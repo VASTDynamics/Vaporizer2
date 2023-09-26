@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="100mm"
+   height="100mm"
+   viewBox="0 0 100 100"
+   version="1.1"
+   id="svg8"
+   sodipodi:docname="logokreis.svg"
+   inkscape:version="0.92.1 r15371">
+  <defs
+     id="defs2">
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter5374"
+       x="-0.00600853"
+       width="1.0120171"
+       y="-0.0059914942"
+       height="1.011983">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.9424121"
+         id="feGaussianBlur5376" />
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.979899"
+     inkscape:cx="65.795795"
+     inkscape:cy="147.7632"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer2"
+     showgrid="false"
+     inkscape:window-width="2048"
+     inkscape:window-height="1099"
+     inkscape:window-x="2040"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-197)" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Ebene 2"
+     transform="translate(0,-197)">
+    <path
+       style="opacity:1;fill:#a3bfa8;fill-opacity:1;stroke-width:1.13739097;stroke-linecap:square;stroke-linejoin:bevel;filter:url(#filter5374)"
+       d="M 188.39258 0.095703125 A 188.21427 188.74999 0 0 0 0.17773438 188.8457 A 188.21427 188.74999 0 0 0 188.39258 377.5957 A 188.21427 188.74999 0 0 0 376.60742 188.8457 A 188.21427 188.74999 0 0 0 188.39258 0.095703125 z M 100.14062 70.673828 L 180.81055 70.673828 C 198.93665 70.673828 214.5743 72.361729 227.7207 75.736328 C 240.86711 79.002069 251.92131 83.681295 260.88477 89.777344 C 276.22224 100.01 288.27284 113.83662 297.03711 131.25391 C 305.90097 148.56233 310.33398 168.973 310.33398 192.48633 C 310.33398 215.1288 305.60205 235.431 296.14062 253.39258 C 286.6792 271.24529 274.72824 284.96151 260.28711 294.54102 C 249.43137 301.72564 237.52925 306.73219 224.58203 309.5625 C 211.63482 312.39281 196.29804 313.80859 178.57031 313.80859 L 100.14062 313.80859 L 100.14062 70.673828 z M 157.50586 116.06836 L 157.50586 268.25 L 171.99609 268.25 C 185.64047 268.25 195.65138 267.59731 202.02539 266.29102 C 208.3994 264.87586 214.62399 262.37356 220.69922 258.78125 C 231.15659 252.24977 238.82497 243.5401 243.70508 232.6543 C 248.58518 221.65964 251.02539 208.10708 251.02539 191.99609 C 251.02539 175.99396 248.33511 162.33295 242.95703 151.01172 C 237.67855 139.58163 229.26384 130.65505 217.71094 124.23242 C 211.83489 121.07554 205.80959 118.95186 199.63477 117.86328 C 193.55953 116.66584 184.34575 116.06836 171.99609 116.06836 L 157.50586 116.06836 z "
+       transform="matrix(0.26458333,0,0,0.26458333,0,197)"
+       id="path133" />
+  </g>
+</svg>

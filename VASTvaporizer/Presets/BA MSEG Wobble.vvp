@@ -1,0 +1,897 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<VASTvaporizer2 PatchVersion="VASTVaporizerParamsV2.20000" PatchName="MSEG Wobble"
+                PatchCategory="BA" PatchTag="Factory" PatchAuthor="VASTDynamics"
+                PatchComments="" CustomModulator1Text="Custom1" CustomModulator2Text="Custom2"
+                CustomModulator3Text="Custom3" CustomModulator4Text="Custom4">
+  <PARAM id="m_fMasterVolumedB" text="-2.87999"/>
+  <PARAM id="m_fPortamento" text="95.8309"/>
+  <PARAM id="m_fMasterTune" text="440"/>
+  <PARAM id="m_fWheelSensitivity" text="50"/>
+  <PARAM id="m_fPitchMod" text="0"/>
+  <PARAM id="m_fVoiceGain" text="100"/>
+  <PARAM id="m_uPolyMode" text="Mono"/>
+  <PARAM id="m_bLegatoMode" text="On"/>
+  <PARAM id="m_fCustomModulator1" text="0"/>
+  <PARAM id="m_fCustomModulator2" text="0"/>
+  <PARAM id="m_fCustomModulator3" text="0"/>
+  <PARAM id="m_fCustomModulator4" text="0"/>
+  <PARAM id="m_bOscOnOff_OscA" text="On"/>
+  <PARAM id="m_uOscRouting1_OscA" text="Filter1"/>
+  <PARAM id="m_uOscRouting2_OscA" text="---"/>
+  <PARAM id="m_fOscDetune_OscA" text="0"/>
+  <PARAM id="m_fOscGain_OscA" text="100"/>
+  <PARAM id="m_fOscCents_OscA" text="0"/>
+  <PARAM id="m_fOscWTPos_OscA" text="0"/>
+  <PARAM id="m_fOscMorph_OscA" text="100"/>
+  <PARAM id="m_fSpread_OscA" text="0"/>
+  <PARAM id="m_iNumOscs_OscA" text="1"/>
+  <PARAM id="m_iOscOct_OscA" text="-2"/>
+  <PARAM id="m_fOscPan_OscA" text="0.800003"/>
+  <PARAM id="m_fOscPhase_OscA" text="0"/>
+  <PARAM id="m_bExciterOnOff_OscA" text="Off"/>
+  <PARAM id="m_bOscInverterOnOff_OscA" text="Off"/>
+  <PARAM id="m_bOscRetrigOnOff_OscA" text="On"/>
+  <PARAM id="m_uVCAEnv_OscA" text="MSEG1"/>
+  <PARAM id="m_bOscOnOff_OscB" text="On"/>
+  <PARAM id="m_uOscRouting1_OscB" text="Filter1"/>
+  <PARAM id="m_uOscRouting2_OscB" text="---"/>
+  <PARAM id="m_fOscDetune_OscB" text="0.95831"/>
+  <PARAM id="m_fOscGain_OscB" text="140.8"/>
+  <PARAM id="m_fOscCents_OscB" text="0"/>
+  <PARAM id="m_fOscWTPos_OscB" text="0"/>
+  <PARAM id="m_fOscMorph_OscB" text="100"/>
+  <PARAM id="m_fSpread_OscB" text="100"/>
+  <PARAM id="m_iNumOscs_OscB" text="2"/>
+  <PARAM id="m_iOscOct_OscB" text="-1"/>
+  <PARAM id="m_fOscPan_OscB" text="0.800003"/>
+  <PARAM id="m_fOscPhase_OscB" text="0"/>
+  <PARAM id="m_bExciterOnOff_OscB" text="Off"/>
+  <PARAM id="m_bOscInverterOnOff_OscB" text="Off"/>
+  <PARAM id="m_bOscRetrigOnOff_OscB" text="On"/>
+  <PARAM id="m_uVCAEnv_OscB" text="MSEG1"/>
+  <PARAM id="m_bOscOnOff_OscC" text="On"/>
+  <PARAM id="m_uOscRouting1_OscC" text="Filter1"/>
+  <PARAM id="m_uOscRouting2_OscC" text="---"/>
+  <PARAM id="m_fOscDetune_OscC" text="0"/>
+  <PARAM id="m_fOscGain_OscC" text="57.6"/>
+  <PARAM id="m_fOscCents_OscC" text="0"/>
+  <PARAM id="m_fOscWTPos_OscC" text="0"/>
+  <PARAM id="m_fOscMorph_OscC" text="100"/>
+  <PARAM id="m_fSpread_OscC" text="0"/>
+  <PARAM id="m_iNumOscs_OscC" text="1"/>
+  <PARAM id="m_iOscOct_OscC" text="-1"/>
+  <PARAM id="m_fOscPan_OscC" text="0"/>
+  <PARAM id="m_fOscPhase_OscC" text="0"/>
+  <PARAM id="m_bExciterOnOff_OscC" text="Off"/>
+  <PARAM id="m_bOscInverterOnOff_OscC" text="Off"/>
+  <PARAM id="m_bOscRetrigOnOff_OscC" text="On"/>
+  <PARAM id="m_uVCAEnv_OscC" text="MSEG1"/>
+  <PARAM id="m_bOscOnOff_OscD" text="Off"/>
+  <PARAM id="m_uOscRouting1_OscD" text="FXBus1"/>
+  <PARAM id="m_uOscRouting2_OscD" text="---"/>
+  <PARAM id="m_fOscDetune_OscD" text="0"/>
+  <PARAM id="m_fOscGain_OscD" text="100"/>
+  <PARAM id="m_fOscCents_OscD" text="0"/>
+  <PARAM id="m_fOscWTPos_OscD" text="0"/>
+  <PARAM id="m_fOscMorph_OscD" text="100"/>
+  <PARAM id="m_fSpread_OscD" text="0"/>
+  <PARAM id="m_iNumOscs_OscD" text="1"/>
+  <PARAM id="m_iOscOct_OscD" text="0"/>
+  <PARAM id="m_fOscPan_OscD" text="0"/>
+  <PARAM id="m_fOscPhase_OscD" text="0"/>
+  <PARAM id="m_bExciterOnOff_OscD" text="Off"/>
+  <PARAM id="m_bOscInverterOnOff_OscD" text="Off"/>
+  <PARAM id="m_bOscRetrigOnOff_OscD" text="On"/>
+  <PARAM id="m_uVCAEnv_OscD" text="MSEG1"/>
+  <PARAM id="m_bNoiseOnOff" text="Off"/>
+  <PARAM id="m_uNoiseRouting1" text="FXBus1"/>
+  <PARAM id="m_uNoiseRouting2" text="---"/>
+  <PARAM id="m_uNoiseType" text="White"/>
+  <PARAM id="m_fNoiseGain" text="100"/>
+  <PARAM id="m_fNoisePan" text="0"/>
+  <PARAM id="m_fNoiseResonance" text="0"/>
+  <PARAM id="m_uVCAEnv_Noise" text="MSEG1"/>
+  <PARAM id="m_fNoiseLowCut" text="100"/>
+  <PARAM id="m_fNoiseHighCut" text="18000"/>
+  <PARAM id="m_bSamplerOnOff" text="Off"/>
+  <PARAM id="m_uSamplerRouting1" text="FXBus1"/>
+  <PARAM id="m_uSamplerRouting2" text="---"/>
+  <PARAM id="m_fSamplerGain" text="100"/>
+  <PARAM id="m_bSamplerKeytrack" text="On"/>
+  <PARAM id="m_uSamplerRootKey" text="c3"/>
+  <PARAM id="m_fSamplerCents" text="0"/>
+  <PARAM id="m_bSamplerLoop" text="Off"/>
+  <PARAM id="m_bSamplerLoopOnly" text="Off"/>
+  <PARAM id="m_bSamplerLoopPingpong" text="Off"/>
+  <PARAM id="m_fSamplerLoopRange" text="100"/>
+  <PARAM id="m_bSamplerPoly" text="On"/>
+  <PARAM id="m_fSamplerPan" text="0"/>
+  <PARAM id="m_uVCAEnv_Sampler" text="MSEG1"/>
+  <PARAM id="m_bOnOff_Filter1" text="On"/>
+  <PARAM id="m_uFilterRouting_Filter1" text="FXBus1"/>
+  <PARAM id="m_uFilterRouting2_Filter1" text="---"/>
+  <PARAM id="m_uFilterType_Filter1" text="DQF LDF 12"/>
+  <PARAM id="m_fFilterCutoff_Filter1" text="8704.75"/>
+  <PARAM id="m_fFilterReso_Filter1" text="0"/>
+  <PARAM id="m_fFilterDrive_Filter1" text="8.48"/>
+  <PARAM id="m_fFilterDryWet_Filter1" text="100"/>
+  <PARAM id="m_uVCFEnv_Filter1" text="MSEG2"/>
+  <PARAM id="m_fVCFEnvMod_Filter1" text="0"/>
+  <PARAM id="m_fFilterScale_Filter1" text="100"/>
+  <PARAM id="m_fFilterGain_Filter1" text="62.4"/>
+  <PARAM id="m_bOnOff_Filter2" text="Off"/>
+  <PARAM id="m_uFilterRouting_Filter2" text="FXBus1"/>
+  <PARAM id="m_uFilterRouting2_Filter2" text="---"/>
+  <PARAM id="m_uFilterType_Filter2" text="DQF HPF 12"/>
+  <PARAM id="m_fFilterCutoff_Filter2" text="28000"/>
+  <PARAM id="m_fFilterReso_Filter2" text="0"/>
+  <PARAM id="m_fFilterDrive_Filter2" text="0"/>
+  <PARAM id="m_fFilterDryWet_Filter2" text="100"/>
+  <PARAM id="m_uVCFEnv_Filter2" text="MSEG2"/>
+  <PARAM id="m_fVCFEnvMod_Filter2" text="100"/>
+  <PARAM id="m_fFilterScale_Filter2" text="100"/>
+  <PARAM id="m_fFilterGain_Filter2" text="100"/>
+  <PARAM id="m_bOnOff_Filter3" text="Off"/>
+  <PARAM id="m_uFilterRouting_Filter3" text="FXBus1"/>
+  <PARAM id="m_uFilterRouting2_Filter3" text="---"/>
+  <PARAM id="m_uFilterType_Filter3" text="DQF LDF 12"/>
+  <PARAM id="m_fFilterCutoff_Filter3" text="28000"/>
+  <PARAM id="m_fFilterReso_Filter3" text="0"/>
+  <PARAM id="m_fFilterDrive_Filter3" text="0"/>
+  <PARAM id="m_fFilterDryWet_Filter3" text="100"/>
+  <PARAM id="m_uVCFEnv_Filter3" text="MSEG2"/>
+  <PARAM id="m_fVCFEnvMod_Filter3" text="100"/>
+  <PARAM id="m_fFilterScale_Filter3" text="100"/>
+  <PARAM id="m_fFilterGain_Filter3" text="100"/>
+  <PARAM id="m_fLFOFreq_LFO1" text="2.98275"/>
+  <PARAM id="m_uLFOWave_LFO1" text="Sine"/>
+  <PARAM id="m_uLFOPolarity_LFO1" text="Bipolar"/>
+  <PARAM id="m_fLFORamp_LFO1" text="0"/>
+  <PARAM id="m_fLFOPhase_LFO1" text="0"/>
+  <PARAM id="m_bLFOPerVoice_LFO1" text="Off"/>
+  <PARAM id="m_bLFORetrigOnOff_LFO1" text="On"/>
+  <PARAM id="m_bLFOSynch_LFO1" text="Off"/>
+  <PARAM id="m_uLFOTimeBeats_LFO1" text="1"/>
+  <PARAM id="m_fLFOFreq_LFO2" text="3.12551"/>
+  <PARAM id="m_uLFOWave_LFO2" text="Sine"/>
+  <PARAM id="m_uLFOPolarity_LFO2" text="Bipolar"/>
+  <PARAM id="m_fLFORamp_LFO2" text="0"/>
+  <PARAM id="m_fLFOPhase_LFO2" text="0"/>
+  <PARAM id="m_bLFOPerVoice_LFO2" text="Off"/>
+  <PARAM id="m_bLFORetrigOnOff_LFO2" text="On"/>
+  <PARAM id="m_bLFOSynch_LFO2" text="Off"/>
+  <PARAM id="m_uLFOTimeBeats_LFO2" text="1"/>
+  <PARAM id="m_fLFOFreq_LFO3" text="2"/>
+  <PARAM id="m_uLFOWave_LFO3" text="Sine"/>
+  <PARAM id="m_uLFOPolarity_LFO3" text="Bipolar"/>
+  <PARAM id="m_fLFORamp_LFO3" text="1"/>
+  <PARAM id="m_fLFOPhase_LFO3" text="0"/>
+  <PARAM id="m_bLFOPerVoice_LFO3" text="Off"/>
+  <PARAM id="m_bLFORetrigOnOff_LFO3" text="On"/>
+  <PARAM id="m_bLFOSynch_LFO3" text="Off"/>
+  <PARAM id="m_uLFOTimeBeats_LFO3" text="1"/>
+  <PARAM id="m_fLFOFreq_LFO4" text="2"/>
+  <PARAM id="m_uLFOWave_LFO4" text="Sine"/>
+  <PARAM id="m_uLFOPolarity_LFO4" text="Bipolar"/>
+  <PARAM id="m_fLFORamp_LFO4" text="1"/>
+  <PARAM id="m_fLFOPhase_LFO4" text="0"/>
+  <PARAM id="m_bLFOPerVoice_LFO4" text="Off"/>
+  <PARAM id="m_bLFORetrigOnOff_LFO4" text="On"/>
+  <PARAM id="m_bLFOSynch_LFO4" text="Off"/>
+  <PARAM id="m_uLFOTimeBeats_LFO4" text="1"/>
+  <PARAM id="m_fLFOFreq_LFO5" text="2"/>
+  <PARAM id="m_uLFOWave_LFO5" text="Sine"/>
+  <PARAM id="m_uLFOPolarity_LFO5" text="Bipolar"/>
+  <PARAM id="m_fLFORamp_LFO5" text="1"/>
+  <PARAM id="m_fLFOPhase_LFO5" text="0"/>
+  <PARAM id="m_bLFOPerVoice_LFO5" text="Off"/>
+  <PARAM id="m_bLFORetrigOnOff_LFO5" text="On"/>
+  <PARAM id="m_bLFOSynch_LFO5" text="Off"/>
+  <PARAM id="m_uLFOTimeBeats_LFO5" text="1"/>
+  <PARAM id="m_uMSEGPolarity_MSEG1" text="Unipolar"/>
+  <PARAM id="m_fAttackTime_MSEG1" text="0"/>
+  <PARAM id="m_fDecayTime_MSEG1" text="10"/>
+  <PARAM id="m_fSustainLevel_MSEG1" text="100"/>
+  <PARAM id="m_fReleaseTime_MSEG1" text="100"/>
+  <PARAM id="m_uMSEGPolarity_MSEG2" text="Unipolar"/>
+  <PARAM id="m_fAttackTime_MSEG2" text="0"/>
+  <PARAM id="m_fDecayTime_MSEG2" text="10"/>
+  <PARAM id="m_fSustainLevel_MSEG2" text="100"/>
+  <PARAM id="m_fReleaseTime_MSEG2" text="100"/>
+  <PARAM id="m_uMSEGPolarity_MSEG3" text="Bipolar"/>
+  <PARAM id="m_fAttackTime_MSEG3" text="0"/>
+  <PARAM id="m_fDecayTime_MSEG3" text="10"/>
+  <PARAM id="m_fSustainLevel_MSEG3" text="100"/>
+  <PARAM id="m_fReleaseTime_MSEG3" text="100"/>
+  <PARAM id="m_uMSEGPolarity_MSEG4" text="Unipolar"/>
+  <PARAM id="m_fAttackTime_MSEG4" text="0"/>
+  <PARAM id="m_fDecayTime_MSEG4" text="10"/>
+  <PARAM id="m_fSustainLevel_MSEG4" text="100"/>
+  <PARAM id="m_fReleaseTime_MSEG4" text="100"/>
+  <PARAM id="m_uMSEGPolarity_MSEG5" text="Unipolar"/>
+  <PARAM id="m_fAttackTime_MSEG5" text="0"/>
+  <PARAM id="m_fDecayTime_MSEG5" text="10"/>
+  <PARAM id="m_fSustainLevel_MSEG5" text="100"/>
+  <PARAM id="m_fReleaseTime_MSEG5" text="100"/>
+  <PARAM id="m_fStepSeqSpeed_STEPSEQ1" text="250"/>
+  <PARAM id="m_fGlide_STEPSEQ1" text="25"/>
+  <PARAM id="m_fGate_STEPSEQ1" text="65"/>
+  <PARAM id="m_bStepSeqSynch_STEPSEQ1" text="Off"/>
+  <PARAM id="m_uStepSeqTimeBeats_STEPSEQ1" text="1"/>
+  <PARAM id="m_fStepSeqSpeed_STEPSEQ2" text="250"/>
+  <PARAM id="m_fGlide_STEPSEQ2" text="25"/>
+  <PARAM id="m_fGate_STEPSEQ2" text="65"/>
+  <PARAM id="m_bStepSeqSynch_STEPSEQ2" text="Off"/>
+  <PARAM id="m_uStepSeqTimeBeats_STEPSEQ2" text="1"/>
+  <PARAM id="m_fStepSeqSpeed_STEPSEQ3" text="250"/>
+  <PARAM id="m_fGlide_STEPSEQ3" text="25"/>
+  <PARAM id="m_fGate_STEPSEQ3" text="65"/>
+  <PARAM id="m_bStepSeqSynch_STEPSEQ3" text="Off"/>
+  <PARAM id="m_uStepSeqTimeBeats_STEPSEQ3" text="1"/>
+  <PARAM id="m_fARPSpeed" text="250"/>
+  <PARAM id="m_uARPMode" text="Poly"/>
+  <PARAM id="m_uARPTimeBeats" text="1"/>
+  <PARAM id="m_bARPOnOff" text="Off"/>
+  <PARAM id="m_bARPSynch" text="Off"/>
+  <PARAM id="m_uModMatSrce1" text="MSEG3Env"/>
+  <PARAM id="m_uModMatSrce2" text="LFO2"/>
+  <PARAM id="m_uModMatSrce3" text="LFO1"/>
+  <PARAM id="m_uModMatSrce4" text="LFO2"/>
+  <PARAM id="m_uModMatSrce5" text="---"/>
+  <PARAM id="m_uModMatSrce6" text="---"/>
+  <PARAM id="m_uModMatSrce7" text="---"/>
+  <PARAM id="m_uModMatSrce8" text="---"/>
+  <PARAM id="m_uModMatSrce9" text="---"/>
+  <PARAM id="m_uModMatSrce10" text="---"/>
+  <PARAM id="m_uModMatSrce11" text="---"/>
+  <PARAM id="m_uModMatSrce12" text="---"/>
+  <PARAM id="m_uModMatSrce13" text="---"/>
+  <PARAM id="m_uModMatSrce14" text="---"/>
+  <PARAM id="m_uModMatSrce15" text="---"/>
+  <PARAM id="m_uModMatSrce16" text="---"/>
+  <PARAM id="m_uModMatDest1" text="Filter1Cutoff"/>
+  <PARAM id="m_uModMatDest2" text="OscAPan"/>
+  <PARAM id="m_uModMatDest3" text="OscBPan"/>
+  <PARAM id="m_uModMatDest4" text="OscCPan"/>
+  <PARAM id="m_uModMatDest5" text="---"/>
+  <PARAM id="m_uModMatDest6" text="---"/>
+  <PARAM id="m_uModMatDest7" text="---"/>
+  <PARAM id="m_uModMatDest8" text="---"/>
+  <PARAM id="m_uModMatDest9" text="---"/>
+  <PARAM id="m_uModMatDest10" text="---"/>
+  <PARAM id="m_uModMatDest11" text="---"/>
+  <PARAM id="m_uModMatDest12" text="---"/>
+  <PARAM id="m_uModMatDest13" text="---"/>
+  <PARAM id="m_uModMatDest14" text="---"/>
+  <PARAM id="m_uModMatDest15" text="---"/>
+  <PARAM id="m_uModMatDest16" text="---"/>
+  <PARAM id="m_fModMatVal1" text="30.3"/>
+  <PARAM id="m_fModMatVal2" text="19.9"/>
+  <PARAM id="m_fModMatVal3" text="19.9"/>
+  <PARAM id="m_fModMatVal4" text="27.9"/>
+  <PARAM id="m_fModMatVal5" text="0"/>
+  <PARAM id="m_fModMatVal6" text="0"/>
+  <PARAM id="m_fModMatVal7" text="0"/>
+  <PARAM id="m_fModMatVal8" text="0"/>
+  <PARAM id="m_fModMatVal9" text="0"/>
+  <PARAM id="m_fModMatVal10" text="0"/>
+  <PARAM id="m_fModMatVal11" text="0"/>
+  <PARAM id="m_fModMatVal12" text="0"/>
+  <PARAM id="m_fModMatVal13" text="0"/>
+  <PARAM id="m_fModMatVal14" text="0"/>
+  <PARAM id="m_fModMatVal15" text="0"/>
+  <PARAM id="m_fModMatVal16" text="0"/>
+  <PARAM id="m_fModMatCurve1" text="0"/>
+  <PARAM id="m_fModMatCurve2" text="0"/>
+  <PARAM id="m_fModMatCurve3" text="0"/>
+  <PARAM id="m_fModMatCurve4" text="0"/>
+  <PARAM id="m_fModMatCurve5" text="0"/>
+  <PARAM id="m_fModMatCurve6" text="0"/>
+  <PARAM id="m_fModMatCurve7" text="0"/>
+  <PARAM id="m_fModMatCurve8" text="0"/>
+  <PARAM id="m_fModMatCurve9" text="0"/>
+  <PARAM id="m_fModMatCurve10" text="0"/>
+  <PARAM id="m_fModMatCurve11" text="0"/>
+  <PARAM id="m_fModMatCurve12" text="0"/>
+  <PARAM id="m_fModMatCurve13" text="0"/>
+  <PARAM id="m_fModMatCurve14" text="0"/>
+  <PARAM id="m_fModMatCurve15" text="0"/>
+  <PARAM id="m_fModMatCurve16" text="0"/>
+  <PARAM id="m_iWavWTPos" text="32"/>
+  <PARAM id="m_iWTEditorZoom" text="8"/>
+  <PARAM id="m_iWAVScale" text="1"/>
+  <PARAM id="m_fMBMonoFrequency" text="0"/>
+  <PARAM id="m_fMBMonoFrequency_Bus2" text="0"/>
+  <PARAM id="m_fMBMonoFrequency_Bus3" text="0"/>
+  <PARAM id="m_uFxBusRouting" text="Master"/>
+  <PARAM id="m_uFxBusRouting_Bus2" text="Master"/>
+  <PARAM id="m_uFxBusRouting_Bus3" text="Master"/>
+  <PARAM id="m_bEQOnOff" text="Off"/>
+  <PARAM id="m_fEQ1" text="0"/>
+  <PARAM id="m_fEQ2" text="2.24"/>
+  <PARAM id="m_fEQ3" text="3.04"/>
+  <PARAM id="m_fEQ4" text="0"/>
+  <PARAM id="m_fEQ5" text="3.68"/>
+  <PARAM id="m_fEQ6" text="0"/>
+  <PARAM id="m_fEQ7" text="0"/>
+  <PARAM id="m_fEQ8" text="0"/>
+  <PARAM id="m_fEQGain" text="100"/>
+  <PARAM id="m_bChorusOnOff" text="Off"/>
+  <PARAM id="m_fChorusDryWet" text="100"/>
+  <PARAM id="m_fChorusDepth" text="100"/>
+  <PARAM id="m_bChorusSynch" text="Off"/>
+  <PARAM id="m_uChorusTimeBeats" text="1"/>
+  <PARAM id="m_fChorusRate_hz" text="0.1"/>
+  <PARAM id="m_fChorusGain" text="100"/>
+  <PARAM id="m_bPhaserOnOff" text="Off"/>
+  <PARAM id="m_fPhaserDryWet" text="100"/>
+  <PARAM id="m_fPhaserWidth" text="1000"/>
+  <PARAM id="m_fPhaserFeedback" text="0.7"/>
+  <PARAM id="m_fPhaserMinFrequency" text="80"/>
+  <PARAM id="m_uPhaserLFOWave" text="Sine"/>
+  <PARAM id="m_bPhaserSynch" text="Off"/>
+  <PARAM id="m_uPhaserTimeBeats" text="1"/>
+  <PARAM id="m_fPhaserLFOFreq" text="1"/>
+  <PARAM id="m_fPhaserGain" text="100"/>
+  <PARAM id="m_bFlangerOnOff" text="Off"/>
+  <PARAM id="m_fFlangerDryWet" text="100"/>
+  <PARAM id="m_fFlangerDelay" text="2.5"/>
+  <PARAM id="m_fFlangerWidth" text="10"/>
+  <PARAM id="m_fFlangerFeedback" text="0"/>
+  <PARAM id="m_uFlangerLFOWave" text="Sine"/>
+  <PARAM id="m_bFlangerSynch" text="Off"/>
+  <PARAM id="m_uFlangerTimeBeats" text="1"/>
+  <PARAM id="m_fFlangerLFOFreq" text="0.2"/>
+  <PARAM id="m_fFlangerGain" text="100"/>
+  <PARAM id="m_bAtomizerOnOff" text="Off"/>
+  <PARAM id="m_fAtomizerDryWet" text="100"/>
+  <PARAM id="m_fAtomizerLowcut" text="0"/>
+  <PARAM id="m_fAtomizerHighcut" text="100"/>
+  <PARAM id="m_fAtomizerHarmonics" text="0"/>
+  <PARAM id="m_fAtomizerEmphasis" text="0"/>
+  <PARAM id="m_fAtomizerDephase" text="0"/>
+  <PARAM id="m_uAtomizerLFOWave" text="Sine"/>
+  <PARAM id="m_bAtomizerSynch" text="Off"/>
+  <PARAM id="m_uAtomizerTimeBeats" text="1"/>
+  <PARAM id="m_fAtomizerLFOFreq" text="1"/>
+  <PARAM id="m_fAtomizerGain" text="100"/>
+  <PARAM id="m_bDistortionOnOff" text="Off"/>
+  <PARAM id="m_fDistDryWet" text="10"/>
+  <PARAM id="m_fDistPreGain" text="100"/>
+  <PARAM id="m_fDistLowcut" text="50"/>
+  <PARAM id="m_fDistDrive" text="30"/>
+  <PARAM id="m_fDistFuzz" text="10"/>
+  <PARAM id="m_fDistGain" text="100"/>
+  <PARAM id="m_bBitcrushOnOff" text="Off"/>
+  <PARAM id="m_fBitcrushDryWet" text="60"/>
+  <PARAM id="m_fBitcrushLowcut" text="50"/>
+  <PARAM id="m_fBitcrushBitdepth" text="4"/>
+  <PARAM id="m_fBitcrushBitrate" text="100"/>
+  <PARAM id="m_fBitcrushJitter" text="0"/>
+  <PARAM id="m_fBitcrushGain" text="100"/>
+  <PARAM id="m_bCombOnOff" text="Off"/>
+  <PARAM id="m_fCombDryWet" text="100"/>
+  <PARAM id="m_fCombFrequOffset" text="440"/>
+  <PARAM id="m_fCombDrive" text="0"/>
+  <PARAM id="m_fCombLevel" text="95"/>
+  <PARAM id="m_fCombGain" text="100"/>
+  <PARAM id="m_bFormantOnOff" text="Off"/>
+  <PARAM id="m_fFormantDryWet" text="100"/>
+  <PARAM id="m_fFormantVowelOne" text="0"/>
+  <PARAM id="m_fFormantVowelTwo" text="0"/>
+  <PARAM id="m_fFormantVowelMix" text="0"/>
+  <PARAM id="m_fFormantGain" text="100"/>
+  <PARAM id="m_bMultibandCompressorOffOn" text="Off"/>
+  <PARAM id="m_fMultibandCompressorFcLow" text="1500"/>
+  <PARAM id="m_fMultibandCompressorFcHigh" text="6700"/>
+  <PARAM id="m_fMultibandCompressorThresholdLB" text="-40"/>
+  <PARAM id="m_fMultibandCompressorRatioLB" text="40"/>
+  <PARAM id="m_fMultibandCompressorAttackLB" text="4"/>
+  <PARAM id="m_fMultibandCompressorReleaseLB" text="4"/>
+  <PARAM id="m_fMultibandCompressorGainLB" text="14"/>
+  <PARAM id="m_fMultibandCompressorThresholdMB" text="-10"/>
+  <PARAM id="m_fMultibandCompressorRatioMB" text="25"/>
+  <PARAM id="m_fMultibandCompressorAttackMB" text="4"/>
+  <PARAM id="m_fMultibandCompressorReleaseMB" text="4"/>
+  <PARAM id="m_fMultibandCompressorGainMB" text="8"/>
+  <PARAM id="m_fMultibandCompressorThresholdHB" text="-40"/>
+  <PARAM id="m_fMultibandCompressorRatioHB" text="55"/>
+  <PARAM id="m_fMultibandCompressorAttackHB" text="4"/>
+  <PARAM id="m_fMultibandCompressorReleaseHB" text="4"/>
+  <PARAM id="m_fMultibandCompressorGainHB" text="10"/>
+  <PARAM id="m_bLimiterOffOn" text="Off"/>
+  <PARAM id="m_fLimiterDryWet" text="100"/>
+  <PARAM id="m_uLimiterMode" text="Limiter"/>
+  <PARAM id="m_fLimiterThreshold" text="-24"/>
+  <PARAM id="m_fLimiterRatio" text="50"/>
+  <PARAM id="m_fLimiterAttack" text="2"/>
+  <PARAM id="m_fLimiterRelease" text="300"/>
+  <PARAM id="m_fLimiterMakeupGain" text="0"/>
+  <PARAM id="m_bDelayOnOff" text="On"/>
+  <PARAM id="m_fDelayWet" text="8.8"/>
+  <PARAM id="m_uDelayMode" text="PingPong"/>
+  <PARAM id="m_fDelayLowcut" text="145.707"/>
+  <PARAM id="m_fDelayFeedback" text="1.6"/>
+  <PARAM id="m_bDelaySynch" text="On"/>
+  <PARAM id="m_uDelayTimeBeats" text="1/4"/>
+  <PARAM id="m_fDelayTime" text="300"/>
+  <PARAM id="m_fDelayGain" text="100"/>
+  <PARAM id="m_bReverbOnOff" text="Off"/>
+  <PARAM id="m_fReverbDryWet" text="10"/>
+  <PARAM id="m_uReverbMode" text="Plate"/>
+  <PARAM id="m_fReverbLowcut" text="100"/>
+  <PARAM id="m_fReverbPredelay" text="100"/>
+  <PARAM id="m_fReverbSize" text="100"/>
+  <PARAM id="m_fReverbDamping" text="10"/>
+  <PARAM id="m_fReverbFeedback" text="2000"/>
+  <PARAM id="m_fReverbGain" text="100"/>
+  <PARAM id="m_bEQOnOff_bus2" text="Off"/>
+  <PARAM id="m_fEQ1_bus2" text="0"/>
+  <PARAM id="m_fEQ2_bus2" text="0"/>
+  <PARAM id="m_fEQ3_bus2" text="0"/>
+  <PARAM id="m_fEQ4_bus2" text="0"/>
+  <PARAM id="m_fEQ5_bus2" text="0"/>
+  <PARAM id="m_fEQ6_bus2" text="0"/>
+  <PARAM id="m_fEQ7_bus2" text="0"/>
+  <PARAM id="m_fEQ8_bus2" text="0"/>
+  <PARAM id="m_fEQGain_bus2" text="100"/>
+  <PARAM id="m_bChorusOnOff_bus2" text="Off"/>
+  <PARAM id="m_fChorusDryWet_bus2" text="100"/>
+  <PARAM id="m_fChorusDepth_bus2" text="100"/>
+  <PARAM id="m_bChorusSynch_bus2" text="Off"/>
+  <PARAM id="m_uChorusTimeBeats_bus2" text="1"/>
+  <PARAM id="m_fChorusRate_hz_bus2" text="0.1"/>
+  <PARAM id="m_fChorusGain_bus2" text="100"/>
+  <PARAM id="m_bPhaserOnOff_bus2" text="Off"/>
+  <PARAM id="m_fPhaserDryWet_bus2" text="100"/>
+  <PARAM id="m_fPhaserWidth_bus2" text="1000"/>
+  <PARAM id="m_fPhaserFeedback_bus2" text="0.7"/>
+  <PARAM id="m_fPhaserMinFrequency_bus2" text="80"/>
+  <PARAM id="m_uPhaserLFOWave_bus2" text="Sine"/>
+  <PARAM id="m_bPhaserSynch_bus2" text="Off"/>
+  <PARAM id="m_uPhaserTimeBeats_bus2" text="1"/>
+  <PARAM id="m_fPhaserLFOFreq_bus2" text="1"/>
+  <PARAM id="m_fPhaserGain_bus2" text="100"/>
+  <PARAM id="m_bFlangerOnOff_bus2" text="Off"/>
+  <PARAM id="m_fFlangerDryWet_bus2" text="100"/>
+  <PARAM id="m_fFlangerDelay_bus2" text="2.5"/>
+  <PARAM id="m_fFlangerWidth_bus2" text="10"/>
+  <PARAM id="m_fFlangerFeedback_bus2" text="0"/>
+  <PARAM id="m_uFlangerLFOWave_bus2" text="Sine"/>
+  <PARAM id="m_bFlangerSynch_bus2" text="Off"/>
+  <PARAM id="m_uFlangerTimeBeats_bus2" text="1"/>
+  <PARAM id="m_fFlangerLFOFreq_bus2" text="0.2"/>
+  <PARAM id="m_fFlangerGain_bus2" text="100"/>
+  <PARAM id="m_bAtomizerOnOff_bus2" text="Off"/>
+  <PARAM id="m_fAtomizerDryWet_bus2" text="100"/>
+  <PARAM id="m_fAtomizerLowcut_bus2" text="0"/>
+  <PARAM id="m_fAtomizerHighcut_bus2" text="100"/>
+  <PARAM id="m_fAtomizerHarmonics_bus2" text="0"/>
+  <PARAM id="m_fAtomizerEmphasis_bus2" text="0"/>
+  <PARAM id="m_fAtomizerDephase_bus2" text="0"/>
+  <PARAM id="m_uAtomizerLFOWave_bus2" text="Sine"/>
+  <PARAM id="m_bAtomizerSynch_bus2" text="Off"/>
+  <PARAM id="m_uAtomizerTimeBeats_bus2" text="1"/>
+  <PARAM id="m_fAtomizerLFOFreq_bus2" text="1"/>
+  <PARAM id="m_fAtomizerGain_bus2" text="100"/>
+  <PARAM id="m_bDistortionOnOff_bus2" text="Off"/>
+  <PARAM id="m_fDistDryWet_bus2" text="10"/>
+  <PARAM id="m_fDistPreGain_bus2" text="100"/>
+  <PARAM id="m_fDistLowcut_bus2" text="50"/>
+  <PARAM id="m_fDistDrive_bus2" text="30"/>
+  <PARAM id="m_fDistFuzz_bus2" text="10"/>
+  <PARAM id="m_fDistGain_bus2" text="100"/>
+  <PARAM id="m_bBitcrushOnOff_bus2" text="Off"/>
+  <PARAM id="m_fBitcrushDryWet_bus2" text="60"/>
+  <PARAM id="m_fBitcrushLowcut_bus2" text="50"/>
+  <PARAM id="m_fBitcrushBitdepth_bus2" text="4"/>
+  <PARAM id="m_fBitcrushBitrate_bus2" text="100"/>
+  <PARAM id="m_fBitcrushJitter_bus2" text="0"/>
+  <PARAM id="m_fBitcrushGain_bus2" text="100"/>
+  <PARAM id="m_bCombOnOff_bus2" text="Off"/>
+  <PARAM id="m_fCombDryWet_bus2" text="100"/>
+  <PARAM id="m_fCombFrequOffset_bus2" text="440"/>
+  <PARAM id="m_fCombDrive_bus2" text="0"/>
+  <PARAM id="m_fCombLevel_bus2" text="95"/>
+  <PARAM id="m_fCombGain_bus2" text="100"/>
+  <PARAM id="m_bFormantOnOff_bus2" text="Off"/>
+  <PARAM id="m_fFormantDryWet_bus2" text="100"/>
+  <PARAM id="m_fFormantVowelOne_bus2" text="0"/>
+  <PARAM id="m_fFormantVowelTwo_bus2" text="0"/>
+  <PARAM id="m_fFormantVowelMix_bus2" text="0"/>
+  <PARAM id="m_fFormantGain_bus2" text="100"/>
+  <PARAM id="m_bMultibandCompressorOffOn_bus2" text="Off"/>
+  <PARAM id="m_fMultibandCompressorFcLow_bus2" text="1500"/>
+  <PARAM id="m_fMultibandCompressorFcHigh_bus2" text="6700"/>
+  <PARAM id="m_fMultibandCompressorThresholdLB_bus2" text="-40"/>
+  <PARAM id="m_fMultibandCompressorRatioLB_bus2" text="40"/>
+  <PARAM id="m_fMultibandCompressorAttackLB_bus2" text="4"/>
+  <PARAM id="m_fMultibandCompressorReleaseLB_bus2" text="4"/>
+  <PARAM id="m_fMultibandCompressorGainLB_bus2" text="14"/>
+  <PARAM id="m_fMultibandCompressorThresholdMB_bus2" text="-10"/>
+  <PARAM id="m_fMultibandCompressorRatioMB_bus2" text="25"/>
+  <PARAM id="m_fMultibandCompressorAttackMB_bus2" text="4"/>
+  <PARAM id="m_fMultibandCompressorReleaseMB_bus2" text="4"/>
+  <PARAM id="m_fMultibandCompressorGainMB_bus2" text="8"/>
+  <PARAM id="m_fMultibandCompressorThresholdHB_bus2" text="-40"/>
+  <PARAM id="m_fMultibandCompressorRatioHB_bus2" text="55"/>
+  <PARAM id="m_fMultibandCompressorAttackHB_bus2" text="4"/>
+  <PARAM id="m_fMultibandCompressorReleaseHB_bus2" text="4"/>
+  <PARAM id="m_fMultibandCompressorGainHB_bus2" text="10"/>
+  <PARAM id="m_bLimiterOffOn_bus2" text="Off"/>
+  <PARAM id="m_fLimiterDryWet_bus2" text="100"/>
+  <PARAM id="m_uLimiterMode_bus2" text="Limiter"/>
+  <PARAM id="m_fLimiterThreshold_bus2" text="-24"/>
+  <PARAM id="m_fLimiterRatio_bus2" text="50"/>
+  <PARAM id="m_fLimiterAttack_bus2" text="2"/>
+  <PARAM id="m_fLimiterRelease_bus2" text="300"/>
+  <PARAM id="m_fLimiterMakeupGain_bus2" text="0"/>
+  <PARAM id="m_bDelayOnOff_bus2" text="Off"/>
+  <PARAM id="m_fDelayWet_bus2" text="20"/>
+  <PARAM id="m_uDelayMode_bus2" text="PingPong"/>
+  <PARAM id="m_fDelayLowcut_bus2" text="50"/>
+  <PARAM id="m_fDelayFeedback_bus2" text="40"/>
+  <PARAM id="m_bDelaySynch_bus2" text="Off"/>
+  <PARAM id="m_uDelayTimeBeats_bus2" text="1"/>
+  <PARAM id="m_fDelayTime_bus2" text="300"/>
+  <PARAM id="m_fDelayGain_bus2" text="100"/>
+  <PARAM id="m_bReverbOnOff_bus2" text="Off"/>
+  <PARAM id="m_fReverbDryWet_bus2" text="10"/>
+  <PARAM id="m_uReverbMode_bus2" text="Plate"/>
+  <PARAM id="m_fReverbLowcut_bus2" text="100"/>
+  <PARAM id="m_fReverbPredelay_bus2" text="100"/>
+  <PARAM id="m_fReverbSize_bus2" text="100"/>
+  <PARAM id="m_fReverbDamping_bus2" text="10"/>
+  <PARAM id="m_fReverbFeedback_bus2" text="2000"/>
+  <PARAM id="m_fReverbGain_bus2" text="100"/>
+  <PARAM id="m_bEQOnOff_bus3" text="Off"/>
+  <PARAM id="m_fEQ1_bus3" text="0"/>
+  <PARAM id="m_fEQ2_bus3" text="0"/>
+  <PARAM id="m_fEQ3_bus3" text="0"/>
+  <PARAM id="m_fEQ4_bus3" text="0"/>
+  <PARAM id="m_fEQ5_bus3" text="0"/>
+  <PARAM id="m_fEQ6_bus3" text="0"/>
+  <PARAM id="m_fEQ7_bus3" text="0"/>
+  <PARAM id="m_fEQ8_bus3" text="0"/>
+  <PARAM id="m_fEQGain_bus3" text="100"/>
+  <PARAM id="m_bChorusOnOff_bus3" text="Off"/>
+  <PARAM id="m_fChorusDryWet_bus3" text="100"/>
+  <PARAM id="m_fChorusDepth_bus3" text="100"/>
+  <PARAM id="m_bChorusSynch_bus3" text="Off"/>
+  <PARAM id="m_uChorusTimeBeats_bus3" text="1"/>
+  <PARAM id="m_fChorusRate_hz_bus3" text="0.1"/>
+  <PARAM id="m_fChorusGain_bus3" text="100"/>
+  <PARAM id="m_bPhaserOnOff_bus3" text="Off"/>
+  <PARAM id="m_fPhaserDryWet_bus3" text="100"/>
+  <PARAM id="m_fPhaserWidth_bus3" text="1000"/>
+  <PARAM id="m_fPhaserFeedback_bus3" text="0.7"/>
+  <PARAM id="m_fPhaserMinFrequency_bus3" text="80"/>
+  <PARAM id="m_uPhaserLFOWave_bus3" text="Sine"/>
+  <PARAM id="m_bPhaserSynch_bus3" text="Off"/>
+  <PARAM id="m_uPhaserTimeBeats_bus3" text="1"/>
+  <PARAM id="m_fPhaserLFOFreq_bus3" text="1"/>
+  <PARAM id="m_fPhaserGain_bus3" text="100"/>
+  <PARAM id="m_bFlangerOnOff_bus3" text="Off"/>
+  <PARAM id="m_fFlangerDryWet_bus3" text="100"/>
+  <PARAM id="m_fFlangerDelay_bus3" text="2.5"/>
+  <PARAM id="m_fFlangerWidth_bus3" text="10"/>
+  <PARAM id="m_fFlangerFeedback_bus3" text="0"/>
+  <PARAM id="m_uFlangerLFOWave_bus3" text="Sine"/>
+  <PARAM id="m_bFlangerSynch_bus3" text="Off"/>
+  <PARAM id="m_uFlangerTimeBeats_bus3" text="1"/>
+  <PARAM id="m_fFlangerLFOFreq_bus3" text="0.2"/>
+  <PARAM id="m_fFlangerGain_bus3" text="100"/>
+  <PARAM id="m_bAtomizerOnOff_bus3" text="Off"/>
+  <PARAM id="m_fAtomizerDryWet_bus3" text="100"/>
+  <PARAM id="m_fAtomizerLowcut_bus3" text="0"/>
+  <PARAM id="m_fAtomizerHighcut_bus3" text="100"/>
+  <PARAM id="m_fAtomizerHarmonics_bus3" text="0"/>
+  <PARAM id="m_fAtomizerEmphasis_bus3" text="0"/>
+  <PARAM id="m_fAtomizerDephase_bus3" text="0"/>
+  <PARAM id="m_uAtomizerLFOWave_bus3" text="Sine"/>
+  <PARAM id="m_bAtomizerSynch_bus3" text="Off"/>
+  <PARAM id="m_uAtomizerTimeBeats_bus3" text="1"/>
+  <PARAM id="m_fAtomizerLFOFreq_bus3" text="1"/>
+  <PARAM id="m_fAtomizerGain_bus3" text="100"/>
+  <PARAM id="m_bDistortionOnOff_bus3" text="Off"/>
+  <PARAM id="m_fDistDryWet_bus3" text="10"/>
+  <PARAM id="m_fDistPreGain_bus3" text="100"/>
+  <PARAM id="m_fDistLowcut_bus3" text="50"/>
+  <PARAM id="m_fDistDrive_bus3" text="30"/>
+  <PARAM id="m_fDistFuzz_bus3" text="10"/>
+  <PARAM id="m_fDistGain_bus3" text="100"/>
+  <PARAM id="m_bBitcrushOnOff_bus3" text="Off"/>
+  <PARAM id="m_fBitcrushDryWet_bus3" text="60"/>
+  <PARAM id="m_fBitcrushLowcut_bus3" text="50"/>
+  <PARAM id="m_fBitcrushBitdepth_bus3" text="4"/>
+  <PARAM id="m_fBitcrushBitrate_bus3" text="100"/>
+  <PARAM id="m_fBitcrushJitter_bus3" text="0"/>
+  <PARAM id="m_fBitcrushGain_bus3" text="100"/>
+  <PARAM id="m_bCombOnOff_bus3" text="Off"/>
+  <PARAM id="m_fCombDryWet_bus3" text="100"/>
+  <PARAM id="m_fCombFrequOffset_bus3" text="440"/>
+  <PARAM id="m_fCombDrive_bus3" text="0"/>
+  <PARAM id="m_fCombLevel_bus3" text="95"/>
+  <PARAM id="m_fCombGain_bus3" text="100"/>
+  <PARAM id="m_bFormantOnOff_bus3" text="Off"/>
+  <PARAM id="m_fFormantDryWet_bus3" text="100"/>
+  <PARAM id="m_fFormantVowelOne_bus3" text="0"/>
+  <PARAM id="m_fFormantVowelTwo_bus3" text="0"/>
+  <PARAM id="m_fFormantVowelMix_bus3" text="0"/>
+  <PARAM id="m_fFormantGain_bus3" text="100"/>
+  <PARAM id="m_bMultibandCompressorOffOn_bus3" text="Off"/>
+  <PARAM id="m_fMultibandCompressorFcLow_bus3" text="1500"/>
+  <PARAM id="m_fMultibandCompressorFcHigh_bus3" text="6700"/>
+  <PARAM id="m_fMultibandCompressorThresholdLB_bus3" text="-40"/>
+  <PARAM id="m_fMultibandCompressorRatioLB_bus3" text="40"/>
+  <PARAM id="m_fMultibandCompressorAttackLB_bus3" text="4"/>
+  <PARAM id="m_fMultibandCompressorReleaseLB_bus3" text="4"/>
+  <PARAM id="m_fMultibandCompressorGainLB_bus3" text="14"/>
+  <PARAM id="m_fMultibandCompressorThresholdMB_bus3" text="-10"/>
+  <PARAM id="m_fMultibandCompressorRatioMB_bus3" text="25"/>
+  <PARAM id="m_fMultibandCompressorAttackMB_bus3" text="4"/>
+  <PARAM id="m_fMultibandCompressorReleaseMB_bus3" text="4"/>
+  <PARAM id="m_fMultibandCompressorGainMB_bus3" text="8"/>
+  <PARAM id="m_fMultibandCompressorThresholdHB_bus3" text="-40"/>
+  <PARAM id="m_fMultibandCompressorRatioHB_bus3" text="55"/>
+  <PARAM id="m_fMultibandCompressorAttackHB_bus3" text="4"/>
+  <PARAM id="m_fMultibandCompressorReleaseHB_bus3" text="4"/>
+  <PARAM id="m_fMultibandCompressorGainHB_bus3" text="10"/>
+  <PARAM id="m_bLimiterOffOn_bus3" text="Off"/>
+  <PARAM id="m_fLimiterDryWet_bus3" text="100"/>
+  <PARAM id="m_uLimiterMode_bus3" text="Limiter"/>
+  <PARAM id="m_fLimiterThreshold_bus3" text="-24"/>
+  <PARAM id="m_fLimiterRatio_bus3" text="50"/>
+  <PARAM id="m_fLimiterAttack_bus3" text="2"/>
+  <PARAM id="m_fLimiterRelease_bus3" text="300"/>
+  <PARAM id="m_fLimiterMakeupGain_bus3" text="0"/>
+  <PARAM id="m_bDelayOnOff_bus3" text="Off"/>
+  <PARAM id="m_fDelayWet_bus3" text="20"/>
+  <PARAM id="m_uDelayMode_bus3" text="PingPong"/>
+  <PARAM id="m_fDelayLowcut_bus3" text="50"/>
+  <PARAM id="m_fDelayFeedback_bus3" text="40"/>
+  <PARAM id="m_bDelaySynch_bus3" text="Off"/>
+  <PARAM id="m_uDelayTimeBeats_bus3" text="1"/>
+  <PARAM id="m_fDelayTime_bus3" text="300"/>
+  <PARAM id="m_fDelayGain_bus3" text="100"/>
+  <PARAM id="m_bReverbOnOff_bus3" text="Off"/>
+  <PARAM id="m_fReverbDryWet_bus3" text="10"/>
+  <PARAM id="m_uReverbMode_bus3" text="Plate"/>
+  <PARAM id="m_fReverbLowcut_bus3" text="100"/>
+  <PARAM id="m_fReverbPredelay_bus3" text="100"/>
+  <PARAM id="m_fReverbSize_bus3" text="100"/>
+  <PARAM id="m_fReverbDamping_bus3" text="10"/>
+  <PARAM id="m_fReverbFeedback_bus3" text="2000"/>
+  <PARAM id="m_fReverbGain_bus3" text="100"/>
+  <PARAM id="m_uLFOMSEG_LFO1" text="--"/>
+  <PARAM id="m_uLFOMSEG_LFO2" text="--"/>
+  <PARAM id="m_uLFOMSEG_LFO3" text="--"/>
+  <PARAM id="m_uLFOMSEG_LFO4" text="--"/>
+  <PARAM id="m_uLFOMSEG_LFO5" text="--"/>
+  <PARAM id="m_fDelayHighcut" text="18000"/>
+  <PARAM id="m_fReverbHighcut" text="18000"/>
+  <PARAM id="m_fDelayHighcut_bus2" text="18000"/>
+  <PARAM id="m_fReverbHighcut_bus2" text="18000"/>
+  <PARAM id="m_fDelayHighcut_bus3" text="18000"/>
+  <PARAM id="m_fReverbHighcut_bus3" text="18000"/>
+  <PARAM id="m_uModMatPolarity1" text="Bipolar"/>
+  <PARAM id="m_uModMatPolarity2" text="Bipolar"/>
+  <PARAM id="m_uModMatPolarity3" text="Bipolar"/>
+  <PARAM id="m_uModMatPolarity4" text="Bipolar"/>
+  <PARAM id="m_uModMatPolarity5" text="Bipolar"/>
+  <PARAM id="m_uModMatPolarity6" text="Bipolar"/>
+  <PARAM id="m_uModMatPolarity7" text="Bipolar"/>
+  <PARAM id="m_uModMatPolarity8" text="Bipolar"/>
+  <PARAM id="m_uModMatPolarity9" text="Bipolar"/>
+  <PARAM id="m_uModMatPolarity10" text="Bipolar"/>
+  <PARAM id="m_uModMatPolarity11" text="Bipolar"/>
+  <PARAM id="m_uModMatPolarity12" text="Bipolar"/>
+  <PARAM id="m_uModMatPolarity13" text="Bipolar"/>
+  <PARAM id="m_uModMatPolarity14" text="Bipolar"/>
+  <PARAM id="m_uModMatPolarity15" text="Bipolar"/>
+  <PARAM id="m_uModMatPolarity16" text="Bipolar"/>
+  <PARAM id="m_bMSEGPerVoice_MSEG1" text="On"/>
+  <PARAM id="m_bMSEGSynch_MSEG1" text="Off"/>
+  <PARAM id="m_uMSEGTimeBeats_MSEG1" text="1"/>
+  <PARAM id="m_fAttackSteps_MSEG1" text="0"/>
+  <PARAM id="m_fDecaySteps_MSEG1" text="1"/>
+  <PARAM id="m_fReleaseSteps_MSEG1" text="1"/>
+  <PARAM id="m_bMSEGPerVoice_MSEG2" text="On"/>
+  <PARAM id="m_bMSEGSynch_MSEG2" text="Off"/>
+  <PARAM id="m_uMSEGTimeBeats_MSEG2" text="1"/>
+  <PARAM id="m_fAttackSteps_MSEG2" text="0"/>
+  <PARAM id="m_fDecaySteps_MSEG2" text="1"/>
+  <PARAM id="m_fReleaseSteps_MSEG2" text="1"/>
+  <PARAM id="m_bMSEGPerVoice_MSEG3" text="On"/>
+  <PARAM id="m_bMSEGSynch_MSEG3" text="On"/>
+  <PARAM id="m_uMSEGTimeBeats_MSEG3" text="1/8"/>
+  <PARAM id="m_fAttackSteps_MSEG3" text="0"/>
+  <PARAM id="m_fDecaySteps_MSEG3" text="8"/>
+  <PARAM id="m_fReleaseSteps_MSEG3" text="4"/>
+  <PARAM id="m_bMSEGPerVoice_MSEG4" text="On"/>
+  <PARAM id="m_bMSEGSynch_MSEG4" text="Off"/>
+  <PARAM id="m_uMSEGTimeBeats_MSEG4" text="1"/>
+  <PARAM id="m_fAttackSteps_MSEG4" text="0"/>
+  <PARAM id="m_fDecaySteps_MSEG4" text="1"/>
+  <PARAM id="m_fReleaseSteps_MSEG4" text="1"/>
+  <PARAM id="m_bMSEGPerVoice_MSEG5" text="On"/>
+  <PARAM id="m_bMSEGSynch_MSEG5" text="Off"/>
+  <PARAM id="m_uMSEGTimeBeats_MSEG5" text="1"/>
+  <PARAM id="m_fAttackSteps_MSEG5" text="0"/>
+  <PARAM id="m_fDecaySteps_MSEG5" text="1"/>
+  <PARAM id="m_fReleaseSteps_MSEG5" text="1"/>
+  <chunkData>
+    <oscBank0 waveTableName="" numPositions="1">
+      <waveTablePosition0 isInitial="0" naiveTable="3f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f8000003f800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000bf800000"
+                          maxHarmonics="1023" numWaveTableFreqs="27" wtPos="0"/>
+    </oscBank0>
+    <oscBank1 waveTableName="" numPositions="1">
+      <waveTablePosition0 isInitial="0" naiveTable="3f2b50003f37be623f42180d3f49eb953f4f58b83f52dcec3f5503fd3f563be23f56d5223f56feb53f56dc223f5683223f560e173f55a07f3f5557c33f55520d3f5594a83f5616313f56b8943f575ce83f57e9433f5849c63f5876023f58631b3f5802073f573b673f55e6283f53c5343f50999d3f4c37a33f469ef93f401c9c3f3940933f32cacd3f2d66533f299bd23f27a1113f2777093f28ead53f2bb0723f2f75ca3f33f2993f38e2b83f3e0e673f433d783f483c143f4ccd853f50be1e3f53eca23f5652823f5802e23f591eff3f59cb213f5a29b23f5a48cb3f5a31493f59d5243f590d653f5788913f54c6a93f501acd3f48eef03f3f30f63f33afb63f2806d43f1e17f83f1767d53f14be0f3f1614f33f1abc073f218dab3f2940d13f30ac043f37050d3f3bee963f3f605e3f41855a3f429ffa3f42ff083f4304323f43164e3f43a3ad3f4502823f475c6f3f4a95033f4e4f113f5209123f5546673f57c0573f596e6d3f5a73753f5b04793f5b52bf3f5b7a873f5b8e7f3f5b99363f5b9eee3f5ba1db3f5ba2003f5ba2003f5ba2003f5ba03b3f5b9bf53f5b96153f5b8e1e3f5b80103f5b6a3a3f5b47b23f5b125b3f5abff83f5a47f33f59a0aa3f58ca5b3f57c9913f56b1fc3f55a0533f54ae413f53f3c33f5378d43f533d173f5330b83f53423a3f535e663f5376f63f5381333f5376793f53591b3f532b1e3f52f3293f52ba693f5283493f524ffa3f521f0f3f51e49e3f518b0a3f5102e53f5029de3f4edef13f4cf6613f4a42803f468ef23f41b7263f3baf013f349ebc3f2ce2903f2507a63f1dabf83f17548a3f124c5b3f0e93163f0bd4013f0982e63f06dfb13f03184a3efab8d43ee9e39c3ed2ae503eb4d8a23e913a643e53b2123e035a003d5eba81bc250cbcbd7ddbe3bdccc1efbdfde734be09caacbe07e5f2bdf51b23bdc70e4cbd8a6956bd0aea7c390102183cfaad183d5dc6ea3d8be9643d93f72e3d8847283d5a0a043d0fea1a3c7cd26bbb3b3cb1bc8ea358bcdb4598bcf72491bce49759bcac1e06bc37f400ba7386d43befd5123c33b7ce3c03144bbb33ce3cbcae2790bd3dca14bd9b6583bddb73fbbe0cbb0abe285e78be3ec738be4ec6f9be57e1b5be59d68dbe54e1d2be498e06be38a6ebbe237bf8be0ba5ccbde613a1bdb7659abd8f0989bd5fcc7fbd372342bd241ae2bd23f6b1bd316d46bd46243abd5ac541bd68ad6abd6990e9bd58c34cbd329d7bbce94dedbbf421953c9d77e93d4fefe83daf8c1b3df9e4c43e20d6e73e407cb03e58d82a3e67152b3e68f5523e5ce90d3e425ee23e1a0dd13dcc2b103d283434bcabd4f8bda7afdfbe0ce98cbe3dc5acbe64c404be809928be89749dbe8d0362be8b4fcebe845bd1be70640cbe4dee83be224dcfbddf4e76bd663fe7bb9a3bb23d24f5f93d97aa163dbf490e3dc703d33db0c2423d8232793d0764fcba32e1cdbd088844bd7bc0e4bda95ef5bdc4539abdce4d8bbdc8a243bdb640c5bd9b9455bd7ccc53bd4a69c4bd2cea50bd2e7138bd53ef4ebd8e16b8bdbfaa26bdf85f9dbe184933be3058e3be411a98be47b98fbe41ac97be2c7345be054df5bd92ae703c1742ae3de54dbc3e6ccb053eb615533ef0dbb13f103ba83f211eef3f2b63a63f2ff87a3f2f95773f2a63553f2015493f1057913ef6e36e3ec56d233e90b1a13e3ad6a93dbc56023c6dc718bd4b2876bdd0e14ebe147918be396293be5959c1be7603fabe883796be948af6be9ff8d5beaa5823beb36922bebaf3babec0c1c7bec4bf40bec6e4f0bec74300bec60d1fbec38cbcbec02fb4bebc87dabeb941b2beb70a78beb67cefbeb7faaebebba281bec1361fbec83e20bed01b51bed82d32bedff74fbee710d3beed4b32bef29e05bef70ee8befac645befdede6bf0058fbbf01a47dbf02e56ebf042b6abf057839bf06c5adbf080af3bf0938ecbf0a43bebf0b1d71bf0bbd64bf0c2195bf0c4891bf0c3a5ebf0c01c4bf0bae51bf0b5127bf0b01dbbf0aceafbf0ac289bf0ae0a6bf0b211fbf0b713bbf0bb9d0bf0bddfcbf0bc250bf0b4716bf0a5567bf08d359bf06adc3bf03d439bf0047cbbef83adabeef18a7bee5e09abedd8f45bed74a8ebed40123bed43c89bed7deddbede34c1bee630fbbeeeb168bef6bf5bbefda89cbf017dfcbf034276bf040df4bf03d5f6bf0288aabf000a52bef86d16beedc03fbedfb9c8bece0a7cbeb8b421bea01cc1be85573cbe544660be21887bbdee5ce0bdb27558bd949421bd96408abdb594f1bded95f7be1ba8d5be456d92be7059a4be8cae78be9f20ffbeaee0debebbaa00bec56345becc22a6bed000eabed103a0becf2b97beca5568bec23ab0beb68e2dbea6cae3be925c6dbe714318be321561bdcd3bd2bc7939ea3da182e23e35eca83e8cecf73ebaf77e3ee261573f00c3fa3f0bfd1e3f1308ca3f1645cc3f161b0d3f12f2693f0d3ef43f05c2763efaee973eeb2f1c3edee6753ed882383ed9e2533ee3fbc13ef6bb733f0858af3f17890c3f27124c3f3521cd3f407c593f48c2e13f4e52df3f51ce7a3f53d3c23f54df9c3f553f1f3f55208e3f54a0173f53d6703f52e2c73f51ea273f510f643f506fe63f5010ea3f4fe8d73f4fd69b3f4fb21d3f4f4cec3f4e736a3f4ceeb23f4a7b803f46ca323f4182c53f3a56873f310f9b3f25ba0a3f18ac913f0a851a3ef801b43edba3bb3ec113833ea90a9f3e93ef9b3e81e0bd3e65d02e3e4de8b53e3bf1d13e2fea533e29b5bb3e2912263e2d988a3e3676a73e42a10f3e508a0d3e5e925f3e6b0f213e748cf93e7a1a583e7b6a0b3e7915a73e746fe63e6f5fa83e6c1aa53e6cd81a3e73541c3e804ed43e8a56343e9716943ea549c23eb3cacc3ec4e9223ec4fa7e3ebd099d3eac4b3a3e92ea253e64826c3e19e9bb3d9a11133b98b321bd66b408bdd6ca58be0f7de4be269a62be320b38be3417b1be2f63edbe271916be1ec9a2be19fb71be1baa29be257717be375d48be4f935ebe6b0f15be8335e9be8f3998be984f98be9d93a9be9e8211be9ab4a7be91f4d8be843b80be63b94abe379a7ebe07bcb1bdb2d4cdbd4b1ccdbccc8a60bc8cc56ebcdeefa6bd592a83bdb8cbdbbe0838a0be33e4c6be5acfaabe79fc78be87dc4abe8da582be8e2c96be8955e0be7df77fbe5dfff9be32ab5ebdf90cdcbd746bdb3c0c976b3da262863e1741a73e56774f3e85b12f3e9a000d3ea7e04b3eaf9d7a3eb1e0643eaf97163ea9e08c3ea1f9b13e992d153e90bd043e89c3543e851e713e8358203e84a3c13e88ca353e8f38973e96f4cb3e9ec4d73ea548cd3ea926243ea931ce3ea486f43e9ab4123e8bc2863e7097f13e42ec7f3e1198ce3dbffced3d446ae73be5e9d8bce41284bd66da02bda1e252bdc6bdc4bde4f326bdffedd3be0d65d5be1c0456be2c6dcabe3e98c1be51c54fbe64bd4cbe75dcc9be81c27dbe86180cbe873de3be849314be7af921be62dfb9be3fe643be117447bdaf67ebbca0306a3d5a325a3e03a67f3e4e1d673e8898cd3ea4cacb3ebaf8cd3ecb5fd23ed6c1803ede31e33ee2d0183ee5a7c33ee78eaa3ee90dfd3eea5c2e3eeb63183eebd0513eeb2aff3ee8ee223ee497b33eddd2943ed46c973ec86c263eba104e3ea9c4b73e9811a63e858ba23e655a7e3e3fb3613e1a91d03dec62bf3da515a43d3e70d93c56c746bc9dda0bbd4e1c7fbda2bd1bbdd971d9be05062fbe19f078be2b666ebe397e53be44cc41be4e1741be566995be5ef735be690394be759297be82a872be8c2c9fbe971dcebea2fd7bbeaf28eabebaf728bec5d8c4becf5c0abed74a41bedd8bafbee230b3bee56258bee75870bee86a8bbee8eac3bee946cabee9d6a9beeaf066beeccac5beef721abef2c9c9bef69afdbefa953fbefe6b16bf00ef4dbf025e03bf0375f2bf043921bf04b0b0bf04eee4bf051399bf053e17bf059576bf06373fbf07397abf08a1edbf0a5e5fbf0c53a2bf0e5ef1bf105912bf122373bf13a7eebf14db61bf15b5adbf16355fbf165f2abf163910bf15c906bf151b2bbf143f9bbf134816bf124ee4bf116b9bbf10b95ebf104933bf1022d7bf10448fbf10a17bbf112782bf11c300bf125e7fbf12edc8bf13643dbf13bcb1bf13f610bf1410dcbf141056bf13f837bf13cd2ebf1390f9bf134441bf12e487bf126d0dbf11d584bf11142ebf101b60bf0ee137bf0d5843bf0b76babf0933b3bf069038bf0391dcbf004f54bef9d503bef32239beecfd8fbee7de4dbee4261ebee212c5bee1b09abee2d82ebee53acbbee8744cbeec2203beefe5d8bef37cc7bef6adb4bef962c4befb8816befd237cbefe34f9befec55abefee299befe91e6befdd5efbefcb572befb29c4bef92db9bef6beadbef3d413bef0773abeecae71bee894cebee45c50bee04074bedc92a7bed9b2a4bed7ffbcbed7c06dbed91f2ebedc197bbee07486bee5d59bbeebc9c5bef1d423bef784e4befc7f81bf00419bbf01ade3bf0276eebf028c03bf01e448bf00727fbefc54d0bef60559beedeee8bee4228cbed8d85fbecc88f4bebfe147beb3cce7bea9524abea1626bbe9cabebbe9b7b08be9da60abea29e65bea99806beb1b02abeba12bbbec2107ebec92490becef999bed36148bed64037bed780a5bed72cdebed539ccbed1ae68becc8f7fbec5e529bebdc5abbeb4603dbea9f090be9ed924be939ccabe88d7b1be7e8055be6ef753be644960be5f2ba7be5fd03bbe65d99fbe705223be7de2e1be868814be8e262ebe9520ddbe9ae93cbe9f1a53bea170e6bea1cae9bea021c6be9c89dfbe973b73be90842bbe88d7d5be80c37cbe71b3d8be63598ebe575214be4e0152be475afebe42a678be3ecff7be3a69ccbe33e2bcbe29d02ebe1abe46be058beebdd2bd50bd8b8745bcd6aff83cb4dc0e3d9a454a3e06ad843e40dc083e7979ea3e977aef3eb05daa3ec78eaf3edda2203ef362ae3f04d0153f106b763f1c861f3f28d2203f34b2273f3f63933f4846073f4f05bf3f53ba743f56c0623f5897bc3f59a9ee3f5a44d33f5a96d63f5abe5c3f5aca713f5ac0373f5aa41f3f5a77a43f5a3b3f3f59f4ef3f59aae73f5966603f592d713f59039f3f58e5573f58ca043f58ab8a3f5877e83f58206f3f57914e3f56aaa93f55437a3f531fe83f4ff7513f4b74513f45514e3f3d70563f3400043f29820e3f1ebdc03f14999f3f0bed363f055d8d3f014b5b3effb4763f00e8d53f0427df3f09170a3f0f1b5c3f1588523f1bb6bf3f2113b83f2532f63f27c1be3f2883f43f274bb73f23e6aa3f1e2d163f160d2a3f0ba6553efec66e3ee40ade3ec923063eb03ad23e9b43973e8ba6fb3e822de33e7e10f93e81d6303e8992ee3e94ccf83ea1c8743eae8fc93eb938a53ec0180e3ec1f2a33ebe02823eb406f83ea440453e8f7edc3e6e38293e397d8a3e043b6d3da2a9dd3d0bf31ebbbbcfb8bd24c067bd8f1c3a3f2b50003f56dc223f5849c63f401c9c3f38e2b83f5a29b23f33afb63f3bee963f4e4f113f5b99363f5b6a3a3f53f3c33f532b1e3f4cf6613f0e93163e53b212bd8a69563c7cd26b3c03144bbe59d68dbd372342bbf421953e5ce90dbe89749d3d97aa16bdc4539abdbfaa263c1742ae3f201549be396293bec4bf40bebba281befac645bf0b1d71bf0ac289bf03d439bede34c1bef86d16bdb27558bebbaa00be925c6d3f0bfd1e3ed882383f51ce7a3f506fe63f3a56873e81e0bd3e508a0d3e73541c3e92ea25be2f63edbe8f3998bdb2d4cdbe87dc4a3da262863ea1f9b13ea548cd3d446ae7be2c6dcabe3fe6433ecb5fd23eeb2aff3e655a7ebe05062fbe82a872bee230b3bef2c9c9bf051399bf13a7eebf124ee4bf12edc8bf12e487bf0391dcbee53acbbefec55abeecae71bee07486bf01e448bea9524abec92490bebdc5abbe5fd03bbea1cae9be4e0152bd8b87453edda2203f53ba743f5a77a43f5877e83f3d70563f0427df3f23e6aa3e822de33ebe0282bbbbcfb8be5980e73e8a18b93f083d0f3ea1ce753eed99d33f52dcec3f55520d3f5802073f2d66533f433d783f5a29b23f3f30f63f30ac043f43a3ad3f5b04793f5ba2003f5a47f33f533d173f52f3293f4cf6613f17548a3ed2ae50bdfde7343d8be964bcf72491bcae2790be59d68dbd5fcc7fbd58c34c3e407cb0bcabd4f8be845bd13dbf490ebdc4539abd53ef4ebe2c73453f211eef3e90b1a1be7603fabec4bf40beb67cefbeed4b32bf057839bf0c4891bf0b211fbf03d439bed43c89bf040df4beb8b421bdb594f1bec56345bea6cae33e8cecf73f0d3ef43ef6bb733f53d3c23f510f643f4ceeb23f0a851a3e3bf1d13e5e925f3e6c1aa53ec4e9223b98b321be271916be8335e9be63b94abd592a83be8e2c963da262863eaf97163e84a3c13ea486f43be5e9d8be0d65d5be86180cbca0306a3ed6c1803eeb63183eba104e3dec62bfbe05062fbe5ef735bebaf728bee75870bef2c9c9bf043921bf07397abf14db61bf143f9bbf10448fbf13bcb1bf12e487bf0b76babeecfd8fbee8744cbefd237cbefb29c4bee45c50bedc197bbf00419bbefc54d0beb3cce7bea99806bed64037bec5e529be7e8055be7de2e1bea170e6be80c37cbe42a678bdd2bd503e40dc083f04d0153f4846073f5a44d33f5a3b3f3f58e5573f56aaa93f3d70563f055d8d3f0f1b5c3f2883f43efec66e3e822de33eae8fc93ea440453d0bf31ebe0e373abe5d146dbdb6771f3eecb4f63f12c9023ea60e4a3ea1ce753edae1983ef98e233f42180d3f56d5223f55a07f3f575ce83f5802073f4c37a33f2d66533f2bb0723f483c143f5802e23f5a31493f501acd3f1e17f83f218dab3f3bee963f4304323f4a95033f596e6d3f5b8e7f3f5ba2003f5b96153f5b47b23f58ca5b3f53f3c33f53423a3f5376793f5283493f518b0a3f4cf6613f349ebc3f17548a3f0982e63ee9e39c3e53b212bd7ddbe3be07e5f2bd0aea7c3d8be9643d0fea1abcdb4598bc37f4003c33b7cebd3dca14be285e78be57e1b5be38a6ebbde613a1bd372342bd316d46bd6990e9bce94ded3d4fefe83e20d6e73e68f5523e1a0dd1bcabd4f8be3dc5acbe89749dbe845bd1be224dcfbb9a3bb23dbf490e3db0c242ba32e1cdbda95ef5bdc8a243bd9b9455bd2cea50bd53ef4ebdf85f9dbe3058e3be41ac97be054df53c1742ae3eb615533f103ba83f2b63a63f2f95773f2015493ef6e36e3e90b1a13dbc5602bd4b2876be147918be5959c1be7603fabe948af6beaa5823beb36922bec0c1c7bec6e4f0bec74300bec38cbcbec02fb4bebc87dabeb70a78beb67cefbeb7faaebebba281bec1361fbec83e20bed01b51bed82d32bedff74fbee710d3beed4b32bef29e05bef70ee8bef70ee8befac645befdede6befdede6bf0058fbbf0058fbbf01a47dbf01a47dbf02e56ebf02e56ebf02e56ebf02e56ebf042b6abf042b6abf042b6abf042b6abf042b6abf042b6abf042b6abf042b6abf02e56ebf02e56ebf02e56ebf02e56ebf01a47dbf01a47dbf0058fbbf0058fbbefdede6befdede6befac645bef70ee8bef70ee8bef29e05beed4b32bee710d3bedff74fbed82d32bed01b51bec83e20bec1361fbebba281beb7faaebeb67cefbeb941b2bebc87dabec02fb4bec60d1fbec74300bec4bf40bec0c1c7beb36922beaa5823be948af6be7603fabe5959c1be147918bd4b28763dbc56023e90b1a13ef6e36e3f2015493f2f95773f2b63a63f103ba83eb615533de54dbcbe054df5be41ac97be411a98bdf85f9dbd8e16b8bd2cea50bd7ccc53bdc8a243bdc4539abd0888443d8232793dc703d33d24f5f9bddf4e76be70640cbe8d0362be64c404bda7afdf3dcc2b103e5ce90d3e58d82a3df9e4c43c9d77e9bd329d7bbd5ac541bd23f6b1bd5fcc7fbe0ba5ccbe498e06be4ec6f9be0cbb0abcae27903c33b7cebcac1e06bcdb45983d0fea1a3d8be964bd0aea7cbe07e5f2bdccc1ef3e035a003ed2ae503f06dfb13f124c5b3f2ce2903f468ef23f5102e53f524ffa3f532b1e3f5376f63f5378d43f56b1fc3f5a47f33f5b80103f5ba03b3f5b9eee3f5b52bf3f5546673f475c6f3f42ff083f37050d3f1abc073f2806d43f54c6a93f5a48cb3f5802e23f483c143f2f75ca3f299bd23f469ef93f573b673f57e9433f55520d3f56dc223f4f58b83f10a5893ee2a47d3ecb2eef3e8756913ed9903f3f1c9c693e8a18b9be100c73be5078ffbdf244143da2a9dd3ea440453eae8fc93e822de33ee40ade3f274bb73f1588523f014b5b3f29820e3f531fe83f58ab8a3f59aae73f5aca713f56c0623f28d2203ec78eaf3d9a454abe1abe46be475afebe88d7d5be9f1a53be705223be7e8055bebdc5abbed64037beb1b02abea1626bbeedeee8bf0276eebee5d59bbed9b2a4bef0773abefe91e6bef6adb4bee2d82ebef9d503bf0d5843bf134441bf13bcb1bf10448fbf134816bf15b5adbf0a5e5fbf04eee4befa953fbee946cabedd8bafbe971dcebe4e1741bda2bd1b3e1a91d03ec86c263eeb63183ecb5fd2bca0306abe873de3be2c6dcabd66da023e7097f13e96f4cb3e90bd043ea7e04bbdf90cdcbe87dc4abcdeefa6be843b80be8335e9be1ec9a2bd66b4083ebd099d3e73541c3e7a1a583e2912263e93ef9b3f310f9b3f4fb21d3f52e2c73f4e52df3ee3fbc13f0d3ef43ebaf77ebe925c6dbed000eabe456d92be21887bbef86d16befda89cbed74a8ebf08d359bf0ae0a6bf0c4891bf057839bef29e05bebba281bec60d1fbe9ff8d5bd4b28763f2015493eb61553be47b98fbd2e7138bdc4539a3dc703d3be4dee83be3dc5ac3e5ce90d3d4fefe8bd5ac541bde613a1be4ec6f9bb33ce3cbcf724913d93f72ebe07e5f23e53b2123f0982e63f349ebc3f518b0a3f53591b3f5378d43f5abff83f5ba03b3f5b7a873f4a95033f41855a3f14be0f3f54c6a93f591eff3f38e2b83f2d66533f573b673f5616313f56feb53f2b50003ede873b3e8756913f12c9023e27a889be5d146dbd8f1c3a3e8f7edc3e94ccf83ec923063f27c1be3effb4763f3d70563f5877e83f59f4ef3f59a9ee3f28d2203e7979eabe1abe46be575214bea1cae9be705223be9ed924bed780a5bea99806becc88f4bf028c03bee07486bee894cebefdd5efbef37cc7bee7de4dbf0b76babf1390f9bf125e7fbf116b9bbf15b5adbf08a1edbf0375f2beeaf066bedd8bafbe82a872be19f0783da515a43ec86c263ee90dfd3ea4cacbbe62dfb9be3e98c1bd66da023e9ab4123e84a3c13eaf97163c0c976bbe8da582bc8cc56ebe9ab4a7be375d48be269a623eac4b3a3e804ed43e748cf93e29b5bb3edba3bb3f4a7b803f506fe63f53d3c23f0858af3f0d3ef43e8cecf7bea6cae3bebbaa00bdb594f1beb8b421bf040df4bed43c89bf03d439bf0b211fbf0c3a5ebf057839bef29e05beb7faaebec74300be8837963dbc56023f2ff87a3c1742aebdf85f9dbd9b94553d0764fcbd663fe7be89749d3e1a0dd13df9e4c4bd6990e9bd8f0989be59d68dbd3dca14bce497593d884728bdc70e4c3e035a003f06dfb13f2ce2903f5029de3f532b1e3f533d173f59a0aa3f5b96153f5b99363f5209123f42ff083f218dab3f3f30f63f5a48cb3f4ccd853f28ead53f469ef93f5876023f5557c33f5503fd3f0574453ed499ae3e8a2a603f19c4af3e27a889be5d146dbdc3b8103e6e38293eae8fc93e9b43973f1e2d163f1588523f0bed363f4ff7513f58ab8a3f5a3b3f3f59a9ee3f28d2203eb05daabd8b8745be42a678be88d7d5be9ae93cbe5fd03bbea9f090bed72cdebeb1b02abea9524abefc54d0befc7f81bed7c06dbeecae71befdd5efbef6adb4bee1b09abf004f54bf11142ebf13f837bf125e7fbf10b95ebf163910bf0e5ef1bf053e17bf00ef4dbeeaf066bee230b3bea2fd7bbe566995bdd971d93dec62bf3eba104e3eebd0513ede31e33e4e1d67be62dfb9be64bd4cbde4f3263dbffced3ea486f43e88ca353ea1f9b13e9a000dbdf90cdcbe8da582bd592a83be379a7ebe9d93a9be375d48be3417b13b98b3213ec4fa7e3e804ed43e7915a73e42a10f3e3bf1d13ec113833f310f9b3f4e736a3f510f643f553f1f3f407c593ee3fbc13f05c2763f0bfd1e3da182e2bea6cae3bed000eabe9f20ffbdb594f1be544660beedc03fbf040df4bee630fbbedd8f45bf03d439bf0bddfcbf0aceafbf0c3a5ebf0938ecbf02e56ebef70ee8bed01b51beb67cefbec60d1fbebaf3babe883796bdd0e14e3e90b1a13f2f95773ef0dbb1bd92ae70be411a98bd8e16b8bd7ccc53bdc4539a3d0764fc3dbf490ebddf4e76be8b4fcebe3dc5ac3dcc2b103e68f5523df9e4c4bce94dedbd68ad6abd241ae2bdb7659abe498e06be4ec6f9bddb73fb3c03144bbc37f400bcdb45983d0fea1a3d5dc6eabd8a6956be09caacbc250cbc3e913a643efab8d43f0bd4013f1dabf83f3baf013f4cf6613f5102e53f524ffa3f532b1e3f5376f63f5330b83f54ae413f57c9913f5abff83f5b6a3a3f5b9bf53f5ba2003f5b99363f5b52bf3f596e6d3f5209123f4502823f4304323f41855a3f37050d3f218dab3f14be0f3f2806d43f48eef03f5788913f5a31493f5a29b23f5802e23f50be1e3f483c143f38e2b83f2bb0723f2777093f2d66533f3940933f4c37a33f53c5343f573b673f5876023f57e9433f56b8943f5594a83f5557c33f560e173f56dc223f56d5223f5503fd3f4f58b83f42180d3f2b50003f10a5893ef98e233ee6684e3ee2a47d3ede873b3ed499ae3ecb2eef3eb081243ea1ce753e94b8f03e8756913e8a2a603e94736c3ea60e4a3ebdd6203ef636bf3f083d0f3f12c9023f19c4af3f1c9c693f1c9c693f1af5583f1454953f0833383f0833383eecb4f63ebec40e3ebec40e3e8a18b93e8a18b93e27a8893e27a8893e27a8893d8460d73d8460d73d8460d73d8460d73d8460d73d8460d7bca90f213d8460d73d8460d73d8460d73d8460d73d8460d73d8460d73e27a8893e27a8893e27a8893e8a18b93e8a18b93ebec40e3ebec40e3eecb4f63f0833383f0833383f1454953f1af5583f1c9c693f19c4af3f12c9023f083d0f3ef636bf3ed9903f3ebdd6203ea60e4a3e94736c3e8a2a603e8b4e323e94b8f03ea1ce753ebed7f63ecb2eef3edae1983ede873b3ee2a47d3eed99d33ef98e233f10a5893f37be623f49eb953f52dcec3f563be23f56d5223f5683223f55a07f3f55520d3f5616313f575ce83f5849c63f5802073f55e6283f50999d3f401c9c3f32cacd3f27a1113f28ead53f33f2993f433d783f4ccd853f5652823f59cb213f5a31493f590d653f501acd3f33afb63f1767d53f1abc073f37050d3f41855a3f4304323f4502823f4e4f113f596e6d3f5b52bf3f5b99363f5ba2003f5b9bf53f5b6a3a3f5a47f33f57c9913f53f3c33f53423a3f5381333f52f3293f521f0f3f5029de3f468ef23f2ce2903f124c5b3f06dfb13ed2ae503e035a00bdccc1efbdf51b23"
+                          maxHarmonics="1023" numWaveTableFreqs="27" wtPos="0"/>
+    </oscBank1>
+    <oscBank2 waveTableName="" numPositions="1">
+      <waveTablePosition0 isInitial="0" naiveTable="3f2b50003f37be623f4f58b83f5503fd3f56d5223f5683223f55a07f3f55520d3f5616313f57e9433f5876023f5802073f55e6283f4c37a33f401c9c3f32cacd3f27a1113f28ead53f2f75ca3f38e2b83f483c143f50be1e3f5652823f59cb213f5a48cb3f59d5243f5788913f48eef03f33afb63f1e17f83f14be0f3f218dab3f30ac043f3bee963f429ffa3f4304323f43a3ad3f475c6f3f5209123f57c0573f5a73753f5b7a873f5b99363f5ba1db3f5ba2003f5b9bf53f5b8e1e3f5b6a3a3f5b125b3f59a0aa3f57c9913f55a0533f5378d43f533d173f535e663f5381333f532b1e3f52ba693f524ffa3f51e49e3f5102e53f4cf6613f468ef23f349ebc3f2507a63f17548a3f0e93163f0982e63efab8d43ed2ae503e913a643e035a00bd7ddbe3bdfde734be07e5f2bd8a6956390102183d5dc6ea3d93f72e3d0fea1abb3b3cb1bcdb4598bcac1e06ba7386d43c33b7cebb33ce3cbd9b6583be0cbb0abe3ec738be57e1b5be498e06be237bf8bde613a1bd5fcc7fbd241ae2bd316d46bd5ac541bd58c34cbce94ded3c9d77e93daf8c1b3e407cb03e67152b3e5ce90d3dcc2b10bcabd4f8be0ce98cbe64c404be8d0362be845bd1be4dee83bd663fe73d24f5f93dbf490e3db0c242ba32e1cdbd7bc0e4bdc4539abdc8a243bd7ccc53bd2cea50bd53ef4ebdf85f9dbe3058e3be47b98fbe2c73453c1742ae3e6ccb053ef0dbb13f2b63a63f2ff87a3f2015493ef6e36e3e3ad6a93c6dc718bdd0e14ebe396293be7603fabe9ff8d5beb36922bec0c1c7bec74300bec38cbcbebc87dabeb70a78bebba281bec83e20bed82d32bee710d3bef70ee8befdede6bf01a47dbf057839bf080af3bf0a43bebf0bbd64bf0c3a5ebf0bae51bf0b01dbbf0ac289bf0b713bbf0bddfcbf0b4716bf06adc3bf0047cbbeef18a7bedd8f45bed43c89bede34c1beeeb168bf017dfcbf040df4bf0288aabef86d16bece0a7cbea01cc1be544660bdee5ce0bd96408abded95f7be456d92be9f20ffbebbaa00becc22a6bed103a0bec23ab0bea6cae3be714318bc7939ea3e35eca83ebaf77e3f00c3fa3f1645cc3f12f2693f05c2763eeb2f1c3ed9e2533ef6bb733f17890c3f407c593f48c2e13f53d3c23f553f1f3f53d6703f51ea273f506fe63f4fe8d73f4fb21d3f4ceeb23f46ca323f3a56873f18ac913ef801b43ec113833e93ef9b3e4de8b53e2fea533e2912263e3676a73e5e925f3e748cf93e7b6a0b3e6f5fa83e6cd81a3e804ed43e9716943ec4e9223ebd099d3e92ea253d9a1113bd66b408be0f7de4be320b38be271916be19fb71be257717be4f935ebe8f3998be9d93a9be9ab4a7be63b94abe07bcb1bd4b1ccdbc8cc56ebdb8cbdbbe33e4c6be79fc78be8da582be7df77fbe32ab5ebd746bdb3e1741a73e85b12f3ea7e04b3eb1e0643ea1f9b13e90bd043e851e713e88ca353e96f4cb3ea548cd3ea931ce3e8bc2863e42ec7f3dbffced3be5e9d8bda1e252bde4f326be0d65d5be3e98c1be64bd4cbe81c27dbe873de3be62dfb9be117447bca0306a3e4e1d673e8898cd3ecb5fd23ede31e33ee5a7c33eea5c2e3eebd0513ee8ee223eddd2943eba104e3e9811a63e655a7e3dec62bf3d3e70d9bc9dda0bbda2bd1bbe19f078be397e53be4e1741be5ef735be82a872be971dcebeaf28eabecf5c0abedd8bafbee56258bee86a8bbee9d6a9beeccac5bef2c9c9befa953fbf025e03bf043921bf04eee4bf059576bf07397abf0a5e5fbf0e5ef1bf13a7eebf15b5adbf165f2abf151b2bbf134816bf116b9bbf104933bf10a17bbf11c300bf12edc8bf13bcb1bf141056bf13cd2ebf134441bf11d584bf101b60bf0d5843bf0933b3bf004f54bef32239bee7de4dbee1b09abee53acbbeec2203bef37cc7befb8816befe34f9befee299befdd5efbef92db9bef3d413beecae71bee04074bedc92a7bed7c06dbedc197bbee5d59bbef784e4bf00419bbf0276eebf01e448bef60559bee4228cbecc88f4bea9524abe9cabebbe9da60abea99806bec2107ebecef999bed64037bed72cdebecc8f7fbebdc5abbea9f090be88d7b1be6ef753be5f2ba7be65d99fbe868814be9520ddbe9f1a53bea021c6be973b73be88d7d5be71b3d8be4e0152be42a678be3a69ccbe29d02ebdd2bd50bcd6aff83d9a454a3e7979ea3eb05daa3edda2203f04d0153f28d2203f3f63933f4f05bf3f56c0623f5a44d33f5abe5c3f5ac0373f5a3b3f3f59aae73f592d713f58e5573f5877e83f57914e3f55437a3f4b74513f3d70563f29820e3f14999f3f014b5b3f00e8d53f09170a3f1588523f2532f63f2883f43f23e6aa3f0ba6553ee40ade3eb03ad23e8ba6fb3e7e10f93e94ccf83eae8fc93ec1f2a33ebe02823f37be623f4f58b83f5503fd3f56d5223f5683223f55a07f3f55520d3f5616313f57e9433f5876023f5802073f55e6283f4c37a33f401c9c3f32cacd3f27a1113f28ead53f2f75ca3f38e2b83f483c143f50be1e3f5652823f591eff3f5a48cb3f59d5243f5788913f48eef03f33afb63f1e17f83f14be0f3f218dab3f30ac043f3bee963f429ffa3f4304323f43a3ad3f475c6f3f5209123f57c0573f5a73753f5b52bf3f5b99363f5ba1db3f5ba2003f5b9bf53f5b8e1e3f5b6a3a3f5b125b3f59a0aa3f57c9913f55a0533f5378d43f533d173f535e663f5381333f532b1e3f52ba693f524ffa3f51e49e3f5102e53f4cf6613f468ef23f349ebc3f2507a63f17548a3f0e93163f0982e63efab8d43ed2ae503e913a643e035a00bd7ddbe3bdfde734be07e5f2bd8a6956390102183d5dc6ea3d93f72e3d0fea1abb3b3cb1bcdb4598bce49759ba7386d43c33b7cebb33ce3cbd9b6583be0cbb0abe3ec738be57e1b5be498e06be237bf8bde613a1bd5fcc7fbd241ae2bd316d46bd5ac541bd58c34cbce94ded3c9d77e93daf8c1b3e407cb03e67152b3e5ce90d3dcc2b10bcabd4f8be0ce98cbe64c404be8d0362be845bd1be4dee83bd663fe73d24f5f93dbf490e3db0c242ba32e1cdbd7bc0e4bdc4539abdc8a243bd7ccc53bd2cea50bd53ef4ebdf85f9dbe184933be47b98fbe2c73453c1742ae3e6ccb053ef0dbb13f211eef3f2ff87a3f2015493ef6e36e3e3ad6a93c6dc718bdd0e14ebe396293be7603fabe9ff8d5beb36922bec0c1c7bec6e4f0bec38cbcbebc87dabeb70a78bebba281bec83e20bed82d32bee710d3bef70ee8befdede6bf01a47dbf057839bf080af3bf0a43bebf0bbd64bf0c3a5ebf0bae51bf0b01dbbf0ac289bf0b713bbf0bddfcbf0b4716bf06adc3bf0047cbbeef18a7bedd8f45bed43c89bede34c1beeeb168befda89cbf040df4bf0288aabef86d16bece0a7cbea01cc1be544660bdee5ce0bd96408abded95f7be456d92be9f20ffbebbaa00becc22a6bed103a0bec23ab0bea6cae3be714318bdcd3bd23e35eca83ebaf77e3f00c3fa3f1645cc3f12f2693f05c2763eeb2f1c3ed9e2533ef6bb733f17890c3f407c593f48c2e13f53d3c23f553f1f3f53d6703f51ea273f506fe63f4fe8d73f4fb21d3f4ceeb23f46ca323f3a56873f18ac913ef801b43ec113833e93ef9b3e4de8b53e2fea533e2912263e3676a73e5e925f3e748cf93e7b6a0b3e6f5fa83e6cd81a3e804ed43e9716943ec4e9223ebd099d3e92ea253e19e9bbbd66b408be0f7de4be320b38be271916be19fb71be257717be4f935ebe8f3998be9d93a9be9ab4a7be63b94abe07bcb1bd4b1ccdbc8cc56ebdb8cbdbbe33e4c6be79fc78be8da582be7df77fbe32ab5ebd746bdb3e1741a73e85b12f3ea7e04b3eb1e0643ea1f9b13e90bd043e851e713e88ca353e96f4cb3ea548cd3ea931ce3e8bc2863e42ec7f3dbffced3be5e9d8bda1e252bde4f326be0d65d5be3e98c1be51c54fbe81c27dbe873de3be62dfb9be117447bca0306a3e03a67f3e8898cd3ecb5fd23ede31e33ee5a7c33eea5c2e3eebd0513ee8ee223eddd2943eba104e3e9811a63e655a7e3e1a91d03d3e70d9bc9dda0bbda2bd1bbe19f078be397e53be4e1741be5ef735be82a872be971dcebeaf28eabecf5c0abedd8bafbee56258bee86a8bbee9d6a9beeccac5bef2c9c9befa953fbf025e03bf043921bf04eee4bf059576bf07397abf0a5e5fbf0e5ef1bf13a7eebf15b5adbf165f2abf15c906bf134816bf116b9bbf104933bf10a17bbf11c300bf12edc8bf13bcb1bf141056bf13cd2ebf134441bf11d584bf101b60bf0d5843bf0933b3bf004f54bef32239bee7de4dbee212c5bee53acbbeec2203bef37cc7befb8816befe34f9befee299befdd5efbef92db9bef3d413beecae71bee04074bedc92a7bed7c06dbedc197bbee5d59bbef784e4bf00419bbf0276eebf01e448bef60559bee4228cbecc88f4beb3cce7be9cabebbe9da60abea99806bec2107ebecef999bed64037bed72cdebecc8f7fbebdc5abbea9f090be88d7b1be6ef753be5f2ba7be65d99fbe868814be9520ddbe9f1a53bea1cae9be973b73be88d7d5be71b3d8be4e0152be42a678be3a69ccbe29d02ebdd2bd50bcd6aff83d9a454a3e7979ea3eb05daa3edda2203f04d0153f28d2203f3f63933f4f05bf3f56c0623f5a44d33f5abe5c3f5ac0373f5a3b3f3f59aae73f592d713f58e5573f5877e83f57914e3f55437a3f4b74513f3d70563f29820e3f14999f3f014b5b3f00e8d53f09170a3f1588523f2532f63f2883f43f23e6aa3f0ba6553efec66e3eb03ad23e8ba6fb3e7e10f93e94ccf83eae8fc93ec0180e3ebe02823f37be623f4f58b83f5503fd3f56d5223f56dc223f55a07f3f55520d3f5616313f57e9433f5876023f5802073f55e6283f4c37a33f401c9c3f32cacd3f27a1113f28ead53f2f75ca3f38e2b83f483c143f50be1e3f5652823f591eff3f5a48cb3f59d5243f5788913f48eef03f33afb63f1e17f83f14be0f3f218dab3f30ac043f3bee963f41855a3f4304323f43a3ad3f475c6f3f5209123f57c0573f5a73753f5b52bf3f5b99363f5ba1db3f5ba2003f5b9bf53f5b96153f5b6a3a3f5b125b3f59a0aa3f57c9913f55a0533f53f3c33f533d173f535e663f5381333f532b1e3f52ba693f524ffa3f51e49e3f5102e53f4cf6613f468ef23f349ebc3f2ce2903f17548a3f0e93163f0982e63efab8d43ed2ae503e913a643e035a00bd7ddbe3bdfde734be07e5f2bd8a6956390102183d5dc6ea3d93f72e3d0fea1abb3b3cb1bcdb4598bce49759ba7386d43c33b7cebb33ce3cbd9b6583be0cbb0abe3ec738be57e1b5be498e06be237bf8bde613a1bd8f0989bd241ae2bd316d46bd5ac541bd58c34cbce94ded3c9d77e93daf8c1b3e407cb03e67152b3e5ce90d3dcc2b10bcabd4f8be0ce98cbe64c404be8d0362be845bd1be4dee83bddf4e763d24f5f93dbf490e3db0c242ba32e1cdbd7bc0e4bdc4539abdc8a243bd7ccc53bd2cea50bd53ef4ebdf85f9dbe184933be47b98fbe2c73453c1742ae3e6ccb053ef0dbb13f211eef3f2ff87a3f2015493ef6e36e3e3ad6a93dbc5602bdd0e14ebe396293be7603fabe9ff8d5beb36922bec0c1c7bec6e4f0bec38cbcbebc87dabeb70a78bebba281bec83e20bed82d32bee710d3bef70ee8befdede6bf01a47dbf042b6abf080af3bf0a43bebf0bbd64bf0c3a5ebf0bae51bf0b01dbbf0ac289bf0b713bbf0bddfcbf0b4716bf06adc3bf0047cbbeef18a7bedd8f45bed43c89bede34c1beeeb168befda89cbf040df4bf0288aabef86d16bece0a7cbea01cc1be544660bdee5ce0bd96408abded95f7be456d92be8cae78bebbaa00becc22a6bed103a0bec23ab0bea6cae3be714318bdcd3bd23e35eca83ebaf77e3f00c3fa3f1645cc3f161b0d3f05c2763eeb2f1c3ed9e2533ef6bb733f17890c3f3521cd3f48c2e13f53d3c23f553f1f3f53d6703f51ea273f506fe63f4fe8d73f4fb21d3f4ceeb23f46ca323f3a56873f25ba0a3ef801b43ec113833e93ef9b3e4de8b53e2fea533e2912263e3676a73e5e925f3e748cf93e7b6a0b3e6f5fa83e6cd81a3e804ed43e9716943ec4e9223ebd099d3e92ea253e19e9bbbd66b408be0f7de4be320b38be271916be19fb71be257717be4f935ebe8f3998be9d93a9be9ab4a7be843b80be07bcb1bd4b1ccdbc8cc56ebdb8cbdbbe33e4c6be79fc78be8da582be7df77fbe32ab5ebd746bdb3e1741a73e85b12f3ea7e04b3eb1e0643ea1f9b13e90bd043e851e713e84a3c13e96f4cb3ea548cd3ea931ce3e8bc2863e42ec7f3dbffced3be5e9d8bda1e252bde4f326be0d65d5be3e98c1be51c54fbe81c27dbe873de3be62dfb9be117447bca0306a3e03a67f3e8898cd3ecb5fd23ede31e33ee5a7c33ee90dfd3eebd0513ee8ee223eddd2943eba104e3e9811a63e655a7e3e1a91d03d3e70d9bc9dda0bbda2bd1bbe19f078be397e53be4e1741be5ef735be82a872be971dcebeaf28eabec5d8c4bedd8bafbee56258bee86a8bbee9d6a9beeccac5bef2c9c9befa953fbf025e03bf043921bf04eee4bf059576bf07397abf0a5e5fbf0e5ef1bf13a7eebf15b5adbf165f2abf15c906bf134816bf116b9bbf104933bf10a17bbf11c300bf12edc8bf13bcb1bf141056bf13cd2ebf134441bf126d0dbf101b60bf0d5843bf0933b3bf004f54bef32239bee7de4dbee212c5bee53acbbeec2203bef37cc7befb8816befd237cbefee299befdd5efbef92db9bef3d413beecae71bee45c50bedc92a7bed7c06dbedc197bbee5d59bbef784e4bf00419bbf0276eebf01e448bef60559bee4228cbecc88f4beb3cce7be9cabebbe9da60abea99806bec2107ebecef999bed64037bed72cdebecc8f7fbebdc5abbea9f090be88d7b1be6ef753be5f2ba7be65d99fbe868814be9520ddbe9f1a53bea1cae9be973b73be88d7d5be71b3d8be4e0152be42a678be3a69ccbe29d02ebdd2bd50bcd6aff83d9a454a3e40dc083eb05daa3edda2203f04d0153f28d2203f3f63933f4f05bf3f56c0623f5a44d33f5abe5c3f5ac0373f5a3b3f3f59aae73f592d713f58e5573f5877e83f57914e3f55437a3f4ff7513f3d70563f29820e3f14999f3f014b5b3f00e8d53f09170a3f1588523f2532f63f2883f43f23e6aa3f0ba6553efec66e3eb03ad23e8ba6fb3e7e10f93e94ccf83eae8fc93ec0180e3ebe02823f37be623f4f58b83f5503fd3f56d5223f56dc223f55a07f3f55520d3f5616313f57e9433f5876023f5802073f55e6283f4c37a33f401c9c3f32cacd3f299bd23f28ead53f2f75ca3f38e2b83f483c143f50be1e3f5652823f591eff3f5a48cb3f59d5243f5788913f48eef03f33afb63f1e17f83f14be0f3f218dab3f30ac043f3bee963f41855a3f4304323f43a3ad3f475c6f3f5209123f57c0573f5a73753f5b52bf3f5b99363f5ba1db3f5ba2003f5b9bf53f5b96153f5b6a3a3f5b125b3f59a0aa3f57c9913f55a0533f53f3c33f533d173f535e663f5381333f532b1e3f52f3293f524ffa3f51e49e3f5102e53f4cf6613f468ef23f3baf013f2ce2903f17548a3f0e93163f0982e63efab8d43ed2ae503e913a643e035a00bd7ddbe3bdfde734be07e5f2bdc70e4c390102183d5dc6ea3d93f72e3d0fea1abb3b3cb1bcdb4598bce49759ba7386d43c33b7cebb33ce3cbd9b6583be0cbb0abe3ec738be57e1b5be498e06be237bf8bde613a1bd8f0989bd241ae2bd316d46bd5ac541bd58c34cbce94ded3c9d77e93daf8c1b3e407cb03e67152b3e5ce90d3e1a0dd1bcabd4f8be0ce98cbe64c404be8d0362be845bd1be4dee83bddf4e763d24f5f93dbf490e3db0c242ba32e1cdbd088844bdc4539abdc8a243bd7ccc53bd2cea50bd53ef4ebdbfaa26be184933be47b98fbe2c73453c1742ae3e6ccb053ef0dbb13f211eef3f2ff87a3f2015493ef6e36e3e3ad6a93dbc5602bdd0e14ebe396293be7603fabe9ff8d5beb36922bec0c1c7bec6e4f0bec38cbcbebc87dabeb70a78bebba281bec83e20bed82d32bee710d3bef70ee8befdede6bf01a47dbf042b6abf080af3bf0a43bebf0bbd64bf0c3a5ebf0bae51bf0b01dbbf0ac289bf0b713bbf0bddfcbf0b4716bf08d359bf0047cbbeef18a7bedd8f45bed43c89bede34c1beeeb168befda89cbf040df4bf0288aabef86d16bece0a7cbea01cc1be544660bdee5ce0bd96408abded95f7be456d92be8cae78bebbaa00becc22a6bed103a0bec23ab0bea6cae3be714318bdcd3bd23e35eca83ebaf77e3f00c3fa3f1645cc3f161b0d3f05c2763eeb2f1c3ed9e2533ef6bb733f17890c3f3521cd3f48c2e13f53d3c23f553f1f3f53d6703f52e2c73f506fe63f4fe8d73f4fb21d3f4ceeb23f46ca323f3a56873f25ba0a3ef801b43ec113833e93ef9b3e4de8b53e2fea533e2912263e3676a73e5e925f3e748cf93e7b6a0b3e746fe63e6cd81a3e804ed43e9716943ec4e9223ebd099d3e92ea253e19e9bbbd66b408be0f7de4be320b38be271916be19fb71be257717be4f935ebe8f3998be9d93a9be9ab4a7be843b80be07bcb1bd4b1ccdbc8cc56ebdb8cbdbbe33e4c6be79fc78be8da582be7df77fbe32ab5ebd746bdb3da262863e85b12f3ea7e04b3eb1e0643ea1f9b13e90bd043e851e713e84a3c13e96f4cb3ea548cd3ea931ce3e8bc2863e7097f13dbffced3be5e9d8bda1e252bde4f326be0d65d5be2c6dcabe51c54fbe81c27dbe873de3be62dfb9be117447bca0306a3e03a67f3e8898cd3ecb5fd23ede31e33ee5a7c33ee90dfd3eebd0513ee8ee223eddd2943eba104e3e9811a63e655a7e3e1a91d03d3e70d9bc9dda0bbda2bd1bbe05062fbe397e53be4e1741be5ef735be82a872be971dcebeaf28eabec5d8c4bedd8bafbee56258bee86a8bbee9d6a9beeccac5bef2c9c9befa953fbf025e03bf043921bf04eee4bf053e17bf07397abf0a5e5fbf0e5ef1bf13a7eebf15b5adbf165f2abf15c906bf134816bf116b9bbf104933bf10a17bbf11c300bf12edc8bf13bcb1bf141056bf13cd2ebf134441bf126d0dbf101b60bf0d5843bf0933b3bf004f54bef32239bee7de4dbee212c5bee53acbbeec2203bef37cc7befb8816befd237cbefee299befdd5efbef92db9bef3d413beecae71bee45c50bedc92a7bed7c06dbedc197bbee5d59bbef1d423bf00419bbf0276eebf01e448bef60559bee4228cbecc88f4beb3cce7be9cabebbe9da60abea99806bec2107ebecef999bed64037bed72cdebecc8f7fbebdc5abbea9f090be939ccabe6ef753be5f2ba7be65d99fbe868814be9520ddbe9f1a53bea1cae9be973b73be88d7d5be71b3d8be4e0152be42a678be3a69ccbe29d02ebdd2bd50bcd6aff83d9a454a3e40dc083eb05daa3edda2203f04d0153f28d2203f3f63933f4f05bf3f56c0623f5a44d33f5abe5c3f5ac0373f5a77a43f59aae73f592d713f58e5573f5877e83f57914e3f55437a3f4ff7513f3d70563f29820e3f14999f3f014b5b3effb4763f09170a3f1588523f2532f63f2883f43f23e6aa3f160d2a3efec66e3eb03ad23e8ba6fb3e7e10f93e94ccf83eae8fc93ec0180e3ebe02823f37be623f4f58b83f5503fd3f56d5223f56dc223f55a07f3f55520d3f5616313f57e9433f5876023f5802073f55e6283f4c37a33f401c9c3f32cacd3f299bd23f28ead53f2f75ca3f38e2b83f483c143f50be1e3f5652823f591eff3f5a48cb3f59d5243f5788913f501acd3f33afb63f1e17f83f14be0f3f218dab3f30ac043f3bee963f41855a3f4304323f43a3ad3f475c6f3f5209123f5546673f5a73753f5b52bf3f5b99363f5ba1db3f5ba2003f5ba03b3f5b96153f5b6a3a3f5b125b3f59a0aa3f57c9913f55a0533f53f3c33f533d173f535e663f5381333f532b1e3f52f3293f524ffa3f51e49e3f5102e53f4cf6613f468ef23f3baf013f2ce2903f17548a3f0e93163f0982e63f03184a3ed2ae503e913a643e035a00bd7ddbe3bdfde734be07e5f2bdc70e4c390102183d5dc6ea3d93f72e3d0fea1abb3b3cb1bcdb4598bce49759ba7386d43c33b7cebb33ce3cbd3dca14be0cbb0abe3ec738be57e1b5be498e06be237bf8bde613a1bd8f0989bd241ae2bd316d46bd5ac541bd58c34cbce94ded3c9d77e93daf8c1b3e407cb03e67152b3e5ce90d3e1a0dd1bcabd4f8be0ce98cbe64c404be8d0362be845bd1be4dee83bddf4e763d24f5f93dbf490e3db0c2423d0764fcbd088844bdc4539abdc8a243bd7ccc53bd2cea50bd53ef4ebdbfaa26be184933be47b98fbe2c73453c1742ae3de54dbc3ef0dbb13f211eef3f2ff87a3f2015493ef6e36e3e90b1a13dbc5602bdd0e14ebe396293be7603fabe9ff8d5beb36922bec0c1c7bec6e4f0bec38cbcbebc87dabeb70a78beb7faaebec83e20bed82d32bee710d3bef70ee8befdede6bf01a47dbf042b6abf080af3bf0a43bebf0bbd64bf0c3a5ebf0bae51bf0b01dbbf0ac289bf0b713bbf0bddfcbf0b4716bf08d359bf0047cbbeef18a7bedd8f45bed43c89bede34c1beeeb168befda89cbf040df4bf0288aabef86d16bedfb9c8bea01cc1be544660bdee5ce0bd96408abded95f7be456d92be8cae78bebbaa00becc22a6bed103a0bec23ab0beb68e2dbe714318bdcd3bd23e35eca83ebaf77e3f00c3fa3f1308ca3f161b0d3f05c2763eeb2f1c3ed9e2533ef6bb733f17890c3f3521cd3f48c2e13f53d3c23f553f1f3f53d6703f52e2c73f506fe63f4fe8d73f4fb21d3f4ceeb23f46ca323f3a56873f25ba0a3ef801b43ec113833e93ef9b3e65d02e3e2fea533e2912263e3676a73e5e925f3e748cf93e7b6a0b3e746fe63e6cd81a3e804ed43e9716943ec4e9223ebd099d3e92ea253e19e9bbbd66b408be0f7de4be320b38be2f63edbe19fb71be257717be4f935ebe8f3998be9d93a9be9ab4a7be843b80be07bcb1bd4b1ccdbc8cc56ebdb8cbdbbe33e4c6be79fc78be8da582be7df77fbe32ab5ebd746bdb3da262863e85b12f3ea7e04b3eb1e0643ea1f9b13e90bd043e851e713e84a3c13e96f4cb3ea548cd3ea931ce3e9ab4123e7097f13dbffced3be5e9d8bda1e252bde4f326be0d65d5be2c6dcabe51c54fbe81c27dbe873de3be62dfb9be3fe643bca0306a3e03a67f3e8898cd3ecb5fd23ede31e33ee5a7c33ee90dfd3eebd0513ee8ee223eddd2943eba104e3e9811a63e655a7e3e1a91d03d3e70d9bc9dda0bbda2bd1bbe05062fbe397e53be4e1741be5ef735be82a872be971dcebeaf28eabec5d8c4bedd8bafbee56258bee86a8bbee9d6a9beeccac5bef2c9c9befa953fbf025e03bf043921bf04eee4bf053e17bf07397abf0a5e5fbf0e5ef1bf13a7eebf15b5adbf165f2abf15c906bf134816bf116b9bbf104933bf10448fbf11c300bf12edc8bf13bcb1bf141056bf13cd2ebf134441bf126d0dbf101b60bf0d5843bf0933b3bf004f54bef9d503bee7de4dbee212c5bee53acbbeec2203bef37cc7bef962c4befd237cbefee299befdd5efbef92db9bef3d413beecae71bee45c50bedc92a7bed7c06dbedc197bbee5d59bbef1d423"
+                          maxHarmonics="1023" numWaveTableFreqs="27" wtPos="0"/>
+    </oscBank2>
+    <oscBank3 waveTableName="" numPositions="1">
+      <waveTablePosition0 isInitial="0" naiveTable="0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+                          maxHarmonics="0" numWaveTableFreqs="1" wtPos="0"/>
+    </oscBank3>
+    <msegData0 patternName="ADSR" env_mode="0" m_bSynch="0" m_uTimeBeats="0"
+               m_fSustainLevelExternalSet="1.0" m_fAttackTimeExternalSet="0.0"
+               m_fDecayTimeExternalSet="9.999989643692968" m_fReleaseTimeExternalSet="100.000010356307"
+               m_fAttackSteps="0.0" m_fDecaySteps="0.0" m_fReleaseSteps="0.0"
+               numControlPoints="4">
+      <msegPoint0 isDecay="0" isSustain="0" isLoopStart="0" xVal="0.0" yVal="0.0"
+                  curvy="0.5" curveStyle="1"/>
+      <msegPoint1 isDecay="1" isSustain="0" isLoopStart="0" xVal="0.0" yVal="1.0"
+                  curvy="0.800000011920929" curveStyle="1"/>
+      <msegPoint2 isDecay="0" isSustain="1" isLoopStart="0" xVal="0.09090899676084518"
+                  yVal="1.0" curvy="0.2000000029802322" curveStyle="1"/>
+      <msegPoint3 isDecay="0" isSustain="0" isLoopStart="0" xVal="1.0" yVal="0.0"
+                  curvy="0.2000000029802322" curveStyle="1"/>
+    </msegData0>
+    <msegData1 patternName="ADSR" env_mode="0" m_bSynch="0" m_uTimeBeats="0"
+               m_fSustainLevelExternalSet="1.0" m_fAttackTimeExternalSet="0.0"
+               m_fDecayTimeExternalSet="9.999989643692968" m_fReleaseTimeExternalSet="100.000010356307"
+               m_fAttackSteps="0.0" m_fDecaySteps="0.0" m_fReleaseSteps="0.0"
+               numControlPoints="4">
+      <msegPoint0 isDecay="0" isSustain="0" isLoopStart="0" xVal="0.0" yVal="0.0"
+                  curvy="0.5" curveStyle="1"/>
+      <msegPoint1 isDecay="1" isSustain="0" isLoopStart="0" xVal="0.0" yVal="1.0"
+                  curvy="0.800000011920929" curveStyle="1"/>
+      <msegPoint2 isDecay="0" isSustain="1" isLoopStart="0" xVal="0.09090899676084518"
+                  yVal="1.0" curvy="0.2000000029802322" curveStyle="1"/>
+      <msegPoint3 isDecay="0" isSustain="0" isLoopStart="0" xVal="1.0" yVal="0.0"
+                  curvy="0.2000000029802322" curveStyle="1"/>
+    </msegData1>
+    <msegData2 patternName="ADSR" env_mode="1" m_bSynch="1" m_uTimeBeats="6"
+               m_fSustainLevelExternalSet="1.0" m_fAttackTimeExternalSet="1.0e-10"
+               m_fDecayTimeExternalSet="483.8709411622094" m_fReleaseTimeExternalSet="241.9354705808547"
+               m_fAttackSteps="0.0" m_fDecaySteps="8.0" m_fReleaseSteps="4.0"
+               numControlPoints="12">
+      <msegPoint0 isDecay="0" isSustain="0" isLoopStart="0" xVal="0.0" yVal="1.0"
+                  curvy="0.5" curveStyle="1"/>
+      <msegPoint1 isDecay="1" isSustain="0" isLoopStart="1" xVal="1.377777853461376e-13"
+                  yVal="1.0" curvy="0.800000011920929" curveStyle="1"/>
+      <msegPoint2 isDecay="0" isSustain="0" isLoopStart="0" xVal="0.08262801777245911"
+                  yVal="0.2199074029922485" curvy="0.2422222197055817" curveStyle="1"/>
+      <msegPoint3 isDecay="0" isSustain="0" isLoopStart="0" xVal="0.1653645401100355"
+                  yVal="1.0" curvy="0.7666666507720947" curveStyle="1"/>
+      <msegPoint4 isDecay="0" isSustain="0" isLoopStart="0" xVal="0.2535264571327148"
+                  yVal="0.0" curvy="0.6511111259460449" curveStyle="1"/>
+      <msegPoint5 isDecay="0" isSustain="0" isLoopStart="0" xVal="0.3335502901992018"
+                  yVal="0.7430555820465088" curvy="0.2155555486679077" curveStyle="1"/>
+      <msegPoint6 isDecay="0" isSustain="0" isLoopStart="0" xVal="0.3335502902992019"
+                  yVal="0.2199074029922485" curvy="0.5" curveStyle="1"/>
+      <msegPoint7 isDecay="0" isSustain="0" isLoopStart="0" xVal="0.4176431411293986"
+                  yVal="1.0" curvy="0.5" curveStyle="1"/>
+      <msegPoint8 isDecay="0" isSustain="0" isLoopStart="0" xVal="0.499023367260203"
+                  yVal="0.0" curvy="0.2511110901832581" curveStyle="1"/>
+      <msegPoint9 isDecay="0" isSustain="0" isLoopStart="0" xVal="0.5559894868087478"
+                  yVal="0.5810185074806213" curvy="0.3311111330986023" curveStyle="1"/>
+      <msegPoint10 isDecay="0" isSustain="1" isLoopStart="0" xVal="0.6666666666669422"
+                   yVal="1.0" curvy="0.7066666483879089" curveStyle="1"/>
+      <msegPoint11 isDecay="0" isSustain="0" isLoopStart="0" xVal="1.0" yVal="0.0"
+                   curvy="0.1822222173213959" curveStyle="1"/>
+    </msegData2>
+    <msegData3 patternName="ADSR" env_mode="0" m_bSynch="0" m_uTimeBeats="0"
+               m_fSustainLevelExternalSet="1.0" m_fAttackTimeExternalSet="0.0"
+               m_fDecayTimeExternalSet="9.999989643692968" m_fReleaseTimeExternalSet="100.000010356307"
+               m_fAttackSteps="0.0" m_fDecaySteps="0.0" m_fReleaseSteps="0.0"
+               numControlPoints="4">
+      <msegPoint0 isDecay="0" isSustain="0" isLoopStart="0" xVal="0.0" yVal="0.0"
+                  curvy="0.5" curveStyle="1"/>
+      <msegPoint1 isDecay="1" isSustain="0" isLoopStart="0" xVal="0.0" yVal="1.0"
+                  curvy="0.800000011920929" curveStyle="1"/>
+      <msegPoint2 isDecay="0" isSustain="1" isLoopStart="0" xVal="0.09090899676084518"
+                  yVal="1.0" curvy="0.2000000029802322" curveStyle="1"/>
+      <msegPoint3 isDecay="0" isSustain="0" isLoopStart="0" xVal="1.0" yVal="0.0"
+                  curvy="0.2000000029802322" curveStyle="1"/>
+    </msegData3>
+    <msegData4 patternName="ADSR" env_mode="0" m_bSynch="0" m_uTimeBeats="0"
+               m_fSustainLevelExternalSet="1.0" m_fAttackTimeExternalSet="0.0"
+               m_fDecayTimeExternalSet="9.999989643692968" m_fReleaseTimeExternalSet="100.000010356307"
+               m_fAttackSteps="0.0" m_fDecaySteps="0.0" m_fReleaseSteps="0.0"
+               numControlPoints="4">
+      <msegPoint0 isDecay="0" isSustain="0" isLoopStart="0" xVal="0.0" yVal="0.0"
+                  curvy="0.5" curveStyle="1"/>
+      <msegPoint1 isDecay="1" isSustain="0" isLoopStart="0" xVal="0.0" yVal="1.0"
+                  curvy="0.800000011920929" curveStyle="1"/>
+      <msegPoint2 isDecay="0" isSustain="1" isLoopStart="0" xVal="0.09090899676084518"
+                  yVal="1.0" curvy="0.2000000029802322" curveStyle="1"/>
+      <msegPoint3 isDecay="0" isSustain="0" isLoopStart="0" xVal="1.0" yVal="0.0"
+                  curvy="0.2000000029802322" curveStyle="1"/>
+    </msegData4>
+    <stepSeqData0 patternName="Default pattern" invert="0" numSteps="4">
+      <stepSeqStep0 barHeight="1.0"/>
+      <stepSeqStep1 barHeight="0.800000011920929"/>
+      <stepSeqStep2 barHeight="0.6000000238418579"/>
+      <stepSeqStep3 barHeight="0.4000000059604645"/>
+    </stepSeqData0>
+    <stepSeqData1 patternName="Default pattern" invert="0" numSteps="4">
+      <stepSeqStep0 barHeight="1.0"/>
+      <stepSeqStep1 barHeight="0.800000011920929"/>
+      <stepSeqStep2 barHeight="0.6000000238418579"/>
+      <stepSeqStep3 barHeight="0.4000000059604645"/>
+    </stepSeqData1>
+    <stepSeqData2 patternName="Default pattern" invert="0" numSteps="4">
+      <stepSeqStep0 barHeight="1.0"/>
+      <stepSeqStep1 barHeight="0.800000011920929"/>
+      <stepSeqStep2 barHeight="0.6000000238418579"/>
+      <stepSeqStep3 barHeight="0.4000000059604645"/>
+    </stepSeqData2>
+    <arpData0 patternName="Default pattern" numSteps="4">
+      <arpStep0 octave="0" semitones="0" gate="3" velocity="127"/>
+      <arpStep1 octave="0" semitones="0" gate="3" velocity="30"/>
+      <arpStep2 octave="1" semitones="0" gate="3" velocity="127"/>
+      <arpStep3 octave="1" semitones="7" gate="3" velocity="60"/>
+    </arpData0>
+    <fxBusData1 numFX="13">
+      <fxSequence0 fxNo="0"/>
+      <fxSequence1 fxNo="1"/>
+      <fxSequence2 fxNo="2"/>
+      <fxSequence3 fxNo="3"/>
+      <fxSequence4 fxNo="4"/>
+      <fxSequence5 fxNo="5"/>
+      <fxSequence6 fxNo="6"/>
+      <fxSequence7 fxNo="7"/>
+      <fxSequence8 fxNo="8"/>
+      <fxSequence9 fxNo="9"/>
+      <fxSequence10 fxNo="10"/>
+      <fxSequence11 fxNo="11"/>
+      <fxSequence12 fxNo="12"/>
+    </fxBusData1>
+    <fxBusData2 numFX="13">
+      <fxSequence0 fxNo="0"/>
+      <fxSequence1 fxNo="1"/>
+      <fxSequence2 fxNo="2"/>
+      <fxSequence3 fxNo="3"/>
+      <fxSequence4 fxNo="4"/>
+      <fxSequence5 fxNo="5"/>
+      <fxSequence6 fxNo="6"/>
+      <fxSequence7 fxNo="7"/>
+      <fxSequence8 fxNo="8"/>
+      <fxSequence9 fxNo="9"/>
+      <fxSequence10 fxNo="10"/>
+      <fxSequence11 fxNo="11"/>
+      <fxSequence12 fxNo="12"/>
+    </fxBusData2>
+    <fxBusData3 numFX="13">
+      <fxSequence0 fxNo="0"/>
+      <fxSequence1 fxNo="1"/>
+      <fxSequence2 fxNo="2"/>
+      <fxSequence3 fxNo="3"/>
+      <fxSequence4 fxNo="4"/>
+      <fxSequence5 fxNo="5"/>
+      <fxSequence6 fxNo="6"/>
+      <fxSequence7 fxNo="7"/>
+      <fxSequence8 fxNo="8"/>
+      <fxSequence9 fxNo="9"/>
+      <fxSequence10 fxNo="10"/>
+      <fxSequence11 fxNo="11"/>
+      <fxSequence12 fxNo="12"/>
+    </fxBusData3>
+  </chunkData>
+</VASTvaporizer2>

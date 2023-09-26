@@ -1,0 +1,749 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="wPTx8T" name="VASTvaporizer2" projectType="audioplug" version="3.3.0"
+              bundleIdentifier="com.vastdynamics.VAST2" includeBinaryInAppConfig="1"
+              buildVST="1" buildVST3="1" buildAU="1" buildRTAS="0" buildAAX="1"
+              pluginName="Vaporizer2" pluginDesc="VAST Dynamics Vaporizer2 Hybrid Synthesizer Plug-in"
+              pluginManufacturer="VAST Dynamics" pluginManufacturerCode="Vast"
+              pluginCode="Vap2" pluginIsSynth="1" pluginWantsMidiIn="1" pluginProducesMidiOut="0"
+              pluginSilenceInIsSilenceOut="0" pluginEditorRequiresKeys="0"
+              pluginAUExportPrefix="VAST2AU" aaxIdentifier="com.vastdynamics.VAST2"
+              companyName="VAST Dynamics" companyWebsite="www.vast-dynamics.com"
+              companyEmail="contact@vast-dynamics.com" pluginIsMidiEffectPlugin="0"
+              buildAUv3="0" displaySplashScreen="0" reportAppUsage="0" splashScreenColour="Dark"
+              buildStandalone="1" enableIAA="0" cppLanguageStandard="latest"
+              companyCopyright="VAST Dynamics" headerPath="..\..\Source\Engine; ..\..\Source\Plugin; ..\..\Source; ..\..\Source\muFFT"
+              pluginFormats="buildVST,buildVST3,buildAU,buildAAX,buildStandalone"
+              pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn"
+              pluginAUMainType="'aumu'" pluginChannelConfigs="{2,2}" maxBinaryFileSize="20971520"
+              jucerFormatVersion="1">
+  <MAINGROUP id="xqLnpn" name="VASTvaporizer2">
+    <GROUP id="{DD9ED2B8-D8FE-19B6-7641-38F05EF355A6}" name="Documentation"/>
+    <GROUP id="{6680AC59-1EE2-8456-E1A0-9C30F1100D44}" name="Resources">
+      <GROUP id="{B60025E9-D3E3-2680-2829-E4AF564DA18C}" name="Fonts">
+        <FILE id="KTBqtc" name="AlteHaasGroteskBold.ttf" compile="0" resource="1"
+              file="Resources/Fonts/AlteHaasGroteskBold.ttf"/>
+        <FILE id="ZM0uxC" name="AlteHaasGroteskRegular.ttf" compile="0" resource="1"
+              file="Resources/Fonts/AlteHaasGroteskRegular.ttf"/>
+        <FILE id="h71qhZ" name="OpenSans-Bold.ttf" compile="0" resource="1"
+              file="Resources/Fonts/OpenSans-Bold.ttf"/>
+        <FILE id="L0a63D" name="OpenSans-Regular.ttf" compile="0" resource="1"
+              file="Resources/Fonts/OpenSans-Regular.ttf"/>
+        <FILE id="yE441b" name="SFUIDisplay-Bold.ttf" compile="0" resource="1"
+              file="Resources/Fonts/SFUIDisplay-Bold.ttf"/>
+        <FILE id="bj0AAq" name="SFUIDisplay-Regular.ttf" compile="0" resource="1"
+              file="Resources/Fonts/SFUIDisplay-Regular.ttf"/>
+        <FILE id="l6EFAu" name="Trade Gothic LT Bold.ttf" compile="0" resource="1"
+              file="Resources/Fonts/Trade Gothic LT Bold.ttf"/>
+        <FILE id="XDu2c3" name="Trade Gothic LT.ttf" compile="0" resource="1"
+              file="Resources/Fonts/Trade Gothic LT.ttf"/>
+      </GROUP>
+      <FILE id="tkfzyB" name="logokreis.svg" compile="0" resource="1" file="Resources/logokreis.svg"
+            xcodeResource="1"/>
+      <FILE id="A2sWSy" name="logokreisvdalpha.png" compile="0" resource="1"
+            file="Resources/logokreisvdalpha.png"/>
+    </GROUP>
+    <GROUP id="{035887F9-4484-E81C-3B31-9C0EF669AE0B}" name="Engine">
+      <GROUP id="{833DA37C-AB5C-7981-6C04-CE6E3FBE21F0}" name="Filter">
+        <FILE id="J3Z8Jn" name="VASTBiQuadFilter.cpp" compile="1" resource="0"
+              file="Source/Engine/Filter/VASTBiQuadFilter.cpp"/>
+        <FILE id="aqgV4s" name="VASTBiQuadFilter.h" compile="0" resource="0"
+              file="Source/Engine/Filter/VASTBiQuadFilter.h"/>
+        <FILE id="Ls9UiD" name="VASTCombFilter.cpp" compile="1" resource="0"
+              file="Source/Engine/Filter/VASTCombFilter.cpp"/>
+        <FILE id="KlnHOd" name="VASTCombFilter.h" compile="0" resource="0"
+              file="Source/Engine/Filter/VASTCombFilter.h"/>
+        <FILE id="CNSwD6" name="VASTDelay.cpp" compile="1" resource="0" file="Source/Engine/Filter/VASTDelay.cpp"/>
+        <FILE id="mf9Idv" name="VASTDelay.h" compile="0" resource="0" file="Source/Engine/Filter/VASTDelay.h"/>
+        <FILE id="qmYgDT" name="VASTDelayAPF.cpp" compile="1" resource="0"
+              file="Source/Engine/Filter/VASTDelayAPF.cpp"/>
+        <FILE id="jt8wlA" name="VASTDelayAPF.h" compile="0" resource="0" file="Source/Engine/Filter/VASTDelayAPF.h"/>
+        <FILE id="X91QfG" name="VASTIIRFilter.h" compile="0" resource="0" file="Source/Engine/Filter/VASTIIRFilter.h"/>
+        <FILE id="DlK4LM" name="VASTLPFCombFilter.cpp" compile="1" resource="0"
+              file="Source/Engine/Filter/VASTLPFCombFilter.cpp"/>
+        <FILE id="ITleh2" name="VASTLPFCombFilter.h" compile="0" resource="0"
+              file="Source/Engine/Filter/VASTLPFCombFilter.h"/>
+        <FILE id="t1lpqw" name="VASTOnePoleLPF.cpp" compile="1" resource="0"
+              file="Source/Engine/Filter/VASTOnePoleLPF.cpp"/>
+        <FILE id="TgBYcC" name="VASTOnePoleLPF.h" compile="0" resource="0"
+              file="Source/Engine/Filter/VASTOnePoleLPF.h"/>
+        <FILE id="uYzuzX" name="VASTQFilter.cpp" compile="1" resource="0" file="Source/Engine/Filter/VASTQFilter.cpp"/>
+        <FILE id="w1oCcU" name="VASTQFilter.h" compile="0" resource="0" file="Source/Engine/Filter/VASTQFilter.h"/>
+        <FILE id="DiuQ2T" name="VASTQFilterCoefficients.cpp" compile="1" resource="0"
+              file="Source/Engine/Filter/VASTQFilterCoefficients.cpp"/>
+        <FILE id="YMy49a" name="VASTQFilterCoefficients.h" compile="0" resource="0"
+              file="Source/Engine/Filter/VASTQFilterCoefficients.h"/>
+        <FILE id="kxHCX0" name="VASTStateVariableFilter.cpp" compile="1" resource="0"
+              file="Source/Engine/Filter/VASTStateVariableFilter.cpp"/>
+        <FILE id="rjBuht" name="VASTStateVariableFilter.h" compile="0" resource="0"
+              file="Source/Engine/Filter/VASTStateVariableFilter.h"/>
+        <FILE id="Jtqwb8" name="VASTVAOnePoleFilter.cpp" compile="1" resource="0"
+              file="Source/Engine/Filter/VASTVAOnePoleFilter.cpp"/>
+        <FILE id="nJ3JaF" name="VASTVAOnePoleFilter.h" compile="0" resource="0"
+              file="Source/Engine/Filter/VASTVAOnePoleFilter.h"/>
+        <FILE id="tv1vSa" name="VASTVAOnePoleFilterEx.cpp" compile="1" resource="0"
+              file="Source/Engine/Filter/VASTVAOnePoleFilterEx.cpp"/>
+        <FILE id="eNc0ih" name="VASTVAOnePoleFilterEx.h" compile="0" resource="0"
+              file="Source/Engine/Filter/VASTVAOnePoleFilterEx.h"/>
+        <FILE id="TZdFTB" name="VASTVCFCombFilter.cpp" compile="1" resource="0"
+              file="Source/Engine/Filter/VASTVCFCombFilter.cpp"/>
+        <FILE id="RvE3Tm" name="VASTVCFCombFilter.h" compile="0" resource="0"
+              file="Source/Engine/Filter/VASTVCFCombFilter.h"/>
+      </GROUP>
+      <GROUP id="{7111349C-415B-B572-4908-8843261E4386}" name="FX">
+        <GROUP id="{1A0EC0B3-9169-7D0E-95D8-F40B4494E90A}" name="FXUtils">
+          <FILE id="AlF1mf" name="STFT.h" compile="0" resource="0" file="Source/Engine/FX/FXUtils/STFT.h"/>
+          <FILE id="IVTHJ5" name="VASTDDLModule.cpp" compile="1" resource="0"
+                file="Source/Engine/FX/FXUtils/VASTDDLModule.cpp"/>
+          <FILE id="adsEb0" name="VASTDDLModule.h" compile="0" resource="0" file="Source/Engine/FX/FXUtils/VASTDDLModule.h"/>
+          <FILE id="A7i50U" name="VASTDelayLine.cpp" compile="1" resource="0"
+                file="Source/Engine/FX/FXUtils/VASTDelayLine.cpp"/>
+          <FILE id="WQPG1U" name="VASTDelayLine.h" compile="0" resource="0" file="Source/Engine/FX/FXUtils/VASTDelayLine.h"/>
+          <FILE id="U3y1ec" name="VASTDelayLineAPF.cpp" compile="1" resource="0"
+                file="Source/Engine/FX/FXUtils/VASTDelayLineAPF.cpp"/>
+          <FILE id="AQ9OG6" name="VASTDelayLineAPF.h" compile="0" resource="0"
+                file="Source/Engine/FX/FXUtils/VASTDelayLineAPF.h"/>
+          <FILE id="xUGWPV" name="VASTDelaySoftAdjust.cpp" compile="1" resource="0"
+                file="Source/Engine/FX/FXUtils/VASTDelaySoftAdjust.cpp"/>
+          <FILE id="mCgnb1" name="VASTDelaySoftAdjust.h" compile="0" resource="0"
+                file="Source/Engine/FX/FXUtils/VASTDelaySoftAdjust.h"/>
+          <FILE id="QTvbGs" name="VASTModDelayModule.cpp" compile="1" resource="0"
+                file="Source/Engine/FX/FXUtils/VASTModDelayModule.cpp"/>
+          <FILE id="HdgPmJ" name="VASTModDelayModule.h" compile="0" resource="0"
+                file="Source/Engine/FX/FXUtils/VASTModDelayModule.h"/>
+          <FILE id="GSnwXs" name="VASTMVerb.h" compile="0" resource="0" file="Source/Engine/FX/FXUtils/VASTMVerb.h"/>
+        </GROUP>
+        <FILE id="mu7XTE" name="VASTAtomizer.cpp" compile="1" resource="0"
+              file="Source/Engine/FX/VASTAtomizer.cpp"/>
+        <FILE id="w4ZNk8" name="VASTAtomizer.h" compile="0" resource="0" file="Source/Engine/FX/VASTAtomizer.h"/>
+        <FILE id="iZEZcq" name="VASTBitcrush.cpp" compile="1" resource="0"
+              file="Source/Engine/FX/VASTBitcrush.cpp"/>
+        <FILE id="xqzVv6" name="VASTBitcrush.h" compile="0" resource="0" file="Source/Engine/FX/VASTBitcrush.h"/>
+        <FILE id="Jfus4C" name="VASTChorus.cpp" compile="1" resource="0" file="Source/Engine/FX/VASTChorus.cpp"/>
+        <FILE id="WohtHN" name="VASTChorus.h" compile="0" resource="0" file="Source/Engine/FX/VASTChorus.h"/>
+        <FILE id="kDQLB4" name="VASTCombFilterEffect.cpp" compile="1" resource="0"
+              file="Source/Engine/FX/VASTCombFilterEffect.cpp"/>
+        <FILE id="UJLBhP" name="VASTCombFilterEffect.h" compile="0" resource="0"
+              file="Source/Engine/FX/VASTCombFilterEffect.h"/>
+        <FILE id="uyZayk" name="VASTCompressorExpander.cpp" compile="1" resource="0"
+              file="Source/Engine/FX/VASTCompressorExpander.cpp"/>
+        <FILE id="oUbF8q" name="VASTCompressorExpander.h" compile="0" resource="0"
+              file="Source/Engine/FX/VASTCompressorExpander.h"/>
+        <FILE id="PzToiD" name="VASTDistortion.cpp" compile="1" resource="0"
+              file="Source/Engine/FX/VASTDistortion.cpp"/>
+        <FILE id="DuZkdI" name="VASTDistortion.h" compile="0" resource="0"
+              file="Source/Engine/FX/VASTDistortion.h"/>
+        <FILE id="eTITyW" name="VASTEffect.cpp" compile="1" resource="0" file="Source/Engine/FX/VASTEffect.cpp"/>
+        <FILE id="uzhQJT" name="VASTEffect.h" compile="0" resource="0" file="Source/Engine/FX/VASTEffect.h"/>
+        <FILE id="WLzAKj" name="VASTEq.cpp" compile="1" resource="0" file="Source/Engine/FX/VASTEq.cpp"/>
+        <FILE id="V3wtR3" name="VASTEq.h" compile="0" resource="0" file="Source/Engine/FX/VASTEq.h"/>
+        <FILE id="be0CKl" name="VASTFlanger.cpp" compile="1" resource="0" file="Source/Engine/FX/VASTFlanger.cpp"/>
+        <FILE id="Ut04ub" name="VASTFlanger.h" compile="0" resource="0" file="Source/Engine/FX/VASTFlanger.h"/>
+        <FILE id="TyKoJM" name="VASTFormantFilter.cpp" compile="1" resource="0"
+              file="Source/Engine/FX/VASTFormantFilter.cpp"/>
+        <FILE id="Z15Hrn" name="VASTFormantFilter.h" compile="0" resource="0"
+              file="Source/Engine/FX/VASTFormantFilter.h"/>
+        <FILE id="bb330x" name="VASTMultibandCompressor.cpp" compile="1" resource="0"
+              file="Source/Engine/FX/VASTMultibandCompressor.cpp"/>
+        <FILE id="FHvsxl" name="VASTMultibandCompressor.h" compile="0" resource="0"
+              file="Source/Engine/FX/VASTMultibandCompressor.h"/>
+        <FILE id="y8W38B" name="VASTMultibandCompressorSingleBand.cpp" compile="1"
+              resource="0" file="Source/Engine/FX/VASTMultibandCompressorSingleBand.cpp"/>
+        <FILE id="GImSLw" name="VASTMultibandCompressorSingleBand.h" compile="0"
+              resource="0" file="Source/Engine/FX/VASTMultibandCompressorSingleBand.h"/>
+        <FILE id="gSC79Y" name="VASTPhaser.cpp" compile="1" resource="0" file="Source/Engine/FX/VASTPhaser.cpp"/>
+        <FILE id="ut2t6r" name="VASTPhaser.h" compile="0" resource="0" file="Source/Engine/FX/VASTPhaser.h"/>
+        <FILE id="tDIcJI" name="VASTReverb.cpp" compile="1" resource="0" file="Source/Engine/FX/VASTReverb.cpp"/>
+        <FILE id="CBCRxV" name="VASTReverb.h" compile="0" resource="0" file="Source/Engine/FX/VASTReverb.h"/>
+        <FILE id="lCFI0C" name="VASTStereoDelay.cpp" compile="1" resource="0"
+              file="Source/Engine/FX/VASTStereoDelay.cpp"/>
+        <FILE id="AqhS1V" name="VASTStereoDelay.h" compile="0" resource="0"
+              file="Source/Engine/FX/VASTStereoDelay.h"/>
+        <FILE id="NQvQqN" name="VASTWaveshaper.cpp" compile="1" resource="0"
+              file="Source/Engine/FX/VASTWaveshaper.cpp"/>
+        <FILE id="EucrUu" name="VASTWaveshaper.h" compile="0" resource="0"
+              file="Source/Engine/FX/VASTWaveshaper.h"/>
+      </GROUP>
+      <GROUP id="{4EF2B105-C823-352E-2E21-D1DD89C3982A}" name="Oscillator">
+        <FILE id="GQ6wgJ" name="VASTWaveTable.cpp" compile="1" resource="0"
+              file="Source/Engine/Oscillator/VASTWaveTable.cpp"/>
+        <FILE id="hwhioq" name="VASTWaveTable.h" compile="0" resource="0" file="Source/Engine/Oscillator/VASTWaveTable.h"/>
+        <FILE id="cx3JD7" name="VASTWaveTableOscillator.cpp" compile="1" resource="0"
+              file="Source/Engine/Oscillator/VASTWaveTableOscillator.cpp"/>
+        <FILE id="XL8yk0" name="VASTWaveTableOscillator.h" compile="0" resource="0"
+              file="Source/Engine/Oscillator/VASTWaveTableOscillator.h"/>
+      </GROUP>
+      <GROUP id="{5EFC092B-4F68-497A-AC66-B70B50C3BC2B}" name="Oversampler">
+        <FILE id="HUYPWV" name="VASTDecimator.cpp" compile="1" resource="0"
+              file="Source/Engine/Oversampler/VASTDecimator.cpp"/>
+        <FILE id="G2hFTS" name="VASTDecimator.h" compile="0" resource="0" file="Source/Engine/Oversampler/VASTDecimator.h"/>
+        <FILE id="culTAs" name="VASTInterpolator.cpp" compile="1" resource="0"
+              file="Source/Engine/Oversampler/VASTInterpolator.cpp"/>
+        <FILE id="tE6Ahd" name="VASTInterpolator.h" compile="0" resource="0"
+              file="Source/Engine/Oversampler/VASTInterpolator.h"/>
+        <FILE id="NFzA2X" name="VASTOversampler.cpp" compile="1" resource="0"
+              file="Source/Engine/Oversampler/VASTOversampler.cpp"/>
+        <FILE id="AqP4Xx" name="VASTOversampler.h" compile="0" resource="0"
+              file="Source/Engine/Oversampler/VASTOversampler.h"/>
+        <FILE id="vBhsK5" name="VASTRateConvertor.cpp" compile="1" resource="0"
+              file="Source/Engine/Oversampler/VASTRateConvertor.cpp"/>
+        <FILE id="Dcurti" name="VASTRateConvertor.h" compile="0" resource="0"
+              file="Source/Engine/Oversampler/VASTRateConvertor.h"/>
+      </GROUP>
+      <GROUP id="{A321449D-5279-FB03-2525-786ACD5F542E}" name="Utils">
+        <FILE id="RUcXzK" name="VASTEnvelopeDetector.cpp" compile="1" resource="0"
+              file="Source/Engine/Utils/VASTEnvelopeDetector.cpp"/>
+        <FILE id="KGg4aG" name="VASTEnvelopeDetector.h" compile="0" resource="0"
+              file="Source/Engine/Utils/VASTEnvelopeDetector.h"/>
+        <FILE id="XNd61X" name="VASTFFTSingletonFactory.cpp" compile="1" resource="0"
+              file="Source/Engine/Utils/VASTFFTSingletonFactory.cpp"/>
+        <FILE id="fL4jze" name="VASTFFTSingletonFactory.h" compile="0" resource="0"
+              file="Source/Engine/Utils/VASTFFTSingletonFactory.h"/>
+        <FILE id="Nygpge" name="VASTFloatVectorOperations.cpp" compile="1"
+              resource="0" file="Source/Engine/Utils/VASTFloatVectorOperations.cpp"/>
+        <FILE id="opQOaA" name="VASTFloatVectorOperations.h" compile="0" resource="0"
+              file="Source/Engine/Utils/VASTFloatVectorOperations.h"/>
+        <FILE id="PSRNvb" name="VASTLookuptables.h" compile="0" resource="0"
+              file="Source/Engine/Utils/VASTLookuptables.h"/>
+        <FILE id="d7Q6Vd" name="VASTSSEHelper.h" compile="0" resource="0" file="Source/Engine/Utils/VASTSSEHelper.h"/>
+        <FILE id="EbifGf" name="VASTSynthfunctions.h" compile="0" resource="0"
+              file="Source/Engine/Utils/VASTSynthfunctions.h"/>
+      </GROUP>
+      <FILE id="HzTKqR" name="VASTARPData.cpp" compile="1" resource="0" file="Source/Engine/VASTARPData.cpp"/>
+      <FILE id="LKA0hn" name="VASTARPData.h" compile="0" resource="0" file="Source/Engine/VASTARPData.h"/>
+      <FILE id="xbW97G" name="VASTSampler.cpp" compile="1" resource="0" file="Source/Engine/VASTSampler.cpp"/>
+      <FILE id="owDnjq" name="VASTSampler.h" compile="0" resource="0" file="Source/Engine/VASTSampler.h"/>
+      <FILE id="LrhB9s" name="VASTSynthesiser.cpp" compile="1" resource="0"
+            file="Source/Engine/VASTSynthesiser.cpp"/>
+      <FILE id="dvJPrf" name="VASTSynthesiser.h" compile="0" resource="0"
+            file="Source/Engine/VASTSynthesiser.h"/>
+      <FILE id="qjRz66" name="VASTEnvelope.h" compile="0" resource="0" file="Source/Engine/VASTEnvelope.h"/>
+      <FILE id="k1jvHm" name="VASTEnvelope.cpp" compile="1" resource="0"
+            file="Source/Engine/VASTEnvelope.cpp"/>
+      <FILE id="HbtuwF" name="VASTEngineHeader.h" compile="0" resource="0"
+            file="Source/Engine/VASTEngineHeader.h"/>
+      <FILE id="oLTyWH" name="VASTFXBus.cpp" compile="1" resource="0" file="Source/Engine/VASTFXBus.cpp"/>
+      <FILE id="iqJAzG" name="VASTFXBus.h" compile="0" resource="0" file="Source/Engine/VASTFXBus.h"/>
+      <FILE id="drnHml" name="VASTMSEGData.cpp" compile="1" resource="0"
+            file="Source/Engine/VASTMSEGData.cpp"/>
+      <FILE id="dV97eO" name="VASTMSEGData.h" compile="0" resource="0" file="Source/Engine/VASTMSEGData.h"/>
+      <FILE id="qe1UqQ" name="VASTMSEGEnvelope.cpp" compile="1" resource="0"
+            file="Source/Engine/VASTMSEGEnvelope.cpp"/>
+      <FILE id="a1D8q0" name="VASTMSEGEnvelope.h" compile="0" resource="0"
+            file="Source/Engine/VASTMSEGEnvelope.h"/>
+      <FILE id="Qb6VYU" name="VASTOscillatorBank.h" compile="0" resource="0"
+            file="Source/Engine/VASTOscillatorBank.h"/>
+      <FILE id="TMCLxr" name="VASTOscillatorBank.cpp" compile="1" resource="0"
+            file="Source/Engine/VASTOscillatorBank.cpp"/>
+      <FILE id="vJiyN5" name="VASTParamState.cpp" compile="1" resource="0"
+            file="Source/Engine/VASTParamState.cpp"/>
+      <FILE id="czxHt3" name="VASTParamState.h" compile="0" resource="0"
+            file="Source/Engine/VASTParamState.h"/>
+      <FILE id="HJLYG8" name="VASTPluginConstants.h" compile="0" resource="0"
+            file="Source/Engine/VASTPluginConstants.h"/>
+      <FILE id="pj30rk" name="VASTPoly.cpp" compile="1" resource="0" file="Source/Engine/VASTPoly.cpp"/>
+      <FILE id="qY8o7W" name="VASTPoly.h" compile="0" resource="0" file="Source/Engine/VASTPoly.h"/>
+      <FILE id="qlsels" name="VASTSettings.cpp" compile="1" resource="0"
+            file="Source/Engine/VASTSettings.cpp"/>
+      <FILE id="yiZlpt" name="VASTSettings.h" compile="0" resource="0" file="Source/Engine/VASTSettings.h"/>
+      <FILE id="fGk7Ly" name="VASTSingleNote.cpp" compile="1" resource="0"
+            file="Source/Engine/VASTSingleNote.cpp"/>
+      <FILE id="QXT8Dg" name="VASTSingleNote.h" compile="0" resource="0"
+            file="Source/Engine/VASTSingleNote.h"/>
+      <FILE id="RCmdK9" name="VASTVca.cpp" compile="1" resource="0" file="Source/Engine/VASTVca.cpp"/>
+      <FILE id="r8LQPQ" name="VASTVca.h" compile="0" resource="0" file="Source/Engine/VASTVca.h"/>
+      <FILE id="oT8s2P" name="VASTVcf.cpp" compile="1" resource="0" file="Source/Engine/VASTVcf.cpp"/>
+      <FILE id="LcrTDl" name="VASTVcf.h" compile="0" resource="0" file="Source/Engine/VASTVcf.h"/>
+      <FILE id="XVjyL9" name="VASTXperience.cpp" compile="1" resource="0"
+            file="Source/Engine/VASTXperience.cpp"/>
+      <FILE id="xREZwE" name="VASTXperience.h" compile="0" resource="0" file="Source/Engine/VASTXperience.h"/>
+    </GROUP>
+    <GROUP id="{AB8ED39A-6BC7-E013-3FDB-5C761263BDDF}" name="Plugin">
+      <GROUP id="{BCA89F9B-9683-BB7B-8798-651A9FCFB9B5}" name="VASTCommercial"/>
+      <GROUP id="{5A88AFAB-8671-08E2-14D1-FB5E0AB7F9F9}" name="VASTFX">
+        <FILE id="fbFiKm" name="VASTFXEffectPane.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTFX/VASTFXEffectPane.cpp"/>
+        <FILE id="SXWzXh" name="VASTFXEffectPane.h" compile="0" resource="0"
+              file="Source/Plugin/VASTFX/VASTFXEffectPane.h"/>
+        <FILE id="k6xAUz" name="VASTFXPane.cpp" compile="1" resource="0" file="Source/Plugin/VASTFX/VASTFXPane.cpp"/>
+        <FILE id="IDh9hR" name="VASTFXPane.h" compile="0" resource="0" file="Source/Plugin/VASTFX/VASTFXPane.h"/>
+        <FILE id="PIbbQW" name="VASTFXSelectionPane.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTFX/VASTFXSelectionPane.cpp"/>
+        <FILE id="yOTuwp" name="VASTFXSelectionPane.h" compile="0" resource="0"
+              file="Source/Plugin/VASTFX/VASTFXSelectionPane.h"/>
+        <FILE id="FeLhQ5" name="VASTGenericEditor.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTFX/VASTGenericEditor.cpp"/>
+        <FILE id="esMcm7" name="VASTGenericEditor.h" compile="0" resource="0"
+              file="Source/Plugin/VASTFX/VASTGenericEditor.h"/>
+        <FILE id="zsw2rl" name="VASTGenericSelector.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTFX/VASTGenericSelector.cpp"/>
+        <FILE id="Da8THe" name="VASTGenericSelector.h" compile="0" resource="0"
+              file="Source/Plugin/VASTFX/VASTGenericSelector.h"/>
+      </GROUP>
+      <GROUP id="{F0D03DD3-D0EC-E2F7-E2AB-1BCE45648293}" name="VASTControls">
+        <FILE id="rBskvh" name="VASTDragMatrix.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTControls/VASTDragMatrix.cpp"/>
+        <FILE id="hprN8Z" name="VASTDragMatrix.h" compile="0" resource="0"
+              file="Source/Plugin/VASTControls/VASTDragMatrix.h"/>
+        <FILE id="UFGghT" name="VASTButton.cpp" compile="1" resource="0" file="Source/Plugin/VASTControls/VASTButton.cpp"/>
+        <FILE id="EFy3E0" name="VASTButton.h" compile="0" resource="0" file="Source/Plugin/VASTControls/VASTButton.h"/>
+        <FILE id="XdqIFz" name="VASTComboBox.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTControls/VASTComboBox.cpp"/>
+        <FILE id="hyxig2" name="VASTComboBox.h" compile="0" resource="0" file="Source/Plugin/VASTControls/VASTComboBox.h"/>
+        <FILE id="jGNTma" name="VASTComboBrev.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTControls/VASTComboBrev.cpp"/>
+        <FILE id="d9ls2Z" name="VASTComboBrev.h" compile="0" resource="0" file="Source/Plugin/VASTControls/VASTComboBrev.h"/>
+        <FILE id="sf6S3g" name="VASTComboPreset.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTControls/VASTComboPreset.cpp"/>
+        <FILE id="vVfmvm" name="VASTComboPreset.h" compile="0" resource="0"
+              file="Source/Plugin/VASTControls/VASTComboPreset.h"/>
+        <FILE id="aMp1Vo" name="VASTConcertinaPanel.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTControls/VASTConcertinaPanel.cpp"/>
+        <FILE id="Fiq4f5" name="VASTConcertinaPanel.h" compile="0" resource="0"
+              file="Source/Plugin/VASTControls/VASTConcertinaPanel.h"/>
+        <FILE id="B8MlG8" name="VASTDragFX.cpp" compile="1" resource="0" file="Source/Plugin/VASTControls/VASTDragFX.cpp"/>
+        <FILE id="b6qe6J" name="VASTDragFX.h" compile="0" resource="0" file="Source/Plugin/VASTControls/VASTDragFX.h"/>
+        <FILE id="IrenRq" name="VASTDragSource.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTControls/VASTDragSource.cpp"/>
+        <FILE id="IQqC52" name="VASTDragSource.h" compile="0" resource="0"
+              file="Source/Plugin/VASTControls/VASTDragSource.h"/>
+        <FILE id="baLnoM" name="VASTDrawableButton.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTControls/VASTDrawableButton.cpp"/>
+        <FILE id="csSIs2" name="VASTDrawableButton.h" compile="0" resource="0"
+              file="Source/Plugin/VASTControls/VASTDrawableButton.h"/>
+        <FILE id="QXqP1q" name="VASTImageButton.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTControls/VASTImageButton.cpp"/>
+        <FILE id="YSucdC" name="VASTImageButton.h" compile="0" resource="0"
+              file="Source/Plugin/VASTControls/VASTImageButton.h"/>
+        <FILE id="dtpwnl" name="VASTManualDualValueEditor.cpp" compile="1"
+              resource="0" file="Source/Plugin/VASTControls/VASTManualDualValueEditor.cpp"/>
+        <FILE id="dQDqw9" name="VASTManualDualValueEditor.h" compile="0" resource="0"
+              file="Source/Plugin/VASTControls/VASTManualDualValueEditor.h"/>
+        <FILE id="YfrIah" name="VASTManualFreqdomainValueEditor.cpp" compile="1"
+              resource="0" file="Source/Plugin/VASTControls/VASTManualFreqdomainValueEditor.cpp"/>
+        <FILE id="kNZAe3" name="VASTManualFreqdomainValueEditor.h" compile="0"
+              resource="0" file="Source/Plugin/VASTControls/VASTManualFreqdomainValueEditor.h"/>
+        <FILE id="cJZ8wm" name="VASTManualRenameEditor.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTControls/VASTManualRenameEditor.cpp"/>
+        <FILE id="L3vFC0" name="VASTManualRenameEditor.h" compile="0" resource="0"
+              file="Source/Plugin/VASTControls/VASTManualRenameEditor.h"/>
+        <FILE id="iPPeyr" name="VASTManualTagsEditor.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTControls/VASTManualTagsEditor.cpp"/>
+        <FILE id="dIhDst" name="VASTManualTagsEditor.h" compile="0" resource="0"
+              file="Source/Plugin/VASTControls/VASTManualTagsEditor.h"/>
+        <FILE id="c3qTAi" name="VASTManualScaleEditor.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTControls/VASTManualScaleEditor.cpp"/>
+        <FILE id="QwXMHr" name="VASTManualScaleEditor.h" compile="0" resource="0"
+              file="Source/Plugin/VASTControls/VASTManualScaleEditor.h"/>
+        <FILE id="C3hAQI" name="VASTManualValueEditor.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTControls/VASTManualValueEditor.cpp"/>
+        <FILE id="tIMHsH" name="VASTManualValueEditor.h" compile="0" resource="0"
+              file="Source/Plugin/VASTControls/VASTManualValueEditor.h"/>
+        <FILE id="K5N05d" name="VASTModwheelSlider.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTControls/VASTModwheelSlider.cpp"/>
+        <FILE id="JM2ZY8" name="VASTModwheelSlider.h" compile="0" resource="0"
+              file="Source/Plugin/VASTControls/VASTModwheelSlider.h"/>
+        <FILE id="HrJ2cL" name="VASTParameterButton.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTControls/VASTParameterButton.cpp"/>
+        <FILE id="cfWYXw" name="VASTParameterComboBox.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTControls/VASTParameterComboBox.cpp"/>
+        <FILE id="w2LdM9" name="VASTParameterButton.h" compile="0" resource="0"
+              file="Source/Plugin/VASTControls/VASTParameterButton.h"/>
+        <FILE id="Ruy7Wo" name="VASTParameterComboBox.h" compile="0" resource="0"
+              file="Source/Plugin/VASTControls/VASTParameterComboBox.h"/>
+        <FILE id="ktSQd4" name="VASTParameterSlider.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTControls/VASTParameterSlider.cpp"/>
+        <FILE id="IKN2py" name="VASTParameterSlider.h" compile="0" resource="0"
+              file="Source/Plugin/VASTControls/VASTParameterSlider.h"/>
+        <FILE id="ztM6vN" name="VASTPitchbendSlider.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTControls/VASTPitchbendSlider.cpp"/>
+        <FILE id="YDz8Ev" name="VASTPitchbendSlider.h" compile="0" resource="0"
+              file="Source/Plugin/VASTControls/VASTPitchbendSlider.h"/>
+        <FILE id="ZCnsH8" name="VASTPopupHandler.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTControls/VASTPopupHandler.cpp"/>
+        <FILE id="RhgCED" name="VASTPopupHandler.h" compile="0" resource="0"
+              file="Source/Plugin/VASTControls/VASTPopupHandler.h"/>
+        <FILE id="GCr2Ls" name="VASTPositionEditor.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTControls/VASTPositionEditor.cpp"/>
+        <FILE id="p5rdIs" name="VASTPositionEditor.h" compile="0" resource="0"
+              file="Source/Plugin/VASTControls/VASTPositionEditor.h"/>
+        <FILE id="bryKOT" name="VASTSlider.cpp" compile="1" resource="0" file="Source/Plugin/VASTControls/VASTSlider.cpp"/>
+        <FILE id="hNmqMz" name="VASTSlider.h" compile="0" resource="0" file="Source/Plugin/VASTControls/VASTSlider.h"/>
+      </GROUP>
+      <GROUP id="{AF155AAE-4593-BC5C-70E8-39BE3AA01087}" name="VASTMSEGEditor">
+        <FILE id="xOnFjK" name="VASTARPEditor.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTMSEGEditor/VASTARPEditor.cpp"/>
+        <FILE id="YS8lM3" name="VASTARPEditor.h" compile="0" resource="0" file="Source/Plugin/VASTMSEGEditor/VASTARPEditor.h"/>
+        <FILE id="kjI0ol" name="VASTARPEditorPane.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTMSEGEditor/VASTARPEditorPane.cpp"/>
+        <FILE id="rnC1U4" name="VASTLFOEditor.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTMSEGEditor/VASTLFOEditor.cpp"/>
+        <FILE id="PVY3B5" name="VASTARPEditorPane.h" compile="0" resource="0"
+              file="Source/Plugin/VASTMSEGEditor/VASTARPEditorPane.h"/>
+        <FILE id="VNcq1q" name="VASTLFOEditor.h" compile="0" resource="0" file="Source/Plugin/VASTMSEGEditor/VASTLFOEditor.h"/>
+        <FILE id="xXb9kZ" name="VASTLFOEditorPane.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTMSEGEditor/VASTLFOEditorPane.cpp"/>
+        <FILE id="iBFGSx" name="VASTLFOEditorPane.h" compile="0" resource="0"
+              file="Source/Plugin/VASTMSEGEditor/VASTLFOEditorPane.h"/>
+        <FILE id="QElIjT" name="VASTMSEGEditor.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTMSEGEditor/VASTMSEGEditor.cpp"/>
+        <FILE id="BTnVom" name="VASTMSEGEditor.h" compile="0" resource="0"
+              file="Source/Plugin/VASTMSEGEditor/VASTMSEGEditor.h"/>
+        <FILE id="nBC6XL" name="VASTMSEGEditorPane.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTMSEGEditor/VASTMSEGEditorPane.cpp"/>
+        <FILE id="C48l0k" name="VASTMSEGEditorPane.h" compile="0" resource="0"
+              file="Source/Plugin/VASTMSEGEditor/VASTMSEGEditorPane.h"/>
+        <FILE id="bGswNv" name="VASTStepSeqEditor.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTMSEGEditor/VASTStepSeqEditor.cpp"/>
+        <FILE id="tsHPWy" name="VASTStepSeqEditor.h" compile="0" resource="0"
+              file="Source/Plugin/VASTMSEGEditor/VASTStepSeqEditor.h"/>
+        <FILE id="JRJzpY" name="VASTStepSeqEditorPane.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTMSEGEditor/VASTStepSeqEditorPane.cpp"/>
+        <FILE id="KsIraG" name="VASTStepSeqEditorPane.h" compile="0" resource="0"
+              file="Source/Plugin/VASTMSEGEditor/VASTStepSeqEditorPane.h"/>
+      </GROUP>
+      <GROUP id="{982DA74D-F177-0B47-7612-D258B896F927}" name="VASTPreset">
+        <FILE id="A3YhdC" name="VASTPresetComponent.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTPreset/VASTPresetComponent.cpp"/>
+        <FILE id="qXTNKC" name="VASTPresetComponent.h" compile="0" resource="0"
+              file="Source/Plugin/VASTPreset/VASTPresetComponent.h"/>
+        <FILE id="jwqZu5" name="VASTPresetData.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTPreset/VASTPresetData.cpp"/>
+        <FILE id="yHrRNF" name="VASTPresetData.h" compile="0" resource="0"
+              file="Source/Plugin/VASTPreset/VASTPresetData.h"/>
+        <FILE id="HfRkwJ" name="VASTPresetElement.h" compile="0" resource="0"
+              file="Source/Plugin/VASTPreset/VASTPresetElement.h"/>
+        <FILE id="X0Q6wY" name="VASTPresetStars.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTPreset/VASTPresetStars.cpp"/>
+        <FILE id="e4pAff" name="VASTPresetStars.h" compile="0" resource="0"
+              file="Source/Plugin/VASTPreset/VASTPresetStars.h"/>
+        <FILE id="T3354i" name="VASTPresetTreeHeader.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTPreset/VASTPresetTreeHeader.cpp"/>
+        <FILE id="CYi6ZO" name="VASTPresetTreeHeader.h" compile="0" resource="0"
+              file="Source/Plugin/VASTPreset/VASTPresetTreeHeader.h"/>
+      </GROUP>
+      <GROUP id="{C6F94F81-65AC-975A-98BC-94DB7DB6C3EE}" name="VASTScopeDisplay">
+        <FILE id="GzBrHc" name="VASTFilterDisplay.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTScopeDisplay/VASTFilterDisplay.cpp"/>
+        <FILE id="VIdP0A" name="VASTFilterDisplay.h" compile="0" resource="0"
+              file="Source/Plugin/VASTScopeDisplay/VASTFilterDisplay.h"/>
+        <FILE id="s068OF" name="VASTModMatCurveDisplay.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTScopeDisplay/VASTModMatCurveDisplay.cpp"/>
+        <FILE id="ChQKCh" name="VASTModMatCurveDisplay.h" compile="0" resource="0"
+              file="Source/Plugin/VASTScopeDisplay/VASTModMatCurveDisplay.h"/>
+        <FILE id="SV2jEd" name="VASTOscilloscope.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTScopeDisplay/VASTOscilloscope.cpp"/>
+        <FILE id="BuYeTc" name="VASTOscilloscope.h" compile="0" resource="0"
+              file="Source/Plugin/VASTScopeDisplay/VASTOscilloscope.h"/>
+        <FILE id="hDbmW7" name="VASTOscilloscopeOGL2D.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTScopeDisplay/VASTOscilloscopeOGL2D.cpp"/>
+        <FILE id="rkITJs" name="VASTOscilloscopeOGL2D.h" compile="0" resource="0"
+              file="Source/Plugin/VASTScopeDisplay/VASTOscilloscopeOGL2D.h"/>
+        <FILE id="BaX8K0" name="VASTRingBuffer.h" compile="0" resource="0"
+              file="Source/Plugin/VASTScopeDisplay/VASTRingBuffer.h"/>
+      </GROUP>
+      <GROUP id="{E3585E0F-6714-3261-3AC1-4B1EDE2F0903}" name="VASTUtils">
+        <FILE id="gvs2EZ" name="VASTGUINotifier.h" compile="0" resource="0"
+              file="Source/Plugin/VASTUtils/VASTGUINotifier.h"/>
+        <FILE id="o3DktJ" name="VASTLookAndFeel.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTUtils/VASTLookAndFeel.cpp"/>
+        <FILE id="yap1Tc" name="VASTLookAndFeel.h" compile="0" resource="0"
+              file="Source/Plugin/VASTUtils/VASTLookAndFeel.h"/>
+        <FILE id="hs4DeX" name="VASTLookAndFeelThemeDark.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTUtils/VASTLookAndFeelThemeDark.cpp"/>
+        <FILE id="vCXjmD" name="VASTLookAndFeelThemeDark.h" compile="0" resource="0"
+              file="Source/Plugin/VASTUtils/VASTLookAndFeelThemeDark.h"/>
+        <FILE id="aWUOWr" name="VASTLookAndFeelThemeDefault.cpp" compile="1"
+              resource="0" file="Source/Plugin/VASTUtils/VASTLookAndFeelThemeDefault.cpp"/>
+        <FILE id="DvtoBC" name="VASTLookAndFeelThemeDefault.h" compile="0"
+              resource="0" file="Source/Plugin/VASTUtils/VASTLookAndFeelThemeDefault.h"/>
+        <FILE id="YtFCP7" name="VASTLookAndFeelThemeIce.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTUtils/VASTLookAndFeelThemeIce.cpp"/>
+        <FILE id="n2L98j" name="VASTLookAndFeelThemeIce.h" compile="0" resource="0"
+              file="Source/Plugin/VASTUtils/VASTLookAndFeelThemeIce.h"/>
+        <FILE id="lwvRxh" name="VASTLookAndFeelThemeTech.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTUtils/VASTLookAndFeelThemeTech.cpp"/>
+        <FILE id="JjMMNW" name="VASTLookAndFeelThemeTech.h" compile="0" resource="0"
+              file="Source/Plugin/VASTUtils/VASTLookAndFeelThemeTech.h"/>
+        <FILE id="orMAJ0" name="VASTUndoableWavetableAction.cpp" compile="1"
+              resource="0" file="Source/Plugin/VASTUtils/VASTUndoableWavetableAction.cpp"/>
+        <FILE id="SbN1sE" name="VASTUndoableWavetableAction.h" compile="0"
+              resource="0" file="Source/Plugin/VASTUtils/VASTUndoableWavetableAction.h"/>
+      </GROUP>
+      <GROUP id="{161536AF-D259-C428-4801-D2D5C8328845}" name="VASTWTEditor">
+        <FILE id="WUY1bR" name="VASTFreqDomainViewport.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTWTEditor/VASTFreqDomainViewport.cpp"/>
+        <FILE id="Mgd6cc" name="VASTFreqDomainViewport.h" compile="0" resource="0"
+              file="Source/Plugin/VASTWTEditor/VASTFreqDomainViewport.h"/>
+        <FILE id="uMfNj5" name="VASTPositionViewport.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTWTEditor/VASTPositionViewport.cpp"/>
+        <FILE id="hCQmZl" name="VASTPositionViewport.h" compile="0" resource="0"
+              file="Source/Plugin/VASTWTEditor/VASTPositionViewport.h"/>
+        <FILE id="Qfic5k" name="VASTSamplerViewport.cpp" compile="1" resource="0"
+              file="Source/Plugin/VASTWTEditor/VASTSamplerViewport.cpp"/>
+        <FILE id="cMYtgi" name="VASTSamplerViewport.h" compile="0" resource="0"
+              file="Source/Plugin/VASTWTEditor/VASTSamplerViewport.h"/>
+      </GROUP>
+      <FILE id="KIiAM1" name="VASTArpComponent.cpp" compile="1" resource="0"
+            file="Source/Plugin/VASTArpComponent.cpp"/>
+      <FILE id="Bo7EYN" name="VASTArpComponent.h" compile="0" resource="0"
+            file="Source/Plugin/VASTArpComponent.h"/>
+      <FILE id="P7urFr" name="VASTAudioProcessor.cpp" compile="1" resource="0"
+            file="Source/Plugin/VASTAudioProcessor.cpp"/>
+      <FILE id="f3ciTn" name="VASTAudioProcessor.h" compile="0" resource="0"
+            file="Source/Plugin/VASTAudioProcessor.h"/>
+      <FILE id="WqLL1u" name="VASTAudioProcessorEditor.cpp" compile="1" resource="0"
+            file="Source/Plugin/VASTAudioProcessorEditor.cpp"/>
+      <FILE id="Y6cwSF" name="VASTAudioProcessorEditor.h" compile="0" resource="0"
+            file="Source/Plugin/VASTAudioProcessorEditor.h"/>
+      <FILE id="syEuA6" name="VASTFilterComponent.cpp" compile="1" resource="0"
+            file="Source/Plugin/VASTFilterComponent.cpp"/>
+      <FILE id="ynYyC8" name="VASTFilterComponent.h" compile="0" resource="0"
+            file="Source/Plugin/VASTFilterComponent.h"/>
+      <FILE id="D1c1xS" name="VASTFXComponent.cpp" compile="1" resource="0"
+            file="Source/Plugin/VASTFXComponent.cpp"/>
+      <FILE id="pn5YIk" name="VASTFXComponent.h" compile="0" resource="0"
+            file="Source/Plugin/VASTFXComponent.h"/>
+      <FILE id="dwhSek" name="VASTGeneratorsComponent.cpp" compile="1" resource="0"
+            file="Source/Plugin/VASTGeneratorsComponent.cpp"/>
+      <FILE id="xZjrBp" name="VASTGeneratorsComponent.h" compile="0" resource="0"
+            file="Source/Plugin/VASTGeneratorsComponent.h"/>
+      <FILE id="opHXjl" name="VASTHeaderComponent.cpp" compile="1" resource="0"
+            file="Source/Plugin/VASTHeaderComponent.cpp"/>
+      <FILE id="u31aAf" name="VASTHeaderComponent.h" compile="0" resource="0"
+            file="Source/Plugin/VASTHeaderComponent.h"/>
+      <FILE id="kMWs9o" name="VASTKeyboardComponent.cpp" compile="1" resource="0"
+            file="Source/Plugin/VASTKeyboardComponent.cpp"/>
+      <FILE id="ViBRAM" name="VASTKeyboardComponent.h" compile="0" resource="0"
+            file="Source/Plugin/VASTKeyboardComponent.h"/>
+      <FILE id="zIXWTy" name="VASTLFOMsegComponent.cpp" compile="1" resource="0"
+            file="Source/Plugin/VASTLFOMsegComponent.cpp"/>
+      <FILE id="WNEobh" name="VASTLFOMsegComponent.h" compile="0" resource="0"
+            file="Source/Plugin/VASTLFOMsegComponent.h"/>
+      <FILE id="IpZwto" name="VASTLogoComponent.cpp" compile="1" resource="0"
+            file="Source/Plugin/VASTLogoComponent.cpp"/>
+      <FILE id="i5GnmG" name="VASTLogoComponent.h" compile="0" resource="0"
+            file="Source/Plugin/VASTLogoComponent.h"/>
+      <FILE id="Wg6TdN" name="VASTMatrixComponent.cpp" compile="1" resource="0"
+            file="Source/Plugin/VASTMatrixComponent.cpp"/>
+      <FILE id="KDqXC8" name="VASTMatrixComponent.h" compile="0" resource="0"
+            file="Source/Plugin/VASTMatrixComponent.h"/>
+      <FILE id="ZVWibk" name="VASTMasterVoicingComponent.cpp" compile="1"
+            resource="0" file="Source/Plugin/VASTMasterVoicingComponent.cpp"/>
+      <FILE id="G82Qyc" name="VASTMasterVoicingComponent.h" compile="0" resource="0"
+            file="Source/Plugin/VASTMasterVoicingComponent.h"/>
+      <FILE id="DD3iHc" name="VASTOscillatorComponent.cpp" compile="1" resource="0"
+            file="Source/Plugin/VASTOscillatorComponent.cpp"/>
+      <FILE id="HtyCxU" name="VASTOscillatorComponent.h" compile="0" resource="0"
+            file="Source/Plugin/VASTOscillatorComponent.h"/>
+      <FILE id="RN4Blf" name="VASTPresetEditorComponent.cpp" compile="1"
+            resource="0" file="Source/Plugin/VASTPresetEditorComponent.cpp"/>
+      <FILE id="cTr57q" name="VASTPresetEditorComponent.h" compile="0" resource="0"
+            file="Source/Plugin/VASTPresetEditorComponent.h"/>
+      <FILE id="GnPand" name="VASTSamplerEditorComponent.cpp" compile="1"
+            resource="0" file="Source/Plugin/VASTSamplerEditorComponent.cpp"/>
+      <FILE id="rKdJ4T" name="VASTSamplerEditorComponent.h" compile="0" resource="0"
+            file="Source/Plugin/VASTSamplerEditorComponent.h"/>
+      <FILE id="VkMaTk" name="VASTSamplerEditorComponentHeader.cpp" compile="1"
+            resource="0" file="Source/Plugin/VASTSamplerEditorComponentHeader.cpp"/>
+      <FILE id="lWYQI5" name="VASTSamplerEditorComponentHeader.h" compile="0"
+            resource="0" file="Source/Plugin/VASTSamplerEditorComponentHeader.h"/>
+      <FILE id="G001ka" name="VASTSamplerNoiseComponent.cpp" compile="1"
+            resource="0" file="Source/Plugin/VASTSamplerNoiseComponent.cpp"/>
+      <FILE id="LnpVCA" name="VASTSamplerNoiseComponent.h" compile="0" resource="0"
+            file="Source/Plugin/VASTSamplerNoiseComponent.h"/>
+      <FILE id="pXh1nx" name="VASTSidePanelComponent.cpp" compile="1" resource="0"
+            file="Source/Plugin/VASTSidePanelComponent.cpp"/>
+      <FILE id="MYT1A6" name="VASTSidePanelComponent.h" compile="0" resource="0"
+            file="Source/Plugin/VASTSidePanelComponent.h"/>
+      <FILE id="ZfBaJL" name="VASTSidePanelHeader.cpp" compile="1" resource="0"
+            file="Source/Plugin/VASTSidePanelHeader.cpp"/>
+      <FILE id="Y3c8Ev" name="VASTSidePanelHeader.h" compile="0" resource="0"
+            file="Source/Plugin/VASTSidePanelHeader.h"/>
+      <FILE id="ylpLZn" name="VASTWaveTableEditorComponent.cpp" compile="1"
+            resource="0" file="Source/Plugin/VASTWaveTableEditorComponent.cpp"/>
+      <FILE id="X6F3Gr" name="VASTWaveTableEditorComponent.h" compile="0"
+            resource="0" file="Source/Plugin/VASTWaveTableEditorComponent.h"/>
+      <FILE id="l3ewp2" name="VASTWaveTableEditorView.cpp" compile="1" resource="0"
+            file="Source/Plugin/VASTWaveTableEditorView.cpp"/>
+      <FILE id="K6V4SM" name="VASTWaveTableEditorView.h" compile="0" resource="0"
+            file="Source/Plugin/VASTWaveTableEditorView.h"/>
+      <FILE id="ieDWNZ" name="VASTWaveTableEditorViewHeader.cpp" compile="1"
+            resource="0" file="Source/Plugin/VASTWaveTableEditorViewHeader.cpp"/>
+      <FILE id="iIeUby" name="VASTWaveTableEditorViewHeader.h" compile="0"
+            resource="0" file="Source/Plugin/VASTWaveTableEditorViewHeader.h"/>
+      <FILE id="P3WGDH" name="VASTVaporizerComponent.cpp" compile="1" resource="0"
+            file="Source/Plugin/VASTVaporizerComponent.cpp"/>
+      <FILE id="cuFSxi" name="VASTVaporizerComponent.h" compile="0" resource="0"
+            file="Source/Plugin/VASTVaporizerComponent.h"/>
+      <FILE id="yhm1B3" name="VASTVUMeter.cpp" compile="1" resource="0" file="Source/Plugin/VASTVUMeter.cpp"/>
+      <FILE id="woyCmw" name="VASTVUMeter.h" compile="0" resource="0" file="Source/Plugin/VASTVUMeter.h"/>
+      <FILE id="YESWO5" name="VASTVUMeterSource.h" compile="0" resource="0"
+            file="Source/Plugin/VASTVUMeterSource.h"/>
+    </GROUP>
+    <GROUP id="{C203E609-90C7-57FC-C898-662223510738}" name="muFFT">
+      <GROUP id="{0B364E15-8749-A0F8-1678-67103BDFFC61}" name="doxygen">
+        <FILE id="aOtVF1" name="fft.md" compile="0" resource="1" file="Source/muFFT/doxygen/fft.md"/>
+      </GROUP>
+      <GROUP id="{B4D65BFF-415C-8180-E75C-FE3D0DF4F1C4}" name="x86">
+        <FILE id="KFqjoe" name="kernel.h" compile="0" resource="0" file="Source/muFFT/x86/kernel.h"/>
+      </GROUP>
+      <FILE id="w4LBU3" name="CMakeLists.txt" compile="0" resource="1" file="Source/muFFT/CMakeLists.txt"/>
+      <FILE id="DCCduq" name="COPYING" compile="0" resource="1" file="Source/muFFT/COPYING"/>
+      <FILE id="kuEtrW" name="COPYING.GPLv2" compile="0" resource="1" file="Source/muFFT/COPYING.GPLv2"/>
+      <FILE id="bn22u9" name="cpu.c" compile="1" resource="0" file="Source/muFFT/cpu.c"/>
+      <FILE id="cxTefo" name="Doxyfile" compile="0" resource="1" file="Source/muFFT/Doxyfile"/>
+      <FILE id="IJQyF6" name="fft.c" compile="1" resource="0" file="Source/muFFT/fft.c"/>
+      <FILE id="uBX20h" name="fft.h" compile="0" resource="0" file="Source/muFFT/fft.h"/>
+      <FILE id="xLpM3w" name="fft_internal.h" compile="0" resource="0" file="Source/muFFT/fft_internal.h"/>
+      <FILE id="aFeL3p" name="kernel.c" compile="1" resource="0" file="Source/muFFT/kernel.c"/>
+      <FILE id="lhMd0g" name="mufft.pc.in" compile="0" resource="1" file="Source/muFFT/mufft.pc.in"/>
+      <FILE id="QrM1WG" name="README.md" compile="0" resource="1" file="Source/muFFT/README.md"/>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX" vstFolder="/SDKs/VST3-SDK" extraCompilerFlags="-W2"
+               iosDevelopmentTeamID="PK93HYD6ZN" smallIcon="A2sWSy" bigIcon="A2sWSy"
+               hardenedRuntime="1">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" osxCompatibility="10.6 SDK" isDebug="1" optimisation="1"
+                       targetName="VASTvaporizer2_dbg" defines="_MACOSX _MACOSX64BIT SSE_AVX=AVX "
+                       enablePluginBinaryCopyStep="1" vstBinaryLocation="/Library/Audio/Plug-Ins/VST/"
+                       auBinaryLocation="/Library/Audio/Plug-Ins/Components/" customXcodeFlags="VALID_ARCHS = &quot;x86_64&quot;,  CLANG_X86_VECTOR_INSTRUCTIONS=avx"
+                       vst3BinaryLocation="/Library/Audio/Plug-Ins/VST3/" osxArchitecture="64BitIntel"
+                       fastMath="1" macOSDeploymentTarget="10.6"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="VASTvaporizer2"
+                       linkTimeOptimisation="1" defines="_MACOSX _MACOSX32BIT NDEBUG  SSE_AVX=AVX "
+                       enablePluginBinaryCopyStep="1" osxArchitecture="32BitUniversal"
+                       vstBinaryLocation="/Library/Audio/Plug-Ins/VST/" auBinaryLocation="/Library/Audio/Plug-Ins/Components/"
+                       customXcodeFlags="VALID_ARCHS = &quot;x86_64&quot;,  CLANG_X86_VECTOR_INSTRUCTIONS=avx"
+                       vst3BinaryLocation="/Library/Audio/Plug-Ins/VST3/" fastMath="1"/>
+        <CONFIGURATION name="Release 64bit" isDebug="0" optimisation="3" targetName="VASTvaporizer2_64"
+                       linkTimeOptimisation="1" defines="_MACOSX _MACOSX64BIT NDEBUG  SSE_AVX=AVX"
+                       enablePluginBinaryCopyStep="1" vstBinaryLocation="/Library/Audio/Plug-Ins/VST/"
+                       auBinaryLocation="/Library/Audio/Plug-Ins/Components/" headerPath="/Users/setup/Library/Developer/VST/VST_SDK/VST2_SDK"
+                       customXcodeFlags="VALID_ARCHS = &quot;x86_64&quot;,  CLANG_X86_VECTOR_INSTRUCTIONS=avx"
+                       vst3BinaryLocation="/Library/Audio/Plug-Ins/VST3/" fastMath="1"
+                       stripLocalSymbols="1" aaxBinaryLocation="/Library/Application Support/Avid/Audio/Plug-Ins/"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_gui_extra" path="/Users/d026198/Desktop/JUCE-OSX/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="/Users/d026198/Desktop/JUCE-OSX/modules"/>
+        <MODULEPATH id="juce_graphics" path="/Users/d026198/Desktop/JUCE-OSX/modules"/>
+        <MODULEPATH id="juce_events" path="/Users/d026198/Desktop/JUCE-OSX/modules"/>
+        <MODULEPATH id="juce_data_structures" path="/Users/d026198/Desktop/JUCE-OSX/modules"/>
+        <MODULEPATH id="juce_cryptography" path="/Users/d026198/Desktop/JUCE-OSX/modules"/>
+        <MODULEPATH id="juce_core" path="/Users/d026198/Desktop/JUCE-OSX/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="/Users/d026198/Desktop/JUCE-OSX/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="/Users/d026198/Desktop/JUCE-OSX/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="/Users/d026198/Desktop/JUCE-OSX/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="/Users/d026198/Desktop/JUCE-OSX/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="/Users/d026198/Desktop/JUCE-OSX/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="/Users/d026198/Desktop/JUCE-OSX/modules"/>
+        <MODULEPATH id="juce_dsp" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../JUCE/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+    <XCODE_MAC targetFolder="Builds/MacOSX_SSE" smallIcon="A2sWSy" bigIcon="A2sWSy"
+               iosDevelopmentTeamID="PK93HYD6ZN" extraCompilerFlags="-W2" hardenedRuntime="1">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="0" name="Release 64bit SSE3" targetName="VASTvaporizer2_64_SSE"
+                       headerPath="/Users/setup/Library/Developer/VST/VST_SDK/VST2_SDK"
+                       defines="_MACOSX _MACOSX64BIT NDEBUG  SSE_AVX=SSE2 _SSE2_VERSION "
+                       vst3BinaryLocation="/Library/Audio/Plug-Ins/VST3/" auBinaryLocation="/Library/Audio/Plug-Ins/Components/"
+                       vstBinaryLocation="/Library/Audio/Plug-Ins/VST/" optimisation="3"
+                       customXcodeFlags="VALID_ARCHS = &quot;x86_64&quot;, CLANG_X86_VECTOR_INSTRUCTIONS=sse3"
+                       osxArchitecture="64BitIntel" fastMath="1" stripLocalSymbols="1"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_gui_extra"/>
+        <MODULEPATH id="juce_gui_basics"/>
+        <MODULEPATH id="juce_graphics"/>
+        <MODULEPATH id="juce_events"/>
+        <MODULEPATH id="juce_dsp"/>
+        <MODULEPATH id="juce_data_structures"/>
+        <MODULEPATH id="juce_cryptography"/>
+        <MODULEPATH id="juce_core"/>
+        <MODULEPATH id="juce_audio_utils"/>
+        <MODULEPATH id="juce_audio_processors"/>
+        <MODULEPATH id="juce_audio_plugin_client"/>
+        <MODULEPATH id="juce_audio_formats"/>
+        <MODULEPATH id="juce_audio_devices"/>
+        <MODULEPATH id="juce_audio_basics"/>
+        <MODULEPATH id="juce_opengl" path="../../JUCE/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+    <VS2019 targetFolder="Builds/VisualStudio2019" extraCompilerFlags="-W3 /arch:${SSE_AVX} /Qvec-report:1 /permissive- /I&quot;C:\Vaporizer2\asiosdk\common&quot; "
+            extraLinkerFlags="/LTCG /NXCOMPAT:NO" smallIcon="A2sWSy" bigIcon="A2sWSy">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug FLStudio 64bit" targetName="VASTvaporizer2_64_dbg"
+                       defines="_WIN64 _WIN64BIT SSE_AVX=AVX" linkTimeOptimisation="0"
+                       enablePluginBinaryCopyStep="1" vstBinaryLocation="%ProgramW6432%\Steinberg\VSTPlugins\VASTvaporizer"
+                       winArchitecture="x64" debugInformationFormat="ProgramDatabase"
+                       fastMath="1" optimisation="1" useRuntimeLibDLL="0" generateManifest="1"/>
+        <CONFIGURATION isDebug="0" name="Release Optimized 64bit" targetName="VASTvaporizer2_64"
+                       defines="_WIN64 _WIN64BIT NDEBUG SSE_AVX=AVX " linkTimeOptimisation="1"
+                       enablePluginBinaryCopyStep="1" vstBinaryLocation="%ProgramW6432%\Steinberg\VSTPlugins\Vaporizer2"
+                       winArchitecture="x64" fastMath="1" useRuntimeLibDLL="0" generateManifest="1"
+                       winWarningLevel="4" optimisation="4"/>
+        <CONFIGURATION isDebug="0" name="Release Optimized 64bit SSE2" targetName="VASTvaporizer2_64_SSE2"
+                       defines="_WIN64 _WIN64BIT NDEBUG SSE_AVX=SSE2 _SSE2_VERSION"
+                       linkTimeOptimisation="1" enablePluginBinaryCopyStep="1" vstBinaryLocation="%ProgramW6432%\Steinberg\VSTPlugins\Vaporizer2"
+                       winArchitecture="x64" fastMath="1" useRuntimeLibDLL="0" generateManifest="1"
+                       optimisation="4" winWarningLevel="2"/>
+        <CONFIGURATION isDebug="0" name="Release Optimized 32bit" targetName="VASTvaporizer2"
+                       defines="_WIN32 _WIN32BIT NDEBUG SSE_AVX=AVX " linkTimeOptimisation="1"
+                       enablePluginBinaryCopyStep="1" vstBinaryLocation="%ProgramW6432%\Steinberg\VSTPlugins\Vaporizer2"
+                       winArchitecture="Win32" fastMath="1" useRuntimeLibDLL="0" generateManifest="1"
+                       optimisation="4" winWarningLevel="2"/>
+        <CONFIGURATION isDebug="0" name="Release Optimized 32bit SSE2" targetName="VASTvaporizer2_SSE2"
+                       defines="_WIN32 _WIN32BIT NDEBUG SSE_AVX=SSE2 _SSE2_VERSION"
+                       linkTimeOptimisation="1" enablePluginBinaryCopyStep="1" vstBinaryLocation="%ProgramW6432%\Steinberg\VSTPlugins\Vaporizer2"
+                       winArchitecture="Win32" fastMath="1" useRuntimeLibDLL="0" generateManifest="1"
+                       optimisation="4" winWarningLevel="2"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_opengl"/>
+        <MODULEPATH id="juce_gui_extra"/>
+        <MODULEPATH id="juce_gui_basics"/>
+        <MODULEPATH id="juce_graphics"/>
+        <MODULEPATH id="juce_events"/>
+        <MODULEPATH id="juce_dsp"/>
+        <MODULEPATH id="juce_data_structures"/>
+        <MODULEPATH id="juce_cryptography"/>
+        <MODULEPATH id="juce_core"/>
+        <MODULEPATH id="juce_audio_utils"/>
+        <MODULEPATH id="juce_audio_processors"/>
+        <MODULEPATH id="juce_audio_plugin_client"/>
+        <MODULEPATH id="juce_audio_formats"/>
+        <MODULEPATH id="juce_audio_devices"/>
+        <MODULEPATH id="juce_audio_basics"/>
+      </MODULEPATHS>
+    </VS2019>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULES id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULES id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULES id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULES id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="0"
+             useGlobalPath="1"/>
+    <MODULES id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULES id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULES id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULES id="juce_cryptography" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULES id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_dsp" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULES id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULES id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULES id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULES id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+  <JUCEOPTIONS DROWAUDIO_USE_FFTREAL="disabled" DROWAUDIO_USE_SOUNDTOUCH="disabled"
+               DROWAUDIO_USE_CURL="disabled" JUCE_WEB_BROWSER="0" JUCE_PLUGINHOST_AU="0"
+               JUCE_USE_MP3AUDIOFORMAT="1" JUCE_ASIO="1" JUCE_WIN_PER_MONITOR_DPI_AWARE="0"/>
+  <LIVE_SETTINGS>
+    <WINDOWS buildEnabled="0"/>
+    <OSX/>
+  </LIVE_SETTINGS>
+</JUCERPROJECT>

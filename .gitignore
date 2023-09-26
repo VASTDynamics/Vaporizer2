@@ -1,0 +1,17 @@
+VASTvaporizer_commercial.jucer
+VASTvaporizer_vastbuild.jucer
+VASTvaporizer/Builds/
+VASTLicense.*
+post_build_script_win.bat
+build_script_win.bat
+MacOS Build Chain.docx
+*.o
+*.dll
+*.so
+*.so*
+*.dylib
+*.a
+*.vst*
+*.au
+*.aax
+.DS_Store
