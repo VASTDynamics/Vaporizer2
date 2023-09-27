@@ -5,7 +5,7 @@ VAST Dynamics Audio Software (TM)
 #include "VASTDecimator.h"
 #include <stdio.h>
 
-#ifdef _MACOSX
+#if defined _MACOSX || defined JUCE_LINUX
     #include <pmmintrin.h>
     #include <cstddef>
 #else
@@ -20,7 +20,7 @@ VAST Dynamics Audio Software (TM)
 CDecimator::CDecimator(void)
 {
 	//FACTOR4
-#ifdef _MACOSX
+#if defined _MACOSX || defined JUCE_LINUX
 	m_pIRBuffer = new float[C_FACTOR4_IR_LENGTH];
 #else
 	m_pIRBuffer = (float*)_aligned_malloc(C_FACTOR4_IR_LENGTH*sizeof(float), 16);
@@ -28,7 +28,7 @@ CDecimator::CDecimator(void)
 	// flush buffer
 	memset(m_pIRBuffer, 0, C_FACTOR4_IR_LENGTH*sizeof(float));
 
-#ifdef _MACOSX
+#if defined _MACOSX || defined JUCE_LINUX
 	m_pLeftInputBuffer = new float[C_FACTOR4_IR_LENGTH * 2];
 	m_pRightInputBuffer = new float[C_FACTOR4_IR_LENGTH * 2];
 #else
@@ -56,7 +56,7 @@ CDecimator::CDecimator(void)
 CDecimator::~CDecimator(void)
 {
 	// free up our input buffers
-#ifdef _MACOSX
+#if defined _MACOSX || defined JUCE_LINUX
 	if (m_pLeftInputBuffer) delete[] m_pLeftInputBuffer;
 	if (m_pRightInputBuffer) delete[] m_pRightInputBuffer;
 	if (m_pIRBuffer) delete[] m_pIRBuffer;
@@ -512,11 +512,11 @@ bool CDecimator::decimateNextOutputSample4(float xnL, float xnR, float& fLeftOut
 		yn_accR[0] += yn_accR[1] + yn_accR[2] + yn_accR[3];
 		yn_accumR = yn_accR[0];
 
-#elif _MACOSX
+#elif _MACOSX || JUCE_LINUX
     //MacOSX intrinsic version with SSE, works with WIN32/64 as well
         if (i == 0) {
         //see http://www.drdobbs.com/optimizing-cc-with-inline-assembly-progr/184401967?pgno=3
-#ifdef _MACOSX        
+#if defined _MACOSX || defined JUCE_LINUX
             typedef float Sse[4] __attribute__ ((aligned(16)));
             Sse sse4 __attribute__ ((aligned(16))) = { 0.0, 0.0, 0.0, 0.0 };
 #elif _WIN32 || _WIN64

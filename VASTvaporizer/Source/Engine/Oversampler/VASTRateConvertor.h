@@ -4,6 +4,7 @@ VAST Dynamics Audio Software (TM)
 
 #pragma once
 #include "../VASTPluginConstants.h"
+#include <cstring>
 
 class CRateConvertor
 {

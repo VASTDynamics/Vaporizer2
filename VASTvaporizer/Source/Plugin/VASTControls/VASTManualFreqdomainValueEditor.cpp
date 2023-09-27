@@ -21,7 +21,7 @@
 #include "../VASTAudioProcessor.h"
 #include "../VASTControls/VASTParameterSlider.h"
 #include "../VASTWTEditor/VASTFreqDomainViewport.h"
-#include "../VASTWavetableEditorComponent.h"
+#include "../VASTWaveTableEditorComponent.h"
 //[/Headers]
 
 #include "VASTManualFreqdomainValueEditor.h"
