@@ -37,7 +37,7 @@ Available formats: VST2 / VST3 / AU / AAX plugins and a standalone version for b
 ### 2. macOS
   - Build Projucer from JUCE/extras/Projucer/Builds/MacOSX/Projucer.xcodeproj
   - Run Projucer
-  - Set Global Paths from Menu Projucer>Global Paths..
+  - Set Global Paths from Menu Projucer>Global Paths.
   - Set path to JUCE, JUCE modules, VST SDK, AAX SDK
 
 ## Screenshot
