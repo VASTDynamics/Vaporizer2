@@ -2,15 +2,15 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2022 - Raw Material Software Limited
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
+   By using JUCE, you agree to the terms of both the JUCE 7 End-User License
+   Agreement and JUCE Privacy Policy.
 
-   End User License Agreement: www.juce.com/juce-6-licence
+   End User License Agreement: www.juce.com/juce-7-licence
    Privacy Policy: www.juce.com/juce-privacy-policy
 
    Or: You may also use this code under the terms of the GPL v3 (see
@@ -35,12 +35,14 @@
 #include "juce_box2d.h"
 
 JUCE_BEGIN_IGNORE_WARNINGS_MSVC (6011)
-JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wconversion",
-                                     "-Wsign-conversion",
+JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wcast-align",
+                                     "-Wconversion",
                                      "-Wfloat-conversion",
-                                     "-Wcast-align",
-                                     "-Wswitch-enum",
+                                     "-Wfloat-equal",
+                                     "-Wmaybe-uninitialized",
+                                     "-Wsign-conversion",
                                      "-Wswitch-default",
+                                     "-Wswitch-enum",
                                      "-Wunused-but-set-variable",
                                      "-Wzero-as-null-pointer-constant")
 

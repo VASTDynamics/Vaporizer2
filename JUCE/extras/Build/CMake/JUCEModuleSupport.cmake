@@ -1,15 +1,15 @@
 # ==============================================================================
 #
 #  This file is part of the JUCE library.
-#  Copyright (c) 2020 - Raw Material Software Limited
+#  Copyright (c) 2022 - Raw Material Software Limited
 #
 #  JUCE is an open source library subject to commercial or open-source
 #  licensing.
 #
-#  By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-#  Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
+#  By using JUCE, you agree to the terms of both the JUCE 7 End-User License
+#  Agreement and JUCE Privacy Policy.
 #
-#  End User License Agreement: www.juce.com/juce-6-licence
+#  End User License Agreement: www.juce.com/juce-7-licence
 #  Privacy Policy: www.juce.com/juce-privacy-policy
 #
 #  Or: You may also use this code under the terms of the GPL v3 (see
@@ -33,7 +33,7 @@
 # ==================================================================================================
 
 include_guard(GLOBAL)
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.22)
 
 # ==================================================================================================
 
@@ -73,9 +73,10 @@ endfunction()
 # ==================================================================================================
 
 function(_juce_add_standard_defs juce_target)
+    _juce_get_debug_config_genex(debug_config)
     target_compile_definitions(${juce_target} INTERFACE
         JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1
-        $<IF:$<CONFIG:DEBUG>,DEBUG=1 _DEBUG=1,NDEBUG=1 _NDEBUG=1>
+        $<IF:${debug_config},DEBUG=1 _DEBUG=1,NDEBUG=1 _NDEBUG=1>
         $<$<PLATFORM_ID:Android>:JUCE_ANDROID=1>)
 endfunction()
 
@@ -83,8 +84,10 @@ endfunction()
 
 macro(_juce_make_absolute path)
     if(NOT IS_ABSOLUTE "${${path}}")
-        get_filename_component("${path}" "${${path}}" ABSOLUTE BASE_DIR "${CMAKE_CURRENT_LIST_DIR}")
+        get_filename_component(${path} "${${path}}" ABSOLUTE BASE_DIR "${CMAKE_CURRENT_LIST_DIR}")
     endif()
+
+    string(REGEX REPLACE "\\\\" "/" ${path} "${${path}}")
 endmacro()
 
 macro(_juce_make_absolute_and_check path)
@@ -120,23 +123,23 @@ function(_juce_extract_metadata_block delim_str file_with_block out_dict)
 
     foreach(line IN LISTS module_header_contents)
         if(NOT append)
-            if(line MATCHES " *BEGIN_${delim_str} *")
+            if(line MATCHES "[\t ]*BEGIN_${delim_str}[\t ]*")
                 set(append YES)
             endif()
 
             continue()
         endif()
 
-        if(append AND (line MATCHES " *END_${delim_str} *"))
+        if(append AND (line MATCHES "[\t ]*END_${delim_str}[\t ]*"))
             break()
         endif()
 
-        if(line MATCHES "^ *([a-zA-Z]+):")
+        if(line MATCHES "^[\t ]*([a-zA-Z]+):")
             set(last_written_key "${CMAKE_MATCH_1}")
         endif()
 
-        string(REGEX REPLACE "^ *${last_written_key}: *" "" line "${line}")
-        string(REGEX REPLACE "[ ,]+" ";" line "${line}")
+        string(REGEX REPLACE "^[\t ]*${last_written_key}:[\t ]*" "" line "${line}")
+        string(REGEX REPLACE "[\t ,]+" ";" line "${line}")
 
         set_property(TARGET ${target_name} APPEND PROPERTY
             "INTERFACE_JUCE_${last_written_key}" "${line}")
@@ -153,24 +156,25 @@ function(_juce_get_metadata target key out_var)
 endfunction()
 
 # ==================================================================================================
-
 function(_juce_should_build_module_source filename output_var)
-    get_filename_component(trimmed_name "${filename}" NAME_WE)
+    get_filename_component(trimmed_filename "${filename}" NAME_WE)
+    string(TOLOWER "${trimmed_filename}" trimmed_filename_lowercase)
+
+    set(system_name_regex_for_suffix
+        "android\;Android"
+        "ios\;iOS"
+        "linux\;Linux|.*BSD"
+        "mac\;Darwin"
+        "osx\;Darwin"
+        "windows\;Windows")
 
     set(result TRUE)
 
-    set(pairs
-        "OSX\;Darwin"
-        "Windows\;Windows"
-        "Linux\;Linux"
-        "Android\;Android"
-        "iOS\;iOS")
-
-    foreach(pair IN LISTS pairs)
+    foreach(pair IN LISTS system_name_regex_for_suffix)
         list(GET pair 0 suffix)
-        list(GET pair 1 system_name)
+        list(GET pair 1 regex)
 
-        if((trimmed_name MATCHES "_${suffix}$") AND NOT (CMAKE_SYSTEM_NAME STREQUAL "${system_name}"))
+        if((trimmed_filename_lowercase MATCHES "_${suffix}$") AND NOT (CMAKE_SYSTEM_NAME MATCHES "${regex}"))
             set(result FALSE)
         endif()
     endforeach()
@@ -234,7 +238,7 @@ endfunction()
 # ==================================================================================================
 
 function(_juce_get_all_plugin_kinds out)
-    set(${out} AU AUv3 AAX Standalone Unity VST VST3 PARENT_SCOPE)
+    set(${out} AU AUv3 AAX LV2 Standalone Unity VST VST3 PARENT_SCOPE)
 endfunction()
 
 function(_juce_get_platform_plugin_kinds out)
@@ -249,7 +253,14 @@ function(_juce_get_platform_plugin_kinds out)
     endif()
 
     if(NOT CMAKE_SYSTEM_NAME STREQUAL "iOS" AND NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
-        list(APPEND result AAX Unity VST VST3)
+        list(APPEND result VST LV2)
+        if(NOT (CMAKE_SYSTEM_NAME MATCHES ".*BSD"))
+            list(APPEND result Unity VST3)
+        endif()
+    endif()
+
+    if((CMAKE_SYSTEM_NAME STREQUAL "Darwin" OR CMAKE_SYSTEM_NAME STREQUAL "Windows") AND NOT (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
+        list(APPEND result AAX)
     endif()
 
     set(${out} ${result} PARENT_SCOPE)
@@ -272,22 +283,29 @@ endfunction()
 
 # ==================================================================================================
 
-# Takes a target, a link visibility, and a variable-length list of framework
-# names. On macOS, finds the requested frameworks using `find_library` and
-# links them. On iOS, links directly with `-framework Name`.
+# Takes a target, a link visibility, if it should be a weak link, and a variable-length list of
+# framework names. On macOS, for non-weak links, this finds the requested frameworks using
+# `find_library`.
 function(_juce_link_frameworks target visibility)
-    foreach(framework IN LISTS ARGN)
+    set(options WEAK)
+    cmake_parse_arguments(JUCE_LINK_FRAMEWORKS "${options}" "" "" ${ARGN})
+    foreach(framework IN LISTS JUCE_LINK_FRAMEWORKS_UNPARSED_ARGUMENTS)
         if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-            find_library("juce_found_${framework}" "${framework}" REQUIRED)
-            target_link_libraries("${target}" "${visibility}" "${juce_found_${framework}}")
+            if(JUCE_LINK_FRAMEWORKS_WEAK)
+                set(framework_flags "-weak_framework ${framework}")
+            else()
+                find_library("juce_found_${framework}" "${framework}" REQUIRED)
+                set(framework_flags "${juce_found_${framework}}")
+            endif()
         elseif(CMAKE_SYSTEM_NAME STREQUAL "iOS")
             # CoreServices is only available on iOS 12+, we must link it weakly on earlier platforms
-            if((framework STREQUAL "CoreServices") AND (CMAKE_OSX_DEPLOYMENT_TARGET LESS 12.0))
+            if(JUCE_LINK_FRAMEWORKS_WEAK OR ((framework STREQUAL "CoreServices") AND (CMAKE_OSX_DEPLOYMENT_TARGET LESS 12.0)))
                 set(framework_flags "-weak_framework ${framework}")
             else()
                 set(framework_flags "-framework ${framework}")
             endif()
-
+        endif()
+        if(NOT framework_flags STREQUAL "")
             target_link_libraries("${target}" "${visibility}" "${framework_flags}")
         endif()
     endforeach()
@@ -297,14 +315,13 @@ endfunction()
 
 function(_juce_add_plugin_wrapper_target format path out_path)
     _juce_module_sources("${path}" "${out_path}" out_var headers)
-    list(FILTER out_var EXCLUDE REGEX "/juce_audio_plugin_client_utils.cpp$")
     set(target_name juce_audio_plugin_client_${format})
 
     _juce_add_interface_library("${target_name}" ${out_var})
     _juce_add_plugin_definitions("${target_name}" INTERFACE ${format})
     _juce_add_standard_defs("${target_name}")
 
-    target_compile_features("${target_name}" INTERFACE cxx_std_14)
+    target_compile_features("${target_name}" INTERFACE cxx_std_17)
     add_library("juce::${target_name}" ALIAS "${target_name}")
 
     if(format STREQUAL "AUv3")
@@ -314,6 +331,7 @@ function(_juce_add_plugin_wrapper_target format path out_path)
             _juce_link_frameworks("${target_name}" INTERFACE AudioUnit)
         endif()
     elseif(format STREQUAL "AU")
+        target_include_directories("${target_name}" INTERFACE "${out_path}/juce_audio_plugin_client/AU")
         _juce_link_frameworks("${target_name}" INTERFACE AudioUnit CoreAudioKit)
     endif()
 endfunction()
@@ -398,6 +416,11 @@ endfunction()
 
 # ==================================================================================================
 
+function(_juce_remove_empty_list_elements arg)
+    list(FILTER ${arg} EXCLUDE REGEX "^$")
+    set(${arg} ${${arg}} PARENT_SCOPE)
+endfunction()
+
 function(juce_add_module module_path)
     set(one_value_args INSTALL_PATH ALIAS_NAMESPACE)
     cmake_parse_arguments(JUCE_ARG "" "${one_value_args}" "" ${ARGN})
@@ -422,21 +445,16 @@ function(juce_add_module module_path)
     _juce_module_sources("${module_path}" "${base_path}" globbed_sources headers)
 
     if(${module_name} STREQUAL "juce_audio_plugin_client")
+        list(REMOVE_ITEM headers
+            "${module_path}/LV2/juce_LV2ManifestHelper.cpp"
+            "${module_path}/VST3/juce_VST3ManifestHelper.mm"
+            "${module_path}/VST3/juce_VST3ManifestHelper.cpp")
+
         _juce_get_platform_plugin_kinds(plugin_kinds)
 
         foreach(kind IN LISTS plugin_kinds)
             _juce_add_plugin_wrapper_target(${kind} "${module_path}" "${base_path}")
         endforeach()
-
-        set(utils_source
-            "${base_path}/${module_name}/juce_audio_plugin_client_utils.cpp")
-        add_library(juce_audio_plugin_client_utils INTERFACE)
-        target_sources(juce_audio_plugin_client_utils INTERFACE "${utils_source}")
-
-        if(JUCE_ARG_ALIAS_NAMESPACE)
-            add_library(${JUCE_ARG_ALIAS_NAMESPACE}::juce_audio_plugin_client_utils
-                ALIAS juce_audio_plugin_client_utils)
-        endif()
 
         file(GLOB_RECURSE all_module_files
             CONFIGURE_DEPENDS LIST_DIRECTORIES FALSE
@@ -484,8 +502,30 @@ function(juce_add_module module_path)
 
         target_link_libraries(juce_audio_processors INTERFACE juce_vst3_headers)
 
+        add_library(juce_lilv_headers INTERFACE)
+        set(lv2_base_path "${base_path}/juce_audio_processors/format_types/LV2_SDK")
+        target_include_directories(juce_lilv_headers INTERFACE
+            "${lv2_base_path}"
+            "${lv2_base_path}/lv2"
+            "${lv2_base_path}/serd"
+            "${lv2_base_path}/sord"
+            "${lv2_base_path}/sord/src"
+            "${lv2_base_path}/sratom"
+            "${lv2_base_path}/lilv"
+            "${lv2_base_path}/lilv/src")
+        target_link_libraries(juce_audio_processors INTERFACE juce_lilv_headers)
+
+        add_library(juce_ara_headers INTERFACE)
+
+        target_include_directories(juce_ara_headers INTERFACE
+            "$<$<TARGET_EXISTS:juce_ara_sdk>:$<TARGET_PROPERTY:juce_ara_sdk,INTERFACE_INCLUDE_DIRECTORIES>>")
+
+        target_link_libraries(juce_audio_processors INTERFACE juce_ara_headers)
+
         if(JUCE_ARG_ALIAS_NAMESPACE)
             add_library(${JUCE_ARG_ALIAS_NAMESPACE}::juce_vst3_headers ALIAS juce_vst3_headers)
+            add_library(${JUCE_ARG_ALIAS_NAMESPACE}::juce_lilv_headers ALIAS juce_lilv_headers)
+            add_library(${JUCE_ARG_ALIAS_NAMESPACE}::juce_ara_headers ALIAS juce_ara_headers)
         endif()
     endif()
 
@@ -529,24 +569,32 @@ function(juce_add_module module_path)
     if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
         _juce_get_metadata("${metadata_dict}" OSXFrameworks module_osxframeworks)
 
+        _juce_remove_empty_list_elements(module_osxframeworks)
         foreach(module_framework IN LISTS module_osxframeworks)
-            if(module_framework STREQUAL "")
-                continue()
-            endif()
-
             _juce_link_frameworks("${module_name}" INTERFACE "${module_framework}")
+        endforeach()
+
+        _juce_get_metadata("${metadata_dict}" WeakOSXFrameworks module_weakosxframeworks)
+
+        _juce_remove_empty_list_elements(module_weakosxframeworks)
+        foreach(module_framework IN LISTS module_weakosxframeworks)
+            _juce_link_frameworks("${module_name}" INTERFACE WEAK "${module_framework}")
         endforeach()
 
         _juce_link_libs_from_metadata("${module_name}" "${metadata_dict}" OSXLibs)
     elseif(CMAKE_SYSTEM_NAME STREQUAL "iOS")
         _juce_get_metadata("${metadata_dict}" iOSFrameworks module_iosframeworks)
 
+        _juce_remove_empty_list_elements(module_iosframeworks)
         foreach(module_framework IN LISTS module_iosframeworks)
-            if(module_framework STREQUAL "")
-                continue()
-            endif()
-
             _juce_link_frameworks("${module_name}" INTERFACE "${module_framework}")
+        endforeach()
+
+        _juce_get_metadata("${metadata_dict}" WeakiOSFrameworks module_weakiosframeworks)
+
+        _juce_remove_empty_list_elements(module_weakiosframeworks)
+        foreach(module_framework IN LISTS module_weakiosframeworks)
+            _juce_link_frameworks("${module_name}" INTERFACE WEAK "${module_framework}")
         endforeach()
 
         _juce_link_libs_from_metadata("${module_name}" "${metadata_dict}" iOSLibs)

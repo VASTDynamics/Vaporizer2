@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE examples.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2022 - Raw Material Software Limited
 
    The code included in this file is provided under the terms of the ISC license
    http://www.isc.org/downloads/software-support-policy/isc-license. Permission
@@ -32,7 +32,7 @@
  dependencies:     juce_audio_basics, juce_audio_devices, juce_core, juce_cryptography,
                    juce_data_structures, juce_events, juce_graphics, juce_gui_basics,
                    juce_gui_extra, juce_video
- exporters:        xcode_mac, vs2019, androidstudio, xcode_iphone
+ exporters:        xcode_mac, vs2022, androidstudio, xcode_iphone
 
  moduleFlags:      JUCE_USE_CAMERA=1, JUCE_STRICT_REFCOUNTEDPOINTER=1
 
@@ -252,8 +252,10 @@ private:
         }
         else
         {
-            AlertWindow::showMessageBoxAsync (MessageBoxIconType::WarningIcon, "Camera open failed",
-                                              "Camera open failed, reason: " + error);
+            auto options = MessageBoxOptions::makeOptionsOk (MessageBoxIconType::WarningIcon,
+                                                             "Camera open failed",
+                                                             "Camera open failed, reason: " + error);
+            messageBox = AlertWindow::showScopedAsync (options, nullptr);
         }
 
         snapshotButton   .setEnabled (cameraDevice.get() != nullptr && ! contentSharingPending);
@@ -312,12 +314,11 @@ private:
 
                 SafePointer<CameraDemo> safeThis (this);
 
-                juce::ContentSharer::getInstance()->shareFiles ({url},
-                                                                [safeThis] (bool success, const String&) mutable
-                                                                {
-                                                                    if (safeThis)
-                                                                        safeThis->sharingFinished (success, false);
-                                                                });
+                messageBox = ContentSharer::shareFilesScoped ({ url }, [safeThis] (bool success, const String&)
+                {
+                    if (safeThis)
+                        safeThis->sharingFinished (success, false);
+                });
                #endif
             }
         }
@@ -353,21 +354,21 @@ private:
 
             SafePointer<CameraDemo> safeThis (this);
 
-            juce::ContentSharer::getInstance()->shareFiles ({url},
-                                                            [safeThis] (bool success, const String&) mutable
-                                                            {
-                                                                if (safeThis)
-                                                                    safeThis->sharingFinished (success, true);
-                                                            });
+            messageBox = ContentSharer::shareFilesScoped ({ url }, [safeThis] (bool success, const String&)
+            {
+                if (safeThis)
+                    safeThis->sharingFinished (success, true);
+            });
         }
        #endif
     }
 
     void errorOccurred (const String& error)
     {
-        AlertWindow::showMessageBoxAsync (MessageBoxIconType::InfoIcon,
-                                          "Camera Device Error",
-                                          "An error has occurred: " + error + " Camera will be closed.");
+        auto options = MessageBoxOptions::makeOptionsOk (MessageBoxIconType::InfoIcon,
+                                                         "Camera Device Error",
+                                                         "An error has occurred: " + error + " Camera will be closed.");
+        messageBox = AlertWindow::showScopedAsync (options, nullptr);
 
         cameraDevice.reset();
 
@@ -378,14 +379,17 @@ private:
 
     void sharingFinished (bool success, bool isCapture)
     {
-        AlertWindow::showMessageBoxAsync (MessageBoxIconType::InfoIcon,
-                                          isCapture ? "Image sharing result" : "Video sharing result",
-                                          success ? "Success!" : "Failed!");
+        auto options = MessageBoxOptions::makeOptionsOk (MessageBoxIconType::InfoIcon,
+                                                         isCapture ? "Image sharing result" : "Video sharing result",
+                                                         success ? "Success!" : "Failed!");
+        messageBox = AlertWindow::showScopedAsync (options, nullptr);
 
         contentSharingPending = false;
         snapshotButton   .setEnabled (true);
         recordMovieButton.setEnabled (true);
     }
+
+    ScopedMessageBox messageBox;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CameraDemo)
 };

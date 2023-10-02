@@ -3,6 +3,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist>
   <dict>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>This app requires audio input. If you do not have an audio interface connected it will use the built-in microphone.</string>
+    <key>NSCameraUsageDescription</key>
+    <string>This app requires access to the camera to function correctly.</string>
     <key>CFBundleExecutable</key>
     <string>${EXECUTABLE_NAME}</string>
     <key>CFBundleIconFile</key>
@@ -18,13 +22,15 @@
     <key>CFBundleSignature</key>
     <string>????</string>
     <key>CFBundleShortVersionString</key>
-    <string>6.1.6</string>
+    <string>7.0.7</string>
     <key>CFBundleVersion</key>
-    <string>6.1.6</string>
+    <string>7.0.7</string>
     <key>NSHumanReadableCopyright</key>
     <string>Raw Material Software Limited</string>
     <key>NSHighResolutionCapable</key>
     <true/>
+    <key>LSApplicationCategoryType</key>
+    <string>public.app-category.developer-tools</string>
     <key>CFBundleDocumentTypes</key>
     <array>
       <dict>
@@ -40,6 +46,8 @@
         <string>Icon</string>
         <key>NSPersistentStoreTypeKey</key>
         <string>XML</string>
+        <key>LSHandlerRank</key>
+        <string>Default</string>
       </dict>
     </array>
   </dict>

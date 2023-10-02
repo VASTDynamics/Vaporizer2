@@ -2,15 +2,15 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2022 - Raw Material Software Limited
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
+   By using JUCE, you agree to the terms of both the JUCE 7 End-User License
+   Agreement and JUCE Privacy Policy.
 
-   End User License Agreement: www.juce.com/juce-6-licence
+   End User License Agreement: www.juce.com/juce-7-licence
    Privacy Policy: www.juce.com/juce-privacy-policy
 
    Or: You may also use this code under the terms of the GPL v3 (see
@@ -64,14 +64,14 @@ public:
 
     void createNewFile (Project&, Project::Item parent) override
     {
-        askUserToChooseNewFile ("SourceCode.cpp", "*.cpp", parent, [parent] (File newFile)
+        askUserToChooseNewFile ("SourceCode.cpp", "*.cpp", parent, [this, parent] (File newFile)
         {
             if (newFile != File())
-                create (parent, newFile, "jucer_NewCppFileTemplate_cpp");
+                create (*this, parent, newFile, "jucer_NewCppFileTemplate_cpp");
         });
     }
 
-    static bool create (Project::Item parent, const File& newFile, const char* templateName)
+    static bool create (NewFileWizard::Type& wizard, Project::Item parent, const File& newFile, const char* templateName)
     {
         if (fillInNewCppFileTemplate (newFile, parent, templateName))
         {
@@ -79,7 +79,7 @@ public:
             return true;
         }
 
-        showFailedToWriteMessage (newFile);
+        wizard.showFailedToWriteMessage (newFile);
         return false;
     }
 };
@@ -92,14 +92,14 @@ public:
 
     void createNewFile (Project&, Project::Item parent) override
     {
-        askUserToChooseNewFile ("SourceCode.h", "*.h", parent, [parent] (File newFile)
+        askUserToChooseNewFile ("SourceCode.h", "*.h", parent, [this, parent] (File newFile)
         {
             if (newFile != File())
-                create (parent, newFile, "jucer_NewCppFileTemplate_h");
+                create (*this, parent, newFile, "jucer_NewCppFileTemplate_h");
         });
     }
 
-    static bool create (Project::Item parent, const File& newFile, const char* templateName)
+    static bool create (NewFileWizard::Type& wizard, Project::Item parent, const File& newFile, const char* templateName)
     {
         if (fillInNewCppFileTemplate (newFile, parent, templateName))
         {
@@ -107,7 +107,7 @@ public:
             return true;
         }
 
-        showFailedToWriteMessage (newFile);
+        wizard.showFailedToWriteMessage (newFile);
         return false;
     }
 };
@@ -120,10 +120,10 @@ public:
 
     void createNewFile (Project&, Project::Item parent) override
     {
-        askUserToChooseNewFile ("SourceCode.h", "*.h;*.cpp", parent, [parent] (File newFile)
+        askUserToChooseNewFile ("SourceCode.h", "*.h;*.cpp", parent, [this, parent] (File newFile)
         {
-            if (NewCppFileWizard::create (parent, newFile.withFileExtension ("h"),   "jucer_NewCppFileTemplate_h"))
-                NewCppFileWizard::create (parent, newFile.withFileExtension ("cpp"), "jucer_NewCppFileTemplate_cpp");
+            if (NewCppFileWizard::create (*this, parent, newFile.withFileExtension ("h"),   "jucer_NewCppFileTemplate_h"))
+                NewCppFileWizard::create (*this, parent, newFile.withFileExtension ("cpp"), "jucer_NewCppFileTemplate_cpp");
         });
     }
 };
@@ -139,7 +139,7 @@ public:
         createNewFileInternal (parent);
     }
 
-    static bool create (const String& className, Project::Item parent,
+    static bool create (NewFileWizard::Type& wizard, const String& className, Project::Item parent,
                         const File& newFile, const char* templateName)
     {
         auto content = fillInBasicTemplateFields (newFile, parent, templateName)
@@ -154,15 +154,15 @@ public:
             return true;
         }
 
-        showFailedToWriteMessage (newFile);
+        wizard.showFailedToWriteMessage (newFile);
         return false;
     }
 
 private:
     virtual void createFiles (Project::Item parent, const String& className, const File& newFile)
     {
-        if (create (className, parent, newFile.withFileExtension ("h"),   "jucer_NewComponentTemplate_h"))
-            create (className, parent, newFile.withFileExtension ("cpp"), "jucer_NewComponentTemplate_cpp");
+        if (create (*this, className, parent, newFile.withFileExtension ("h"),   "jucer_NewComponentTemplate_h"))
+            create (*this, className, parent, newFile.withFileExtension ("cpp"), "jucer_NewComponentTemplate_cpp");
     }
 
     static String getClassNameFieldName()  { return "Class Name"; }
@@ -227,17 +227,17 @@ public:
 
     void createFiles (Project::Item parent, const String& className, const File& newFile) override
     {
-        create (className, parent, newFile.withFileExtension ("h"), "jucer_NewInlineComponentTemplate_h");
+        create (*this, className, parent, newFile.withFileExtension ("h"), "jucer_NewInlineComponentTemplate_h");
     }
 };
-
 
 //==============================================================================
 void NewFileWizard::Type::showFailedToWriteMessage (const File& file)
 {
-    AlertWindow::showMessageBoxAsync (MessageBoxIconType::WarningIcon,
-                                      "Failed to Create File!",
-                                      "Couldn't write to the file: " + file.getFullPathName());
+    auto options = MessageBoxOptions::makeOptionsOk (MessageBoxIconType::WarningIcon,
+                                                     "Failed to Create File!",
+                                                     "Couldn't write to the file: " + file.getFullPathName());
+    messageBox = AlertWindow::showScopedAsync (options, nullptr);
 }
 
 void NewFileWizard::Type::askUserToChooseNewFile (const String& suggestedFilename, const String& wildcard,

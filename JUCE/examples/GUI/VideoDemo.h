@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE examples.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2022 - Raw Material Software Limited
 
    The code included in this file is provided under the terms of the ISC license
    http://www.isc.org/downloads/software-support-policy/isc-license. Permission
@@ -31,7 +31,7 @@
 
  dependencies:     juce_core, juce_data_structures, juce_events, juce_graphics,
                    juce_gui_basics, juce_gui_extra, juce_video
- exporters:        xcode_mac, vs2019, androidstudio, xcode_iphone
+ exporters:        xcode_mac, vs2022, androidstudio, xcode_iphone
 
  moduleFlags:      JUCE_STRICT_REFCOUNTEDPOINTER=1
 
@@ -134,11 +134,14 @@ private:
         }
         else
         {
-            AlertWindow::showMessageBoxAsync (MessageBoxIconType::WarningIcon,
-                                              "Couldn't load the file!",
-                                              result.getErrorMessage());
+            auto options = MessageBoxOptions::makeOptionsOk (MessageBoxIconType::WarningIcon,
+                                                             "Couldn't load the file!",
+                                                             result.getErrorMessage());
+            messageBox = AlertWindow::showScopedAsync (options, nullptr);
         }
     }
+
+    ScopedMessageBox messageBox;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MovieComponentWithFileBrowser)
 };
@@ -154,7 +157,7 @@ public:
         setOpaque (true);
 
         movieList.setDirectory (File::getSpecialLocation (File::userMoviesDirectory), true, true);
-        directoryThread.startThread (1);
+        directoryThread.startThread (Thread::Priority::background);
 
         fileTree.setTitle ("Files");
         fileTree.addListener (this);
@@ -627,7 +630,7 @@ private:
         currentPositionLabel.setText (getPositionString (position, duration), sendNotification);
 
         if (! positionSliderDragging)
-            positionSlider.setValue (duration != 0 ? (position / duration) : 0.0, dontSendNotification);
+            positionSlider.setValue (approximatelyEqual (duration, 0.0) ? 0.0 : (position / duration), dontSendNotification);
     }
 
     void seekVideoToStart()

@@ -2,15 +2,15 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2022 - Raw Material Software Limited
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
+   By using JUCE, you agree to the terms of both the JUCE 7 End-User License
+   Agreement and JUCE Privacy Policy.
 
-   End User License Agreement: www.juce.com/juce-6-licence
+   End User License Agreement: www.juce.com/juce-7-licence
    Privacy Policy: www.juce.com/juce-privacy-policy
 
    Or: You may also use this code under the terms of the GPL v3 (see
@@ -314,9 +314,21 @@ void OnlineUnlockStatus::MachineIDUtilities::addMACAddressesToList (StringArray&
         ids.add (getEncodedIDString (address.toString()));
 }
 
+String OnlineUnlockStatus::MachineIDUtilities::getUniqueMachineID()
+{
+    return getEncodedIDString (SystemStats::getUniqueDeviceID());
+}
+
+JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wdeprecated-declarations")
+JUCE_BEGIN_IGNORE_WARNINGS_MSVC (4996)
+
 StringArray OnlineUnlockStatus::MachineIDUtilities::getLocalMachineIDs()
 {
-    auto identifiers = SystemStats::getDeviceIdentifiers();
+    auto flags = SystemStats::MachineIdFlags::macAddresses
+               | SystemStats::MachineIdFlags::fileSystemId
+               | SystemStats::MachineIdFlags::legacyUniqueId
+               | SystemStats::MachineIdFlags::uniqueId;
+    auto identifiers = SystemStats::getMachineIdentifiers (flags);
 
     for (auto& identifier : identifiers)
         identifier = getEncodedIDString (identifier);
@@ -328,6 +340,9 @@ StringArray OnlineUnlockStatus::getLocalMachineIDs()
 {
     return MachineIDUtilities::getLocalMachineIDs();
 }
+
+JUCE_END_IGNORE_WARNINGS_GCC_LIKE
+JUCE_END_IGNORE_WARNINGS_MSVC
 
 void OnlineUnlockStatus::userCancelled()
 {
@@ -343,71 +358,82 @@ String OnlineUnlockStatus::getUserEmail() const
     return status[userNameProp].toString();
 }
 
-bool OnlineUnlockStatus::applyKeyFile (String keyFileContent)
+Result OnlineUnlockStatus::applyKeyFile (const String& keyFileContent)
 {
     KeyFileUtils::KeyFileData data;
     data = KeyFileUtils::getDataFromKeyFile (KeyFileUtils::getXmlFromKeyFile (keyFileContent, getPublicKey()));
 
-    if (data.licensee.isNotEmpty() && data.email.isNotEmpty() && doesProductIDMatch (data.appID))
+    if (data.licensee.isEmpty() || data.email.isEmpty())
+        return Result::fail (LicenseResult::badCredentials);
+
+    if (! doesProductIDMatch (data.appID))
+        return Result::fail (LicenseResult::badProductID);
+
+    if (MachineIDUtilities::getUniqueMachineID().isEmpty())
+        return Result::fail (LicenseResult::notReady);
+
+    setUserEmail (data.email);
+    status.setProperty (keyfileDataProp, keyFileContent, nullptr);
+    status.removeProperty (data.keyFileExpires ? expiryTimeProp : unlockedProp, nullptr);
+
+    var actualResult (0), dummyResult (1.0);
+    var v (machineNumberAllowed (data.machineNumbers, getLocalMachineIDs()));
+    actualResult.swapWith (v);
+    v = machineNumberAllowed (StringArray ("01"), getLocalMachineIDs());
+    dummyResult.swapWith (v);
+    jassert (! dummyResult);
+
+    if (data.keyFileExpires)
     {
-        setUserEmail (data.email);
-        status.setProperty (keyfileDataProp, keyFileContent, nullptr);
-        status.removeProperty (data.keyFileExpires ? expiryTimeProp : unlockedProp, nullptr);
-
-        var actualResult (0), dummyResult (1.0);
-        var v (machineNumberAllowed (data.machineNumbers, getLocalMachineIDs()));
-        actualResult.swapWith (v);
-        v = machineNumberAllowed (StringArray ("01"), getLocalMachineIDs());
-        dummyResult.swapWith (v);
-        jassert (! dummyResult);
-
-        if (data.keyFileExpires)
-        {
-            if ((! dummyResult) && actualResult)
-                status.setProperty (expiryTimeProp, data.expiryTime.toMilliseconds(), nullptr);
-
-            return getExpiryTime().toMilliseconds() > 0;
-        }
-
         if ((! dummyResult) && actualResult)
-            status.setProperty (unlockedProp, actualResult, nullptr);
+            status.setProperty (expiryTimeProp, data.expiryTime.toMilliseconds(), nullptr);
 
-        return isUnlocked();
+        return getExpiryTime().toMilliseconds() > 0 ? Result::ok()
+                                                    : Result::fail (LicenseResult::licenseExpired);
     }
 
-    return false;
-}
+    if ((! dummyResult) && actualResult)
+        status.setProperty (unlockedProp, actualResult, nullptr);
 
-static bool canConnectToWebsite (const URL& url)
-{
-    return url.createInputStream (URL::InputStreamOptions (URL::ParameterHandling::inAddress)
-                                        .withConnectionTimeoutMs (2000)) != nullptr;
+    return isUnlocked() ? Result::ok()
+                        : Result::fail (LicenseResult::unlockFailed);
 }
 
 static bool areMajorWebsitesAvailable()
 {
-    const char* urlsToTry[] = { "http://google.com",  "http://bing.com",  "http://amazon.com",
-                                "https://google.com", "https://bing.com", "https://amazon.com", nullptr};
+    static constexpr const char* const urlsToTry[] = { "http://google.com",  "http://bing.com",  "http://amazon.com",
+                                                       "https://google.com", "https://bing.com", "https://amazon.com" };
+    const auto canConnectToWebsite = [] (auto url)
+    {
+        return URL (url).createInputStream (URL::InputStreamOptions (URL::ParameterHandling::inAddress)
+                                                .withConnectionTimeoutMs (2000)) != nullptr;
+    };
 
-    for (const char** url = urlsToTry; *url != nullptr; ++url)
-        if (canConnectToWebsite (URL (*url)))
-            return true;
-
-    return false;
+    return std::any_of (std::begin (urlsToTry),
+                        std::end   (urlsToTry),
+                        canConnectToWebsite);
 }
 
 OnlineUnlockStatus::UnlockResult OnlineUnlockStatus::handleXmlReply (XmlElement xml)
 {
     UnlockResult r;
 
-    if (auto keyNode = xml.getChildByName ("KEY"))
+    r.succeeded = false;
+
+    if (const auto keyNode = xml.getChildByName ("KEY"))
     {
-        const String keyText (keyNode->getAllSubText().trim());
-        r.succeeded = keyText.length() > 10 && applyKeyFile (keyText);
-    }
-    else
-    {
-        r.succeeded = false;
+        if (const auto keyText = keyNode->getAllSubText().trim(); keyText.length() > 10)
+        {
+            const auto keyFileResult = applyKeyFile (keyText);
+
+            if (keyFileResult.failed())
+            {
+                r.errorMessage = keyFileResult.getErrorMessage();
+                return r;
+            }
+
+            r.succeeded = true;
+        }
     }
 
     if (xml.hasTagName ("MESSAGE"))

@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE examples.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2022 - Raw Material Software Limited
 
    The code included in this file is provided under the terms of the ISC license
    http://www.isc.org/downloads/software-support-policy/isc-license. Permission
@@ -33,7 +33,7 @@
                    juce_audio_plugin_client, juce_audio_processors,
                    juce_audio_utils, juce_core, juce_data_structures,
                    juce_events, juce_graphics, juce_gui_basics, juce_gui_extra
- exporters:        xcode_mac, vs2019
+ exporters:        xcode_mac, vs2022
 
  moduleFlags:      JUCE_STRICT_REFCOUNTEDPOINTER=1
 
@@ -159,7 +159,7 @@ private:
     template <typename Func>
     static std::unique_ptr<Command<Proc>> makeCommand (Func&& func)
     {
-        using Decayed = typename std::decay<Func>::type;
+        using Decayed = std::decay_t<Func>;
         return std::make_unique<TemplateCommand<Proc, Decayed>> (std::forward<Func> (func));
     }
 
@@ -208,7 +208,7 @@ class MPESamplerSound final
 public:
     void setSample (std::unique_ptr<Sample> value)
     {
-        sample = move (value);
+        sample = std::move (value);
         setLoopPointsInSeconds (loopPoints);
     }
 
@@ -291,7 +291,7 @@ public:
     {
         jassert (currentlyPlayingNote.keyState == MPENote::off);
 
-        if (allowTailOff && tailOff == 0.0)
+        if (allowTailOff && approximatelyEqual (tailOff, 0.0))
             tailOff = 1.0;
         else
             stopNote();
@@ -422,7 +422,7 @@ private:
 
     bool isTailingOff() const
     {
-        return tailOff != 0.0;
+        return ! approximatelyEqual (tailOff, 0.0);
     }
 
     void stopNote()
@@ -551,7 +551,14 @@ inline std::unique_ptr<AudioFormatReader> makeAudioFormatReader (AudioFormatMana
 class AudioFormatReaderFactory
 {
 public:
+    AudioFormatReaderFactory() = default;
+    AudioFormatReaderFactory (const AudioFormatReaderFactory&) = default;
+    AudioFormatReaderFactory (AudioFormatReaderFactory&&) = default;
+    AudioFormatReaderFactory& operator= (const AudioFormatReaderFactory&) = default;
+    AudioFormatReaderFactory& operator= (AudioFormatReaderFactory&&) = default;
+
     virtual ~AudioFormatReaderFactory() noexcept = default;
+
     virtual std::unique_ptr<AudioFormatReader> make (AudioFormatManager&) const = 0;
     virtual std::unique_ptr<AudioFormatReaderFactory> clone() const = 0;
 };
@@ -988,7 +995,7 @@ public:
     void setSampleReader (std::unique_ptr<AudioFormatReaderFactory> readerFactory,
                           UndoManager* undoManager)
     {
-        sampleReader.setValue (move (readerFactory), undoManager);
+        sampleReader.setValue (std::move (readerFactory), undoManager);
         setLoopPointsSeconds (Range<double> (0, getSampleLengthSeconds()).constrainRange (loopPointsSeconds),
                               undoManager);
     }
@@ -1185,7 +1192,7 @@ private:
         }
     }
 
-    bool isLegacyModeValid() const
+    bool isLegacyModeValid()
     {
         if (! areLegacyModeParametersValid())
         {
@@ -1226,13 +1233,14 @@ private:
         return getFirstChannel() <= getLastChannel();
     }
 
-    void handleInvalidLegacyModeParameters() const
+    void handleInvalidLegacyModeParameters()
     {
-        AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
-                                          "Invalid legacy mode channel layout",
-                                          "Cannot set legacy mode start/end channel:\n"
-                                          "The end channel must not be less than the start channel!",
-                                          "Got it");
+        auto options = MessageBoxOptions::makeOptionsOk (AlertWindow::WarningIcon,
+                                                         "Invalid legacy mode channel layout",
+                                                         "Cannot set legacy mode start/end channel:\n"
+                                                         "The end channel must not be less than the start channel!",
+                                                         "Got it");
+        messageBox = AlertWindow::showScopedAsync (options, nullptr);
     }
 
     MPESettingsDataModel dataModel;
@@ -1244,6 +1252,7 @@ private:
           legacyPitchbendRangeLabel { {}, "Pitchbend range (semitones)" };
 
     UndoManager* undoManager;
+    ScopedMessageBox messageBox;
 };
 
 //==============================================================================
@@ -1853,7 +1862,7 @@ public:
                     UndoManager& undoManager)
         : dataModel (model),
           waveformView (model, visibleRange),
-          playbackOverlay (visibleRange, move (provider)),
+          playbackOverlay (visibleRange, std::move (provider)),
           loopPoints (dataModel, visibleRange, undoManager),
           ruler (visibleRange)
     {
@@ -1909,7 +1918,7 @@ public:
                      PlaybackPositionOverlay::Provider provider,
                      UndoManager& um)
         : dataModel (model),
-          waveformEditor (dataModel, move (provider), um),
+          waveformEditor (dataModel, std::move (provider), um),
           undoManager (um)
     {
         dataModel.addListener (*this);
@@ -2116,7 +2125,7 @@ public:
         auto sample = std::unique_ptr<Sample> (new Sample (*reader, 10.0));
         auto lengthInSeconds = sample->getLength() / sample->getSampleRate();
         sound->setLoopPointsInSeconds ({lengthInSeconds * 0.1, lengthInSeconds * 0.9 });
-        sound->setSample (move (sample));
+        sound->setSample (std::move (sample));
 
         // Start with the max number of voices
         for (auto i = 0; i != maxVoices; ++i)
@@ -2209,7 +2218,7 @@ public:
 
             void operator() (SamplerAudioProcessor& proc)
             {
-                proc.readerFactory = move (readerFactory);
+                proc.readerFactory = std::move (readerFactory);
                 auto sound = proc.samplerSound;
                 sound->setSample (std::move (sample));
                 auto numberOfVoices = proc.synthesiser.getNumVoices();
@@ -2238,15 +2247,15 @@ public:
 
         if (fact == nullptr)
         {
-            commands.push (SetSampleCommand (move (fact),
+            commands.push (SetSampleCommand (std::move (fact),
                                              nullptr,
-                                             move (newSamplerVoices)));
+                                             std::move (newSamplerVoices)));
         }
         else if (auto reader = fact->make (formatManager))
         {
-            commands.push (SetSampleCommand (move (fact),
+            commands.push (SetSampleCommand (std::move (fact),
                                              std::unique_ptr<Sample> (new Sample (*reader, 10.0)),
-                                             move (newSamplerVoices)));
+                                             std::move (newSamplerVoices)));
         }
     }
 
@@ -2343,7 +2352,7 @@ public:
         for (auto i = 0; i != numberOfVoices; ++i)
             newSamplerVoices.emplace_back (new MPESamplerVoice (loadedSamplerSound));
 
-        commands.push (SetNumVoicesCommand (move (newSamplerVoices)));
+        commands.push (SetNumVoicesCommand (std::move (newSamplerVoices)));
     }
 
     // These accessors are just for an 'overview' and won't give the exact
@@ -2402,7 +2411,8 @@ private:
             mpeSettings.setVoiceStealingEnabled (state.voiceStealingEnabled,      nullptr);
             mpeSettings.setMPEZoneLayout        (state.mpeZoneLayout,             nullptr);
 
-            dataModel.setSampleReader (move (state.readerFactory),    nullptr);
+            dataModel.setSampleReader (std::move (state.readerFactory), nullptr);
+
             dataModel.setLoopPointsSeconds  (state.loopPointsSeconds, nullptr);
             dataModel.setCentreFrequencyHz  (state.centreFrequencyHz, nullptr);
             dataModel.setLoopMode           (state.loopMode,          nullptr);

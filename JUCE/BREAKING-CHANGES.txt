@@ -1,6 +1,751 @@
 JUCE breaking changes
 =====================
 
+Version 7.0.7
+=============
+
+Change
+------
+The minimum supported CMake version is now 3.22.
+
+Possible Issues
+---------------
+It will no longer be possible to configure JUCE projects with CMake versions
+between 3.15 and 3.21 inclusive.
+
+Workaround
+----------
+No workaround is available. Newer versions of CMake can be obtained from the
+official download page, or through system package managers.
+
+Rationale
+---------
+Moving to CMake 3.22 improves consistency with the Projucer's Android exporter,
+which already requires CMake 3.22. It also allows us to make use of the
+XCODE_EMBED_APP_EXTENSIONS property (introduced in CMake 3.21), fixing an
+issue when archiving AUv3 plugins.
+
+
+Version 7.0.6
+=============
+
+Change
+------
+Thread::wait and WaitableEvent::wait now take a double rather than an int to
+indicate the number of milliseconds to wait.
+
+Possible Issues
+---------------
+Calls to either wait function may trigger warnings.
+
+Workaround
+----------
+Explicitly cast the value to double.
+
+Rationale
+---------
+Changing to double allows sub-millisecond waits which was important for
+supporting changes to the HighResolutionTimer.
+
+
+Change
+------
+RealtimeOptions member workDurationMs was replaced by three optional member
+variables in RealtimeOptions, and all RealtimeOptions member variables were
+marked private.
+
+Possible Issues
+---------------
+Trying to construct a RealtimeOptions object with one or two values, or access
+any of its member variables, will no longer compile.
+
+Workaround
+----------
+Use the withMember functions to construct the object, and the getter functions
+to access the member variable values.
+
+Rationale
+---------
+The new approach improves the flexibility for users to specify realtime thread
+options on macOS/iOS and improves the flexibility for the API to evolve without
+introducing further breaking changes.
+
+
+Change
+------
+JUCE module compilation files with a platform suffix are now checked case
+insensitively for CMake builds.
+
+Possible Issues
+---------------
+If a JUCE module compilation file ends in a specific platform suffix but does
+not match the case for the string previously checked by the CMake
+implementation, it may have compiled for all platforms. Now, it will only
+compile for the platform specified by the suffix.
+
+Workaround
+----------
+In most cases this was probably a bug, in other cases rename the file to remove
+the platform suffix.
+
+Rationale
+---------
+This change improves consistency between the Projucer and CMake integrations.
+
+
+Change
+------
+An undocumented feature that allowed JUCE module compilation files to compile
+for a specific platform or subset of platforms by declaring the platform name
+followed by an underscore, was removed.
+
+Possible Issues
+---------------
+If a JUCE module compilation file contains a matching platform suffix followed
+by an underscore and is loaded by the Projucer it will no longer compile for
+just that platform.
+
+Workaround
+----------
+Use the suffix of the name only. If the undocumented feature was used to select
+multiple platforms, make multiple separate files for each of the required
+platforms.
+
+Rationale
+---------
+This change improves consistency between the Projucer and CMake integrations.
+Given the functionality was undocumented, the ease of a workaround, and the
+added complexity required for CMake support, the functionality was removed.
+
+
+Change
+------
+Unique device IDs on iOS now use the OS provided 'identifierForVendor'.
+OnlineUnlockStatus has been updated to handle the iOS edge-case where a device
+ID query might return an empty String.
+
+Possible Issues
+---------------
+The License checks using InAppPurchases, getLocalMachineIDs(), and
+getUniqueDeviceID() may return an empty String if iOS 'is not ready'. This can
+occur for example if the device has restarted but has not yet been unlocked.
+
+Workaround
+----------
+InAppPurchase has been updated to handle this and propagate the error
+accordingly. The relevant methods have been updated to return a Result object
+that can be queried for additional information on failure.
+
+Rationale
+---------
+Apple have introduced restrictions on device identification rendering our
+previous methods unsuitable.
+
+
+Change
+------
+AudioProcessor::getAAXPluginIDForMainBusConfig() has been deprecated.
+
+Possible Issues
+---------------
+Any AudioProcessor overriding this method will fail to compile.
+
+Workaround
+----------
+- Create an object which inherits from AAXClientExtensions.
+- In the object override and implement getPluginIDForMainBusConfig().
+- In the AudioProcessor override getAAXClientExtensions() and return a pointer
+  to the object.
+
+Rationale
+---------
+Additional AAX specific functionality was required in the audio processor.
+Rather than continuing to grow and expand the AudioProcessor class with format
+specific functionality, separating this concern into a new class allows for
+greater expansion for those that need it without burdening those that don't.
+Moving this function into this class improves consistency both with the new
+functionality and with similar functionality for the VST2 and VST3 formats.
+
+
+Change
+------
+Unique device IDs on Windows have been updated to use a more reliable SMBIOS
+parser. The SystemStats::getUniqueDeviceID function now returns new IDs using
+this improved parser. Additionally, a new function,
+SystemStats::getMachineIdentifiers, has been introduced to aggregate all ID
+sources. It is recommended to use this new function to verify any IDs.
+
+Possible Issues
+----------------
+The SystemStats::getUniqueDeviceID function will return a different ID for the
+same machine due to the updated parser.
+
+Workaround
+----------
+For code that previously relied on SystemStats::getUniqueDeviceID, it is advised
+to switch to using SystemStats::getMachineIdentifiers() instead.
+
+Rationale
+---------
+This update ensures the generation of more stable and reliable unique device
+IDs, while also maintaining backward compatibility with the previous ID
+generation methods.
+
+
+Change
+------
+The Grid layout algorithm has been slightly altered to provide more consistent
+behaviour. The new approach guarantees that dimensions specified using the
+absolute Px quantity will always be correctly rounded when applied to the
+integer dimensions of Components.
+
+Possible Issues
+---------------
+Components laid out using Grid can observe a size or position change of +/- 1px
+along each dimension compared with the result of the previous algorithm.
+
+Workaround
+----------
+If the Grid based graphical layout is sensitive to changes of +/- 1px, then the
+UI layout code may have to be adjusted to the new algorithm.
+
+Rationale
+---------
+The old Grid layout algorithm could exhibit surprising and difficult to control
+single pixel artifacts, where an item with a specified absolute size of
+e.g. 100px could end up with a layout size of 101px. The new approach
+guarantees that such items will have a layout size exactly as specified, and
+this new behaviour is also in line with CSS behaviour in browsers. The new
+approach makes necessary corrections easier as adding 1px to the size of an
+item with absolute dimensions is guaranteed to translate into an observable 1px
+increase in the layout size.
+
+
+Change
+------
+The k91_4 and k90_4 VST3 layouts are now mapped to the canonical JUCE 9.1.4 and
+9.0.4 AudioChannelSets. This has a different ChannelType layout than the
+AudioChannelSet previously used with such VST3 SpeakerArrangements.
+
+Possible Issues
+---------------
+VST3 plugins that were prepared to work with the k91_4 and k90_4
+SpeakerArrangements may now have incorrect channel mapping. The channels
+previously accessible through ChannelType::left and right are now accessible
+through ChannelType::wideLeft and wideRight, and channels previously accessible
+through ChannelType::leftCentre and rightCentre are now accessible through
+ChannelType::left and right.
+
+Workaround
+----------
+Code that accesses the channels that correspond to the VST3 Speakers kSpeakerL,
+kSpeakerR, kSpeakerLc and kSpeakerRc needs to be updated. These channels are now
+accessible respectively through ChannelTypes wideLeft, wideRight, left and
+right. Previously they were accessible respectively through left, right,
+leftCentre and rightCentre.
+
+Rationale
+---------
+This change allows developers to handle the 9.1.4 and 9.0.4 surround layouts
+with one codepath across all plugin formats. Previously the
+AudioChannelSet::create9point1point4() and create9point0point4() layouts would
+only be used in CoreAudio and AAX, but a different AudioChannelSet would be used
+in VST3 even though they were functionally equivalent.
+
+
+Change
+------
+The signatures of the ContentSharer member functions have been updated. The
+ContentSharer class itself is no longer a singleton.
+
+Possible Issues
+---------------
+Projects that use the old signatures will not build until they are updated.
+
+Workaround
+----------
+Instead of calling content sharer functions through a singleton instance, e.g.
+    ContentSharer::getInstance()->shareText (...);
+call the static member functions directly:
+    ScopedMessageBox messageBox = ContentSharer::shareTextScoped (...);
+The new functions return a ScopedMessageBox instance. On iOS, the content
+sharer will only remain open for as long as the ScopedMessageBox remains alive.
+On Android, this functionality will be added as/when the native APIs allow.
+
+Rationale
+---------
+The new signatures are safer and easier to use. The ScopedMessageBox also
+allows content sharers to be dismissed programmatically, which wasn't
+previously possible.
+
+
+Change
+------
+The minimum supported AAX library version has been bumped to 2.4.0 and the
+library is now built automatically while building an AAX plugin. The
+JucePlugin_AAXLibs_path preprocessor definition is no longer defined in AAX
+plugin builds.
+
+Possible Issues
+---------------
+Projects that use the JucePlugin_AAXLibs_path definition may no longer build
+correctly. Projects that reference an AAX library version earlier than 2.4.0
+will fail to build.
+
+Workaround
+----------
+You must download an AAX library distribution with a version of at least 2.4.0.
+Use the definition JucePlugin_Build_AAX to check whether the AAX format is
+enabled at build time.
+
+Rationale
+---------
+The JUCE framework now requires features only present in version 2.4.0 of the
+AAX library. The build change removes steps from the build process, and ensures
+that the same compiler flags are used across the entire project.
+
+
+Change
+------
+The implementation of ColourGradient::createLookupTable has been updated to use
+non-premultiplied colours.
+
+Possible Issues
+---------------
+Programs that draw transparent gradients using the OpenGL or software
+renderers, or that use lookup tables generated from transparent gradients for
+other purposes, may now produce different results.
+
+Workaround
+----------
+For gradients to render the same as they did previously, transparent colour
+stops should be un-premultiplied. For colours with an alpha component of 0, it
+may be necessary to specify appropriate RGB components.
+
+Rationale
+---------
+Previously, transparent gradients rendered using CoreGraphics looked different
+to the same gradients drawn using OpenGL or the software renderer. This change
+updates the OpenGL and software renderers, so that they produce the same
+results as CoreGraphics.
+
+
+Change
+------
+Projucer-generated MSVC projects now build VST3s as bundles, rather than as
+single DLL files.
+
+Possible Issues
+---------------
+Build workflows that expect the VST3 to be a single DLL may break.
+
+Workaround
+----------
+Any post-build scripts that expect to copy or move the built VST3 should be
+updated so that the entire bundle directory is copied/moved. The DLL itself
+can still be located and extracted from within the generated bundle if
+necessary.
+
+Rationale
+---------
+Distributing VST3s as single files was deprecated in VST3 v3.6.10. JUCE's CMake
+scripts already produce VST3s as bundles, so this change increases consistency
+between the two build systems.
+
+
+Version 7.0.3
+=============
+
+Change
+------
+The default macOS and iOS deployment targets set by the Projucer have been
+increased to macOS 10.13 and iOS 11 respectively.
+
+Possible Issues
+---------------
+Projects using the Projucer's default minimum deployment target will have their
+minimum deployment target increased.
+
+Workaround
+----------
+If you need a lower minimum deployment target then you must set this in the
+Projucer's Xcode build configuration settings.
+
+Rationale
+---------
+Xcode 14 no longer supports deployment targets lower than macOS 10.13 and iOS
+11.
+
+
+Change
+------
+The ARA SDK expected by JUCE has been updated to version 2.2.0.
+
+Possible Issues
+---------------
+Builds using earlier versions of the ARA SDK will fail to compile.
+
+Workaround
+----------
+The ARA SDK configured in JUCE must be updated to version 2.2.0.
+
+Rationale
+---------
+Version 2.2.0 is the latest official release of the ARA SDK.
+
+
+Change
+------
+The Thread::startThread (int) and Thread::setPriority (int) methods have been
+removed. A new Thread priority API has been introduced.
+
+Possible Issues
+---------------
+Code will fail to compile.
+
+Workaround
+----------
+Rather than using an integer thread priority you must instead use a value from
+the Thread::Priority enum. Thread::setPriority and Thread::getPriority should
+only be called from the target thread. To start a Thread with a realtime
+performance profile you must call startRealtimeThread.
+
+Rationale
+---------
+Operating systems are moving away from a specific thread priority and towards
+more granular control over which types of cores can be used and things like
+power throttling options. In particular, it is no longer possible to map a 0-10
+integer to a meaningful performance range on macOS ARM using the pthread
+interface. Using a more modern interface grants us access to more runtime
+options, but also changes how we can work with threads. The two most
+significant changes are that we cannot mix operations using the new and old
+interfaces, and that changing a priority using the new interface can only be
+done on the currently running thread.
+
+
+Change
+------
+The constructor of WebBrowserComponent now requires passing in an instance of
+a new Options class instead of a single option boolean. The
+WindowsWebView2WebBrowserComponent class was removed.
+
+Possible Issues
+---------------
+Code using the WebBrowserComponent's boolean parameter to indicate if a
+webpage should be unloaded when the component is hidden, will now fail to
+compile. Additionally, any code using the WindowsWebView2WebBrowserComponent
+class will fail to compile. Code relying on the default value of the
+WebBrowserComponent's constructor are not affected.
+
+Workaround
+----------
+Instead of passing in a single boolean to the WebBrowserComponent's
+constructor you should now set this option via tha
+WebBrowserComponent::Options::withKeepPageLoadedWhenBrowserIsHidden method.
+
+If you were previously using WindowsWebView2WebBrowserComponent to indicate to
+JUCE that you prefer JUCE to use Windows' Webview2 browser backend, you now do
+this by setting the WebBrowserComponent::Options::withBackend method. The
+WebView2Preferences can now be modified with the methods in
+WebBrowserComponent::Options::WinWebView2.
+
+Rationale
+---------
+The old API made adding further options to the WebBrowserComponent cumbersome
+especially as the WindowsWebView2WebBrowserComponent already had a parameter
+very similar to the above Options class, whereas the base class did not use
+such a parameter. Furthermore, using an option to specify the preferred
+browser backend is more intuitive then requiring the user to derive from a
+special class, especially if additional browser backends are added in the
+future.
+
+
+Change
+------
+The function AudioIODeviceCallback::audioDeviceIOCallback() was removed.
+
+Possible Issues
+---------------
+Code overriding audioDeviceIOCallback() will fail to compile.
+
+Workaround
+----------
+Affected classes should override the audioDeviceIOCallbackWithContext() function
+instead.
+
+Rationale
+---------
+The audioDeviceIOCallbackWithContext() function fulfills the same role as
+audioDeviceIOCallback(), it just has an extra parameter. Hence the
+audioDeviceIOCallback() function was superfluous.
+
+
+Change
+------
+The type representing multi-channel audio data has been changed from T** to
+T* const*. Affected classes are AudioIODeviceCallback, AudioBuffer and
+AudioFormatReader.
+
+Possible Issues
+---------------
+Code overriding the affected AudioIODeviceCallback and AudioFormatReader
+functions will fail to compile. Code that interacts with the return value of
+AudioBuffer::getArrayOfReadPointers() and AudioBuffer::getArrayOfWritePointers()
+may fail to compile.
+
+Workaround
+----------
+Functions overriding the affected AudioIODeviceCallback and AudioFormatReader
+members will need to be changed to confirm to the new signature. Type
+declarations related to getArrayOfReadPointers() and getArrayOfWritePointers()
+of AudioBuffer may have to be adjusted.
+
+Rationale
+---------
+While the previous signature permitted it, changing the channel pointers by the
+previously used types was already being considered illegal. The earlier type
+however prevented passing T** values to parameters with type const T**. In some
+places this necessitated the usage of const_cast. The new signature can bind to
+T** values and the awkward casting can be avoided.
+
+
+Change
+------
+The minimum supported C++ standard is now C++17 and the oldest supported
+compilers on Linux are now GCC 7.0 and Clang 6.0.
+
+Possible Issues
+---------------
+Older compilers will no longer be able to compile JUCE.
+
+Workaround
+----------
+No workaround is available.
+
+Rationale
+---------
+This compiler upgrade will allow the use of C++17 within the framework.
+
+
+Change
+------
+Resource forks are no longer generated for Audio Unit plug-ins.
+
+Possible Issues
+---------------
+New builds of JUCE Audio Units may no longer load in old hosts that use the
+Component Manager to discover plug-ins.
+
+Workaround
+----------
+No workaround is available.
+
+Rationale
+---------
+The Component Manager is deprecated in macOS 10.8 and later, so the majority of
+hosts have now implemented support for the new plist-based discovery mechanism.
+The new AudioUnitSDK (https://github.com/apple/AudioUnitSDK) provided by Apple
+to replace the old Core Audio Utility Classes no longer includes the files
+required to generate resource forks.
+
+
+Change
+------
+Previously, the AudioProcessorGraph would call processBlockBypassed on any
+processor for which setBypassed had previously been called. Now, the
+AudioProcessorGraph will now only call processBlockBypassed if those processors
+do not have dedicated bypass parameters.
+
+Possible Issues
+---------------
+Processors with non-functional bypass parameters may not bypass in the same way
+as before.
+
+Workaround
+----------
+For each AudioProcessor owned by a Graph, ensure that either: the processor has
+a working bypass parameter that correctly affects the output of processBlock();
+or, the processor has no bypass parameter, in which case processBlockBypassed()
+will be called as before.
+
+Rationale
+---------
+The documentation for AudioProcessor::getBypassParameter() states that if this
+function returns non-null, then processBlockBypassed() should never be called,
+but the AudioProcessorGraph was breaking this rule. Calling
+processBlockBypassed() on AudioProcessors with bypass parameters is likely to
+result in incorrect or unexpected output if this function is not overridden.
+The new behaviour obeys the contract set out in the AudioProcessor
+documentation.
+
+
+Version 7.0.2
+=============
+
+Change
+------
+The Matrix3D (Vector3D<Type> vector) constructor has been replaced with an
+explicit static Matrix3D fromTranslation (Vector3D<Type> vector) function, and a
+bug in the behaviour of the multipication operator that reversed the order of
+operations has been addressed.
+
+Possible Issues
+---------------
+Code using the old constructor will not compile. Code that relied upon the order
+of multiplication operations will return different results.
+
+Workaround
+----------
+Code that was using the old constructor must use the new static function. Code
+that relied on the order of multiplication operations will need to have the
+order of the arguments reversed. With the old code A * B was returning BA rather
+than AB.
+
+Rationale
+---------
+Previously a matrix multipled by a vector would return a matrix, rather than a
+vector, as the multiplied-by vector would be automatically converted into a
+matrix during the operation. Removing the converting constructor makes
+everything much more explicit and there is no confusion about dimensionality.
+The current multiplication routine also included a bug where A * B resulted in
+BA rather than AB, which needed to be addressed.
+
+
+Version 7.0.0
+=============
+
+Change
+------
+AudioProcessor::getHostTimeNs() and AudioProcessor::setHostTimeNanos() have
+been removed.
+
+Possible Issues
+---------------
+Code that used these functions will no longer compile.
+
+Workaround
+----------
+Set and get the system time corresponding to the current audio callback using
+the new functions AudioPlayHead::PositionInfo::getHostTimeNs() and
+AudioPlayHead::PositionInfo::setHostTimeNs().
+
+Rationale
+---------
+This change consolidates callback-related timing information into the
+PositionInfo type, improving the consistency of the AudioProcessor and
+AudioPlayHead APIs.
+
+
+Change
+------
+AudioPlayHead::getCurrentPosition() has been deprecated and replaced with
+AudioPlayHead::getPosition().
+
+Possible Issues
+---------------
+Hosts that implemented custom playhead types may no longer compile. Plugins
+that used host-provided timing information may trigger deprecation warnings
+when building.
+
+Workaround
+----------
+Classes that derive from AudioPlayHead must now override getPosition() instead
+of getCurrentPosition(). Code that used to use the playhead's
+CurrentPositionInfo must switch to using the new PositionInfo type.
+
+Rationale
+---------
+Not all hosts and plugin formats are capable of providing the full complement
+of timing information contained in the old CurrentPositionInfo class.
+Previously, in the case that some information could not be provided, fallback
+values would be used instead, but it was not possible for clients to distinguish
+between "real" values set explicitly by the host, and "fallback" values set by
+a plugin wrapper. The new PositionInfo type keeps track of which members have
+been explicitly set, so clients can implement their own fallback behaviour.
+The new PositionInfo type also includes a new "barCount" member, which is
+currently only used by the LV2 host and client.
+
+
+Change
+------
+The optional JUCE_COREGRAPHICS_RENDER_WITH_MULTIPLE_PAINT_CALLS preprocessor
+flag will now use a new Metal layer renderer when running on macOS 10.14 or
+later. The minimum requirements for building macOS and iOS software are now
+macOS 10.13.6 and Xcode 10.1.
+
+Possible Issues
+---------------
+Previously enabling JUCE_COREGRAPHICS_RENDER_WITH_MULTIPLE_PAINT_CALLS had no
+negative effect on performance. Now it may slow rendering down.
+
+Workaround
+----------
+Disable JUCE_COREGRAPHICS_RENDER_WITH_MULTIPLE_PAINT_CALLS.
+
+Rationale
+---------
+JUCE_COREGRAPHICS_RENDER_WITH_MULTIPLE_PAINT_CALLS has been ineffective when
+running on macOS 10.13 or later. Enabling this flag, and hence using the new
+Metal layer renderer when running on macOS 10.14, restores the previous
+behaviour and fixes problems where Core Graphics will render much larger
+regions than necessary. However, the new renderer will may be slower than the
+recently introduced default of asynchronous Core Graphics rendering, depending
+on the regions that Core Graphcis is redrawing. Whether
+JUCE_COREGRAPHICS_RENDER_WITH_MULTIPLE_PAINT_CALLS improves or degrades
+performance is specific to an application.
+
+
+Change
+------
+The optional JUCE_COREGRAPHICS_DRAW_ASYNC preprocessor flag has been removed
+and asynchronous Core Graphics rendering is now the default. The helper
+function setComponentAsyncLayerBackedViewDisabled has also been removed.
+
+Possible Issues
+---------------
+Components that were previously using setComponentAsyncLayerBackedViewDisabled
+to conditionally opt out of asynchronous Core Graphics rendering will no longer
+be able to do so.
+
+Workaround
+----------
+To opt out of asynchronous Core Graphics rendering the
+windowRequiresSynchronousCoreGraphicsRendering ComponentPeer style flag can be
+used when adding a component to the desktop.
+
+Rationale
+---------
+Asynchronous Core Graphics rendering provides a substantial performance
+benefit. Asynchronous rendering is a property of a Peer, rather than a
+Component, so a Peer style flag to conditionally opt out of asynchronous
+rendering is more appropriate.
+
+
+Change
+------
+Constructors of AudioParameterBool, AudioParameterChoice, AudioParameterFloat,
+AudioParameterInt, and AudioProcessorParameterWithID have been deprecated and
+replaced with new constructors taking an 'Attributes' argument.
+
+Possible Issues
+---------------
+The compiler may issue a deprecation warning upon encountering usages of the
+old constructors.
+
+Workaround
+----------
+Update code to pass an 'Attributes' instance instead. Example usages of the new
+constructors are given in the constructor documentation, and in the plugin
+example projects.
+
+Rationale
+---------
+Parameter types have many different properties. Setting a non-default property
+using the old constructors required explicitly setting other normally-defaulted
+properties, which was redundant. The new Attributes types allow non-default
+properties to be set in isolation.
+
+
 Version 6.1.6
 =============
 
@@ -340,7 +1085,7 @@ querying the capabilities of the current context at runtime.
 
 Change
 ------
-The minimum support CMake version is now 3.15.
+The minimum supported CMake version is now 3.15.
 
 Possible Issues
 ---------------

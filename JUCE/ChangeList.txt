@@ -3,6 +3,66 @@
 This file just lists the more notable headline features. For more detailed info
 about changes and bugfixes please see the git log and BREAKING-CHANGES.txt.
 
+Version 7.0.7
+  - Fixed some macOS 14.0 deprecations
+  - Fixed some issues with VST3 manifest generation
+  - Fixed a Metal layer rendering issue
+  - Fixed an issue setting realtime thread priorities
+  - Fixed a crash in VirtualDesktopWatcher
+  - Fixed an AUv3 bundling problem
+
+Version 7.0.6
+  - Added support for VST3 bundles and moduleinfo.json
+  - Improved message box dismissal
+  - Improved WebView support
+  - Updated to the latest VST3 and AAX SDKs
+  - Fixed some Metal layer rendering issues
+  - Improved ambisonic support
+  - Improved machine ID support
+  - Improved the HighResolutionTimer implementation
+
+Version 7.0.5
+  - Fixed Windows 7 compatibility
+  - Fixed dark mode notifications on macOS
+  - Improved the performance of AudioProcessorGraph
+
+Version 7.0.4
+  - Improved Metal device handling
+  - Adopted more C++17 features
+  - Improved input handling on macOS and iOS
+  - Fixed a GUI display issue on Linux
+  - Fixed some compiler warnings
+
+Version 7.0.3
+  - Added a unique machine ID
+  - Added new threading classes
+  - Improved the performance of multiple OpenGL contexts
+  - Refactored AudioProcessorGraph
+  - Improved AudioDeviceManager sample rate handling
+  - Fixed Studio One drawing performance
+  - Updated the FLAC library
+
+Version 7.0.2
+  - Fixed accessibility table navigation
+  - Fixed Android file access on older APIs
+  - Improved Linux VST3 threading
+  - Improved ARA integration
+
+Version 7.0.1
+  - Fixed some Xcode and MSVC compiler warnings
+  - Improved VST3 bus configuration and channel handling
+  - Fixed some Metal layer rendering bugs
+
+Version 7.0.0
+  - Added Audio Random Access (ARA) SDK support
+  - Added support for authoring and hosting LV2 plug-ins
+  - Added a default renderer for macOS and iOS
+  - Added new macOS and iOS rendering options
+  - Added hardware synchronised drawing on Windows, macOS and iOS
+  - Updated the Android billing and file access APIs
+  - Revamped AudioPlayHead functionality
+  - Improved accessibility support
+
 Version 6.1.6
   - Improved the handling of AU multichannel layouts
   - Added JUCE_NODISCARD to builder-patten functions

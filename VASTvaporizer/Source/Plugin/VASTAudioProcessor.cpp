@@ -53,13 +53,6 @@ VASTAudioProcessor::VASTAudioProcessor() : m_undoManager(3000, 30),
 #endif	
 #endif
 
-#ifndef _SSE2_VERSION
-	if (!SystemStats::hasAVX()) {
-		setErrorState(21);
-		AlertWindow::showMessageBoxAsync(MessageBoxIconType::WarningIcon, TRANS("Failed"), TRANS("This build of Vaporizer2 requires a CPU with AVX architecture or better."), TRANS("Continue"));
-	}	
-#endif
-
 	m_initCompleted = false;
 	m_bAudioThreadRunning = false;
 	m_wasBypassed = false;
@@ -3323,7 +3316,8 @@ String VASTAudioProcessor::getVersionString() {
 		case AudioProcessor::wrapperType_VST3:          pluginType = "VST3"; break;
 		case AudioProcessor::wrapperType_AudioUnit:     pluginType = "AU"; break;
 		case AudioProcessor::wrapperType_AudioUnitv3:   pluginType = "AUv3"; break;
-		case AudioProcessor::wrapperType_RTAS:          pluginType = "RTAS"; break;
+		case AudioProcessor::wrapperType_Unity:         pluginType = "Unity"; break;
+		case AudioProcessor::wrapperType_LV2:           pluginType = "LV2"; break;
 		case AudioProcessor::wrapperType_AAX:           pluginType = "AAX"; break;
 		case AudioProcessor::wrapperType_Standalone:    pluginType = "Standalone"; break;
 		default: pluginType = "undefined"; break;

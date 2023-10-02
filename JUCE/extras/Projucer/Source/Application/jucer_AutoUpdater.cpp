@@ -2,15 +2,15 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2022 - Raw Material Software Limited
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
+   By using JUCE, you agree to the terms of both the JUCE 7 End-User License
+   Agreement and JUCE Privacy Policy.
 
-   End User License Agreement: www.juce.com/juce-6-licence
+   End User License Agreement: www.juce.com/juce-7-licence
    Privacy Policy: www.juce.com/juce-privacy-policy
 
    Or: You may also use this code under the terms of the GPL v3 (see
@@ -44,7 +44,7 @@ void LatestVersionCheckerAndUpdater::checkForNewVersion (bool background)
     if (! isThreadRunning())
     {
         backgroundCheck = background;
-        startThread (3);
+        startThread (Priority::low);
     }
 }
 
@@ -56,11 +56,14 @@ void LatestVersionCheckerAndUpdater::run()
     if (info == nullptr)
     {
         if (! backgroundCheck)
-            AlertWindow::showMessageBoxAsync (MessageBoxIconType::WarningIcon,
-                                              "Update Server Communication Error",
-                                              "Failed to communicate with the JUCE update server.\n"
-                                              "Please try again in a few minutes.\n\n"
-                                              "If this problem persists you can download the latest version of JUCE from juce.com");
+        {
+            auto options = MessageBoxOptions::makeOptionsOk (MessageBoxIconType::WarningIcon,
+                                                             "Update Server Communication Error",
+                                                             "Failed to communicate with the JUCE update server.\n"
+                                                             "Please try again in a few minutes.\n\n"
+                                                             "If this problem persists you can download the latest version of JUCE from juce.com");
+            messageBox = AlertWindow::showScopedAsync (options, nullptr);
+        }
 
         return;
     }
@@ -68,9 +71,12 @@ void LatestVersionCheckerAndUpdater::run()
     if (! info->isNewerVersionThanCurrent())
     {
         if (! backgroundCheck)
-            AlertWindow::showMessageBoxAsync (MessageBoxIconType::InfoIcon,
-                                              "No New Version Available",
-                                              "Your JUCE version is up to date.");
+        {
+            auto options = MessageBoxOptions::makeOptionsOk (MessageBoxIconType::InfoIcon,
+                                                             "No New Version Available",
+                                                             "Your JUCE version is up to date.");
+            messageBox = AlertWindow::showScopedAsync (options, nullptr);
+        }
         return;
     }
 
@@ -109,9 +115,12 @@ void LatestVersionCheckerAndUpdater::run()
     }
 
     if (! backgroundCheck)
-        AlertWindow::showMessageBoxAsync (MessageBoxIconType::WarningIcon,
-                                          "Failed to find any new downloads",
-                                          "Please try again in a few minutes.");
+    {
+        auto options = MessageBoxOptions::makeOptionsOk (MessageBoxIconType::WarningIcon,
+                                                         "Failed to find any new downloads",
+                                                         "Please try again in a few minutes.");
+        messageBox = AlertWindow::showScopedAsync (options, nullptr);
+    }
 }
 
 //==============================================================================
@@ -275,33 +284,38 @@ void LatestVersionCheckerAndUpdater::askUserForLocationToDownload (const Version
         {
             if (targetFolder.getChildFile (".git").isDirectory())
             {
-                AlertWindow::showMessageBoxAsync (MessageBoxIconType::WarningIcon, "Downloading New JUCE Version",
-                                                  targetFolderPath + "\n\nis a GIT repository!\n\nYou should use a \"git pull\" to update it to the latest version.");
+                auto options = MessageBoxOptions::makeOptionsOk (MessageBoxIconType::WarningIcon,
+                                                                 "Downloading New JUCE Version",
+                                                                 targetFolderPath + "\n\n"
+                                                                 "is a GIT repository!\n\n"
+                                                                 "You should use a \"git pull\" to update it to the latest version.");
+                if (weakThis != nullptr)
+                    weakThis->messageBox = AlertWindow::showScopedAsync (options, nullptr);
 
                 return;
             }
 
-            AlertWindow::showOkCancelBox (MessageBoxIconType::WarningIcon,
-                                          "Overwrite Existing JUCE Folder?",
-                                          "Do you want to replace the folder\n\n" + targetFolderPath + "\n\nwith the latest version from juce.com?\n\n"
-                                              "This will move the existing folder to " + targetFolderPath + "_old.\n\n"
-                                              "Replacing the folder that contains the currently running Projucer executable may not work on Windows.",
-                                          {},
-                                          {},
-                                          nullptr,
-                                          ModalCallbackFunction::create (onResult));
+            auto options = MessageBoxOptions::makeOptionsOkCancel (MessageBoxIconType::WarningIcon,
+                                                                   "Overwrite Existing JUCE Folder?",
+                                                                   "Do you want to replace the folder\n\n" + targetFolderPath + "\n\n"
+                                                                   "with the latest version from juce.com?\n\n"
+                                                                   "This will move the existing folder to " + targetFolderPath + "_old.\n\n"
+                                                                   "Replacing the folder that contains the currently running Projucer executable may not work on Windows.");
+            if (weakThis != nullptr)
+                weakThis->messageBox = AlertWindow::showScopedAsync (options, onResult);
+
             return;
         }
 
         if (targetFolder.exists())
         {
-            AlertWindow::showOkCancelBox (MessageBoxIconType::WarningIcon,
-                                          "Existing File Or Directory",
-                                          "Do you want to move\n\n" + targetFolderPath + "\n\nto\n\n" + targetFolderPath + "_old?",
-                                          {},
-                                          {},
-                                          nullptr,
-                                          ModalCallbackFunction::create (onResult));
+            auto options = MessageBoxOptions::makeOptionsOkCancel (MessageBoxIconType::WarningIcon,
+                                                                   "Existing File Or Directory",
+                                                                   "Do you want to move\n\n" + targetFolderPath + "\n\n"
+                                                                   "to\n\n" + targetFolderPath + "_old?");
+            if (weakThis != nullptr)
+                weakThis->messageBox = AlertWindow::showScopedAsync (options, onResult);
+
             return;
         }
 
@@ -369,11 +383,11 @@ void LatestVersionCheckerAndUpdater::addNotificationToOpenProjects (const Versio
 class DownloadAndInstallThread   : private ThreadWithProgressWindow
 {
 public:
-    DownloadAndInstallThread  (const VersionInfo::Asset& a, const File& t, std::function<void()>&& cb)
+    DownloadAndInstallThread  (const VersionInfo::Asset& a, const File& t, std::function<void (Result)>&& cb)
         : ThreadWithProgressWindow ("Downloading New Version", true, true),
           asset (a), targetFolder (t), completionCallback (std::move (cb))
     {
-        launchThread (3);
+        launchThread (Priority::low);
     }
 
 private:
@@ -387,12 +401,10 @@ private:
         if (result.wasOk() && ! threadShouldExit())
             result = install (zipData);
 
-        if (result.failed())
-            MessageManager::callAsync ([result] { AlertWindow::showMessageBoxAsync (MessageBoxIconType::WarningIcon,
-                                                                                    "Installation Failed",
-                                                                                    result.getErrorMessage()); });
-        else
-            MessageManager::callAsync (completionCallback);
+        MessageManager::callAsync ([result, callback = completionCallback]
+        {
+            callback (result);
+        });
     }
 
     Result download (MemoryBlock& dest)
@@ -517,7 +529,7 @@ private:
 
     VersionInfo::Asset asset;
     File targetFolder;
-    std::function<void()> completionCallback;
+    std::function<void (Result)> completionCallback;
 };
 
 static void restartProcess (const File& targetFolder)
@@ -548,12 +560,22 @@ static void restartProcess (const File& targetFolder)
 
 void LatestVersionCheckerAndUpdater::downloadAndInstall (const VersionInfo::Asset& asset, const File& targetFolder)
 {
-    installer.reset (new DownloadAndInstallThread (asset, targetFolder,
-                                                   [this, targetFolder]
-                                                   {
-                                                       installer.reset();
-                                                       restartProcess (targetFolder);
-                                                   }));
+    installer.reset (new DownloadAndInstallThread (asset, targetFolder, [this, targetFolder] (const auto result)
+    {
+        if (result.failed())
+        {
+            auto options = MessageBoxOptions::makeOptionsOk (MessageBoxIconType::WarningIcon,
+                                                             "Installation Failed",
+                                                             result.getErrorMessage());
+
+            messageBox = AlertWindow::showScopedAsync (options, nullptr);
+        }
+        else
+        {
+            installer.reset();
+            restartProcess (targetFolder);
+        }
+    }));
 }
 
 //==============================================================================

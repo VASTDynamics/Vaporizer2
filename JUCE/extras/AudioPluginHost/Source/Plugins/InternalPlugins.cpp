@@ -2,15 +2,15 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2022 - Raw Material Software Limited
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
+   By using JUCE, you agree to the terms of both the JUCE 7 End-User License
+   Agreement and JUCE Privacy Policy.
 
-   End User License Agreement: www.juce.com/juce-6-licence
+   End User License Agreement: www.juce.com/juce-7-licence
    Privacy Policy: www.juce.com/juce-privacy-policy
 
    Or: You may also use this code under the terms of the GPL v3 (see
@@ -111,6 +111,7 @@ public:
     void setPlayHead (AudioPlayHead* p) override                                  { inner->setPlayHead (p); }
     void updateTrackProperties (const TrackProperties& p) override                { inner->updateTrackProperties (p); }
     bool isBusesLayoutSupported (const BusesLayout& layout) const override        { return inner->checkBusesLayoutSupported (layout); }
+    bool applyBusLayouts (const BusesLayout& layouts) override                    { return inner->setBusesLayout (layouts) && AudioPluginInstance::applyBusLayouts (layouts); }
 
     bool canAddBus (bool) const override                                          { return true; }
     bool canRemoveBus (bool) const override                                       { return true; }
@@ -261,8 +262,8 @@ private:
                 // start a tail-off by setting this flag. The render callback will pick up on
                 // this and do a fade out, calling clearCurrentNote() when it's finished.
 
-                if (tailOff == 0.0) // we only need to begin a tail-off if it's not already doing so - the
-                    // stopNote method could be called more than once.
+                if (approximatelyEqual (tailOff, 0.0)) // we only need to begin a tail-off if it's not already doing so - the
+                                                       // stopNote method could be called more than once.
                     tailOff = 1.0;
             }
             else
@@ -286,7 +287,7 @@ private:
 
         void renderNextBlock (AudioBuffer<float>& outputBuffer, int startSample, int numSamples) override
         {
-            if (angleDelta != 0.0)
+            if (! approximatelyEqual (angleDelta, 0.0))
             {
                 if (tailOff > 0)
                 {

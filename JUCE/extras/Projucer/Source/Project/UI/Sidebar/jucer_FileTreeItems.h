@@ -2,15 +2,15 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2022 - Raw Material Software Limited
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
+   By using JUCE, you agree to the terms of both the JUCE 7 End-User License
+   Agreement and JUCE Privacy Policy.
 
-   End User License Agreement: www.juce.com/juce-6-licence
+   End User License Agreement: www.juce.com/juce-7-licence
    Privacy Policy: www.juce.com/juce-privacy-policy
 
    Or: You may also use this code under the terms of the GPL v3 (see
@@ -138,15 +138,14 @@ public:
             if (filesToTrash.size() > maxFilesToList)
                 fileList << "\n...plus " << (filesToTrash.size() - maxFilesToList) << " more files...";
 
-            AlertWindow::showYesNoCancelBox (MessageBoxIconType::NoIcon,
-                                             "Delete Project Items",
-                                             "As well as removing the selected item(s) from the project, do you also want to move their files to the trash:\n\n"
-                                                  + fileList,
-                                             "Just remove references",
-                                             "Also move files to Trash",
-                                             "Cancel",
-                                             tree->getTopLevelComponent(),
-                                             ModalCallbackFunction::create ([treeRootItem, filesToTrash, doDelete] (int r) mutable
+            auto options = MessageBoxOptions::makeOptionsYesNoCancel (MessageBoxIconType::NoIcon,
+                                                                      "Delete Project Items",
+                                                                      "As well as removing the selected item(s) from the project, do you also want to move their files to the trash:\n\n" + fileList,
+                                                                      "Just remove references",
+                                                                      "Also move files to Trash",
+                                                                      "Cancel",
+                                                                      tree->getTopLevelComponent());
+            messageBox = AlertWindow::showScopedAsync (options, [treeRootItem, filesToTrash, doDelete] (int r) mutable
             {
                 if (treeRootItem == nullptr)
                     return;
@@ -158,7 +157,7 @@ public:
                     filesToTrash.clear();
 
                 doDelete (filesToTrash);
-            }));
+            });
 
             return;
         }
@@ -471,6 +470,8 @@ protected:
         return -1;
     }
 
+    ScopedMessageBox messageBox;
+
 private:
     std::unique_ptr<FileChooser> chooser;
 
@@ -521,10 +522,13 @@ public:
     {
         if (newName != File::createLegalFileName (newName))
         {
-            AlertWindow::showMessageBoxAsync (MessageBoxIconType::WarningIcon,
-                                              "File Rename",
-                                              "That filename contained some illegal characters!");
-            triggerAsyncRename (item);
+            auto options = MessageBoxOptions::makeOptionsOk (MessageBoxIconType::WarningIcon,
+                                                             "File Rename",
+                                                             "That filename contained some illegal characters!");
+            messageBox = AlertWindow::showScopedAsync (options, [this, item = item] (int)
+            {
+                triggerAsyncRename (item);
+            });
             return;
         }
 
@@ -538,42 +542,40 @@ public:
 
             if (correspondingItem.isValid())
             {
-                AlertWindow::showOkCancelBox (MessageBoxIconType::NoIcon,
-                                              "File Rename",
-                                              "Do you also want to rename the corresponding file \"" + correspondingFile.getFileName() + "\" to match?",
-                                              {},
-                                              {},
-                                              nullptr,
-                                              ModalCallbackFunction::create ([parent = WeakReference<SourceFileItem> { this },
-                                                                              oldFile, newFile, correspondingFile, correspondingItem] (int result) mutable
+                auto options = MessageBoxOptions::makeOptionsOkCancel (MessageBoxIconType::NoIcon,
+                                                                       "File Rename",
+                                                                       "Do you also want to rename the corresponding file \"" + correspondingFile.getFileName() + "\" to match?");
+                messageBox = AlertWindow::showScopedAsync (options, [parent = WeakReference { this }, oldFile, newFile, correspondingFile, correspondingItem] (int result) mutable
                 {
                     if (parent == nullptr || result == 0)
                         return;
 
                     if (! parent->item.renameFile (newFile))
                     {
-                        AlertWindow::showMessageBoxAsync (MessageBoxIconType::WarningIcon,
-                                                          "File Rename",
-                                                          "Failed to rename \"" + oldFile.getFullPathName() + "\"!\n\nCheck your file permissions!");
+                        auto opts = MessageBoxOptions::makeOptionsOk (MessageBoxIconType::WarningIcon,
+                                                                      "File Rename",
+                                                                      "Failed to rename \"" + oldFile.getFullPathName() + "\"!\n\nCheck your file permissions!");
+                        parent->messageBox = AlertWindow::showScopedAsync (opts, nullptr);
                         return;
                     }
 
                     if (! correspondingItem.renameFile (newFile.withFileExtension (correspondingFile.getFileExtension())))
                     {
-                        AlertWindow::showMessageBoxAsync (MessageBoxIconType::WarningIcon,
-                                                          "File Rename",
-                                                          "Failed to rename \"" + correspondingFile.getFullPathName() + "\"!\n\nCheck your file permissions!");
+                        auto opts = MessageBoxOptions::makeOptionsOk (MessageBoxIconType::WarningIcon,
+                                                                      "File Rename",
+                                                                      "Failed to rename \"" + correspondingFile.getFullPathName() + "\"!\n\nCheck your file permissions!");
+                        parent->messageBox = AlertWindow::showScopedAsync (opts, nullptr);
                     }
-
-                }));
+                });
             }
         }
 
         if (! item.renameFile (newFile))
         {
-            AlertWindow::showMessageBoxAsync (MessageBoxIconType::WarningIcon,
-                                              "File Rename",
-                                              "Failed to rename the file!\n\nCheck your file permissions!");
+            auto options = MessageBoxOptions::makeOptionsOk (MessageBoxIconType::WarningIcon,
+                                                             "File Rename",
+                                                             "Failed to rename the file!\n\nCheck your file permissions!");
+            messageBox = AlertWindow::showScopedAsync (options, nullptr);
         }
     }
 

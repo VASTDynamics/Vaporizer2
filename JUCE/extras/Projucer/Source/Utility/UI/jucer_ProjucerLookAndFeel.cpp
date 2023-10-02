@@ -2,15 +2,15 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2022 - Raw Material Software Limited
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
+   By using JUCE, you agree to the terms of both the JUCE 7 End-User License
+   Agreement and JUCE Privacy Policy.
 
-   End User License Agreement: www.juce.com/juce-6-licence
+   End User License Agreement: www.juce.com/juce-7-licence
    Privacy Policy: www.juce.com/juce-privacy-policy
 
    Or: You may also use this code under the terms of the GPL v3 (see
@@ -367,71 +367,9 @@ void ProjucerLookAndFeel::drawTreeviewPlusMinusBox (Graphics& g, const Rectangle
     g.strokePath (getArrowPath (area, isOpen ? 2 : 1, false, Justification::centredRight), PathStrokeType (2.0f));
 }
 
-void ProjucerLookAndFeel::drawProgressBar (Graphics& g, ProgressBar& progressBar,
-                                           int width, int height, double progress, const String& textToShow)
+ProgressBar::Style ProjucerLookAndFeel::getDefaultProgressBarStyle (const ProgressBar&)
 {
-    ignoreUnused (width, height, progress);
-
-    const auto background = progressBar.findColour (ProgressBar::backgroundColourId);
-    const auto foreground = progressBar.findColour (defaultButtonBackgroundColourId);
-
-    const auto sideLength = jmin (width, height);
-
-    auto barBounds = progressBar.getLocalBounds().withSizeKeepingCentre (sideLength, sideLength).reduced (1).toFloat();
-
-    auto rotationInDegrees  = static_cast<float> ((Time::getMillisecondCounter() / 10) % 360);
-    auto normalisedRotation = rotationInDegrees / 360.0f;
-
-    const auto rotationOffset = 22.5f;
-    const auto maxRotation    = 315.0f;
-
-    auto startInDegrees = rotationInDegrees;
-    auto endInDegrees   = startInDegrees + rotationOffset;
-
-    if (normalisedRotation >= 0.25f && normalisedRotation < 0.5f)
-    {
-        const auto rescaledRotation = (normalisedRotation * 4.0f) - 1.0f;
-        endInDegrees = startInDegrees + rotationOffset + (maxRotation * rescaledRotation);
-    }
-    else if (normalisedRotation >= 0.5f && normalisedRotation <= 1.0f)
-    {
-        endInDegrees = startInDegrees + rotationOffset + maxRotation;
-        const auto rescaledRotation = 1.0f - ((normalisedRotation * 2.0f) - 1.0f);
-        startInDegrees = endInDegrees - rotationOffset - (maxRotation * rescaledRotation);
-    }
-
-    g.setColour (background);
-    Path arcPath2;
-    arcPath2.addCentredArc (barBounds.getCentreX(),
-                            barBounds.getCentreY(),
-                            barBounds.getWidth() * 0.5f,
-                            barBounds.getHeight() * 0.5f, 0.0f,
-                            0.0f,
-                            MathConstants<float>::twoPi,
-                            true);
-    g.strokePath (arcPath2, PathStrokeType (2.0f));
-
-    g.setColour (foreground);
-    Path arcPath;
-    arcPath.addCentredArc (barBounds.getCentreX(),
-                           barBounds.getCentreY(),
-                           barBounds.getWidth() * 0.5f,
-                           barBounds.getHeight() * 0.5f,
-                           0.0f,
-                           degreesToRadians (startInDegrees),
-                           degreesToRadians (endInDegrees),
-                           true);
-
-    arcPath.applyTransform (AffineTransform::rotation (normalisedRotation * MathConstants<float>::pi * 2.25f,
-                                                       barBounds.getCentreX(), barBounds.getCentreY()));
-    g.strokePath (arcPath, PathStrokeType (2.0f));
-
-    if (textToShow.isNotEmpty())
-    {
-        g.setColour (progressBar.findColour (TextButton::textColourOffId));
-        g.setFont (Font (12.0f, 2));
-        g.drawText (textToShow, barBounds, Justification::centred, false);
-    }
+    return ProgressBar::Style::circular;
 }
 
 //==============================================================================
@@ -583,5 +521,6 @@ void ProjucerLookAndFeel::setupColours()
     setColour (TreeView::selectedItemBackgroundColourId,        findColour (defaultHighlightColourId));
     setColour (PopupMenu::highlightedBackgroundColourId,        findColour (defaultHighlightColourId).withAlpha (0.75f));
     setColour (PopupMenu::highlightedTextColourId,              findColour (defaultHighlightedTextColourId));
+    setColour (ProgressBar::foregroundColourId,                 findColour (defaultButtonBackgroundColourId));
     setColour (0x1000440, /*LassoComponent::lassoFillColourId*/ findColour (defaultHighlightColourId).withAlpha (0.3f));
 }

@@ -12,10 +12,10 @@
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX" applicationCategory="public.app-category.developer-tools">
       <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" osxCompatibility="10.10 SDK" isDebug="1" targetName="UnitTestRunner"
-                       recommendedWarnings="LLVM" macOSDeploymentTarget="10.10"/>
-        <CONFIGURATION name="Release" osxCompatibility="10.10 SDK" isDebug="0" targetName="UnitTestRunner"
-                       recommendedWarnings="LLVM" macOSDeploymentTarget="10.10"/>
+        <CONFIGURATION name="Debug" isDebug="1" targetName="UnitTestRunner"
+                       recommendedWarnings="LLVM"/>
+        <CONFIGURATION name="Release" isDebug="0" targetName="UnitTestRunner"
+                       recommendedWarnings="LLVM"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../modules"/>
@@ -167,7 +167,7 @@
             useGlobalPath="0"/>
     <MODULES id="juce_video" showAllCode="1" useLocalCopy="0"/>
   </MODULES>
-  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_PLUGINHOST_LV2="1" JUCE_PLUGINHOST_VST3="1"/>
   <LIVE_SETTINGS>
     <OSX enableCxx11="1"/>
   </LIVE_SETTINGS>

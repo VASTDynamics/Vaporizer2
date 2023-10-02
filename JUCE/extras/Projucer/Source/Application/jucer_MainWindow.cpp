@@ -2,15 +2,15 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2022 - Raw Material Software Limited
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
+   By using JUCE, you agree to the terms of both the JUCE 7 End-User License
+   Agreement and JUCE Privacy Policy.
 
-   End User License Agreement: www.juce.com/juce-6-licence
+   End User License Agreement: www.juce.com/juce-7-licence
    Privacy Policy: www.juce.com/juce-privacy-policy
 
    Or: You may also use this code under the terms of the GPL v3 (see
@@ -462,9 +462,10 @@ void MainWindow::openPIP (const File& pipFile, std::function<void (bool)> callba
 
     if (generatorResult != Result::ok())
     {
-        AlertWindow::showMessageBoxAsync (MessageBoxIconType::WarningIcon,
-                                          "PIP Error.",
-                                          generatorResult.getErrorMessage());
+        auto options = MessageBoxOptions::makeOptionsOk (MessageBoxIconType::WarningIcon,
+                                                         "PIP Error.",
+                                                         generatorResult.getErrorMessage());
+        messageBox = AlertWindow::showScopedAsync (options, nullptr);
 
         if (callback != nullptr)
             callback (false);
@@ -474,9 +475,10 @@ void MainWindow::openPIP (const File& pipFile, std::function<void (bool)> callba
 
     if (! generator->createMainCpp())
     {
-        AlertWindow::showMessageBoxAsync (MessageBoxIconType::WarningIcon,
-                                          "PIP Error.",
-                                          "Failed to create Main.cpp.");
+        auto options = MessageBoxOptions::makeOptionsOk (MessageBoxIconType::WarningIcon,
+                                                         "PIP Error.",
+                                                         "Failed to create Main.cpp.");
+        messageBox = AlertWindow::showScopedAsync (options, nullptr);
 
         if (callback != nullptr)
             callback (false);
@@ -491,9 +493,10 @@ void MainWindow::openPIP (const File& pipFile, std::function<void (bool)> callba
 
         if (! openedSuccessfully)
         {
-            AlertWindow::showMessageBoxAsync (MessageBoxIconType::WarningIcon,
-                                              "PIP Error.",
-                                              "Failed to open .jucer file.");
+            auto options = MessageBoxOptions::makeOptionsOk (MessageBoxIconType::WarningIcon,
+                                                             "PIP Error.",
+                                                             "Failed to open .jucer file.");
+            parent->messageBox = AlertWindow::showScopedAsync (options, nullptr);
 
             if (callback != nullptr)
                 callback (false);

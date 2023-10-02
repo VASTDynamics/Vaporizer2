@@ -2,15 +2,15 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2022 - Raw Material Software Limited
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
+   By using JUCE, you agree to the terms of both the JUCE 7 End-User License
+   Agreement and JUCE Privacy Policy.
 
-   End User License Agreement: www.juce.com/juce-6-licence
+   End User License Agreement: www.juce.com/juce-7-licence
    Privacy Policy: www.juce.com/juce-privacy-policy
 
    Or: You may also use this code under the terms of the GPL v3 (see
@@ -35,12 +35,12 @@
 
   ID:                 juce_box2d
   vendor:             juce
-  version:            6.1.6
+  version:            7.0.7
   name:               JUCE wrapper for the Box2D physics engine
   description:        The Box2D physics engine and some utility classes.
   website:            http://www.juce.com/juce
   license:            GPL/Commercial
-  minimumCppStandard: 14
+  minimumCppStandard: 17
 
   dependencies:       juce_graphics
 
@@ -56,10 +56,12 @@
 #include <juce_graphics/juce_graphics.h>
 
 JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wconversion",
+                                     "-Wdeprecated",
+                                     "-Wfloat-equal",
+                                     "-Wmaybe-uninitialized",
                                      "-Wshadow-field",
-                                     "-Wzero-as-null-pointer-constant",
                                      "-Wsign-conversion",
-                                     "-Wdeprecated")
+                                     "-Wzero-as-null-pointer-constant")
 
 #include <climits>
 #include <cfloat>

@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE examples.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2022 - Raw Material Software Limited
 
    The code included in this file is provided under the terms of the ISC license
    http://www.isc.org/downloads/software-support-policy/isc-license. Permission
@@ -185,20 +185,25 @@ public:
             { PushNotifications::getInstance()->removeAllPendingLocalNotifications(); };
       #endif
 
-        remoteView.getDeviceTokenButton.onClick = []
+        remoteView.getDeviceTokenButton.onClick = [this]
         {
             String token = PushNotifications::getInstance()->getDeviceToken();
 
             DBG ("token = " + token);
 
             if (token.isEmpty())
+            {
                 showRemoteInstructions();
+            }
             else
-                NativeMessageBox::showAsync (MessageBoxOptions()
+            {
+                auto options = MessageBoxOptions()
                                                .withIconType (MessageBoxIconType::InfoIcon)
                                                .withTitle ("Device token")
-                                               .withMessage (token),
-                                             nullptr);
+                                               .withMessage (token)
+                                               .withButton ("OK");
+                messageBox = NativeMessageBox::showScopedAsync (options, nullptr);
+            }
         };
 
       #if JUCE_ANDROID
@@ -312,11 +317,12 @@ private:
             String requiredFields = "all required fields";
           #endif
 
-            NativeMessageBox::showAsync (MessageBoxOptions()
+            auto options = MessageBoxOptions()
                                            .withIconType (MessageBoxIconType::InfoIcon)
                                            .withTitle ("Incorrect notifications setup")
-                                           .withMessage ("Please make sure that " + requiredFields + " are set."),
-                                         nullptr);
+                                           .withMessage ("Please make sure that " + requiredFields + " are set.")
+                                           .withButton ("OK");
+            messageBox = NativeMessageBox::showScopedAsync (options, nullptr);
 
             return;
         }
@@ -563,13 +569,14 @@ private:
     {
         ignoreUnused (isLocalNotification);
 
-        NativeMessageBox::showAsync (MessageBoxOptions()
+        auto options = MessageBoxOptions()
                                        .withIconType (MessageBoxIconType::InfoIcon)
                                        .withTitle ("Received notification")
                                        .withMessage ("ID: " + n.identifier
                                                      + ", title: " + n.title
-                                                     + ", body: " + n.body),
-                                     nullptr);
+                                                     + ", body: " + n.body)
+                                       .withButton ("OK");
+        messageBox = NativeMessageBox::showScopedAsync (options, nullptr);
     }
 
     void handleNotificationAction (bool isLocalNotification,
@@ -579,28 +586,30 @@ private:
     {
         ignoreUnused (isLocalNotification);
 
-        NativeMessageBox::showAsync (MessageBoxOptions()
+        auto options = MessageBoxOptions()
                                        .withIconType (MessageBoxIconType::InfoIcon)
                                        .withTitle ("Received notification action")
                                        .withMessage ("ID: " + n.identifier
                                                      + ", title: " + n.title
                                                      + ", body: " + n.body
                                                      + ", action: " + actionIdentifier
-                                                     + ", optionalResponse: " + optionalResponse),
-                                     nullptr);
+                                                     + ", optionalResponse: " + optionalResponse)
+                                       .withButton ("OK");
+        messageBox = NativeMessageBox::showScopedAsync (options, nullptr);
 
         PushNotifications::getInstance()->removeDeliveredNotification (n.identifier);
     }
 
     void localNotificationDismissedByUser (const PushNotifications::Notification& n) override
     {
-        NativeMessageBox::showAsync (MessageBoxOptions()
+        auto options = MessageBoxOptions()
                                        .withIconType (MessageBoxIconType::InfoIcon)
                                        .withTitle ("Notification dismissed by a user")
                                        .withMessage ("ID: " + n.identifier
                                                      + ", title: " + n.title
-                                                     + ", body: " + n.body),
-                                     nullptr);
+                                                     + ", body: " + n.body)
+                                       .withButton ("OK");
+        messageBox = NativeMessageBox::showScopedAsync (options, nullptr);
     }
 
     void deliveredNotificationsListReceived (const Array<PushNotifications::Notification>& notifs) override
@@ -610,11 +619,12 @@ private:
         for (auto& n : notifs)
             text << "(" << n.identifier << ", " << n.title << ", " << n.body << "), ";
 
-        NativeMessageBox::showAsync (MessageBoxOptions()
+        auto options = MessageBoxOptions()
                                        .withIconType (MessageBoxIconType::InfoIcon)
                                        .withTitle ("Received notification list")
-                                       .withMessage (text),
-                                     nullptr);
+                                       .withMessage (text)
+                                       .withButton ("OK");
+        messageBox = NativeMessageBox::showScopedAsync (options, nullptr);
     }
 
     void pendingLocalNotificationsListReceived (const Array<PushNotifications::Notification>& notifs) override
@@ -624,49 +634,54 @@ private:
         for (auto& n : notifs)
             text << "(" << n.identifier << ", " << n.title << ", " << n.body << "), ";
 
-        NativeMessageBox::showAsync (MessageBoxOptions()
+        auto options = MessageBoxOptions()
                                        .withIconType (MessageBoxIconType::InfoIcon)
                                        .withTitle ("Pending notification list")
-                                       .withMessage (text),
-                                     nullptr);
+                                       .withMessage (text)
+                                       .withButton ("OK");
+        messageBox = NativeMessageBox::showScopedAsync (options, nullptr);
     }
 
     void deviceTokenRefreshed (const String& token) override
     {
-        NativeMessageBox::showAsync (MessageBoxOptions()
+        auto options = MessageBoxOptions()
                                        .withIconType (MessageBoxIconType::InfoIcon)
                                        .withTitle ("Device token refreshed")
-                                       .withMessage (token),
-                                     nullptr);
+                                       .withMessage (token)
+                                       .withButton ("OK");
+        messageBox = NativeMessageBox::showScopedAsync (options, nullptr);
     }
 
   #if JUCE_ANDROID
     void remoteNotificationsDeleted() override
     {
-        NativeMessageBox::showAsync (MessageBoxOptions()
+        auto options = MessageBoxOptions()
                                        .withIconType (MessageBoxIconType::InfoIcon)
                                        .withTitle ("Remote notifications deleted")
-                                       .withMessage ("Some of the pending messages were removed!"),
-                                     nullptr);
+                                       .withMessage ("Some of the pending messages were removed!")
+                                       .withButton ("OK");
+        messageBox = NativeMessageBox::showScopedAsync (options, nullptr);
     }
 
     void upstreamMessageSent (const String& messageId) override
     {
-        NativeMessageBox::showAsync (MessageBoxOptions()
+        auto options = MessageBoxOptions()
                                        .withIconType (MessageBoxIconType::InfoIcon)
                                        .withTitle ("Upstream message sent")
-                                       .withMessage ("Message id: " + messageId),
-                                     nullptr);
+                                       .withMessage ("Message id: " + messageId)
+                                       .withButton ("OK");
+        messageBox = NativeMessageBox::showScopedAsync (options, nullptr);
     }
 
     void upstreamMessageSendingError (const String& messageId, const String& error) override
     {
-        NativeMessageBox::showAsync (MessageBoxOptions()
+        auto options = MessageBoxOptions()
                                        .withIconType (MessageBoxIconType::InfoIcon)
                                        .withTitle ("Upstream message sending error")
                                        .withMessage ("Message id: " + messageId
-                                                     + "\nerror: " + error),
-                                     nullptr);
+                                                     + "\nerror: " + error)
+                                       .withButton ("OK");
+        messageBox = NativeMessageBox::showScopedAsync (options, nullptr);
     }
 
     static Array<PushNotifications::Channel> getAndroidChannels()
@@ -1196,8 +1211,8 @@ private:
 
     struct DemoTabbedComponent  : public TabbedComponent
     {
-        explicit DemoTabbedComponent (TabbedButtonBar::Orientation orientation)
-            : TabbedComponent (orientation)
+        DemoTabbedComponent (PushNotificationsDemo& demoIn, TabbedButtonBar::Orientation orientation)
+            : TabbedComponent (orientation), demo (demoIn)
         {
         }
 
@@ -1205,26 +1220,28 @@ private:
         {
             if (! showedRemoteInstructions && newCurrentTabName == "Remote")
             {
-                PushNotificationsDemo::showRemoteInstructions();
+                demo.showRemoteInstructions();
                 showedRemoteInstructions = true;
             }
         }
 
     private:
         bool showedRemoteInstructions = false;
+        PushNotificationsDemo& demo;
     };
 
-    static void showRemoteInstructions()
+    void showRemoteInstructions()
     {
        #if JUCE_IOS || JUCE_MAC
-        NativeMessageBox::showAsync (MessageBoxOptions()
+        auto options = MessageBoxOptions()
                                        .withIconType (MessageBoxIconType::InfoIcon)
                                        .withTitle ("Remote Notifications instructions")
                                        .withMessage ("In order to be able to test remote notifications "
                                                      "ensure that the app is signed and that you register "
                                                      "the bundle ID for remote notifications in "
-                                                     "Apple Developer Center."),
-                                     nullptr);
+                                                     "Apple Developer Center.")
+                                       .withButton ("OK");
+        messageBox = NativeMessageBox::showScopedAsync (options, nullptr);
        #endif
     }
 
@@ -1234,10 +1251,11 @@ private:
     AuxActionsView auxActionsView;
     TabbedComponent localNotificationsTabs { TabbedButtonBar::TabsAtTop };
     RemoteView remoteView;
-    DemoTabbedComponent mainTabs { TabbedButtonBar::TabsAtTop };
+    DemoTabbedComponent mainTabs { *this, TabbedButtonBar::TabsAtTop };
     TextButton sendButton      { "Send!" };
     Label notAvailableYetLabel { "notAvailableYetLabel",
                                  "Push Notifications feature is not available on this platform yet!" };
+    ScopedMessageBox messageBox;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PushNotificationsDemo)

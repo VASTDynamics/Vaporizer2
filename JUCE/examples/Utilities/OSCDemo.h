@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE examples.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2022 - Raw Material Software Limited
 
    The code included in this file is provided under the terms of the ISC license
    http://www.isc.org/downloads/software-support-policy/isc-license. Permission
@@ -31,7 +31,7 @@
 
  dependencies:     juce_core, juce_data_structures, juce_events, juce_graphics,
                    juce_gui_basics, juce_osc
- exporters:        xcode_mac, vs2019, linux_make
+ exporters:        xcode_mac, vs2022, linux_make
 
  moduleFlags:      JUCE_STRICT_REFCOUNTEDPOINTER=1
 
@@ -222,16 +222,17 @@ private:
     //==============================================================================
     void showConnectionErrorMessage (const String& messageText)
     {
-        AlertWindow::showMessageBoxAsync (MessageBoxIconType::WarningIcon,
-                                          "Connection error",
-                                          messageText,
-                                          "OK");
+        auto options = MessageBoxOptions::makeOptionsOk (MessageBoxIconType::WarningIcon,
+                                                         "Connection error",
+                                                         messageText);
+        messageBox = AlertWindow::showScopedAsync (options, nullptr);
     }
 
     //==============================================================================
     Slider rotaryKnob;
     OSCSender sender1, sender2;
     Label senderLabel { {}, "Sender" };
+    ScopedMessageBox messageBox;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (OSCSenderDemo)
 };
@@ -273,15 +274,16 @@ private:
 
     void showConnectionErrorMessage (const String& messageText)
     {
-        AlertWindow::showMessageBoxAsync (MessageBoxIconType::WarningIcon,
-                                          "Connection error",
-                                          messageText,
-                                          "OK");
+        auto options = MessageBoxOptions::makeOptionsOk (MessageBoxIconType::WarningIcon,
+                                                         "Connection error",
+                                                         messageText);
+        messageBox = AlertWindow::showScopedAsync (options, nullptr);
     }
 
     //==============================================================================
     Slider rotaryKnob;
     Label receiverLabel { {}, "Receiver" };
+    ScopedMessageBox messageBox;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (OSCReceiverDemo)
 };
@@ -403,28 +405,28 @@ private:
     //==============================================================================
     void handleConnectError (int failedPort)
     {
-        AlertWindow::showMessageBoxAsync (MessageBoxIconType::WarningIcon,
-                                          "OSC Connection error",
-                                          "Error: could not connect to port " + String (failedPort),
-                                          "OK");
+        auto options = MessageBoxOptions::makeOptionsOk (MessageBoxIconType::WarningIcon,
+                                                         "OSC Connection error",
+                                                         "Error: could not connect to port " + String (failedPort));
+        messageBox = AlertWindow::showScopedAsync (options, nullptr);
     }
 
     //==============================================================================
     void handleDisconnectError()
     {
-        AlertWindow::showMessageBoxAsync (MessageBoxIconType::WarningIcon,
-                                          "Unknown error",
-                                          "An unknown error occurred while trying to disconnect from UDP port.",
-                                          "OK");
+        auto options = MessageBoxOptions::makeOptionsOk (MessageBoxIconType::WarningIcon,
+                                                         "Unknown error",
+                                                         "An unknown error occurred while trying to disconnect from UDP port.");
+        messageBox = AlertWindow::showScopedAsync (options, nullptr);
     }
 
     //==============================================================================
     void handleInvalidPortNumberEntered()
     {
-        AlertWindow::showMessageBoxAsync (MessageBoxIconType::WarningIcon,
-                                          "Invalid port number",
-                                          "Error: you have entered an invalid UDP port number.",
-                                          "OK");
+        auto options = MessageBoxOptions::makeOptionsOk (MessageBoxIconType::WarningIcon,
+                                                         "Invalid port number",
+                                                         "Error: you have entered an invalid UDP port number.");
+        messageBox = AlertWindow::showScopedAsync (options, nullptr);
     }
 
     //==============================================================================
@@ -456,6 +458,8 @@ private:
         connectionStatusLabel.setColour (Label::textColourId, textColour);
         connectionStatusLabel.setJustificationType (Justification::centredRight);
     }
+
+    ScopedMessageBox messageBox;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (OSCMonitorDemo)
 };

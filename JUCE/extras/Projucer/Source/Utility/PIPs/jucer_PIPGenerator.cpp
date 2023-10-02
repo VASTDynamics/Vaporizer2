@@ -2,15 +2,15 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2022 - Raw Material Software Limited
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
+   By using JUCE, you agree to the terms of both the JUCE 7 End-User License
+   Agreement and JUCE Privacy Policy.
 
-   End User License Agreement: www.juce.com/juce-6-licence
+   End User License Agreement: www.juce.com/juce-7-licence
    Privacy Policy: www.juce.com/juce-privacy-policy
 
    Or: You may also use this code under the terms of the GPL v3 (see
@@ -62,18 +62,15 @@ static String ensureCorrectWhitespace (StringRef input)
 
 static bool isJUCEExample (const File& pipFile)
 {
-    int numLinesToTest = 10; // license should be at the top of the file so no need to
-                             // check all lines
+    const auto numLinesToTest = 10; // license should be at the top of the file so no need to check all lines
+    const auto lines = StringArray::fromLines (pipFile.loadFileAsString());
 
-    for (auto line : StringArray::fromLines (pipFile.loadFileAsString()))
-    {
-        if (line.contains ("This file is part of the JUCE examples."))
-            return true;
-
-        --numLinesToTest;
-    }
-
-    return false;
+    return std::any_of (lines.begin(),
+                        lines.begin() + (std::min (lines.size(), numLinesToTest)),
+                        [] (const auto& line)
+                        {
+                            return line.contains ("This file is part of the JUCE examples.");
+                        });
 }
 
 static bool isValidExporterIdentifier (const Identifier& exporterIdentifier)
@@ -213,6 +210,11 @@ void PIPGenerator::createFiles (ValueTree& jucerTree)
     jucerTree.addChild (mainGroup, 0, nullptr);
 }
 
+String PIPGenerator::getDocumentControllerClass() const
+{
+    return metadata.getProperty (Ids::documentControllerClass, "").toString();
+}
+
 ValueTree PIPGenerator::createModulePathChild (const String& moduleID)
 {
     ValueTree modulePath (Ids::MODULEPATH);
@@ -259,6 +261,9 @@ ValueTree PIPGenerator::createExporterChild (const Identifier& exporterIdentifie
             jassertfalse;
         }
     }
+
+    if (exporterIdentifier.toString() == AndroidProjectExporter::getValueTreeTypeName())
+        exporter.setProperty (Ids::androidBluetoothNeeded, true, nullptr);
 
     {
         ValueTree configs (Ids::CONFIGURATIONS);
@@ -383,6 +388,9 @@ Result PIPGenerator::setProjectSettings (ValueTree& jucerTree)
         StringArray pluginFormatsToBuild (Ids::buildVST3.toString(), Ids::buildAU.toString(), Ids::buildStandalone.toString());
         pluginFormatsToBuild.addArray (getExtraPluginFormatsToBuild());
 
+        if (getDocumentControllerClass().isNotEmpty())
+            pluginFormatsToBuild.add (Ids::enableARA.toString());
+
         jucerTree.setProperty (Ids::pluginFormats, pluginFormatsToBuild.joinIntoString (","), nullptr);
 
         const auto characteristics = metadata[Ids::pluginCharacteristics].toString();
@@ -421,6 +429,7 @@ void PIPGenerator::setModuleFlags (ValueTree& jucerTree)
 String PIPGenerator::getMainFileTextForType()
 {
     const auto type = metadata[Ids::type].toString();
+    const auto documentControllerClass = getDocumentControllerClass();
 
     const auto mainTemplate = [&]
     {
@@ -434,8 +443,17 @@ String PIPGenerator::getMainFileTextForType()
                    .replace ("${JUCE_PIP_MAIN_CLASS}", metadata[Ids::mainClass].toString());
 
         if (type == "AudioProcessor")
+        {
+            if (documentControllerClass.isNotEmpty())
+            {
+                return String (BinaryData::PIPAudioProcessorWithARA_cpp_in)
+                       .replace ("${JUCE_PIP_MAIN_CLASS}", metadata[Ids::mainClass].toString())
+                       .replace ("${JUCE_PIP_DOCUMENTCONTROLLER_CLASS}", documentControllerClass);
+            }
+
             return String (BinaryData::PIPAudioProcessor_cpp_in)
                    .replace ("${JUCE_PIP_MAIN_CLASS}", metadata[Ids::mainClass].toString());
+        }
 
         return String{};
     }();

@@ -224,6 +224,15 @@ plugin folders may be protected, so the build may require elevated permissions i
 installation to work correctly, or you may need to adjust the permissions of the destination
 folders.
 
+#### `JUCE_MODULES_ONLY`
+
+Only brings in targets for the built-in JUCE modules, and the `juce_add_module*` CMake functions.
+This is meant for highly custom use-cases where the `juce_add_gui_app` and `juce_add_plugin`
+functions are not required. Most importantly, the 'juceaide' helper tool is not built when this
+option is enabled, which may improve build times for established products that use other methods to
+handle plugin bundle structures, icons, plists, and so on. If this option is enabled, then
+`JUCE_ENABLE_MODULE_SOURCE_GROUPS` will have no effect.
+
 ### Functions
 
 #### `juce_add_<target>`
@@ -266,7 +275,7 @@ attributes directly to these creation functions, rather than adding them later.
 `BUNDLE_ID`
 - An identifier string in the form "com.yourcompany.productname" which should uniquely identify
   this target. Mainly used for macOS builds. If not specified, a default will be generated using
-  the target's `COMPANY_NAME` and `PRODUCT_NAME`.
+  the target's `COMPANY_NAME` and the name of the CMake target.
 
 `MICROPHONE_PERMISSION_ENABLED`
 - May be either TRUE or FALSE. Adds the appropriate entries to an app's Info.plist.
@@ -331,12 +340,14 @@ attributes directly to these creation functions, rather than adding them later.
 
 `LAUNCH_STORYBOARD_FILE`
 - A custom launch storyboard file to use on iOS. If not supplied, a default storyboard will be
-  used.
+  used. If this is specified, then this will take precedence over a LaunchImage inside a custom
+  xcassets directory.
 
 `CUSTOM_XCASSETS_FOLDER`
 - A path to an xcassets directory, containing icons and/or launch images for this target. If this
-  is specified, the ICON_BIG and ICON_SMALL arguments will not have an effect on iOS, and a launch
-  storyboard will not be used.
+  is specified, the ICON_BIG and ICON_SMALL arguments will not have an effect on iOS. LaunchImages
+  have been deprecated from iOS 13 onward, but if your xcassets folder contains a LaunchImage and
+  a custom storyboard hasn't been specified, then it will be used.
 
 `TARGETED_DEVICE_FAMILY`
 - Specifies the device families on which the product must be capable of running. Allowed values
@@ -544,7 +555,7 @@ attributes directly to these creation functions, rather than adding them later.
   `AAX_ePlugInCategory_NoiseReduction`, `AAX_ePlugInCategory_Dither`,
   `AAX_ePlugInCategory_SoundField`, `AAX_ePlugInCategory_HWGenerators`,
   `AAX_ePlugInCategory_SWGenerators`, `AAX_ePlugInCategory_WrappedPlugin`,
-  `AAX_ePlugInCategory_Effect`
+  `AAX_EPlugInCategory_Effect`
 
 `PLUGINHOST_AU`
 - May be either TRUE or FALSE (defaults to FALSE). If TRUE, will add the preprocessor definition
@@ -598,6 +609,51 @@ attributes directly to these creation functions, rather than adding them later.
   adding the plugin targets, rather than setting this argument on each individual target.
   Unlike the other `COPY_DIR` arguments, this argument does not have a default value so be sure
   to set it if you have enabled `COPY_PLUGIN_AFTER_BUILD` and the `Unity` format.
+
+`IS_ARA_EFFECT`
+- May be either TRUE or FALSE (defaults to FALSE). If TRUE it enables additional codepaths in the
+  VST3 and AU plugin wrappers allowing compatible hosts to load the plugin with additional ARA
+  functionality. It will also add the preprocessor definition `JucePlugin_Enable_ARA=1`, which can
+  be used in preprocessor conditions inside the plugin code. You should not add this definition
+  using `target_compile_definitions` manually.
+
+`ARA_FACTORY_ID`
+- A globally unique and versioned identifier string. If not provided a sensible default will be
+  generated using the `BUNDLE_ID` and `VERSION` values. The version must be updated if e.g. the
+  plugin's (compatible) document archive ID(s) or its analysis or playback transformation
+  capabilities change.
+
+`ARA_DOCUMENT_ARCHIVE_ID`
+- Identifier string for document archives created by the document controller. This ID must be
+  globally unique and is shared only amongst document controllers that create the same archives and
+  produce the same render results based upon the same input data. This means that the ID must be
+  updated if the archive format changes in any way that is no longer downwards compatible. If not
+  provided a version independent default will be created that is only appropriate as long as the
+  format remains unchanged.
+
+`ARA_ANALYSIS_TYPES`
+- Defaults to having no analyzable types. Should be one or more of the following values if the
+  document controller has the corresponding analysis capability: `kARAContentTypeNotes`,
+  `kARAContentTypeTempoEntries`, `kARAContentTypeBarSignatures`, `kARAContentTypeStaticTuning `,
+  `kARAContentTypeKeySignatures`, `kARAContentTypeSheetChords`
+
+`ARA_TRANSFORMATION_FLAGS`
+- Defaults to `kARAPlaybackTransformationNoChanges`. If the document controller has the ability to
+  provide the corresponding change it should be one or more of:
+  `kARAPlaybackTransformationTimestretch`, `kARAPlaybackTransformationTimestretchReflectingTempo`,
+  `kARAPlaybackTransformationContentBasedFadeAtTail`,
+  `kARAPlaybackTransformationContentBasedFadeAtHead`
+
+`VST3_AUTO_MANIFEST`
+- May be either TRUE or FALSE (defaults to TRUE). When TRUE, a POST_BUILD step will be added to the
+  VST3 target which will generate a moduleinfo.json file into the Resources subdirectory of the
+  plugin bundle. This is normally desirable, but does require that the plugin can be successfully
+  loaded immediately after building the VST3 target. If the plugin needs further processing before
+  it can be loaded (e.g. custom signing), then set this option to FALSE to disable the automatic
+  manifest generation. To generate the manifest at a later point in the build, use the
+  `juce_enable_vst3_manifest_step` function. It is strongly recommended to generate a manifest for
+  your plugin, as this allows compatible hosts to scan the plugin much more quickly, leading to
+  an improved experience for users.
 
 #### `juce_add_binary_data`
 
@@ -659,15 +715,29 @@ If your custom build steps need to use the location of the plugin artefact, you 
 by querying the property `JUCE_PLUGIN_ARTEFACT_FILE` on a plugin target (*not* the shared code
 target!).
 
+#### `juce_enable_vst3_manifest_step`
+
+    juce_enable_vst3_manifest_step(<target>)
+
+You may call this function to manually enable VST3 manifest generation on a plugin. The argument to
+this function should be a target previously created with `juce_add_plugin`.
+
+VST3_AUTO_MANIFEST TRUE will cause the VST3 manifest to be generated immediately after building.
+This is not always appropriate, if extra build steps (such as signing or modifying the plugin
+bundle) must be executed before the plugin can be loaded. In such cases, you should set
+VST3_AUTO_MANIFEST FALSE, use `add_custom_command(TARGET POST_BUILD)` to add your own post-build
+steps, and then finally call `juce_enable_vst3_manifest_step`.
+
 #### `juce_set_<kind>_sdk_path`
 
     juce_set_aax_sdk_path(<absolute path>)
     juce_set_vst2_sdk_path(<absolute path>)
     juce_set_vst3_sdk_path(<absolute path>)
+    juce_set_ara_sdk_path(<absolute path>)
 
-Call these functions from your CMakeLists to set up your local AAX, VST2, and VST3 SDKs. These
-functions should be called *before* adding any targets that may depend on the AAX/VST2/VST3 SDKs
-(plugin hosts, AAX/VST2/VST3 plugins etc.).
+Call these functions from your CMakeLists to set up your local AAX, VST2, VST3 and ARA SDKs. These
+functions should be called *before* adding any targets that may depend on the AAX/VST2/VST3/ARA SDKs
+(plugin hosts, AAX/VST2/VST3/ARA plugins etc.).
 
 #### `juce_add_module`
 
@@ -717,6 +787,21 @@ your target.
 This function sets the `CMAKE_<LANG>_FLAGS_<MODE>` to empty in the current directory and below,
 allowing alternative optimisation/debug flags to be supplied without conflicting with the
 CMake-supplied defaults.
+
+#### `juce_link_with_embedded_linux_subprocess`
+
+    juce_link_with_embedded_linux_subprocess(<target>)
+
+This function links the provided target with an interface library that generates a barebones 
+standalone executable file and embeds it as a binary resource. This binary resource is only used
+by the `juce_gui_extra` module and only when its `JUCE_WEB_BROWSER` capability is enabled. This
+executable will then be deployed into a temporary file only when the code is running in a
+non-standalone format, and will be used to host a WebKit view. This technique is used by audio
+plugins on Linux.
+
+This function is automatically called if necessary for all targets created by one of the JUCE target
+creation functions i.e. `juce_add_gui_app`, `juce_add_console_app` and `juce_add_gui_app`. You don't
+need to call this function manually in these cases.
 
 ### Targets
 

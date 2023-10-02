@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE examples.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2022 - Raw Material Software Limited
 
    The code included in this file is provided under the terms of the ISC license
    http://www.isc.org/downloads/software-support-policy/isc-license. Permission
@@ -33,7 +33,7 @@
                    juce_audio_processors, juce_audio_utils, juce_core,
                    juce_data_structures, juce_events, juce_graphics,
                    juce_gui_basics, juce_gui_extra
- exporters:        xcode_mac, vs2019, linux_make, androidstudio, xcode_iphone
+ exporters:        xcode_mac, vs2022, linux_make, androidstudio, xcode_iphone
 
  moduleFlags:      JUCE_STRICT_REFCOUNTEDPOINTER=1
 
@@ -134,10 +134,12 @@ public:
         sampleRate = 0;
     }
 
-    void audioDeviceIOCallback (const float** inputChannelData, int numInputChannels,
-                                float** outputChannelData, int numOutputChannels,
-                                int numSamples) override
+    void audioDeviceIOCallbackWithContext (const float* const* inputChannelData, int numInputChannels,
+                                           float* const* outputChannelData, int numOutputChannels,
+                                           int numSamples, const AudioIODeviceCallbackContext& context) override
     {
+        ignoreUnused (context);
+
         const ScopedLock sl (writerLock);
 
         if (activeWriter.load() != nullptr && numInputChannels >= thumbnail.getNumChannels())
@@ -303,17 +305,14 @@ private:
 
     LiveScrollingAudioDisplay liveAudioScroller;
     RecordingThumbnail recordingThumbnail;
-    AudioRecorder recorder  { recordingThumbnail.getAudioThumbnail() };
+    AudioRecorder recorder { recordingThumbnail.getAudioThumbnail() };
 
-    Label explanationLabel  { {}, "This page demonstrates how to record a wave file from the live audio input..\n\n"
-                                 #if (JUCE_ANDROID || JUCE_IOS)
-                                  "After you are done with your recording you can share with other apps."
-                                 #else
-                                  "Pressing record will start recording a file in your \"Documents\" folder."
-                                 #endif
-                             };
+    Label explanationLabel { {},
+                             "This page demonstrates how to record a wave file from the live audio input.\n\n"
+                             "After you are done with your recording you can choose where to save it." };
     TextButton recordButton { "Record" };
     File lastRecording;
+    FileChooser chooser { "Output file...", File::getCurrentWorkingDirectory().getChildFile ("recording.wav"), "*.wav" };
 
     void startRecording()
     {
@@ -348,28 +347,18 @@ private:
     {
         recorder.stop();
 
-       #if JUCE_CONTENT_SHARING
-        SafePointer<AudioRecordingDemo> safeThis (this);
-        File fileToShare = lastRecording;
+        chooser.launchAsync (  FileBrowserComponent::saveMode
+                             | FileBrowserComponent::canSelectFiles
+                             | FileBrowserComponent::warnAboutOverwriting,
+                             [this] (const FileChooser& c)
+                             {
+                                 if (FileInputStream inputStream (lastRecording); inputStream.openedOk())
+                                    if (const auto outputStream = makeOutputStream (c.getURLResult()))
+                                        outputStream->writeFromInputStream (inputStream, -1);
 
-        ContentSharer::getInstance()->shareFiles (Array<URL> ({URL (fileToShare)}),
-                                                  [safeThis, fileToShare] (bool success, const String& error)
-                                                  {
-                                                      if (fileToShare.existsAsFile())
-                                                          fileToShare.deleteFile();
-
-                                                      if (! success && error.isNotEmpty())
-                                                          NativeMessageBox::showAsync (MessageBoxOptions()
-                                                                                         .withIconType (MessageBoxIconType::WarningIcon)
-                                                                                         .withTitle ("Sharing Error")
-                                                                                         .withMessage (error),
-                                                                                       nullptr);
-                                                  });
-       #endif
-
-        lastRecording = File();
-        recordButton.setButtonText ("Record");
-        recordingThumbnail.setDisplayFullThumbnail (true);
+                                 recordButton.setButtonText ("Record");
+                                 recordingThumbnail.setDisplayFullThumbnail (true);
+                             });
     }
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioRecordingDemo)

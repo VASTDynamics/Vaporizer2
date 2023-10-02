@@ -2,15 +2,15 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2022 - Raw Material Software Limited
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
+   By using JUCE, you agree to the terms of both the JUCE 7 End-User License
+   Agreement and JUCE Privacy Policy.
 
-   End User License Agreement: www.juce.com/juce-6-licence
+   End User License Agreement: www.juce.com/juce-7-licence
    Privacy Policy: www.juce.com/juce-privacy-policy
 
    Or: You may also use this code under the terms of the GPL v3 (see
@@ -38,8 +38,8 @@ public:
     };
 
     //==============================================================================
-    static String getDisplayNameWindows()        { return "Code::Blocks (Windows)"; }
-    static String getDisplayNameLinux()          { return "Code::Blocks (Linux)"; }
+    static String getDisplayNameWindows()        { return "[Deprecated] Code::Blocks (Windows)"; }
+    static String getDisplayNameLinux()          { return "[Deprecated] Code::Blocks (Linux)"; }
 
     static String getValueTreeTypeNameWindows()  { return "CODEBLOCKS_WINDOWS"; }
     static String getValueTreeTypeNameLinux()    { return "CODEBLOCKS_LINUX"; }
@@ -90,7 +90,6 @@ public:
     bool isCodeBlocks() const override               { return true; }
     bool isMakefile() const override                 { return false; }
     bool isAndroidStudio() const override            { return false; }
-    bool isCLion() const override                    { return false; }
 
     bool isAndroid() const override                  { return false; }
     bool isWindows() const override                  { return os == windowsTarget; }
@@ -107,24 +106,28 @@ public:
 
     bool supportsTargetType (build_tools::ProjectType::Target::Type type) const override
     {
+        using Target = build_tools::ProjectType::Target;
+
         switch (type)
         {
-            case build_tools::ProjectType::Target::StandalonePlugIn:
-            case build_tools::ProjectType::Target::GUIApp:
-            case build_tools::ProjectType::Target::ConsoleApp:
-            case build_tools::ProjectType::Target::StaticLibrary:
-            case build_tools::ProjectType::Target::SharedCodeTarget:
-            case build_tools::ProjectType::Target::AggregateTarget:
-            case build_tools::ProjectType::Target::VSTPlugIn:
-            case build_tools::ProjectType::Target::DynamicLibrary:
+            case Target::StandalonePlugIn:
+            case Target::GUIApp:
+            case Target::ConsoleApp:
+            case Target::StaticLibrary:
+            case Target::SharedCodeTarget:
+            case Target::AggregateTarget:
+            case Target::VSTPlugIn:
+            case Target::DynamicLibrary:
                 return true;
-            case build_tools::ProjectType::Target::AAXPlugIn:
-            case build_tools::ProjectType::Target::RTASPlugIn:
-            case build_tools::ProjectType::Target::UnityPlugIn:
-            case build_tools::ProjectType::Target::VST3PlugIn:
-            case build_tools::ProjectType::Target::AudioUnitPlugIn:
-            case build_tools::ProjectType::Target::AudioUnitv3PlugIn:
-            case build_tools::ProjectType::Target::unspecified:
+            case Target::AAXPlugIn:
+            case Target::UnityPlugIn:
+            case Target::LV2PlugIn:
+            case Target::LV2Helper:
+            case Target::VST3PlugIn:
+            case Target::VST3Helper:
+            case Target::AudioUnitPlugIn:
+            case Target::AudioUnitv3PlugIn:
+            case Target::unspecified:
             default:
                 break;
         }
@@ -137,10 +140,8 @@ public:
         if (isWindows())
         {
             props.add (new ChoicePropertyComponent (targetPlatformValue, "Target platform",
-                                                    { "Windows NT 4.0", "Windows 2000", "Windows XP", "Windows Server 2003", "Windows Vista", "Windows Server 2008",
-                                                      "Windows 7", "Windows 8", "Windows 8.1", "Windows 10" },
-                                                    { "0x0400", "0x0500", "0x0501", "0x0502", "0x0600", "0x0600",
-                                                      "0x0601", "0x0602", "0x0603", "0x0A00" }),
+                                                    { "Windows Vista", "Windows Server 2008", "Windows 7", "Windows 8", "Windows 8.1", "Windows 10" },
+                                                    { "0x0600",        "0x0600",              "0x0601",    "0x0602",    "0x0603",      "0x0A00" }),
                        "This sets the preprocessor macro WINVER to an appropriate value for the corresponding platform.");
         }
     }
@@ -155,11 +156,15 @@ public:
         addVersion (xml);
         createProject (*xml.createNewChildElement ("Project"));
         writeXmlOrThrow (xml, cbpFile, "UTF-8", 10, true);
+
+        linuxSubprocessHelperProperties.deployLinuxSubprocessHelperSourceFilesIfNecessary();
     }
 
     //==============================================================================
     void addPlatformSpecificSettingsForProjectType (const build_tools::ProjectType&) override
     {
+        linuxSubprocessHelperProperties.addToExtraSearchPathsIfNecessary();
+
         // add shared code target first as order matters for Codeblocks
         if (shouldBuildTargetType (build_tools::ProjectType::Target::SharedCodeTarget))
             targets.add (new CodeBlocksTarget (*this, build_tools::ProjectType::Target::SharedCodeTarget));
@@ -223,9 +228,9 @@ private:
 
             if (archFlag.startsWith (prefix))
                 return archFlag.substring (prefix.length());
-            else if (archFlag == "-m64")
+            if (archFlag == "-m64")
                 return "x86_64";
-            else if (archFlag == "-m32")
+            if (archFlag == "-m32")
                 return "i386";
 
             jassertfalse;
@@ -244,6 +249,18 @@ private:
     }
 
     //==============================================================================
+    enum class IsDynamicLibrary
+    {
+        no,
+        yes
+    };
+
+    enum class ShouldBeCompiled
+    {
+        no,
+        yes
+    };
+
     class CodeBlocksTarget : public build_tools::ProjectType::Target
     {
     public:
@@ -297,13 +314,129 @@ private:
             return {};
         }
 
-        bool isDynamicLibrary() const
+        IsDynamicLibrary isDynamicLibrary() const
         {
-            return (type == DynamicLibrary || type == VSTPlugIn);
+            return (type == DynamicLibrary || type == VSTPlugIn) ? IsDynamicLibrary::yes
+                                                                 : IsDynamicLibrary::no;
         }
 
         const CodeBlocksProjectExporter& exporter;
     };
+
+    //==============================================================================
+    class LinuxSubprocessHelperTarget
+    {
+    public:
+        enum class HelperType
+        {
+            linuxSubprocessHelper,
+            simpleBinaryBuilder
+        };
+
+        LinuxSubprocessHelperTarget (const CodeBlocksProjectExporter& exporter, HelperType helperTypeIn)
+            : owner (exporter),
+              helperType (helperTypeIn)
+        {
+        }
+
+        String getTargetNameForConfiguration (const BuildConfiguration& config) const
+        {
+            return getName (helperType) + " | " + config.getName();
+        }
+
+        void addTarget (XmlElement& xml, const BuildConfiguration& config) const
+        {
+            xml.setAttribute ("title", getTargetNameForConfiguration (config));
+            auto* output = xml.createNewChildElement ("Option");
+            output->setAttribute ("output", getOutput (helperType, config));
+            xml.createNewChildElement ("Option")->setAttribute ("object_output",
+                                                                "obj/" + File::createLegalFileName (config.getName().trim()));
+            xml.createNewChildElement ("Option")->setAttribute ("type", getTypeIndex (type));
+            xml.createNewChildElement ("Option")->setAttribute ("compiler", "gcc");
+
+            const auto isDynamicLibrary = IsDynamicLibrary::no;
+
+            {
+                auto* compiler = xml.createNewChildElement ("Compiler");
+
+                for (auto flag : owner.getCompilerFlags (config, isDynamicLibrary))
+                    owner.setAddOption (*compiler, "option", flag);
+            }
+
+            {
+                auto* linker = xml.createNewChildElement ("Linker");
+
+                for (auto& flag : owner.getLinkerFlags (config, isDynamicLibrary))
+                    owner.setAddOption (*linker, "option", flag);
+            }
+
+            if (helperType == HelperType::simpleBinaryBuilder)
+            {
+                auto* postBuildCommands = xml.createNewChildElement ("ExtraCommands");
+
+                const auto binaryDataSource = owner.linuxSubprocessHelperProperties
+                                                   .getLinuxSubprocessHelperBinaryDataSource();
+
+                owner.setAddOption (*postBuildCommands,
+                                    "after",
+                                    getOutput (HelperType::simpleBinaryBuilder, config)
+                                        + " " + getOutput (HelperType::linuxSubprocessHelper, config)
+                                        + " pre_build"
+                                        + " " + binaryDataSource.getFileNameWithoutExtension().quoted()
+                                        + " LinuxSubprocessHelperBinaryData");
+            }
+        }
+
+        void addCompileUnits (XmlElement& xml) const
+        {
+            const auto file = getSource (helperType);
+            auto* unit = xml.createNewChildElement ("Unit");
+            unit->setAttribute ("filename", file.toUnixStyle());
+
+            for (ConstConfigIterator config (owner); config.next();)
+            {
+                auto targetName = getTargetNameForConfiguration (*config);
+                unit->createNewChildElement ("Option")->setAttribute ("target", targetName);
+            }
+        }
+
+    private:
+        build_tools::RelativePath getSource (HelperType helperTypeForSource) const
+        {
+            if (helperTypeForSource == HelperType::linuxSubprocessHelper)
+                return owner.linuxSubprocessHelperProperties.getLinuxSubprocessHelperSource();
+
+            return owner.linuxSubprocessHelperProperties.getSimpleBinaryBuilderSource();
+        }
+
+        String getName (HelperType helperTypeForName) const
+        {
+            return LinuxSubprocessHelperProperties::getBinaryNameFromSource (getSource (helperTypeForName));
+        }
+
+        String getOutput (HelperType helperTypeForOutput, const BuildConfiguration& config) const
+        {
+            return owner.getOutputPathForConfig (config) + "/" + getName (helperTypeForOutput);
+        }
+
+        const CodeBlocksProjectExporter& owner;
+        HelperType helperType;
+        build_tools::ProjectType::Target::Type type = build_tools::ProjectType::Target::ConsoleApp;
+    };
+
+    void addSubprocessHelperBinarySourceCompileUnit (XmlElement& xml) const
+    {
+        auto* unit = xml.createNewChildElement ("Unit");
+        const auto binaryDataSource = linuxSubprocessHelperProperties.getLinuxSubprocessHelperBinaryDataSource();
+        unit->setAttribute ("filename", binaryDataSource.toUnixStyle());
+
+        for (ConstConfigIterator config (*this); config.next();)
+        {
+            const auto& target = getTargetForFile (resolveRelativePath (binaryDataSource), ShouldBeCompiled::yes);
+            const auto targetName = target.getTargetNameForConfiguration (*config);
+            unit->createNewChildElement ("Option")->setAttribute ("target", targetName);
+        }
+    }
 
     //==============================================================================
     void addVersion (XmlElement& xml) const
@@ -370,7 +503,7 @@ private:
         return getCleanedStringArray (defs);
     }
 
-    StringArray getCompilerFlags (const BuildConfiguration& config, CodeBlocksTarget& target) const
+    StringArray getCompilerFlags (const BuildConfiguration& config, IsDynamicLibrary isDynamicLibrary) const
     {
         StringArray flags;
 
@@ -402,12 +535,12 @@ private:
         if (config.isDebug())
             flags.add ("-g");
 
-        flags.addTokens (replacePreprocessorTokens (config, getExtraCompilerFlagsString()).trim(),
+        flags.addTokens (replacePreprocessorTokens (config, config.getAllCompilerFlagsString()).trim(),
                          " \n", "\"'");
 
         if (config.exporter.isLinux())
         {
-            if (target.isDynamicLibrary() || getProject().isAudioPluginProject())
+            if (isDynamicLibrary == IsDynamicLibrary::yes || getProject().isAudioPluginProject())
                 flags.add ("-fPIC");
 
             auto packages = config.exporter.getLinuxPackages (PackageDependencyType::compile);
@@ -430,7 +563,7 @@ private:
         return getCleanedStringArray (flags);
     }
 
-    StringArray getLinkerFlags (const BuildConfiguration& config, CodeBlocksTarget& target) const
+    StringArray getLinkerFlags (const BuildConfiguration& config, IsDynamicLibrary isDynamicLibrary) const
     {
         auto flags = makefileExtraLinkerFlags;
 
@@ -443,11 +576,11 @@ private:
         if (config.isLinkTimeOptimisationEnabled())
             flags.add ("-flto");
 
-        flags.addTokens (replacePreprocessorTokens (config, getExtraLinkerFlagsString()).trim(), " \n", "\"'");
+        flags.addTokens (replacePreprocessorTokens (config, config.getAllLinkerFlagsString()).trim(), " \n", "\"'");
 
         if (config.exporter.isLinux())
         {
-            if (target.isDynamicLibrary())
+            if (isDynamicLibrary == IsDynamicLibrary::yes)
                 flags.add ("-shared");
 
             auto packages = config.exporter.getLinuxPackages (PackageDependencyType::link);
@@ -507,21 +640,23 @@ private:
         return 0;
     }
 
-    String getOutputPathForTarget (CodeBlocksTarget& target, const BuildConfiguration& config) const
+    String getOutputPathForConfig (const BuildConfiguration& config) const
     {
-        String outputPath;
         if (config.getTargetBinaryRelativePathString().isNotEmpty())
         {
             build_tools::RelativePath binaryPath (config.getTargetBinaryRelativePathString(), build_tools::RelativePath::projectFolder);
             binaryPath = binaryPath.rebased (projectFolder, getTargetFolder(), build_tools::RelativePath::buildTargetFolder);
-            outputPath = config.getTargetBinaryRelativePathString();
-        }
-        else
-        {
-            outputPath ="bin/" + File::createLegalFileName (config.getName().trim());
+            return config.getTargetBinaryRelativePathString();
         }
 
-        return outputPath + "/" + replacePreprocessorTokens (config, config.getTargetBinaryNameString() + target.getTargetSuffix());
+        return "bin/" + File::createLegalFileName (config.getName().trim());
+    }
+
+    String getOutputPathForTarget (CodeBlocksTarget& target, const BuildConfiguration& config) const
+    {
+        return   getOutputPathForConfig (config)
+               + "/"
+               + replacePreprocessorTokens (config, config.getTargetBinaryNameString() + target.getTargetSuffix());
     }
 
     String getSharedCodePath (const BuildConfiguration& config) const
@@ -582,7 +717,7 @@ private:
                     flags.add ("-D" + def);
                 }
 
-                flags.addArray (getCompilerFlags (config, target));
+                flags.addArray (getCompilerFlags (config, target.isDynamicLibrary()));
 
                 for (auto flag : flags)
                     setAddOption (*compiler, "option", flag);
@@ -602,7 +737,7 @@ private:
             if (getProject().isAudioPluginProject() && target.type != build_tools::ProjectType::Target::SharedCodeTarget)
                 setAddOption (*linker, "option", getSharedCodePath (config).quoted());
 
-            for (auto& flag : getLinkerFlags (config, target))
+            for (auto& flag : getLinkerFlags (config, target.isDynamicLibrary()))
                 setAddOption (*linker, "option", flag);
 
             const StringArray& libs = isWindows() ? mingwLibs : linuxLibs;
@@ -621,9 +756,15 @@ private:
         auto* build = xml.createNewChildElement ("Build");
 
         for (ConstConfigIterator config (*this); config.next();)
+        {
+            if (linuxSubprocessHelperProperties.shouldUseLinuxSubprocessHelper())
+                for (const auto& helperTarget : helperTargets)
+                    helperTarget.addTarget (*build->createNewChildElement ("Target"), *config);
+
             for (auto target : targets)
                 if (target->type != build_tools::ProjectType::Target::AggregateTarget)
                     createBuildTarget (*build->createNewChildElement ("Target"), *target, *config);
+        }
     }
 
     void addVirtualTargets (XmlElement& xml) const
@@ -633,6 +774,10 @@ private:
         for (ConstConfigIterator config (*this); config.next();)
         {
             StringArray allTargets;
+
+            if (linuxSubprocessHelperProperties.shouldUseLinuxSubprocessHelper())
+                for (const auto& target : helperTargets)
+                    allTargets.add (target.getTargetNameForConfiguration (*config));
 
             for (auto target : targets)
                 if (target->type != build_tools::ProjectType::Target::AggregateTarget)
@@ -724,17 +869,24 @@ private:
         return *targets[0];
     }
 
-    CodeBlocksTarget& getTargetForProjectItem (const Project::Item& projectItem) const
+    CodeBlocksTarget& getTargetForFile (const File& file, ShouldBeCompiled shouldBeCompiled) const
     {
         if (getProject().isAudioPluginProject())
         {
-            if (! projectItem.shouldBeCompiled())
+            if (shouldBeCompiled == ShouldBeCompiled::no)
                 return getTargetWithType (build_tools::ProjectType::Target::SharedCodeTarget);
 
-            return getTargetWithType (getProject().getTargetTypeFromFilePath (projectItem.getFile(), true));
+            return getTargetWithType (getProject().getTargetTypeFromFilePath (file, true));
         }
 
         return getMainTarget();
+    }
+
+    CodeBlocksTarget& getTargetForProjectItem (const Project::Item& projectItem) const
+    {
+        return getTargetForFile (projectItem.getFile(),
+                                 projectItem.shouldBeCompiled() ? ShouldBeCompiled::yes
+                                                                : ShouldBeCompiled::no);
     }
 
     void addCompileUnits (const Project::Item& projectItem, XmlElement& xml) const
@@ -759,7 +911,7 @@ private:
 
             if (projectItem.shouldBeCompiled())
             {
-                auto extraCompilerFlags = compilerFlagSchemesMap[projectItem.getCompilerFlagSchemeString()].get().toString();
+                auto extraCompilerFlags = getCompilerFlagsForProjectItem (projectItem);
 
                 if (extraCompilerFlags.isNotEmpty())
                 {
@@ -785,6 +937,14 @@ private:
 
     void addCompileUnits (XmlElement& xml) const
     {
+        if (linuxSubprocessHelperProperties.shouldUseLinuxSubprocessHelper())
+        {
+            for (const auto& helperTarget : helperTargets)
+                helperTarget.addCompileUnits (xml);
+
+            addSubprocessHelperBinarySourceCompileUnit (xml);
+        }
+
         for (int i = 0; i < getAllGroups().size(); ++i)
             addCompileUnits (getAllGroups().getReference(i), xml);
 
@@ -823,7 +983,9 @@ private:
 
     OwnedArray<CodeBlocksTarget> targets;
 
-    friend class CLionProjectExporter;
+    // The order of these targets is significant, as latter targets depend on earlier ones
+    const LinuxSubprocessHelperTarget helperTargets[2] { { *this, LinuxSubprocessHelperTarget::HelperType::linuxSubprocessHelper },
+                                                         { *this, LinuxSubprocessHelperTarget::HelperType::simpleBinaryBuilder   } };
 
     JUCE_DECLARE_NON_COPYABLE (CodeBlocksProjectExporter)
 };

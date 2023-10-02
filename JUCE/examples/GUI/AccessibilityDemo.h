@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE examples.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2022 - Raw Material Software Limited
 
    The code included in this file is provided under the terms of the ISC license
    http://www.isc.org/downloads/software-support-policy/isc-license. Permission
@@ -32,7 +32,7 @@
 
  dependencies:     juce_core, juce_data_structures, juce_events, juce_graphics,
                    juce_gui_basics
- exporters:        xcode_mac, vs2019, androidstudio, xcode_iphone
+ exporters:        xcode_mac, vs2022, androidstudio, xcode_iphone
 
  moduleFlags:      JUCE_STRICT_REFCOUNTEDPOINTER=1
 
@@ -195,7 +195,13 @@ private:
             addAndMakeVisible (textButton);
 
             shapeButton.setShape (getJUCELogoPath(), false, true, false);
-            shapeButton.onClick = [] { AlertWindow::showMessageBoxAsync (MessageBoxIconType::InfoIcon, "Alert", "This is an AlertWindow"); };
+            shapeButton.onClick = [this]
+            {
+                auto options = MessageBoxOptions::makeOptionsOk (MessageBoxIconType::InfoIcon,
+                                                                 "Alert",
+                                                                 "This is an AlertWindow");
+                messageBox = AlertWindow::showScopedAsync (options, nullptr);
+            };
             shapeButton.setHasFocusOutline (true);
             addAndMakeVisible (shapeButton);
         }
@@ -250,6 +256,7 @@ private:
                                   Colours::darkorange,
                                   Colours::darkorange.brighter (0.5f),
                                   Colours::darkorange.brighter (0.75f) };
+        ScopedMessageBox messageBox;
 
         //==============================================================================
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ButtonsComponent)

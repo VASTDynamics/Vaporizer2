@@ -2,15 +2,15 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2022 - Raw Material Software Limited
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
+   By using JUCE, you agree to the terms of both the JUCE 7 End-User License
+   Agreement and JUCE Privacy Policy.
 
-   End User License Agreement: www.juce.com/juce-6-licence
+   End User License Agreement: www.juce.com/juce-7-licence
    Privacy Policy: www.juce.com/juce-privacy-policy
 
    Or: You may also use this code under the terms of the GPL v3 (see
@@ -165,9 +165,6 @@ private:
 
             for (Project::ExporterIterator exporter (project); exporter.next();)
             {
-                if (exporter->isCLion())
-                    continue;
-
                 auto modulePathValue = exporter->getPathForModuleValue (moduleID);
                 const auto fallbackPath = getAppSettings().getStoredPath (isJUCEModule (moduleID) ? Ids::defaultJuceModulePath
                                                                                                   : Ids::defaultUserModulePath,
@@ -378,10 +375,11 @@ private:
                 {
                     missingDependencies = enabledModules.getExtraDependenciesNeeded (moduleID);
 
-                    AlertWindow::showMessageBoxAsync (MessageBoxIconType::WarningIcon,
-                                                      "Adding Missing Dependencies",
-                                                      "Couldn't locate some of these modules - you'll need to find their "
-                                                      "folders manually and add them to the list.");
+                    auto options = MessageBoxOptions::makeOptionsOk (MessageBoxIconType::WarningIcon,
+                                                                     "Adding Missing Dependencies",
+                                                                     "Couldn't locate some of these modules - you'll need to find their "
+                                                                     "folders manually and add them to the list.");
+                    messageBox = AlertWindow::showScopedAsync (options, nullptr);
                 }
             }
 
@@ -396,6 +394,7 @@ private:
             String moduleID;
             StringArray missingDependencies;
             TextButton fixButton { "Add Required Modules" };
+            ScopedMessageBox messageBox;
 
             JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MissingDependenciesComponent)
         };
