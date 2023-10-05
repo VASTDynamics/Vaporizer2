@@ -434,7 +434,7 @@ bool CDecimator::decimateNextOutputSample4(float xnL, float xnR, float& fLeftOut
 
 	// Don't have to convolve on the first L-1, only need one convolution at the end
 	if (i == 0) {
-#ifdef _WIN64
+#if defined _WIN64 || defined JUCE_LINUX
 		//Auto vectorizable version Windows AVX/SSE
 		int offset = C_FACTOR4_IR_LENGTH - m_nReadIndexDL;
 		for (int j = 0; j < C_FACTOR4_IR_LENGTH; j++)
