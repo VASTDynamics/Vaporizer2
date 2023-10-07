@@ -512,11 +512,11 @@ bool CDecimator::decimateNextOutputSample4(float xnL, float xnR, float& fLeftOut
 		yn_accR[0] += yn_accR[1] + yn_accR[2] + yn_accR[3];
 		yn_accumR = yn_accR[0];
 
-#elif _MACOSX || JUCE_LINUX
+#elif _MACOSX
     //MacOSX intrinsic version with SSE, works with WIN32/64 as well
         if (i == 0) {
         //see http://www.drdobbs.com/optimizing-cc-with-inline-assembly-progr/184401967?pgno=3
-#if defined _MACOSX || defined JUCE_LINUX
+#if defined _MACOSX
             typedef float Sse[4] __attribute__ ((aligned(16)));
             Sse sse4 __attribute__ ((aligned(16))) = { 0.0, 0.0, 0.0, 0.0 };
 #elif _WIN32 || _WIN64
