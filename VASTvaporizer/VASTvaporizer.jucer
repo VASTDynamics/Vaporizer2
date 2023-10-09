@@ -18,6 +18,27 @@
               pluginAUMainType="'aumu'" pluginChannelConfigs="{2,2}" maxBinaryFileSize="20971520"
               jucerFormatVersion="1" lv2Uri="https://www.vast-dynamics.com/plugins/VASTvaporizer2">
   <MAINGROUP id="xqLnpn" name="VASTvaporizer2">
+    <GROUP id="{1D7203A2-55A5-B073-6013-4046AC173451}" name="AnaMark-Tuning-Library">
+      <FILE id="CVsSw1" name="LICENSE.md" compile="0" resource="1" file="Source/AnaMark-Tuning-Library/LICENSE.md"/>
+      <FILE id="JxW6Bj" name="README.md" compile="0" resource="1" file="Source/AnaMark-Tuning-Library/README.md"/>
+      <FILE id="z2hwNM" name="SCL_Import.cpp" compile="1" resource="0" file="Source/AnaMark-Tuning-Library/SCL_Import.cpp"/>
+      <FILE id="Tcy1rK" name="SCL_Import.h" compile="0" resource="0" file="Source/AnaMark-Tuning-Library/SCL_Import.h"/>
+      <FILE id="PgckfW" name="TUN_EmbedHTML.cpp" compile="1" resource="0"
+            file="Source/AnaMark-Tuning-Library/TUN_EmbedHTML.cpp"/>
+      <FILE id="s4fDuP" name="TUN_EmbedHTML.h" compile="0" resource="0" file="Source/AnaMark-Tuning-Library/TUN_EmbedHTML.h"/>
+      <FILE id="tfObh5" name="TUN_Error.h" compile="0" resource="0" file="Source/AnaMark-Tuning-Library/TUN_Error.h"/>
+      <FILE id="UY7sKS" name="TUN_Formula.h" compile="0" resource="0" file="Source/AnaMark-Tuning-Library/TUN_Formula.h"/>
+      <FILE id="hBnWSp" name="TUN_MIDIChannelRange.h" compile="0" resource="0"
+            file="Source/AnaMark-Tuning-Library/TUN_MIDIChannelRange.h"/>
+      <FILE id="SHlPOv" name="TUN_MultiScaleFile.h" compile="0" resource="0"
+            file="Source/AnaMark-Tuning-Library/TUN_MultiScaleFile.h"/>
+      <FILE id="Mc8TuB" name="TUN_Scale.cpp" compile="1" resource="0" file="Source/AnaMark-Tuning-Library/TUN_Scale.cpp"/>
+      <FILE id="gHM8hL" name="TUN_Scale.h" compile="0" resource="0" file="Source/AnaMark-Tuning-Library/TUN_Scale.h"/>
+      <FILE id="ePujnx" name="TUN_StringTools.cpp" compile="1" resource="0"
+            file="Source/AnaMark-Tuning-Library/TUN_StringTools.cpp"/>
+      <FILE id="F0N3Ex" name="TUN_StringTools.h" compile="0" resource="0"
+            file="Source/AnaMark-Tuning-Library/TUN_StringTools.h"/>
+    </GROUP>
     <GROUP id="{DD9ED2B8-D8FE-19B6-7641-38F05EF355A6}" name="Documentation"/>
     <GROUP id="{6680AC59-1EE2-8456-E1A0-9C30F1100D44}" name="Resources">
       <GROUP id="{B60025E9-D3E3-2680-2829-E4AF564DA18C}" name="Fonts">
