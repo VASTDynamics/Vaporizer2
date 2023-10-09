@@ -10,7 +10,7 @@ Global settings for AUDIO THREAD!
 #include "VASTPluginConstants.h"
 #include "../Plugin/VASTAudioProcessor.h"
 #include "../AnaMark-Tuning-Library/SCL_Import.h"
-
+#include <cmath>
 #include <string>
 
 #ifdef _WINDOWS
@@ -61,7 +61,7 @@ CVASTSettings::~CVASTSettings(void) {
 }
 
 float CVASTSettings::getFrequencyFactorFromLUT(float octave) {
-	int intpart = std::floorf(octave);
+	int intpart = floorf(octave);
 	float fracpart = octave - intpart;
 	jassert((intpart >= -11) && (intpart <= 11)); //m_lookupTable_OctaveFreqFactor[22] //-11...11	
 	float factor = m_lookupTable_OctaveFreqFactor[intpart + 11] * m_lookupTable_CentsFreqFactor[int(fracpart * M_CENTS_LUT_SIZE)]; //-11...11
