@@ -172,9 +172,22 @@ float CVASTSettings::midiNoteGetBaseFreq(MYUINT uMIDINote, float oscMasterTune){
 	float divi = (key - 45.0 - (24)) / 12.0;
 	float freq = powf(2.0, divi) * oscMasterTune;
 	freq = (freq > m_nSampleRate - 1.0f) ? m_nSampleRate - 1.0f : freq;
-	//if (uMIDINote == 0) 
-	if (uMIDINote < 0) //CHTS 3.0.1
+
+	/*testing //add micotuning support here
+	int uScaleNote = uMIDINote % 12; //only support scl files with 12 note scales?
+	//float sclFile[12] = { 2187.f/2048, 9.f/8, 32.f/27, 81.f/64, 4.f/3, 729.f/512, 3.f/2, 6561.f/4096, 27.f/16, 16.f/9, 243.f/128, 2.f/1 }; //12 - tone Pythagorean scale
+	float sclFile[12] = { 2.f / 1, 11.f / 8, 132.f / 27, 81.f / 64, 10.f / 3, 729.f / 512, 1.f / 2, 6561.f / 40196, 27.f / 16, 116.f / 9, 2432.f / 128, 2.f / 11 }; //test
+
+	signed int key = uMIDINote - uScaleNote;
+	float divi = (key - 45.0 - (24)) / 12.0;
+	float freq = powf(2.0, divi) * oscMasterTune;
+	freq *= sclFile[uScaleNote];
+	freq = (freq > m_nSampleRate - 1.0f) ? m_nSampleRate - 1.0f : freq;
+	*/
+
+	if (uMIDINote < 0) 
 		freq = 0.f;
+
 	return freq;
 }
 

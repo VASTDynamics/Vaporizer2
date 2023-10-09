@@ -1,0 +1,6 @@
+[submodule "JUCE"]
+	path = JUCE
+	url = https://github.com/juce-framework/JUCE
+[submodule "VASTvaporizer/Source/muFFT"]
+	path = VASTvaporizer/Source/muFFT
+	url = https://github.com/Themaister/muFFT
