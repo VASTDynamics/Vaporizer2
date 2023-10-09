@@ -8,12 +8,6 @@
 
 namespace BinaryData
 {
-    extern const char*   LICENSE_md;
-    const int            LICENSE_mdSize = 1127;
-
-    extern const char*   README_md;
-    const int            README_mdSize = 2991;
-
     extern const char*   AlteHaasGroteskBold_ttf;
     const int            AlteHaasGroteskBold_ttfSize = 144556;
 
@@ -62,11 +56,11 @@ namespace BinaryData
     extern const char*   mufft_pc_in;
     const int            mufft_pc_inSize = 302;
 
-    extern const char*   README_md2;
-    const int            README_md2Size = 5121;
+    extern const char*   README_md;
+    const int            README_mdSize = 5121;
 
     // Number of elements in the namedResourceList and originalFileNames arrays.
-    const int namedResourceListSize = 19;
+    const int namedResourceListSize = 17;
 
     // Points to the start of a list of resource names.
     extern const char* namedResourceList[];
