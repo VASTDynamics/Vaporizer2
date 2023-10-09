@@ -10,6 +10,7 @@ All modulators tested: OK
 #include "../../Plugin/VASTAudioProcessor.h"
 #include "VASTEffect.h"
 #include <ctime>
+#include <cmath>
 
 CVASTBitcrush::CVASTBitcrush(VASTAudioProcessor* processor, int busnr) {
 	my_processor = processor;
@@ -170,7 +171,7 @@ void CVASTBitcrush::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMess
 		checkSoftFade();
 
 		inputState = ((VASTAudioProcessor*)my_processor)->m_pVASTXperience.m_Poly.getOldestNotePlayedInputState(currentFrameOSAdjusted); // make parameter oldest or newest
-				
+
 		m_fBitcrushDryWet_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fBitcrushDryWet, MODMATDEST::BitcrushDryWet, &inputState));
 		float lBitcrushDryWet = m_fBitcrushDryWet_smoothed.getNextValue();
 
@@ -189,7 +190,7 @@ void CVASTBitcrush::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMess
 		float lBitcrushBitrate = m_Set->getParameterValueWithMatrixModulation(m_fBitcrushBitrate, MODMATDEST::BitcrushBitrate, &inputState);
 		float lBitcrushGain = m_Set->getParameterValueWithMatrixModulation(m_fBitcrushGain, MODMATDEST::BitcrushGain, &inputState);
 
-		//https://github.com/hosackm/Bitcrusher/blob/master/Bitcrusher/bitcrusher.c	
+		//https://github.com/hosackm/Bitcrusher/blob/master/Bitcrusher/bitcrusher.c
 
 
 		float fIn[2];
@@ -198,7 +199,7 @@ void CVASTBitcrush::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMess
 
 		fIn[0] = m_lowCutBiquadL.doBiQuad(fIn[0]); //do pre filter
 		fIn[1] = m_lowCutBiquadR.doBiQuad(fIn[1]); //do pre filter
-		
+
 		float fOut[2];
 #define ROUND(f) ((float) ((f > 0.0f) ? floor(f+0.5f) : ceil(f-0.5f)))
 		float max = ROUND(powf(2.0f, lBitcrushBitdepth) - 1);
@@ -210,7 +211,7 @@ void CVASTBitcrush::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMess
 			m_rightFirstSample = fOut[1];
 			m_repeatLength = (100.f - lBitcrushBitrate) * (m_iSampleRate / 44100.f);
 			if (lfBitcrushJitter > 0)
-				m_repeatLength += (m_rand.nextInt64() % int(std::ceilf((lfBitcrushJitter + 1.f) * (float(m_iSampleRate) / 44100.f))));
+				m_repeatLength += (m_rand.nextInt64() % int(ceilf((lfBitcrushJitter + 1.f) * (float(m_iSampleRate) / 44100.f))));
 		}
 
 		//different approach
@@ -247,7 +248,7 @@ void CVASTBitcrush::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMess
 			outR = 10.0f;
 			reset();
 		}
-        
+
 		bufferWritePointerL[currentFrame] = outL * lBitcrushGain * 0.01f;
 		bufferWritePointerR[currentFrame] = outR * lBitcrushGain * 0.01f;
 	}

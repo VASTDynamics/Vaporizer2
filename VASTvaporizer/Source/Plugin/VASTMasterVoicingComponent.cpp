@@ -317,7 +317,11 @@ VASTMasterVoicingComponent::~VASTMasterVoicingComponent()
 void VASTMasterVoicingComponent::paint (juce::Graphics& g)
 {
     //[UserPrePaint] Add your own custom painting code here..
-	oscilloscopeOLG2D->setVisible(!myProcessor->m_disableOpenGLGFX);
+#if defined JUCE_LINUX
+    oscilloscopeOLG2D->setVisible(false);
+#else
+    oscilloscopeOLG2D->setVisible(!myProcessor->m_disableOpenGLGFX);
+#endif
 
     //[/UserPrePaint]
 

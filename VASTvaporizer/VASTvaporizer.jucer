@@ -2,7 +2,7 @@
 
 <JUCERPROJECT id="wPTx8T" name="VASTvaporizer2" projectType="audioplug" version="3.3.0"
               bundleIdentifier="com.vastdynamics.VAST2" includeBinaryInAppConfig="1"
-              buildVST="1" buildVST3="1" buildAU="1" buildRTAS="0" buildAAX="1"
+              buildVST="0" buildVST3="1" buildAU="1" buildRTAS="0" buildAAX="1"
               pluginName="Vaporizer2" pluginDesc="VAST Dynamics Vaporizer2 Hybrid Synthesizer Plug-in"
               pluginManufacturer="VAST Dynamics" pluginManufacturerCode="Vast"
               pluginCode="Vap2" pluginIsSynth="1" pluginWantsMidiIn="1" pluginProducesMidiOut="0"
@@ -13,10 +13,10 @@
               buildAUv3="0" displaySplashScreen="0" reportAppUsage="0" splashScreenColour="Dark"
               buildStandalone="1" enableIAA="0" cppLanguageStandard="latest"
               companyCopyright="VAST Dynamics" headerPath="..\..\Source\Engine; ..\..\Source\Plugin; ..\..\Source; ..\..\Source\muFFT"
-              pluginFormats="buildAAX,buildAU,buildLV2,buildStandalone,buildVST,buildVST3"
+              pluginFormats="buildAAX,buildAU,buildLV2,buildStandalone,buildVST3"
               pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn"
               pluginAUMainType="'aumu'" pluginChannelConfigs="{2,2}" maxBinaryFileSize="20971520"
-              jucerFormatVersion="1">
+              jucerFormatVersion="1" lv2Uri="https://www.vast-dynamics.com/plugins/VASTvaporizer2">
   <MAINGROUP id="xqLnpn" name="VASTvaporizer2">
     <GROUP id="{DD9ED2B8-D8FE-19B6-7641-38F05EF355A6}" name="Documentation"/>
     <GROUP id="{6680AC59-1EE2-8456-E1A0-9C30F1100D44}" name="Resources">
@@ -722,28 +722,53 @@
         <MODULEPATH id="juce_audio_basics"/>
       </MODULEPATHS>
     </VS2019>
+    <LINUX_MAKE targetFolder="Builds/LinuxMakefile" externalLibraries="atomic">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" enablePluginBinaryCopyStep="0"/>
+        <CONFIGURATION isDebug="0" name="Release" extraLinkerFlags="-latomic&#10;-fdata-sections -ffunction-sections -Wl,--gc-sections -Wl,-O1 -Wl,--as-needed -Wl,--strip-all"
+                       extraCompilerFlags="-fvisibility=hidden" enablePluginBinaryCopyStep="0"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../juce"/>
+        <MODULEPATH id="juce_audio_devices" path="../../juce"/>
+        <MODULEPATH id="juce_audio_formats" path="../../juce"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../../juce"/>
+        <MODULEPATH id="juce_audio_processors" path="../../juce"/>
+        <MODULEPATH id="juce_audio_utils" path="../../juce"/>
+        <MODULEPATH id="juce_core" path="../../juce"/>
+        <MODULEPATH id="juce_cryptography" path="../../juce"/>
+        <MODULEPATH id="juce_data_structures" path="../../juce"/>
+        <MODULEPATH id="juce_dsp" path="../../juce"/>
+        <MODULEPATH id="juce_events" path="../../juce"/>
+        <MODULEPATH id="juce_graphics" path="../../juce"/>
+        <MODULEPATH id="juce_gui_basics" path="../../juce"/>
+        <MODULEPATH id="juce_gui_extra" path="../../juce"/>
+        <MODULEPATH id="juce_opengl" path="../../juce"/>
+      </MODULEPATHS>
+    </LINUX_MAKE>
   </EXPORTFORMATS>
   <MODULES>
-    <MODULES id="juce_audio_basics" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
-    <MODULES id="juce_audio_devices" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
-    <MODULES id="juce_audio_formats" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
-    <MODULES id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="1"
+    <MODULES id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULES id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULES id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULES id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="0"
              useGlobalPath="1"/>
-    <MODULES id="juce_audio_processors" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
-    <MODULES id="juce_audio_utils" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
-    <MODULES id="juce_core" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
-    <MODULES id="juce_cryptography" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
-    <MODULES id="juce_data_structures" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
-    <MODULE id="juce_dsp" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
-    <MODULES id="juce_events" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
-    <MODULES id="juce_graphics" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
-    <MODULES id="juce_gui_basics" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
-    <MODULES id="juce_gui_extra" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
-    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULES id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULES id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULES id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULES id="juce_cryptography" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULES id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_dsp" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULES id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULES id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULES id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULES id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
   </MODULES>
   <JUCEOPTIONS DROWAUDIO_USE_FFTREAL="disabled" DROWAUDIO_USE_SOUNDTOUCH="disabled"
                DROWAUDIO_USE_CURL="disabled" JUCE_WEB_BROWSER="0" JUCE_PLUGINHOST_AU="0"
-               JUCE_USE_MP3AUDIOFORMAT="1" JUCE_ASIO="1" JUCE_WIN_PER_MONITOR_DPI_AWARE="0"/>
+               JUCE_USE_MP3AUDIOFORMAT="1" JUCE_ASIO="1" JUCE_WIN_PER_MONITOR_DPI_AWARE="0"
+               JUCE_USE_CURL="0" JUCE_JACK="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
   <LIVE_SETTINGS>
     <WINDOWS buildEnabled="0"/>
     <OSX/>
