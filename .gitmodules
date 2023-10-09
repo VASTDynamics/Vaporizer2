@@ -4,3 +4,6 @@
 [submodule "VASTvaporizer/Source/muFFT"]
 	path = VASTvaporizer/Source/muFFT
 	url = https://github.com/Themaister/muFFT
+[submodule "VASTvaporizer/Source/AnaMark-Tuning-Library"]
+	path = VASTvaporizer/Source/AnaMark-Tuning-Library
+	url = https://github.com/zardini123/AnaMark-Tuning-Library
