@@ -5,7 +5,7 @@ VAST Dynamics Audio Software (TM)
 #include "VASTDecimator.h"
 #include <stdio.h>
 
-#ifdef _MACOSX
+#if defined _MACOSX || defined JUCE_LINUX
     #include <pmmintrin.h>
     #include <cstddef>
 #else
@@ -20,7 +20,7 @@ VAST Dynamics Audio Software (TM)
 CDecimator::CDecimator(void)
 {
 	//FACTOR4
-#ifdef _MACOSX
+#if defined _MACOSX || defined JUCE_LINUX
 	m_pIRBuffer = new float[C_FACTOR4_IR_LENGTH];
 #else
 	m_pIRBuffer = (float*)_aligned_malloc(C_FACTOR4_IR_LENGTH*sizeof(float), 16);
@@ -28,7 +28,7 @@ CDecimator::CDecimator(void)
 	// flush buffer
 	memset(m_pIRBuffer, 0, C_FACTOR4_IR_LENGTH*sizeof(float));
 
-#ifdef _MACOSX
+#if defined _MACOSX || defined JUCE_LINUX
 	m_pLeftInputBuffer = new float[C_FACTOR4_IR_LENGTH * 2];
 	m_pRightInputBuffer = new float[C_FACTOR4_IR_LENGTH * 2];
 #else
@@ -56,7 +56,7 @@ CDecimator::CDecimator(void)
 CDecimator::~CDecimator(void)
 {
 	// free up our input buffers
-#ifdef _MACOSX
+#if defined _MACOSX || defined JUCE_LINUX
 	if (m_pLeftInputBuffer) delete[] m_pLeftInputBuffer;
 	if (m_pRightInputBuffer) delete[] m_pRightInputBuffer;
 	if (m_pIRBuffer) delete[] m_pIRBuffer;
@@ -434,7 +434,7 @@ bool CDecimator::decimateNextOutputSample4(float xnL, float xnR, float& fLeftOut
 
 	// Don't have to convolve on the first L-1, only need one convolution at the end
 	if (i == 0) {
-#ifdef _WIN64
+#if defined _WIN64 || defined JUCE_LINUX
 		//Auto vectorizable version Windows AVX/SSE
 		int offset = C_FACTOR4_IR_LENGTH - m_nReadIndexDL;
 		for (int j = 0; j < C_FACTOR4_IR_LENGTH; j++)
@@ -516,7 +516,7 @@ bool CDecimator::decimateNextOutputSample4(float xnL, float xnR, float& fLeftOut
     //MacOSX intrinsic version with SSE, works with WIN32/64 as well
         if (i == 0) {
         //see http://www.drdobbs.com/optimizing-cc-with-inline-assembly-progr/184401967?pgno=3
-#ifdef _MACOSX        
+#if defined _MACOSX
             typedef float Sse[4] __attribute__ ((aligned(16)));
             Sse sse4 __attribute__ ((aligned(16))) = { 0.0, 0.0, 0.0, 0.0 };
 #elif _WIN32 || _WIN64

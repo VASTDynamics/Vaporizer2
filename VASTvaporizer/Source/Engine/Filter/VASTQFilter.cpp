@@ -28,7 +28,7 @@ VASTQFilter::VASTQFilter() {
 }
 
 VASTQFilter::~VASTQFilter() {
-#ifdef _MACOSX
+#if defined _MACOSX || defined JUCE_LINUX
 	if (FBQ[0]) //can be that it was not even started yet
 		delete FBQ[0];
 	if (FBQ[1])
@@ -57,7 +57,7 @@ void VASTQFilter::initQuadFilter(CVASTSettings* m_Set) {
 
 	QFirstRun = true;
 
-#ifdef _MACOSX
+#if defined _MACOSX || defined JUCE_LINUX
 	FBQ[0] =
 		(VASTQFilterProcessState*)malloc((C_MAX_POLY >> 2) * sizeof(VASTQFilterProcessState));
 	FBQ[1] =
