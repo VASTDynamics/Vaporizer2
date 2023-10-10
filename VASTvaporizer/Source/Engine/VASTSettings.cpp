@@ -9,7 +9,7 @@ Global settings for AUDIO THREAD!
 #include "VASTSettings.h"
 #include "VASTPluginConstants.h"
 #include "../Plugin/VASTAudioProcessor.h"
-#include "../AnaMark-Tuning-Library/SCL_Import.h"
+//#include "../AnaMark-Tuning-Library/SCL_Import.h"
 #include <cmath>
 #include <string>
 
@@ -175,15 +175,15 @@ float CVASTSettings::midiNoteGetBaseFreq(MYUINT uMIDINote, float oscMasterTune) 
 	float freq = powf(2.0, divi) * oscMasterTune;
 	freq = (freq > m_nSampleRate - 1.0f) ? m_nSampleRate - 1.0f : freq;
 
-	const char* sclFilepath = "G:\\Downloads\\Sevish Tunings Pack\\No Octaves\\tun\\19 ed3 (12 tet stretched).tun";
-	long res = m_scale.Read(sclFilepath);
-	if (res == 0) {
+	//const char* sclFilepath = "G:\\Downloads\\Sevish Tunings Pack\\No Octaves\\tun\\19 ed3 (12 tet stretched).tun";
+	//long res = m_scale.Read(sclFilepath);
+	//if (res == 0) {
 		int iMidiNote = jlimit(0, 127, uMIDINote);
 		float nfreq = m_scale.GetNoteFrequenciesHz()[iMidiNote];
 		freq = nfreq * (oscMasterTune / 440.f);
-	}
+	//}
 
-		/*testing //add microtuning support here
+		/*testing //add micotuning support here
 		int uScaleNote = uMIDINote % 12; //only support scl files with 12 note scales?
 		//float sclFile[12] = { 2187.f/2048, 9.f/8, 32.f/27, 81.f/64, 4.f/3, 729.f/512, 3.f/2, 6561.f/4096, 27.f/16, 16.f/9, 243.f/128, 2.f/1 }; //12 - tone Pythagorean scale
 		float sclFile[12] = { 2.f / 1, 11.f / 8, 132.f / 27, 81.f / 64, 10.f / 3, 729.f / 512, 1.f / 2, 6561.f / 40196, 27.f / 16, 116.f / 9, 2432.f / 128, 2.f / 11 }; //test
