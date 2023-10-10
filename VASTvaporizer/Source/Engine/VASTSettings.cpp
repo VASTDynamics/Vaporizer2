@@ -9,7 +9,7 @@ Global settings for AUDIO THREAD!
 #include "VASTSettings.h"
 #include "VASTPluginConstants.h"
 #include "../Plugin/VASTAudioProcessor.h"
-//#include "../AnaMark-Tuning-Library/SCL_Import.h"
+#include "../AnaMark-Tuning-Library/SCL_Import.h"
 #include <cmath>
 #include <string>
 
