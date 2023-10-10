@@ -524,7 +524,7 @@ public:
 
 	float getFrequencyFactorFromLUT(float octave);
 
-	TUN::CSingleScale m_scale;
+	//TUN::CSingleScale m_scale;
 	
 	private:	
 		bool modMatrixDestinationSet(MYUINT destination); //use fast instead
