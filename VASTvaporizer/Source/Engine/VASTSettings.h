@@ -13,7 +13,7 @@ Global settings for AUDIO THREAD!
 #include "VASTParamState.h"
 #include "VASTMSEGData.h"
 #include "VASTARPData.h"
-//#include "../AnaMark-Tuning-Library/SCL_Import.h"
+#include "../AnaMark-Tuning-Library/SCL_Import.h"
 #include <string>
 #include <vector>
 
@@ -524,7 +524,7 @@ public:
 
 	float getFrequencyFactorFromLUT(float octave);
 
-	//TUN::CSingleScale m_scale;
+	TUN::CSingleScale m_scale;
 	
 	private:	
 		bool modMatrixDestinationSet(MYUINT destination); //use fast instead
