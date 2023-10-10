@@ -175,13 +175,13 @@ float CVASTSettings::midiNoteGetBaseFreq(MYUINT uMIDINote, float oscMasterTune) 
 	float freq = powf(2.0, divi) * oscMasterTune;
 	freq = (freq > m_nSampleRate - 1.0f) ? m_nSampleRate - 1.0f : freq;
 
-	const char* sclFilepath = "G:\\Downloads\\Sevish Tunings Pack\\No Octaves\\tun\\19 ed3 (12 tet stretched).tun";
-	long res = m_scale.Read(sclFilepath);
-	if (res == 0) {
+	//const char* sclFilepath = "G:\\Downloads\\Sevish Tunings Pack\\No Octaves\\tun\\19 ed3 (12 tet stretched).tun";
+	//long res = m_scale.Read(sclFilepath);
+	//if (res == 0) {
 		int iMidiNote = jlimit(0, 127, uMIDINote);
 		float nfreq = m_scale.GetNoteFrequenciesHz()[iMidiNote];
 		freq = nfreq * (oscMasterTune / 440.f);
-	}
+	//}
 
 		/*testing //add micotuning support here
 		int uScaleNote = uMIDINote % 12; //only support scl files with 12 note scales?
