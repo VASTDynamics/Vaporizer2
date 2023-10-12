@@ -52,7 +52,7 @@ namespace ProjectInfo
 {
     const char* const  projectName    = "VASTvaporizer2";
     const char* const  companyName    = "VAST Dynamics";
-    const char* const  versionString  = "3.3.0";
-    const int          versionNumber  = 0x30300;
+    const char* const  versionString  = "3.3.5";
+    const int          versionNumber  = 0x30305;
 }
 #endif

@@ -11,7 +11,7 @@
 // Audio plugin settings..
 
 #ifndef  JucePlugin_Build_VST
- #define JucePlugin_Build_VST              1
+ #define JucePlugin_Build_VST              0
 #endif
 #ifndef  JucePlugin_Build_VST3
  #define JucePlugin_Build_VST3             1
@@ -77,13 +77,13 @@
  #define JucePlugin_EditorRequiresKeyboardFocus  0
 #endif
 #ifndef  JucePlugin_Version
- #define JucePlugin_Version                3.3.0
+ #define JucePlugin_Version                3.3.5
 #endif
 #ifndef  JucePlugin_VersionCode
- #define JucePlugin_VersionCode            0x30300
+ #define JucePlugin_VersionCode            0x30305
 #endif
 #ifndef  JucePlugin_VersionString
- #define JucePlugin_VersionString          "3.3.0"
+ #define JucePlugin_VersionString          "3.3.5"
 #endif
 #ifndef  JucePlugin_VSTUniqueID
  #define JucePlugin_VSTUniqueID            JucePlugin_PluginCode

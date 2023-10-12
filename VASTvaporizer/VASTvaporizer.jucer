@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="wPTx8T" name="VASTvaporizer2" projectType="audioplug" version="3.3.0"
+<JUCERPROJECT id="wPTx8T" name="VASTvaporizer2" projectType="audioplug" version="3.3.5"
               bundleIdentifier="com.vastdynamics.VAST2" includeBinaryInAppConfig="1"
               buildVST="0" buildVST3="1" buildAU="1" buildRTAS="0" buildAAX="1"
               pluginName="Vaporizer2" pluginDesc="VAST Dynamics Vaporizer2 Hybrid Synthesizer Plug-in"
