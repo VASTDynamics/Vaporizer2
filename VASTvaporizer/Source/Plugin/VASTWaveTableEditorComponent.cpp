@@ -4021,29 +4021,37 @@ void VASTWaveTableEditorComponent::notifySelectionChanged() {
 }
 
 void VASTWaveTableEditorComponent::setDrawMode(int mode) {
-	myProcessor->m_iWTEditorDrawMode = mode;
-	c_waveTableEditorView->getEditorOscilloscope()->updateContent(true); //force update
-	myProcessor->writeSettingsToFileAsync();
+	if (myProcessor->m_iWTEditorDrawMode != mode) {
+		myProcessor->m_iWTEditorDrawMode = mode;
+		c_waveTableEditorView->getEditorOscilloscope()->updateContent(true); //force update
+		myProcessor->writeSettingsToFileAsync();
+	} 
 }
 
 void VASTWaveTableEditorComponent::setGridMode(int mode) {
-	myProcessor->m_iWTEditorGridMode = mode;
-	c_waveTableEditorView->getEditorOscilloscope()->updateContent(true); //force update
-	myProcessor->writeSettingsToFileAsync();
+	if (myProcessor->m_iWTEditorGridMode != mode) {
+		myProcessor->m_iWTEditorGridMode = mode;
+		c_waveTableEditorView->getEditorOscilloscope()->updateContent(true); //force update
+		myProcessor->writeSettingsToFileAsync();
+	}
 }
 
 void VASTWaveTableEditorComponent::setBinMode(int mode) {
-	myProcessor->m_iWTEditorBinMode = mode;
-	myProcessor->m_iWTEditorBinMode = jlimit<int>(0, BinMode::BinMode_NUM - 1, myProcessor->m_iWTEditorBinMode); //safety BinMode
-	m_freqviewport->updateContent(true);
-	myProcessor->writeSettingsToFileAsync();
+	if (myProcessor->m_iWTEditorBinMode != mode) {
+		myProcessor->m_iWTEditorBinMode = mode;
+		myProcessor->m_iWTEditorBinMode = jlimit<int>(0, BinMode::BinMode_NUM - 1, myProcessor->m_iWTEditorBinMode); //safety BinMode
+		m_freqviewport->updateContent(true);
+		myProcessor->writeSettingsToFileAsync();
+	}
 }
 
 void VASTWaveTableEditorComponent::setBinEditMode(int mode) {
-	myProcessor->m_iWTEditorBinEditMode = mode;
-	myProcessor->m_iWTEditorBinEditMode = jlimit<int>(0, FreqEditMode::FreqEditMode_NUM - 1, myProcessor->m_iWTEditorBinEditMode); //safety FreqEditMode
-	m_freqviewport->updateContent(true);
-	myProcessor->writeSettingsToFileAsync();
+	if (myProcessor->m_iWTEditorBinEditMode != mode) {
+		myProcessor->m_iWTEditorBinEditMode = mode;
+		myProcessor->m_iWTEditorBinEditMode = jlimit<int>(0, FreqEditMode::FreqEditMode_NUM - 1, myProcessor->m_iWTEditorBinEditMode); //safety FreqEditMode
+		m_freqviewport->updateContent(true);
+		myProcessor->writeSettingsToFileAsync();
+	}
 }
 
 void VASTWaveTableEditorComponent::startAutoUpdate() {

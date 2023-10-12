@@ -774,13 +774,13 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
 	c_oscC->addListener(myWTEditor);
 	c_oscD->addListener(myWTEditor);
 
-	c_applyOptions->setSelectedItemIndex(ApplyOption::ApplyInterpolation);
-	c_generationOptions->setSelectedItemIndex(GenerateOption::GenerateHardSync);
+	c_applyOptions->setSelectedItemIndex(ApplyOption::ApplyInterpolation, false);
+	c_generationOptions->setSelectedItemIndex(GenerateOption::GenerateHardSync, false);
 
-	c_gridMode->setSelectedItemIndex(OscillatorGridMode::NoGrid);
-	c_binMode->setSelectedItemIndex(BinMode::ClipBin);
-	c_binEditMode->setSelectedItemIndex(FreqEditMode::SingleBin);
-	c_drawMode->setSelectedItemIndex(OscillatorEditMode::SelectMode);
+	c_gridMode->setSelectedItemIndex(OscillatorGridMode::NoGrid, false);
+	c_binMode->setSelectedItemIndex(BinMode::ClipBin, false);
+	c_binEditMode->setSelectedItemIndex(FreqEditMode::SingleBin, false);
+	c_drawMode->setSelectedItemIndex(OscillatorEditMode::SelectMode, false);
 
 	setOpaque(true);
     //[/UserPreSize]

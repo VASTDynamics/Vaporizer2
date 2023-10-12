@@ -524,6 +524,7 @@ public:
 
 	float getFrequencyFactorFromLUT(float octave);
 
+	void setTuning(String tuningFile);
 	TUN::CSingleScale m_scale;
 	
 	private:	

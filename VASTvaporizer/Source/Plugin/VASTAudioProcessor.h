@@ -251,6 +251,7 @@ public:
 	String m_UserPresetRootFolder; // root folder for user presets - read from config file, set in preset component
 	String m_UserWavetableRootFolder; // root folder for user presets - read from config file, set in preset component
 	String m_UserWavRootFolder; // root folder for user presets - read from config file, set in preset component
+	String m_UserTuningFile; // AnaMArk .tun tuning file 
 	bool m_disableOpenGLGFX = false; // settings
 
 	int m_iUserTargetPluginWidth = 0;
@@ -304,6 +305,9 @@ public:
 			vastLookAndFeels[i]->setUIFontSize(size);
 		requestUIInit();
 	}
+	
+	void setUserTuningFile(String filename);
+	
 	void setBendRange(int bendRange) {
 		m_pVASTXperience.m_Set.m_iBendRange = bendRange;
 		requestUIUpdate(true, false, false);

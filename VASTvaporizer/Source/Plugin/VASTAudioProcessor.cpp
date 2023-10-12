@@ -1542,6 +1542,11 @@ void VASTAudioProcessor::addModMatrixLookupTable(int modMatrixDestination, float
 	m_modMatrixLookupTable[modMatrixDestination].param = param;
 }
 
+void VASTAudioProcessor::setUserTuningFile(String filename) {
+	m_UserTuningFile = filename;
+	m_pVASTXperience.m_Set.setTuning(m_UserTuningFile);
+}
+
 int VASTAudioProcessor::autoParamGetDestination(String parametername) {
 	std::unordered_map<String, int>::iterator it;
 	it = m_mapParameterNameToModdest.find(parametername);
@@ -2081,6 +2086,7 @@ bool VASTAudioProcessor::writeSettingsToFile() {
 	settings->setAttribute("PresetRootFolder", m_UserPresetRootFolder);
 	settings->setAttribute("WavetableRootFolder", m_UserWavetableRootFolder);
 	settings->setAttribute("WavRootFolder", m_UserWavRootFolder);
+	settings->setAttribute("TuningFile", m_UserTuningFile);
 
 	settings->setAttribute("PluginWidth", String(m_iUserTargetPluginWidth));
 	settings->setAttribute("PluginHeight", String(m_iUserTargetPluginHeight));
@@ -2248,6 +2254,10 @@ bool VASTAudioProcessor::readSettingsFromFile() {
 							else if (pChild->getAttributeName(i).equalsIgnoreCase("WavRootFolder") == true) {
 								m_UserWavRootFolder = pChild->getAttributeValue(i);
 							}
+							else if (pChild->getAttributeName(i).equalsIgnoreCase("TuningFile") == true) {
+								m_UserTuningFile = pChild->getAttributeValue(i);
+								setUserTuningFile(m_UserTuningFile);
+							}										
 							else if (pChild->getAttributeName(i).equalsIgnoreCase("PluginWidth") == true) {
 								m_iUserTargetPluginWidth = pChild->getAttributeValue(i).getIntValue();
 							}
