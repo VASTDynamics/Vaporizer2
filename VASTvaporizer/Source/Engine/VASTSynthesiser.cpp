@@ -1344,7 +1344,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 
 void VASTSynthesiser::handleMidiEvent(const MidiMessage& m)
 {
-	DBG("handleMidiEvent: " + m.getDescription());
+	DBG("handleMidiEvent: " << m.getDescription());
 	const int channel = m.getChannel();
 	
 	if (m.isNoteOn())
@@ -1353,7 +1353,7 @@ void VASTSynthesiser::handleMidiEvent(const MidiMessage& m)
 			//dont do note on on master channnel
 		}
 		else {
-			DBG("NoteOn midinote: " + String(m.getNoteNumber()));
+			DBG("NoteOn midinote: " << m.getNoteNumber());
 			noteOn(channel, m.getNoteNumber(), m.getFloatVelocity());
 
 			//set initial values for note: timbre
@@ -1573,7 +1573,7 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 							if (voice != nullptr) {
 								((CVASTSingleNote*)voice)->setGlissandoStart(newest, false);
 								m_iGlissandoAssigned++;
-								DBG("voice: " + String(voice->getVoiceNo()) + " glissandoStart for newest note in old chord stack " + String(newest));
+								DBG("voice: " << voice->getVoiceNo() << " glissandoStart for newest note in old chord stack " << newest);
 								break; //lowest old note
 							}
 						}
@@ -1620,7 +1620,7 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 								if (voice != nullptr) {
 									((CVASTSingleNote*)voice)->setGlissandoStart(i, true);
 									m_iGlissandoAssigned++;
-									DBG("voice: " + String(voice->getVoiceNo()) + " glissandoStart for note  " + String(i));
+									DBG("voice: " << voice->getVoiceNo() << " glissandoStart for note  " << i);
 									break; //lowest old note
 								}
 							}
@@ -1654,7 +1654,7 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 								if (voice != nullptr) {
 									((CVASTSingleNote*)voice)->setGlissandoStart(i, true);
 									m_iGlissandoAssigned++;
-									DBG("voice: " + String(voice->getVoiceNo()) + " glissandoStart for note  " + String(i));
+									DBG("voice: " << voice->getVoiceNo() << " glissandoStart for note  " << i);
 									break; //lowest old note
 								}
 							}
@@ -1681,14 +1681,14 @@ void VASTSynthesiser::startVoice(VASTSynthesiserVoice* const voice,
 			if (midiNoteNumber != voice->currentlyPlayingNote) {
 				if (m_midiNotesNumKeyDown > m_Set->m_uMaxPoly) {
 					bLegato = true;
-					DBG("StartVoice Legato start (sustain) voice: " + String(voice->mVoiceNo));
+					DBG("StartVoice Legato start (sustain) voice: " << voice->mVoiceNo);
 				}
 				else {
-					DBG("StartVoice start new voice: " + String(voice->mVoiceNo));
+					DBG("StartVoice start new voice: " << voice->mVoiceNo);
 				}
 			}
 			else {
-				DBG("StartVoice start new voice: " + String(voice->mVoiceNo));
+				DBG("StartVoice start new voice: " << voice->mVoiceNo);
 			}
 		}
 				   		 	  
@@ -1723,7 +1723,7 @@ void VASTSynthesiser::startVoice(VASTSynthesiserVoice* const voice,
 				msegpervoice = true;
 			if (!msegpervoice) {
 				if ((m_oldestPlayingKeyDown >= 0) && voices[m_oldestPlayingKeyDown]->isKeyDown()) { 
-					DBG("Single MSEG Copy m_oldestPlayingKeyDown: " + String(m_oldestPlayingKeyDown) + " -> " + String(voice->mVoiceNo) + " keyDown: " + (voices[m_oldestPlayingKeyDown]->isKeyDown() ? "true" : "false"));
+					DBG("Single MSEG Copy m_oldestPlayingKeyDown: " << m_oldestPlayingKeyDown << " -> " << voice->mVoiceNo << " keyDown: " << (voices[m_oldestPlayingKeyDown]->isKeyDown() ? "true" : "false"));
 					((CVASTSingleNote*)voice)->m_VCA->m_MSEG_Envelope[mseg].copyStateFrom(((CVASTSingleNote*)voices[m_oldestPlayingKeyDown])->m_VCA->m_MSEG_Envelope[mseg]);
 				}
 			}
@@ -1739,7 +1739,7 @@ void VASTSynthesiser::stopVoice(VASTSynthesiserVoice* voice, float velocity, con
 {
 	jassert(voice != nullptr);
 
-	DBG("StopVoice " + String(voice->mVoiceNo));
+	DBG("StopVoice " << voice->mVoiceNo);
 
 	//int iLegatoNote = 0;
 	if ((*m_Set->m_State->m_bLegatoMode == SWITCH::SWITCH_ON) && m_Set->m_uMaxPoly == 1) { //mono legato

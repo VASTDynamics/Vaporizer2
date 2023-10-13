@@ -977,7 +977,7 @@ void VASTWaveTableEditorComponent::threadedFreehandDraw(/*int msbeg, int msend,*
 	editor->myProcessor->m_pVASTXperience.m_Poly.m_OscBank[editor->m_bank]->addSoftFadeEditor();
 
 	std::shared_ptr<CVASTWaveTable> wavetable = editor->myProcessor->m_pVASTXperience.m_Poly.m_OscBank[editor->m_bank]->getSoftOrCopyWavetable();
-	DBG("threadedFreehandDraw on wavetable: " + String(wavetable->getID()));
+	DBG("threadedFreehandDraw on wavetable: " << wavetable->getID());
 
 	//do stuff
 	int msbeg = wavetable->getMultiSelectBegin();
@@ -1111,7 +1111,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 		msend = wavetable->getMultiSelectEnd();
 	}
 
-	DBG("editorFunction on wavetable ID: " + String(wavetable->getID()));
+	DBG("editorFunction on wavetable ID: " << wavetable->getID());
 
 #ifdef _DEBUG
 	std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
@@ -2444,7 +2444,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 	auto duration1 = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count() * 0.001;
 	auto duration2 = std::chrono::duration_cast<std::chrono::microseconds>(t3 - t2).count() * 0.001;
 	auto duration3 = std::chrono::duration_cast<std::chrono::microseconds>(t4 - t3).count() * 0.001;
-	DBG("Thread runtime (milliseconds): " + String(duration1) + " " + String(duration2) + " " + String(duration3));
+	DBG("Thread runtime (milliseconds): " << duration1 << " " << duration2 << " " << duration3);
 #endif
  	getEditorThreadsRunning()--;
 }
@@ -3856,7 +3856,7 @@ VASTSamplerSound* VASTWaveTableEditorComponent::loadWavFile(String filename) {
 				String valType = metadataValues[metadataKeys.indexOf("Loop0Type")];
 				if (valStart.getIntValue() > 0) {
 					if (valEnd.getIntValue() > 0) {
-						DBG("LoopFound: " + valStart + " " + valEnd + " " + valType);
+						DBG("LoopFound: " << valStart << " " << valEnd << " " << valType);
 						lVASTSamplerSound->setLoopChanged(valStart.getIntValue(), valEnd.getIntValue());
 					}
 				}

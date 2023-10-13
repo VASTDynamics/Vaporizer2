@@ -28,14 +28,13 @@ CVASTXperience::CVASTXperience(VASTAudioProcessor* processor) :
 	int tmpFlag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
 	tmpFlag |= _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF;  // Check heap alloc and dump mem leaks at exit
 	_CrtSetDbgFlag(tmpFlag);
-	//_crtBreakAlloc = 4380; // Set to break on allocation number in case you get a leak without a line number
+	//_CrtSetBreakAlloc(651510); // Set to break on allocation number in case you get a leak without a line number
 #endif
 #endif
 
 	m_isPreparingForPlay.store(false);
 	my_processor = processor; //in CVASTEffect
 	setEffectName(JucePlugin_Name);
-
 }
 
 /* destructor()
@@ -280,7 +279,7 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
 	m_Set.m_bPpqIsLooping = isLooping;
 	m_Set.m_dPpqPositionOfLastBarStart = ppqPositionOfLastBarStart;
 	if (m_Set.m_dPpqBpm != bpm) {
-		DBG("BPM changed! Now: " + String(bpm));
+		DBG("BPM changed! Now: " << bpm);
 		m_Set.m_dPpqBpm = bpm;
 		if (*m_Set.m_State->m_bLFOSynch_LFO1 == SWITCH::SWITCH_ON) {
 			m_Poly.updateLFO(0);
@@ -655,7 +654,7 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
 			if ((abs(clickBuffer[i] - clickBuffer[i + 1]) > l_clickTolerance) &&
 				(clickBuffer[i] * clickBuffer[i + 1] > 0.f)) { //above tolerance and not + to -
 				m_Set.m_bShallDump = true;
-				DBG("!!!Click detected at samplepos: " + String(i) + "! Dumping Log!");
+				DBG("!!!Click detected at samplepos: " << i << "! Dumping Log!");
 			}
 		}
 	}

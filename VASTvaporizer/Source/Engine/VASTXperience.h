@@ -113,5 +113,6 @@ public:
 	// Audio & GL Audio Buffer
 	std::unique_ptr<VASTRingBuffer<GLfloat>> oscilloscopeRingBuffer;
 
-	JUCE_LEAK_DETECTOR(CVASTXperience)
+	JUCE_HEAVYWEIGHT_LEAK_DETECTOR(CVASTXperience)
+	//JUCE_LEAK_DETECTOR(CVASTXperience)
 };

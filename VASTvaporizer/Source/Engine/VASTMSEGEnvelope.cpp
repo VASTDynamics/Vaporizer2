@@ -56,7 +56,7 @@ void CVASTMSEGEnvelope::copyStateFrom(CVASTMSEGEnvelope &copyEnvelope) {
 }
 
 void CVASTMSEGEnvelope::reset() {
-	DBG("Voice " + String(m_voiceNo) + " MSEG " + String(m_mseg) + " reset");
+	DBG("Voice " << m_voiceNo << " MSEG " << m_mseg << " reset");
 	m_iSamplesSinceNoteOn = -1;
 	m_iSamplesSinceSegmentStart = -1;
 	m_activeSegment = 0;
@@ -82,9 +82,9 @@ void CVASTMSEGEnvelope::reset() {
 
 void CVASTMSEGEnvelope::noteOn(ULong64_t startPlayTimestamp, bool legatoStartSustain) {
 #ifdef _DEBUG
-	DBG("Voice " + String(m_voiceNo) + " MSEG " + String(m_mseg) + " noteOn called");
+	DBG("Voice " << m_voiceNo << " MSEG " << m_mseg << " noteOn called");
 	if (m_bRelease) {
-		DBG("ERROR! Voice " + String(m_voiceNo) + " MSEG " + String(m_mseg) + " noteOn but still in Release mode!!!");
+		DBG("ERROR! Voice " << m_voiceNo << " MSEG " << m_mseg << " noteOn but still in Release mode!!!");
 	}
 #endif 
 
@@ -136,7 +136,7 @@ void CVASTMSEGEnvelope::noteOff(float releaseVelocity) {
 
 	if (m_bHardStop) {
 		m_bHardStopNoteOff = true;
-		DBG("Voice " + String(m_voiceNo) + " MSEG " + String(m_mseg) + " Hardstop noteoff");
+		DBG("Voice " << m_voiceNo << " MSEG " << m_mseg << " Hardstop noteoff");
 		return;
 	}
 	m_bIsNoteOff = true;
@@ -233,7 +233,7 @@ void CVASTMSEGEnvelope::getEnvelopeRange(float* msegWritePointer, int currentFra
 			}
 			else {
 				m_dEnvelope = 0.00f;
-				DBG(String(m_voiceNo) + " hardstop mode completed " + String(m_dEnvelope) + " MSEG " + String(m_mseg));
+				DBG(m_voiceNo << " hardstop mode completed " << m_dEnvelope << " MSEG " << m_mseg);
 				reset();
 			}
 			if (m_dEnvelope < 0.f) m_dEnvelope = 0.f;
@@ -564,7 +564,7 @@ float CVASTMSEGEnvelope::getEnvelopeStepSeq(int bufferSample) { //called during 
 	if (m_bHardStop) {
 		if (m_dEnvelope > 0.00) {			
 			m_dEnvelope -= float(1.0 / (m_Set->m_nSampleRate * 0.02f)); // 20 ms
-			DBG(String(m_voiceNo) + " in hardstop mode returning " + String(m_dEnvelope) + " STEPSEQ " + String(m_stepSeq));
+			DBG(m_voiceNo << " in hardstop mode returning " << m_dEnvelope << " STEPSEQ " << m_stepSeq);
 		}
 		else {
 			m_dEnvelope = 0.00f;

@@ -635,9 +635,9 @@ void VASTPresetEditorComponent::resized()
     label4->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.1896f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
     c_presetName->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.0626f), proportionOfWidth (0.3038f), proportionOfHeight (0.0244f));
     c_presetTag->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.1478f), proportionOfWidth (0.7813f), proportionOfHeight (0.0244f));
-    label3->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.1478f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
+    label3->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.1513f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
     label2->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.1096f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
-    label13->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.0626f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
+    label13->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.0661f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
     c_presetFolder->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.4261f), proportionOfWidth (0.3912f), proportionOfHeight (0.0244f));
     label7->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.4296f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
     c_folderSelect->setBounds (proportionOfWidth (0.6088f), proportionOfHeight (0.4261f), proportionOfWidth (0.1600f), proportionOfHeight (0.0244f));
@@ -648,20 +648,20 @@ void VASTPresetEditorComponent::resized()
     c_currentSize->setBounds (proportionOfWidth (0.6088f), proportionOfHeight (0.5583f), proportionOfWidth (0.1600f), proportionOfHeight (0.0244f));
     c_defaultSize->setBounds (proportionOfWidth (0.7900f), proportionOfHeight (0.5583f), proportionOfWidth (0.1600f), proportionOfHeight (0.0244f));
     c_wavetableFolder->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.4644f), proportionOfWidth (0.3912f), proportionOfHeight (0.0244f));
-    label5->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.4661f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
+    label5->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.4678f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
     c_folderWTSelect->setBounds (proportionOfWidth (0.6088f), proportionOfHeight (0.4644f), proportionOfWidth (0.1600f), proportionOfHeight (0.0244f));
     c_wavFolder->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.5026f), proportionOfWidth (0.3912f), proportionOfHeight (0.0244f));
-    label6->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.5026f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
+    label6->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.5061f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
     c_folderWavSelect->setBounds (proportionOfWidth (0.6088f), proportionOfHeight (0.5026f), proportionOfWidth (0.1600f), proportionOfHeight (0.0244f));
     c_presetComments->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.2243f), proportionOfWidth (0.7813f), proportionOfHeight (0.0244f));
     label10->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.2278f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
     c_presetCategoryCombo->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.1043f), proportionOfWidth (0.1313f), proportionOfHeight (0.0261f));
-    label11->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.5983f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
+    label11->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.5965f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
     c_uiThemeCombo->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.5948f), proportionOfWidth (0.2300f), proportionOfHeight (0.0261f));
     label12->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.7756f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
     c_WTmode->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.7722f), proportionOfWidth (0.1313f), proportionOfHeight (0.0261f));
     c_iconMaximizeEditor->setBounds (getWidth() - 1 - proportionOfWidth (0.0150f), 1, proportionOfWidth (0.0150f), proportionOfHeight (0.0209f));
-    label14->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.6713f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
+    label14->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.6730f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
     c_disableGFX->setBounds (proportionOfWidth (0.1650f), proportionOfHeight (0.6661f), proportionOfWidth (0.0213f), proportionOfHeight (0.0296f));
     label15->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.8139f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
     label16->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.6348f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
@@ -672,7 +672,7 @@ void VASTPresetEditorComponent::resized()
     c_presetBendRange->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.3078f), proportionOfWidth (0.0750f), proportionOfHeight (0.0313f));
     label18->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.3130f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
     c_tuning->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.8783f), proportionOfWidth (0.3912f), proportionOfHeight (0.0244f));
-    label19->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.8783f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
+    label19->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.8800f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
     c_tuningSelect->setBounds (proportionOfWidth (0.6088f), proportionOfHeight (0.8783f), proportionOfWidth (0.1600f), proportionOfHeight (0.0244f));
     c_tuningRemove->setBounds (proportionOfWidth (0.7900f), proportionOfHeight (0.8783f), proportionOfWidth (0.1600f), proportionOfHeight (0.0244f));
     //[UserResized] Add your own custom resize handling here..
@@ -841,7 +841,7 @@ void VASTPresetEditorComponent::buttonClicked (juce::Button* buttonThatWasClicke
     else if (buttonThatWasClicked == c_tuningRemove.get())
     {
         //[UserButtonCode_c_tuningRemove] -- add your button handler code here..
-        
+
         myProcessor->setUserTuningFile("");
         myProcessor->writeSettingsToFile();
         c_tuning->setText(myProcessor->m_UserTuningFile, false);
@@ -1033,7 +1033,7 @@ void VASTPresetEditorComponent::updateAll() {
 	c_pluginHeight->setColour(TextEditor::backgroundColourId, myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colBoxTextBackground));
     c_tuning->applyFontToAllText(myEditor->getCurrentVASTLookAndFeel()->getTextEditorFont(*c_pluginHeight.get()));
     c_tuning->applyColourToAllText(myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colBoxText), true);
-    c_tuning->setColour(TextEditor::backgroundColourId, myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colBoxTextBackground));    
+    c_tuning->setColour(TextEditor::backgroundColourId, myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colBoxTextBackground));
 }
 
 void VASTPresetEditorComponent::lookAndFeelChanged() {
@@ -1099,7 +1099,7 @@ BEGIN_JUCER_METADATA
               initialText="" multiline="0" retKeyStartsLine="0" readonly="0"
               scrollbars="0" caret="1" popupmenu="1"/>
   <LABEL name="new label" id="f9de9a64cb5680c" memberName="label3" virtualName=""
-         explicitFocusOrder="0" pos="3% 14.783% 12.875% 1.913%" textCol="ffe2e2e2"
+         explicitFocusOrder="0" pos="3% 15.13% 12.875% 1.913%" textCol="ffe2e2e2"
          edTextCol="ff000000" edBkgCol="0" labelText="TAG" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Code Pro Demo"
          fontsize="11.0" kerning="0.0" bold="0" italic="0" justification="34"/>
@@ -1109,7 +1109,7 @@ BEGIN_JUCER_METADATA
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Code Pro Demo"
          fontsize="11.0" kerning="0.0" bold="0" italic="0" justification="34"/>
   <LABEL name="new label" id="7969f6422cf2ee4e" memberName="label13" virtualName=""
-         explicitFocusOrder="0" pos="3% 6.261% 12.875% 1.913%" textCol="ffe2e2e2"
+         explicitFocusOrder="0" pos="3% 6.609% 12.875% 1.913%" textCol="ffe2e2e2"
          edTextCol="ff000000" edBkgCol="0" labelText="PRESET NAME" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Code Pro Demo"
          fontsize="11.0" kerning="0.0" bold="0" italic="0" justification="34"/>
@@ -1157,7 +1157,7 @@ BEGIN_JUCER_METADATA
               initialText="" multiline="0" retKeyStartsLine="0" readonly="1"
               scrollbars="0" caret="0" popupmenu="1"/>
   <LABEL name="new label" id="dbc0f2492bd981bf" memberName="label5" virtualName=""
-         explicitFocusOrder="0" pos="3% 46.609% 12.875% 1.913%" textCol="ffe2e2e2"
+         explicitFocusOrder="0" pos="3% 46.783% 12.875% 1.913%" textCol="ffe2e2e2"
          edTextCol="ff000000" edBkgCol="0" labelText="WAVETABLES" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Code Pro Demo"
          fontsize="11.0" kerning="0.0" bold="0" italic="0" justification="34"/>
@@ -1170,7 +1170,7 @@ BEGIN_JUCER_METADATA
               initialText="" multiline="0" retKeyStartsLine="0" readonly="1"
               scrollbars="0" caret="0" popupmenu="1"/>
   <LABEL name="new label" id="7ada2650fc012320" memberName="label6" virtualName=""
-         explicitFocusOrder="0" pos="3% 50.261% 12.875% 1.913%" textCol="ffe2e2e2"
+         explicitFocusOrder="0" pos="3% 50.609% 12.875% 1.913%" textCol="ffe2e2e2"
          edTextCol="ff000000" edBkgCol="0" labelText="SAMPLES" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Code Pro Demo"
          fontsize="11.0" kerning="0.0" bold="0" italic="0" justification="34"/>
@@ -1192,7 +1192,7 @@ BEGIN_JUCER_METADATA
             editable="0" layout="33" items="AR Arpeggio &#10;AT Atmosphere&#10;BA Bass&#10;BR Brass &#10;BL Bell&#10;CH Chord&#10;DK Drum kit&#10;DR Drum&#10;DL Drum loop&#10;FX Effect&#10;GT Guitar&#10;IN Instrument&#10;KB Keyboard&#10;LD Lead&#10;MA Mallet&#10;OR Organ&#10;OC Orchestral&#10;PD Pad&#10;PN Piano&#10;PL Plucked&#10;RI Riser&#10;RD Reed&#10;ST String&#10;SY Synth&#10;SQ Sequence / Split&#10;TG Trancegate&#10;VC Vocal / Voice&#10;WW Woodwind"
             textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <LABEL name="new label" id="413a9c4a8fbe5523" memberName="label11" virtualName=""
-         explicitFocusOrder="0" pos="3% 59.826% 12.875% 1.913%" textCol="ffe2e2e2"
+         explicitFocusOrder="0" pos="3% 59.652% 12.875% 1.913%" textCol="ffe2e2e2"
          edTextCol="ff000000" edBkgCol="0" labelText="SKIN" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Code Pro Demo"
          fontsize="11.0" kerning="0.0" bold="0" italic="0" justification="34"/>
@@ -1215,7 +1215,7 @@ BEGIN_JUCER_METADATA
                     virtualName="" explicitFocusOrder="0" pos="1Rr 1 1.5% 2.087%"
                     class="VASTDrawableButton" params="&quot;c_iconMaximize&quot;, arrow_right_corner_svg, arrow_right_corner_svgSize, &quot;Maximize area&quot;"/>
   <LABEL name="new label" id="6e81c839abaf8532" memberName="label14" virtualName=""
-         explicitFocusOrder="0" pos="3% 67.13% 12.875% 1.913%" textCol="ffe2e2e2"
+         explicitFocusOrder="0" pos="3% 67.304% 12.875% 1.913%" textCol="ffe2e2e2"
          edTextCol="ff000000" edBkgCol="0" labelText="DISABLE GFX" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Code Pro Demo"
          fontsize="11.0" kerning="0.0" bold="0" italic="0" justification="34"/>
@@ -1269,7 +1269,7 @@ BEGIN_JUCER_METADATA
               multiline="0" retKeyStartsLine="0" readonly="1" scrollbars="0"
               caret="0" popupmenu="1"/>
   <LABEL name="new label" id="639d4b3c348badbd" memberName="label19" virtualName=""
-         explicitFocusOrder="0" pos="3% 87.826% 12.875% 1.913%" textCol="ffe2e2e2"
+         explicitFocusOrder="0" pos="3% 88% 12.875% 1.913%" textCol="ffe2e2e2"
          edTextCol="ff000000" edBkgCol="0" labelText="TUNING" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Code Pro Demo"
          fontsize="11.0" kerning="0.0" bold="0" italic="0" justification="34"/>

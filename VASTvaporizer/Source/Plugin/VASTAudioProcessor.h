@@ -200,6 +200,7 @@ public:
 	bool loadPatchXML(XmlDocument* xmlDoc, bool bNameOnly, const VASTPresetElement* preset, int index, VASTPresetElement& resultPresetData);
 	static String getVSTPath();
 	static String getVSTPathAlternative();
+	static String getSettingsFilePath(bool read, bool& migrate_legacy);
 	void loadPreset(int index);	
 	bool loadUserPatchMetaData(File file, VASTPresetElement& lPreset);	
 	void randomizePatch();

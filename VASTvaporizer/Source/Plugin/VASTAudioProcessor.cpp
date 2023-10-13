@@ -184,12 +184,12 @@ bool VASTAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) cons
 	int inSize = layouts.getMainInputChannelSet().size();
 	int outSize = layouts.getMainOutputChannelSet().size();
 
-	DBG("layouts.getMainInputChannelSet().size():" + String(layouts.getMainInputChannelSet().size()));
-	DBG("layouts.getMainOutputChannelSet().size():" + String(layouts.getMainOutputChannelSet().size()));
-	DBG("layouts.getMainInputChannelSet().isDiscreteLayout():" + String(layouts.getMainInputChannelSet().isDiscreteLayout() ? "X" : ""));
-	DBG("layouts.getMainOutputChannelSet().isDiscreteLayout():" + String(layouts.getMainOutputChannelSet().isDiscreteLayout() ? "X" : ""));
-	DBG("layouts.getMainInputChannelSet().getSpeakerArrangementAsString():" + layouts.getMainInputChannelSet().getSpeakerArrangementAsString());
-	DBG("layouts.getMainOutputChannelSet().getSpeakerArrangementAsString():" + layouts.getMainOutputChannelSet().getSpeakerArrangementAsString());
+	DBG("layouts.getMainInputChannelSet().size():" << layouts.getMainInputChannelSet().size());
+	DBG("layouts.getMainOutputChannelSet().size():" << layouts.getMainOutputChannelSet().size());
+	DBG("layouts.getMainInputChannelSet().isDiscreteLayout():" << (layouts.getMainInputChannelSet().isDiscreteLayout() ? "X" : ""));
+	DBG("layouts.getMainOutputChannelSet().isDiscreteLayout():" << (layouts.getMainOutputChannelSet().isDiscreteLayout() ? "X" : ""));
+	DBG("layouts.getMainInputChannelSet().getSpeakerArrangementAsString():" << (layouts.getMainInputChannelSet().getSpeakerArrangementAsString()));
+	DBG("layouts.getMainOutputChannelSet().getSpeakerArrangementAsString():" << (layouts.getMainOutputChannelSet().getSpeakerArrangementAsString()));
 	
 	if (layouts.getMainInputChannelSet().isDisabled()) 
 		return true;
@@ -590,7 +590,7 @@ void VASTAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mid
 		else if (msg.isController()) {
 			//check for midiLearn
 			if (msg.getControllerNumber() == 0) { //CC00 bank change
-				DBG("Bank Change " + String(msg.getControllerValue()));
+				DBG("Bank Change " << msg.getControllerValue());
 				m_midiBank = msg.getControllerValue();
 			}
 			else if (msg.getControllerNumber() == 1) { //CC01 mod wheel
@@ -642,7 +642,7 @@ void VASTAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mid
 			//if (newProg < maxPrograms) {
 			if (presetindex >= 0) {
 				setCurrentProgram(presetindex);
-				DBG("Program Change " + String(presetindex));
+				DBG("Program Change " << presetindex);
 			}
 		}
 	}
@@ -952,7 +952,7 @@ bool VASTAudioProcessor::loadUserPatchMetaData(File file, VASTPresetElement& lPr
 //array of xml, xmlsize ...
 //define factory bank
 void VASTAudioProcessor::loadPreset(int index) {
-	DBG("Load preset " + String(index));
+	DBG("Load preset " << index);
 	//after this it has to be quick
 	//CriticalSection::ScopedLockType lock(m_pVASTXperience.m_Set.audioProcessBlockRunning);
 	//SpinLock::ScopedLockType lock(m_pVASTXperience.m_Set.audioProcessBlockRunning);
@@ -1519,14 +1519,14 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 void VASTAudioProcessor::registerThread() {
 	const ScopedLock sl(getCallbackLock());
 	m_iNumPassTreeThreads++;
-	DBG("Register Num Threads registered: " + String(m_iNumPassTreeThreads));
+	DBG("Register Num Threads registered: " << m_iNumPassTreeThreads);
 }
 
 void VASTAudioProcessor::unregisterThread() {
 	const ScopedLock sl(getCallbackLock());
 	m_iNumPassTreeThreads--;
 	if (m_iNumPassTreeThreads < 0) m_iNumPassTreeThreads = 0;
-	DBG("Unregister Num Threads registered: " + String(m_iNumPassTreeThreads));
+	DBG("Unregister Num Threads registered: " << m_iNumPassTreeThreads);
 }
 
 bool VASTAudioProcessor::getTreeThreadLock() {
@@ -2009,7 +2009,6 @@ std::string  VASTAudioProcessor::XORDecrypt(std::string a_sValue, std::string  a
 	return sRet;
 }
 
-
 void VASTAudioProcessor::convertASCIIhexToString(std::string & output, std::string & input) {
 	const char* const lut = "0123456789ABCDEF";
 	size_t len = input.length();
@@ -2186,11 +2185,8 @@ bool VASTAudioProcessor::writeSettingsToFile() {
 
 	String myXmlDoc = root.createDocument(String()); //empty is deprecated
 
-#ifdef JUCE_WINDOWS
-	String filename = getVSTPath() + "\\VASTvaporizerSettings.xml";
-#else
-	String filename = getVSTPath() + "/VASTvaporizerSettings.xml";
-#endif
+	bool migrate_legacy = false;
+	String filename = getSettingsFilePath(false, migrate_legacy); //write always new path
 
 	File file(filename);
 	file.deleteFile();
@@ -2207,17 +2203,54 @@ bool VASTAudioProcessor::writeSettingsToFile() {
 	return true;
 }
 
+String VASTAudioProcessor::getSettingsFilePath(bool read, bool &migrate_legacy) {
+	const String settingsFile = "VASTvaporizerSettings.xml";
+#ifdef JUCE_WINDOWS
+	//JUCE>> File::getSpecialLocation(File::commonApplicationDataDirectory) ="C:\ProgramData"
+	String filename = File::getSpecialLocation(File::commonApplicationDataDirectory).getFullPathName() + "\\Vaporizer2\\" + settingsFile;
+	if (read) {
+		if (!File(filename).existsAsFile()) {
+			File(filename).create(); //recursively create also directories
+			File(filename).deleteFile();
+			filename = getVSTPath() + "\\VASTvaporizerSettings.xml"; //try compatibility
+			migrate_legacy = true;
+		}
+	}
+#elif JUCE_MAC
+	//JUCE>> File::getSpecialLocation(File::commonApplicationDataDirectory) ="/Library"
+	String filename = File::getSpecialLocation(File::commonApplicationDataDirectory).getFullPathName() + "/Application Support/Vaporizer2/" + settingsFile;
+	if (read) {
+		if (!File(filename).existsAsFile()) {
+			File(filename).create(); //recursively create also directories
+			File(filename).deleteFile();
+			filename = getVSTPath() + "/VASTvaporizerSettings.xml"; //try compatibility
+			migrate_legacy = true;
+		}
+	}
+#elif JUCE_LINUX
+	//JUCE>> File::getSpecialLocation(File::commonApplicationDataDirectory) ="/opt"
+	String filename = File::getSpecialLocation(File::commonApplicationDataDirectory).getFullPathName() + "/Vaporizer2/" + settingsFile;
+	if (read) {
+		if (!File(filename).existsAsFile()) {
+			File(filename).create(); //recursively create also directories
+			File(filename).deleteFile();
+			filename = getVSTPath() + "/VASTvaporizerSettings.xml"; //try compatibility
+			migrate_legacy = true;
+		}
+	}
+#endif
+
+	return filename;
+}
+
 bool VASTAudioProcessor::readSettingsFromFile() {
 	loadZeroMidiMapping();
 
 	string line = "";
 	String file_enc = "";
 
-#ifdef JUCE_WINDOWS
-	String filename = getVSTPath() + "\\VASTvaporizerSettings.xml";
-#else
-	String filename = getVSTPath() + "/VASTvaporizerSettings.xml";
-#endif
+	bool migrate_legacy = false;
+	String filename = getSettingsFilePath(true, migrate_legacy);
 
 	ifstream mappingFile;
 	const char* fname = filename.toRawUTF8();
@@ -2477,6 +2510,9 @@ bool VASTAudioProcessor::readSettingsFromFile() {
 	}
 
 	m_iUserTargetPluginWidth = m_iUserTargetPluginHeight * m_dPluginRatio;
+
+	if (migrate_legacy)
+		writeSettingsToFileAsync();
 
 	return true;
 }
@@ -3077,7 +3113,7 @@ void VASTAudioProcessor::dumpBuffers() {
 		}
 		else {
 			Result r = m_DumpOutStream->getStatus();
-			DBG("ERROR: " + r.getErrorMessage());
+			DBG("ERROR: " << r.getErrorMessage());
 			vassertfalse;
 		}
 		m_bDumpFileCreated = true;

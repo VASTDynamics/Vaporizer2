@@ -68,6 +68,7 @@ void VASTPresetData::reloadPresetArray() {
 	}
 
 	FileSearchPath sPath = FileSearchPath(myProcessor->m_UserPresetRootFolder);
+
 	Array<File> presetFiles;
 	sPath.findChildFiles(presetFiles, File::findFiles, true, "*.vvp");
 	m_numUserPresets = 0;

@@ -222,7 +222,7 @@ void CVASTSingleNote::prepareForPlay() {
 void CVASTSingleNote::clearCurrentNote()
 {
 	if (currentlyPlayingNote != -1) {
-		DBG("Note is cleared - voice is not playing / active anymore: " + String(getVoiceNo()));
+		DBG("Note is cleared - voice is not playing / active anymore: " << getVoiceNo());
 		currentlyPlayingNote = -1;
 		currentlyPlayingSound = nullptr;
 		currentPlayingMidiChannel = 0;
@@ -308,7 +308,7 @@ void CVASTSingleNote::startNote(int midiNoteNumber, float velocity, SynthesiserS
 
 			if (legato) {
 #ifdef _DEBUG
-				DBG("SingleNote Sampler startNote legato! voice: " + String(getVoiceNo()));
+				DBG("SingleNote Sampler startNote legato! voice: " << getVoiceNo());
 				//if (m_sampler_isInAttack || m_sampler_isInRelease) 
 					//DBG("!!!! SingleNote Sampler is attack or release voice: " + String(getVoiceNo()));
 #endif 
@@ -389,14 +389,14 @@ void CVASTSingleNote::controllerMoved(int controllerNumber, int newControllerVal
 		if (m_Set->m_uModWheel > 127) m_Set->m_uModWheel = 127;
 	}
 	else if (controllerNumber == 74) { // MPE Controller Sound Brightness // handleTimbreMSB 
-		DBG("Brightness MSB voice " + String(mVoiceNo) + " " + String(newControllerValue));
+		DBG("Brightness MSB voice " << mVoiceNo << " " << newControllerValue);
 		m_Set->iMPETimbreMidiNote[getVoiceNo()] = getCurrentlyPlayingNote();
 		m_Set->iMPETimbre[getVoiceNo()] = newControllerValue;
 		if (m_Set->iMPETimbre[getVoiceNo()] < 0) m_Set->iMPETimbre[getVoiceNo()] = 0;
 		if (m_Set->iMPETimbre[getVoiceNo()] > 127) m_Set->iMPETimbre[getVoiceNo()] = 127;
 	}
 	else if (controllerNumber == 106) { // MPE Controller Sound Brightness // handleTimbreLSB    
-		DBG("Brightness LSB voice " + String(mVoiceNo) + " " + String(newControllerValue));
+		DBG("Brightness LSB voice " << mVoiceNo << newControllerValue);
 	}
 }
 
@@ -1051,14 +1051,14 @@ bool CVASTSingleNote::noteOn(MYUINT uChannel, MYUINT uMIDINote, MYUINT uVelocity
 	bool hardStop = m_VCA->isHardStop();
 	bool noteOff = m_VCA->isNoteOff();
 	if (hardStop && !noteOff) { //wait for hardstop tailoff
-		DBG("voice " + String(getVoiceNo()) + " noteOn but m_VCA->isHardStop() and running!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		DBG("voice " << getVoiceNo() << " noteOn but m_VCA->isHardStop() and running!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		if (m_Set->m_uMaxPoly == 1)
 			legato = false;
 			//return false;
 	}
 #ifdef _DEBUG
 	if (hardStop)
-		DBG("voice " + String(getVoiceNo()) + " m_VCA->isHardStop() and new noteOn");
+		DBG("voice " << getVoiceNo() << " m_VCA->isHardStop() and new noteOn");
 #endif
 
 	m_uChannelNext = uChannel;
@@ -1821,7 +1821,7 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 	else { 
 #ifdef _DEBUG
 		if (startSample > 0) 
-			DBG("StartSample > 0: " + String(startSample) + " numSamples: " + String(numSamples) + " bufferSamples: " + String(routingBuffers.getNumSamples()));
+			DBG("StartSample > 0: " << startSample << " numSamples: " << numSamples << " bufferSamples: " << routingBuffers.getNumSamples());
 #endif			
 		m_Set->bufferInputState.store(l_inputState);
 

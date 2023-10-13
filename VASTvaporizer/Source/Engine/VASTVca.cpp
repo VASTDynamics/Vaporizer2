@@ -62,7 +62,7 @@ void CVASTVca::noteOff(float releaseVelocity) {
 }
 
 bool CVASTVca::hardStop() {
-	DBG("hardstop voice " + String(m_voiceNo));
+	DBG("hardstop voice " << m_voiceNo);
 	for (int mseg = 0; mseg < 5; mseg++) {
 		if (m_Set->m_RoutingBuffers.msegUsed[mseg])
 			m_MSEG_Envelope[mseg].hardStop();

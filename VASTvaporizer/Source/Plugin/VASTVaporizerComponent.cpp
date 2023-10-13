@@ -301,7 +301,7 @@ void VASTVaporizerComponent::resized()
 	}
 	*/
 
-	DBG("Vaporizer component resized to w: " + String(this->getWidth()) + " h: " + String(this->getHeight()));
+	DBG("Vaporizer component resized to w: " << this->getWidth() << " h: " << this->getHeight());
     //[/UserResized]
 }
 
@@ -483,7 +483,7 @@ bool VASTVaporizerComponent::keyStateChanged(bool isKeyDown, Component* originat
 }
 
 bool VASTVaporizerComponent::keyPressed(const KeyPress& key, Component* originatingComponent) { //return true for the ableton bug
-	DBG(key.getTextDescription() + "   " + String(key.getKeyCode()));
+	DBG(key.getTextDescription() << "   " << key.getKeyCode());
 	ModifierKeys mod = key.getModifiers();
 
 	VASTWaveTableEditorComponent* myWtEditor = ((VASTWaveTableEditorComponent*)c_tabbedComponent->getTabContentComponent(0));
