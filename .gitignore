@@ -1,6 +1,7 @@
 VASTvaporizer_commercial.jucer
 VASTvaporizer_vastbuild.jucer
 VASTvaporizer/Builds/
+VASTvaporizer/JuceLibraryCode/
 VASTLicense.*
 post_build_script_win.bat
 build_script_win.bat
