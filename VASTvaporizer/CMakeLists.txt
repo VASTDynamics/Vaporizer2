@@ -2,26 +2,35 @@
 
 cmake_minimum_required(VERSION 3.15)
 
+option(USE_SYSTEM_JUCE "Use system installation of juce" OFF)
+set(VST2_SDK_LOCATION "" CACHE STRING "Steinberg VST2 SDK directory for non-FOSS builds")
+
 project("VASTvaporizer2")
 
+if(NOT USE_SYSTEM_JUCE)
+  message(STATUS "Using JUCE from source tree")
+  add_subdirectory("${CMAKE_SOURCE_DIR}/../JUCE" EXCLUDE_FROM_ALL)
+else()
+  message(STATUS "Using system provided JUCE")
+  find_package(JUCE CONFIG REQUIRED)
+endif()
 
-find_package(JUCE CONFIG REQUIRED)
+if (VST2_SDK_LOCATION)
+    juce_set_vst2_sdk_path(${VST2_SDK_LOCATION})
+    message(STATUS "Enabling VST2 - caution, non FOSS build")
+    list(APPEND PLUGIN_FORMATS VST)
+endif()
 
+list(APPEND PLUGIN_FORMATS VST3 AU AAX Standalone LV2)
 
 juce_add_plugin(VASTvaporizer2
-  VERSION "3.3.0"
+  VERSION "3.3.5"
   BUNDLE_ID "com.vastdynamics.VAST2"
   COMPANY_NAME "VAST Dynamics"
   COMPANY_COPYRIGHT "VAST Dynamics"
   COMPANY_WEBSITE "www.vast-dynamics.com"
   COMPANY_EMAIL "contact@vast-dynamics.com"
-
-  FORMATS
-    "VST3"
-    "AU"
-    "AAX"
-    "Standalone"
-    "LV2"
+  FORMATS ${PLUGIN_FORMATS}
   PLUGIN_NAME "Vaporizer2"
   DESCRIPTION "VAST Dynamics Vaporizer2 Hybrid Synthesizer Plug-in"
   PLUGIN_MANUFACTURER_CODE "Vast"
@@ -33,8 +42,6 @@ juce_add_plugin(VASTvaporizer2
   AU_EXPORT_PREFIX "VAST2AU"
   AU_MAIN_TYPE "kAudioUnitType_MusicDevice"
 )
-
-# juce_generate_juce_header(VASTvaporizer2)
 
 target_compile_definitions(VASTvaporizer2
   PUBLIC
@@ -53,6 +60,10 @@ target_compile_definitions(VASTvaporizer2
 
 target_sources(VASTvaporizer2
   PRIVATE
+    "Source/AnaMark-Tuning-Library/SCL_Import.cpp"
+    "Source/AnaMark-Tuning-Library/TUN_EmbedHTML.cpp"
+    "Source/AnaMark-Tuning-Library/TUN_Scale.cpp"
+    "Source/AnaMark-Tuning-Library/TUN_StringTools.cpp"
     "Source/Engine/FX/FXUtils/VASTDDLModule.cpp"
     "Source/Engine/FX/FXUtils/VASTDelayLine.cpp"
     "Source/Engine/FX/FXUtils/VASTDelayLineAPF.cpp"
@@ -205,13 +216,6 @@ juce_add_binary_data(VASTvaporizer2_BinaryData
     "Resources/Fonts/Trade Gothic LT.ttf"
     "Resources/logokreis.svg"
     "Resources/logokreisvdalpha.png"
-    "Source/muFFT/CMakeLists.txt"
-    "Source/muFFT/COPYING"
-    "Source/muFFT/COPYING.GPLv2"
-    "Source/muFFT/Doxyfile"
-    "Source/muFFT/README.md"
-    "Source/muFFT/doxygen/fft.md"
-    "Source/muFFT/mufft.pc.in"
 )
 
 set_target_properties(VASTvaporizer2_BinaryData PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
@@ -234,9 +238,9 @@ target_link_libraries(VASTvaporizer2
     juce::juce_gui_basics
     juce::juce_gui_extra
     juce::juce_opengl
+    atomic
   PUBLIC
     juce::juce_recommended_config_flags
     juce::juce_recommended_lto_flags
     juce::juce_recommended_warning_flags
-    atomic
 )
