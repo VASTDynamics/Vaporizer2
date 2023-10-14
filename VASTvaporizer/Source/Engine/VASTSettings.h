@@ -278,12 +278,12 @@ public:
 	- OscDBuffer - clear(Output Combobox 1 & 2) (Filter1, Filter2, Filter3, Bus1, Bus2, Bus3, Master)
 	- NoiseBuffer - clear(Output Combobox 1 & 2) (Filter1, Filter2, Filter3, Bus1, Bus2, Bus3, Master)
 	- SampleBuffer - clear(Output Combobox 1 & 2) (Filter1, Filter2, Filter3, Bus1, Bus2, Bus3, Master)
-	- Filter1Buffer - clear(Output Combobox) (Filter2, Filter3, Bus1, Bus2, Bus3, Master)  In : A, B, C, D, Noise, Sample
-	- Filter2Buffer - clear(Output Combobox) (Filter3, Bus1, Bus2, Bus3, Master)  In : A, B, C, D, Noise, Sample, Filter2
-	- Filter3Buffer - clear(Output Combobox) (Bus1, Bus2, Bus3, Master)  In : A, B, C, D, Noise, Sample, Filter1, Filter2
-	- FxBus1Buffer - clear(Output Combobox) (Bus2, Bus3, Master)  In : A, B, C, D, Noise, Sample, Filter1, Filter2, Filter3
-	- FxBus2Buffer - clear(Output Combobox) (Bus 3, Master)  In : A, B, C, D, Noise, Sample, Filter1, Filter2, Filter3, Bus1
-	- FxBus3Buffer - clear(Output Combobox) (Master)  In : A, B, C, D, Noise, Sample, Filter1, Filter2, Filter3, Bus1, Bus2
+	- Filter1Buffer - clear(Output Combobox) (Filter2, Filter3, Bus1, Bus2, Bus3, Master) \96 In : A, B, C, D, Noise, Sample
+	- Filter2Buffer - clear(Output Combobox) (Filter3, Bus1, Bus2, Bus3, Master) \96 In : A, B, C, D, Noise, Sample, Filter2
+	- Filter3Buffer - clear(Output Combobox) (Bus1, Bus2, Bus3, Master) \96 In : A, B, C, D, Noise, Sample, Filter1, Filter2
+	- FxBus1Buffer - clear(Output Combobox) (Bus2, Bus3, Master) \96 In : A, B, C, D, Noise, Sample, Filter1, Filter2, Filter3
+	- FxBus2Buffer - clear(Output Combobox) (Bus 3, Master) \96 In : A, B, C, D, Noise, Sample, Filter1, Filter2, Filter3, Bus1
+	- FxBus3Buffer - clear(Output Combobox) (Master) \96 In : A, B, C, D, Noise, Sample, Filter1, Filter2, Filter3, Bus1, Bus2
 	- MasterOutBuffer - clear - In : A, B, C, D, Noise, Sample, Filter1, Filter2, Filter3, Bus1, Bus2, Bus3
 	- MSEG1Buffer - clear
 	- MSEG2Buffer - clear
