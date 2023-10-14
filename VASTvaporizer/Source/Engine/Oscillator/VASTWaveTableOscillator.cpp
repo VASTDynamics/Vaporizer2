@@ -688,7 +688,7 @@ float CVASTWaveTableOscillator::doWhiteNoiseFast()
 {
 	float fNoise = 0.0;
 
-#if defined _WINDOWS || defined _WINDLL || defined JUCE_LINUX   
+#if defined _WINDOWS || defined _WINDLL || defined _OLDGLIBC
 	// fNoise is 0 -> 2147483647.0
 	fNoise = (float)rand31_next();
 

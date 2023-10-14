@@ -12,7 +12,7 @@
               companyEmail="contact@vast-dynamics.com" pluginIsMidiEffectPlugin="0"
               buildAUv3="0" displaySplashScreen="0" reportAppUsage="0" splashScreenColour="Dark"
               buildStandalone="1" enableIAA="0" cppLanguageStandard="latest"
-              companyCopyright="VAST Dynamics" headerPath="..\..\Source\Engine; ..\..\Source\Plugin; ..\..\Source; ..\..\Source\muFFT"
+              companyCopyright="VAST Dynamics" headerPath="..\..\Source\Engine; ..\..\Source\Plugin; ..\..\Source; ..\..\Source\muFFT; ..\..\Source\AnaMark-Tuning-Library; ..\..\..\asiosdk\common"
               pluginFormats="buildAAX,buildAU,buildLV2,buildStandalone,buildVST3"
               pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn"
               pluginAUMainType="'aumu'" pluginChannelConfigs="{2,2}" maxBinaryFileSize="20971520"
@@ -113,7 +113,7 @@
       </GROUP>
       <GROUP id="{7111349C-415B-B572-4908-8843261E4386}" name="FX">
         <GROUP id="{1A0EC0B3-9169-7D0E-95D8-F40B4494E90A}" name="FXUtils">
-          <FILE id="AlF1mf" name="STFT.h" compile="0" resource="0" file="Source/Engine/FX/FXUtils/STFT.h"/>
+          <FILE id="aZHhGb" name="STFT.h" compile="0" resource="0" file="Source/Engine/FX/FXUtils/STFT.h"/>
           <FILE id="IVTHJ5" name="VASTDDLModule.cpp" compile="1" resource="0"
                 file="Source/Engine/FX/FXUtils/VASTDDLModule.cpp"/>
           <FILE id="adsEb0" name="VASTDDLModule.h" compile="0" resource="0" file="Source/Engine/FX/FXUtils/VASTDDLModule.h"/>

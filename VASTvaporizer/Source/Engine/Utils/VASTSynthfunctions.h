@@ -1059,7 +1059,7 @@ inline double doWhiteNoise()
 {
 	float fNoise = 0.0;
 
-#if defined _WINDOWS || defined _WINDLL || defined JUCE_LINUX
+#if defined _WINDOWS || defined _WINDLL || defined _OLDGLIBC
 	// fNoise is 0 -> 32767.0
 	fNoise = (float)rand();
 
