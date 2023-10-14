@@ -68,6 +68,9 @@ void VASTPresetData::reloadPresetArray() {
 	}
 
 	FileSearchPath sPath = FileSearchPath(myProcessor->m_UserPresetRootFolder);
+#if defined JUCE_LINUX
+	sPath.addIfNotAlreadyThere(juce::File::getSpecialLocation(juce::File::globalApplicationsDirectory).getChildFile("share/Vaporizer2").getFullPathName());
+#endif
 
 	Array<File> presetFiles;
 	sPath.findChildFiles(presetFiles, File::findFiles, true, "*.vvp");

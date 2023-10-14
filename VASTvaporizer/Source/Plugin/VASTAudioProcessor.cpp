@@ -1603,7 +1603,7 @@ String VASTAudioProcessor::getVSTPath() {
 	return "";
 
 #elif JUCE_LINUX
-	return "~/.Vaporizer2/"; // ~ is home directory
+	return  juce::File::getSpecialLocation(juce::File::userDocumentsDirectory).getChildFile("Vaporizer2").getFullPathName().toStdString();
 
 #elif JUCE_WINDOWS	
 	String Vaporizer2InstallPath = "";
@@ -2823,6 +2823,11 @@ void VASTAudioProcessor::initSettings() {
 #endif
 		m_iUserTargetPluginWidth = m_iDefaultPluginWidth; //default size from projucer
 		m_iUserTargetPluginHeight = m_iDefaultPluginHeight; //default size from projucer
+
+		if(!File(m_UserPresetRootFolder).exists())
+		{
+			File(m_UserPresetRootFolder).createDirectory();
+		}
 
 		writeSettingsToFile();
 	}
