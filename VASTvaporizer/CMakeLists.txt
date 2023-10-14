@@ -9,7 +9,7 @@ project("VASTvaporizer2")
 
 if(NOT USE_SYSTEM_JUCE)
   message(STATUS "Using JUCE from source tree")
-  add_subdirectory("${CMAKE_SOURCE_DIR}/../JUCE" EXCLUDE_FROM_ALL)
+  add_subdirectory("${CMAKE_SOURCE_DIR}/../JUCE" ${CMAKE_BINARY_DIR}/../JUCE EXCLUDE_FROM_ALL)
 else()
   message(STATUS "Using system provided JUCE")
   find_package(JUCE CONFIG REQUIRED)
