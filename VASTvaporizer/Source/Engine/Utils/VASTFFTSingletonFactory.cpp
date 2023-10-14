@@ -1,7 +1,6 @@
 /*
 VAST Dynamics Audio Software (TM)
 */
-#pragma once
 
 #include "VASTFFTSingletonFactory.h"
 //#include <mutex>
