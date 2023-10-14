@@ -241,7 +241,7 @@ public:
 
 	VASTPresetData m_presetData{ this };
 	VASTPresetElement getCurPatchData() {
-		m_presetData.getCurPatchData();
+		return m_presetData.getCurPatchData();
 	};
 
 	int m_curPatchDataLoadRequestedIndex = 0;
