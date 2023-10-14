@@ -39,9 +39,11 @@ typedef signed int MYUINT; //CHECK FOR PORTABILITY
 
 #define M_TWELFTH_ROOT_TWO 1.0594630943592952645618252949463
 
-//#ifndef M_PI
-	#define M_PI	   3.1415926535897932384626433832795 //redefined here, keep!
-//#endif
+#ifdef M_PI
+	#undef  M_PI	// we want to use our own version of PI, and we don't want the redefine warnings showing up all over the place
+#endif
+#define M_PI	   3.1415926535897932384626433832795 //redefined here, keep!	
+
 #ifndef M_2PI
 	#define M_2PI	   6.283185307179586476925286766559
 #endif
