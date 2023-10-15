@@ -9,6 +9,8 @@ set(ASIO_SDK_LOCATION "" CACHE STRING "Steinberg ASIO SDK directory for non-FOSS
 
 project("VASTvaporizer2")
 
+message("Building VAST Dynamics Vaporizer2 plugin, version ${PLUGIN_VERSION}")
+
 if(NOT USE_SYSTEM_JUCE)
   message(STATUS "Using JUCE from source tree")
   add_subdirectory("${CMAKE_SOURCE_DIR}/JUCE" ${CMAKE_BINARY_DIR}/JUCE EXCLUDE_FROM_ALL)
@@ -33,7 +35,7 @@ endif()
 list(APPEND PLUGIN_FORMATS VST3 AU Standalone LV2)
 
 juce_add_plugin(VASTvaporizer2
-  VERSION "3.3.5"
+  VERSION ${PLUGIN_VERSION}
   BUNDLE_ID "com.vastdynamics.VAST2"
   COMPANY_NAME "VAST Dynamics"
   COMPANY_COPYRIGHT "VAST Dynamics"
@@ -66,6 +68,7 @@ target_compile_definitions(VASTvaporizer2
     JUCE_VST3_CAN_REPLACE_VST2=0
     JUCE_WEB_BROWSER=0
     JUCE_WIN_PER_MONITOR_DPI_AWARE=0
+    JUCE_DISPLAY_SPLASH_SCREEN=0
 )
 
 if (WIN32)

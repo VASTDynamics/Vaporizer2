@@ -1,9 +1,9 @@
 VASTvaporizer_commercial.jucer
 VASTvaporizer_vastbuild.jucer
 VASTvaporizer/Builds/
-VASTvaporizer/cmake-build/
 VASTvaporizer/JuceLibraryCode/
 VASTLicense.*
+cmake-build/
 post_build_script_win.bat
 build_script_win.bat
 MacOS Build Chain.docx
