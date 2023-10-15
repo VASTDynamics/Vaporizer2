@@ -5,6 +5,7 @@ VAST Dynamics
 #include "../../Engine/VASTEngineHeader.h"
 #include "VASTPresetStars.h"
 #include "VASTPresetComponent.h"
+#include <ciso646>
 
 VASTPresetStars::VASTPresetStars(VASTPresetComponent* presetComponent, String internalid, int ranking) : _presetComponent(presetComponent), m_internalid(internalid), m_ranking(ranking) {
 }
