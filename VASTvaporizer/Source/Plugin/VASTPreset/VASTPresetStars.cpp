@@ -43,7 +43,7 @@ void VASTPresetStars::mouseDown(const MouseEvent &e) {
 	juce::Rectangle<int> rec = getLocalBounds();
 	float dist = rec.getWidth() / 6.f;
 	int rank = e.getMouseDownX() / dist;
-	if (rank >= 0 and rank <= 5)
+	if ((rank >= 0) && (rank <= 5))
 		setRanking(rank);
 	repaint();
 }
@@ -52,7 +52,7 @@ void VASTPresetStars::mouseDrag(const MouseEvent &e) {
 	juce::Rectangle<int> rec = getLocalBounds();
 	float dist = rec.getWidth() / 6.f;
 	int rank = (e.getMouseDownX() + e.getDistanceFromDragStartX()) / dist;
-	if (rank >= 0 and rank <= 5)
+	if ((rank >= 0) && (rank <= 5))
 		setRanking(rank);
 	repaint();
 }
