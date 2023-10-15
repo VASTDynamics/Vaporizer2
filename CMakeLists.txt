@@ -59,7 +59,6 @@ target_compile_definitions(VASTvaporizer2
     DROWAUDIO_USE_CURL=disabled
     DROWAUDIO_USE_FFTREAL=disabled
     DROWAUDIO_USE_SOUNDTOUCH=disabled
-    JUCE_ASIO=1
     JUCE_JACK=1
     JUCE_PLUGINHOST_AU=0
     JUCE_USE_CURL=0
