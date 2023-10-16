@@ -744,11 +744,11 @@
       </MODULEPATHS>
     </VS2019>
     <LINUX_MAKE targetFolder="Builds/LinuxMakefile" externalLibraries="atomic"
-                extraDefs="JUCE_DISABLE_CAUTIOUS_PARAMETER_ID_CHECKING"
-                smallIcon="A2sWSy" bigIcon="A2sWSy">
+                extraDefs="JUCE_DISABLE_CAUTIOUS_PARAMETER_ID_CHECKING" smallIcon="A2sWSy"
+                bigIcon="A2sWSy">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" enablePluginBinaryCopyStep="0" defines="_LINUX _LINUX64BIT SSE_AVX=AVX"/>
-        <CONFIGURATION isDebug="0" name="Release" extraLinkerFlags="-latomic&#10;-fdata-sections -ffunction-sections -Wl,--gc-sections -Wl,-O1 -Wl,--as-needed -Wl,--strip-all"
+        <CONFIGURATION isDebug="0" name="Release" extraLinkerFlags="-fdata-sections -ffunction-sections -Wl,--gc-sections -Wl,-O1 -Wl,--as-needed -Wl,--strip-all"
                        extraCompilerFlags="-fvisibility=hidden" enablePluginBinaryCopyStep="0"
                        defines="_LINUX _LINUX64BIT NDEBUG SSE_AVX=AVX"/>
       </CONFIGURATIONS>
