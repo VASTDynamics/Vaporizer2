@@ -2,10 +2,12 @@
 
 cmake_minimum_required(VERSION 3.15)
 
+file(STRINGS VERSION PLUGIN_VERSION)
 option(USE_SYSTEM_JUCE "Use system installation of juce" OFF)
 set(VST2_SDK_LOCATION "" CACHE STRING "Steinberg VST2 SDK directory for non-FOSS builds")
 set(AAX_SDK_LOCATION "" CACHE STRING "Avid AAX SDK directory for non-FOSS builds")
 set(ASIO_SDK_LOCATION "" CACHE STRING "Steinberg ASIO SDK directory for non-FOSS builds")
+option(BUILD_AVX "Build AVX optimized code" ON)
 
 project("VASTvaporizer2")
 
@@ -72,13 +74,17 @@ target_compile_definitions(VASTvaporizer2
 )
 
 if (WIN32)
-  target_compile_definitions(VASTvaporizer2 PRIVATE _WIN64 _WIN64BIT SSE_AVX=AVX)
+  if (BUILD_AVX)
+    target_compile_definitions(VASTvaporizer2 PRIVATE _WIN64 _WIN64BIT)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX")
+  endif(BUILD_AVX)
+
   if (ASIO_SDK_LOCATION)
     message( STATUS "Including ASIO from ${ASIO_SDK_LOCATION}")
     target_compile_definitions(VASTvaporizer2 PRIVATE JUCE_ASIO=1)
     target_include_directories(VASTvaporizer2 PRIVATE ${ASIO_SDK_LOCATION}/common)
-  endif()
-endif()
+  endif(ASIO_SDK_LOCATION)
+endif(WIN32)
 
 target_sources(VASTvaporizer2
   PRIVATE
