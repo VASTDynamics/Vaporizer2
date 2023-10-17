@@ -1,6 +1,6 @@
 ; https://www.kvraudio.com/forum/viewtopic.php?t=501615
 
-#define AppVer "3.3.0"
+#define AppVer "3.3.5"
 #define PluginBaseName = "Vaporizer2"
 
 [Setup]
@@ -62,8 +62,11 @@ Name: "documentation"; Description: "Documentation File"; Types: full compact
 Name: "license"; Description: "License Text"; Types: full compact; Flags: fixed
 
 [Dirs]
-Name: "{app}"; Permissions: everyone-full
+;Name: "{app}"; Permissions: everyone-full                     
+Name: "{app}"; Permissions: users-readexec
 Name: "{commoncf}\Avid\Audio\Plug-Ins\VASTvaporizer2_64.aaxplugin"; Check: Is64BitInstallMode; Components:aax_win64; Attribs: system;
+;for settings file:
+Name: "{commonappdata}\Vaporizer2"; Permissions: everyone-full
 
 [InstallDelete]
 Type: files; Name: "{group}\uninstall Vaporizer2*"

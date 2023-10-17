@@ -988,12 +988,13 @@ inline double calcInverseValueVoltOctaveExp(double dLowLimit, double dHighLimit,
 	return fastlog2(dControlValue / dLowLimit) / dOctaves;
 }
 
+/* use std::log2 instead
 inline double log2(double n)
 {
 	// log(n)/log(2) is log2.  
 	return log(n) / log((double)2);
 }
-
+*/
 
 /* calcModulatedValueExp()
 
