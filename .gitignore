@@ -1,6 +1,7 @@
 VASTvaporizer_commercial.jucer
 VASTvaporizer_vastbuild.jucer
 VASTvaporizer/Builds/
+VASTvaporizer/InnoSetupFiles/Output/
 VASTvaporizer/JuceLibraryCode/
 VASTLicense.*
 cmake-build/
