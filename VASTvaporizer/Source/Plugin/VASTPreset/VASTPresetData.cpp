@@ -68,9 +68,11 @@ void VASTPresetData::reloadPresetArray() {
 	}
 
 	FileSearchPath sPath = FileSearchPath(myProcessor->m_UserPresetRootFolder);
+	sPath.addIfNotAlreadyThere(File(myProcessor->getVSTPath() + "/Presets")); //add serach path for factory presets in app folder (not configurable)
 
 	Array<File> presetFiles;
 	sPath.findChildFiles(presetFiles, File::findFiles, true, "*.vvp");
+	
 	m_numUserPresets = 0;
 	for (int i = 0; i < presetFiles.size(); i++) {
 		VASTPresetElement* l_PresetArray = new VASTPresetElement(); //new OK because of owned Array
