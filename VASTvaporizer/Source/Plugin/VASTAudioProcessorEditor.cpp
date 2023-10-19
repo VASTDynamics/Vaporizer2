@@ -33,7 +33,11 @@ VASTAudioProcessorEditor::VASTAudioProcessorEditor(VASTAudioProcessor& p)
 	//Make sure that before the constructor has finished, you've set the
 	//editor's size to whatever you need it to be.
 
+#if defined JUCE_LINUX
+	setResizable(false, false);
+#else
 	setResizable(true, true);
+#endif
 
 	if ((processor.m_iUserTargetPluginHeight == 0) || (processor.m_iUserTargetPluginWidth == 0)) {
 		processor.m_iUserTargetPluginWidth = processor.m_iDefaultPluginWidth;
@@ -46,9 +50,11 @@ VASTAudioProcessorEditor::VASTAudioProcessorEditor(VASTAudioProcessor& p)
 	resizeCalledFromConstructor = true;
 	//setSize(processor.m_iUserTargetPluginWidth, processor.m_iUserTargetPluginHeight);
 	resizeCalledFromConstructor = true;
-	m_componentBoundsConstrainer.setFixedAspectRatio(processor.m_dPluginRatio); 
-	m_componentBoundsConstrainer.setSizeLimits(m_iMinWidth, m_iMinHeight, m_iMaxWidth, m_iMaxHeight); //CHECK https://forum.juce.com/t/best-way-to-implement-resizable-plugin/12644/5	
+#if !defined JUCE_LINUX
+	m_componentBoundsConstrainer.setFixedAspectRatio(processor.m_dPluginRatio);
+	m_componentBoundsConstrainer.setSizeLimits(m_iMinWidth, m_iMinHeight, m_iMaxWidth, m_iMaxHeight); //CHECK https://forum.juce.com/t/best-way-to-implement-resizable-plugin/12644/5
 	setConstrainer(&m_componentBoundsConstrainer);
+#endif
 	resizeCalledFromConstructor = true;
 	setSize(processor.m_iUserTargetPluginHeight * processor.m_dPluginRatio, processor.m_iUserTargetPluginHeight);
 	//vaporizerComponent->setBounds(Rectangle<int>(0, 0, processor.m_iUserTargetPluginWidth, processor.m_iUserTargetPluginHeight));
@@ -258,11 +264,13 @@ void VASTAudioProcessorEditor::resized() {
 	getCurrentVASTLookAndFeel()->setCurrentScalingFactors(getProcessor()->getPluginScaleWidthFactor(), getProcessor()->getPluginScaleHeightFactor());
 	initAllLookAndFeels();
 
+#if !defined JUCE_LINUX
 	if (m_componentBoundsConstrainer.isBeingCornerResized) {
 		getProcessor()->m_iUserTargetPluginWidth = getWidth();
 		getProcessor()->m_iUserTargetPluginHeight = getHeight();
 		getProcessor()->writeSettingsToFile(); //must not be async
 	}
+#endif
 
 	vaporizerComponent->setSize(this->getWidth(), this->getHeight());
 }

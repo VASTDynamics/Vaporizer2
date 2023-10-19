@@ -89,7 +89,9 @@ private:
 	Component* shallComponentUpdate = nullptr;
 	float shallComponentUpdateValue = 0.f;
 
+#if !defined JUCE_LINUX
 	VASTComponentBoundsConstrainer m_componentBoundsConstrainer = { this };
+#endif
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (VASTAudioProcessorEditor)
 };
