@@ -2137,15 +2137,18 @@ bool VASTAudioProcessor::writeSettingsToFile() {
 	if (!File(m_UserPresetRootFolder).exists())
 		(File(m_UserPresetRootFolder).createDirectory()); //recursively create also directories			
 	if (!File(m_UserPresetRootFolder).getChildFile("Factory").isSymbolicLink())
-		File(getVSTPath()).getChildFile("Presets").createSymbolicLink(File(m_UserPresetRootFolder).getChildFile("Factory"), true); //add symlink to Factory
+		if (!File(getVSTPath()).getChildFile("Presets").getFullPathName().equalsIgnoreCase(m_UserPresetRootFolder))
+			File(getVSTPath()).getChildFile("Presets").createSymbolicLink(File(m_UserPresetRootFolder).getChildFile("Factory"), true); //add symlink to Factory
 	if (!File(m_UserWavetableRootFolder).exists())
 		(File(m_UserWavetableRootFolder).createDirectory()); //recursively create also directories
 	if (!File(m_UserWavetableRootFolder).getChildFile("Factory").isSymbolicLink())
-		File(getVSTPath()).getChildFile("Tables").createSymbolicLink(File(m_UserWavetableRootFolder).getChildFile("Factory"), true); //add symlink to Factory
+		if (!File(getVSTPath()).getChildFile("Tables").getFullPathName().equalsIgnoreCase(m_UserWavetableRootFolder))
+			File(getVSTPath()).getChildFile("Tables").createSymbolicLink(File(m_UserWavetableRootFolder).getChildFile("Factory"), true); //add symlink to Factory
 	if (!File(m_UserWavRootFolder).exists())
 		(File(m_UserWavRootFolder).createDirectory()); //recursively create also directories
 	if (!File(m_UserWavRootFolder).getChildFile("Factory").isSymbolicLink())
-		File(getVSTPath()).getChildFile("Noises").createSymbolicLink(File(m_UserWavRootFolder).getChildFile("Factory"), true); //add symlink to Factory		
+		if (!File(getVSTPath()).getChildFile("Noises").getFullPathName().equalsIgnoreCase(m_UserWavRootFolder))
+			File(getVSTPath()).getChildFile("Noises").createSymbolicLink(File(m_UserWavRootFolder).getChildFile("Factory"), true); //add symlink to Factory		
 
 	bool migrate_legacy = false;
 	String filename = getSettingsFilePath(false, migrate_legacy); //write always new path
