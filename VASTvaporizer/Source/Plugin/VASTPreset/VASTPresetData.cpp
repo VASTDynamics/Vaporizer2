@@ -243,7 +243,7 @@ void VASTPresetData::doSearchWithVector() {
 		while (i < m_SearchArray.size()) {
 			bool keep = false;
 			for (int j = 0; j < mSearchVector.searchAuthors.size(); j++) {
-				if (m_SearchArray[i]->authorname.isNotEmpty() && (m_SearchArray[i]->authorname.containsIgnoreCase(mSearchVector.searchAuthors[j]) == true)) {
+				if (m_SearchArray[i]->authorname.isNotEmpty() && (m_SearchArray[i]->authorname.equalsIgnoreCase(mSearchVector.searchAuthors[j]) == true)) {
 					keep = true;
 					break;
 				}
