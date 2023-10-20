@@ -218,6 +218,14 @@ void VASTManualRenameEditor::textEditorEscapeKeyPressed(TextEditor& textEditorTh
 		c_Cancel->triggerClick();
 	}
 }
+void VASTManualRenameEditor::setName(String text) {
+    c_textEditor->setText(text, NotificationType::sendNotification);
+    c_textEditor->applyFontToAllText(((VASTLookAndFeel*)&getLookAndFeel())->getTextEditorFont(*c_textEditor));
+    c_textEditor->selectAll();
+}
+void VASTManualRenameEditor::setCategory(String text) {
+    c_presetCategoryCombo->setText(text, NotificationType::sendNotification);
+}
 //[/MiscUserCode]
 
 

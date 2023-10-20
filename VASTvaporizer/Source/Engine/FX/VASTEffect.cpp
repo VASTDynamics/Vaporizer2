@@ -44,8 +44,28 @@ void CVASTEffect::createAndAddParameter(std::atomic<float>** parameterVar, Audio
 
 	if (isOnOffParameter)
 		setOnOffParameter(newId);
-};
+}
 
+void CVASTEffect::useOversampling(int sampleRate, bool oversample) {
+	if (m_bOversampling)
+		m_iSampleRate = sampleRate * C_OVERSAMPLING_RATIO;
+	else
+		m_iSampleRate = sampleRate;
+
+	if (oversample != m_bOversampling) {
+		m_bOversampling = oversample;
+		if (m_bOversampling) {
+			prepareToPlay(m_iSampleRate, m_iExpectedSamplesPerBlock);
+		}
+		else {
+			prepareToPlay(m_iSampleRate, m_iExpectedSamplesPerBlock);
+		}
+	}
+}
+
+bool CVASTEffect::isOff() {
+	return m_bIsOff || m_bShallBeOff;
+}
 
 void CVASTEffect::switchOff() {
 	m_bShallBeOff = true;
@@ -55,4 +75,40 @@ void CVASTEffect::switchOff() {
 void CVASTEffect::switchOn() {
 	m_bShallBeOff = false;
 	my_processor->requestUIUpdate(true, false, false);
+}
+
+bool CVASTEffect::isOffAndShallBeOff() {
+	return m_bIsOff && m_bShallBeOff;
+}
+
+bool CVASTEffect::shallBeOff() {
+	return m_bShallBeOff;
+}
+
+void CVASTEffect::checkSoftFade() {
+	if (m_bShallBeOff == true) {
+		if (m_bIsOff == true) {
+			m_iSoftFade = 0;
+			return;
+		}
+		if (m_iSoftFade <= 0) {
+			//reset();
+			m_bIsOff = true;
+			m_iSoftFade = 0;
+		}
+		else
+			m_iSoftFade--;
+	}
+	else { //shall be on
+		if (m_bIsOff == false) {
+			m_iSoftFade = C_MAX_SOFTFADE;
+			return;
+		}
+		if (m_iSoftFade >= C_MAX_SOFTFADE) {
+			m_bIsOff = false;
+			m_iSoftFade = C_MAX_SOFTFADE;
+		}
+		else
+			m_iSoftFade++;
+	}
 }

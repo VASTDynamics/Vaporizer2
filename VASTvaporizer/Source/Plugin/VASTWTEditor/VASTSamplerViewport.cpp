@@ -54,6 +54,12 @@ void VASTSamplerViewport::setZoomFactor(int zoom) {
 	setSize(width, myWtEditor->getSamplerViewport()->getHeight());
 }
 
+void VASTSamplerViewport::setEditor(VASTAudioProcessorEditor* editor) { myEditor = editor; }
+
+void VASTSamplerViewport::setProcessor(VASTAudioProcessor* processor) { myProcessor = processor; }
+
+void VASTSamplerViewport::setWTEditor(VASTWaveTableEditorComponent* wtEditor) { myWtEditor = wtEditor; }
+
 void VASTSamplerViewport::resized()
 {
 	//waveformImage = waveformImage.rescaled(jmax(1, getWidth()), jmax(1, getHeight()), juce::Graphics::ResamplingQuality::highResamplingQuality);
@@ -306,7 +312,20 @@ void VASTSamplerViewport::setSelectionFromSound() {
 		m_selection.iWavSelectionStartSample = samplerSound->getLoopStartChanged();
 		m_selection.iWavSelectionEndSample = samplerSound->getLoopEndChanged();
 	}
-};
+}
+sSelectionWav* VASTSamplerViewport::getSelection() {
+	return &m_selection;
+}
+
+bool VASTSamplerViewport::isInterestedInFileDrag(const StringArray& files) {
+	for (int i = 0; i < files.size(); i++) {
+		if (files[i].endsWithIgnoreCase(".wav")) return true;
+		if (files[i].endsWithIgnoreCase(".aif")) return true;
+		if (files[i].endsWithIgnoreCase(".flac")) return true;
+		if (files[i].endsWithIgnoreCase(".mp3")) return true;
+	}
+	return false;
+}
 
 void VASTSamplerViewport::setSelectionFromWavSamples(int startSample, int endSample) {
 	VASTSamplerSound* samplerSound = myWtEditor->getCurSamplerSound();
@@ -315,7 +334,7 @@ void VASTSamplerViewport::setSelectionFromWavSamples(int startSample, int endSam
 	m_selection.iWavSelectionStartSample = startSample;
 	m_selection.iWavSelectionEndSample = endSample; //can be the same as startSample
 	notifySelectionChanged();
-};
+}
 
 void VASTSamplerViewport::mouseDrag(const MouseEvent &e) { // show value
 	if (myWtEditor == nullptr) return;

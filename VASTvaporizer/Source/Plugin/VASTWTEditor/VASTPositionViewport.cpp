@@ -59,6 +59,12 @@ void VASTPositionViewport::setZoomFactor(int zoom) {
 	setSize(width / m_screenWidthScale, lVisibleArea.getHeight());
 }
 
+void VASTPositionViewport::setEditor(VASTAudioProcessorEditor* editor) { myEditor = editor; }
+
+void VASTPositionViewport::setProcessor(VASTAudioProcessor* processor) { myProcessor = processor; }
+
+void VASTPositionViewport::setWTEditor(VASTWaveTableEditorComponent* wtEditor) { myWtEditor = wtEditor; }
+
 void VASTPositionViewport::resized()
 {	
 	if (myWtEditor == nullptr) return;

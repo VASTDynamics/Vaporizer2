@@ -198,12 +198,61 @@ int CVASTPoly::getOldestNotePlayed() { //-1 if none playing
 	return m_OscillatorSynthesizer.getOldestPlayedVoiceNo();
 }
 
+void CVASTPoly::stopAllNotes(bool allowTailOff) {
+	for (int i = 0; i < C_MAX_POLY; i++) {
+		m_singleNote[i]->stopNote(0, allowTailOff);
+	}
+}
+
+bool CVASTPoly::voicesMSEGStillActive() {
+	for (int i = 0; i < C_MAX_POLY; i++) {
+		if (m_singleNote[i]->m_VCA->isActive()) return true;
+	}
+	return false;
+}
+
 modMatrixInputState CVASTPoly::getOldestNotePlayedInputState(int currentFrame) {
 	modMatrixInputState inputState;
 	int voiceNo = getOldestNotePlayed(); // make parameter oldest or newest
 	inputState.voiceNo = (voiceNo < 0) ? 0 : voiceNo;
 	inputState.currentFrame = currentFrame;
 	return inputState;
+}
+
+VASTSynthesiser* CVASTPoly::getSynthesizer() { return &m_OscillatorSynthesizer; }
+
+VASTSynthesiserSound* CVASTPoly::getSynthSound() {
+	VASTSynthesiserSound* sound = (VASTSynthesiserSound*)getSynthesizer()->getSound(0);
+	return sound;
+}
+
+VASTSamplerSound* CVASTPoly::getSamplerSound() { //live Data
+	VASTSynthesiserSound* sound = (VASTSynthesiserSound*)getSynthesizer()->getSound(0);
+	return sound->getSamplerSound();
+}
+
+VASTSamplerSound* CVASTPoly::getSamplerSoundChanged() {
+	VASTSynthesiserSound* sound = (VASTSynthesiserSound*)getSynthesizer()->getSound(0);
+	return sound->getSamplerSoundChanged();
+}
+
+void CVASTPoly::clearSamplerSoundChanged() {
+	VASTSynthesiserSound* sound = (VASTSynthesiserSound*)getSynthesizer()->getSound(0);
+	sound->clearSamplerSoundChanged();
+}
+
+void CVASTPoly::softFadeExchangeSample() {
+	VASTSynthesiserSound* sound = getSynthSound();
+	if (sound != nullptr)
+		sound->softFadeExchangeSample();
+}
+
+bool CVASTPoly::getLastSingleNoteCycleWasActive() {
+	return m_iLastSingleNoteCycleCalls > 0;
+}
+
+void CVASTPoly::initArp() {
+	m_shallInitARP = true;
 }
 
 modMatrixInputState CVASTPoly::getLastNotePlayedInputState(int currentFrame) {

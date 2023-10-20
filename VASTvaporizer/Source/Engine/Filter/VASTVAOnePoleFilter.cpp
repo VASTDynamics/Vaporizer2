@@ -22,6 +22,15 @@ CVAOnePoleFilter::~CVAOnePoleFilter(void)
 {
 }
 
+
+// provide access to our feedback output
+
+double CVAOnePoleFilter::getFeedbackOutput() { return m_dZ1 * m_dBeta; }
+
+// -- CFilter Overrides --
+
+void CVAOnePoleFilter::reset() { m_dZ1 = 0; }
+
 // recalc coeffs -- NOTE: not used for Korg35 Filter
 void CVAOnePoleFilter::updateFilter()
 {

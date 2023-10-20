@@ -68,6 +68,18 @@ void VASTEnvelopeDetector::setReleaseTime(float release_in_ms)
 		m_fReleaseTime = exp(DIGITAL_TC/( release_in_ms * m_fSampleRate * 0.001));
 }
 
+// Use these "codes"
+// DETECT PEAK   = 0
+// DETECT MS	 = 1
+// DETECT RMS	 = 2
+//
+
+inline void VASTEnvelopeDetector::setDetectMode(MYUINT uDetect) { m_uDetectMode = uDetect; }
+
+inline void VASTEnvelopeDetector::setSampleRate(float f) { m_fSampleRate = f; }
+
+inline void VASTEnvelopeDetector::setLogDetect(bool b) { m_bLogDetector = b; }
+
 void VASTEnvelopeDetector::setTCModeAnalog(bool bAnalogTC)
 {
 	m_bAnalogTC = bAnalogTC;

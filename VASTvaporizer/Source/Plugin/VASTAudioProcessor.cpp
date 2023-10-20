@@ -159,6 +159,75 @@ bool VASTAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) cons
 	
 }
 
+void VASTAudioProcessor::setErrorState(int state) {
+	bIsInErrorState = true;
+	iErrorState = state;
+}
+
+int VASTAudioProcessor::getErrorState() { return iErrorState; }
+
+bool VASTAudioProcessor::wantsUIAlert() { return mUIAlert; }
+
+void VASTAudioProcessor::clearUIAlertFlag() { mUIAlert = false; }
+
+void VASTAudioProcessor::requestUIAlert() { mUIAlert = true; }
+
+void VASTAudioProcessor::requestUIPresetUpdate() {
+	mUIUpdateFlag = true;
+	mUIPresetUpdate = true;
+}
+
+bool VASTAudioProcessor::needsUIPresetUpdate() { return mUIPresetUpdate; }
+
+void VASTAudioProcessor::clearUIPresetFlag() { mUIPresetUpdate = false; }
+
+void VASTAudioProcessor::requestUIPresetReloadUpdate() {
+	mUIUpdateFlag = true;
+	mUIPresetReloadUpdate = true;
+}
+
+bool VASTAudioProcessor::needsUIPresetReloadUpdate() { return mUIPresetReloadUpdate; }
+
+void VASTAudioProcessor::clearUIPresetReloadFlag() { mUIPresetReloadUpdate = false; }
+
+bool VASTAudioProcessor::needsUIInit() { return mUIInitFlag; }
+
+void VASTAudioProcessor::clearUIInitFlag() { mUIInitFlag = false; }
+
+void VASTAudioProcessor::requestUIInit() { mUIInitFlag = true; requestUIUpdate(true, true, true); }
+
+bool VASTAudioProcessor::needsUIUpdate() { return mUIUpdateFlag; }
+
+bool VASTAudioProcessor::needsUIUpdate_tabs() { return mUIUpdateFlag_tabs; }
+
+bool VASTAudioProcessor::needsUIUpdate_matrix() { return mUIUpdateFlag_matrix; }
+
+bool VASTAudioProcessor::needsUIUpdate_sliders() { return mUIUpdateFlag_sliders; }
+
+int VASTAudioProcessor::needsUIUpdate_slider1dest() { return mUIUpdateFlag_slider1dest; }
+
+int VASTAudioProcessor::needsUIUpdate_slider2dest() { return mUIUpdateFlag_slider2dest; }
+
+void VASTAudioProcessor::clearUIUpdateFlag() {
+	mUIUpdateFlag = false;
+	mUIUpdateFlag_tabs = false;
+	mUIUpdateFlag_matrix = false;
+	mUIUpdateFlag_sliders = false;
+	mUIUpdateFlag_slider1dest = -1;
+	mUIUpdateFlag_slider2dest = -1;
+}
+
+void VASTAudioProcessor::requestUIUpdate(bool tabs, bool matrix, bool sliders, int slider1dest, int slider2dest) {
+	mUIUpdateFlag = true;
+	mUIUpdateFlag_tabs = tabs;
+	mUIUpdateFlag_matrix = matrix;
+	mUIUpdateFlag_sliders = sliders;
+	mUIUpdateFlag_slider1dest = slider1dest;
+	mUIUpdateFlag_slider2dest = slider2dest;
+}
+
+void VASTAudioProcessor::requestUILoadAlert() { mUIAlert = true; }
+
 bool VASTAudioProcessor::acceptsMidi() const
 {
 #if JucePlugin_WantsMidiInput
@@ -1503,10 +1572,88 @@ void VASTAudioProcessor::addModMatrixLookupTable(int modMatrixDestination, float
 	m_modMatrixLookupTable[modMatrixDestination].param = param;
 }
 
+bool VASTAudioProcessor::nonThreadsafeIsBlockedProcessingInfo() {
+	return m_pVASTXperience.nonThreadsafeIsBlockedProcessingInfo();
+}
+
+VASTPresetElement VASTAudioProcessor::getCurPatchData() {
+	return m_presetData.getCurPatchData();
+}
+
+float VASTAudioProcessor::getPluginScaleWidthFactor() {
+	if (m_iDefaultPluginWidth != 0)
+		return m_iUserTargetPluginWidth / float(m_iDefaultPluginWidth);
+	return 1.f;
+}
+
+float VASTAudioProcessor::getPluginScaleHeightFactor() {
+	if (m_iDefaultPluginHeight != 0)
+		return m_iUserTargetPluginHeight / float(m_iDefaultPluginHeight);
+	return 1.f;
+}
+
+void VASTAudioProcessor::togglePerspectiveDisplay(int lOscillatorBank) {
+	m_bTogglePerspectiveDisplay[lOscillatorBank] = !m_bTogglePerspectiveDisplay[lOscillatorBank];
+	writeSettingsToFileAsync();
+}
+
+void VASTAudioProcessor::setWTmode(int wtMode) {
+	if (wtMode != m_pVASTXperience.m_Set.m_WTmode) {
+		m_pVASTXperience.m_Set.m_WTmode = wtMode;
+		//recalc WT
+		for (int bank = 0; bank < 4; bank++)
+			m_pVASTXperience.m_Poly.m_OscBank[bank]->recalcWavetable();
+	}
+}
+
+int VASTAudioProcessor::getWTmode() {
+	return m_pVASTXperience.m_Set.m_WTmode;
+}
+
+int VASTAudioProcessor::getMPEmode() {
+	return m_MPEmode;
+}
+
+void VASTAudioProcessor::setMPEmode(int mode) {
+	m_MPEmode = jlimit<int>(0, 2, mode);
+}
+
+bool VASTAudioProcessor::isMPEenabled() {
+	return (m_MPEmode == 1) || ((m_MPEmode == 0) && (m_presetData.getCurPatchData().mpepreset));
+}
+
+int VASTAudioProcessor::getUIFontSize() {
+	return m_uiFontSize;
+}
+
+void VASTAudioProcessor::setUIFontSize(int size) {
+	m_uiFontSize = size;
+	for (int i = 0; i < vastLookAndFeels.size(); i++)
+		vastLookAndFeels[i]->setUIFontSize(size);
+	requestUIInit();
+}
+
 void VASTAudioProcessor::setUserTuningFile(String filename) {
 	m_UserTuningFile = filename;
 	m_pVASTXperience.m_Set.setTuning(m_UserTuningFile);
 }
+
+void VASTAudioProcessor::setBendRange(int bendRange) {
+	m_pVASTXperience.m_Set.m_iBendRange = bendRange;
+	requestUIUpdate(true, false, false);
+}
+
+int VASTAudioProcessor::getBendRange() {
+	return m_pVASTXperience.m_Set.m_iBendRange;
+}
+
+int VASTAudioProcessor::getDrawMode() { return m_iWTEditorDrawMode; }
+
+int VASTAudioProcessor::getGridMode() { return m_iWTEditorGridMode; }
+
+int VASTAudioProcessor::getBinMode() { return m_iWTEditorBinMode; }
+
+int VASTAudioProcessor::getBinEditMode() { return m_iWTEditorBinEditMode; }
 
 int VASTAudioProcessor::autoParamGetDestination(String parametername) {
 	std::unordered_map<String, int>::iterator it;
@@ -1537,6 +1684,21 @@ void VASTAudioProcessor::setParameterText(StringRef parName, StringRef textVal, 
 	else {
 		//jassert(false); //ignore - unused param in preset xml file
 	}
+}
+
+AudioProcessorValueTreeState& VASTAudioProcessor::getParameterTree() {
+	return m_parameterState;
+}
+
+VASTVUMeterSource* VASTAudioProcessor::getMeterSource() {
+	return &m_meterSource;
+}
+
+char* VASTAudioProcessor::_strncpy(char* dst, const char* src, size_t maxLen)
+{
+	char* result = strncpy(dst, src, maxLen);
+	dst[maxLen] = 0;
+	return result;
 }
 
 String VASTAudioProcessor::getVSTPath() {
@@ -1824,6 +1986,50 @@ void VASTAudioProcessor::checkForNewerVersion(String resultString) {
 	}
 }
 
+String VASTAudioProcessor::FloatArrayToString(float* fData, int numFloat)
+{//Return String of multiple float values separated by commas 
+	String result = "";
+	if (numFloat<1)
+		return result;
+	for (int i = 0; i<(numFloat - 1); i++)
+		result << String(fData[i]) << ",";//Use juce::String initializer for each value
+	result << String(fData[numFloat - 1]);
+	return result;
+}
+
+int VASTAudioProcessor::StringToFloatArray(String sFloatCSV, float* fData, int maxNumFloat)
+{//Return is number of floats copied to the fData array
+ //-1 if there were more in the string than maxNumFloat
+	StringArray Tokenizer;
+	int TokenCount = Tokenizer.addTokens(sFloatCSV, ",", "");
+	int resultCount = (maxNumFloat <= TokenCount) ? maxNumFloat : TokenCount;
+	for (int i = 0; i<resultCount; i++)//only go as far as resultCount for valid data
+		fData[i] = Tokenizer[i].getFloatValue();//fill data using String class float conversion
+	return ((TokenCount <= maxNumFloat) ? resultCount : -1);
+}
+
+String VASTAudioProcessor::StringArrayToString(String* sData, int numFloat)
+{//Return String of multiple float values separated by commas 
+	String result = "";
+	if (numFloat<1)
+		return result;
+	for (int i = 0; i<(numFloat - 1); i++)
+		result << String(sData[i]) << ",";//Use juce::String initializer for each value
+	result << String(sData[numFloat - 1]);
+	return result;
+}
+
+int VASTAudioProcessor::StringToStringArray(String sStringCSV, String* sData, int maxNumFloat)
+{//Return is number of floats copied to the fData array
+ //-1 if there were more in the string than maxNumFloat
+	StringArray Tokenizer;
+	int TokenCount = Tokenizer.addTokens(sStringCSV, ",", "");
+	int resultCount = (maxNumFloat <= TokenCount) ? maxNumFloat : TokenCount;
+	for (int i = 0; i<resultCount; i++)//only go as far as resultCount for valid data
+		sData[i] = Tokenizer[i];//fill data using String class 
+	return ((TokenCount <= maxNumFloat) ? resultCount : -1);
+}
+
 String VASTAudioProcessor::getLocalMachineID() {
 	StringArray nums;
 
@@ -1899,6 +2105,10 @@ String VASTAudioProcessor::getLicenseText() {
 		// removed in OS version / return XORDecrypt
 		return ("DEMO VERSION");
 }
+
+bool VASTAudioProcessor::isUserPatch() { return !m_presetData.getCurPatchData().isFactory; }
+
+String VASTAudioProcessor::getUserPatchName() { return m_presetData.getCurPatchData().presetname; }
 
 
 bool VASTAudioProcessor::isLicensed() {
@@ -2464,6 +2674,12 @@ void VASTAudioProcessor::initLookAndFeels() {
 	vastLookAndFeels.add(new VASTLookAndFeelThemeIce());
 	vastLookAndFeels.add(new VASTLookAndFeelThemeTech());
 	vastLookAndFeels.add(new VASTLookAndFeelThemeDark());
+}
+
+VASTLookAndFeel* VASTAudioProcessor::getCurrentVASTLookAndFeel() {
+	VASTLookAndFeel* lf = vastLookAndFeels[m_activeLookAndFeel];
+	vassert(lf != nullptr);
+	return lf;
 }
 
 void VASTAudioProcessor::loadDefaultMidiMapping() {

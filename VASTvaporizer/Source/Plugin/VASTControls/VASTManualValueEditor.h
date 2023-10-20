@@ -48,11 +48,7 @@ public:
     //[UserMethods]     -- You can add your own custom methods in this section.
 	void textEditorReturnKeyPressed(TextEditor& textEditorThatWasChanged) override;
 	void textEditorEscapeKeyPressed(TextEditor& textEditorThatWasChanged) override;
-	void setText(String text) {
-		c_textEditor->setText(text, NotificationType::sendNotification);
-		c_textEditor->applyFontToAllText(((VASTLookAndFeel*)&getLookAndFeel())->getTextEditorFont(*c_textEditor));
-		c_textEditor->selectAll();
-	}
+    void setText(String text);
     //[/UserMethods]
 
     void paint (juce::Graphics& g) override;

@@ -22,9 +22,7 @@ public:
 	void paint(Graphics& g) override;
 
 	VASTAudioProcessor* getAudioProcessor();
-	void setModString(const juce::String &dragText) {
-		ddLabel->setText(dragText, NotificationType::dontSendNotification);
-	}
+	void setModString(const juce::String& dragText);
 	void lookAndFeelChanged() override;
 	void buttonClicked(Button* b) override;
 	void buttonStateChanged(Button* b) override;

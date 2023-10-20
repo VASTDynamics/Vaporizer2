@@ -96,10 +96,7 @@ public:
 	int m_unisonOscis = 1;
 	CVASTSettings *m_Set; 
 	
-	void syncAllPhasorsToMaster() {
-		for (int osci = 1; osci < m_unisonOscis; osci++)
-			phasor[osci] = phasor[0];
-	}
+	void syncAllPhasorsToMaster();
 
 protected:
 	// this should be protected

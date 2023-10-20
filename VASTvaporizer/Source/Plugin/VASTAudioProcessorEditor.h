@@ -49,9 +49,7 @@ public:
 
 	void initAllLookAndFeels();
 	void setActiveLookAndFeel(int no);
-	VASTLookAndFeel* getCurrentVASTLookAndFeel() {
-		return getProcessor()->getCurrentVASTLookAndFeel();
-	};	
+	VASTLookAndFeel* getCurrentVASTLookAndFeel();
 	Component* findChildComponetWithName(Component* parent, String compName);
 	void registerComponentValueUpdate(Component* comp, float lValue);
 

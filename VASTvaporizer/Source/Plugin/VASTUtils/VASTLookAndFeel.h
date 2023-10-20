@@ -212,16 +212,7 @@ public:
 	Colour createBaseColour(Colour buttonColour,
 		bool hasKeyboardFocus,
 		bool isMouseOverButton,
-		bool isButtonDown) noexcept
-	{
-		const float sat = hasKeyboardFocus ? 1.3f : 0.9f;
-		const Colour baseColour(buttonColour.withMultipliedSaturation(sat));
-
-		if (isButtonDown)      return baseColour.contrasting(0.2f);
-		if (isMouseOverButton) return baseColour.contrasting(0.1f);
-
-		return baseColour;
-	}
+		bool isButtonDown) noexcept;
 
 	Typeface::Ptr getTypefaceForFont(const Font &font) override;
 

@@ -98,16 +98,13 @@ public:
 	/** Returns the audio sample data.
 	This could return nullptr if there was a problem loading the data.
 	*/
-	AudioBuffer<float>* getAudioData() const noexcept { 
-		return data.get(); } //liveData
-	AudioBuffer<float>* getAudioDataChanged() {
-		return data_changed.get();
-	};
+	AudioBuffer<float>* getAudioData() const noexcept; //liveData
+	AudioBuffer<float>* getAudioDataChanged();
 
 	//int getLength() { return getAudioData()->getNumSamples() - 4; }; //-4??? CHECK
 	//int getLengthChanged() { return getAudioDataChanged()->getNumSamples() - 4; }; //-4??? CHECK
-	int getLength() { return getAudioData()->getNumSamples(); }; 
-	int getLengthChanged() { return getAudioDataChanged()->getNumSamples(); };
+	int getLength();
+	int getLengthChanged();
 
 	//==============================================================================
 	bool appliesToNote(int midiNoteNumber) override;
@@ -121,43 +118,11 @@ public:
 	int getMidiRootNote() { return midiRootNote; };
 	int getSourceSampleRate() { return sourceSampleRate; };
 
-	bool softFadeExchangeSample() {
-		if (m_bChangedFlag) {
-			bHasLoop = bHasLoop_changed;
-			iLoopStart = iLoopStart_changed;
-			iLoopEnd = iLoopEnd_changed;
-
-			if (m_bAudioDataChangedFlag) {
-				if (data_changed.get() != nullptr) {
-					data->setSize(data_changed->getNumChannels(), data_changed->getNumSamples());
-					int chan = data_changed->getNumChannels();
-					for (int c = 0; c < chan; c++) {
-						data->copyFrom(c, 0, data_changed->getReadPointer(c, 0), data_changed->getNumSamples());
-					}
-				}
-			}
-			m_bChangedFlag = false;
-			m_bAudioDataChangedFlag = false;
-			return true;
-		}
-		return false;
-	}
-
-	bool hasLoop() { 
-		return bHasLoop; };
-	int getLoopStart() { 
-		return iLoopStart; };
-	int getLoopEnd() { 
-		return iLoopEnd; };
-
-	void setLoop(int loopstart, int loopend) { 
-		bHasLoop = true; 
-		if (loopstart < 0) return;
-		if (loopstart > loopend) return;
-		if (loopend > (getLength() - 1)) return; //loop is on live data
-		iLoopStart = loopstart;
-		iLoopEnd = loopend; 
-	};
+	bool softFadeExchangeSample();
+	bool hasLoop();
+	int getLoopStart();
+	int getLoopEnd();
+	void setLoop(int loopstart, int loopend);
 
 	/*
 	void clearLoop() { bHasLoop = false; 
@@ -165,43 +130,16 @@ public:
 		iLoopEnd = 0; 
 	}
 	*/
-	int getAttackSamples() { return attackSamples; };
-	int getReleaseSamples() { return releaseSamples; };
+	int getAttackSamples();
+	int getReleaseSamples();
 
-	void setLoopChanged(int loopstart, int loopend) {
-		bHasLoop_changed = true;
-		if (loopstart < 0) return;
-		if (loopstart > loopend) return;
-		if (loopend > (getLengthChanged() - 1)) return; 
-		iLoopStart_changed = loopstart;
-		iLoopEnd_changed = loopend;
-		setChangedFlag();
-	};
-	void clearLoopChanged() {
-		bHasLoop_changed = false;
-		iLoopStart_changed = 0;
-		iLoopEnd_changed = 0;
-		setChangedFlag();
-	}
-	int getLoopStartChanged() {
-		return iLoopStart_changed;
-	};
-	int getLoopEndChanged() {
-		return iLoopEnd_changed;
-	};
-	bool hasLoopChanged() {
-		return bHasLoop_changed;
-	};
-
-	
-	void setChangedFlag() {
-		m_bChangedFlag = true;
-	}
-	void setAudioDataChangedFlag() {
-		setChangedFlag();
-		m_bAudioDataChangedFlag = true;
-		calcZeroCrossings();
-	}
+	void setLoopChanged(int loopstart, int loopend);
+	void clearLoopChanged();
+	int getLoopStartChanged();
+	int getLoopEndChanged();
+	bool hasLoopChanged();		
+	void setChangedFlag();
+	void setAudioDataChangedFlag();
 
 	Array<int>* getZeroCrossings();	
 	void calcZeroCrossings();

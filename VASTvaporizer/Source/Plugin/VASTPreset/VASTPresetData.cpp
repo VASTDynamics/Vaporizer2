@@ -510,3 +510,9 @@ void VASTPresetData::addTag(String tagToAdd) {
 	if (!(tags.contains(tagToAdd, true)))
 		m_curPatchData.freetag = m_curPatchData.freetag + " " + tagToAdd;
 }
+
+inline int VASTPresetData::VASTPresetElementCompareDates::compareElements(VASTPresetElement* first, const VASTPresetElement* second)
+{
+	return (first->presetdate < second->presetdate) ? -1
+		: ((first->presetdate == second->presetdate) ? 0 : 1);
+}

@@ -23,7 +23,7 @@ public:
 	bool isActive();
 	bool hardStop();	//returns success
 	bool isHardStop();
-	bool isNoteOff() { return m_bNoteOff; };
+	bool isNoteOff();
 
 	CVASTMSEGEnvelope m_MSEG_Envelope[5]; 
 

@@ -66,65 +66,19 @@ public:
 		bool addListener = false);
 
 
-	virtual void useOversampling(int sampleRate, bool oversample) {
-		if (m_bOversampling)
-			m_iSampleRate = sampleRate * C_OVERSAMPLING_RATIO;
-		else 
-			m_iSampleRate = sampleRate;
+	virtual void useOversampling(int sampleRate, bool oversample);
 
-		if (oversample != m_bOversampling) {
-			m_bOversampling = oversample;
-			if (m_bOversampling) {
-				prepareToPlay(m_iSampleRate, m_iExpectedSamplesPerBlock);
-			}
-			else {
-				prepareToPlay(m_iSampleRate, m_iExpectedSamplesPerBlock);
-			}
-		}
-	}
-
-	virtual bool isOff() {
-		return m_bIsOff || m_bShallBeOff;
-	}
+	virtual bool isOff();
 
 	virtual void switchOff();
 	
 	virtual void switchOn();
 	
-	bool isOffAndShallBeOff() { 
-		return m_bIsOff && m_bShallBeOff; 
-	};
+	bool isOffAndShallBeOff();
 
-	bool shallBeOff() { 
-		return m_bShallBeOff; 
-	};
+	bool shallBeOff();
 
-	virtual void checkSoftFade() {
-		if (m_bShallBeOff == true) {
-			if (m_bIsOff == true) {
-				m_iSoftFade = 0;
-				return;
-			}
-			if (m_iSoftFade <= 0) {
-				//reset();
-				m_bIsOff = true;
-				m_iSoftFade = 0;
-			}
-			else
-				m_iSoftFade--;
-		}
-		else { //shall be on
-			if (m_bIsOff == false) {
-				m_iSoftFade = C_MAX_SOFTFADE;
-				return;
-			}
-			if (m_iSoftFade >= C_MAX_SOFTFADE) {
-				m_bIsOff = false;
-				m_iSoftFade = C_MAX_SOFTFADE;
-			} else 			
-				m_iSoftFade++;
-		}
-	}
+	virtual void checkSoftFade();
 
 	bool m_bOversampling = false;
 	int m_iSampleRate = 41000;

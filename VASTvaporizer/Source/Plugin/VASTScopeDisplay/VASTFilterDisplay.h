@@ -24,8 +24,8 @@ public:
 	void timerCallback() override;
 	//void updateContent(bool force);
 	void doUpdates(bool force);
-	void setEditor(VASTAudioProcessorEditor* editor) { myEditor = editor; };
-	void setProcessor(VASTAudioProcessor* processor) { myProcessor = processor; };	
+	void setEditor(VASTAudioProcessorEditor* editor);
+	void setProcessor(VASTAudioProcessor* processor);
     void lookAndFeelChanged() override;
 
 	static void updateThread(VASTFilterDisplay* display, bool force);

@@ -48,16 +48,8 @@ public:
     //[UserMethods]     -- You can add your own custom methods in this section.
 	void textEditorReturnKeyPressed(TextEditor& textEditorThatWasChanged) override;
 	void textEditorEscapeKeyPressed(TextEditor& textEditorThatWasChanged) override;
-	void setTextMagnitude(String text) {
-		c_textEditorMagnitude->setText(text, NotificationType::sendNotification);
-		c_textEditorMagnitude->applyFontToAllText(((VASTLookAndFeel*)&getLookAndFeel())->getTextEditorFont(*c_textEditorMagnitude));
-		c_textEditorMagnitude->selectAll();
-	}
-	void setTextPhase(String text) {
-		c_textEditorPhase->setText(text, NotificationType::sendNotification);
-		c_textEditorPhase->applyFontToAllText(((VASTLookAndFeel*)&getLookAndFeel())->getTextEditorFont(*c_textEditorPhase));
-		c_textEditorPhase->selectAll();
-	}
+    void setTextMagnitude(String text);
+    void setTextPhase(String text);
 
     //[/UserMethods]
 

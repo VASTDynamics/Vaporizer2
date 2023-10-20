@@ -109,6 +109,10 @@ VASTAudioProcessor* VASTDragSource::getAudioProcessor() {
 	return m_processor;
 }
 
+void VASTDragSource::setModString(const juce::String& dragText) {
+	ddLabel->setText(dragText, NotificationType::dontSendNotification);
+}
+
 void VASTDragSource::editorShown(Label *label, TextEditor &editor) {
 	if (m_processor == nullptr) return;
 	editor.applyFontToAllText(m_processor->getCurrentVASTLookAndFeel()->getTextEditorFont(editor));

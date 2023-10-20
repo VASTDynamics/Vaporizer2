@@ -206,6 +206,10 @@ void VASTFilterDisplay::doUpdates(bool force) {
 	}
 }
 
+void VASTFilterDisplay::setEditor(VASTAudioProcessorEditor* editor) { myEditor = editor; }
+
+void VASTFilterDisplay::setProcessor(VASTAudioProcessor* processor) { myProcessor = processor; }
+
 void VASTFilterDisplay::timerCallback() {
 	if (b_newImageReady) {
 
