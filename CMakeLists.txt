@@ -74,17 +74,26 @@ target_compile_definitions(VASTvaporizer2
 )
 
 if (WIN32)
+  message( STATUS "Building on Windows with AVX flags: ${BUILD_AVX}")
+  target_compile_definitions(VASTvaporizer2 PRIVATE _WIN64 _WIN64BIT NDEBUG)
   if (BUILD_AVX)
-    target_compile_definitions(VASTvaporizer2 PRIVATE _WIN64 _WIN64BIT)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX")
   endif(BUILD_AVX)
 
-  if (ASIO_SDK_LOCATION)
+  if (ASIO_SDK_LOCATION) #ASIO is windows only
     message( STATUS "Including ASIO from ${ASIO_SDK_LOCATION}")
     target_compile_definitions(VASTvaporizer2 PRIVATE JUCE_ASIO=1)
     target_include_directories(VASTvaporizer2 PRIVATE ${ASIO_SDK_LOCATION}/common)
   endif(ASIO_SDK_LOCATION)
 endif(WIN32)
+
+if (APPLE)
+ message( STATUS "Building on Apple macOS with AVX flags: ${BUILD_AVX}")
+ target_compile_definitions(VASTvaporizer2 PRIVATE _MACOSX _MACOSX64BIT NDEBUG)
+ if (BUILD_AVX)
+    # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX")
+  endif(BUILD_AVX)
+endif(APPLE)
 
 target_sources(VASTvaporizer2
   PRIVATE
