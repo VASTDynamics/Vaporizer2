@@ -1,5 +1,5 @@
 /*
-VAST Dynamics GbR
+VAST Dynamics Software
 */
 
 #ifndef VASTENGINEHEADER_H_INCLUDED
@@ -8,17 +8,6 @@ VAST Dynamics GbR
 #include <assert.h>
 #include <math.h>
 //#include <stdlib.h> // for memory leak detection
-
-//TODO check at some point in time
-// turn off non-critical warnings
-#pragma warning(disable : 4244) //double to float
-#pragma warning(disable : 4996) //strncpy
-#pragma warning(disable : 4305) //double float truncation
-#pragma warning(disable : 4267) //size_t conversion
-#pragma warning(disable : 4018) //signed unsigned mismatch
-#pragma warning(disable : 4100) //unreferenced parameter
-#pragma warning(disable : 5055) //Operator "==": zwischen Enumerationen und Gleitkommatypen veraltet // solve some day
-
 #define _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
 
 // For WIN vs MacOS
