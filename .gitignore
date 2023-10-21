@@ -8,6 +8,7 @@ cmake-build/
 post_build_script_win.bat
 build_script_win.bat
 MacOS Build Chain.docx
+package_macos.sh
 *.o
 *.dll
 *.so
