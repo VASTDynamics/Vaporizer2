@@ -236,6 +236,10 @@ void CVASTFXBus::swapSlots(int first, int second) {
 	mFXBusSequence.swap(first, second);
 }
 
+int CVASTFXBus::getSequence(int slot) {
+	return mFXBusSequence[slot];
+}
+
 int CVASTFXBus::findPosition(int slot) {
 	for (int i = 0; i < mFXBusSequence.size(); i++) {
 		if (mFXBusSequence[i] == slot) return i;

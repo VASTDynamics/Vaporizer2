@@ -81,45 +81,14 @@ public:
 	void copyWTFreqsFrom(const CVASTWaveTable& wavetable);
 	void addFromOtherWavetable(int newPos, sWaveTablePosition wtp);
 	void clear();
-	int getNumPositions() {
-		return wtheader.numPositions; };
-	juce::String getWaveTableName() { 
-		return wtheader.waveTableName; };
-	void setWaveTableName(StringRef wtname) { 
-		wtheader.waveTableName = wtname; };
+	int getNumPositions();
+	juce::String getWaveTableName();
+	void setWaveTableName(StringRef wtname);
 	
 	std::vector<float>* getNaiveTableWithFXForDisplay(int wtPos, int wtFXType, float wtFXVal, bool forceRecalc);
-
-	std::vector<float>* getNaiveTable(int wtPos) { 
-		/*if (wtPos >= wtheader.waveTablePositions.size()) return std::vector<float>(C_WAVE_TABLE_SIZE);
-		else 
-			return wtheader.waveTablePositions[wtPos].naiveTable; 
-			*/
-		if (wtPos >= wtheader.waveTablePositions.size()) {
-			//vassertfalse; //should not happen!
-			return &wtheader.waveTablePositions[0].naiveTable; //CHECK
-			//return &std::vector<float>(C_WAVE_TABLE_SIZE);
-		}
-			else
-				return &wtheader.waveTablePositions[wtPos].naiveTable;
-	};
-
+	std::vector<float>* getNaiveTable(int wtPos);
 	void frequencyDomainBufferFromNaive(int tableLen, const std::vector<float> &naiveTable, std::vector<dsp::Complex<float>> &frequencyDomainBuffer);
-
-	std::vector<dsp::Complex<float>>* getFreqDomainBuffer(int wtPos) { 
-		/*
-		if (wtheader.waveTablePositions.size() <= wtPos) 
-			return std::vector<dsp::Complex<float>>(C_WAVE_TABLE_SIZE); 
-		else return wtheader.waveTablePositions[wtPos].frequencyDomainBuffer; 
-		*/
-	
-		if (wtheader.waveTablePositions.size() <= wtPos) {
-			//vassertfalse; //should not happen!
-			return &wtheader.waveTablePositions[0].frequencyDomainBuffer;  //CHECK
-		}		
-		else 
-			return &wtheader.waveTablePositions[wtPos].frequencyDomainBuffer;
-	};
+	std::vector<dsp::Complex<float>>* getFreqDomainBuffer(int wtPos);;
 
 	//WT FX
 	typedef void (CVASTWaveTable::*WTFXFuncPtr)(std::vector<float>* naive, float paramvalue); //function pointer
@@ -176,67 +145,15 @@ public:
 	void markAllWTFreqsDirty(); //need recalc
 	void pregenerateWithWTFX(int wtFxType, float wtFxVal, int wtMode);
 
-	void setSelectedWtPos(int wtPos) {
-		int numPositions = getNumPositions();
-		vassert((numPositions > 0) && (numPositions <= C_MAX_NUM_POSITIONS));
-		m_iSelectedPosition = jlimit<int>(0, numPositions - 1, wtPos);
-		clearMultiSelect();
-	}
-	int getSelectedWtPos() {
-		return m_iSelectedPosition;
-	}
-	bool isMultiSelected() {
-#ifdef _DEBUG
-		if (m_multiSelect)
-			vassert((m_iSelectedPosition >= m_iMultiSelectBegin) && (m_iSelectedPosition <= m_iMultiSelectEnd));
-#endif
-		return m_multiSelect;
-	};
-	int getMultiSelectBegin() {
-		if (!m_multiSelect)
-			return m_iSelectedPosition;
-		return m_iMultiSelectBegin;
-	};
-	int getMultiSelectEnd() {
-		if (!m_multiSelect)
-			return m_iSelectedPosition;
-		return m_iMultiSelectEnd;
-	};
-	void multiSelectAll() {
-		m_multiSelect = true;
-		m_iMultiSelectBegin = 0;
-		m_iMultiSelectEnd = getNumPositions() - 1;
-	};
-	void clearMultiSelect() {
-		m_multiSelect = false;
-		m_iMultiSelectBegin = 0;
-		m_iMultiSelectEnd = 0;
-	};
-	void setMultiSelect(int wtPos) {
-		m_multiSelect = true;
-		if (wtPos < getSelectedWtPos()) {
-			m_iMultiSelectBegin = wtPos;
-			m_iMultiSelectEnd = (getSelectedWtPos() <= getNumPositions() - 1 ? getSelectedWtPos() : getNumPositions() - 1);
-		}
-		else {
-			m_iMultiSelectBegin = getSelectedWtPos();
-			m_iMultiSelectEnd = (wtPos <= getNumPositions() - 1 ? wtPos : getNumPositions() - 1);
-		}
-		m_iSelectedPosition = jlimit<int>(m_iMultiSelectBegin, m_iMultiSelectEnd, m_iSelectedPosition);
-		vassert(m_iMultiSelectBegin <= m_iMultiSelectEnd);
-	};
-	void setSelection(int begin, int end) {
-		m_iMultiSelectBegin = (begin < 0) ? 0 : begin;
-		m_iMultiSelectEnd = (end > getNumPositions() - 1) ? getNumPositions() - 1 : end;
-		if (m_iMultiSelectBegin != m_iMultiSelectEnd) {
-			m_multiSelect = true;
-			m_iSelectedPosition = jlimit<int>(m_iMultiSelectBegin, m_iMultiSelectEnd, m_iSelectedPosition);
-		}
-		else {
-			m_multiSelect = false;
-			m_iSelectedPosition = m_iMultiSelectBegin;
-		}
-	};
+	void setSelectedWtPos(int wtPos);
+	int getSelectedWtPos();
+	bool isMultiSelected();
+	int getMultiSelectBegin();
+	int getMultiSelectEnd();
+	void multiSelectAll();
+	void clearMultiSelect();
+	void setMultiSelect(int wtPos);
+	void setSelection(int begin, int end);
 	bool loadWavFile(wavFile* wavfile, bool preGenerate, int wtMode);
 	
 	void getNaiveSamplesFromWave(std::vector<float> &nsamples, int wave);
@@ -250,12 +167,8 @@ public:
 	int m_iMultiSelectEnd = 0;
 	int m_iSelectedPosition = 0;
 	int m_iWaveTableID = 0;
-	int getID() { 
-		return m_iWaveTableID;
-	};	
-	int getChangeCounter() {
-		return wtheader.changeCounter;
-	}
+	int getID();
+	int getChangeCounter();
 	void copyUIFXUpdates();
 
 	//make private
@@ -268,8 +181,7 @@ public:
 	CVASTSettings* m_Set;
 	ValueTree bufferedValueTree; //for save state performance optimization
 
-private:
-	
+private:	
 	sWaveTableHeader wtheader;
 
 	void copyFrom(const CVASTWaveTable &wavetable);

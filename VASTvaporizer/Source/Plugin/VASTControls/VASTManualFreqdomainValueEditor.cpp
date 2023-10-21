@@ -228,6 +228,18 @@ void VASTManualFreqdomainValueEditor::textEditorEscapeKeyPressed(TextEditor& tex
 	}
 }
 
+void VASTManualFreqdomainValueEditor::setTextMagnitude(String text) {
+    c_textEditorMagnitude->setText(text, NotificationType::sendNotification);
+    c_textEditorMagnitude->applyFontToAllText(((VASTLookAndFeel*)&getLookAndFeel())->getTextEditorFont(*c_textEditorMagnitude));
+    c_textEditorMagnitude->selectAll();
+}
+
+void VASTManualFreqdomainValueEditor::setTextPhase(String text) {
+    c_textEditorPhase->setText(text, NotificationType::sendNotification);
+    c_textEditorPhase->applyFontToAllText(((VASTLookAndFeel*)&getLookAndFeel())->getTextEditorFont(*c_textEditorPhase));
+    c_textEditorPhase->selectAll();
+}
+
 //[/MiscUserCode]
 
 

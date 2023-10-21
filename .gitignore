@@ -1,12 +1,15 @@
 VASTvaporizer_commercial.jucer
 VASTvaporizer_vastbuild.jucer
 VASTvaporizer/Builds/
+VASTvaporizer/InnoSetupFiles/Output/
 VASTvaporizer/JuceLibraryCode/
 VASTLicense.*
 cmake-build/
 post_build_script_win.bat
 build_script_win.bat
 MacOS Build Chain.docx
+package_macos.sh
+package_win.bat
 *.o
 *.dll
 *.so

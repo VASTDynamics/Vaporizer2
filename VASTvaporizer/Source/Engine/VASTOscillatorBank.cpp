@@ -226,8 +226,75 @@ const std::shared_ptr<CVASTWaveTable>& CVASTOscillatorBank::getSoftFadeWavetable
 	return m_wavetable_soft_fade_next;
 }
 
+void CVASTOscillatorBank::recalcWavetable() {
+	if (m_wavetable != nullptr)
+		m_wavetable->markAllWTFreqsDirty();
+	if (m_wavetable_soft_fade != nullptr)
+		m_wavetable_soft_fade->markAllWTFreqsDirty();
+	if (m_wavetable_soft_fade_next != nullptr)
+		m_wavetable_soft_fade_next->markAllWTFreqsDirty();
+}
+
 void CVASTOscillatorBank::prepareForPlay(int expectedSamplesPerBlock) {
 	m_wavetable->prepareForPlay(expectedSamplesPerBlock);
+}
+
+int CVASTOscillatorBank::getBankno() { return m_bankno; }
+
+void CVASTOscillatorBank::setChangedFlagOsc() {
+	m_bWtSoftChangedOsc = true; //CHECK
+}
+
+void CVASTOscillatorBank::setChangedFlag() {
+	m_bWtSoftChangedFdv = true; //CHECK
+	m_bWtSoftChangedOsc = true; //CHECK
+	m_bWtSoftChangedOscEditor = true; //CHECK
+	m_bWtSoftChangedPos = true; //CHECK
+
+}
+
+bool CVASTOscillatorBank::isChanged() {
+	return
+		(m_bWtSoftChangedFdv || m_bWtSoftChangedOsc || m_bWtSoftChangedOscEditor || m_bWtSoftChangedPos);
+}
+
+bool CVASTOscillatorBank::getAndClearSoftChangedFlagStructure() {
+	bool l_changed = m_bWtSoftChangedStructure;
+	m_bWtSoftChangedStructure = false;
+	return l_changed;
+}
+
+bool CVASTOscillatorBank::getAndClearSoftChangedFlagFdv() {
+	bool l_changed = m_bWtSoftChangedFdv;
+	m_bWtSoftChangedFdv = false;
+	return l_changed;
+}
+
+bool CVASTOscillatorBank::getAndClearSoftChangedFlagOsc() {
+	bool l_changed = m_bWtSoftChangedOsc;
+	m_bWtSoftChangedOsc = false;
+	return l_changed;
+}
+
+bool CVASTOscillatorBank::getAndClearSoftChangedFlagOscEditor() {
+	bool l_changed = m_bWtSoftChangedOscEditor;
+	m_bWtSoftChangedOscEditor = false;
+	return l_changed;
+}
+
+bool CVASTOscillatorBank::getAndClearSoftChangedFlagPos() {
+	bool l_changed = m_bWtSoftChangedPos;
+	m_bWtSoftChangedPos = false;
+	return l_changed;
+}
+
+void CVASTOscillatorBank::setSoloMode(bool solo) {
+	m_soloMode = solo;
+	m_bWtSoftChangedOsc = true;
+}
+
+bool CVASTOscillatorBank::getSoloMode() {
+	return m_soloMode;
 }
 
 void CVASTOscillatorBank::timerCallback() { //for WT copy / undo
@@ -271,6 +338,44 @@ void CVASTOscillatorBank::undoLastWTChange() {
 	}
 }
 
+void CVASTOscillatorBank::addSingleNoteSoftFadeCycle(int voiceNo) {
+	m_iSingleNoteSoftFadeCycle[voiceNo].store(true);
+	//DBG("addSingleNoteSoftFadeCycle SingleNoteSoftFadeCycle now " + String((isInSingleNoteSoftFadeCycle())));
+}
+
+void CVASTOscillatorBank::removeSingleNoteSoftFadeCycle(int voiceNo) {
+	m_iSingleNoteSoftFadeCycle[voiceNo].store(false);
+	//DBG("removeSingleNoteSoftFadeCycle SingleNoteSoftFadeCycle now " + String((isInSingleNoteSoftFadeCycle())));
+}
+
+int CVASTOscillatorBank::isInSingleNoteSoftFadeCycle() {
+	return m_iSingleNoteSoftFadeCycle[0] + m_iSingleNoteSoftFadeCycle[1] + m_iSingleNoteSoftFadeCycle[2] + m_iSingleNoteSoftFadeCycle[3] +
+		m_iSingleNoteSoftFadeCycle[4] + m_iSingleNoteSoftFadeCycle[5] + m_iSingleNoteSoftFadeCycle[6] + m_iSingleNoteSoftFadeCycle[7] +
+		m_iSingleNoteSoftFadeCycle[8] + m_iSingleNoteSoftFadeCycle[9] + m_iSingleNoteSoftFadeCycle[10] + m_iSingleNoteSoftFadeCycle[11] +
+		m_iSingleNoteSoftFadeCycle[12] + m_iSingleNoteSoftFadeCycle[13] + m_iSingleNoteSoftFadeCycle[14] + m_iSingleNoteSoftFadeCycle[15];
+}
+
+void CVASTOscillatorBank::clearSingleNoteSoftFadeCycle() {
+	m_iSingleNoteSoftFadeCycle->store(false); //CHECK
+}
+
+void CVASTOscillatorBank::startRecording(int wtPos) {
+	m_bIsRecording = true;
+	m_iRecordingPos = wtPos;
+}
+
+void CVASTOscillatorBank::stopRecording() {
+	m_bIsRecording = false;
+
+	std::shared_ptr<CVASTWaveTable> l_wavetable = getSoftOrCopyWavetable();
+	if ((m_iRecordingPos >= 0) && (l_wavetable->getNumPositions() > (m_iRecordingPos + 1))) {
+		l_wavetable->deletePosition(m_iRecordingPos);
+		setWavetableSoftFade(l_wavetable);
+	}
+
+	m_iRecordingPos = -1;
+}
+
 std::shared_ptr<CVASTWaveTable> CVASTOscillatorBank::getSoftOrCopyWavetable(bool getCopy, bool copyAlsoFreqs) {
 	//make thread safe!! https://stackoverflow.com/questions/7688107/is-copy-thread-safe
 
@@ -288,4 +393,14 @@ std::shared_ptr<CVASTWaveTable> CVASTOscillatorBank::getSoftOrCopyWavetable(bool
 	}
 	vassert(wtshared != nullptr);
 	return wtshared;
+}
+
+//https://stackoverflow.com/questions/11666610/how-to-give-priority-to-privileged-thread-in-mutex-locking
+
+void CVASTOscillatorBank::addSoftFadeEditor() {
+	m_numEditingSoftFadeNext++;
+}
+
+void CVASTOscillatorBank::removeSoftFadeEditor() {
+	m_numEditingSoftFadeNext--;
 }

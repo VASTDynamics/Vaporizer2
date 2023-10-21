@@ -24,6 +24,17 @@ void VASTLookAndFeel::initAll() {
 	m_knobBufferArrayMouseOver.clear();
 }
 
+inline Colour VASTLookAndFeel::createBaseColour(Colour buttonColour, bool hasKeyboardFocus, bool isMouseOverButton, bool isButtonDown) noexcept
+{
+	const float sat = hasKeyboardFocus ? 1.3f : 0.9f;
+	const Colour baseColour(buttonColour.withMultipliedSaturation(sat));
+
+	if (isButtonDown)      return baseColour.contrasting(0.2f);
+	if (isMouseOverButton) return baseColour.contrasting(0.1f);
+
+	return baseColour;
+}
+
 Typeface::Ptr VASTLookAndFeel::getTypefaceForFont(const Font &font) {
 
 	Typeface::Ptr tf;

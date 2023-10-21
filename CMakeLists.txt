@@ -8,10 +8,9 @@ set(VST2_SDK_LOCATION "" CACHE STRING "Steinberg VST2 SDK directory for non-FOSS
 set(AAX_SDK_LOCATION "" CACHE STRING "Avid AAX SDK directory for non-FOSS builds")
 set(ASIO_SDK_LOCATION "" CACHE STRING "Steinberg ASIO SDK directory for non-FOSS builds")
 option(BUILD_AVX "Build AVX optimized code" ON)
+option(BUILD_32 "Build for 32bit" OFF)
 
-project("VASTvaporizer2")
-
-message("Building VAST Dynamics Vaporizer2 plugin, version ${PLUGIN_VERSION}")
+message("Building VAST Dynamics Vaporizer2 plugin, version ${PLUGIN_VERSION} on architecture: ${CMAKE_GENERATOR_PLATFORM}")
 
 if(NOT USE_SYSTEM_JUCE)
   message(STATUS "Using JUCE from source tree")
@@ -19,6 +18,20 @@ if(NOT USE_SYSTEM_JUCE)
 else()
   message(STATUS "Using system provided JUCE")
   find_package(JUCE CONFIG REQUIRED)
+endif()
+
+if (BUILD_32)
+  if (BUILD_AVX)  
+	project("VASTvaporizer2")
+  else()
+	project("VASTvaporizer2_SSE2")
+  endif()
+else()
+  if (BUILD_AVX)  
+	project("VASTvaporizer2_64")
+  else()
+	project("VASTvaporizer2_64_SSE2")
+  endif()
 endif()
 
 if (AAX_SDK_LOCATION)
@@ -32,11 +45,11 @@ if (VST2_SDK_LOCATION)
     message(STATUS "Enabling VST2 - caution, non FOSS build")
     list(APPEND PLUGIN_FORMATS VST)
 endif()
-
-
 list(APPEND PLUGIN_FORMATS VST3 AU Standalone LV2)
 
-juce_add_plugin(VASTvaporizer2
+message(STATUS "Project name" ${PROJECT_NAME})
+
+juce_add_plugin(${PROJECT_NAME}
   VERSION ${PLUGIN_VERSION}
   BUNDLE_ID "com.vastdynamics.VAST2"
   COMPANY_NAME "VAST Dynamics"
@@ -56,9 +69,49 @@ juce_add_plugin(VASTvaporizer2
   AU_MAIN_TYPE "kAudioUnitType_MusicDevice"
 )
 
-juce_generate_juce_header(VASTvaporizer2)
+juce_generate_juce_header(${PROJECT_NAME})
 
-target_compile_definitions(VASTvaporizer2
+if (WIN32)
+  message( STATUS "Building on Windows ${CMAKE_GENERATOR_PLATFORM} with AVX flags: ${BUILD_AVX}")
+  if (BUILD_32)
+    if (BUILD_AVX)     	  
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX")
+    endif(BUILD_AVX)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE _WIN32 _WIN32BIT NDEBUG)
+  else()#64bit
+    if (BUILD_AVX)  
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX")
+    endif(BUILD_AVX)
+	target_compile_definitions(${PROJECT_NAME} PRIVATE _WIN64 _WIN64BIT NDEBUG)
+  endif()
+
+  if (ASIO_SDK_LOCATION) #ASIO is windows only
+    message( STATUS "Including ASIO from ${ASIO_SDK_LOCATION}")
+    target_compile_definitions(${PROJECT_NAME} PRIVATE JUCE_ASIO=1)
+    target_include_directories(${PROJECT_NAME} PRIVATE ${ASIO_SDK_LOCATION}/common)
+  endif(ASIO_SDK_LOCATION)
+endif(WIN32)
+
+if (APPLE)
+  message( STATUS "Building on Apple macOS ${CMAKE_GENERATOR_PLATFORM} with AVX flags: ${BUILD_AVX}")
+  if (BUILD_32)
+    if (BUILD_AVX)     	  
+	  # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX")  
+    endif(BUILD_AVX)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE _MACOSX _MACOSX32BIT NDEBUG)
+  else()#64bit
+    if (BUILD_AVX)  
+		# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX")  
+    endif(BUILD_AVX)
+	target_compile_definitions(${PROJECT_NAME} PRIVATE _MACOSX _MACOSX64BIT NDEBUG)
+  endif()      
+endif(APPLE)
+
+if(UNIX AND NOT APPLE) #linux
+  message( STATUS "Building on Linux ${CMAKE_GENERATOR_PLATFORM} with AVX flags: ${BUILD_AVX}")
+endif()
+
+target_compile_definitions(${PROJECT_NAME}
   PUBLIC
     DROWAUDIO_USE_CURL=disabled
     DROWAUDIO_USE_FFTREAL=disabled
@@ -73,20 +126,7 @@ target_compile_definitions(VASTvaporizer2
     JUCE_DISPLAY_SPLASH_SCREEN=0
 )
 
-if (WIN32)
-  if (BUILD_AVX)
-    target_compile_definitions(VASTvaporizer2 PRIVATE _WIN64 _WIN64BIT)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX")
-  endif(BUILD_AVX)
-
-  if (ASIO_SDK_LOCATION)
-    message( STATUS "Including ASIO from ${ASIO_SDK_LOCATION}")
-    target_compile_definitions(VASTvaporizer2 PRIVATE JUCE_ASIO=1)
-    target_include_directories(VASTvaporizer2 PRIVATE ${ASIO_SDK_LOCATION}/common)
-  endif(ASIO_SDK_LOCATION)
-endif(WIN32)
-
-target_sources(VASTvaporizer2
+target_sources(${PROJECT_NAME}
   PRIVATE
     "VASTvaporizer/Source/AnaMark-Tuning-Library/SCL_Import.cpp"
     "VASTvaporizer/Source/AnaMark-Tuning-Library/TUN_EmbedHTML.cpp"
@@ -248,11 +288,11 @@ juce_add_binary_data(VASTvaporizer2_BinaryData
 
 set_target_properties(VASTvaporizer2_BinaryData PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
-if(UNIX AND NOT APPLE)
-  target_link_libraries(VASTvaporizer2 PRIVATE atomic)
+if(UNIX AND NOT APPLE) #linux
+  target_link_libraries(${PROJECT_NAME} PRIVATE atomic)
 endif(UNIX AND NOT APPLE)
 
-target_link_libraries(VASTvaporizer2
+target_link_libraries(${PROJECT_NAME}
   PRIVATE
     VASTvaporizer2_BinaryData
     juce::juce_audio_basics

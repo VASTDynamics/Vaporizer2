@@ -99,45 +99,6 @@ VASTAudioProcessor::VASTAudioProcessor() : m_undoManager(3000, 30),
 
 	m_presetData.exchangeCurPatchData(*m_presetData.getPreset(0));
 	initializeToDefaults();
-
-#ifdef _DEBUG
-	int i = 0;
-	if (i == 1) {
-		int origHeight = 534;
-		int newHeight = 575;
-
-		File f = File("G:\\VSTProjects\\JUCE Projects\\VASTvaporizer\\Source\\Plugin\\VASTMatrixComponent.cpp");
-		FileInputStream InStream(f);
-		String InString = InStream.readEntireStreamAsString();
-		StringArray lines;
-		lines.addTokens(InString, "\r\n" );
-		for (int i = 0; i < lines.size(); i++) {
-			String posstr = lines[i].fromFirstOccurrenceOf("pos=\"", false, true).upToFirstOccurrenceOf("\"", false, true);
-			if ((posstr != "") &&  (posstr.contains("%"))) {
-				StringArray posis;
-				posis.addTokens(posstr, " ");
-				if (posis.size() == 4) {
-					DBG(posstr);
-					String newy = String((posis[1].removeCharacters("%")).getFloatValue() * origHeight / newHeight) + "%";	//y
-					String newheight = String((posis[3].removeCharacters("%")).getFloatValue() * origHeight/ newHeight) + "%";	//height					
-					String newposstr = posis[0] + " "+ newy + " " + posis[2] + " " + newheight;			
-					DBG(newposstr);
-					int posi = InString.indexOfWholeWord(posstr);
-					InString = InString.replaceSection(posi, posstr.length(), newposstr);
-				}
-			}
-		}
-
-		File OutFile("G:\\VSTProjects\\JUCE Projects\\VASTvaporizer\\Source\\Plugin\\VASTMatrixComponent.cpp2");
-		OutFile.deleteFile();
-		FileOutputStream OutStream(OutFile);
-		int br = OutStream.writeString(InString);
-		if (br != 0) {
-			vassertfalse;
-		}; //do error handling
-        OutStream.flush();
-	}
-#endif
 }
 
 VASTAudioProcessor::~VASTAudioProcessor()
@@ -197,6 +158,75 @@ bool VASTAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) cons
 		return ((inSize == 2) && (outSize == 2));
 	
 }
+
+void VASTAudioProcessor::setErrorState(int state) {
+	bIsInErrorState = true;
+	iErrorState = state;
+}
+
+int VASTAudioProcessor::getErrorState() { return iErrorState; }
+
+bool VASTAudioProcessor::wantsUIAlert() { return mUIAlert; }
+
+void VASTAudioProcessor::clearUIAlertFlag() { mUIAlert = false; }
+
+void VASTAudioProcessor::requestUIAlert() { mUIAlert = true; }
+
+void VASTAudioProcessor::requestUIPresetUpdate() {
+	mUIUpdateFlag = true;
+	mUIPresetUpdate = true;
+}
+
+bool VASTAudioProcessor::needsUIPresetUpdate() { return mUIPresetUpdate; }
+
+void VASTAudioProcessor::clearUIPresetFlag() { mUIPresetUpdate = false; }
+
+void VASTAudioProcessor::requestUIPresetReloadUpdate() {
+	mUIUpdateFlag = true;
+	mUIPresetReloadUpdate = true;
+}
+
+bool VASTAudioProcessor::needsUIPresetReloadUpdate() { return mUIPresetReloadUpdate; }
+
+void VASTAudioProcessor::clearUIPresetReloadFlag() { mUIPresetReloadUpdate = false; }
+
+bool VASTAudioProcessor::needsUIInit() { return mUIInitFlag; }
+
+void VASTAudioProcessor::clearUIInitFlag() { mUIInitFlag = false; }
+
+void VASTAudioProcessor::requestUIInit() { mUIInitFlag = true; requestUIUpdate(true, true, true); }
+
+bool VASTAudioProcessor::needsUIUpdate() { return mUIUpdateFlag; }
+
+bool VASTAudioProcessor::needsUIUpdate_tabs() { return mUIUpdateFlag_tabs; }
+
+bool VASTAudioProcessor::needsUIUpdate_matrix() { return mUIUpdateFlag_matrix; }
+
+bool VASTAudioProcessor::needsUIUpdate_sliders() { return mUIUpdateFlag_sliders; }
+
+int VASTAudioProcessor::needsUIUpdate_slider1dest() { return mUIUpdateFlag_slider1dest; }
+
+int VASTAudioProcessor::needsUIUpdate_slider2dest() { return mUIUpdateFlag_slider2dest; }
+
+void VASTAudioProcessor::clearUIUpdateFlag() {
+	mUIUpdateFlag = false;
+	mUIUpdateFlag_tabs = false;
+	mUIUpdateFlag_matrix = false;
+	mUIUpdateFlag_sliders = false;
+	mUIUpdateFlag_slider1dest = -1;
+	mUIUpdateFlag_slider2dest = -1;
+}
+
+void VASTAudioProcessor::requestUIUpdate(bool tabs, bool matrix, bool sliders, int slider1dest, int slider2dest) {
+	mUIUpdateFlag = true;
+	mUIUpdateFlag_tabs = tabs;
+	mUIUpdateFlag_matrix = matrix;
+	mUIUpdateFlag_sliders = sliders;
+	mUIUpdateFlag_slider1dest = slider1dest;
+	mUIUpdateFlag_slider2dest = slider2dest;
+}
+
+void VASTAudioProcessor::requestUILoadAlert() { mUIAlert = true; }
 
 bool VASTAudioProcessor::acceptsMidi() const
 {
@@ -1542,10 +1572,88 @@ void VASTAudioProcessor::addModMatrixLookupTable(int modMatrixDestination, float
 	m_modMatrixLookupTable[modMatrixDestination].param = param;
 }
 
+bool VASTAudioProcessor::nonThreadsafeIsBlockedProcessingInfo() {
+	return m_pVASTXperience.nonThreadsafeIsBlockedProcessingInfo();
+}
+
+VASTPresetElement VASTAudioProcessor::getCurPatchData() {
+	return m_presetData.getCurPatchData();
+}
+
+float VASTAudioProcessor::getPluginScaleWidthFactor() {
+	if (m_iDefaultPluginWidth != 0)
+		return m_iUserTargetPluginWidth / float(m_iDefaultPluginWidth);
+	return 1.f;
+}
+
+float VASTAudioProcessor::getPluginScaleHeightFactor() {
+	if (m_iDefaultPluginHeight != 0)
+		return m_iUserTargetPluginHeight / float(m_iDefaultPluginHeight);
+	return 1.f;
+}
+
+void VASTAudioProcessor::togglePerspectiveDisplay(int lOscillatorBank) {
+	m_bTogglePerspectiveDisplay[lOscillatorBank] = !m_bTogglePerspectiveDisplay[lOscillatorBank];
+	writeSettingsToFileAsync();
+}
+
+void VASTAudioProcessor::setWTmode(int wtMode) {
+	if (wtMode != m_pVASTXperience.m_Set.m_WTmode) {
+		m_pVASTXperience.m_Set.m_WTmode = wtMode;
+		//recalc WT
+		for (int bank = 0; bank < 4; bank++)
+			m_pVASTXperience.m_Poly.m_OscBank[bank]->recalcWavetable();
+	}
+}
+
+int VASTAudioProcessor::getWTmode() {
+	return m_pVASTXperience.m_Set.m_WTmode;
+}
+
+int VASTAudioProcessor::getMPEmode() {
+	return m_MPEmode;
+}
+
+void VASTAudioProcessor::setMPEmode(int mode) {
+	m_MPEmode = jlimit<int>(0, 2, mode);
+}
+
+bool VASTAudioProcessor::isMPEenabled() {
+	return (m_MPEmode == 1) || ((m_MPEmode == 0) && (m_presetData.getCurPatchData().mpepreset));
+}
+
+int VASTAudioProcessor::getUIFontSize() {
+	return m_uiFontSize;
+}
+
+void VASTAudioProcessor::setUIFontSize(int size) {
+	m_uiFontSize = size;
+	for (int i = 0; i < vastLookAndFeels.size(); i++)
+		vastLookAndFeels[i]->setUIFontSize(size);
+	requestUIInit();
+}
+
 void VASTAudioProcessor::setUserTuningFile(String filename) {
 	m_UserTuningFile = filename;
 	m_pVASTXperience.m_Set.setTuning(m_UserTuningFile);
 }
+
+void VASTAudioProcessor::setBendRange(int bendRange) {
+	m_pVASTXperience.m_Set.m_iBendRange = bendRange;
+	requestUIUpdate(true, false, false);
+}
+
+int VASTAudioProcessor::getBendRange() {
+	return m_pVASTXperience.m_Set.m_iBendRange;
+}
+
+int VASTAudioProcessor::getDrawMode() { return m_iWTEditorDrawMode; }
+
+int VASTAudioProcessor::getGridMode() { return m_iWTEditorGridMode; }
+
+int VASTAudioProcessor::getBinMode() { return m_iWTEditorBinMode; }
+
+int VASTAudioProcessor::getBinEditMode() { return m_iWTEditorBinEditMode; }
 
 int VASTAudioProcessor::autoParamGetDestination(String parametername) {
 	std::unordered_map<String, int>::iterator it;
@@ -1576,6 +1684,21 @@ void VASTAudioProcessor::setParameterText(StringRef parName, StringRef textVal, 
 	else {
 		//jassert(false); //ignore - unused param in preset xml file
 	}
+}
+
+AudioProcessorValueTreeState& VASTAudioProcessor::getParameterTree() {
+	return m_parameterState;
+}
+
+VASTVUMeterSource* VASTAudioProcessor::getMeterSource() {
+	return &m_meterSource;
+}
+
+char* VASTAudioProcessor::_strncpy(char* dst, const char* src, size_t maxLen)
+{
+	char* result = strncpy(dst, src, maxLen);
+	dst[maxLen] = 0;
+	return result;
 }
 
 String VASTAudioProcessor::getVSTPath() {
@@ -1753,11 +1876,7 @@ bool VASTAudioProcessor::readLicense() {
 	m_sLicenseInformation.m_bIsFreeVersion = false;
 	m_sLicenseString = "Free version";
 
-#ifdef JUCE_WINDOWS
-	String filename = getVSTPath() + "\\VASTDynamics.actkey";
-#else
-	String filename = getVSTPath() + "/VASTDynamics.actkey";
-#endif
+	String filename = File(getVSTPath()).getChildFile("VASTDynamics.actkey").getFullPathName();
 	File activationfile(filename);
 	if (activationfile.existsAsFile()) {
 		String activationFileData = activationfile.loadFileAsString();
@@ -1781,12 +1900,7 @@ bool VASTAudioProcessor::readLicense() {
 
 	if (!m_sLicenseInformation.m_bIsLicensed) {
 		//legacy
-#ifdef JUCE_WINDOWS
-		filename = getVSTPath() + "\\VASTvaporizer.key";
-#else
-		filename = getVSTPath() + "/VASTvaporizer.key";
-#endif
-
+		filename = File(getVSTPath()).getChildFile("VASTvaporizer.key").getFullPathName();
 		ifstream licensefile;
 		const char* fname = filename.toRawUTF8();
 		licensefile.open(fname);
@@ -1800,11 +1914,7 @@ bool VASTAudioProcessor::readLicense() {
 			licensefile.close();
 		}
 		else { //to allow that keyfile can still be placed where the dll is even when install folder exists
-#ifdef JUCE_WINDOWS
-			filename = getVSTPathAlternative() + "\\VASTvaporizer.key";
-#else
-			filename = getVSTPathAlternative() + "/VASTvaporizer.key";
-#endif
+			filename = File(getVSTPathAlternative()).getChildFile("VASTvaporizer.key").getFullPathName();
 			ifstream licensefile;
 			const char* fname = filename.toRawUTF8();
 			licensefile.open(fname);
@@ -1874,6 +1984,50 @@ void VASTAudioProcessor::checkForNewerVersion(String resultString) {
 			}
 		}
 	}
+}
+
+String VASTAudioProcessor::FloatArrayToString(float* fData, int numFloat)
+{//Return String of multiple float values separated by commas 
+	String result = "";
+	if (numFloat<1)
+		return result;
+	for (int i = 0; i<(numFloat - 1); i++)
+		result << String(fData[i]) << ",";//Use juce::String initializer for each value
+	result << String(fData[numFloat - 1]);
+	return result;
+}
+
+int VASTAudioProcessor::StringToFloatArray(String sFloatCSV, float* fData, int maxNumFloat)
+{//Return is number of floats copied to the fData array
+ //-1 if there were more in the string than maxNumFloat
+	StringArray Tokenizer;
+	int TokenCount = Tokenizer.addTokens(sFloatCSV, ",", "");
+	int resultCount = (maxNumFloat <= TokenCount) ? maxNumFloat : TokenCount;
+	for (int i = 0; i<resultCount; i++)//only go as far as resultCount for valid data
+		fData[i] = Tokenizer[i].getFloatValue();//fill data using String class float conversion
+	return ((TokenCount <= maxNumFloat) ? resultCount : -1);
+}
+
+String VASTAudioProcessor::StringArrayToString(String* sData, int numFloat)
+{//Return String of multiple float values separated by commas 
+	String result = "";
+	if (numFloat<1)
+		return result;
+	for (int i = 0; i<(numFloat - 1); i++)
+		result << String(sData[i]) << ",";//Use juce::String initializer for each value
+	result << String(sData[numFloat - 1]);
+	return result;
+}
+
+int VASTAudioProcessor::StringToStringArray(String sStringCSV, String* sData, int maxNumFloat)
+{//Return is number of floats copied to the fData array
+ //-1 if there were more in the string than maxNumFloat
+	StringArray Tokenizer;
+	int TokenCount = Tokenizer.addTokens(sStringCSV, ",", "");
+	int resultCount = (maxNumFloat <= TokenCount) ? maxNumFloat : TokenCount;
+	for (int i = 0; i<resultCount; i++)//only go as far as resultCount for valid data
+		sData[i] = Tokenizer[i];//fill data using String class 
+	return ((TokenCount <= maxNumFloat) ? resultCount : -1);
 }
 
 String VASTAudioProcessor::getLocalMachineID() {
@@ -1951,6 +2105,10 @@ String VASTAudioProcessor::getLicenseText() {
 		// removed in OS version / return XORDecrypt
 		return ("DEMO VERSION");
 }
+
+bool VASTAudioProcessor::isUserPatch() { return !m_presetData.getCurPatchData().isFactory; }
+
+String VASTAudioProcessor::getUserPatchName() { return m_presetData.getCurPatchData().presetname; }
 
 
 bool VASTAudioProcessor::isLicensed() {
@@ -2081,7 +2239,7 @@ void VASTAudioProcessor::writeSettingsToFileAsync() {
 bool VASTAudioProcessor::writeSettingsToFile() {
 	//readable version 20.2.15
 	XmlElement root("VASTVaporizerSettingsV1.000");
-	XmlElement *settings = root.createNewChildElement("Settings");
+	XmlElement* settings = root.createNewChildElement("Settings");
 	settings->setAttribute("PresetRootFolder", m_UserPresetRootFolder);
 	settings->setAttribute("WavetableRootFolder", m_UserWavetableRootFolder);
 	settings->setAttribute("WavRootFolder", m_UserWavRootFolder);
@@ -2089,17 +2247,17 @@ bool VASTAudioProcessor::writeSettingsToFile() {
 
 	settings->setAttribute("PluginWidth", String(m_iUserTargetPluginWidth));
 	settings->setAttribute("PluginHeight", String(m_iUserTargetPluginHeight));
-	
+
 	settings->setAttribute("Skin", String(m_activeLookAndFeel));
 	settings->setAttribute("UIFontSize", String(getUIFontSize()));
-	settings->setAttribute("WavetableMode", String(getWTmode()));	
+	settings->setAttribute("WavetableMode", String(getWTmode()));
 	settings->setAttribute("DisableOpenGLGFX", (m_disableOpenGLGFX == true ? "X" : ""));
 	settings->setAttribute("MPEMode", String(m_MPEmode));
 
 	settings->setAttribute("BendRange", String(getBendRange()));
 
 	settings->setAttribute("PresetBrowserSortColumn", getCurrentVASTLookAndFeel()->presetTableSortColumn);
-	settings->setAttribute("PresetBrowserSortForward", (getCurrentVASTLookAndFeel()->presetTableSortColumnForward == true ? "X" : ""));	   
+	settings->setAttribute("PresetBrowserSortForward", (getCurrentVASTLookAndFeel()->presetTableSortColumnForward == true ? "X" : ""));
 
 	settings->setAttribute("TogglePerspectiveDisplay_Osc1", (m_bTogglePerspectiveDisplay[0] == true ? "X" : ""));
 	settings->setAttribute("TogglePerspectiveDisplay_Osc2", (m_bTogglePerspectiveDisplay[1] == true ? "X" : ""));
@@ -2111,30 +2269,30 @@ bool VASTAudioProcessor::writeSettingsToFile() {
 	settings->setAttribute("WTEditorBinMode", String(getBinMode()));
 	settings->setAttribute("WTEditorBinEditMode", String(getBinEditMode()));
 
-	XmlElement *presetdata = root.createNewChildElement("PresetData");
+	XmlElement* presetdata = root.createNewChildElement("PresetData");
 	if (m_presetData.m_favorites.size() > 0) {
-		XmlElement *favorites = presetdata->createNewChildElement("Favorites");
-		
+		XmlElement* favorites = presetdata->createNewChildElement("Favorites");
+
 		for (std::unordered_multimap<String, int>::iterator it = m_presetData.m_favorites.begin(); it != m_presetData.m_favorites.end(); ++it) {
-			XmlElement *favoritesitems = favorites->createNewChildElement("Favorites");
+			XmlElement* favoritesitems = favorites->createNewChildElement("Favorites");
 			favoritesitems->setAttribute("PresetID", it->first);
 			favoritesitems->setAttribute("Favorite", it->second);
 		}
 	}
 
 	if (m_presetData.m_stars.size() > 0) {
-		XmlElement *stars = presetdata->createNewChildElement("Stars");
+		XmlElement* stars = presetdata->createNewChildElement("Stars");
 		for (std::map<String, int>::iterator it = m_presetData.m_stars.begin(); it != m_presetData.m_stars.end(); ++it) {
 			if (it->second > 0) {
-				XmlElement *starsitem = stars->createNewChildElement("Stars");
+				XmlElement* starsitem = stars->createNewChildElement("Stars");
 				starsitem->setAttribute("PresetID", it->first);
 				starsitem->setAttribute("Ranking", it->second);
 			}
 		}
 	}
 
-	XmlElement *mapping = root.createNewChildElement("MIDIMapping");
-	XmlElement *controller = mapping->createNewChildElement("ControllerCC");
+	XmlElement* mapping = root.createNewChildElement("MIDIMapping");
+	XmlElement* controller = mapping->createNewChildElement("ControllerCC");
 	for (int i = 0; i < 128; i++) {
 		ScopedPointer<String> ccStr = new String("CC" + String(i));
 		ScopedPointer<String> paramString;
@@ -2150,7 +2308,7 @@ bool VASTAudioProcessor::writeSettingsToFile() {
 			paramString = new String("---");
 		controller->setAttribute(*ccStr.get(), *paramString);
 	}
-	XmlElement *bankA = mapping->createNewChildElement("ProgramChangeBankA");
+	XmlElement* bankA = mapping->createNewChildElement("ProgramChangeBankA");
 	StringArray pcd = m_presetData.getProgramChangeData(0);
 	for (int i = 0; i < pcd.size(); i++) {
 		ScopedPointer<String> ccStr = new String("Prog" + String(i));
@@ -2158,7 +2316,7 @@ bool VASTAudioProcessor::writeSettingsToFile() {
 		paramString = new String(pcd[i]);
 		bankA->setAttribute(*ccStr.get(), *paramString);
 	}
-	XmlElement *bankB = mapping->createNewChildElement("ProgramChangeBankB");
+	XmlElement* bankB = mapping->createNewChildElement("ProgramChangeBankB");
 	pcd = m_presetData.getProgramChangeData(1);
 	for (int i = 0; i < pcd.size(); i++) {
 		ScopedPointer<String> ccStr = new String("Prog" + String(i));
@@ -2166,7 +2324,7 @@ bool VASTAudioProcessor::writeSettingsToFile() {
 		paramString = new String(pcd[i]);
 		bankB->setAttribute(*ccStr.get(), *paramString);
 	}
-	XmlElement *bankC = mapping->createNewChildElement("ProgramChangeBankC");
+	XmlElement* bankC = mapping->createNewChildElement("ProgramChangeBankC");
 	pcd = m_presetData.getProgramChangeData(2);
 	for (int i = 0; i < pcd.size(); i++) {
 		ScopedPointer<String> ccStr = new String("Prog" + String(i));
@@ -2174,7 +2332,7 @@ bool VASTAudioProcessor::writeSettingsToFile() {
 		paramString = new String(pcd[i]);
 		bankC->setAttribute(*ccStr.get(), *paramString);
 	}
-	XmlElement *bankD = mapping->createNewChildElement("ProgramChangeBankD");
+	XmlElement* bankD = mapping->createNewChildElement("ProgramChangeBankD");
 	pcd = m_presetData.getProgramChangeData(3);
 	for (int i = 0; i < pcd.size(); i++) {
 		ScopedPointer<String> ccStr = new String("Prog" + String(i));
@@ -2184,6 +2342,23 @@ bool VASTAudioProcessor::writeSettingsToFile() {
 	}
 
 	String myXmlDoc = root.createDocument(String()); //empty is deprecated
+
+	//check if user folders have to be created
+	if (!File(m_UserPresetRootFolder).exists())
+		(File(m_UserPresetRootFolder).createDirectory()); //recursively create also directories			
+	if (!File(m_UserPresetRootFolder).getChildFile("Factory").isSymbolicLink())
+		if (!File(getVSTPath()).getChildFile("Presets").getFullPathName().equalsIgnoreCase(m_UserPresetRootFolder))
+			File(getVSTPath()).getChildFile("Presets").createSymbolicLink(File(m_UserPresetRootFolder).getChildFile("Factory"), true); //add symlink to Factory
+	if (!File(m_UserWavetableRootFolder).exists())
+		(File(m_UserWavetableRootFolder).createDirectory()); //recursively create also directories
+	if (!File(m_UserWavetableRootFolder).getChildFile("Factory").isSymbolicLink())
+		if (!File(getVSTPath()).getChildFile("Tables").getFullPathName().equalsIgnoreCase(m_UserWavetableRootFolder))
+			File(getVSTPath()).getChildFile("Tables").createSymbolicLink(File(m_UserWavetableRootFolder).getChildFile("Factory"), true); //add symlink to Factory
+	if (!File(m_UserWavRootFolder).exists())
+		(File(m_UserWavRootFolder).createDirectory()); //recursively create also directories
+	if (!File(m_UserWavRootFolder).getChildFile("Factory").isSymbolicLink())
+		if (!File(getVSTPath()).getChildFile("Noises").getFullPathName().equalsIgnoreCase(m_UserWavRootFolder))
+			File(getVSTPath()).getChildFile("Noises").createSymbolicLink(File(m_UserWavRootFolder).getChildFile("Factory"), true); //add symlink to Factory		
 
 	bool migrate_legacy = false;
 	String filename = getSettingsFilePath(false, migrate_legacy); //write always new path
@@ -2204,42 +2379,19 @@ bool VASTAudioProcessor::writeSettingsToFile() {
 }
 
 String VASTAudioProcessor::getSettingsFilePath(bool read, bool &migrate_legacy) {
+	//JUCE_WINDOWS	File::getSpecialLocation(File::userApplicationDataDirectory) ="C:\Users\<username>\AppData\Roaming\"
+	//JUCE_MAC		File::getSpecialLocation(File::userApplicationDataDirectory) ="~/Library"
+	//JUCE_LINUX	File::getSpecialLocation(File::userApplicationDataDirectory) ="/usr/share/"
 	const String settingsFile = "VASTvaporizerSettings.xml";
-#ifdef JUCE_WINDOWS
-	//JUCE>> File::getSpecialLocation(File::commonApplicationDataDirectory) ="C:\ProgramData"
-	String filename = File::getSpecialLocation(File::commonApplicationDataDirectory).getFullPathName() + "\\Vaporizer2\\" + settingsFile;
+	String filename = File::getSpecialLocation(File::userApplicationDataDirectory).getChildFile("Vaporizer2").getChildFile(settingsFile).getFullPathName();
 	if (read) {
 		if (!File(filename).existsAsFile()) {
 			File(filename).create(); //recursively create also directories
 			File(filename).deleteFile();
-			filename = getVSTPath() + "\\VASTvaporizerSettings.xml"; //try compatibility
+			filename = File(getVSTPath()).getChildFile(settingsFile).getFullPathName(); //try compatibility
 			migrate_legacy = true;
 		}
 	}
-#elif JUCE_MAC
-	//JUCE>> File::getSpecialLocation(File::commonApplicationDataDirectory) ="/Library"
-	String filename = File::getSpecialLocation(File::commonApplicationDataDirectory).getFullPathName() + "/Application Support/Vaporizer2/" + settingsFile;
-	if (read) {
-		if (!File(filename).existsAsFile()) {
-			File(filename).create(); //recursively create also directories
-			File(filename).deleteFile();
-			filename = getVSTPath() + "/VASTvaporizerSettings.xml"; //try compatibility
-			migrate_legacy = true;
-		}
-	}
-#elif JUCE_LINUX
-	//JUCE>> File::getSpecialLocation(File::commonApplicationDataDirectory) ="/opt"
-	String filename = File::getSpecialLocation(File::commonApplicationDataDirectory).getFullPathName() + "/Vaporizer2/" + settingsFile;
-	if (read) {
-		if (!File(filename).existsAsFile()) {
-			File(filename).create(); //recursively create also directories
-			File(filename).deleteFile();
-			filename = getVSTPath() + "/VASTvaporizerSettings.xml"; //try compatibility
-			migrate_legacy = true;
-		}
-	}
-#endif
-
 	return filename;
 }
 
@@ -2524,6 +2676,12 @@ void VASTAudioProcessor::initLookAndFeels() {
 	vastLookAndFeels.add(new VASTLookAndFeelThemeDark());
 }
 
+VASTLookAndFeel* VASTAudioProcessor::getCurrentVASTLookAndFeel() {
+	VASTLookAndFeel* lf = vastLookAndFeels[m_activeLookAndFeel];
+	vassert(lf != nullptr);
+	return lf;
+}
+
 void VASTAudioProcessor::loadDefaultMidiMapping() {
 	typedef struct
 	{
@@ -2769,12 +2927,7 @@ void VASTAudioProcessor::loadDefaultMidiMapping() {
 #ifdef _DEBUG
 	bool lWriteAsDocumentation = false;
 	if (lWriteAsDocumentation == true) {
-#ifdef JUCE_WINDOWS
-		String filename = getVSTPath() + "\\VASTvaporizerMapDoc.txt";
-#else
-		String filename = getVSTPath() + "/VASTvaporizerMapDoc.txt";
-#endif
-
+		String filename = File(getVSTPath()).getChildFile("VASTvaporizerMapDoc.txt").getFullPathName();
 		File file(filename);
 		file.deleteFile();
 		FileOutputStream out(file);
@@ -2811,15 +2964,15 @@ void VASTAudioProcessor::initSettings() {
 
 	if (lSuccess == false) {
 		loadDefaultMidiMapping();
+		m_UserPresetRootFolder = File(getVSTPath()).getChildFile("Presets").getFullPathName(); //will be overwritten by settings if set
+		m_UserWavetableRootFolder = File(getVSTPath()).getChildFile("Tables").getFullPathName(); // root folder for wavetables
+		m_UserWavRootFolder = File(getVSTPath()).getChildFile("Noises").getFullPathName(); // root folder for WAV files
 
+//store values passed from installer in settings
 #ifdef JUCE_WINDOWS
-		m_UserPresetRootFolder = getVSTPath() + "\\Presets"; //will be overwritten by settings if set
-		m_UserWavetableRootFolder = getVSTPath() + "\\Tables"; // root folder for wavetables
-		m_UserWavRootFolder = getVSTPath() + "\\Noises"; // root folder for WAV files
-#else
-		m_UserPresetRootFolder = getVSTPath() + "/Presets"; //will be overwritten by settings if set
-		m_UserWavetableRootFolder = getVSTPath() + "/Tables"; // root folder for wavetables
-		m_UserWavRootFolder = getVSTPath() + "/Noises"; // root folder for WAV files
+		m_UserPresetRootFolder = WindowsRegistry::getValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\VAST Dynamics\\Vaporizer2\\Settings\\UserPresetFolder", m_UserPresetRootFolder);
+		m_UserWavetableRootFolder = WindowsRegistry::getValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\VAST Dynamics\\Vaporizer2\\Settings\\UserTableFolder", m_UserWavetableRootFolder);
+		m_UserWavRootFolder = WindowsRegistry::getValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\VAST Dynamics\\Vaporizer2\\Settings\\UserNoisesFolder", m_UserWavRootFolder);
 #endif
 		m_iUserTargetPluginWidth = m_iDefaultPluginWidth; //default size from projucer
 		m_iUserTargetPluginHeight = m_iDefaultPluginHeight; //default size from projucer
@@ -2855,11 +3008,7 @@ void VASTAudioProcessor::midiParameterLearned(int iCC) {
 }
 
 void VASTAudioProcessor::crashHandler(void*) {
-#ifdef JUCE_WINDOWS
-	String filename = getVSTPath() + "\\crashreport.log";
-#else
-	String filename = getVSTPath() + "/crashreport.log";
-#endif
+	String filename = File(getVSTPath()).getChildFile("crashreport.log").getFullPathName();
 	File crashFile = File(filename);
 	crashFile.deleteFile();
 	FileOutputStream fos(crashFile);
@@ -2983,11 +3132,7 @@ void VASTAudioProcessor::dumpBuffersFlush() {
 	m_DumpOutStream = nullptr;
 
 	//WAV
-#ifdef JUCE_WINDOWS
-	String filename = getVSTPath() + "\\bufferDump";
-#else
-	String filename = getVSTPath() + "/bufferDump";
-#endif
+	String filename = File(getVSTPath()).getChildFile("bufferDump").getFullPathName();
 	// Write the file headers
 	WavAudioFormat format;
 	std::unique_ptr<AudioFormatWriter> writer;
@@ -3100,11 +3245,7 @@ void VASTAudioProcessor::dumpBuffersFlush() {
 void VASTAudioProcessor::dumpBuffers() {
 	int maxWavDump = 1000000; //~22s
 	if (!m_bDumpFileCreated) {
-#ifdef JUCE_WINDOWS
-		String filename = getVSTPath() + "\\bufferDump.log";
-#else
-		String filename = getVSTPath() + "/bufferDump.log";
-#endif	
+		String filename = File(getVSTPath()).getChildFile("bufferDump.log").getFullPathName();
 		File dumpFile = File(filename);	
 		m_DumpOutStream = dumpFile.createOutputStream();
 		if (m_DumpOutStream->openedOk()) {

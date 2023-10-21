@@ -168,6 +168,11 @@ void VASTManualTagsEditor::textEditorEscapeKeyPressed(TextEditor& textEditorThat
 		c_Cancel->triggerClick();
 	}
 }
+void VASTManualTagsEditor::setTags(String text) {
+    c_textEditor->setText(text, NotificationType::sendNotification);
+    c_textEditor->applyFontToAllText(((VASTLookAndFeel*)&getLookAndFeel())->getTextEditorFont(*c_textEditor));
+    c_textEditor->selectAll();
+}
 //[/MiscUserCode]
 
 

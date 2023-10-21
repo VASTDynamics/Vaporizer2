@@ -17,6 +17,11 @@ COnePoleLPF::~COnePoleLPF(void)
 {
 }
 
+
+// set our one and only gain coefficient
+
+void COnePoleLPF::setLPF_g(float fLPFg) { m_fLPF_g = fLPFg; }
+
 void COnePoleLPF::init()
 {
 	m_fLPF_z1 = 0.0;

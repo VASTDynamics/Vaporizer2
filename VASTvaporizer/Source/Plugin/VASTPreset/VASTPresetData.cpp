@@ -68,9 +68,11 @@ void VASTPresetData::reloadPresetArray() {
 	}
 
 	FileSearchPath sPath = FileSearchPath(myProcessor->m_UserPresetRootFolder);
+	//sPath.addIfNotAlreadyThere(File(myProcessor->getVSTPath()).getChildFile("Presets").getFullPathName()); //add serach path for factory presets in app folder (not configurable) //not needed with symlink solution
 
 	Array<File> presetFiles;
 	sPath.findChildFiles(presetFiles, File::findFiles, true, "*.vvp");
+	
 	m_numUserPresets = 0;
 	for (int i = 0; i < presetFiles.size(); i++) {
 		VASTPresetElement* l_PresetArray = new VASTPresetElement(); //new OK because of owned Array
@@ -507,4 +509,10 @@ void VASTPresetData::addTag(String tagToAdd) {
 	tags.addTokens(m_curPatchData.freetag, " ,#", "\"");
 	if (!(tags.contains(tagToAdd, true)))
 		m_curPatchData.freetag = m_curPatchData.freetag + " " + tagToAdd;
+}
+
+inline int VASTPresetData::VASTPresetElementCompareDates::compareElements(VASTPresetElement* first, const VASTPresetElement* second)
+{
+	return (first->presetdate < second->presetdate) ? -1
+		: ((first->presetdate == second->presetdate) ? 0 : 1);
 }

@@ -61,9 +61,9 @@ private:
 	std::unique_ptr<FileChooser> myChooser;
 	void refreshSubItems();
 	void valueTreePropertyChanged(ValueTree&, const Identifier&) override;
-	void valueTreeChildAdded(ValueTree& parentTree, ValueTree&) override { treeChildrenChanged(parentTree); }
-	void valueTreeChildRemoved(ValueTree& parentTree, ValueTree&, int) override { treeChildrenChanged(parentTree); }
-	void valueTreeChildOrderChanged(ValueTree& parentTree, int, int) override { treeChildrenChanged(parentTree); }
+	void valueTreeChildAdded(ValueTree& parentTree, ValueTree&) override;
+	void valueTreeChildRemoved(ValueTree& parentTree, ValueTree&, int) override;
+	void valueTreeChildOrderChanged(ValueTree& parentTree, int, int) override;
 	void valueTreeParentChanged(ValueTree&) override {}
 
 	void treeChildrenChanged(const ValueTree& parentTree);
@@ -101,7 +101,7 @@ public:
 	void textEditorTextChanged(TextEditor &) override;
 	bool keyPressed(const KeyPress& key, Component* originatingComponent) override;
 
-	TextEditor* getSearchTextEditor() { return m_searchText.get(); };
+	TextEditor* getSearchTextEditor();
 
 	void setSearchVector();
 	void clearFilter();
@@ -111,7 +111,7 @@ public:
 	void reloadPresets();
 	std::unique_ptr<Drawable> mFolderDrawable = nullptr;
 
-	juce::TreeView* getTreeViewFiles() { return treeViewFiles.get(); };
+	juce::TreeView* getTreeViewFiles();
 
     //[/UserMethods]
 

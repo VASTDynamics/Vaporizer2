@@ -157,6 +157,14 @@ void VASTARPData::copyDataFrom(const VASTARPData &copyData) {
 	isDirty = true;
 }
 
+int VASTARPData::getNumSteps() {
+	return arpStepNum; ;
+}
+
+void VASTARPData::setDirty() {
+	isDirty = true;
+}
+
 void VASTARPData::initDefaultPattern(int pattern) {
 	arpSteps.clear();
 	patternName = VASTARPData::mARPPattern[pattern].name;
@@ -171,6 +179,25 @@ void VASTARPData::initDefaultPattern(int pattern) {
 	arpStepNum = arpSteps.size();
 }
 
+bool VASTARPData::getAndClearDirtyFlag() {
+	bool lDirty = isDirty;
+	isDirty = false;
+	return lDirty;
+}
+
+void VASTARPData::setDispActiveStep(int step) {
+	if (m_dispActiveStep != step) isDirty = true;
+	m_dispActiveStep = step;
+}
+
+bool VASTARPData::getIsDirty() {
+	return isDirty;
+}
+
+void VASTARPData::clearDirtyFlag() {
+	isDirty = false;
+}
+
 StringArray VASTARPData::getDefaultPatternNames() {
 	int numElements = sizeof(VASTARPData::mARPPattern) / sizeof(VASTARPData::mARPPattern[0]);
 	StringArray list;
@@ -178,6 +205,31 @@ StringArray VASTARPData::getDefaultPatternNames() {
 		list.add(VASTARPData::mARPPattern[i].name);
 	}
 	return list;
+}
+
+VASTARPData::ArpStep VASTARPData::getStep(int step) {
+	return arpSteps[step];
+}
+
+void VASTARPData::incGate(int step) {
+	arpSteps[step].gate++;
+	arpSteps[step].gate %= 5; //0..4
+	isDirty = true;
+}
+
+void VASTARPData::setOctave(int step, int octave) {
+	arpSteps[step].octave = octave;
+	isDirty = true;
+}
+
+void VASTARPData::setSemitone(int step, int semitone) {
+	arpSteps[step].semitones = semitone;
+	isDirty = true;
+}
+
+void VASTARPData::setVelocity(int step, int velocity) {
+	arpSteps[step].velocity = jlimit<int>(0, 127, velocity);
+	isDirty = true;
 }
 
 void VASTARPData::addStep(ArpStep step) {

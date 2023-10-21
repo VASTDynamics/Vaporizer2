@@ -594,6 +594,11 @@ void CVASTWaveTableOscillator::resynchWithFade(bool lfo) {
 	m_bLFO = lfo; //what???
 }
 
+inline void CVASTWaveTableOscillator::syncAllPhasorsToMaster() {
+	for (int osci = 1; osci < m_unisonOscis; osci++)
+		phasor[osci] = phasor[0];
+}
+
 void CVASTWaveTableOscillator::random_retrig(int unisonOsci) {
 	phasor[unisonOsci] = ((double)rand() / RAND_MAX); // top of buffer	
 }

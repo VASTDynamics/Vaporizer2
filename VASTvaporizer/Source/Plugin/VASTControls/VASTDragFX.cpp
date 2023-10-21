@@ -101,6 +101,10 @@ VASTAudioProcessor* VASTDragFX::getAudioProcessor() {
 	return my_processor;
 }
 
+inline void VASTDragFX::setModString(const juce::String& dragText) {
+	ddLabel->setText(dragText, NotificationType::dontSendNotification);
+}
+
 void VASTDragFX::buttonClicked(Button* b) { //needed for listener interface
 	String compID = b->getComponentID();
 	if (!compID.equalsIgnoreCase(""))

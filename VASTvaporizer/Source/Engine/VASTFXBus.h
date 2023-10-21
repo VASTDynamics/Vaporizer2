@@ -46,9 +46,7 @@ public:
 	void updateTiming();
 	OwnedArray<insertEffect> effectBus;
 	void swapSlots(int first, int second);
-	int getSequence(int slot) {
-		return mFXBusSequence[slot];
-	}
+	int getSequence(int slot);
 	int findPosition(int slot);
 
 	void initSequence();

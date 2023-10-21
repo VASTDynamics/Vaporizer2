@@ -89,73 +89,40 @@ public:
 	bool isBusesLayoutSupported(const BusesLayout& layouts) const override;
 
 	bool isInErrorState() { return bIsInErrorState; };
-	void setErrorState(int state) { 
-		bIsInErrorState = true; 
-		iErrorState = state; 
-	};
-	int getErrorState() { return iErrorState; };
-	bool wantsUIAlert() { return mUIAlert; };
-	void clearUIAlertFlag() { mUIAlert = false; };
-	void requestUIAlert() { mUIAlert = true; };
-	void requestUIPresetUpdate() {
-		mUIUpdateFlag = true;
-		mUIPresetUpdate = true; };
-	bool needsUIPresetUpdate() { return mUIPresetUpdate; };
-	void clearUIPresetFlag() { mUIPresetUpdate = false; };
+	void setErrorState(int state);
+	int getErrorState();
+	bool wantsUIAlert();
+	void clearUIAlertFlag();
+	void requestUIAlert();
+	void requestUIPresetUpdate();
+	bool needsUIPresetUpdate();
+	void clearUIPresetFlag();
 
-	void requestUIPresetReloadUpdate() {
-		mUIUpdateFlag = true;
-		mUIPresetReloadUpdate = true;
-	};
-	bool needsUIPresetReloadUpdate() { return mUIPresetReloadUpdate; };
-	void clearUIPresetReloadFlag() { mUIPresetReloadUpdate = false; };
+	void requestUIPresetReloadUpdate();
+	bool needsUIPresetReloadUpdate();
+	void clearUIPresetReloadFlag();
 
+	bool needsUIInit();
+	void clearUIInitFlag();
+	void requestUIInit();
 
-	bool needsUIInit() { return mUIInitFlag; };
-	void clearUIInitFlag() { mUIInitFlag = false; };
-	void requestUIInit() { mUIInitFlag = true; requestUIUpdate(true, true, true); };
-
-	bool needsUIUpdate(){ return mUIUpdateFlag; };
-	bool needsUIUpdate_tabs() { return mUIUpdateFlag_tabs; };
-	bool needsUIUpdate_matrix() { return mUIUpdateFlag_matrix; };
-	bool needsUIUpdate_sliders() { return mUIUpdateFlag_sliders; };
-	int needsUIUpdate_slider1dest() { return mUIUpdateFlag_slider1dest; };
-	int needsUIUpdate_slider2dest() { return mUIUpdateFlag_slider2dest; };
-	void clearUIUpdateFlag() { mUIUpdateFlag = false; 
-		mUIUpdateFlag_tabs = false;
-		mUIUpdateFlag_matrix = false;
-		mUIUpdateFlag_sliders = false;
-		mUIUpdateFlag_slider1dest = -1;
-		mUIUpdateFlag_slider2dest = -1;
-	}; 
-	void requestUIUpdate(bool tabs = true, bool matrix = true, bool sliders = true, int slider1dest = -1, int slider2dest = -1 ) {
-		mUIUpdateFlag = true; 
-		mUIUpdateFlag_tabs = tabs;
-		mUIUpdateFlag_matrix = matrix;
-		mUIUpdateFlag_sliders = sliders;
-		mUIUpdateFlag_slider1dest = slider1dest;
-		mUIUpdateFlag_slider2dest = slider2dest;	
-	};
-	void requestUILoadAlert() { mUIAlert = true; };
+	bool needsUIUpdate();
+	bool needsUIUpdate_tabs();
+	bool needsUIUpdate_matrix();
+	bool needsUIUpdate_sliders();
+	int needsUIUpdate_slider1dest();
+	int needsUIUpdate_slider2dest();
+	void clearUIUpdateFlag();
+	void requestUIUpdate(bool tabs = true, bool matrix = true, bool sliders = true, int slider1dest = -1, int slider2dest = -1);
+	void requestUILoadAlert();
 
     //==============================================================================
     const String getName() const override;
   
 	void setParameterText(StringRef parName, StringRef textVal, bool bSilent);
-	AudioProcessorValueTreeState& getParameterTree() { 
-		return m_parameterState;  
-	};
-
-	VASTVUMeterSource* getMeterSource() {
-		return &m_meterSource;
-	};
-
-	inline char* _strncpy(char* dst, const char* src, size_t maxLen)
-	{
-		char* result = strncpy(dst, src, maxLen);
-		dst[maxLen] = 0;
-		return result;
-	}
+	AudioProcessorValueTreeState& getParameterTree();
+	VASTVUMeterSource* getMeterSource();
+	char* _strncpy(char* dst, const char* src, size_t maxLen);
 
     /*
 	const String getInputChannelName (int channelIndex) const override;
@@ -193,9 +160,8 @@ public:
 
 	bool isLicensed();
 	String getLicenseText();
-	inline bool isUserPatch() { return !m_presetData.getCurPatchData().isFactory; }
-	//inline void setIsUserPatch() { m_bIsUserPatch = true; }
-	inline String getUserPatchName() { return m_presetData.getCurPatchData().presetname; }
+	bool isUserPatch();
+	String getUserPatchName();
 	void savePatchXML(File *selectedFile);
 	bool loadPatchXML(XmlDocument* xmlDoc, bool bNameOnly, const VASTPresetElement* preset, int index, VASTPresetElement& resultPresetData);
 	static String getVSTPath();
@@ -236,14 +202,9 @@ public:
 	CVASTXperience m_pVASTXperience;
 	//==============================================================================
 
-	bool nonThreadsafeIsBlockedProcessingInfo() {
-		return m_pVASTXperience.nonThreadsafeIsBlockedProcessingInfo();
-	}
-
+	bool nonThreadsafeIsBlockedProcessingInfo();
 	VASTPresetData m_presetData{ this };
-	VASTPresetElement getCurPatchData() {
-		return m_presetData.getCurPatchData();
-	};
+	VASTPresetElement getCurPatchData();
 
 	int m_curPatchDataLoadRequestedIndex = 0;
 
@@ -258,73 +219,32 @@ public:
 	int m_iUserTargetPluginWidth = 0;
 	int m_iUserTargetPluginHeight = 0;
 	
-	float getPluginScaleWidthFactor() {
-		if (m_iDefaultPluginWidth != 0)
-			return m_iUserTargetPluginWidth / float(m_iDefaultPluginWidth);
-		return 1.f;
-	}
-	float getPluginScaleHeightFactor() {
-		if (m_iDefaultPluginHeight != 0)
-			return m_iUserTargetPluginHeight / float(m_iDefaultPluginHeight);
-		return 1.f;
-	}
-
-	void togglePerspectiveDisplay(int lOscillatorBank) {
-		m_bTogglePerspectiveDisplay[lOscillatorBank] = !m_bTogglePerspectiveDisplay[lOscillatorBank];
-		writeSettingsToFileAsync();
-	}
+	float getPluginScaleWidthFactor();
+	float getPluginScaleHeightFactor();
+	void togglePerspectiveDisplay(int lOscillatorBank);
 	bool m_bTogglePerspectiveDisplay[4] = { false, false, false, false }; //per oscbank
 
-	void setWTmode(int wtMode) {
-		if (wtMode != m_pVASTXperience.m_Set.m_WTmode) {
-			m_pVASTXperience.m_Set.m_WTmode = wtMode;
-			//recalc WT
-			for (int bank = 0; bank < 4; bank++)
-				m_pVASTXperience.m_Poly.m_OscBank[bank]->recalcWavetable();
-		}
-	}
-	int getWTmode() {
-		return m_pVASTXperience.m_Set.m_WTmode;
-	}
-
-	int getMPEmode() {
-		return m_MPEmode;
-	}
-	void setMPEmode(int mode) {
-		m_MPEmode = jlimit<int>(0, 2, mode);
-	}
-	bool isMPEenabled() {
-		return (m_MPEmode == 1) || ((m_MPEmode == 0) && (m_presetData.getCurPatchData().mpepreset));
-	}
-
-	int getUIFontSize() {
-		return m_uiFontSize;
-	}
-	void setUIFontSize(int size) {
-		m_uiFontSize = size;
-		for (int i = 0; i < vastLookAndFeels.size(); i++)
-			vastLookAndFeels[i]->setUIFontSize(size);
-		requestUIInit();
-	}
+	void setWTmode(int wtMode);
+	int getWTmode();
+	int getMPEmode();
+	void setMPEmode(int mode);
+	bool isMPEenabled();
+	int getUIFontSize();
+	void setUIFontSize(int size);
 	
 	void setUserTuningFile(String filename);
 	
-	void setBendRange(int bendRange) {
-		m_pVASTXperience.m_Set.m_iBendRange = bendRange;
-		requestUIUpdate(true, false, false);
-	}
-	int getBendRange() {
-		return m_pVASTXperience.m_Set.m_iBendRange;
-	}
+	void setBendRange(int bendRange);
+	int getBendRange();
 
 	int m_iWTEditorDrawMode = OscillatorEditMode::SelectMode;
 	int m_iWTEditorGridMode = OscillatorGridMode::NoGrid;
 	int m_iWTEditorBinMode = BinMode::ClipBin;
 	int m_iWTEditorBinEditMode = FreqEditMode::SingleBin;
-	int getDrawMode() { return m_iWTEditorDrawMode; };
-	int getGridMode() { return m_iWTEditorGridMode; };
-	int getBinMode() { return m_iWTEditorBinMode; };
-	int getBinEditMode() { return m_iWTEditorBinEditMode; };	   
+	int getDrawMode();
+	int getGridMode();
+	int getBinMode();
+	int getBinEditMode();
 
 	//--------------------------------------------------------------------------------------------------------------------
 
@@ -349,11 +269,7 @@ public:
 	int m_uiFontSize = 0; //default 100%
 	void initLookAndFeels();
 	OwnedArray<VASTLookAndFeel> vastLookAndFeels; 
-	VASTLookAndFeel* getCurrentVASTLookAndFeel() {
-		VASTLookAndFeel* lf = vastLookAndFeels[m_activeLookAndFeel];
-		vassert(lf != nullptr);
-		return lf;
-	};
+	VASTLookAndFeel* getCurrentVASTLookAndFeel();
 
 	void dumpBuffers();
 	void dumpBuffersFlush();
@@ -410,46 +326,10 @@ private:
   
 	void checkForNewerVersion(String resultString);
 
-	String FloatArrayToString(float* fData, int numFloat)
-	{//Return String of multiple float values separated by commas 
-		String result = "";
-		if (numFloat<1)
-			return result;
-		for (int i = 0; i<(numFloat - 1); i++)
-			result << String(fData[i]) << ",";//Use juce::String initializer for each value
-		result << String(fData[numFloat - 1]);
-		return result;
-	}
-	int StringToFloatArray(String sFloatCSV, float* fData, int maxNumFloat)
-	{//Return is number of floats copied to the fData array
-		//-1 if there were more in the string than maxNumFloat
-		StringArray Tokenizer;
-		int TokenCount = Tokenizer.addTokens(sFloatCSV, ",", "");
-		int resultCount = (maxNumFloat <= TokenCount) ? maxNumFloat : TokenCount;
-		for (int i = 0; i<resultCount; i++)//only go as far as resultCount for valid data
-			fData[i] = Tokenizer[i].getFloatValue();//fill data using String class float conversion
-		return ((TokenCount <= maxNumFloat) ? resultCount : -1);
-	}
-	String StringArrayToString(String* sData, int numFloat)
-	{//Return String of multiple float values separated by commas 
-		String result = "";
-		if (numFloat<1)
-			return result;
-		for (int i = 0; i<(numFloat - 1); i++)
-			result << String(sData[i]) << ",";//Use juce::String initializer for each value
-		result << String(sData[numFloat - 1]);
-		return result;
-	}
-	int StringToStringArray(String sStringCSV, String* sData, int maxNumFloat)
-	{//Return is number of floats copied to the fData array
-		//-1 if there were more in the string than maxNumFloat
-		StringArray Tokenizer;
-		int TokenCount = Tokenizer.addTokens(sStringCSV, ",", "");
-		int resultCount = (maxNumFloat <= TokenCount) ? maxNumFloat : TokenCount;
-		for (int i = 0; i<resultCount; i++)//only go as far as resultCount for valid data
-			sData[i] = Tokenizer[i];//fill data using String class 
-		return ((TokenCount <= maxNumFloat) ? resultCount : -1);
-	}
+	String FloatArrayToString(float* fData, int numFloat);
+	int StringToFloatArray(String sFloatCSV, float* fData, int maxNumFloat);
+	String StringArrayToString(String* sData, int numFloat);
+	int StringToStringArray(String sStringCSV, String* sData, int maxNumFloat);
 	bool m_initCompleted = false;
 
 	XmlElement createPatchXML(bool externalRepresentation);

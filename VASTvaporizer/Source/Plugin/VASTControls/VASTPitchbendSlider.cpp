@@ -41,6 +41,12 @@ VASTAudioProcessor* VASTPitchbendSlider::getAudioProcessor() {
 	return m_processor;
 }
 
+inline void VASTPitchbendSlider::setDefaultValue(float defaultVal) {
+	hasDefaultValue = true;
+	mDefaultVal = defaultVal;
+	setDoubleClickReturnValue(true, mDefaultVal);
+}
+
 void VASTPitchbendSlider::mouseDown(const MouseEvent &e) {
 	if (e.getNumberOfClicks() > 1) { //double click shall reset to default
 		if (hasDefaultValue) {

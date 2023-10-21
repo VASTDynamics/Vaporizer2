@@ -318,6 +318,76 @@ void CVASTWaveTable::pregenerateWithWTFX(int wtFxType, float wtFxVal, int wtMode
 	}
 }
 
+void CVASTWaveTable::setSelectedWtPos(int wtPos) {
+	int numPositions = getNumPositions();
+	vassert((numPositions > 0) && (numPositions <= C_MAX_NUM_POSITIONS));
+	m_iSelectedPosition = jlimit<int>(0, numPositions - 1, wtPos);
+	clearMultiSelect();
+}
+
+int CVASTWaveTable::getSelectedWtPos() {
+	return m_iSelectedPosition;
+}
+
+bool CVASTWaveTable::isMultiSelected() {
+#ifdef _DEBUG
+	if (m_multiSelect)
+		vassert((m_iSelectedPosition >= m_iMultiSelectBegin) && (m_iSelectedPosition <= m_iMultiSelectEnd));
+#endif
+	return m_multiSelect;
+}
+
+int CVASTWaveTable::getMultiSelectBegin() {
+	if (!m_multiSelect)
+		return m_iSelectedPosition;
+	return m_iMultiSelectBegin;
+}
+
+int CVASTWaveTable::getMultiSelectEnd() {
+	if (!m_multiSelect)
+		return m_iSelectedPosition;
+	return m_iMultiSelectEnd;
+}
+
+void CVASTWaveTable::multiSelectAll() {
+	m_multiSelect = true;
+	m_iMultiSelectBegin = 0;
+	m_iMultiSelectEnd = getNumPositions() - 1;
+}
+
+void CVASTWaveTable::clearMultiSelect() {
+	m_multiSelect = false;
+	m_iMultiSelectBegin = 0;
+	m_iMultiSelectEnd = 0;
+}
+
+void CVASTWaveTable::setMultiSelect(int wtPos) {
+	m_multiSelect = true;
+	if (wtPos < getSelectedWtPos()) {
+		m_iMultiSelectBegin = wtPos;
+		m_iMultiSelectEnd = (getSelectedWtPos() <= getNumPositions() - 1 ? getSelectedWtPos() : getNumPositions() - 1);
+	}
+	else {
+		m_iMultiSelectBegin = getSelectedWtPos();
+		m_iMultiSelectEnd = (wtPos <= getNumPositions() - 1 ? wtPos : getNumPositions() - 1);
+	}
+	m_iSelectedPosition = jlimit<int>(m_iMultiSelectBegin, m_iMultiSelectEnd, m_iSelectedPosition);
+	vassert(m_iMultiSelectBegin <= m_iMultiSelectEnd);
+}
+
+void CVASTWaveTable::setSelection(int begin, int end) {
+	m_iMultiSelectBegin = (begin < 0) ? 0 : begin;
+	m_iMultiSelectEnd = (end > getNumPositions() - 1) ? getNumPositions() - 1 : end;
+	if (m_iMultiSelectBegin != m_iMultiSelectEnd) {
+		m_multiSelect = true;
+		m_iSelectedPosition = jlimit<int>(m_iMultiSelectBegin, m_iMultiSelectEnd, m_iSelectedPosition);
+	}
+	else {
+		m_multiSelect = false;
+		m_iSelectedPosition = m_iMultiSelectBegin;
+	}
+}
+
 void CVASTWaveTable::duplicatePosition(int wtPos, int newPos) {
 	if (getNumPositions() >= C_MAX_NUM_POSITIONS) return;
 	ScopedLock sl(mWavetableChangeLock);
@@ -363,6 +433,18 @@ void CVASTWaveTable::clear() {
 	m_lastWaveTableIdx = 0; //performance optimize
 	m_lastWaveTableIdxNext = 0; //performance optimize
 	m_lastPhaseInc = -1; //performance optimize
+}
+
+int CVASTWaveTable::getNumPositions() {
+	return wtheader.numPositions;
+}
+
+juce::String CVASTWaveTable::getWaveTableName() {
+	return wtheader.waveTableName;
+}
+
+void CVASTWaveTable::setWaveTableName(StringRef wtname) {
+	wtheader.waveTableName = wtname;
 }
 
 void CVASTWaveTable::insertEmptyPosition(int wtPos) {
@@ -872,6 +954,21 @@ void CVASTWaveTable::frequencyDomainBufferFromNaive(int tableLen, const std::vec
 
 }
 
+std::vector<dsp::Complex<float>>* CVASTWaveTable::getFreqDomainBuffer(int wtPos) {
+	/*
+	if (wtheader.waveTablePositions.size() <= wtPos)
+	return std::vector<dsp::Complex<float>>(C_WAVE_TABLE_SIZE);
+	else return wtheader.waveTablePositions[wtPos].frequencyDomainBuffer;
+	*/
+
+	if (wtheader.waveTablePositions.size() <= wtPos) {
+		//vassertfalse; //should not happen!
+		return &wtheader.waveTablePositions[0].frequencyDomainBuffer;  //CHECK
+	}
+	else
+		return &wtheader.waveTablePositions[wtPos].frequencyDomainBuffer;
+}
+
 // Create wavetables from time domain (arbitrary waveform)
 // all Tables - create all freq tables
 void CVASTWaveTable::generateWaveTableFreqsFromTimeDomain(int wtPos, int tableLen, const std::vector<float> &naiveTable, bool preGenerate, int wtMode) {	
@@ -1305,6 +1402,14 @@ bool CVASTWaveTable::wtFreqCheckForChange(sWaveTableFreq &wtFreq, float wtFxVal,
 	return false;
 }
 
+int CVASTWaveTable::getID() {
+	return m_iWaveTableID;
+}
+
+int CVASTWaveTable::getChangeCounter() {
+	return wtheader.changeCounter;
+}
+
 void CVASTWaveTable::copyUIFXUpdates() {
 	//ScopedLock sl(mWavetableChangeLock); //CHECK if really needed
 	for (int i = 0; i < getNumPositions(); i++) {
@@ -1340,7 +1445,21 @@ std::vector<float>* CVASTWaveTable::getNaiveTableWithFXForDisplay(int wtPos, int
 			}
 		}
 	}
-};
+}
+std::vector<float>* CVASTWaveTable::getNaiveTable(int wtPos) {
+	/*if (wtPos >= wtheader.waveTablePositions.size()) return std::vector<float>(C_WAVE_TABLE_SIZE);
+	else
+	return wtheader.waveTablePositions[wtPos].naiveTable;
+	*/
+	if (wtPos >= wtheader.waveTablePositions.size()) {
+		//vassertfalse; //should not happen!
+		return &wtheader.waveTablePositions[0].naiveTable; //CHECK
+														   //return &std::vector<float>(C_WAVE_TABLE_SIZE);
+	}
+	else
+		return &wtheader.waveTablePositions[wtPos].naiveTable;
+}
+;
 
 // if scale is 0, auto-scales
 // returns wavetable in ai array

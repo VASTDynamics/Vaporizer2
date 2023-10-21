@@ -45,17 +45,8 @@ public:
 	int numOscsPlaying();
 	int getLastNotePlayed();
 	int getOldestNotePlayed();
-	void stopAllNotes(bool allowTailOff) {
-		for (int i = 0; i < C_MAX_POLY; i++) {
-			m_singleNote[i]->stopNote(0, allowTailOff);
-		}
-	};
-	bool voicesMSEGStillActive() {
-		for (int i = 0; i < C_MAX_POLY; i++) {
-			if (m_singleNote[i]->m_VCA->isActive()) return true;
-		}
-		return false;
-	}
+	void stopAllNotes(bool allowTailOff);
+	bool voicesMSEGStillActive();
 	modMatrixInputState getLastNotePlayedInputState(int currentFrame);
 	modMatrixInputState getOldestNotePlayedInputState(int currentFrame);
 
@@ -70,36 +61,14 @@ public:
 	//std::vector<std::shared_ptr<CVASTOscillatorBank>> m_OscBank;
 	OwnedArray<CVASTOscillatorBank> m_OscBank;
 
-	VASTSynthesiser* getSynthesizer() { return &m_OscillatorSynthesizer; };
-	VASTSynthesiserSound* getSynthSound() {
-		VASTSynthesiserSound* sound = (VASTSynthesiserSound*)getSynthesizer()->getSound(0);
-		return sound;
-	}
-
-	VASTSamplerSound* getSamplerSound() { //live Data
-		VASTSynthesiserSound* sound = (VASTSynthesiserSound*)getSynthesizer()->getSound(0);
-		return sound->getSamplerSound();
-	};
-
-	VASTSamplerSound* getSamplerSoundChanged() {
-		VASTSynthesiserSound* sound = (VASTSynthesiserSound*)getSynthesizer()->getSound(0);
-		return sound->getSamplerSoundChanged();
-	};
-	void clearSamplerSoundChanged() {
-		VASTSynthesiserSound* sound = (VASTSynthesiserSound*)getSynthesizer()->getSound(0);
-		sound->clearSamplerSoundChanged();
-	}
-
-	void softFadeExchangeSample() {
-		VASTSynthesiserSound* sound = getSynthSound();
-		if (sound != nullptr)
-			sound->softFadeExchangeSample();
-	}
-
+	VASTSynthesiser* getSynthesizer();
+	VASTSynthesiserSound* getSynthSound();
+	VASTSamplerSound* getSamplerSound();
+	VASTSamplerSound* getSamplerSoundChanged();
+	void clearSamplerSoundChanged();
+	void softFadeExchangeSample();
+	bool getLastSingleNoteCycleWasActive();
 	int m_iLastSingleNoteCycleCalls = 0;
-	bool getLastSingleNoteCycleWasActive() {
-		return m_iLastSingleNoteCycleCalls > 0;
-	}
 
 	LinearSmoothedValue<float> m_fCustomModulator1_smoothed;
 	LinearSmoothedValue<float> m_fCustomModulator2_smoothed;
@@ -110,9 +79,7 @@ public:
 	float m_ARP_speed = 0.0f;
 
 	CVASTSettings * m_Set;
-	void initArp() {
-		m_shallInitARP = true;
-	};
+	void initArp();
 	SortedSet<int> m_ARP_midiInNotes;
 
 private:

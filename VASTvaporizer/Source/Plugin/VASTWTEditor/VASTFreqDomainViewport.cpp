@@ -345,6 +345,12 @@ double VASTFreqDomainViewport::getDomainBufferSlotImagPercentage(dsp::Complex<fl
 	return percentageIm;
 }
 
+void VASTFreqDomainViewport::setEditor(VASTAudioProcessorEditor* editor) { myEditor = editor; }
+
+void VASTFreqDomainViewport::setProcessor(VASTAudioProcessor* processor) { myProcessor = processor; }
+
+void VASTFreqDomainViewport::setWTEditor(VASTWaveTableEditorComponent* wtEditor) { myWtEditor = wtEditor; }
+
 dsp::Complex<float> VASTFreqDomainViewport::setDomainBufferSlotRealPercentage(double percentage, dsp::Complex<float> currentSlotVal) {
 	//https://www.rohde-schwarz.com/us/faq/converting-the-real-and-imaginary-numbers-to-magnitude-in-db-and-phase-in-degrees.-faq_78704-30465.html
 	//The formulas for calculating the magnitude and the phase from the real(Re) and imaginary(Im) numbers are :

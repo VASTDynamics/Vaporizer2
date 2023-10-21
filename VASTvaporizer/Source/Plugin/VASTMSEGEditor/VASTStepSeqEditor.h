@@ -15,7 +15,7 @@ public:
 	VASTStepSeqEditor(AudioProcessor* processor, VASTMSEGData* data, VASTMSEGData* datalive);
 	~VASTStepSeqEditor();
 
-	VASTMSEGData& getData() { return *myData; }
+	VASTMSEGData& getData();
 	void updateContent(bool force);
 	void timerCallback() override;
 	void startAutoUpdate();

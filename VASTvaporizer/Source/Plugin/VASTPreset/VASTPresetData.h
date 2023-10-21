@@ -113,10 +113,6 @@ private:
 	//ElementComparator
 	class VASTPresetElementCompareDates {
 	public:
-		int compareElements(VASTPresetElement* first, const VASTPresetElement* second)
-		{
-			return (first->presetdate < second->presetdate) ? -1
-				: ((first->presetdate == second->presetdate) ? 0 : 1);
-		}		
+		int compareElements(VASTPresetElement* first, const VASTPresetElement* second);
 	};
 };

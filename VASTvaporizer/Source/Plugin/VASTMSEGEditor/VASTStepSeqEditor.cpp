@@ -134,6 +134,8 @@ void VASTStepSeqEditor::handleBorderDisplay() {
 	}
 }
 
+inline VASTMSEGData& VASTStepSeqEditor::getData() { return *myData; }
+
 void VASTStepSeqEditor::updateContent(bool force)
 {
 	if (myData == nullptr) return;

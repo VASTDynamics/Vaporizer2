@@ -20,7 +20,7 @@ protected:
 public:
 
 	// set our one and only gain coefficient
-	void setLPF_g(float fLPFg){m_fLPF_g = fLPFg;}
+	void setLPF_g(float fLPFg);
 
 	// function to init
 	void init();

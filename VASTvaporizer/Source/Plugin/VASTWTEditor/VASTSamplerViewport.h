@@ -43,9 +43,9 @@ public:
 	void updateContent(bool force);
 	void setZoomFactor(int zoom);
 
-	void setEditor(VASTAudioProcessorEditor* editor) { myEditor = editor;};
-	void setProcessor(VASTAudioProcessor* processor) { myProcessor = processor; };
-	void setWTEditor (VASTWaveTableEditorComponent* wtEditor) { myWtEditor = wtEditor; };
+	void setEditor(VASTAudioProcessorEditor* editor);
+	void setProcessor(VASTAudioProcessor* processor);
+	void setWTEditor(VASTWaveTableEditorComponent* wtEditor);
 
 	void selectAll();
 	void selectNothing();
@@ -55,20 +55,8 @@ public:
 
 	void setSelectionFromWavSamples(int startSample, int endSample);
 	void setSelectionFromSound();
-	sSelectionWav* getSelection() {
-		return &m_selection;
-	}
-
-	bool isInterestedInFileDrag(const StringArray& files) override {
-		for (int i = 0; i < files.size(); i++) {
-			if (files[i].endsWithIgnoreCase(".wav")) return true;
-			if (files[i].endsWithIgnoreCase(".aif")) return true;
-			if (files[i].endsWithIgnoreCase(".flac")) return true;
-			if (files[i].endsWithIgnoreCase(".mp3")) return true;
-		}
-		return false;
-	};
-
+	sSelectionWav* getSelection();
+	bool isInterestedInFileDrag(const StringArray& files) override;
 	void filesDropped(const StringArray& files, int x, int y) override;
 	void lookAndFeelChanged() override;
 	bool m_needsUpdate = false;

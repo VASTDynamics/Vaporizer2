@@ -87,3 +87,5 @@ bool CVASTVca::isHardStop() {
 	}
 	return false;
 }
+
+bool CVASTVca::isNoteOff() { return m_bNoteOff; }

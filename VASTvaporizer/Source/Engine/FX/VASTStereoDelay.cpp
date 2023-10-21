@@ -248,6 +248,10 @@ void CVASTStereoDelay::prepareToPlay(double sampleRate, int samplesPerBlock) {
 	update();
 }
 
+inline void CVASTStereoDelay::setMode(MYUINT u) { m_uMode = u; }
+
+inline void CVASTStereoDelay::setDelayRatio(double d) { m_dDelayRatio = d; }
+
 void CVASTStereoDelay::update() {
 	float l_fDelayTime = 0.f;
 	if (*m_bDelaySynch == SWITCH::SWITCH_OFF) {

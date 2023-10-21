@@ -189,6 +189,18 @@ void CVASTAtomizer::parameterChanged(const String& parameterID, float newValue) 
 	}
 }
 
+inline void CVASTAtomizer::setHarmonics(float harmonics) { m_harmonics = harmonics; }
+
+inline void CVASTAtomizer::setDephase(float dephase) { m_dephase = dephase; }
+
+inline void CVASTAtomizer::setLowcut(float lowcut) { m_lowcut = lowcut; }
+
+inline void CVASTAtomizer::setHighcut(float highcut) { m_highcut = highcut; }
+
+inline void CVASTAtomizer::setEmphasis(float emphasis) { m_emphasis = emphasis; }
+
+inline void CVASTAtomizer::setGain(float gain) { m_gain = gain; }
+
 void CVASTAtomizer::updateTiming() {
 	updateLFOFreq();
 }
@@ -368,6 +380,8 @@ void CVASTAtomizer::processSTFTBlock(AudioSampleBuffer& block, const int numSamp
 	outputBufferReadPosition = currentOutputBufferReadPosition;
 	samplesSinceLastFFT = currentSamplesSinceLastFFT;
 }
+
+inline void CVASTAtomizer::setLFO(float lfo) { m_lfo = lfo; }
 
 void CVASTAtomizer::modification() {
 #ifdef _DEBUG

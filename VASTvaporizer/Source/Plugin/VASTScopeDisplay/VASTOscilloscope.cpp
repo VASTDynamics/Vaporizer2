@@ -64,6 +64,14 @@ void VASTOscilloscope::setToStandardRender() {
 	//mOpenGLContext.detach();
 }
 
+void VASTOscilloscope::setEditor(VASTAudioProcessorEditor* editor) { myEditor = editor; }
+
+void VASTOscilloscope::setProcessor(VASTAudioProcessor* processor) {
+	myProcessor = processor;
+}
+
+void VASTOscilloscope::setWTEditor(VASTWaveTableEditorComponent* wtEditor) { myWtEditor = wtEditor; }
+
 void VASTOscilloscope::setToOpenGLRender() {
 	/*
 	if (((myProcessor != nullptr) && !myProcessor->m_disableOpenGLGFX) || (myProcessor == nullptr)) {

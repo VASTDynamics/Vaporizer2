@@ -194,6 +194,85 @@ float CVASTSettings::midiNoteGetBaseFreq(MYUINT uMIDINote, float oscMasterTune) 
 	return freq;
 }
 
+double CVASTSettings::getMillisecondsPerBeat() {
+	double dawbpm = m_dPpqBpm;
+	if (dawbpm < 3.0)
+		dawbpm = 120.0; //standard value
+	double millisecondsPerBeat = (1.0 / dawbpm) * 60.0 * 1000.0;
+	return millisecondsPerBeat;
+}
+
+double CVASTSettings::getIntervalRatio(int beatindex) {
+	double l_dRatio = 0.0;
+	switch (beatindex) {
+	case TIMEBEATS::BEATS1_256:
+		l_dRatio = (1.0 / 256.0);
+		break;
+	case TIMEBEATS::BEATS1_128:
+		l_dRatio = (1.0 / 128.0);
+		break;
+	case TIMEBEATS::BEATS1_64:
+		l_dRatio = (1.0 / 64.0);
+		break;
+	case TIMEBEATS::BEATS1_32:
+		l_dRatio = (1.0 / 32.0);
+		break;
+	case TIMEBEATS::BEATS1_16:
+		l_dRatio = (1.0 / 16.0);
+		break;
+	case TIMEBEATS::BEATS1_9:
+		l_dRatio = (1.0 / 9.0);
+		break;
+	case TIMEBEATS::BEATS1_8:
+		l_dRatio = (1.0 / 8.0);
+		break;
+	case TIMEBEATS::BEATS1_4:
+		l_dRatio = (1.0 / 4.0);
+		break;
+	case TIMEBEATS::BEATS1_3:
+		l_dRatio = (1.0 / 3.0);
+		break;
+	case TIMEBEATS::BEATS1_2:
+		l_dRatio = (1.0 / 2.0);
+		break;
+	case TIMEBEATS::BEATS1:
+		l_dRatio = 1.0;
+		break;
+	case TIMEBEATS::BEATS3_2:
+		l_dRatio = 1.5;
+		break;
+	case TIMEBEATS::BEATS2:
+		l_dRatio = 2.0;
+		break;
+	case TIMEBEATS::BEATS3:
+		l_dRatio = 3.0;
+		break;
+	case TIMEBEATS::BEATS4:
+		l_dRatio = 4.0;
+		break;
+	case TIMEBEATS::BEATS8:
+		l_dRatio = 8.0;
+		break;
+	case TIMEBEATS::BEATS16:
+		l_dRatio = 16.0;
+		break;
+	case TIMEBEATS::BEATS32:
+		l_dRatio = 32.0;
+		break;
+	case TIMEBEATS::BEATS64:
+		l_dRatio = 64.0;
+		break;
+	}
+	return l_dRatio;
+}
+
+double CVASTSettings::getIntervalTimeFromDAWBeats(int beatindex) {
+	double l_dIntervalTime = 0.f;
+	double millisecondsPerBeat = getMillisecondsPerBeat();
+	l_dIntervalTime = millisecondsPerBeat * getIntervalRatio(beatindex);
+	return l_dIntervalTime;
+}
+
 void CVASTSettings::initModMatrix() {
 	for (int slot = 0; slot < M_MODMATRIX_MAX_SLOTS; slot++) {
 		initModMatrixValueLookupTable(slot);

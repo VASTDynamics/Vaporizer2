@@ -268,6 +268,13 @@ void VASTARPEditor::timerCallback() {
 		updateContent(false);
 }
 
+inline bool VASTARPEditor::isInterestedInFileDrag(const StringArray& files) {
+	for (int i = 0; i < files.size(); i++) {
+		if (files[i].endsWithIgnoreCase(".mid")) return true;
+	}
+	return false;
+}
+
 void VASTARPEditor::filesDropped(const StringArray& files, int x, int y) {
 	String file = files[0];
 	File midiFile = File(file);

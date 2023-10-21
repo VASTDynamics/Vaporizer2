@@ -21,9 +21,7 @@ public:
 
 	void setAudioProcessor(VASTAudioProcessor &processor);
 	VASTAudioProcessor* getAudioProcessor();
-	void setModString(const juce::String &dragText) {
-		ddLabel->setText(dragText, NotificationType::dontSendNotification);
-	}
+	void setModString(const juce::String& dragText);
 	void lookAndFeelChanged() override;
 	void editorShown(Label *, TextEditor &) override;
 	void labelTextChanged(Label* labelThatHasChanged) override;

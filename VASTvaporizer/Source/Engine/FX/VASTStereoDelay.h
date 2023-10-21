@@ -44,8 +44,8 @@ public:
 
 	//==============================================================================
 
-	void setMode(MYUINT u){m_uMode = u;}
-	void setDelayRatio(double d){m_dDelayRatio = d;}
+	void setMode(MYUINT u);
+	void setDelayRatio(double d);
 
 	void update();
 	bool processAudioFrame(float* pInputBuffer, float* pInputBufferUnfiltered, float* pOutputBuffer, MYUINT uNumInputChannels, MYUINT uNumOutputChannels);

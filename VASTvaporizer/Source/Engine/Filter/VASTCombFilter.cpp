@@ -13,6 +13,17 @@ CCombFilter::~CCombFilter(void)
 {
 }
 	
+
+// set gain using RT60 time
+
+void CCombFilter::setComb_g_with_RTSixty(float fRT)
+{
+	float fExponent = -3.0 * m_fDelayInSamples * (1.0 / m_nSampleRate);
+	fRT /= 1000.0; // RT is in mSec!
+
+	m_fComb_g = pow((float)10.0, fExponent / fRT);
+}
+
 bool CCombFilter::processAudio(float* pInput, float* pOutput)
 {
 	// read the delay line to get w(n-D); call base class

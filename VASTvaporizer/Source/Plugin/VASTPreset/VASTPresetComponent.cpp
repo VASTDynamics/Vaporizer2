@@ -573,6 +573,12 @@ void VASTValueTreeItem::valueTreePropertyChanged(ValueTree&, const Identifier&)
 	repaintItem();
 }
 
+void VASTValueTreeItem::valueTreeChildAdded(ValueTree& parentTree, ValueTree&) { treeChildrenChanged(parentTree); }
+
+void VASTValueTreeItem::valueTreeChildRemoved(ValueTree& parentTree, ValueTree&, int) { treeChildrenChanged(parentTree); }
+
+void VASTValueTreeItem::valueTreeChildOrderChanged(ValueTree& parentTree, int, int) { treeChildrenChanged(parentTree); }
+
 void VASTValueTreeItem::treeChildrenChanged(const ValueTree& parentTree)
 {
 	if (parentTree == tree)
@@ -842,6 +848,8 @@ void VASTPresetComponent::reloadPresets() {
 	setSearchVector();
 }
 
+juce::TreeView* VASTPresetComponent::getTreeViewFiles() { return treeViewFiles.get(); }
+
 void VASTPresetComponent::buildTreeContent() {
 
 	//files
@@ -1069,6 +1077,8 @@ bool VASTPresetComponent::keyPressed(const KeyPress& key, Component* originating
 		((VASTComboPreset*)myBox)->removePopup();
 	return true;
 }
+
+TextEditor* VASTPresetComponent::getSearchTextEditor() { return m_searchText.get(); }
 
 void VASTPresetComponent::setSearchVector() {
 	myProcessor->m_presetData.mSearchVector.clear();

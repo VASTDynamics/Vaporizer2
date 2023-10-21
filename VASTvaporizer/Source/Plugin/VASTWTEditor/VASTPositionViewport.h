@@ -33,9 +33,9 @@ public:
 	void updateContentAsync();
 	void setZoomFactor(int zoom);
 
-	void setEditor(VASTAudioProcessorEditor* editor) { myEditor = editor;};
-	void setProcessor(VASTAudioProcessor* processor) { myProcessor = processor; };
-	void setWTEditor (VASTWaveTableEditorComponent* wtEditor) { myWtEditor = wtEditor; };
+	void setEditor(VASTAudioProcessorEditor* editor);
+	void setProcessor(VASTAudioProcessor* processor);
+	void setWTEditor(VASTWaveTableEditorComponent* wtEditor);
 
 	//bool keyPressed(const KeyPress& key, Component* originatingComponent) override;
 

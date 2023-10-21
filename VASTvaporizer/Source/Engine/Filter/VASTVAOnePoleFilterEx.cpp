@@ -30,6 +30,18 @@ double CVAOnePoleFilterEx::getFeedbackOutput()
 	return m_dBeta*(m_dZ1 + m_dFeedback*m_dDelta);
 }
 
+// provide access to set our feedback input
+
+void CVAOnePoleFilterEx::setFeedback(double fb) { m_dFeedback = fb; }
+
+// for s_N only
+
+double CVAOnePoleFilterEx::getStorageValue() { return m_dZ1; }
+
+// flush buffer
+
+void CVAOnePoleFilterEx::reset() { m_dZ1 = 0; }
+
 // do the filter
 double CVAOnePoleFilterEx::doFilter(double xn)
 {
