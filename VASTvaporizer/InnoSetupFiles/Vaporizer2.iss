@@ -2,6 +2,9 @@
 
 ;#define AppVer "3.3.5"
 #define PluginBaseName = "Vaporizer2"
+#ifndef AppVer
+#define AppVer "3.3.5"
+#endif
 
 [Setup]
 ArchitecturesInstallIn64BitMode=x64
@@ -282,8 +285,6 @@ begin
 end;  
 
 procedure InitializeWizard;
-//var 
-  //retVal : Boolean; 
 begin    
   WizardForm.ComponentsList.OnClickCheck := @ComponentsListClickCheck;
   TypesComboOnChangePrev := WizardForm.TypesCombo.OnChange;
