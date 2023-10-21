@@ -1,6 +1,6 @@
 ; https://www.kvraudio.com/forum/viewtopic.php?t=501615
 
-#define AppVer "3.3.5"
+;#define AppVer "3.3.5"
 #define PluginBaseName = "Vaporizer2"
 
 [Setup]

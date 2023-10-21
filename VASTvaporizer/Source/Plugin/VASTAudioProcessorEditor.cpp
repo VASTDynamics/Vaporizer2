@@ -300,10 +300,10 @@ void VASTAudioProcessorEditor::setActiveLookAndFeel(int no) {
 		vaporizerComponent->setLookAndFeel(getProcessor()->getCurrentVASTLookAndFeel());
 	//LookAndFeel::setDefaultLookAndFeel(getProcessor()->getCurrentVASTLookAndFeel()); //causes problems with standalone app
 }
-inline VASTLookAndFeel* VASTAudioProcessorEditor::getCurrentVASTLookAndFeel() {
+
+VASTLookAndFeel* VASTAudioProcessorEditor::getCurrentVASTLookAndFeel() {
 	return getProcessor()->getCurrentVASTLookAndFeel();
 }
-;
 
 void VASTAudioProcessorEditor::showNewerVersionPopup() {
 	getProcessor()->m_showNewerVersionPopup = false;

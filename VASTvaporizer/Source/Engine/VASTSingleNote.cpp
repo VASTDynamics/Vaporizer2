@@ -835,6 +835,10 @@ void CVASTSingleNote::samplerUpdatePitch(VASTSamplerSound* sound, bool force) {
 	}
 }
 
+int CVASTSingleNote::getVoiceNo() {
+	return mVoiceNo;
+}
+
 void CVASTSingleNote::updateDetune(int bank, float detuneValue, bool updateFrequency) {
 	int numOscs = 0;
 	if (bank == 0)
@@ -2241,7 +2245,7 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 		//VCA
 		//if (!routingBuffers.OscVoices[0][mVoiceNo]->hasBeenCleared()) {
 		if (uNumOscAOscsPlaying > 0) {
-			const float* envBuffer;
+			const float* envBuffer = nullptr;
 			if (*m_Set->m_State->m_uVCAEnv_OscA == MSEGENV::MSEG1) {
 				envBuffer = routingBuffers.MSEGBuffer[0][mVoiceNo]->getReadPointer(0, startSample);
 			}
@@ -2257,9 +2261,10 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 			else if (*m_Set->m_State->m_uVCAEnv_OscA == MSEGENV::MSEG5) {
 				envBuffer = routingBuffers.MSEGBuffer[4][mVoiceNo]->getReadPointer(0, startSample);
 			}
-			FloatVectorOperations::multiply(routingBuffers.OscVoices[0][mVoiceNo]->getWritePointer(0, startSample), envBuffer, numSamples); //voice = voice * mseg
-			FloatVectorOperations::multiply(routingBuffers.OscVoices[0][mVoiceNo]->getWritePointer(1, startSample), envBuffer, numSamples); //voice = voice * mseg
-
+			if (envBuffer) {
+				FloatVectorOperations::multiply(routingBuffers.OscVoices[0][mVoiceNo]->getWritePointer(0, startSample), envBuffer, numSamples); //voice = voice * mseg
+				FloatVectorOperations::multiply(routingBuffers.OscVoices[0][mVoiceNo]->getWritePointer(1, startSample), envBuffer, numSamples); //voice = voice * mseg
+			}
 			routingBuffers.OscBuffer[0]->addFrom(0, startSample, routingBuffers.OscVoices[0][mVoiceNo]->getReadPointer(0, startSample), numSamples);
 			routingBuffers.OscBuffer[0]->addFrom(1, startSample, routingBuffers.OscVoices[0][mVoiceNo]->getReadPointer(1, startSample), numSamples);
 
@@ -2269,7 +2274,7 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 		}
 		//if (!routingBuffers.OscVoices[1][mVoiceNo]->hasBeenCleared()) {
 		if (uNumOscBOscsPlaying > 0) {
-			const float* envBuffer;
+			const float* envBuffer = nullptr;
 			if (*m_Set->m_State->m_uVCAEnv_OscB == MSEGENV::MSEG1) {
 				envBuffer = routingBuffers.MSEGBuffer[0][mVoiceNo]->getReadPointer(0, startSample);
 			}
@@ -2285,18 +2290,19 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 			else if (*m_Set->m_State->m_uVCAEnv_OscB == MSEGENV::MSEG5) {
 				envBuffer = routingBuffers.MSEGBuffer[4][mVoiceNo]->getReadPointer(0, startSample);
 			}
-			FloatVectorOperations::multiply(routingBuffers.OscVoices[1][mVoiceNo]->getWritePointer(0, startSample), envBuffer, numSamples); //voice = voice * mseg
-			FloatVectorOperations::multiply(routingBuffers.OscVoices[1][mVoiceNo]->getWritePointer(1, startSample), envBuffer, numSamples); //voice = voice * mseg
+			if (envBuffer) {
+				FloatVectorOperations::multiply(routingBuffers.OscVoices[1][mVoiceNo]->getWritePointer(0, startSample), envBuffer, numSamples); //voice = voice * mseg
+				FloatVectorOperations::multiply(routingBuffers.OscVoices[1][mVoiceNo]->getWritePointer(1, startSample), envBuffer, numSamples); //voice = voice * mseg
+			}
 			routingBuffers.OscBuffer[1]->addFrom(0, startSample, routingBuffers.OscVoices[1][mVoiceNo]->getReadPointer(0, startSample), numSamples);
-			routingBuffers.OscBuffer[1]->addFrom(1, startSample, routingBuffers.OscVoices[1][mVoiceNo]->getReadPointer(1, startSample), numSamples);
-
+			routingBuffers.OscBuffer[1]->addFrom(1, startSample, routingBuffers.OscVoices[1][mVoiceNo]->getReadPointer(1, startSample), numSamples);			
 			//when to reset filter?		
 			//m_bqEndLowShelfL[1].processSamples(routingBuffers.OscBuffer[1]->getWritePointer(0, startSample), numSamples);
 			//m_bqEndLowShelfR[1].processSamples(routingBuffers.OscBuffer[1]->getWritePointer(1, startSample), numSamples);
 		}
 		//if (!routingBuffers.OscVoices[2][mVoiceNo]->hasBeenCleared()) {
 		if (uNumOscCOscsPlaying > 0) {
-			const float* envBuffer;
+			const float* envBuffer = nullptr;
 			if (*m_Set->m_State->m_uVCAEnv_OscC == MSEGENV::MSEG1) {
 				envBuffer = routingBuffers.MSEGBuffer[0][mVoiceNo]->getReadPointer(0, startSample);
 			}
@@ -2312,8 +2318,10 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 			else if (*m_Set->m_State->m_uVCAEnv_OscC == MSEGENV::MSEG5) {
 				envBuffer = routingBuffers.MSEGBuffer[4][mVoiceNo]->getReadPointer(0, startSample);
 			}
-			FloatVectorOperations::multiply(routingBuffers.OscVoices[2][mVoiceNo]->getWritePointer(0, startSample), envBuffer, numSamples); //voice = voice * mseg
-			FloatVectorOperations::multiply(routingBuffers.OscVoices[2][mVoiceNo]->getWritePointer(1, startSample), envBuffer, numSamples); //voice = voice * mseg
+			if (envBuffer) {
+				FloatVectorOperations::multiply(routingBuffers.OscVoices[2][mVoiceNo]->getWritePointer(0, startSample), envBuffer, numSamples); //voice = voice * mseg
+				FloatVectorOperations::multiply(routingBuffers.OscVoices[2][mVoiceNo]->getWritePointer(1, startSample), envBuffer, numSamples); //voice = voice * mseg
+			}
 			routingBuffers.OscBuffer[2]->addFrom(0, startSample, routingBuffers.OscVoices[2][mVoiceNo]->getReadPointer(0, startSample), numSamples);
 			routingBuffers.OscBuffer[2]->addFrom(1, startSample, routingBuffers.OscVoices[2][mVoiceNo]->getReadPointer(1, startSample), numSamples);
 
@@ -2323,7 +2331,7 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 		}
 		//if (!routingBuffers.OscVoices[3][mVoiceNo]->hasBeenCleared()) {
 		if (uNumOscDOscsPlaying > 0) {
-			const float* envBuffer;
+			const float* envBuffer = nullptr;
 			if (*m_Set->m_State->m_uVCAEnv_OscD == MSEGENV::MSEG1) {
 				envBuffer = routingBuffers.MSEGBuffer[0][mVoiceNo]->getReadPointer(0, startSample);
 			}
@@ -2339,18 +2347,19 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 			else if (*m_Set->m_State->m_uVCAEnv_OscD == MSEGENV::MSEG5) {
 				envBuffer = routingBuffers.MSEGBuffer[4][mVoiceNo]->getReadPointer(0, startSample);
 			}
-			FloatVectorOperations::multiply(routingBuffers.OscVoices[3][mVoiceNo]->getWritePointer(0, startSample), envBuffer, numSamples); //voice = voice * mseg
-			FloatVectorOperations::multiply(routingBuffers.OscVoices[3][mVoiceNo]->getWritePointer(1, startSample), envBuffer, numSamples); //voice = voice * mseg
+			if (envBuffer) {
+				FloatVectorOperations::multiply(routingBuffers.OscVoices[3][mVoiceNo]->getWritePointer(0, startSample), envBuffer, numSamples); //voice = voice * mseg
+				FloatVectorOperations::multiply(routingBuffers.OscVoices[3][mVoiceNo]->getWritePointer(1, startSample), envBuffer, numSamples); //voice = voice * mseg
+			}
 			routingBuffers.OscBuffer[3]->addFrom(0, startSample, routingBuffers.OscVoices[3][mVoiceNo]->getReadPointer(0, startSample), numSamples);
-			routingBuffers.OscBuffer[3]->addFrom(1, startSample, routingBuffers.OscVoices[3][mVoiceNo]->getReadPointer(1, startSample), numSamples);
-			
+			routingBuffers.OscBuffer[3]->addFrom(1, startSample, routingBuffers.OscVoices[3][mVoiceNo]->getReadPointer(1, startSample), numSamples);		
 			//when to reset filter?		
 			//m_bqEndLowShelfL[3].processSamples(routingBuffers.OscBuffer[0]->getWritePointer(0, startSample), numSamples);
 			//m_bqEndLowShelfR[3].processSamples(routingBuffers.OscBuffer[0]->getWritePointer(1, startSample), numSamples);
 		}
 		//if (!routingBuffers.NoiseVoices[mVoiceNo]->hasBeenCleared()) {
 		if (uNumOscNoisePlaying > 0) {
-			const float* envBuffer;
+			const float* envBuffer = nullptr;;
 			if (*m_Set->m_State->m_uVCAEnv_Noise == MSEGENV::MSEG1) {
 				envBuffer = routingBuffers.MSEGBuffer[0][mVoiceNo]->getReadPointer(0, startSample);
 			}
@@ -2373,7 +2382,7 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 		}		
 		//if (!routingBuffers.SamplerVoices[mVoiceNo]->hasBeenCleared()) {
 		if (*m_Set->m_State->m_bSamplerOnOff == SWITCH::SWITCH_ON) {
-			const float* envBuffer;
+			const float* envBuffer = nullptr;
 			if (*m_Set->m_State->m_uVCAEnv_Sampler == MSEGENV::MSEG1) {
 				envBuffer = routingBuffers.MSEGBuffer[0][mVoiceNo]->getReadPointer(0, startSample);
 			}
@@ -2389,8 +2398,10 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 			else if (*m_Set->m_State->m_uVCAEnv_Sampler == MSEGENV::MSEG5) {
 				envBuffer = routingBuffers.MSEGBuffer[4][mVoiceNo]->getReadPointer(0, startSample);
 			}
-			FloatVectorOperations::multiply(routingBuffers.SamplerVoices[mVoiceNo]->getWritePointer(0, startSample), envBuffer, numSamples); //voice = voice * mseg
-			FloatVectorOperations::multiply(routingBuffers.SamplerVoices[mVoiceNo]->getWritePointer(1, startSample), envBuffer, numSamples); //voice = voice * mseg
+			if (envBuffer) {
+				FloatVectorOperations::multiply(routingBuffers.SamplerVoices[mVoiceNo]->getWritePointer(0, startSample), envBuffer, numSamples); //voice = voice * mseg
+				FloatVectorOperations::multiply(routingBuffers.SamplerVoices[mVoiceNo]->getWritePointer(1, startSample), envBuffer, numSamples); //voice = voice * mseg
+			}
 			routingBuffers.SamplerBuffer->addFrom(0, startSample, routingBuffers.SamplerVoices[mVoiceNo]->getReadPointer(0, startSample), numSamples);
 			routingBuffers.SamplerBuffer->addFrom(1, startSample, routingBuffers.SamplerVoices[mVoiceNo]->getReadPointer(1, startSample), numSamples);
 		}	

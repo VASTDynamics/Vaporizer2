@@ -97,9 +97,7 @@ public:
 	//==============================================================================
 	void samplerUpdatePitch(VASTSamplerSound* sound, bool force);
 	int m_samplerMidiNoteNumber = 0;
-	int getVoiceNo() { 
-		return mVoiceNo; 
-	};
+	int getVoiceNo();
 	ULong64_t m_startPlayTimestamp = 0;
 
 	void setWTPosSmooth(int bank);

@@ -9,6 +9,7 @@ post_build_script_win.bat
 build_script_win.bat
 MacOS Build Chain.docx
 package_macos.sh
+package_win.bat
 *.o
 *.dll
 *.so
