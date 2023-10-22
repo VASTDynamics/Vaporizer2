@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 clear
-# declare -a targets=("macOS64" "macOS64SSE2" "macOS32")
-declare -a targets=("macOS64SSE2")
+declare -a targets=("macOS64" "macOS64SSE2" "macOS32")
 echo Building VAST Dynamics Software Vaporizer2 plugin
 echo Cleaning
 read -p "Press enter to continue"
