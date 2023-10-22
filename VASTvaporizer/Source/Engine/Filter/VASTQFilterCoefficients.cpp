@@ -3,7 +3,7 @@
 #include "../VASTEngineHeader.h"
 #include "../Utils/VASTSynthfunctions.h"  //for pow
 #ifdef __aarch64__ //arm64
-	#include "sse2neon.h"
+	#include "../../sse2neon.h"
 #else
 	#include "emmintrin.h"
 #endif

@@ -4,7 +4,7 @@ VAST Dynamics Audio Software (TM)
 #pragma once
 #include "../VASTEngineHeader.h"
 #ifdef __aarch64__ //arm64
-	#include "sse2neon.h"
+	#include "../../sse2neon.h"
 #else
 	#include "immintrin.h"
 #endif

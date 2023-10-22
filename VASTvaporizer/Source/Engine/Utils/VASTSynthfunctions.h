@@ -12,6 +12,11 @@ VAST Dynamics Audio Software (TM)
 #include <cmath>
 #include <string>
 #include <stdio.h>
+#ifdef __aarch64__ //arm64
+    #include "../../sse2neon.h"
+#else
+    #include "immintrin.h"
+#endif
 
 #define CONVEX_LIMIT 0.00398107
 #define CONCAVE_LIMIT 0.99601893
@@ -447,10 +452,6 @@ inline float megapanR(float pos)
 }
 
 //portable_instrinsics.h
-#if LINUX
-#include <immintrin.h>
-#endif
-
 #define vFloat __m128
 
 #define vZero _mm_setzero_ps()
@@ -500,9 +501,6 @@ inline float get1f(__m128 m, int i)
 {
 	return *((float*)&m + i);
 }
-
-//CHVAST SURGE
-
 
 //VAST for chunk save files
 /*

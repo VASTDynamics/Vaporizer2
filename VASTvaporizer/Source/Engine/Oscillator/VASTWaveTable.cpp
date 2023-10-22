@@ -6,7 +6,6 @@ VAST Dynamics Audio Software (TM)
 #include "VASTWaveTable.h"
 #include "VASTWaveTableOscillator.h"
 #include "../VASTSettings.h"
-#include "../Utils/VASTFloatVectorOperations.h" //temporary until standard added
 #include <chrono>
 #include <math.h>
 #include "../../muFFT/fft.h"

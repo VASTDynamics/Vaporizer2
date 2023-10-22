@@ -8,7 +8,7 @@
 #include "../VASTSingleNote.h"
 #include "../VASTVcf.h"
 #ifdef __aarch64__ //arm64
-	#include "sse2neon.h"
+	#include "../../sse2neon.h"
 #else
 	#include "emmintrin.h"
 #endif
@@ -2558,7 +2558,7 @@ __m128 VASTQFilter::SINUS_SSE2(__m128 in, __m128 drive)
 
 	return x;
 }
-
+/*
 #if !_M_X64
 __m128 VASTQFilter::ASYM_SSE1(__m128 in, __m128 drive)
 {
@@ -2601,6 +2601,7 @@ __m128 VASTQFilter::ASYM_SSE1(__m128 in, __m128 drive)
 	return x;
 }
 #endif
+ */
 
 __m128 VASTQFilter::ASYM_SSE2(__m128 in, __m128 drive)
 {

@@ -893,9 +893,8 @@ namespace juce
 	void JUCE_CALLTYPE VASTFloatVectorOperations::convertFloatToFixed(float* dest, const float* src, float multiplier, int num) noexcept
 	{
 #if JUCE_USE_ARM_NEON
-		JUCE_PERFORM_VEC_OP_SRC_DEST(dest[i] = src[i] * multiplier,
-			vmulq_n_f32(vcvtq_f32_s32(vld1q_s32(src)), multiplier),
-			JUCE_LOAD_NONE, JUCE_INCREMENT_SRC_DEST, )
+		//TODO
+        
 #else
 		JUCE_PERFORM_VEC_OP_SRC_DEST(dest[i] = (float)src[i] * multiplier,
 			Mode::mul(mult, _mm_cvtepi32_ps(_mm_cvttps_epi32(_mm_loadu_ps(src)))),
@@ -908,8 +907,9 @@ namespace juce
 	//Added TS
 	void JUCE_CALLTYPE VASTFloatVectorOperations::getFraction(float* dest, const float* src, int num) noexcept
 	{
-#if JUCE_USE_VDSP_FRAMEWORK
-		//??
+#if JUCE_USE_ARM_NEON
+            //TODO
+        
 #else
 		JUCE_PERFORM_VEC_OP_SRC_DEST(dest[i] = src[i] - int(src[i]),
 			Mode::sub(s, _mm_cvtepi32_ps(_mm_cvttps_epi32(_mm_loadu_ps(src)))),

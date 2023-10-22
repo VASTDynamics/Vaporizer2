@@ -11,7 +11,7 @@ All modulators tested: OK
 #include "VASTEffect.h"
 #include <math.h>
 #ifdef __aarch64__ //arm64
-	#include "sse2neon.h"
+	#include "../../sse2neon.h"
 #else
 	#include "emmintrin.h"
 #endif
