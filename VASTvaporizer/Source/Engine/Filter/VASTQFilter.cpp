@@ -7,7 +7,11 @@
 #include "../VASTEngineHeader.h"
 #include "../VASTSingleNote.h"
 #include "../VASTVcf.h"
-#include "emmintrin.h"
+#ifdef __aarch64__ //arm64
+	#include "sse2neon.h"
+#else
+	#include "emmintrin.h"
+#endif
 
 #define c_blocksize_q 32
 #define c_max_os_factor_q 4

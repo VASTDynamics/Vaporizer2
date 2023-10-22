@@ -3,7 +3,11 @@ VAST Dynamics Audio Software (TM)
 */
 #pragma once
 #include "../VASTEngineHeader.h"
-#include "immintrin.h"
+#ifdef __aarch64__ //arm64
+	#include "sse2neon.h"
+#else
+	#include "immintrin.h"
+#endif
 
 //http://www.juce.com/forum/topic/simple-sse-wrapper
 

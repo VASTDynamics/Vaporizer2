@@ -10,7 +10,11 @@ All modulators tested: OK
 #include "../../Plugin/VASTAudioProcessor.h"
 #include "VASTEffect.h"
 #include <math.h>
-#include "emmintrin.h"
+#ifdef __aarch64__ //arm64
+	#include "sse2neon.h"
+#else
+	#include "emmintrin.h"
+#endif
 
 CVASTWaveshaper::CVASTWaveshaper(VASTAudioProcessor* processor, int busnr) {
 	my_processor = processor;
