@@ -643,9 +643,9 @@
                        linkTimeOptimisation="1" defines="_MACOSX _MACOSX64BIT NDEBUG  SSE_AVX=AVX"
                        enablePluginBinaryCopyStep="1" vstBinaryLocation="/Library/Audio/Plug-Ins/VST/"
                        auBinaryLocation="/Library/Audio/Plug-Ins/Components/" headerPath="/Users/setup/Library/Developer/VST/VST_SDK/VST2_SDK"
-                       customXcodeFlags="VALID_ARCHS = &quot;x86_64&quot;,  CLANG_X86_VECTOR_INSTRUCTIONS=avx"
-                       vst3BinaryLocation="/Library/Audio/Plug-Ins/VST3/" fastMath="1"
-                       stripLocalSymbols="1" aaxBinaryLocation="/Library/Application Support/Avid/Audio/Plug-Ins/"/>
+                       customXcodeFlags="VALID_ARCHS = &quot;x86_64 arm64&quot;" vst3BinaryLocation="/Library/Audio/Plug-Ins/VST3/"
+                       fastMath="1" stripLocalSymbols="1" aaxBinaryLocation="/Library/Application Support/Avid/Audio/Plug-Ins/"
+                       userNotes="old xcode flags:&#10;VALID_ARCHS = &quot;x86_64&quot;,  CLANG_X86_VECTOR_INSTRUCTIONS=avx"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_gui_extra" path="/Users/d026198/Desktop/JUCE-OSX/modules"/>
