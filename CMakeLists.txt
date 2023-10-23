@@ -9,6 +9,11 @@ set(AAX_SDK_LOCATION "" CACHE STRING "Avid AAX SDK directory for non-FOSS builds
 set(ASIO_SDK_LOCATION "" CACHE STRING "Steinberg ASIO SDK directory for non-FOSS builds")
 option(BUILD_AVX "Build AVX optimized code" ON)
 option(BUILD_32 "Build for 32bit" OFF)
+option(VASTBUILD "Build compatibility version for existing licenses distributed by VAST Dynamics Software as installers" OFF)
+
+if(EXISTS "VASTvaporizer/Source/Plugin/VASTCommercial/VASTLicense.h")
+  set(VASTBUILD ON CACHE BOOL "Build compatibility version for existing licenses distributed by VAST Dynamics Software as installers" FORCE)
+endif()
 
 message("Building VAST Dynamics Vaporizer2 plugin, version ${PLUGIN_VERSION} on architecture: ${CMAKE_GENERATOR_PLATFORM}")
 
@@ -74,18 +79,18 @@ juce_generate_juce_header(${PROJECT_NAME})
 if (WIN32)
   message( STATUS "Building on Windows ${CMAKE_GENERATOR_PLATFORM} with AVX flags: ${BUILD_AVX}")
   if (BUILD_32)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE _WIN32 _WIN32BIT NDEBUG)
     if (BUILD_AVX)     	  
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX")
-         target_compile_definitions(${PROJECT_NAME} PRIVATE _WIN32 _WIN32BIT NDEBUG)
     else()
-        target_compile_definitions(${PROJECT_NAME} PRIVATE _WIN32 _WIN32BIT NDEBUG _SSE2_VERSION)
+        target_compile_definitions(${PROJECT_NAME} PRIVATE _SSE2_VERSION)
     endif(BUILD_AVX)
   else()#64bit
+    target_compile_definitions(${PROJECT_NAME} PRIVATE _WIN64 _WIN64BIT NDEBUG)
     if (BUILD_AVX)  
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX")
-        target_compile_definitions(${PROJECT_NAME} PRIVATE _WIN64 _WIN64BIT NDEBUG)
+		  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX")
     else()
-     	target_compile_definitions(${PROJECT_NAME} PRIVATE _WIN64 _WIN64BIT NDEBUG _SSE2_VERSION)   
+     	target_compile_definitions(${PROJECT_NAME} PRIVATE _SSE2_VERSION)   
     endif(BUILD_AVX)
   endif()
 
@@ -99,18 +104,18 @@ endif(WIN32)
 if (APPLE)
   message( STATUS "Building on Apple macOS ${CMAKE_GENERATOR_PLATFORM} with AVX flags: ${BUILD_AVX}")
   if (BUILD_32)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE _MACOSX _MACOSX32BIT NDEBUG)
     if (BUILD_AVX)     	  
-	  # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX")
-        target_compile_definitions(${PROJECT_NAME} PRIVATE _MACOSX _MACOSX32BIT NDEBUG)
+	    # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX")
     else()
-        target_compile_definitions(${PROJECT_NAME} PRIVATE _MACOSX _MACOSX32BIT NDEBUG _SSE2_VERSION)
+      target_compile_definitions(${PROJECT_NAME} PRIVATE _SSE2_VERSION)
     endif(BUILD_AVX)
   else()#64bit
+    target_compile_definitions(${PROJECT_NAME} PRIVATE _MACOSX _MACOSX64BIT NDEBUG)
     if (BUILD_AVX)  
-		# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX")  
-        target_compile_definitions(${PROJECT_NAME} PRIVATE _MACOSX _MACOSX64BIT NDEBUG)
+		  # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX")  
     else()
-        target_compile_definitions(${PROJECT_NAME} PRIVATE _MACOSX _MACOSX64BIT NDEBUG _SSE2_VERSION)
+        target_compile_definitions(${PROJECT_NAME} PRIVATE _SSE2_VERSION)
     endif(BUILD_AVX)
   endif()      
 endif(APPLE)
@@ -279,6 +284,14 @@ target_sources(${PROJECT_NAME}
     "VASTvaporizer/Source/muFFT/fft.c"
     "VASTvaporizer/Source/muFFT/kernel.c"
 )
+if (VASTBUILD) 
+  target_sources(${PROJECT_NAME}
+  PRIVATE
+    "VASTvaporizer/Source/Plugin/VASTCommercial/VASTLicense.h"
+    "VASTvaporizer/Source/Plugin/VASTCommercial/VASTLicenseEditor.h"
+  )
+  target_compile_definitions(${PROJECT_NAME} PRIVATE VASTBUILD)
+endif ()
 
 juce_add_binary_data(VASTvaporizer2_BinaryData
   SOURCES
