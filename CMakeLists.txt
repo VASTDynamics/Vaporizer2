@@ -15,7 +15,7 @@ if(EXISTS "VASTvaporizer/Source/Plugin/VASTCommercial/VASTLicense.h")
   set(VASTBUILD ON CACHE BOOL "Build compatibility version for existing licenses distributed by VAST Dynamics Software as installers" FORCE)
 endif()
 
-message("Building VAST Dynamics Vaporizer2 plugin, version ${PLUGIN_VERSION} on architecture: ${CMAKE_GENERATOR_PLATFORM}")
+message(STATUS "Building VAST Dynamics Vaporizer2 plugin, version ${PLUGIN_VERSION} on architecture: ${CMAKE_GENERATOR_PLATFORM}")
 
 if(NOT USE_SYSTEM_JUCE)
   message(STATUS "Using JUCE from source tree")
@@ -285,6 +285,7 @@ target_sources(${PROJECT_NAME}
     "VASTvaporizer/Source/muFFT/kernel.c"
 )
 if (VASTBUILD) 
+  message( STATUS "Building as VASTBUILD")
   target_sources(${PROJECT_NAME}
   PRIVATE
     "VASTvaporizer/Source/Plugin/VASTCommercial/VASTLicense.h"

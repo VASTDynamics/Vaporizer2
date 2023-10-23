@@ -24,9 +24,9 @@ CreateAppDir=yes
 DisableDirPage=no
 DisableWelcomePage=no
 LanguageDetectionMethod=uilanguage
-LicenseFile=VASTvaporizer\InnoSetupFiles\license.txt
+LicenseFile=license.txt
 OutputBaseFilename=Vaporizer2_installer_win_{#AppVer}
-SetupIconFile=VASTvaporizer\InnoSetupFiles\logokreisvdalpha.ico
+SetupIconFile=logokreisvdalpha.ico
 ShowLanguageDialog=no
 VersionInfoCompany=VAST Dynamics Software
 VersionInfoCopyright=VAST Dynamics Software
@@ -34,8 +34,8 @@ VersionInfoDescription=VAST Dynamics Vaporizer 2 {#AppVer}
 VersionInfoProductName={#PluginBaseName}
 VersionInfoProductVersion={#AppVer}
 VersionInfoVersion={#AppVer}
-WizardImageFile=VASTvaporizer\InnoSetupFiles\vasttitle_410x797.bmp,VASTvaporizer\InnoSetupFiles\vasttitle_164x314.bmp,VASTvaporizer\InnoSetupFiles\vasttitle_273x556.bmp
-WizardSmallImageFile=VASTvaporizer\InnoSetupFiles\logokreisvdalpha_83x80.bmp
+WizardImageFile=vasttitle_410x797.bmp,vasttitle_164x314.bmp,vasttitle_273x556.bmp
+WizardSmallImageFile=logokreisvdalpha_83x80.bmp
 WizardImageStretch=false
 WizardSizePercent=120
 ;SignTool=signtool
@@ -94,64 +94,64 @@ Type: files; Name: "{code:GetPluginDir|3}\VASTvaporizer2_SSE2.vst3"
 
 [Files]
 ;Intrinsics Detector
-Source: "VASTvaporizer\InstallerFiles\DetectIntrinsicsWin32.exe"; DestDir: "{app}";
+Source: "..\InstallerFiles\DetectIntrinsicsWin32.exe"; DestDir: "{app}";
 
 ;VST2
-Source: "cmake-build\x64\VASTvaporizer2_64_artefacts\VST\VASTvaporizer2_64.dll"; DestDir: "{app}"; Components: vst_win64; Flags: ignoreversion; 
-Source: "cmake-build\x64\VASTvaporizer2_64_artefacts\VST\VASTvaporizer2_64.dll"; DestDir: {code:GetPluginDir|0}; Components: vst_win64; Flags: ignoreversion
+Source: "..\..\cmake-build\x64\VASTvaporizer2_64_artefacts\Release\VST\VASTvaporizer2_64.dll"; DestDir: "{app}"; Components: vst_win64; Flags: ignoreversion; 
+Source: "..\..\cmake-build\x64\VASTvaporizer2_64_artefacts\Release\VST\VASTvaporizer2_64.dll"; DestDir: {code:GetPluginDir|0}; Components: vst_win64; Flags: ignoreversion
 
-Source: "cmake-build\Win32\VASTvaporizer2_artefacts\VST\VASTvaporizer2.dll"; DestDir: "{app}"; Components: vst_win32; Flags: ignoreversion
-Source: "cmake-build\Win32\VASTvaporizer2_artefacts\VST\VASTvaporizer2.dll"; DestDir: {code:GetPluginDir|1}; Components: vst_win32; Flags: ignoreversion
+Source: "..\..\cmake-build\Win32\VASTvaporizer2_artefacts\Release\VST\VASTvaporizer2.dll"; DestDir: "{app}"; Components: vst_win32; Flags: ignoreversion
+Source: "..\..\cmake-build\Win32\VASTvaporizer2_artefacts\Release\VST\VASTvaporizer2.dll"; DestDir: {code:GetPluginDir|1}; Components: vst_win32; Flags: ignoreversion
 
-Source: "cmake-build\x64SSE2\VASTvaporizer2_64_SSE2_artefacts\VST\VASTvaporizer2_64_SSE2.dll"; DestDir: "{app}"; Components: vst_win64_SSE2; Flags: ignoreversion
-Source: "cmake-build\x64SSE2\VASTvaporizer2_64_SSE2_artefacts\VST\VASTvaporizer2_64_SSE2.dll"; DestDir: {code:GetPluginDir|0}; Components: vst_win64_SSE2; Flags: ignoreversion
+Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_64_SSE2_artefacts\Release\VST\VASTvaporizer2_64_SSE2.dll"; DestDir: "{app}"; Components: vst_win64_SSE2; Flags: ignoreversion
+Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_64_SSE2_artefacts\Release\VST\VASTvaporizer2_64_SSE2.dll"; DestDir: {code:GetPluginDir|0}; Components: vst_win64_SSE2; Flags: ignoreversion
 
-Source: "cmake-build\Win32SSE2\VASTvaporizer2_SSE2_artefacts\VST\VASTvaporizer2_SSE2.dll"; DestDir: "{app}"; Components: vst_win32_SSE2; Flags: ignoreversion
-Source: "cmake-build\Win32SSE2\VASTvaporizer2_SSE2_artefacts\VST\VASTvaporizer2_SSE2.dll"; DestDir: {code:GetPluginDir|0}; Components: vst_win32_SSE2; Flags: ignoreversion
+Source: "..\..\cmake-build\Win32SSE2\VASTvaporizer2_SSE2_artefacts\Release\VST\VASTvaporizer2_SSE2.dll"; DestDir: "{app}"; Components: vst_win32_SSE2; Flags: ignoreversion
+Source: "..\..\cmake-build\Win32SSE2\VASTvaporizer2_SSE2_artefacts\Release\VST\VASTvaporizer2_SSE2.dll"; DestDir: {code:GetPluginDir|0}; Components: vst_win32_SSE2; Flags: ignoreversion
 
 ;VST3
-Source: "cmake-build\x64\VASTvaporizer2_64_artefacts\VST3\VASTvaporizer2_64.vst3"; DestDir: "{app}\VASTvaporizer2_64.vst3"; Components: vst3_win64; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "cmake-build\x64\VASTvaporizer2_64_artefacts\VST3\VASTvaporizer2_64.vst3"; DestDir: "{code:GetPluginDir|2}\VASTvaporizer2_64.vst3"; Components: vst3_win64; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\cmake-build\x64\VASTvaporizer2_64_artefacts\Release\VST3\VASTvaporizer2_64.vst3"; DestDir: "{app}\VASTvaporizer2_64.vst3"; Components: vst3_win64; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\cmake-build\x64\VASTvaporizer2_64_artefacts\Release\VST3\VASTvaporizer2_64.vst3"; DestDir: "{code:GetPluginDir|2}\VASTvaporizer2_64.vst3"; Components: vst3_win64; Flags: ignoreversion recursesubdirs createallsubdirs
 
-Source: "cmake-build\Win32\VASTvaporizer2_artefacts\VST3\VASTvaporizer2.vst3"; DestDir: "{app}\VASTvaporizer2.vst3"; Components: vst3_win32; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "cmake-build\Win32\VASTvaporizer2_artefacts\VST3\VASTvaporizer2.vst3"; DestDir: "{code:GetPluginDir|3}\VASTvaporizer2.vst3"; Components: vst3_win32; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\cmake-build\Win32\VASTvaporizer2_artefacts\Release\VST3\VASTvaporizer2.vst3"; DestDir: "{app}\VASTvaporizer2.vst3"; Components: vst3_win32; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\cmake-build\Win32\VASTvaporizer2_artefacts\Release\VST3\VASTvaporizer2.vst3"; DestDir: "{code:GetPluginDir|3}\VASTvaporizer2.vst3"; Components: vst3_win32; Flags: ignoreversion recursesubdirs createallsubdirs
 
-Source: "cmake-build\x64SSE2\VASTvaporizer2_64_SSE2_artefacts\VST3\VASTvaporizer2_64_SSE2.vst3"; DestDir: "{app}\VASTvaporizer2_64_SSE2.vst3"; Components: vst3_win64_SSE2; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "cmake-build\x64SSE2\VASTvaporizer2_64_SSE2_artefacts\VST3\VASTvaporizer2_64_SSE2.vst3"; DestDir: "{code:GetPluginDir|2}\VASTvaporizer2_64_SSE2.vst3"; Components: vst3_win64_SSE2; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_64_SSE2_artefacts\Release\VST3\VASTvaporizer2_64_SSE2.vst3"; DestDir: "{app}\VASTvaporizer2_64_SSE2.vst3"; Components: vst3_win64_SSE2; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_64_SSE2_artefacts\Release\VST3\VASTvaporizer2_64_SSE2.vst3"; DestDir: "{code:GetPluginDir|2}\VASTvaporizer2_64_SSE2.vst3"; Components: vst3_win64_SSE2; Flags: ignoreversion recursesubdirs createallsubdirs
 
-Source: "cmake-build\Win32SSE2\VASTvaporizer2_SSE2_artefacts\VST3\VASTvaporizer2_SSE2.vst3"; DestDir: "{app}\VASTvaporizer2_SSE2.vst3"; Components: vst3_win32_SSE2; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "cmake-build\Win32SSE2\VASTvaporizer2_SSE2_artefacts\VST3\VASTvaporizer2_SSE2.vst3"; DestDir: "{code:GetPluginDir|3}\VASTvaporizer2_SSE2.vst3"; Components: vst3_win32_SSE2; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\cmake-build\Win32SSE2\VASTvaporizer2_SSE2_artefacts\Release\VST3\VASTvaporizer2_SSE2.vst3"; DestDir: "{app}\VASTvaporizer2_SSE2.vst3"; Components: vst3_win32_SSE2; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\cmake-build\Win32SSE2\VASTvaporizer2_SSE2_artefacts\Release\VST3\VASTvaporizer2_SSE2.vst3"; DestDir: "{code:GetPluginDir|3}\VASTvaporizer2_SSE2.vst3"; Components: vst3_win32_SSE2; Flags: ignoreversion recursesubdirs createallsubdirs
 
 ;STANDALONE
-Source: "cmake-build\x64\VASTvaporizer2_64_artefacts\Standalone Plugin\VASTvaporizer2_64.exe"; DestDir: "{app}"; Components: standalone_win64; Flags: ignoreversion
-Source: "cmake-build\x64SSE2\VASTvaporizer2_64_SSE2_artefacts\Standalone Plugin\VASTvaporizer2_64_SSE2.exe"; DestDir: "{app}"; Components: standalone_win64_SSE2; Flags: ignoreversion
-Source: "cmake-build\Win32SSE2\VASTvaporizer2_SSE2_artefacts\Standalone Plugin\VASTvaporizer2_SSE2.exe"; DestDir: "{app}"; Components: standalone_win32_SSE2; Flags: ignoreversion
+Source: "..\..\cmake-build\x64\VASTvaporizer2_64_artefacts\Release\Standalone\VASTvaporizer2_64.exe"; DestDir: "{app}"; Components: standalone_win64; Flags: ignoreversion
+Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_64_SSE2_artefacts\Release\Standalone\VASTvaporizer2_64_SSE2.exe"; DestDir: "{app}"; Components: standalone_win64_SSE2; Flags: ignoreversion
+Source: "..\..\cmake-build\Win32SSE2\VASTvaporizer2_SSE2_artefacts\Release\Standalone\VASTvaporizer2_SSE2.exe"; DestDir: "{app}"; Components: standalone_win32_SSE2; Flags: ignoreversion
 
 ;AAX
-Source: "cmake-build\x64\VASTvaporizer2_64_artefacts\AAX\VASTvaporizer2_64.aaxplugin\*"; DestDir: "{app}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly 
-Source: "VASTvaporizer\AAXFiles\desktop.ini"; DestDir: "{app}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion overwritereadonly; Attribs: hidden system
-Source: "VASTvaporizer\AAXFiles\PlugIn.ico"; DestDir: "{app}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion overwritereadonly; Attribs: hidden system
-Source: "cmake-build\x64\VASTvaporizer2_64_artefacts\AAX\VASTvaporizer2_64.aaxplugin\*"; DestDir: "{code:GetPluginDir|4}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly 
-Source: "VASTvaporizer\AAXFiles\desktop.ini"; DestDir: "{code:GetPluginDir|4}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion overwritereadonly; Attribs: hidden system
-Source: "VASTvaporizer\AAXFiles\PlugIn.ico"; DestDir: "{code:GetPluginDir|4}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion overwritereadonly; Attribs: hidden system
+Source: "..\..\cmake-build\x64\VASTvaporizer2_64_artefacts\Release\AAX\VASTvaporizer2_64.aaxplugin\*"; DestDir: "{app}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly 
+Source: "..\..\VASTvaporizer\AAXFiles\desktop.ini"; DestDir: "{app}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion overwritereadonly; Attribs: hidden system
+Source: "..\..\VASTvaporizer\AAXFiles\PlugIn.ico"; DestDir: "{app}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion overwritereadonly; Attribs: hidden system
+Source: "..\..\cmake-build\x64\VASTvaporizer2_64_artefacts\Release\AAX\VASTvaporizer2_64.aaxplugin\*"; DestDir: "{code:GetPluginDir|4}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly 
+Source: "..\..\VASTvaporizer\AAXFiles\desktop.ini"; DestDir: "{code:GetPluginDir|4}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion overwritereadonly; Attribs: hidden system
+Source: "..\..\VASTvaporizer\AAXFiles\PlugIn.ico"; DestDir: "{code:GetPluginDir|4}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion overwritereadonly; Attribs: hidden system
 
 ;LV2
-//check Source: "cmake-build\x64\VASTvaporizer2_64_artefacts\LV2\VASTvaporizer2_64.dll"; DestDir: "{app}"; Components: standalone_win64; Flags: ignoreversion
-//check Source: "cmake-build\x64\VASTvaporizer2_64_artefacts\LV2\VASTvaporizer2_64.dll"; DestDir: {code:GetPluginDir|5}; Components: vst_win64; Flags: ignoreversion
+//check Source: "..\..\cmake-build\x64\VASTvaporizer2_64_artefacts\LV2\VASTvaporizer2_64.dll"; DestDir: "{app}"; Components: standalone_win64; Flags: ignoreversion
+//check Source: "..\..\cmake-build\x64\VASTvaporizer2_64_artefacts\LV2\VASTvaporizer2_64.dll"; DestDir: {code:GetPluginDir|5}; Components: vst_win64; Flags: ignoreversion
 //{commoncf64}\LV2\
 
 ;Other stuff
-;Source: "VASTvaporizer\Presets\*"; DestDir: "{code:GetPluginDir|6}"; Components: factorypresets; Flags: recursesubdirs
-;Source: "VASTvaporizer\Tables\*"; DestDir: "{code:GetPluginDir|7}"; Components: wavetables; Flags: recursesubdirs
-;Source: "VASTvaporizer\Noises\*"; DestDir: "{code:GetPluginDir|8}"; Components: noises; Flags: recursesubdirs
+;Source: "..\Presets\*"; DestDir: "{code:GetPluginDir|6}"; Components: factorypresets; Flags: recursesubdirs
+;Source: "..\Tables\*"; DestDir: "{code:GetPluginDir|7}"; Components: wavetables; Flags: recursesubdirs
+;Source: "..\Noises\*"; DestDir: "{code:GetPluginDir|8}"; Components: noises; Flags: recursesubdirs
 ;new logic - always in appfolder
-Source: "VASTvaporizer\Presets\*"; DestDir: "{app}\Presets"; Components: factorypresets; Flags: recursesubdirs
-Source: "VASTvaporizer\Tables\*"; DestDir: "{app}\Tables"; Components: wavetables; Flags: recursesubdirs
-Source: "VASTvaporizer\Noises\*"; DestDir: "{app}\Noises"; Components: noises; Flags: recursesubdirs
+Source: "..\Presets\*"; DestDir: "{app}\Presets"; Components: factorypresets; Flags: recursesubdirs
+Source: "..\Tables\*"; DestDir: "{app}\Tables"; Components: wavetables; Flags: recursesubdirs
+Source: "..\Noises\*"; DestDir: "{app}\Noises"; Components: noises; Flags: recursesubdirs
 
 
-Source: "VASTvaporizer\InnoSetupFiles\VaporizerUserManual.url"; DestDir: "{app}"; Components: documentation
-Source: "VASTvaporizer\InnoSetupFiles\license.txt"; DestDir: "{app}"; Components: license
+Source: "VaporizerUserManual.url"; DestDir: "{app}"; Components: documentation
+Source: "license.txt"; DestDir: "{app}"; Components: license
 
 [Icons]
 Name: {group}\Vaporizer2 {#AppVer} Standalone; Filename: "{app}\VASTvaporizer2_64.exe"; WorkingDir: "{app}";
