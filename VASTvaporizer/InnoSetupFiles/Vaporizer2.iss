@@ -1,6 +1,5 @@
 ; https://www.kvraudio.com/forum/viewtopic.php?t=501615
 
-;#define AppVer "3.3.5"
 #define PluginBaseName = "Vaporizer2"
 #ifndef AppVer
 #define AppVer "3.3.5"
@@ -98,30 +97,30 @@ Type: files; Name: "{code:GetPluginDir|3}\VASTvaporizer2_SSE2.vst3"
 Source: "C:\Vaporizer2\VASTvaporizer\InstallerFiles\DetectIntrinsicsWin32.exe"; DestDir: "{app}";
 
 ;VST2
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\x64\Release Optimized 64bit\VST\VASTvaporizer2_64.dll"; DestDir: "{app}"; Components: vst_win64; Flags: ignoreversion; 
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\x64\Release Optimized 64bit\VST\VASTvaporizer2_64.dll"; DestDir: {code:GetPluginDir|0}; Components: vst_win64; Flags: ignoreversion
+Source: "cmake-build\x64\VASTvaporizer2_64_artefacts\VST\VASTvaporizer2_64.dll"; DestDir: "{app}"; Components: vst_win64; Flags: ignoreversion; 
+Source: "cmake-build\x64\VASTvaporizer2_64_artefacts\VST\VASTvaporizer2_64.dll"; DestDir: {code:GetPluginDir|0}; Components: vst_win64; Flags: ignoreversion
 
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\Win32\Release Optimized 32bit\VST\VASTvaporizer2.dll"; DestDir: "{app}"; Components: vst_win32; Flags: ignoreversion
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\Win32\Release Optimized 32bit\VST\VASTvaporizer2.dll"; DestDir: {code:GetPluginDir|1}; Components: vst_win32; Flags: ignoreversion
+Source: "cmake-build\Win32\VASTvaporizer2_artefacts\VST\VASTvaporizer2.dll"; DestDir: "{app}"; Components: vst_win32; Flags: ignoreversion
+Source: "cmake-build\Win32\VASTvaporizer2_artefacts\VST\VASTvaporizer2.dll"; DestDir: {code:GetPluginDir|1}; Components: vst_win32; Flags: ignoreversion
 
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\x64\Release Optimized 64bit SSE2\VST\VASTvaporizer2_64_SSE2.dll"; DestDir: "{app}"; Components: vst_win64_SSE2; Flags: ignoreversion
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\x64\Release Optimized 64bit SSE2\VST\VASTvaporizer2_64_SSE2.dll"; DestDir: {code:GetPluginDir|0}; Components: vst_win64_SSE2; Flags: ignoreversion
+Source: "cmake-build\x64SSE2\VASTvaporizer2_64_SSE2_artefacts\VST\VASTvaporizer2_64_SSE2.dll"; DestDir: "{app}"; Components: vst_win64_SSE2; Flags: ignoreversion
+Source: "cmake-build\x64SSE2\VASTvaporizer2_64_SSE2_artefacts\VST\VASTvaporizer2_64_SSE2.dll"; DestDir: {code:GetPluginDir|0}; Components: vst_win64_SSE2; Flags: ignoreversion
 
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\Win32\Release Optimized 32bit SSE2\VST\VASTvaporizer2_SSE2.dll"; DestDir: "{app}"; Components: vst_win32_SSE2; Flags: ignoreversion
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\Win32\Release Optimized 32bit SSE2\VST\VASTvaporizer2_SSE2.dll"; DestDir: {code:GetPluginDir|0}; Components: vst_win32_SSE2; Flags: ignoreversion
+Source: "cmake-build\Win32SSE2\VASTvaporizer2_SSE2_artefacts\VST\VASTvaporizer2_SSE2.dll"; DestDir: "{app}"; Components: vst_win32_SSE2; Flags: ignoreversion
+Source: "cmake-build\Win32SSE2\VASTvaporizer2_SSE2_artefacts\VST\VASTvaporizer2_SSE2.dll"; DestDir: {code:GetPluginDir|0}; Components: vst_win32_SSE2; Flags: ignoreversion
 
 ;VST3
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\x64\Release Optimized 64bit\VST3\VASTvaporizer2_64.vst3"; DestDir: "{app}\VASTvaporizer2_64.vst3"; Components: vst3_win64; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\x64\Release Optimized 64bit\VST3\VASTvaporizer2_64.vst3"; DestDir: "{code:GetPluginDir|2}\VASTvaporizer2_64.vst3"; Components: vst3_win64; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "cmake-build\x64\VASTvaporizer2_64_artefacts\VST3\VASTvaporizer2_64.vst3"; DestDir: "{app}\VASTvaporizer2_64.vst3"; Components: vst3_win64; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "cmake-build\x64\VASTvaporizer2_64_artefacts\VST3\VASTvaporizer2_64.vst3"; DestDir: "{code:GetPluginDir|2}\VASTvaporizer2_64.vst3"; Components: vst3_win64; Flags: ignoreversion recursesubdirs createallsubdirs
 
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\Win32\Release Optimized 32bit\VST3\VASTvaporizer2.vst3"; DestDir: "{app}\VASTvaporizer2.vst3"; Components: vst3_win32; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\Win32\Release Optimized 32bit\VST3\VASTvaporizer2.vst3"; DestDir: "{code:GetPluginDir|3}\VASTvaporizer2.vst3"; Components: vst3_win32; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "cmake-build\Win32\VASTvaporizer2_artefacts\VST3\VASTvaporizer2.vst3"; DestDir: "{app}\VASTvaporizer2.vst3"; Components: vst3_win32; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "cmake-build\Win32\VASTvaporizer2_artefacts\VST3\VASTvaporizer2.vst3"; DestDir: "{code:GetPluginDir|3}\VASTvaporizer2.vst3"; Components: vst3_win32; Flags: ignoreversion recursesubdirs createallsubdirs
 
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\x64\Release Optimized 64bit SSE2\VST3\VASTvaporizer2_64_SSE2.vst3"; DestDir: "{app}\VASTvaporizer2_64_SSE2.vst3"; Components: vst3_win64_SSE2; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\x64\Release Optimized 64bit SSE2\VST3\VASTvaporizer2_64_SSE2.vst3"; DestDir: "{code:GetPluginDir|2}\VASTvaporizer2_64_SSE2.vst3"; Components: vst3_win64_SSE2; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "cmake-build\x64SSE2\VASTvaporizer2_64_SSE2_artefacts\VST3\VASTvaporizer2_64_SSE2.vst3"; DestDir: "{app}\VASTvaporizer2_64_SSE2.vst3"; Components: vst3_win64_SSE2; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "cmake-build\x64SSE2\VASTvaporizer2_64_SSE2_artefacts\VST3\VASTvaporizer2_64_SSE2.vst3"; DestDir: "{code:GetPluginDir|2}\VASTvaporizer2_64_SSE2.vst3"; Components: vst3_win64_SSE2; Flags: ignoreversion recursesubdirs createallsubdirs
 
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\Win32\Release Optimized 32bit SSE2\VST3\VASTvaporizer2_SSE2.vst3"; DestDir: "{app}\VASTvaporizer2_SSE2.vst3"; Components: vst3_win32_SSE2; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\Win32\Release Optimized 32bit SSE2\VST3\VASTvaporizer2_SSE2.vst3"; DestDir: "{code:GetPluginDir|3}\VASTvaporizer2_SSE2.vst3"; Components: vst3_win32_SSE2; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "cmake-build\Win32SSE2\VASTvaporizer2_SSE2_artefacts\VST3\VASTvaporizer2_SSE2.vst3"; DestDir: "{app}\VASTvaporizer2_SSE2.vst3"; Components: vst3_win32_SSE2; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "cmake-build\Win32SSE2\VASTvaporizer2_SSE2_artefacts\VST3\VASTvaporizer2_SSE2.vst3"; DestDir: "{code:GetPluginDir|3}\VASTvaporizer2_SSE2.vst3"; Components: vst3_win32_SSE2; Flags: ignoreversion recursesubdirs createallsubdirs
 
 ;STANDALONE
 Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\x64\Release Optimized 64bit\Standalone Plugin\VASTvaporizer2_64.exe"; DestDir: "{app}"; Components: standalone_win64; Flags: ignoreversion
@@ -135,6 +134,8 @@ Source: "C:\Vaporizer2\VASTvaporizer\AAXFiles\PlugIn.ico"; DestDir: "{app}\VASTv
 Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\x64\Release Optimized 64bit\AAX\VASTvaporizer2_64.aaxplugin\*"; DestDir: "{code:GetPluginDir|4}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly 
 Source: "C:\Vaporizer2\VASTvaporizer\AAXFiles\desktop.ini"; DestDir: "{code:GetPluginDir|4}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion overwritereadonly; Attribs: hidden system
 Source: "C:\Vaporizer2\VASTvaporizer\AAXFiles\PlugIn.ico"; DestDir: "{code:GetPluginDir|4}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion overwritereadonly; Attribs: hidden system
+
+;LV2
 
 ;Other stuff
 ;Source: "C:\Vaporizer2\VASTvaporizer\Presets\*"; DestDir: "{code:GetPluginDir|5}"; Components: factorypresets; Flags: recursesubdirs
