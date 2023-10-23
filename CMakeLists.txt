@@ -17,12 +17,6 @@ endif()
 
 message(STATUS "Building VAST Dynamics Vaporizer2 plugin, version ${PLUGIN_VERSION} on architecture: ${CMAKE_GENERATOR_PLATFORM}")
 
-if(MSVC)
-  target_compile_options(${TARGET_NAME} PRIVATE /W1)
-else()
-  target_compile_options(${TARGET_NAME} PRIVATE -Werror)
-endif()
-
 if(NOT USE_SYSTEM_JUCE)
   message(STATUS "Using JUCE from source tree")
   add_subdirectory("${CMAKE_SOURCE_DIR}/JUCE" ${CMAKE_BINARY_DIR}/JUCE EXCLUDE_FROM_ALL)
@@ -43,6 +37,12 @@ else()
   else()
 	project("VASTvaporizer2_64_SSE2")
   endif()
+endif()
+
+if(MSVC)
+  target_compile_options(${PROJECT_NAME} PRIVATE /W1)
+else()
+  target_compile_options(${PROJECT_NAME} PRIVATE -Werror)
 endif()
 
 if (AAX_SDK_LOCATION)
