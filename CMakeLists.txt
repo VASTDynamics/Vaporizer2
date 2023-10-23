@@ -288,8 +288,8 @@ if (VASTBUILD)
   message( STATUS "Building as VASTBUILD")
   target_sources(${PROJECT_NAME}
   PRIVATE
-    "VASTvaporizer/Source/Plugin/VASTCommercial/VASTLicense.h"
-    "VASTvaporizer/Source/Plugin/VASTCommercial/VASTLicenseEditor.h"
+    "VASTvaporizer/Source/Plugin/VASTCommercial/VASTLicense.cpp"
+    "VASTvaporizer/Source/Plugin/VASTCommercial/VASTLicenseEditor.cpp"
   )
   target_compile_definitions(${PROJECT_NAME} PRIVATE VASTBUILD)
 endif ()
