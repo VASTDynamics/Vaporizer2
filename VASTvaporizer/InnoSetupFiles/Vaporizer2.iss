@@ -37,7 +37,7 @@ VersionInfoVersion={#AppVer}
 WizardImageFile=vasttitle_410x797.bmp,vasttitle_164x314.bmp,vasttitle_273x556.bmp
 WizardSmallImageFile=logokreisvdalpha_83x80.bmp
 WizardImageStretch=false
-WizardSizePercent=120
+WizardSizePercent=150
 ;SignTool=signtool
 PrivilegesRequired=admin
 
@@ -46,7 +46,7 @@ Name: "compact"; Description: "Compact installation"; Flags: iscustom
 Name: "full"; Description: "Full installation"
 
 [Components]
-Name: "vst_win64"; Description: "64-bit VST2"; Types: full compact; Check: IsWin64
+Name: "vst_win64"; Description: "64-bit VST2"; Types: full; Check: IsWin64
 Name: "vst_win32"; Description: "32-bit VST2"; Types: full
 Name: "vst_win64_SSE2"; Description: "64-bit VST2 (SSE2 compatibility version for older systems)"; Types: full; Check: IsWin64 
 Name: "vst_win32_SSE2"; Description: "32-bit VST2 (SSE2 compatibility version for older systems)"; Types: full
@@ -58,6 +58,7 @@ Name: "standalone_win64"; Description: "64-bit Standalone"; Types: full compact;
 Name: "standalone_win64_SSE2"; Description: "64-bit Standalone (SSE2 compatibility version for older systems)"; Types: full; Check: IsWin64
 Name: "standalone_win32_SSE2"; Description: "32-bit Standalone (SSE2 compatibility version for older systems)"; Types: full
 Name: "aax_win64"; Description: "64-bit AAX (ProTools)"; Types: full; Check: IsWin64 
+Name: "lv2_win64"; Description: "64-bit LV2"; Types: full; Check: IsWin64
 Name: "factorypresets"; Description: "Factory Presets"; Types: full compact
 Name: "wavetables"; Description: "Wavetables"; Types: full compact
 Name: "noises"; Description: "Noises"; Types: full compact
@@ -129,16 +130,15 @@ Source: "..\..\cmake-build\Win32SSE2\VASTvaporizer2_SSE2_artefacts\Release\Stand
 
 ;AAX
 Source: "..\..\cmake-build\x64\VASTvaporizer2_64_artefacts\Release\AAX\VASTvaporizer2_64.aaxplugin\*"; DestDir: "{app}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly 
-Source: "..\..\VASTvaporizer\AAXFiles\desktop.ini"; DestDir: "{app}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion overwritereadonly; Attribs: hidden system
-Source: "..\..\VASTvaporizer\AAXFiles\PlugIn.ico"; DestDir: "{app}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion overwritereadonly; Attribs: hidden system
+//Source: "..\..\VASTvaporizer\AAXFiles\desktop.ini"; DestDir: "{app}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion overwritereadonly; Attribs: hidden system
+//Source: "..\..\VASTvaporizer\AAXFiles\PlugIn.ico"; DestDir: "{app}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion overwritereadonly; Attribs: hidden system
 Source: "..\..\cmake-build\x64\VASTvaporizer2_64_artefacts\Release\AAX\VASTvaporizer2_64.aaxplugin\*"; DestDir: "{code:GetPluginDir|4}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly 
-Source: "..\..\VASTvaporizer\AAXFiles\desktop.ini"; DestDir: "{code:GetPluginDir|4}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion overwritereadonly; Attribs: hidden system
-Source: "..\..\VASTvaporizer\AAXFiles\PlugIn.ico"; DestDir: "{code:GetPluginDir|4}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion overwritereadonly; Attribs: hidden system
+//Source: "..\..\VASTvaporizer\AAXFiles\desktop.ini"; DestDir: "{code:GetPluginDir|4}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion overwritereadonly; Attribs: hidden system
+//Source: "..\..\VASTvaporizer\AAXFiles\PlugIn.ico"; DestDir: "{code:GetPluginDir|4}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion overwritereadonly; Attribs: hidden system
 
 ;LV2
-//check Source: "..\..\cmake-build\x64\VASTvaporizer2_64_artefacts\LV2\VASTvaporizer2_64.dll"; DestDir: "{app}"; Components: standalone_win64; Flags: ignoreversion
-//check Source: "..\..\cmake-build\x64\VASTvaporizer2_64_artefacts\LV2\VASTvaporizer2_64.dll"; DestDir: {code:GetPluginDir|5}; Components: vst_win64; Flags: ignoreversion
-//{commoncf64}\LV2\
+Source: "..\..\cmake-build\x64\VASTvaporizer2_64_artefacts\Release\LV2\VASTvaporizer2_64.lv2\*"; DestDir: "{app}"; Components: lv2_win64; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly
+Source: "..\..\cmake-build\x64\VASTvaporizer2_64_artefacts\Release\LV2\VASTvaporizer2_64.lv2\*"; DestDir: {code:GetPluginDir|5}; Components: lv2_win64; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly
 
 ;Other stuff
 ;Source: "..\Presets\*"; DestDir: "{code:GetPluginDir|6}"; Components: factorypresets; Flags: recursesubdirs
@@ -332,7 +332,7 @@ begin
   PluginDirPage.Add('User Noises');
   PluginDirPage.Values[8] := GetPreviousData('Vaporizer2NoisesFolder', ExpandConstant('{code:GetOriginalUserDocumentsPath}\Vaporizer2\User Noises')); //second is default value;
 
-  ReducePromptSpacing(PluginDirPage, 8, ScaleY(20));
+  ReducePromptSpacing(PluginDirPage, 9, ScaleY(20));
 
 end;
 
@@ -415,7 +415,7 @@ function ShouldSkipPage(PageID: Integer): Boolean;
 begin
   if PageID = PluginDirPage.ID then
   begin
-    If ((not WizardIsComponentSelected('aax_win64')) and (not WizardIsComponentSelected('vst_win32')) and (not WizardIsComponentSelected('vst_win64')) and (not WizardIsComponentSelected('vst_win32_SSE2')) and (not WizardIsComponentSelected('vst_win64_SSE2')) and (not WizardIsComponentSelected('vst3_win64')) and (not WizardIsComponentSelected('vst3_win32')) and (not WizardIsComponentSelected('vst3_win64_SSE2')) and (not WizardIsComponentSelected('vst3_win32_SSE2'))) then
+    If ((not WizardIsComponentSelected('aax_win64')) and (not WizardIsComponentSelected('lv2_win64')) and (not WizardIsComponentSelected('vst_win32')) and (not WizardIsComponentSelected('vst_win64')) and (not WizardIsComponentSelected('vst_win32_SSE2')) and (not WizardIsComponentSelected('vst_win64_SSE2')) and (not WizardIsComponentSelected('vst3_win64')) and (not WizardIsComponentSelected('vst3_win32')) and (not WizardIsComponentSelected('vst3_win64_SSE2')) and (not WizardIsComponentSelected('vst3_win32_SSE2'))) then
       begin
         Result := True
       end;
