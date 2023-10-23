@@ -77,9 +77,9 @@ juce_add_plugin(${PROJECT_NAME}
 juce_generate_juce_header(${PROJECT_NAME})
 
 if(MSVC)
-  target_compile_options(${PROJECT_NAME} PRIVATE /W1)
+  target_compile_options(${PROJECT_NAME} PRIVATE /w)
 else()
-  target_compile_options(${PROJECT_NAME} PRIVATE -Werror)
+  target_compile_options(${PROJECT_NAME} PRIVATE -w)
 endif()
 
 if (WIN32)
