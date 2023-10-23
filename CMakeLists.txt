@@ -39,11 +39,7 @@ else()
   endif()
 endif()
 
-if(MSVC)
-  target_compile_options(${PROJECT_NAME} PRIVATE /W1)
-else()
-  target_compile_options(${PROJECT_NAME} PRIVATE -Werror)
-endif()
+message(STATUS "Project name" ${PROJECT_NAME})
 
 if (AAX_SDK_LOCATION)
     juce_set_aax_sdk_path(${AAX_SDK_LOCATION})
@@ -57,8 +53,6 @@ if (VST2_SDK_LOCATION)
     list(APPEND PLUGIN_FORMATS VST)
 endif()
 list(APPEND PLUGIN_FORMATS VST3 AU Standalone LV2)
-
-message(STATUS "Project name" ${PROJECT_NAME})
 
 juce_add_plugin(${PROJECT_NAME}
   VERSION ${PLUGIN_VERSION}
@@ -81,6 +75,12 @@ juce_add_plugin(${PROJECT_NAME}
 )
 
 juce_generate_juce_header(${PROJECT_NAME})
+
+if(MSVC)
+  target_compile_options(${PROJECT_NAME} PRIVATE /W1)
+else()
+  target_compile_options(${PROJECT_NAME} PRIVATE -Werror)
+endif()
 
 if (WIN32)
   message( STATUS "Building on Windows ${CMAKE_GENERATOR_PLATFORM} with AVX flags: ${BUILD_AVX}")
