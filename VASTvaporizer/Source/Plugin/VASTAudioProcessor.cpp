@@ -3526,6 +3526,9 @@ String VASTAudioProcessor::getVersionString() {
 #if _DEBUG
 	lVersion.append(" (Debug)", 8);
 #endif
+#if VASTBUILD || VASTCOMMERCIAL
+	lVersion.append("v", 1);
+#endif
 	return lVersion;
 }
 
