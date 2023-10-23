@@ -72,6 +72,8 @@ juce_add_plugin(${PROJECT_NAME}
   AAX_IDENTIFIER "com.vastdynamics.VAST2"
   AU_EXPORT_PREFIX "VAST2AU"
   AU_MAIN_TYPE "kAudioUnitType_MusicDevice"
+  ICON_BIG "VASTvaporizer/Resources/logokresivdalpha.png"
+  ICON_SMALL "VASTvaporizer/Resources/logokresivdalpha.png"  
 )
 
 juce_generate_juce_header(${PROJECT_NAME})
