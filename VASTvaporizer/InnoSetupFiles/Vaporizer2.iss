@@ -1,7 +1,9 @@
 ; https://www.kvraudio.com/forum/viewtopic.php?t=501615
 
-;#define AppVer "3.3.5"
 #define PluginBaseName = "Vaporizer2"
+#ifndef AppVer
+#define AppVer "3.3.5"
+#endif
 
 [Setup]
 ArchitecturesInstallIn64BitMode=x64
@@ -22,9 +24,9 @@ CreateAppDir=yes
 DisableDirPage=no
 DisableWelcomePage=no
 LanguageDetectionMethod=uilanguage
-LicenseFile=C:\Vaporizer2\VASTvaporizer\InnoSetupFiles\license.txt
+LicenseFile=license.txt
 OutputBaseFilename=Vaporizer2_installer_win_{#AppVer}
-SetupIconFile=C:\Vaporizer2\VASTvaporizer\InnoSetupFiles\logokreisvdalpha.ico
+SetupIconFile=logokreisvdalpha.ico
 ShowLanguageDialog=no
 VersionInfoCompany=VAST Dynamics Software
 VersionInfoCopyright=VAST Dynamics Software
@@ -32,10 +34,10 @@ VersionInfoDescription=VAST Dynamics Vaporizer 2 {#AppVer}
 VersionInfoProductName={#PluginBaseName}
 VersionInfoProductVersion={#AppVer}
 VersionInfoVersion={#AppVer}
-WizardImageFile=C:\Vaporizer2\VASTvaporizer\InnoSetupFiles\vasttitle_410x797.bmp,C:\Vaporizer2\VASTvaporizer\InnoSetupFiles\vasttitle_164x314.bmp,C:\Vaporizer2\VASTvaporizer\InnoSetupFiles\vasttitle_273x556.bmp
-WizardSmallImageFile=C:\Vaporizer2\VASTvaporizer\InnoSetupFiles\logokreisvdalpha_83x80.bmp
+WizardImageFile=vasttitle_410x797.bmp,vasttitle_164x314.bmp,vasttitle_273x556.bmp
+WizardSmallImageFile=logokreisvdalpha_83x80.bmp
 WizardImageStretch=false
-WizardSizePercent=120
+WizardSizePercent=150
 ;SignTool=signtool
 PrivilegesRequired=admin
 
@@ -44,7 +46,7 @@ Name: "compact"; Description: "Compact installation"; Flags: iscustom
 Name: "full"; Description: "Full installation"
 
 [Components]
-Name: "vst_win64"; Description: "64-bit VST2"; Types: full compact; Check: IsWin64
+Name: "vst_win64"; Description: "64-bit VST2"; Types: full; Check: IsWin64
 Name: "vst_win32"; Description: "32-bit VST2"; Types: full
 Name: "vst_win64_SSE2"; Description: "64-bit VST2 (SSE2 compatibility version for older systems)"; Types: full; Check: IsWin64 
 Name: "vst_win32_SSE2"; Description: "32-bit VST2 (SSE2 compatibility version for older systems)"; Types: full
@@ -56,6 +58,7 @@ Name: "standalone_win64"; Description: "64-bit Standalone"; Types: full compact;
 Name: "standalone_win64_SSE2"; Description: "64-bit Standalone (SSE2 compatibility version for older systems)"; Types: full; Check: IsWin64
 Name: "standalone_win32_SSE2"; Description: "32-bit Standalone (SSE2 compatibility version for older systems)"; Types: full
 Name: "aax_win64"; Description: "64-bit AAX (ProTools)"; Types: full; Check: IsWin64 
+Name: "lv2_win64"; Description: "64-bit LV2"; Types: full; Check: IsWin64
 Name: "factorypresets"; Description: "Factory Presets"; Types: full compact
 Name: "wavetables"; Description: "Wavetables"; Types: full compact
 Name: "noises"; Description: "Noises"; Types: full compact
@@ -69,11 +72,11 @@ Name: "{commoncf}\Avid\Audio\Plug-Ins\VASTvaporizer2_64.aaxplugin"; Check: Is64B
 //;for settings file:
 //Name: "{commonappdata}\Vaporizer2"; Permissions: everyone-full
 //;user presets
-//Name: "{code:GetPluginDir|5}"; Permissions: everyone-full 
-//;user tables
 //Name: "{code:GetPluginDir|6}"; Permissions: everyone-full 
-//;user noises
+//;user tables
 //Name: "{code:GetPluginDir|7}"; Permissions: everyone-full 
+//;user noises
+//Name: "{code:GetPluginDir|8}"; Permissions: everyone-full 
 
 [InstallDelete]
 Type: files; Name: "{group}\uninstall Vaporizer2*"
@@ -92,59 +95,63 @@ Type: files; Name: "{code:GetPluginDir|3}\VASTvaporizer2_SSE2.vst3"
 
 [Files]
 ;Intrinsics Detector
-Source: "C:\Vaporizer2\VASTvaporizer\InstallerFiles\DetectIntrinsicsWin32.exe"; DestDir: "{app}";
+Source: "..\InstallerFiles\DetectIntrinsicsWin32.exe"; DestDir: "{app}";
 
 ;VST2
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\x64\Release Optimized 64bit\VST\VASTvaporizer2_64.dll"; DestDir: "{app}"; Components: vst_win64; Flags: ignoreversion; 
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\x64\Release Optimized 64bit\VST\VASTvaporizer2_64.dll"; DestDir: {code:GetPluginDir|0}; Components: vst_win64; Flags: ignoreversion
+Source: "..\..\cmake-build\x64\VASTvaporizer2_64_artefacts\Release\VST\VASTvaporizer2_64.dll"; DestDir: "{app}"; Components: vst_win64; Flags: ignoreversion; 
+Source: "..\..\cmake-build\x64\VASTvaporizer2_64_artefacts\Release\VST\VASTvaporizer2_64.dll"; DestDir: {code:GetPluginDir|0}; Components: vst_win64; Flags: ignoreversion
 
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\Win32\Release Optimized 32bit\VST\VASTvaporizer2.dll"; DestDir: "{app}"; Components: vst_win32; Flags: ignoreversion
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\Win32\Release Optimized 32bit\VST\VASTvaporizer2.dll"; DestDir: {code:GetPluginDir|1}; Components: vst_win32; Flags: ignoreversion
+Source: "..\..\cmake-build\Win32\VASTvaporizer2_artefacts\Release\VST\VASTvaporizer2.dll"; DestDir: "{app}"; Components: vst_win32; Flags: ignoreversion
+Source: "..\..\cmake-build\Win32\VASTvaporizer2_artefacts\Release\VST\VASTvaporizer2.dll"; DestDir: {code:GetPluginDir|1}; Components: vst_win32; Flags: ignoreversion
 
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\x64\Release Optimized 64bit SSE2\VST\VASTvaporizer2_64_SSE2.dll"; DestDir: "{app}"; Components: vst_win64_SSE2; Flags: ignoreversion
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\x64\Release Optimized 64bit SSE2\VST\VASTvaporizer2_64_SSE2.dll"; DestDir: {code:GetPluginDir|0}; Components: vst_win64_SSE2; Flags: ignoreversion
+Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_64_SSE2_artefacts\Release\VST\VASTvaporizer2_64_SSE2.dll"; DestDir: "{app}"; Components: vst_win64_SSE2; Flags: ignoreversion
+Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_64_SSE2_artefacts\Release\VST\VASTvaporizer2_64_SSE2.dll"; DestDir: {code:GetPluginDir|0}; Components: vst_win64_SSE2; Flags: ignoreversion
 
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\Win32\Release Optimized 32bit SSE2\VST\VASTvaporizer2_SSE2.dll"; DestDir: "{app}"; Components: vst_win32_SSE2; Flags: ignoreversion
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\Win32\Release Optimized 32bit SSE2\VST\VASTvaporizer2_SSE2.dll"; DestDir: {code:GetPluginDir|0}; Components: vst_win32_SSE2; Flags: ignoreversion
+Source: "..\..\cmake-build\Win32SSE2\VASTvaporizer2_SSE2_artefacts\Release\VST\VASTvaporizer2_SSE2.dll"; DestDir: "{app}"; Components: vst_win32_SSE2; Flags: ignoreversion
+Source: "..\..\cmake-build\Win32SSE2\VASTvaporizer2_SSE2_artefacts\Release\VST\VASTvaporizer2_SSE2.dll"; DestDir: {code:GetPluginDir|0}; Components: vst_win32_SSE2; Flags: ignoreversion
 
 ;VST3
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\x64\Release Optimized 64bit\VST3\VASTvaporizer2_64.vst3"; DestDir: "{app}\VASTvaporizer2_64.vst3"; Components: vst3_win64; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\x64\Release Optimized 64bit\VST3\VASTvaporizer2_64.vst3"; DestDir: "{code:GetPluginDir|2}\VASTvaporizer2_64.vst3"; Components: vst3_win64; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\cmake-build\x64\VASTvaporizer2_64_artefacts\Release\VST3\VASTvaporizer2_64.vst3"; DestDir: "{app}\VASTvaporizer2_64.vst3"; Components: vst3_win64; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\cmake-build\x64\VASTvaporizer2_64_artefacts\Release\VST3\VASTvaporizer2_64.vst3"; DestDir: "{code:GetPluginDir|2}\VASTvaporizer2_64.vst3"; Components: vst3_win64; Flags: ignoreversion recursesubdirs createallsubdirs
 
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\Win32\Release Optimized 32bit\VST3\VASTvaporizer2.vst3"; DestDir: "{app}\VASTvaporizer2.vst3"; Components: vst3_win32; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\Win32\Release Optimized 32bit\VST3\VASTvaporizer2.vst3"; DestDir: "{code:GetPluginDir|3}\VASTvaporizer2.vst3"; Components: vst3_win32; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\cmake-build\Win32\VASTvaporizer2_artefacts\Release\VST3\VASTvaporizer2.vst3"; DestDir: "{app}\VASTvaporizer2.vst3"; Components: vst3_win32; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\cmake-build\Win32\VASTvaporizer2_artefacts\Release\VST3\VASTvaporizer2.vst3"; DestDir: "{code:GetPluginDir|3}\VASTvaporizer2.vst3"; Components: vst3_win32; Flags: ignoreversion recursesubdirs createallsubdirs
 
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\x64\Release Optimized 64bit SSE2\VST3\VASTvaporizer2_64_SSE2.vst3"; DestDir: "{app}\VASTvaporizer2_64_SSE2.vst3"; Components: vst3_win64_SSE2; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\x64\Release Optimized 64bit SSE2\VST3\VASTvaporizer2_64_SSE2.vst3"; DestDir: "{code:GetPluginDir|2}\VASTvaporizer2_64_SSE2.vst3"; Components: vst3_win64_SSE2; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_64_SSE2_artefacts\Release\VST3\VASTvaporizer2_64_SSE2.vst3"; DestDir: "{app}\VASTvaporizer2_64_SSE2.vst3"; Components: vst3_win64_SSE2; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_64_SSE2_artefacts\Release\VST3\VASTvaporizer2_64_SSE2.vst3"; DestDir: "{code:GetPluginDir|2}\VASTvaporizer2_64_SSE2.vst3"; Components: vst3_win64_SSE2; Flags: ignoreversion recursesubdirs createallsubdirs
 
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\Win32\Release Optimized 32bit SSE2\VST3\VASTvaporizer2_SSE2.vst3"; DestDir: "{app}\VASTvaporizer2_SSE2.vst3"; Components: vst3_win32_SSE2; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\Win32\Release Optimized 32bit SSE2\VST3\VASTvaporizer2_SSE2.vst3"; DestDir: "{code:GetPluginDir|3}\VASTvaporizer2_SSE2.vst3"; Components: vst3_win32_SSE2; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\cmake-build\Win32SSE2\VASTvaporizer2_SSE2_artefacts\Release\VST3\VASTvaporizer2_SSE2.vst3"; DestDir: "{app}\VASTvaporizer2_SSE2.vst3"; Components: vst3_win32_SSE2; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\cmake-build\Win32SSE2\VASTvaporizer2_SSE2_artefacts\Release\VST3\VASTvaporizer2_SSE2.vst3"; DestDir: "{code:GetPluginDir|3}\VASTvaporizer2_SSE2.vst3"; Components: vst3_win32_SSE2; Flags: ignoreversion recursesubdirs createallsubdirs
 
 ;STANDALONE
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\x64\Release Optimized 64bit\Standalone Plugin\VASTvaporizer2_64.exe"; DestDir: "{app}"; Components: standalone_win64; Flags: ignoreversion
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\x64\Release Optimized 64bit SSE2\Standalone Plugin\VASTvaporizer2_64_SSE2.exe"; DestDir: "{app}"; Components: standalone_win64_SSE2; Flags: ignoreversion
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\Win32\Release Optimized 32bit SSE2\Standalone Plugin\VASTvaporizer2_SSE2.exe"; DestDir: "{app}"; Components: standalone_win32_SSE2; Flags: ignoreversion
+Source: "..\..\cmake-build\x64\VASTvaporizer2_64_artefacts\Release\Standalone\VASTvaporizer2_64.exe"; DestDir: "{app}"; Components: standalone_win64; Flags: ignoreversion
+Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_64_SSE2_artefacts\Release\Standalone\VASTvaporizer2_64_SSE2.exe"; DestDir: "{app}"; Components: standalone_win64_SSE2; Flags: ignoreversion
+Source: "..\..\cmake-build\Win32SSE2\VASTvaporizer2_SSE2_artefacts\Release\Standalone\VASTvaporizer2_SSE2.exe"; DestDir: "{app}"; Components: standalone_win32_SSE2; Flags: ignoreversion
 
 ;AAX
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\x64\Release Optimized 64bit\AAX\VASTvaporizer2_64.aaxplugin\*"; DestDir: "{app}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly 
-Source: "C:\Vaporizer2\VASTvaporizer\AAXFiles\desktop.ini"; DestDir: "{app}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion overwritereadonly; Attribs: hidden system
-Source: "C:\Vaporizer2\VASTvaporizer\AAXFiles\PlugIn.ico"; DestDir: "{app}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion overwritereadonly; Attribs: hidden system
-Source: "C:\Vaporizer2\VASTvaporizer\Builds\VisualStudio2019\x64\Release Optimized 64bit\AAX\VASTvaporizer2_64.aaxplugin\*"; DestDir: "{code:GetPluginDir|4}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly 
-Source: "C:\Vaporizer2\VASTvaporizer\AAXFiles\desktop.ini"; DestDir: "{code:GetPluginDir|4}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion overwritereadonly; Attribs: hidden system
-Source: "C:\Vaporizer2\VASTvaporizer\AAXFiles\PlugIn.ico"; DestDir: "{code:GetPluginDir|4}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion overwritereadonly; Attribs: hidden system
+Source: "..\..\cmake-build\x64\VASTvaporizer2_64_artefacts\Release\AAX\VASTvaporizer2_64.aaxplugin\*"; DestDir: "{app}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly 
+//Source: "..\..\VASTvaporizer\AAXFiles\desktop.ini"; DestDir: "{app}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion overwritereadonly; Attribs: hidden system
+//Source: "..\..\VASTvaporizer\AAXFiles\PlugIn.ico"; DestDir: "{app}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion overwritereadonly; Attribs: hidden system
+Source: "..\..\cmake-build\x64\VASTvaporizer2_64_artefacts\Release\AAX\VASTvaporizer2_64.aaxplugin\*"; DestDir: "{code:GetPluginDir|4}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly 
+//Source: "..\..\VASTvaporizer\AAXFiles\desktop.ini"; DestDir: "{code:GetPluginDir|4}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion overwritereadonly; Attribs: hidden system
+//Source: "..\..\VASTvaporizer\AAXFiles\PlugIn.ico"; DestDir: "{code:GetPluginDir|4}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion overwritereadonly; Attribs: hidden system
+
+;LV2
+Source: "..\..\cmake-build\x64\VASTvaporizer2_64_artefacts\Release\LV2\VASTvaporizer2_64.lv2\*"; DestDir: "{app}"; Components: lv2_win64; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly
+Source: "..\..\cmake-build\x64\VASTvaporizer2_64_artefacts\Release\LV2\VASTvaporizer2_64.lv2\*"; DestDir: {code:GetPluginDir|5}; Components: lv2_win64; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly
 
 ;Other stuff
-;Source: "C:\Vaporizer2\VASTvaporizer\Presets\*"; DestDir: "{code:GetPluginDir|5}"; Components: factorypresets; Flags: recursesubdirs
-;Source: "C:\Vaporizer2\VASTvaporizer\Tables\*"; DestDir: "{code:GetPluginDir|6}"; Components: wavetables; Flags: recursesubdirs
-;Source: "C:\Vaporizer2\VASTvaporizer\Noises\*"; DestDir: "{code:GetPluginDir|7}"; Components: noises; Flags: recursesubdirs
+;Source: "..\Presets\*"; DestDir: "{code:GetPluginDir|6}"; Components: factorypresets; Flags: recursesubdirs
+;Source: "..\Tables\*"; DestDir: "{code:GetPluginDir|7}"; Components: wavetables; Flags: recursesubdirs
+;Source: "..\Noises\*"; DestDir: "{code:GetPluginDir|8}"; Components: noises; Flags: recursesubdirs
 ;new logic - always in appfolder
-Source: "C:\Vaporizer2\VASTvaporizer\Presets\*"; DestDir: "{app}\Presets"; Components: factorypresets; Flags: recursesubdirs
-Source: "C:\Vaporizer2\VASTvaporizer\Tables\*"; DestDir: "{app}\Tables"; Components: wavetables; Flags: recursesubdirs
-Source: "C:\Vaporizer2\VASTvaporizer\Noises\*"; DestDir: "{app}\Noises"; Components: noises; Flags: recursesubdirs
+Source: "..\Presets\*"; DestDir: "{app}\Presets"; Components: factorypresets; Flags: recursesubdirs
+Source: "..\Tables\*"; DestDir: "{app}\Tables"; Components: wavetables; Flags: recursesubdirs
+Source: "..\Noises\*"; DestDir: "{app}\Noises"; Components: noises; Flags: recursesubdirs
 
 
-Source: "C:\Vaporizer2\VASTvaporizer\InnoSetupFiles\VaporizerUserManual.url"; DestDir: "{app}"; Components: documentation
-Source: "C:\Vaporizer2\VASTvaporizer\InnoSetupFiles\license.txt"; DestDir: "{app}"; Components: license
+Source: "VaporizerUserManual.url"; DestDir: "{app}"; Components: documentation
+Source: "license.txt"; DestDir: "{app}"; Components: license
 
 [Icons]
 Name: {group}\Vaporizer2 {#AppVer} Standalone; Filename: "{app}\VASTvaporizer2_64.exe"; WorkingDir: "{app}";
@@ -157,9 +164,9 @@ Root: HKCU; Subkey: "Software\VAST Dynamics\Vaporizer2"; Flags: uninsdeletekey
 Root: HKLM; Subkey: "Software\VAST Dynamics"; Flags: uninsdeletekeyifempty
 Root: HKLM; Subkey: "Software\VAST Dynamics\Vaporizer2"; Flags: uninsdeletekey
 Root: HKLM; Subkey: "Software\VAST Dynamics\Vaporizer2\Settings"; ValueType: string; ValueName: "InstallPath"; ValueData: "{app}"
-Root: HKLM; Subkey: "Software\VAST Dynamics\Vaporizer2\Settings"; ValueType: string; ValueName: "UserPresetFolder"; ValueData: "{code:GetPluginDir|5}"
-Root: HKLM; Subkey: "Software\VAST Dynamics\Vaporizer2\Settings"; ValueType: string; ValueName: "UserTableFolder"; ValueData: "{code:GetPluginDir|6}"
-Root: HKLM; Subkey: "Software\VAST Dynamics\Vaporizer2\Settings"; ValueType: string; ValueName: "UserNoisesFolder"; ValueData: "{code:GetPluginDir|7}"
+Root: HKLM; Subkey: "Software\VAST Dynamics\Vaporizer2\Settings"; ValueType: string; ValueName: "UserPresetFolder"; ValueData: "{code:GetPluginDir|6}"
+Root: HKLM; Subkey: "Software\VAST Dynamics\Vaporizer2\Settings"; ValueType: string; ValueName: "UserTableFolder"; ValueData: "{code:GetPluginDir|7}"
+Root: HKLM; Subkey: "Software\VAST Dynamics\Vaporizer2\Settings"; ValueType: string; ValueName: "UserNoisesFolder"; ValueData: "{code:GetPluginDir|8}"
   
 [Run]
 Filename: "{app}\VASTvaporizer2_64.exe"; WorkingDir: "{app}"; Description: "Run Vaporizer2 {#AppVer} Standalone"; Components: standalone_win64; Flags: postinstall runascurrentuser nowait
@@ -282,8 +289,6 @@ begin
 end;  
 
 procedure InitializeWizard;
-//var 
-  //retVal : Boolean; 
 begin    
   WizardForm.ComponentsList.OnClickCheck := @ComponentsListClickCheck;
   TypesComboOnChangePrev := WizardForm.TypesCombo.OnChange;
@@ -307,7 +312,10 @@ begin
   
   PluginDirPage.Add('64-bit folder AAX (ProTools)');
   PluginDirPage.Values[4] := GetPreviousData('AAX64', ExpandConstant('{commoncf}\Avid\Audio\Plug-Ins'));
-   
+
+  PluginDirPage.Add('64-bit folder LV2');
+  PluginDirPage.Values[5] := GetPreviousData('LV264', ExpandConstant('{commoncf}\LV2\'));
+
   If not Is64BitInstallMode then
   begin
     PluginDirPage.Values[1] := GetPreviousData('VST32', ExpandConstant('{reg:HKLM\SOFTWARE\VSTPluginsPath\VST,VSTPluginsPath|{commonpf}\Steinberg\VSTPlugins}\Vaporizer2'));
@@ -318,15 +326,13 @@ begin
 
   //new logic: factory presets are always stored in app folder, user folder can be selected
   PluginDirPage.Add('User Presets Folder');
-  //PluginDirPage.Values[5] := GetPreviousData('Vaporizer2PresetFolder', WizardDirValue + '\Presets'); //second is default value
-  PluginDirPage.Values[5] := GetPreviousData('Vaporizer2PresetFolder', ExpandConstant('{code:GetOriginalUserDocumentsPath}\Vaporizer2\User Presets')); //second is default value
-  Log(GetPreviousData('Vaporizer2PresetFolder', '')); //second is default value);
+  PluginDirPage.Values[6] := GetPreviousData('Vaporizer2PresetFolder', ExpandConstant('{code:GetOriginalUserDocumentsPath}\Vaporizer2\User Presets')); //second is default value
   PluginDirPage.Add('User Wavetables');                                                       
-  PluginDirPage.Values[6] := GetPreviousData('Vaporizer2TablesFolder', ExpandConstant('{code:GetOriginalUserDocumentsPath}\Vaporizer2\User Tables')); //second is default value 
+  PluginDirPage.Values[7] := GetPreviousData('Vaporizer2TablesFolder', ExpandConstant('{code:GetOriginalUserDocumentsPath}\Vaporizer2\User Tables')); //second is default value 
   PluginDirPage.Add('User Noises');
-  PluginDirPage.Values[7] := GetPreviousData('Vaporizer2NoisesFolder', ExpandConstant('{code:GetOriginalUserDocumentsPath}\Vaporizer2\User Noises')); //second is default value;
+  PluginDirPage.Values[8] := GetPreviousData('Vaporizer2NoisesFolder', ExpandConstant('{code:GetOriginalUserDocumentsPath}\Vaporizer2\User Noises')); //second is default value;
 
-  ReducePromptSpacing(PluginDirPage, 8, ScaleY(20));
+  ReducePromptSpacing(PluginDirPage, 9, ScaleY(20));
 
 end;
 
@@ -369,26 +375,33 @@ begin
     PluginDirPage.Edits[4].Enabled := PluginDirPage.Buttons[4].Enabled;
     PluginDirPage.Edits[4].Visible := PluginDirPage.Buttons[4].Enabled;
 
-    PluginDirPage.Buttons[5].Enabled := WizardIsComponentSelected('factorypresets');
+    PluginDirPage.Buttons[5].Enabled := WizardIsComponentSelected('lv2_win64') 
     PluginDirPage.Buttons[5].Visible := PluginDirPage.Buttons[5].Enabled;
     PluginDirPage.PromptLabels[5].Enabled := PluginDirPage.Buttons[5].Enabled;
     PluginDirPage.PromptLabels[5].Visible := PluginDirPage.Buttons[5].Enabled;
     PluginDirPage.Edits[5].Enabled := PluginDirPage.Buttons[5].Enabled;
     PluginDirPage.Edits[5].Visible := PluginDirPage.Buttons[5].Enabled;
 
-    PluginDirPage.Buttons[6].Enabled := WizardIsComponentSelected('wavetables');
+    PluginDirPage.Buttons[6].Enabled := WizardIsComponentSelected('factorypresets');
     PluginDirPage.Buttons[6].Visible := PluginDirPage.Buttons[6].Enabled;
     PluginDirPage.PromptLabels[6].Enabled := PluginDirPage.Buttons[6].Enabled;
     PluginDirPage.PromptLabels[6].Visible := PluginDirPage.Buttons[6].Enabled;
     PluginDirPage.Edits[6].Enabled := PluginDirPage.Buttons[6].Enabled;
     PluginDirPage.Edits[6].Visible := PluginDirPage.Buttons[6].Enabled;
 
-    PluginDirPage.Buttons[7].Enabled := WizardIsComponentSelected('noises');
+    PluginDirPage.Buttons[7].Enabled := WizardIsComponentSelected('wavetables');
     PluginDirPage.Buttons[7].Visible := PluginDirPage.Buttons[7].Enabled;
     PluginDirPage.PromptLabels[7].Enabled := PluginDirPage.Buttons[7].Enabled;
     PluginDirPage.PromptLabels[7].Visible := PluginDirPage.Buttons[7].Enabled;
     PluginDirPage.Edits[7].Enabled := PluginDirPage.Buttons[7].Enabled;
     PluginDirPage.Edits[7].Visible := PluginDirPage.Buttons[7].Enabled;
+
+    PluginDirPage.Buttons[8].Enabled := WizardIsComponentSelected('noises');
+    PluginDirPage.Buttons[8].Visible := PluginDirPage.Buttons[8].Enabled;
+    PluginDirPage.PromptLabels[8].Enabled := PluginDirPage.Buttons[8].Enabled;
+    PluginDirPage.PromptLabels[8].Visible := PluginDirPage.Buttons[8].Enabled;
+    PluginDirPage.Edits[8].Enabled := PluginDirPage.Buttons[8].Enabled;
+    PluginDirPage.Edits[8].Visible := PluginDirPage.Buttons[8].Enabled;
 
   end;
 
@@ -402,7 +415,7 @@ function ShouldSkipPage(PageID: Integer): Boolean;
 begin
   if PageID = PluginDirPage.ID then
   begin
-    If ((not WizardIsComponentSelected('aax_win64')) and (not WizardIsComponentSelected('vst_win32')) and (not WizardIsComponentSelected('vst_win64')) and (not WizardIsComponentSelected('vst_win32_SSE2')) and (not WizardIsComponentSelected('vst_win64_SSE2')) and (not WizardIsComponentSelected('vst3_win64')) and (not WizardIsComponentSelected('vst3_win32')) and (not WizardIsComponentSelected('vst3_win64_SSE2')) and (not WizardIsComponentSelected('vst3_win32_SSE2'))) then
+    If ((not WizardIsComponentSelected('aax_win64')) and (not WizardIsComponentSelected('lv2_win64')) and (not WizardIsComponentSelected('vst_win32')) and (not WizardIsComponentSelected('vst_win64')) and (not WizardIsComponentSelected('vst_win32_SSE2')) and (not WizardIsComponentSelected('vst_win64_SSE2')) and (not WizardIsComponentSelected('vst3_win64')) and (not WizardIsComponentSelected('vst3_win32')) and (not WizardIsComponentSelected('vst3_win64_SSE2')) and (not WizardIsComponentSelected('vst3_win32_SSE2'))) then
       begin
         Result := True
       end;
@@ -430,14 +443,14 @@ begin
   If (PluginDirPage.Buttons[4].Enabled) Then
     SetPreviousData(PreviousDataKey, 'AAX64', PluginDirPage.Values[4]);
   If (PluginDirPage.Buttons[5].Enabled) Then
-    SetPreviousData(PreviousDataKey, 'Vaporizer2PresetFolder', PluginDirPage.Values[5]);
+    SetPreviousData(PreviousDataKey, 'LV264', PluginDirPage.Values[5]);
   If (PluginDirPage.Buttons[6].Enabled) Then
-    SetPreviousData(PreviousDataKey, 'Vaporizer2TablesFolder', PluginDirPage.Values[6]);
+    SetPreviousData(PreviousDataKey, 'Vaporizer2PresetFolder', PluginDirPage.Values[6]);
   If (PluginDirPage.Buttons[7].Enabled) Then
-    SetPreviousData(PreviousDataKey, 'Vaporizer2NoisesFolder', PluginDirPage.Values[7]);
-    Log(PluginDirPage.Values[5]);
+    SetPreviousData(PreviousDataKey, 'Vaporizer2TablesFolder', PluginDirPage.Values[7]);
+  If (PluginDirPage.Buttons[8].Enabled) Then
+    SetPreviousData(PreviousDataKey, 'Vaporizer2NoisesFolder', PluginDirPage.Values[8]);
 end;
-
 
 //procedure WriteInitialSettingsFile;
 //var

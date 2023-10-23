@@ -38,7 +38,7 @@ VASTAudioProcessor* VASTSlider::getAudioProcessor() {
 	return m_processor;
 }
 
-inline void VASTSlider::setDefaultValue(float defaultVal) {
+void VASTSlider::setDefaultValue(float defaultVal) {
 	hasDefaultValue = true;
 	mDefaultVal = defaultVal;
 	setDoubleClickReturnValue(true, mDefaultVal);

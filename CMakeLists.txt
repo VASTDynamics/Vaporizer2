@@ -9,8 +9,13 @@ set(AAX_SDK_LOCATION "" CACHE STRING "Avid AAX SDK directory for non-FOSS builds
 set(ASIO_SDK_LOCATION "" CACHE STRING "Steinberg ASIO SDK directory for non-FOSS builds")
 option(BUILD_AVX "Build AVX optimized code" ON)
 option(BUILD_32 "Build for 32bit" OFF)
+option(VASTBUILD "Build compatibility version for existing licenses distributed by VAST Dynamics Software as installers" OFF)
 
-message("Building VAST Dynamics Vaporizer2 plugin, version ${PLUGIN_VERSION} on architecture: ${CMAKE_GENERATOR_PLATFORM}")
+if(EXISTS "VASTvaporizer/Source/Plugin/VASTCommercial/VASTLicense.h")
+  set(VASTBUILD ON CACHE BOOL "Build compatibility version for existing licenses distributed by VAST Dynamics Software as installers" FORCE)
+endif()
+
+message(STATUS "Building VAST Dynamics Vaporizer2 plugin, version ${PLUGIN_VERSION} on architecture: ${CMAKE_GENERATOR_PLATFORM}")
 
 if(NOT USE_SYSTEM_JUCE)
   message(STATUS "Using JUCE from source tree")
@@ -34,6 +39,8 @@ else()
   endif()
 endif()
 
+message(STATUS "Project name" ${PROJECT_NAME})
+
 if (AAX_SDK_LOCATION)
     juce_set_aax_sdk_path(${AAX_SDK_LOCATION})
     message(STATUS "Enabling AAX - caution, non FOSS build")
@@ -46,8 +53,6 @@ if (VST2_SDK_LOCATION)
     list(APPEND PLUGIN_FORMATS VST)
 endif()
 list(APPEND PLUGIN_FORMATS VST3 AU Standalone LV2)
-
-message(STATUS "Project name" ${PROJECT_NAME})
 
 juce_add_plugin(${PROJECT_NAME}
   VERSION ${PLUGIN_VERSION}
@@ -67,22 +72,34 @@ juce_add_plugin(${PROJECT_NAME}
   AAX_IDENTIFIER "com.vastdynamics.VAST2"
   AU_EXPORT_PREFIX "VAST2AU"
   AU_MAIN_TYPE "kAudioUnitType_MusicDevice"
+  ICON_BIG "VASTvaporizer/Resources/logokreisvdalpha.png"
+  ICON_SMALL "VASTvaporizer/Resources/logokreisvdalpha.png"  
 )
 
 juce_generate_juce_header(${PROJECT_NAME})
 
+if(MSVC)
+  target_compile_options(${PROJECT_NAME} PRIVATE /w)
+else()
+  target_compile_options(${PROJECT_NAME} PRIVATE -w)
+endif()
+
 if (WIN32)
   message( STATUS "Building on Windows ${CMAKE_GENERATOR_PLATFORM} with AVX flags: ${BUILD_AVX}")
   if (BUILD_32)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE _WIN32 _WIN32BIT NDEBUG)
     if (BUILD_AVX)     	  
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX")
+    else()
+      target_compile_definitions(${PROJECT_NAME} PRIVATE _SSE2_VERSION)
     endif(BUILD_AVX)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE _WIN32 _WIN32BIT NDEBUG)
   else()#64bit
+    target_compile_definitions(${PROJECT_NAME} PRIVATE _WIN64 _WIN64BIT NDEBUG)
     if (BUILD_AVX)  
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX")
+	  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX")
+    else()
+      target_compile_definitions(${PROJECT_NAME} PRIVATE _SSE2_VERSION)   
     endif(BUILD_AVX)
-	target_compile_definitions(${PROJECT_NAME} PRIVATE _WIN64 _WIN64BIT NDEBUG)
   endif()
 
   if (ASIO_SDK_LOCATION) #ASIO is windows only
@@ -92,19 +109,30 @@ if (WIN32)
   endif(ASIO_SDK_LOCATION)
 endif(WIN32)
 
+macro (set_xcode_property TARGET XCODE_PROPERTY XCODE_VALUE)
+    set_property (TARGET ${TARGET} PROPERTY 
+        XCODE_ATTRIBUTE_${XCODE_PROPERTY} ${XCODE_VALUE})
+endmacro (set_xcode_property)
+
 if (APPLE)
   message( STATUS "Building on Apple macOS ${CMAKE_GENERATOR_PLATFORM} with AVX flags: ${BUILD_AVX}")
   if (BUILD_32)
-    if (BUILD_AVX)     	  
-	  # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX")  
-    endif(BUILD_AVX)
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32")
+    set (CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -m32")
     target_compile_definitions(${PROJECT_NAME} PRIVATE _MACOSX _MACOSX32BIT NDEBUG)
-  else()#64bit
-    if (BUILD_AVX)  
-		# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX")  
+    if (BUILD_AVX)     	  
+      set_xcode_property(${PROJECT_NAME} CLANG_X86_VECTOR_INSTRUCTIONS "avx")
+    else()
+      target_compile_definitions(${PROJECT_NAME} PRIVATE _SSE2_VERSION)
     endif(BUILD_AVX)
-	target_compile_definitions(${PROJECT_NAME} PRIVATE _MACOSX _MACOSX64BIT NDEBUG)
-  endif()      
+  else() #64bit
+    target_compile_definitions(${PROJECT_NAME} PRIVATE _MACOSX _MACOSX64BIT NDEBUG)
+    if (BUILD_AVX)  
+	  set_xcode_property(${PROJECT_NAME} CLANG_X86_VECTOR_INSTRUCTIONS "avx")
+    else()
+      target_compile_definitions(${PROJECT_NAME} PRIVATE _SSE2_VERSION)   
+    endif(BUILD_AVX)
+  endif()  
 endif(APPLE)
 
 if(UNIX AND NOT APPLE) #linux
@@ -271,6 +299,15 @@ target_sources(${PROJECT_NAME}
     "VASTvaporizer/Source/muFFT/fft.c"
     "VASTvaporizer/Source/muFFT/kernel.c"
 )
+if (VASTBUILD) 
+  message( STATUS "Building as VASTBUILD")
+  target_sources(${PROJECT_NAME}
+  PRIVATE
+    "VASTvaporizer/Source/Plugin/VASTCommercial/VASTLicense.cpp"
+    "VASTvaporizer/Source/Plugin/VASTCommercial/VASTLicenseEditor.cpp"
+  )
+  target_compile_definitions(${PROJECT_NAME} PRIVATE VASTBUILD)
+endif ()
 
 juce_add_binary_data(VASTvaporizer2_BinaryData
   SOURCES

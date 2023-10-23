@@ -41,7 +41,7 @@ VASTAudioProcessor* VASTModwheelSlider::getAudioProcessor() {
 	return m_processor;
 }
 
-inline void VASTModwheelSlider::setDefaultValue(float defaultVal) {
+void VASTModwheelSlider::setDefaultValue(float defaultVal) {
 	hasDefaultValue = true;
 	mDefaultVal = defaultVal;
 	setDoubleClickReturnValue(true, mDefaultVal);

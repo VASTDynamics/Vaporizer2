@@ -6,7 +6,11 @@
 #include "../VASTEngineHeader.h"
 //#include "../VASTVcf.h"
 #include "VASTVCFCombFilter.h"
-#include "emmintrin.h"
+#ifdef __aarch64__ //arm64
+	#include "../../sse2neon.h"
+#else
+	#include "emmintrin.h"
+#endif
 
 //not allocated structs can be global
 struct VASTQFilterStepState

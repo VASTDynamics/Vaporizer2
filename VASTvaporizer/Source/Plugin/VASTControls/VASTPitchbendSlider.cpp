@@ -41,7 +41,7 @@ VASTAudioProcessor* VASTPitchbendSlider::getAudioProcessor() {
 	return m_processor;
 }
 
-inline void VASTPitchbendSlider::setDefaultValue(float defaultVal) {
+void VASTPitchbendSlider::setDefaultValue(float defaultVal) {
 	hasDefaultValue = true;
 	mDefaultVal = defaultVal;
 	setDoubleClickReturnValue(true, mDefaultVal);

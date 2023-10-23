@@ -7,7 +7,11 @@
 #include "../VASTEngineHeader.h"
 #include "../VASTSingleNote.h"
 #include "../VASTVcf.h"
-#include "emmintrin.h"
+#ifdef __aarch64__ //arm64
+	#include "../../sse2neon.h"
+#else
+	#include "emmintrin.h"
+#endif
 
 #define c_blocksize_q 32
 #define c_max_os_factor_q 4
@@ -2554,7 +2558,7 @@ __m128 VASTQFilter::SINUS_SSE2(__m128 in, __m128 drive)
 
 	return x;
 }
-
+/*
 #if !_M_X64
 __m128 VASTQFilter::ASYM_SSE1(__m128 in, __m128 drive)
 {
@@ -2597,6 +2601,7 @@ __m128 VASTQFilter::ASYM_SSE1(__m128 in, __m128 drive)
 	return x;
 }
 #endif
+ */
 
 __m128 VASTQFilter::ASYM_SSE2(__m128 in, __m128 drive)
 {

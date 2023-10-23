@@ -12,11 +12,13 @@
               companyEmail="contact@vast-dynamics.com" pluginIsMidiEffectPlugin="0"
               buildAUv3="0" displaySplashScreen="0" reportAppUsage="0" splashScreenColour="Dark"
               buildStandalone="1" enableIAA="0" cppLanguageStandard="latest"
-              companyCopyright="VAST Dynamics" headerPath="..\..\Source\Engine; ..\..\Source\Plugin; ..\..\Source; ..\..\Source\muFFT; ..\..\Source\AnaMark-Tuning-Library; ..\..\..\asiosdk\common"
+              companyCopyright="VAST Dynamics" headerPath=".;Engine;Plugin;muFFT;AnaMark-Tuning-Library;../../../asiosdk/common"
               pluginFormats="buildAAX,buildAU,buildLV2,buildStandalone,buildVST3"
               pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn"
               pluginAUMainType="'aumu'" pluginChannelConfigs="{2,2}" maxBinaryFileSize="20971520"
-              jucerFormatVersion="1" lv2Uri="https://www.vast-dynamics.com/plugins/VASTvaporizer2">
+              jucerFormatVersion="1" lv2Uri="https://www.vast-dynamics.com/plugins/VASTvaporizer2"
+              userNotes="..\..\Source; ..\..\Source\Engine; ..\..\Source\Plugin; ..\..\Source; ..\..\Source\muFFT; ..\..\Source\AnaMark-Tuning-Library; ..\..\..\asiosdk\common"
+              pluginAAXCategory="0">
   <MAINGROUP id="xqLnpn" name="VASTvaporizer2">
     <GROUP id="{1D7203A2-55A5-B073-6013-4046AC173451}" name="AnaMark-Tuning-Library">
       <FILE id="cy1eIQ" name="LICENSE.md" compile="0" resource="1" file="Source/AnaMark-Tuning-Library/LICENSE.md"/>
@@ -220,10 +222,6 @@
               file="Source/Engine/Utils/VASTFFTSingletonFactory.cpp"/>
         <FILE id="fL4jze" name="VASTFFTSingletonFactory.h" compile="0" resource="0"
               file="Source/Engine/Utils/VASTFFTSingletonFactory.h"/>
-        <FILE id="Nygpge" name="VASTFloatVectorOperations.cpp" compile="1"
-              resource="0" file="Source/Engine/Utils/VASTFloatVectorOperations.cpp"/>
-        <FILE id="opQOaA" name="VASTFloatVectorOperations.h" compile="0" resource="0"
-              file="Source/Engine/Utils/VASTFloatVectorOperations.h"/>
         <FILE id="PSRNvb" name="VASTLookuptables.h" compile="0" resource="0"
               file="Source/Engine/Utils/VASTLookuptables.h"/>
         <FILE id="d7Q6Vd" name="VASTSSEHelper.h" compile="0" resource="0" file="Source/Engine/Utils/VASTSSEHelper.h"/>
@@ -625,7 +623,8 @@
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX" vstFolder="/SDKs/VST3-SDK" extraCompilerFlags="-W2"
                iosDevelopmentTeamID="PK93HYD6ZN" smallIcon="A2sWSy" bigIcon="A2sWSy"
-               hardenedRuntime="1" extraDefs="JUCE_DISABLE_CAUTIOUS_PARAMETER_ID_CHECKING">
+               hardenedRuntime="1" extraDefs="JUCE_DISABLE_CAUTIOUS_PARAMETER_ID_CHECKING"
+               xcodeValidArchs="i386,x86_64">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" osxCompatibility="10.6 SDK" isDebug="1" optimisation="1"
                        targetName="VASTvaporizer2_dbg" defines="_MACOSX _MACOSX64BIT SSE_AVX=AVX "
@@ -645,7 +644,8 @@
                        auBinaryLocation="/Library/Audio/Plug-Ins/Components/" headerPath="/Users/setup/Library/Developer/VST/VST_SDK/VST2_SDK"
                        customXcodeFlags="VALID_ARCHS = &quot;x86_64&quot;,  CLANG_X86_VECTOR_INSTRUCTIONS=avx"
                        vst3BinaryLocation="/Library/Audio/Plug-Ins/VST3/" fastMath="1"
-                       stripLocalSymbols="1" aaxBinaryLocation="/Library/Application Support/Avid/Audio/Plug-Ins/"/>
+                       stripLocalSymbols="1" aaxBinaryLocation="/Library/Application Support/Avid/Audio/Plug-Ins/"
+                       osxArchitecture="64BitIntel"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_gui_extra" path="../JUCE/modules"/>
@@ -667,15 +667,15 @@
     </XCODE_MAC>
     <XCODE_MAC targetFolder="Builds/MacOSX_SSE" smallIcon="A2sWSy" bigIcon="A2sWSy"
                iosDevelopmentTeamID="PK93HYD6ZN" extraCompilerFlags="-W2" hardenedRuntime="1"
-               extraDefs="JUCE_DISABLE_CAUTIOUS_PARAMETER_ID_CHECKING">
+               extraDefs="JUCE_DISABLE_CAUTIOUS_PARAMETER_ID_CHECKING" userNotes="This is the universal binary build also supporting arm64 silicon on Neon.">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="0" name="Release 64bit SSE3" targetName="VASTvaporizer2_64_SSE"
                        headerPath="/Users/setup/Library/Developer/VST/VST_SDK/VST2_SDK"
                        defines="_MACOSX _MACOSX64BIT NDEBUG  SSE_AVX=SSE2 _SSE2_VERSION "
                        vst3BinaryLocation="/Library/Audio/Plug-Ins/VST3/" auBinaryLocation="/Library/Audio/Plug-Ins/Components/"
                        vstBinaryLocation="/Library/Audio/Plug-Ins/VST/" optimisation="3"
-                       customXcodeFlags="VALID_ARCHS = &quot;x86_64&quot;, CLANG_X86_VECTOR_INSTRUCTIONS=sse3"
-                       osxArchitecture="64BitIntel" fastMath="1" stripLocalSymbols="1"/>
+                       customXcodeFlags="VALID_ARCHS = &quot;x86_64 arm64&quot;" fastMath="1"
+                       stripLocalSymbols="1" userNotes="This is the universal binary build also supporting arm64 silicon on Neon."/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_gui_extra" path="../JUCE/modules"/>
