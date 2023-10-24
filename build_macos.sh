@@ -5,7 +5,7 @@ echo Building VAST Dynamics Software Vaporizer2 plugin
 if [[ $@ == "" ]] 
 then
     echo No parameters have been provided. Building all targets.
-    declare -a targets=("macOS64" "macOS64SSE2" "macOS32")
+    declare -a targets=("macOS64" "macOS64SSE" "macOS32")
 else 
     echo Parameters: "$@"
     declare -a targets=("$@")
@@ -26,9 +26,9 @@ do
             cmake --build "cmake-build\x64" --config Release
             ;;
         
-        "macOS64SSE2") #this is the universal binary supporting silicon M2 on Neon
-            cmake -B"cmake-build\x64SSE2" -DCMAKE_PREFIX_PATH=../JUCE/install -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" -DBUILD_AVX=OFF -DBUILD_32=OFF -DAAX_SDK_LOCATION:STRING="../../AAX_SDK/aax-sdk-2-6-0" -DVST2_SDK_LOCATION:STRING="../../VST_SDK/VST2_SDK" 
-            cmake --build "cmake-build\x64SSE2" --config Release
+        "macOS64SSE") #this is the universal binary supporting silicon M2 on Neon
+            cmake -B"cmake-build\x64SSE" -DCMAKE_PREFIX_PATH=../JUCE/install -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" -DBUILD_AVX=OFF -DBUILD_32=OFF -DAAX_SDK_LOCATION:STRING="../../AAX_SDK/aax-sdk-2-6-0" -DVST2_SDK_LOCATION:STRING="../../VST_SDK/VST2_SDK" 
+            cmake --build "cmake-build\x64SSE" --config Release
             ;;
 
         "macOS32")
