@@ -2507,6 +2507,22 @@
 							<array>
 								<dict>
 									<key>CHILDREN</key>
+									<array/>
+									<key>GID</key>
+									<integer>80</integer>
+									<key>PATH</key>
+									<string>Utilities</string>
+									<key>PATH_TYPE</key>
+									<integer>0</integer>
+									<key>PERMISSIONS</key>
+									<integer>493</integer>
+									<key>TYPE</key>
+									<integer>-1</integer>
+									<key>UID</key>
+									<integer>0</integer>
+								</dict>
+								<dict>
+									<key>CHILDREN</key>
 									<array>
 										<dict>
 											<key>CHILDREN</key>
@@ -2514,7 +2530,7 @@
 											<key>GID</key>
 											<integer>0</integer>
 											<key>PATH</key>
-											<string>../../../VASTvaporizer/Presets</string>
+											<string>../Presets</string>
 											<key>PATH_TYPE</key>
 											<integer>1</integer>
 											<key>PERMISSIONS</key>
@@ -2554,6 +2570,22 @@
 						</dict>
 						<dict>
 							<key>CHILDREN</key>
+							<array/>
+							<key>GID</key>
+							<integer>0</integer>
+							<key>PATH</key>
+							<string>bin</string>
+							<key>PATH_TYPE</key>
+							<integer>0</integer>
+							<key>PERMISSIONS</key>
+							<integer>493</integer>
+							<key>TYPE</key>
+							<integer>-1</integer>
+							<key>UID</key>
+							<integer>0</integer>
+						</dict>
+						<dict>
+							<key>CHILDREN</key>
 							<array>
 								<dict>
 									<key>CHILDREN</key>
@@ -2577,7 +2609,39 @@
 									<key>GID</key>
 									<integer>0</integer>
 									<key>PATH</key>
+									<string>Audio</string>
+									<key>PATH_TYPE</key>
+									<integer>0</integer>
+									<key>PERMISSIONS</key>
+									<integer>493</integer>
+									<key>TYPE</key>
+									<integer>1</integer>
+									<key>UID</key>
+									<integer>0</integer>
+								</dict>
+								<dict>
+									<key>CHILDREN</key>
+									<array/>
+									<key>GID</key>
+									<integer>0</integer>
+									<key>PATH</key>
 									<string>Automator</string>
+									<key>PATH_TYPE</key>
+									<integer>0</integer>
+									<key>PERMISSIONS</key>
+									<integer>493</integer>
+									<key>TYPE</key>
+									<integer>1</integer>
+									<key>UID</key>
+									<integer>0</integer>
+								</dict>
+								<dict>
+									<key>CHILDREN</key>
+									<array/>
+									<key>GID</key>
+									<integer>0</integer>
+									<key>PATH</key>
+									<string>ColorPickers</string>
 									<key>PATH_TYPE</key>
 									<integer>0</integer>
 									<key>PERMISSIONS</key>
@@ -2630,6 +2694,22 @@
 									<integer>0</integer>
 									<key>PERMISSIONS</key>
 									<integer>493</integer>
+									<key>TYPE</key>
+									<integer>1</integer>
+									<key>UID</key>
+									<integer>0</integer>
+								</dict>
+								<dict>
+									<key>CHILDREN</key>
+									<array/>
+									<key>GID</key>
+									<integer>80</integer>
+									<key>PATH</key>
+									<string>Fonts</string>
+									<key>PATH_TYPE</key>
+									<integer>0</integer>
+									<key>PERMISSIONS</key>
+									<integer>1021</integer>
 									<key>TYPE</key>
 									<integer>1</integer>
 									<key>UID</key>
@@ -2898,6 +2978,121 @@
 									<key>GID</key>
 									<integer>0</integer>
 									<key>PATH</key>
+									<string>etc</string>
+									<key>PATH_TYPE</key>
+									<integer>0</integer>
+									<key>PERMISSIONS</key>
+									<integer>493</integer>
+									<key>TYPE</key>
+									<integer>-1</integer>
+									<key>UID</key>
+									<integer>0</integer>
+								</dict>
+								<dict>
+									<key>CHILDREN</key>
+									<array/>
+									<key>GID</key>
+									<integer>0</integer>
+									<key>PATH</key>
+									<string>var</string>
+									<key>PATH_TYPE</key>
+									<integer>0</integer>
+									<key>PERMISSIONS</key>
+									<integer>493</integer>
+									<key>TYPE</key>
+									<integer>-1</integer>
+									<key>UID</key>
+									<integer>0</integer>
+								</dict>
+							</array>
+							<key>GID</key>
+							<integer>0</integer>
+							<key>PATH</key>
+							<string>private</string>
+							<key>PATH_TYPE</key>
+							<integer>0</integer>
+							<key>PERMISSIONS</key>
+							<integer>493</integer>
+							<key>TYPE</key>
+							<integer>-1</integer>
+							<key>UID</key>
+							<integer>0</integer>
+						</dict>
+						<dict>
+							<key>CHILDREN</key>
+							<array/>
+							<key>GID</key>
+							<integer>0</integer>
+							<key>PATH</key>
+							<string>sbin</string>
+							<key>PATH_TYPE</key>
+							<integer>0</integer>
+							<key>PERMISSIONS</key>
+							<integer>493</integer>
+							<key>TYPE</key>
+							<integer>-1</integer>
+							<key>UID</key>
+							<integer>0</integer>
+						</dict>
+						<dict>
+							<key>CHILDREN</key>
+							<array>
+								<dict>
+									<key>CHILDREN</key>
+									<array>
+										<dict>
+											<key>CHILDREN</key>
+											<array/>
+											<key>GID</key>
+											<integer>0</integer>
+											<key>PATH</key>
+											<string>Extensions</string>
+											<key>PATH_TYPE</key>
+											<integer>0</integer>
+											<key>PERMISSIONS</key>
+											<integer>493</integer>
+											<key>TYPE</key>
+											<integer>1</integer>
+											<key>UID</key>
+											<integer>0</integer>
+										</dict>
+									</array>
+									<key>GID</key>
+									<integer>0</integer>
+									<key>PATH</key>
+									<string>Library</string>
+									<key>PATH_TYPE</key>
+									<integer>0</integer>
+									<key>PERMISSIONS</key>
+									<integer>493</integer>
+									<key>TYPE</key>
+									<integer>1</integer>
+									<key>UID</key>
+									<integer>0</integer>
+								</dict>
+							</array>
+							<key>GID</key>
+							<integer>0</integer>
+							<key>PATH</key>
+							<string>System</string>
+							<key>PATH_TYPE</key>
+							<integer>0</integer>
+							<key>PERMISSIONS</key>
+							<integer>493</integer>
+							<key>TYPE</key>
+							<integer>1</integer>
+							<key>UID</key>
+							<integer>0</integer>
+						</dict>
+						<dict>
+							<key>CHILDREN</key>
+							<array>
+								<dict>
+									<key>CHILDREN</key>
+									<array/>
+									<key>GID</key>
+									<integer>0</integer>
+									<key>PATH</key>
 									<string>Shared</string>
 									<key>PATH_TYPE</key>
 									<integer>0</integer>
@@ -2922,6 +3117,136 @@
 							<key>UID</key>
 							<integer>0</integer>
 						</dict>
+						<dict>
+							<key>CHILDREN</key>
+							<array>
+								<dict>
+									<key>CHILDREN</key>
+									<array/>
+									<key>GID</key>
+									<integer>0</integer>
+									<key>PATH</key>
+									<string>bin</string>
+									<key>PATH_TYPE</key>
+									<integer>0</integer>
+									<key>PERMISSIONS</key>
+									<integer>493</integer>
+									<key>TYPE</key>
+									<integer>-1</integer>
+									<key>UID</key>
+									<integer>0</integer>
+								</dict>
+								<dict>
+									<key>CHILDREN</key>
+									<array/>
+									<key>GID</key>
+									<integer>0</integer>
+									<key>PATH</key>
+									<string>include</string>
+									<key>PATH_TYPE</key>
+									<integer>0</integer>
+									<key>PERMISSIONS</key>
+									<integer>493</integer>
+									<key>TYPE</key>
+									<integer>-1</integer>
+									<key>UID</key>
+									<integer>0</integer>
+								</dict>
+								<dict>
+									<key>CHILDREN</key>
+									<array/>
+									<key>GID</key>
+									<integer>0</integer>
+									<key>PATH</key>
+									<string>lib</string>
+									<key>PATH_TYPE</key>
+									<integer>0</integer>
+									<key>PERMISSIONS</key>
+									<integer>493</integer>
+									<key>TYPE</key>
+									<integer>-1</integer>
+									<key>UID</key>
+									<integer>0</integer>
+								</dict>
+								<dict>
+									<key>CHILDREN</key>
+									<array>
+										<dict>
+											<key>CHILDREN</key>
+											<array/>
+											<key>GID</key>
+											<integer>0</integer>
+											<key>PATH</key>
+											<string>bin</string>
+											<key>PATH_TYPE</key>
+											<integer>0</integer>
+											<key>PERMISSIONS</key>
+											<integer>493</integer>
+											<key>TYPE</key>
+											<integer>-1</integer>
+											<key>UID</key>
+											<integer>0</integer>
+										</dict>
+									</array>
+									<key>GID</key>
+									<integer>0</integer>
+									<key>PATH</key>
+									<string>local</string>
+									<key>PATH_TYPE</key>
+									<integer>0</integer>
+									<key>PERMISSIONS</key>
+									<integer>493</integer>
+									<key>TYPE</key>
+									<integer>-1</integer>
+									<key>UID</key>
+									<integer>0</integer>
+								</dict>
+								<dict>
+									<key>CHILDREN</key>
+									<array/>
+									<key>GID</key>
+									<integer>0</integer>
+									<key>PATH</key>
+									<string>sbin</string>
+									<key>PATH_TYPE</key>
+									<integer>0</integer>
+									<key>PERMISSIONS</key>
+									<integer>493</integer>
+									<key>TYPE</key>
+									<integer>-1</integer>
+									<key>UID</key>
+									<integer>0</integer>
+								</dict>
+								<dict>
+									<key>CHILDREN</key>
+									<array/>
+									<key>GID</key>
+									<integer>0</integer>
+									<key>PATH</key>
+									<string>share</string>
+									<key>PATH_TYPE</key>
+									<integer>0</integer>
+									<key>PERMISSIONS</key>
+									<integer>493</integer>
+									<key>TYPE</key>
+									<integer>-1</integer>
+									<key>UID</key>
+									<integer>0</integer>
+								</dict>
+							</array>
+							<key>GID</key>
+							<integer>0</integer>
+							<key>PATH</key>
+							<string>usr</string>
+							<key>PATH_TYPE</key>
+							<integer>0</integer>
+							<key>PERMISSIONS</key>
+							<integer>493</integer>
+							<key>TYPE</key>
+							<integer>-1</integer>
+							<key>UID</key>
+							<integer>0</integer>
+						</dict>
 					</array>
 					<key>GID</key>
 					<integer>0</integer>
@@ -2941,7 +3266,7 @@
 				<key>PRESERVE_EXTENDED_ATTRIBUTES</key>
 				<false/>
 				<key>SHOW_INVISIBLE</key>
-				<false/>
+				<true/>
 				<key>SPLIT_FORKS</key>
 				<true/>
 				<key>TREAT_MISSING_FILES_AS_WARNING</key>
@@ -3021,7 +3346,7 @@
 											<key>GID</key>
 											<integer>0</integer>
 											<key>PATH</key>
-											<string>../../../VASTvaporizer/Noises</string>
+											<string>../Noises</string>
 											<key>PATH_TYPE</key>
 											<integer>1</integer>
 											<key>PERMISSIONS</key>
@@ -3528,7 +3853,7 @@
 											<key>GID</key>
 											<integer>0</integer>
 											<key>PATH</key>
-											<string>../../../VASTvaporizer/Tables</string>
+											<string>../Tables</string>
 											<key>PATH_TYPE</key>
 											<integer>1</integer>
 											<key>PERMISSIONS</key>
@@ -8563,9 +8888,9 @@
 						<key>VALUE</key>
 						<dict>
 							<key>PATH</key>
-							<string>/Users/setup/Library/Developer/VST/JUCE Projects/VASTvaporizer/InstallerFiles/license.txt</string>
+							<string>../InstallerFiles/license.txt</string>
 							<key>PATH_TYPE</key>
-							<integer>0</integer>
+							<integer>1</integer>
 						</dict>
 					</dict>
 				</array>
