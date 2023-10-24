@@ -2984,9 +2984,9 @@ void VASTAudioProcessor::initSettings() {
 		m_UserWavetableRootFolder = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile("Vaporizer2").getChildFile("Tables").getFullPathName(); // root folder for wavetables
 		m_UserWavRootFolder = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile("Vaporizer2").getChildFile("Noises").getFullPathName(); // root folder for WAV files
 #elif JUCE_MAC
-		m_UserPresetRootFolder = File::getSpecialLocation(File::userApplicationDataDirectory).getChildFile("Audio").getChildFile("Presets").getChildFile("Vaporizer2").getChildFile("Presets").getFullPathName(); 
-		m_UserWavetableRootFolder = File::getSpecialLocation(File::userApplicationDataDirectory).getChildFile("Audio").getChildFile("Presets").getChildFile("Vaporizer2").getChildFile("Tables").getFullPathName();
-		m_UserWavRootFolder = File::getSpecialLocation(File::userApplicationDataDirectory).getChildFile("Audio").getChildFile("Presets").getChildFile("Vaporizer2").getChildFile("Noises").getFullPathName(); 
+		m_UserPresetRootFolder = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile("Vaporizer2").getChildFile("Presets").getFullPathName();
+		m_UserWavetableRootFolder = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile("Vaporizer2").getChildFile("Tables").getFullPathName();
+		m_UserWavRootFolder = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile("Vaporizer2").getChildFile("Noises").getFullPathName();
 #elif JUCE_LINUX
 		m_UserPresetRootFolder = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile(".local").getChildFile("share").getChildFile("Vaporizer2").getChildFile("Presets").getFullPathName();
 		m_UserWavetableRootFolder = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile(".local").getChildFile("share").getChildFile("Vaporizer2").getChildFile("Tables").getFullPathName();
