@@ -5,7 +5,8 @@ echo Building VAST Dynamics Software Vaporizer2 plugin
 if [[ $@ == "" ]] 
 then
     echo No parameters have been provided. Building all targets.
-    declare -a targets=("macOS64" "macOS64SSE" "macOS32")
+    declare -a targets=("macOS64" "macOS64SSE")
+    #declare -a targets=("macOS64" "macOS64SSE" "macOS32")  #32-bit plugins not packaged but can be build if needed
 else 
     echo Parameters: "$@"
     declare -a targets=("$@")

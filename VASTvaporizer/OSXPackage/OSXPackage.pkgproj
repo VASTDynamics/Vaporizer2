@@ -8936,7 +8936,7 @@
 			<key>BUILD_PATH</key>
 			<dict>
 				<key>PATH</key>
-				<string>.</string>
+				<string>Vaporizer2_installer_OSX64</string>
 				<key>PATH_TYPE</key>
 				<integer>1</integer>
 			</dict>
