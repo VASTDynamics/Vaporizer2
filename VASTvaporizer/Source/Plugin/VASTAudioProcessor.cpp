@@ -2380,10 +2380,19 @@ bool VASTAudioProcessor::writeSettingsToFile() {
 
 String VASTAudioProcessor::getSettingsFilePath(bool read, bool &migrate_legacy) {
 	//JUCE_WINDOWS	File::getSpecialLocation(File::userApplicationDataDirectory) ="C:\Users\<username>\AppData\Roaming\"
-	//JUCE_MAC		File::getSpecialLocation(File::userApplicationDataDirectory) ="~/Library"
-	//JUCE_LINUX	File::getSpecialLocation(File::userApplicationDataDirectory) ="/usr/share/"
+	//JUCE_MAC		File::getSpecialLocation(File::userApplicationDataDirectory) ="~/Library/Application Support/Vaporizer2"
+	//JUCE_LINUX	File::getSpecialLocation(File::userApplicationDataDirectory) ="~.config/Vaporizer2"
 	const String settingsFile = "VASTvaporizerSettings.xml";
 	String filename = File::getSpecialLocation(File::userApplicationDataDirectory).getChildFile("Vaporizer2").getChildFile(settingsFile).getFullPathName();
+
+#ifdef JUCE_WINDOWS
+	filename = File::getSpecialLocation(File::userApplicationDataDirectory).getChildFile("Vaporizer2").getChildFile(settingsFile).getFullPathName();
+#elif JUCE_MAC
+	filename = File::getSpecialLocation(File::userApplicationDataDirectory).getChildFile("Application Support").getChildFile("Vaporizer2").getChildFile(settingsFile).getFullPathName();
+#elif JUCE_LINUX
+	filename = File::getSpecialLocation(File::userApplicationDataDirectory).getChildFile(".config").getChildFile("Vaporizer2").getChildFile(settingsFile).getFullPathName();
+#endif
+
 	if (read) {
 		if (!File(filename).existsAsFile()) {
 			File(filename).create(); //recursively create also directories
