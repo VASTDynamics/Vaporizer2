@@ -2381,7 +2381,7 @@ bool VASTAudioProcessor::writeSettingsToFile() {
 String VASTAudioProcessor::getSettingsFilePath(bool read, bool &migrate_legacy) {
 	//JUCE_WINDOWS	File::getSpecialLocation(File::userApplicationDataDirectory) ="C:\Users\<username>\AppData\Roaming\"
 	//JUCE_MAC		File::getSpecialLocation(File::userApplicationDataDirectory) ="~/Library/Application Support/Vaporizer2"
-	//JUCE_LINUX	File::getSpecialLocation(File::userApplicationDataDirectory) ="~.config/Vaporizer2"
+	//JUCE_LINUX	File::getSpecialLocation(File::userApplicationDataDirectory) ="~./config/Vaporizer2"
 	const String settingsFile = "VASTvaporizerSettings.xml";
 	String filename = File::getSpecialLocation(File::userApplicationDataDirectory).getChildFile("Vaporizer2").getChildFile(settingsFile).getFullPathName();
 
