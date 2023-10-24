@@ -2390,7 +2390,7 @@ String VASTAudioProcessor::getSettingsFilePath(bool read, bool &migrate_legacy) 
 #elif JUCE_MAC
 	filename = File::getSpecialLocation(File::userApplicationDataDirectory).getChildFile("Application Support").getChildFile("Vaporizer2").getChildFile(settingsFile).getFullPathName();
 #elif JUCE_LINUX
-	filename = File::getSpecialLocation(File::userApplicationDataDirectory).getChildFile(".config").getChildFile("Vaporizer2").getChildFile(settingsFile).getFullPathName();
+	filename = File::getSpecialLocation(File::userApplicationDataDirectory).getChildFile("Vaporizer2").getChildFile(settingsFile).getFullPathName();
 #endif
 
 	if (read) {
