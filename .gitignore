@@ -8,6 +8,7 @@ cmake-build/
 post_build_script_win.bat
 build_script_win.bat
 MacOS Build Chain.docx
+Vaporizer2OSX64.pkg
 package_macos.sh
 package_win.bat
 .vscode/
