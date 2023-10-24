@@ -10,6 +10,7 @@ build_script_win.bat
 MacOS Build Chain.docx
 package_macos.sh
 package_win.bat
+.vscode/
 *.o
 *.dll
 *.so
