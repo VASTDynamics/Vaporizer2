@@ -8,7 +8,9 @@ cmake-build/
 post_build_script_win.bat
 build_script_win.bat
 MacOS Build Chain.docx
-Vaporizer2OSX64.pkg
+Vaporizer2OSX64*.pkg
+Vaporizer2OSX64*.zip
+Vaporizer2_installer_OSX64*.zip
 package_macos.sh
 package_win.bat
 .vscode/
@@ -23,3 +25,5 @@ package_win.bat
 *.aax
 .DS_Store
 /.clangd
+output.txt
+output.json
