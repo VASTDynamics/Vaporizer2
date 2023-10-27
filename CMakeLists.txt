@@ -132,7 +132,8 @@ if (APPLE)
       #set_xcode_property(${PROJECT_NAME} DEVELOPMENT_TEAM ${DEVELOPMENT_TEAM_ID})
       #set_xcode_property(${PROJECT_NAME} PROVISIONING_PROFILE_SPECIFIER ${PROVISIONING_PROFILE_NAME})
       set_xcode_property(${PROJECT_NAME} ENABLE_HARDENED_RUNTIME "TRUE")
-      target_link_options(${PROJECT_NAME} PRIVATE " -ld_classic") #due to xcode 15 issue
+      target_compile_definitions(${PROJECT_NAME} PRIVATE "JUCE_SILENCE_XCODE_15_LINKER_WARNING") #temporarily due to xcode 15 issue
+      target_link_options(${PROJECT_NAME} PRIVATE " -ld_classic") #temporarily due to xcode 15 issue
   endif()
   if (BUILD_32)
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32")
