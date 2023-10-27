@@ -608,9 +608,13 @@ void CVASTPoly::doArp(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages)
 
 		double l_ARP_time = (realPos - int(realPos)) * stepDuration;
 		double diff = l_ARP_time - m_ARP_time; //find out difference
-		if (diff < -0.001f) 
+        
+        /* this breaks ARP sync in logic - removed
+		if (diff < -0.001f)
 			diff = stepDuration + l_ARP_time - m_ARP_time;
-		m_ARP_time += diff; //can be larger than stepDuration!
+         */
+        
+        m_ARP_time += diff; //can be larger than stepDuration!
 		//while (m_ARP_time > stepDuration) m_ARP_time -= stepDuration; //needed? safety
 	}
 	else {
@@ -648,7 +652,9 @@ void CVASTPoly::doArp(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages)
 				mb.addEvent(msg, 0);
 			m_ARP_midiInNotes.removeValue(msg.getNoteNumber());
 		}
-		else mb.addEvent(msg, samplePos);
+        else {
+            mb.addEvent(msg, samplePos);
+        }
 	}
 
 	midiMessages.clear();

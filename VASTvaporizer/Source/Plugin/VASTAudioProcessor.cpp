@@ -705,6 +705,7 @@ void VASTAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mid
 	midiMessages.clear();
 
 	//check license
+#ifdef VASTCOMMERCIAL
 	if (isLicensed() == false) {
 		if ((m_sLicenseInformation.m_bExpired) || (m_fTrialSeconds > MAX_TRIAL_SECONDS)) {
 			m_sLicenseInformation.m_bExpired = true;
@@ -714,6 +715,7 @@ void VASTAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mid
 			m_fTrialSeconds += buffer.getNumSamples() / getSampleRate();
 		}
 	}
+#endif
 }
 
 //==============================================================================
@@ -1726,7 +1728,7 @@ String VASTAudioProcessor::getVSTPath() {
 	return "";
 
 #elif JUCE_LINUX
-	return "~/.Vaporizer2/"; // ~ is home directory
+	return "/usr/share";
 
 #elif JUCE_WINDOWS	
 	String Vaporizer2InstallPath = "";
@@ -1827,7 +1829,7 @@ String VASTAudioProcessor::getVSTPathAlternative() {
 	return "";
 
 #elif JUCE_LINUX
-	return "~/.Vaporizer2/";
+	return "/usr/share";
 
 #elif JUCE_WINDOWS	
 	const String currentDll(File::getSpecialLocation(File::currentApplicationFile).getFullPathName());
@@ -1874,6 +1876,7 @@ bool VASTAudioProcessor::readLicense() {
 	m_sLicenseInformation.m_bIsLegacyLicense = true;
 	m_sLicenseInformation.m_bIsLicensed = false;
 	m_sLicenseInformation.m_bIsFreeVersion = false;
+    m_sLicenseInformation.m_bExpired = false;
 	m_sLicenseString = "Free version";
 
 	String filename = File(getVSTPath()).getChildFile("VASTDynamics.actkey").getFullPathName();
@@ -1886,8 +1889,11 @@ bool VASTAudioProcessor::readLicense() {
 			m_sLicenseInformation.m_bIsLicensed = true;
 			m_sLicenseInformation.m_bExpired = false;
 			m_sLicenseInformation.m_bIsLegacyLicense = false;
-	#endif
-		}
+	#else
+        } else { //invalid actkey
+            m_sLicenseString = "Free version";
+        }
+    #endif
 #endif
 	}
 
