@@ -2227,6 +2227,47 @@ int VASTAudioProcessor::parameterIndexGetMidiMapping(int internalIndex) {
 	return lCC;
 }
 
+void VASTAudioProcessor::initSettings() {
+    bool lSuccess = readSettingsFromFile();
+
+    if (lSuccess == false) {
+        loadDefaultMidiMapping();
+        
+        //set default User Folders
+        m_UserPresetRootFolder = File(getVSTPath()).getChildFile("Presets").getFullPathName(); //will be overwritten by settings if set
+        m_UserWavetableRootFolder = File(getVSTPath()).getChildFile("Tables").getFullPathName(); // root folder for wavetables
+        m_UserWavRootFolder = File(getVSTPath()).getChildFile("Noises").getFullPathName(); // root folder for WAV files
+
+#ifdef JUCE_WINDOWS
+        m_UserPresetRootFolder = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile("Vaporizer2").getChildFile("Presets").getFullPathName();
+        m_UserWavetableRootFolder = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile("Vaporizer2").getChildFile("Tables").getFullPathName(); // root folder for wavetables
+        m_UserWavRootFolder = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile("Vaporizer2").getChildFile("Noises").getFullPathName(); // root folder for WAV files
+#elif JUCE_MAC
+        m_UserPresetRootFolder = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile("Vaporizer2").getChildFile("Presets").getFullPathName();
+        m_UserWavetableRootFolder = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile("Vaporizer2").getChildFile("Tables").getFullPathName();
+        m_UserWavRootFolder = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile("Vaporizer2").getChildFile("Noises").getFullPathName();
+#elif JUCE_LINUX
+        m_UserPresetRootFolder = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile("Vaporizer2").getChildFile("Presets").getFullPathName();
+        m_UserWavetableRootFolder = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile("Vaporizer2").getChildFile("Tables").getFullPathName();
+        m_UserWavRootFolder = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile("Vaporizer2").getChildFile("Noises").getFullPathName();
+#endif
+
+//store values passed from installer in settings
+#ifdef JUCE_WINDOWS
+        if (!(WindowsRegistry::getValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\VAST Dynamics\\Vaporizer2\\Settings\\UserPresetFolder", m_UserPresetRootFolder).equalsIgnoreCase("")))
+            m_UserPresetRootFolder = WindowsRegistry::getValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\VAST Dynamics\\Vaporizer2\\Settings\\UserTableFolder", m_UserWavetableRootFolder);
+        if (!(WindowsRegistry::getValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\VAST Dynamics\\Vaporizer2\\Settings\\UserPresetFolder", m_UserPresetRootFolder).equalsIgnoreCase("")))
+            m_UserWavetableRootFolder = WindowsRegistry::getValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\VAST Dynamics\\Vaporizer2\\Settings\\UserTableFolder", m_UserWavetableRootFolder);
+        if (!(WindowsRegistry::getValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\VAST Dynamics\\Vaporizer2\\Settings\\UserNoisesFolder", m_UserWavRootFolder).equalsIgnoreCase("")))
+            m_UserWavRootFolder = WindowsRegistry::getValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\VAST Dynamics\\Vaporizer2\\Settings\\UserNoisesFolder", m_UserWavRootFolder);
+#endif
+        m_iUserTargetPluginWidth = m_iDefaultPluginWidth; //default size from projucer
+        m_iUserTargetPluginHeight = m_iDefaultPluginHeight; //default size from projucer
+
+        writeSettingsToFile();
+    }
+}
+
 void VASTAudioProcessor::writeSettingsToFileAsync() {
 	Component::SafePointer<Label> spl(&safePointerLabel);
     VASTAudioProcessor* processor_ = this;
@@ -2965,47 +3006,6 @@ void VASTAudioProcessor::loadZeroMidiMapping() {
 		m_MidiMapping[i].isParam = false;
 		m_MidiMapping[i].paramID = -1;
 		m_MidiMapping[i].componentVariableName = "";
-	}
-}
-
-void VASTAudioProcessor::initSettings() {
-	bool lSuccess = readSettingsFromFile();
-
-	if (lSuccess == false) {
-		loadDefaultMidiMapping();
-		
-		//set default User Folders
-		m_UserPresetRootFolder = File(getVSTPath()).getChildFile("Presets").getFullPathName(); //will be overwritten by settings if set
-		m_UserWavetableRootFolder = File(getVSTPath()).getChildFile("Tables").getFullPathName(); // root folder for wavetables
-		m_UserWavRootFolder = File(getVSTPath()).getChildFile("Noises").getFullPathName(); // root folder for WAV files
-
-#ifdef JUCE_WINDOWS
-		m_UserPresetRootFolder = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile("Vaporizer2").getChildFile("Presets").getFullPathName();
-		m_UserWavetableRootFolder = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile("Vaporizer2").getChildFile("Tables").getFullPathName(); // root folder for wavetables
-		m_UserWavRootFolder = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile("Vaporizer2").getChildFile("Noises").getFullPathName(); // root folder for WAV files
-#elif JUCE_MAC
-		m_UserPresetRootFolder = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile("Vaporizer2").getChildFile("Presets").getFullPathName();
-		m_UserWavetableRootFolder = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile("Vaporizer2").getChildFile("Tables").getFullPathName();
-		m_UserWavRootFolder = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile("Vaporizer2").getChildFile("Noises").getFullPathName();
-#elif JUCE_LINUX
-		m_UserPresetRootFolder = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile(".local").getChildFile("share").getChildFile("Vaporizer2").getChildFile("Presets").getFullPathName();
-		m_UserWavetableRootFolder = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile(".local").getChildFile("share").getChildFile("Vaporizer2").getChildFile("Tables").getFullPathName();
-		m_UserWavRootFolder = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile(".local").getChildFile("share").getChildFile("Vaporizer2").getChildFile("Noises").getFullPathName();
-#endif		
-
-//store values passed from installer in settings
-#ifdef JUCE_WINDOWS
-		if (!(WindowsRegistry::getValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\VAST Dynamics\\Vaporizer2\\Settings\\UserPresetFolder", m_UserPresetRootFolder).equalsIgnoreCase("")))
-			m_UserPresetRootFolder = WindowsRegistry::getValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\VAST Dynamics\\Vaporizer2\\Settings\\UserTableFolder", m_UserWavetableRootFolder);
-		if (!(WindowsRegistry::getValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\VAST Dynamics\\Vaporizer2\\Settings\\UserPresetFolder", m_UserPresetRootFolder).equalsIgnoreCase("")))
-			m_UserWavetableRootFolder = WindowsRegistry::getValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\VAST Dynamics\\Vaporizer2\\Settings\\UserTableFolder", m_UserWavetableRootFolder);
-		if (!(WindowsRegistry::getValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\VAST Dynamics\\Vaporizer2\\Settings\\UserNoisesFolder", m_UserWavRootFolder).equalsIgnoreCase("")))
-			m_UserWavRootFolder = WindowsRegistry::getValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\VAST Dynamics\\Vaporizer2\\Settings\\UserNoisesFolder", m_UserWavRootFolder);
-#endif
-		m_iUserTargetPluginWidth = m_iDefaultPluginWidth; //default size from projucer
-		m_iUserTargetPluginHeight = m_iDefaultPluginHeight; //default size from projucer
-
-		writeSettingsToFile();
 	}
 }
 

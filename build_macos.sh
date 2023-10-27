@@ -23,17 +23,17 @@ do
     case $t in
         
         "macOS64")
-            cmake -B"cmake-build\x64" -DCMAKE_PREFIX_PATH=../JUCE/install -DCMAKE_OSX_ARCHITECTURES="x86_64" -DBUILD_AVX=ON -DBUILD_32=OFF -DAAX_SDK_LOCATION:STRING="../../AAX_SDK/aax-sdk-2-6-0" -DVST2_SDK_LOCATION:STRING="../../VST_SDK/VST2_SDK" 
+            cmake -B"cmake-build\x64" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=../JUCE/install -DCMAKE_OSX_ARCHITECTURES="x86_64" -DBUILD_AVX=ON -DBUILD_32=OFF -DAAX_SDK_LOCATION:STRING="../../AAX_SDK/aax-sdk-2-6-0" -DVST2_SDK_LOCATION:STRING="../../VST_SDK/VST2_SDK" 
             cmake --build "cmake-build\x64" --config Release
             ;;
         
         "macOS64SSE") #this is the universal binary supporting silicon M2 on Neon
-            cmake -B"cmake-build\x64SSE" -DCMAKE_PREFIX_PATH=../JUCE/install -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" -DBUILD_AVX=OFF -DBUILD_32=OFF -DAAX_SDK_LOCATION:STRING="../../AAX_SDK/aax-sdk-2-6-0" -DVST2_SDK_LOCATION:STRING="../../VST_SDK/VST2_SDK" 
+            cmake -B"cmake-build\x64SSE" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=../JUCE/install -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" -DBUILD_AVX=OFF -DBUILD_32=OFF -DAAX_SDK_LOCATION:STRING="../../AAX_SDK/aax-sdk-2-6-0" -DVST2_SDK_LOCATION:STRING="../../VST_SDK/VST2_SDK" 
             cmake --build "cmake-build\x64SSE" --config Release
             ;;
 
         "macOS32")
-            cmake -B"cmake-build\x86" -DCMAKE_PREFIX_PATH=../JUCE/install -DCMAKE_OSX_ARCHITECTURES="x86_64" -DBUILD_AVX=ON -DBUILD_32=ON -DAAX_SDK_LOCATION:STRING="../../AAX_SDK/aax-sdk-2-6-0" -DVST2_SDK_LOCATION:STRING="../../VST_SDK/VST2_SDK" 
+            cmake -B"cmake-build\x86" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=../JUCE/install -DCMAKE_OSX_ARCHITECTURES="x86_64" -DBUILD_AVX=ON -DBUILD_32=ON -DAAX_SDK_LOCATION:STRING="../../AAX_SDK/aax-sdk-2-6-0" -DVST2_SDK_LOCATION:STRING="../../VST_SDK/VST2_SDK" 
             cmake --build "cmake-build\x86" --config Release
             ;;
 

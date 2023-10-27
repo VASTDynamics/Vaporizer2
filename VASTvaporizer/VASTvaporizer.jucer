@@ -623,15 +623,15 @@
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX" vstFolder="/SDKs/VST3-SDK" extraCompilerFlags="-W2"
                iosDevelopmentTeamID="PK93HYD6ZN" smallIcon="A2sWSy" bigIcon="A2sWSy"
-               hardenedRuntime="1" extraDefs="JUCE_DISABLE_CAUTIOUS_PARAMETER_ID_CHECKING"
-               xcodeValidArchs="i386,x86_64">
+               hardenedRuntime="1" extraDefs="JUCE_DISABLE_CAUTIOUS_PARAMETER_ID_CHECKING JUCE_SILENCE_XCODE_15_LINKER_WARNING "
+               xcodeValidArchs="i386,x86_64" extraLinkerFlags="-ld_classic">
       <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" osxCompatibility="10.6 SDK" isDebug="1" optimisation="1"
+        <CONFIGURATION name="Debug" osxCompatibility="10.13 SDK" isDebug="1" optimisation="1"
                        targetName="VASTvaporizer2_dbg" defines="_MACOSX _MACOSX64BIT SSE_AVX=AVX "
                        enablePluginBinaryCopyStep="1" vstBinaryLocation="/Library/Audio/Plug-Ins/VST/"
                        auBinaryLocation="/Library/Audio/Plug-Ins/Components/" customXcodeFlags="VALID_ARCHS = &quot;x86_64&quot;,  CLANG_X86_VECTOR_INSTRUCTIONS=avx"
                        vst3BinaryLocation="/Library/Audio/Plug-Ins/VST3/" osxArchitecture="64BitIntel"
-                       fastMath="1" macOSDeploymentTarget="10.6"/>
+                       fastMath="1" macOSDeploymentTarget="10.13"/>
         <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="VASTvaporizer2"
                        linkTimeOptimisation="1" defines="_MACOSX _MACOSX32BIT NDEBUG  SSE_AVX=AVX "
                        enablePluginBinaryCopyStep="1" osxArchitecture="32BitUniversal"
@@ -641,8 +641,7 @@
         <CONFIGURATION name="Release 64bit" isDebug="0" optimisation="3" targetName="VASTvaporizer2_64"
                        linkTimeOptimisation="1" defines="_MACOSX _MACOSX64BIT NDEBUG  SSE_AVX=AVX"
                        enablePluginBinaryCopyStep="1" vstBinaryLocation="/Library/Audio/Plug-Ins/VST/"
-                       auBinaryLocation="/Library/Audio/Plug-Ins/Components/" headerPath="/Users/setup/Library/Developer/VST/VST_SDK/VST2_SDK"
-                       customXcodeFlags="VALID_ARCHS = &quot;x86_64&quot;,  CLANG_X86_VECTOR_INSTRUCTIONS=avx"
+                       auBinaryLocation="/Library/Audio/Plug-Ins/Components/" customXcodeFlags="VALID_ARCHS = &quot;x86_64&quot;,  CLANG_X86_VECTOR_INSTRUCTIONS=avx"
                        vst3BinaryLocation="/Library/Audio/Plug-Ins/VST3/" fastMath="1"
                        stripLocalSymbols="1" aaxBinaryLocation="/Library/Application Support/Avid/Audio/Plug-Ins/"
                        osxArchitecture="64BitIntel"/>
@@ -667,10 +666,11 @@
     </XCODE_MAC>
     <XCODE_MAC targetFolder="Builds/MacOSX_SSE" smallIcon="A2sWSy" bigIcon="A2sWSy"
                iosDevelopmentTeamID="PK93HYD6ZN" extraCompilerFlags="-W2" hardenedRuntime="1"
-               extraDefs="JUCE_DISABLE_CAUTIOUS_PARAMETER_ID_CHECKING" userNotes="This is the universal binary build also supporting arm64 silicon on Neon.">
+               extraDefs="JUCE_DISABLE_CAUTIOUS_PARAMETER_ID_CHECKING JUCE_SILENCE_XCODE_15_LINKER_WARNING "
+               userNotes="This is the universal binary build also supporting arm64 silicon on Neon."
+               extraLinkerFlags="-ld_classic">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="0" name="Release 64bit SSE3" targetName="VASTvaporizer2_64_SSE"
-                       headerPath="/Users/setup/Library/Developer/VST/VST_SDK/VST2_SDK"
                        defines="_MACOSX _MACOSX64BIT NDEBUG  SSE_AVX=SSE2 _SSE2_VERSION "
                        vst3BinaryLocation="/Library/Audio/Plug-Ins/VST3/" auBinaryLocation="/Library/Audio/Plug-Ins/Components/"
                        vstBinaryLocation="/Library/Audio/Plug-Ins/VST/" optimisation="3"

@@ -210,14 +210,14 @@ bool CVASTWaveTableOscillator::updatePhase(int unisonOsci) {
 	phasor[unisonOsci] += phaseInc[unisonOsci];
 
 	bool wrap = false;
-	if (phasor[unisonOsci] >= 1.0) {
-		phasor[unisonOsci] -= int(phasor[unisonOsci]);
+    float curPhase = phasor[unisonOsci];
+    if (curPhase < 0.0) { //for FM negative freqs
+        phasor[unisonOsci] -= int(curPhase) - 1; //- * - = +
+    } else if (curPhase >= 1.0) {
+		phasor[unisonOsci] -= int(curPhase);
 		wrap = true;
 	}
-	if (phasor[unisonOsci] < 0.0) { //for FM negative freqs
-		phasor[unisonOsci] -= int(phasor[unisonOsci]) - 1; //- * - = +
-	}
-	if (phasor[unisonOsci] == 0.f) wrap = true;
+    //else if (phasor[unisonOsci] == 0.f) wrap = true; //does not happen??
 	return wrap;
 }
 
