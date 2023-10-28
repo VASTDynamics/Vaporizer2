@@ -87,10 +87,11 @@ private:
 
 	/** This is used to control access to the rendering callback and the note trigger methods. */
 	CriticalSection lock;
-	bool m_ppq_playing = false;		
+	bool m_ppq_playing = false;			
 	double m_last_bpm = 0.0;
 	bool m_shallInitARP = false;
 	bool m_arpHasActiveStepToFinish = false;
+	double m_dLastRealPos = 0.0;
 	void initArpInternal(MidiBuffer& midiMessages);	
 
 	void doArp(sRoutingBuffers &routingBuffers, MidiBuffer& midiMessages);	

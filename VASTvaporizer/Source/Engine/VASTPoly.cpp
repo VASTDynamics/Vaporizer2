@@ -566,10 +566,7 @@ void CVASTPoly::doArp(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages)
 	//const ScopedReadLock myScopedLock(arpData->mReadWriteLock); //this seemed to cause an issue
 	int numSteps = arpData->getNumSteps();
 	auto numSamples = routingBuffers.getNumSamples();
-
 	arpData->setDispActiveStep(((m_ARP_currentStep + numSteps) - 1) % numSteps); // always one ahead - current step means waiting for the step
-
-																				 //reset?
 	bool bStart = false;
 
 	if (!m_arpHasActiveStepToFinish) {
@@ -584,38 +581,14 @@ void CVASTPoly::doArp(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages)
 
 	// get step duration
 	double stepDuration = 0;
-	int l_ARP_currentStep = 0;
-	//if (*m_Set->m_State->m_bARPSynch == SWITCH::SWITCH_ON) {
-	//if ((*m_Set->m_State->m_bARPSynch == SWITCH::SWITCH_ON) && (m_Set->m_bPpqIsPlaying)) {
+	int l_ARP_synch_currentStep = 0;
 	if ((*m_Set->m_State->m_bARPSynch == SWITCH::SWITCH_ON) && (m_Set->m_bPpqIsPlaying)) {
-		//if (m_Set->m_bPpqIsPlaying == false)
-			//return; //stop all??
 		if (m_last_bpm != m_Set->m_dPpqBpm) { //bpm was changed??
 			bStart = true;
 		}
 		m_last_bpm = m_Set->m_dPpqBpm; 
-
 		double l_fIntervalTime = m_Set->getIntervalTimeFromDAWBeats(*m_Set->m_State->m_uARPTimeBeats);
-		//stepDuration = static_cast<int> (std::ceil(m_Set->m_nSampleRate * (l_fIntervalTime / 1000.f)));  //interval time is in seconds
 		stepDuration = m_Set->m_nSampleRate * (l_fIntervalTime * 0.001);  //interval time is in seconds
-
-		double realPos = m_Set->m_dPpqPosition / m_Set->getIntervalRatio(*m_Set->m_State->m_uARPTimeBeats);
-		double realPosEndOfBuffer = realPos + numSamples / stepDuration;
-		l_ARP_currentStep = int(realPosEndOfBuffer) % numSteps;
-		if (bStart) m_ARP_currentStep = l_ARP_currentStep;
-		l_ARP_currentStep++;
-		l_ARP_currentStep %= numSteps;
-
-		double l_ARP_time = (realPos - int(realPos)) * stepDuration;
-		double diff = l_ARP_time - m_ARP_time; //find out difference
-        
-        /* this breaks ARP sync in logic - removed
-		if (diff < -0.001f)
-			diff = stepDuration + l_ARP_time - m_ARP_time;
-         */
-        
-        m_ARP_time += diff; //can be larger than stepDuration!
-		//while (m_ARP_time > stepDuration) m_ARP_time -= stepDuration; //needed? safety
 	}
 	else {
 		if (*m_Set->m_State->m_bARPSynch == SWITCH::SWITCH_ON) { //synch but not playing
@@ -628,9 +601,9 @@ void CVASTPoly::doArp(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages)
 			m_fARP_Speed_smoothed.setValue(*m_Set->m_State->m_fARPSpeed, true);
 			speed = m_fARP_Speed_smoothed.getNextValue();
 		}
-		//stepDuration = static_cast<int> (std::ceil(m_Set->m_nSampleRate * (speed / 1000.f)));
 		stepDuration = m_Set->m_nSampleRate * (speed * 0.001);
-		if (bStart) m_ARP_time = stepDuration;
+		if (bStart) 
+			m_ARP_time = stepDuration; //ARP time can only increase value!
 	}
 
 	int lChannelForARP = 1;
@@ -642,6 +615,8 @@ void CVASTPoly::doArp(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages)
 
 	MidiBuffer mb;
 	mb.clear();
+
+	Array<int> l_noteOffNotes;
 	for (MidiBuffer::Iterator it(midiMessages); it.getNextEvent(msg, samplePos);)
 	{
 		if (msg.isNoteOn()) {
@@ -650,7 +625,9 @@ void CVASTPoly::doArp(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages)
 		else if (msg.isNoteOff()) {
 			if (!m_ARP_midiInNotes.contains(msg.getNoteNumber())) //some leftovers
 				mb.addEvent(msg, 0);
-			m_ARP_midiInNotes.removeValue(msg.getNoteNumber());
+			
+			m_ARP_midiInNotes.removeValue(msg.getNoteNumber()); 
+			l_noteOffNotes.add(msg.getNoteNumber());
 		}
         else {
             mb.addEvent(msg, samplePos);
@@ -659,6 +636,9 @@ void CVASTPoly::doArp(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages)
 
 	midiMessages.clear();
 	midiMessages.addEvents(mb, 0, numSamples, 0);
+
+	double realPos = m_Set->m_dPpqPosition / m_Set->getIntervalRatio(*m_Set->m_State->m_uARPTimeBeats); //only for synch
+	double realPosEndOfBuffer = realPos + (numSamples - 1)/ stepDuration;
 
 	//noteOff shall be send when time passes behind length of last note - and it is not hold
 	bool isHold = false;
@@ -672,8 +652,10 @@ void CVASTPoly::doArp(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages)
 			(curStepData.semitones == stepBeforeData.semitones) &&
 			(curStepData.octave == stepBeforeData.octave)) // this is hold
 			isHold = true;
-		if (curStepData.gate == 0) isHold = false; //no hold when current note is 0
-		if (stepBefore == m_ARP_currentStep) isHold = false; //only one step and hold?
+		if (curStepData.gate == 0) 
+			isHold = false; //no hold when current note is 0
+		if (stepBefore == m_ARP_currentStep) 
+			isHold = false; //only one step and hold?
 		bool allHold = true;
 		for (int i = 0; i < arpData->getNumSteps(); i++) {
 			VASTARPData::ArpStep thisStepData = arpData->getStep(i);
@@ -695,8 +677,19 @@ void CVASTPoly::doArp(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages)
 	}
 
 	bool bStartNote = false;
-	if (((m_ARP_time + numSamples) >= stepDuration) || bStart)
-		bStartNote = true;
+	if (bStart)
+		bStartNote = true; //always!
+	else {
+		if (*m_Set->m_State->m_bARPSynch == SWITCH::SWITCH_ON) {
+			//calc wrap from ppq position 
+			if (int(realPosEndOfBuffer)>int(m_dLastRealPos)) //wrap in this buffer + gap
+				bStartNote = true;
+		}
+		else if ((m_ARP_time + numSamples - 1) >= stepDuration) {
+			bStartNote = true;
+		}
+	}
+	m_dLastRealPos = realPosEndOfBuffer;
 
 	if (bStartNote)
 	{
@@ -764,21 +757,23 @@ void CVASTPoly::doArp(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages)
 					m_ARP_currentARPNoteValues.getReference(note) = -1;
 				}
 			}
-		}
 
-		//if (*m_Set->m_State->m_bARPSynch == SWITCH::SWITCH_OFF) {
-		if ((*m_Set->m_State->m_bARPSynch == SWITCH::SWITCH_OFF) || (!m_Set->m_bPpqIsPlaying)) {
 			m_ARP_currentStep++;
 			m_ARP_currentStep %= numSteps;
-		}
-		else
-			m_ARP_currentStep = l_ARP_currentStep;
+		}	
 	}
 
-	m_ARP_time = (m_ARP_time + numSamples);
-	//while (m_ARP_time > stepDuration) 
-	while (m_ARP_time >= stepDuration) 
-		m_ARP_time -= stepDuration;
+	if ((*m_Set->m_State->m_bARPSynch == SWITCH::SWITCH_OFF) || (!m_Set->m_bPpqIsPlaying)) {
+		m_ARP_time = (m_ARP_time + numSamples);
+		//while (m_ARP_time > stepDuration) 
+		while (m_ARP_time >= stepDuration)
+			m_ARP_time -= stepDuration;
+	}
+	else {
+		double realPos = m_Set->m_dPpqPosition / m_Set->getIntervalRatio(*m_Set->m_State->m_uARPTimeBeats); //required here
+		double realPosEndOfBuffer = realPos + (numSamples - 1) / stepDuration; //required here
+		m_ARP_time = (realPos - int(realPosEndOfBuffer)) * stepDuration; //required here
+	}
 }
 
 //===========================================================================================
