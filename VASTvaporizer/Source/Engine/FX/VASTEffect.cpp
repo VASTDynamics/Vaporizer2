@@ -28,7 +28,16 @@ void CVASTEffect::createAndAddParameter(std::atomic<float>** parameterVar, Audio
 	if (m_effectName != JucePlugin_Name)
 		busId = "FXBUS " + String(myBusnr + 1) + " ";
     
-	AudioProcessorParameterWithID* p = stateTree.createAndAddParameter(newId, busId + paramName, labelText, r, defaultVal, valueToTextFunction, textToValueFunction, isMetaParameter, isAutomatableParameter, isDiscreteParameter, AudioProcessorParameter::Category::genericParameter); //deprecated?? but how??
+    /*
+	AudioProcessorParameterWithID* p = stateTree.createAndAddParameter( newId, busId + paramName, labelText, r, defaultVal, valueToTextFunction, textToValueFunction, isMetaParameter, isAutomatableParameter, isDiscreteParameter, AudioProcessorParameter::Category::genericParameter); //deprecated
+     */
+
+    using Parameter = AudioProcessorValueTreeState::Parameter;
+    AudioProcessorParameterWithID* p = stateTree.createAndAddParameter (std::make_unique<Parameter>
+        ( 
+         ParameterID { newId, 1 }, //the version number is important: new parameters have to always get hight numbers
+         busId + paramName, labelText, r, defaultVal, valueToTextFunction, textToValueFunction, isMetaParameter,
+         isAutomatableParameter, isDiscreteParameter, AudioProcessorParameter::Category::genericParameter));
     
 	//my_parameters.add(p);
 	my_parameters.insert(std::make_pair(uiSequence, p));

@@ -623,8 +623,9 @@
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX" vstFolder="/SDKs/VST3-SDK" extraCompilerFlags="-W2"
                iosDevelopmentTeamID="PK93HYD6ZN" smallIcon="A2sWSy" bigIcon="A2sWSy"
-               hardenedRuntime="1" extraDefs="JUCE_DISABLE_CAUTIOUS_PARAMETER_ID_CHECKING JUCE_SILENCE_XCODE_15_LINKER_WARNING "
-               xcodeValidArchs="i386,x86_64" extraLinkerFlags="-ld_classic">
+               hardenedRuntime="1" extraDefs=" JUCE_SILENCE_XCODE_15_LINKER_WARNING "
+               xcodeValidArchs="i386,x86_64" extraLinkerFlags="-ld_classic"
+               userNotes="JUCE_DISABLE_CAUTIOUS_PARAMETER_ID_CHECKING">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" osxCompatibility="10.13 SDK" isDebug="1" optimisation="1"
                        targetName="VASTvaporizer2_dbg" defines="_MACOSX _MACOSX64BIT SSE_AVX=AVX "
