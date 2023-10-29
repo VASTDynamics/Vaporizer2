@@ -643,6 +643,13 @@ void CVASTPoly::doArp(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages)
 	double realPosEndOfBuffer = realPos + (numSamples - 1) / stepDuration;
 
 	bool bStartNote = false;
+	bool bStopNote = false;
+	if (m_ARP_time < 0) { //when gui changes are done while paying, or for full bar wrap
+		bStartNote = true;
+		bStopNote = true;
+		m_ARP_time = 0;
+	}
+
 	if (bStart)
 		bStartNote = true; //always!
 	else {
@@ -658,14 +665,8 @@ void CVASTPoly::doArp(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages)
 	int stepBefore = (m_ARP_currentStep > 0) ? m_ARP_currentStep - 1 : numSteps - 1;
 	VASTARPData::ArpStep curStepData = arpData->getStep(m_ARP_currentStep);
 	VASTARPData::ArpStep stepBeforeData = arpData->getStep(stepBefore);
-	bool bStopNote = false;
 	if ((m_ARP_time + numSamples) >= (curStepData.gate * 0.25f) * stepDuration)
 		bStopNote = true;
-
-	if (m_ARP_time < 0) { //when gui changes are done while paying 
-		bStopNote = true;
-		m_ARP_time = 0;
-	}
 
 	if (bStopNote)
 	{
@@ -765,21 +766,12 @@ void CVASTPoly::doArp(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages)
 				}
 			}
 
-			m_ARP_time = offset; //0-numSamples
-			bTimeSet = true;
+			m_ARP_time = -offset; //0-numSamples
+			bTimeSet = false;
 		}	
 	}
 
-	if (!bTimeSet) {
-		if ((*m_Set->m_State->m_bARPSynch == SWITCH::SWITCH_OFF) || (!m_Set->m_bPpqIsPlaying)) {
-			m_ARP_time = (m_ARP_time + numSamples);
-		}
-		else {
-			double realPos = m_Set->m_dPpqPosition / m_Set->getIntervalRatio(*m_Set->m_State->m_uARPTimeBeats); //required here
-			double realPosEndOfBuffer = realPos + (numSamples - 1) / stepDuration; //required here
-			m_ARP_time += (realPosEndOfBuffer - m_dLastRealPos) * stepDuration;
-		}
-	}
+	m_ARP_time = (m_ARP_time + numSamples);
 	m_dLastRealPos = realPosEndOfBuffer;
 }
 
