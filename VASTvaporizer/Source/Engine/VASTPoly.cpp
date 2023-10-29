@@ -566,7 +566,7 @@ void CVASTPoly::doArp(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages)
 	//const ScopedReadLock myScopedLock(arpData->mReadWriteLock); //this seemed to cause an issue
 	int numSteps = arpData->getNumSteps();
 	auto numSamples = routingBuffers.getNumSamples();
-	arpData->setDispActiveStep(((m_ARP_currentStep + numSteps) - 1) % numSteps); // always one ahead - current step means waiting for the step
+	arpData->setDispActiveStep(m_ARP_currentStep); 
 	bool bStart = false;
 
 	if (!m_arpHasActiveStepToFinish) {
@@ -589,6 +589,8 @@ void CVASTPoly::doArp(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages)
 		m_last_bpm = m_Set->m_dPpqBpm; 
 		double l_fIntervalTime = m_Set->getIntervalTimeFromDAWBeats(*m_Set->m_State->m_uARPTimeBeats);
 		stepDuration = m_Set->m_nSampleRate * (l_fIntervalTime * 0.001);  //interval time is in seconds
+		if (bStart)
+			m_ARP_time = stepDuration; //ARP time can only increase value!   
 	}
 	else {
 		if (*m_Set->m_State->m_bARPSynch == SWITCH::SWITCH_ON) { //synch but not playing
@@ -638,14 +640,34 @@ void CVASTPoly::doArp(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages)
 	midiMessages.addEvents(mb, 0, numSamples, 0);
 
 	double realPos = m_Set->m_dPpqPosition / m_Set->getIntervalRatio(*m_Set->m_State->m_uARPTimeBeats); //only for synch
-	double realPosEndOfBuffer = realPos + (numSamples - 1)/ stepDuration;
+	double realPosEndOfBuffer = realPos + (numSamples - 1) / stepDuration;
+
+	bool bStartNote = false;
+	if (bStart)
+		bStartNote = true; //always!
+	else {
+		if ((m_ARP_time + numSamples - 1) >= stepDuration) { //wrap in this buffer
+			bStartNote = true;
+			m_ARP_currentStep++;
+			m_ARP_currentStep %= numSteps;
+		}
+	}
 
 	//noteOff shall be send when time passes behind length of last note - and it is not hold
 	bool isHold = false;
 	int stepBefore = (m_ARP_currentStep > 0) ? m_ARP_currentStep - 1 : numSteps - 1;
 	VASTARPData::ArpStep curStepData = arpData->getStep(m_ARP_currentStep);
 	VASTARPData::ArpStep stepBeforeData = arpData->getStep(stepBefore);
-	if ((m_ARP_time + numSamples) >= (stepBeforeData.gate * 0.25f) * stepDuration)
+	bool bStopNote = false;
+	if ((m_ARP_time + numSamples) >= (curStepData.gate * 0.25f) * stepDuration)
+		bStopNote = true;
+
+	if (m_ARP_time < 0) { //when gui changes are done while paying 
+		bStopNote = true;
+		m_ARP_time = 0;
+	}
+
+	if (bStopNote)
 	{
 		m_arpHasActiveStepToFinish = false;
 		if ((stepBeforeData.gate == 4) &&
@@ -675,22 +697,7 @@ void CVASTPoly::doArp(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages)
 			m_ARP_currentARPNoteValues.clear();
 		}
 	}
-
-	bool bStartNote = false;
-	if (bStart)
-		bStartNote = true; //always!
-	else {
-		if (*m_Set->m_State->m_bARPSynch == SWITCH::SWITCH_ON) {
-			//calc wrap from ppq position 
-			if (int(realPosEndOfBuffer)>int(m_dLastRealPos)) //wrap in this buffer + gap
-				bStartNote = true;
-		}
-		else if ((m_ARP_time + numSamples - 1) >= stepDuration) {
-			bStartNote = true;
-		}
-	}
-	m_dLastRealPos = realPosEndOfBuffer;
-
+	bool bTimeSet = false;
 	if (bStartNote)
 	{
 		if ((m_ARP_midiInNotes.size() > 0) && (!isHold))
@@ -758,22 +765,22 @@ void CVASTPoly::doArp(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages)
 				}
 			}
 
-			m_ARP_currentStep++;
-			m_ARP_currentStep %= numSteps;
+			m_ARP_time = offset; //0-numSamples
+			bTimeSet = true;
 		}	
 	}
 
-	if ((*m_Set->m_State->m_bARPSynch == SWITCH::SWITCH_OFF) || (!m_Set->m_bPpqIsPlaying)) {
-		m_ARP_time = (m_ARP_time + numSamples);
-		//while (m_ARP_time > stepDuration) 
-		while (m_ARP_time >= stepDuration)
-			m_ARP_time -= stepDuration;
+	if (!bTimeSet) {
+		if ((*m_Set->m_State->m_bARPSynch == SWITCH::SWITCH_OFF) || (!m_Set->m_bPpqIsPlaying)) {
+			m_ARP_time = (m_ARP_time + numSamples);
+		}
+		else {
+			double realPos = m_Set->m_dPpqPosition / m_Set->getIntervalRatio(*m_Set->m_State->m_uARPTimeBeats); //required here
+			double realPosEndOfBuffer = realPos + (numSamples - 1) / stepDuration; //required here
+			m_ARP_time += (realPosEndOfBuffer - m_dLastRealPos) * stepDuration;
+		}
 	}
-	else {
-		double realPos = m_Set->m_dPpqPosition / m_Set->getIntervalRatio(*m_Set->m_State->m_uARPTimeBeats); //required here
-		double realPosEndOfBuffer = realPos + (numSamples - 1) / stepDuration; //required here
-		m_ARP_time = (realPos - int(realPosEndOfBuffer)) * stepDuration; //required here
-	}
+	m_dLastRealPos = realPosEndOfBuffer;
 }
 
 //===========================================================================================
