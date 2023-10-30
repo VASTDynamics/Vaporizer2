@@ -52,6 +52,7 @@ public:
 	void startAutoUpdate();
 	void stopAutoUpdate();
 	void updateAll();
+    void synchToggled();
     //[/UserMethods]
 
     void paint (juce::Graphics& g) override;
