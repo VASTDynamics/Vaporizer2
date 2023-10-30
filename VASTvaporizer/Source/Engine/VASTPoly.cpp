@@ -665,7 +665,7 @@ void CVASTPoly::doArp(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages)
 	int stepBefore = (m_ARP_currentStep > 0) ? m_ARP_currentStep - 1 : numSteps - 1;
 	VASTARPData::ArpStep curStepData = arpData->getStep(m_ARP_currentStep);
 	VASTARPData::ArpStep stepBeforeData = arpData->getStep(stepBefore);
-	if ((m_ARP_time + numSamples) >= (curStepData.gate * 0.25f) * stepDuration)
+	if ((m_ARP_time + numSamples - 1) >= (curStepData.gate * 0.25f) * stepDuration)
 		bStopNote = true;
 
 	if (bStopNote)
@@ -766,12 +766,17 @@ void CVASTPoly::doArp(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages)
 				}
 			}
 
-			m_ARP_time = -offset; //0-numSamples
-			bTimeSet = false;
+			m_ARP_time = -offset + numSamples; //0-numSamples
+			bTimeSet = true;
 		}	
 	}
 
-	m_ARP_time = (m_ARP_time + numSamples);
+	if (!bTimeSet) {
+		while ((m_ARP_time + numSamples - 1) >= stepDuration)
+			m_ARP_time -= stepDuration; //wrap
+
+		m_ARP_time = (m_ARP_time + numSamples);
+	}
 	m_dLastRealPos = realPosEndOfBuffer;
 }
 
