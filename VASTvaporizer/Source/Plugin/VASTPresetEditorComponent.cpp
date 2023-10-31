@@ -1030,6 +1030,8 @@ void VASTPresetEditorComponent::updateAll() {
 	c_WTmode->repaint();
     c_MPEmode->setSelectedItemIndex(myProcessor->getMPEmode(), false);
     c_MPEmode->repaint();
+    c_permaLink->setSelectedItemIndex(myProcessor->getModWheelPermaLink(), false);
+    c_permaLink->repaint();
 
 	c_presetAuthor->setText(myProcessor->m_presetData.getCurPatchData().authorname, false);
 	c_presetTag->setText(myProcessor->m_presetData.getCurPatchData().freetag, false);

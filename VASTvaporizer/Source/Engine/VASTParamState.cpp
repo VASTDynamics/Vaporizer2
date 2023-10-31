@@ -2,6 +2,7 @@
 VAST Dynamics Audio Software (TM)
 */
 
+#pragma warning( disable : 4244 ) //for float to int
 #include "VASTEngineHeader.h"
 #include "VASTParamState.h"
 #include "FX/VASTEffect.h"
