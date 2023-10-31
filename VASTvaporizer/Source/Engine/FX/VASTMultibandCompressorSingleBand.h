@@ -52,14 +52,14 @@ private:
 
     //==============================================================================	
 	//parameters
-	std::atomic<float>* m_bMultibandCompressorOffOn = nullptr;
-	std::atomic<float>* m_fMultibandCompressorFcLow = nullptr;;
-	std::atomic<float>* m_fMultibandCompressorFcHigh = nullptr;
-	std::atomic<float>* m_fMultibandCompressorThreshold = nullptr;
-	std::atomic<float>* m_fMultibandCompressorAttack = nullptr;
-	std::atomic<float>* m_fMultibandCompressorRelease = nullptr;
-	std::atomic<float>* m_fMultibandCompressorRatio = nullptr;
-	std::atomic<float>* m_fMultibandCompressorGain = nullptr;
+	std::atomic<float>* m_bMBCompOffOn = nullptr;
+	std::atomic<float>* m_fMBCompFcLow = nullptr;;
+	std::atomic<float>* m_fMBCompFcHigh = nullptr;
+	std::atomic<float>* m_fMBCompThreshold = nullptr;
+	std::atomic<float>* m_fMBCompAttack = nullptr;
+	std::atomic<float>* m_fMBCompRelease = nullptr;
+	std::atomic<float>* m_fMBCompRatio = nullptr;
+	std::atomic<float>* m_fMBCompGain = nullptr;
 
 	//filters
 	IIRFilter lowBandPassL1, lowBandPassL2, lowBandPassR1, lowBandPassR2; //Filters for low band pass

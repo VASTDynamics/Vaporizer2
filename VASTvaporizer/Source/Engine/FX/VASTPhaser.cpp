@@ -27,7 +27,7 @@ void CVASTPhaser::initParameters() {
 	AudioProcessorValueTreeState& parameters = my_processor->getParameterTree();
 	int lDestination = 0;
 
-	createAndAddParameter(&m_bPhaserOnOff, parameters, "m_bPhaserOnOff", "Phaser on / off", "On", 0,
+	createAndAddParameter(&m_bPhaserOnOff, parameters, 0, "m_bPhaserOnOff", "Phaser on / off", "On", 0,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		CVASTParamState::toggleButtonValueToTextFunction,
@@ -35,7 +35,7 @@ void CVASTPhaser::initParameters() {
 		false, true, true, true,
 		true);
 
-	createAndAddParameter(&m_fPhaserDryWet, parameters, "m_fPhaserDryWet", "Phaser filter mix in (dry - wet)", "DryWet", 1,
+	createAndAddParameter(&m_fPhaserDryWet, parameters, 0, "m_fPhaserDryWet", "Phaser filter mix in (dry - wet)", "DryWet", 1,
 		MODMATDEST::PhaserDryWet,
 		NormalisableRange<float>(0, 100), 100,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -43,7 +43,7 @@ void CVASTPhaser::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_fPhaserWidth, parameters, "m_fPhaserWidth", "Phaser width", "Width", 2,
+	createAndAddParameter(&m_fPhaserWidth, parameters, 0, "m_fPhaserWidth", "Phaser width", "Width", 2,
 		MODMATDEST::PhaserWidth,
 		NormalisableRange<float>(50.f, 3000.f), 1000.f,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -51,7 +51,7 @@ void CVASTPhaser::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_fPhaserFeedback, parameters, "m_fPhaserFeedback", "Phase feedback", "Feedback", 3,
+	createAndAddParameter(&m_fPhaserFeedback, parameters, 0, "m_fPhaserFeedback", "Phase feedback", "Feedback", 3,
 		MODMATDEST::PhaserFeedback,
 		NormalisableRange<float>(0.f, 0.9f), 0.7f,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -59,7 +59,7 @@ void CVASTPhaser::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_fPhaserMinFrequency, parameters, "m_fPhaserMinFrequency", "Phaser min. frequency (Hz)", "Minfreq", 4,
+	createAndAddParameter(&m_fPhaserMinFrequency, parameters, 0, "m_fPhaserMinFrequency", "Phaser min. frequency (Hz)", "Minfreq", 4,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(50.f, 1000.f), 80.f,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -67,35 +67,35 @@ void CVASTPhaser::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_uPhaserLFOWave, parameters, "m_uPhaserLFOWave", "Phaser LFO waveform", "LFOWave", 5,
+	createAndAddParameter(&m_uPhaserLFOWave, parameters, 0, "m_uPhaserLFOWave", "Phaser LFO waveform", "LFOWave", 5,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, LFOWAVE_Array.size() - 1, 1.0f), 0.0f,
 		CVASTParamState::comboBoxValueToTextFunction_LFOWAVE,
 		CVASTParamState::comboBoxTextToValueFunction_LFOWAVE,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_bPhaserSynch, parameters, "m_bPhaserSynch", "Phaser sync to DAW", "Sync", 6,
+	createAndAddParameter(&m_bPhaserSynch, parameters, 0, "m_bPhaserSynch", "Phaser sync to DAW", "Sync", 6,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		CVASTParamState::toggleButtonValueToTextFunction,
 		CVASTParamState::toggleButtonTextToValueFunction,
 		false, true, true, false,
 		true);
-	createAndAddParameter(&m_uPhaserTimeBeats, parameters, "m_uPhaserTimeBeats", "Phaser time in beats when synced to DAW", "DAW", 7,
+	createAndAddParameter(&m_uPhaserTimeBeats, parameters, 0, "m_uPhaserTimeBeats", "Phaser time in beats when synced to DAW", "DAW", 7,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, TIMEBEATS_Array.size() - 1, 1.0f), TIMEBEATS::BEATS1,
 		CVASTParamState::comboBoxValueToTextFunction_TIMEBEATS,
 		CVASTParamState::comboBoxTextToValueFunction_TIMEBEATS,
 		false, true, true, false,
 		true);
-	createAndAddParameter(&m_fPhaserLFOFreq, parameters, "m_fPhaserLFOFreq", "Phaser LFO frequency (Hz)", "Frequency", 8,
+	createAndAddParameter(&m_fPhaserLFOFreq, parameters, 0, "m_fPhaserLFOFreq", "Phaser LFO frequency (Hz)", "Frequency", 8,
 		MODMATDEST::PhaserLFOFrequency,
 		NormalisableRange<float>(0.0f, 2.0f), 1.00f,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fPhaserGain, parameters, "m_fPhaserGain", "Phaser output gain", "Gain", 9,
+	createAndAddParameter(&m_fPhaserGain, parameters, 0, "m_fPhaserGain", "Phaser output gain", "Gain", 9,
 		MODMATDEST::PhaserGain,
 		NormalisableRange<float>(0, 200), 100,
 		CVASTParamState::floatSliderValueToTextFunction,

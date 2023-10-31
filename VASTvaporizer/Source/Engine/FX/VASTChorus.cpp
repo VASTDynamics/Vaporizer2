@@ -24,7 +24,7 @@ CVASTChorus::CVASTChorus(VASTAudioProcessor* processor, int busnr) {
 void CVASTChorus::initParameters() {
 	AudioProcessorValueTreeState& parameters = my_processor->getParameterTree();
 
-	createAndAddParameter(&m_bChorusOnOff, parameters, "m_bChorusOnOff", "Chrorus effect on / off", "On", 0,
+	createAndAddParameter(&m_bChorusOnOff, parameters, 0, "m_bChorusOnOff", "Chrorus effect on / off", "On", 0,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		CVASTParamState::toggleButtonValueToTextFunction,
@@ -32,42 +32,42 @@ void CVASTChorus::initParameters() {
 		false, true, true, true,
 		true);
 
-	createAndAddParameter(&m_fChorusDryWet, parameters, "m_fChorusDryWet", "Chorus dry / wet (no effect - full effect)", "DryWet", 1,
+	createAndAddParameter(&m_fChorusDryWet, parameters, 0, "m_fChorusDryWet", "Chorus dry / wet (no effect - full effect)", "DryWet", 1,
 		MODMATDEST::ChorusDryWet,
 		NormalisableRange<float>(0, 100), 100.f,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fChorusDepth, parameters, "m_fChorusDepth", "Chorus depth", "Depth", 2,
+	createAndAddParameter(&m_fChorusDepth, parameters, 0, "m_fChorusDepth", "Chorus depth", "Depth", 2,
 		MODMATDEST::ChorusDepth,
 		NormalisableRange<float>(0, 100), 100.f,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_bChorusSynch, parameters, "m_bChorusSynch", "Chorus sync to DAW", "Sync", 3,
+	createAndAddParameter(&m_bChorusSynch, parameters, 0, "m_bChorusSynch", "Chorus sync to DAW", "Sync", 3,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		CVASTParamState::toggleButtonValueToTextFunction,
 		CVASTParamState::toggleButtonTextToValueFunction,
 		false, true, true, false,
 		true);
-	createAndAddParameter(&m_uChorusTimeBeats, parameters, "m_uChorusTimeBeats", "Chorus time in beats when synced to DAW", "DAW", 4,
+	createAndAddParameter(&m_uChorusTimeBeats, parameters, 0, "m_uChorusTimeBeats", "Chorus time in beats when synced to DAW", "DAW", 4,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, TIMEBEATS_Array.size() - 1, 1.0f), TIMEBEATS::BEATS1,
 		CVASTParamState::comboBoxValueToTextFunction_TIMEBEATS,
 		CVASTParamState::comboBoxTextToValueFunction_TIMEBEATS,
 		false, true, true, false,
 		true);
-	createAndAddParameter(&m_fChorusRate_hz, parameters, "m_fChorusRate_hz", "Chorus frequency in hz (is spread amog the 6 chorus oscillators - left, mid, right in stereo)", "Frequency", 5,
+	createAndAddParameter(&m_fChorusRate_hz, parameters, 0, "m_fChorusRate_hz", "Chorus frequency in hz (is spread amog the 6 chorus oscillators - left, mid, right in stereo)", "Frequency", 5,
 		MODMATDEST::ChorusFrequency,
 		NormalisableRange<float>(0.f, 10.f, 0.0001f, 0.3f, false), 0.10f, //skew
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fChorusGain, parameters, "m_fChorusGain", "Chorus output gain", "Gain", 6,
+	createAndAddParameter(&m_fChorusGain, parameters, 0, "m_fChorusGain", "Chorus output gain", "Gain", 6,
 		MODMATDEST::ChorusGain,
 		NormalisableRange<float>(0, 200), 100,
 		CVASTParamState::floatSliderValueToTextFunction,

@@ -1154,26 +1154,11 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 
 	int waitstate = 0;	
 	if (isSeparateThread) {
-		//CHECKTS
 		processor->registerThread();
 		if (processor->getTreeThreadLock() == true) {
 			processor->unregisterThread();
 			return;
 		}
-		//CHECKTS
-
-		
-
-		/*
-		while (processor->getTreeThreadLock() == true) {
-			std::this_thread::sleep_for(std::chrono::milliseconds(50));
-			waitstate += 50;
-			if (waitstate > 5000) {
-				processor->unregisterThread();
-				return; //end after 5s waiting time
-			}
-		} //check sleep thread
-		*/
 	}	
 	
 	waitstate = 0;
@@ -1209,6 +1194,17 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 																	processor->m_pVASTXperience.m_Poly.m_OscBank[1]->getSoftOrCopyWavetable(),
 																	processor->m_pVASTXperience.m_Poly.m_OscBank[2]->getSoftOrCopyWavetable(),
 																	processor->m_pVASTXperience.m_Poly.m_OscBank[3]->getSoftOrCopyWavetable() };
+	
+	//adapt to formerly too long parameter lengthes for compatibility
+	for (int i = 0; i < tree.getNumChildren(); i++) {
+		ValueTree loadedTreeChild = tree.getChild(i);
+		String ids = loadedTreeChild.getPropertyAsValue("id", nullptr, false).toString();
+		if (ids.contains("MultibandCompressor")) {
+			DBG("Replaced old value: " << ids);
+			loadedTreeChild.setProperty("id", ids.replaceFirstOccurrenceOf("MultibandCompressor", "MBComp", false), nullptr);
+		}
+	}
+
 	VASTSamplerSound* m_soundToUpdate;
 	bool b_success = false;
 	if (!initOnly) {
@@ -1228,7 +1224,9 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 						ValueTree parameterChild = processor->m_parameterState.state.getChildWithProperty("id", loadedChildProperty);
 						if (!parameterChild.isValid()) {
 							//delete the crap
+							DBG("TreeValue removed: " << loadedTreeChild.getPropertyAsValue("id", nullptr, false).toString() << " " << loadedTreeChild.getPropertyAsValue("text", nullptr, false).toString());
 							tree.removeChild(tree.indexOf(loadedTreeChild), nullptr);
+							jassertfalse; //error state or tempered preset?
 						}
 						else {
 							//change from "text" to "value" here
@@ -1248,17 +1246,7 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 							loadedTreeChild.setProperty(
 								"value",
 								valStr, nullptr);
-							loadedTreeChild.removeProperty("text", nullptr);
-                            
-                            
-							/*
-							//HACK here - MSEG params must not overwrite chunk
-							if ((loadedChildProperty.startsWith("m_fAttackTime_")) || 
-								(loadedChildProperty.startsWith("m_fDecayTime_")) ||
-								(loadedChildProperty.startsWith("m_fSustainLevel_")) ||
-								(loadedChildProperty.startsWith("m_fReleaseTime_")))
-								tree.removeChild(tree.indexOf(loadedTreeChild), nullptr);
-								*/
+							loadedTreeChild.removeProperty("text", nullptr);                                                       
 						}
 					}
 				}
@@ -1306,77 +1294,6 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 			(preset.version.equalsIgnoreCase("VASTVaporizerParamsV2.10000"))) {
 			processor->m_pVASTXperience.m_Set.m_bBeforeV22CompatibilityMode = true;
 		}
-
-		/*
-		// adopt for older patch versions
-		if ((preset->version.equalsIgnoreCase("VASTVaporizerParamsV2.00000")) || //have to adapt skew modulation for older patches
-		(preset->version.equalsIgnoreCase("VASTVaporizerParamsV2.10000"))) {
-			for (auto parameterChild : tree) {
-				String pName = "m_fModMatVal";
-				String loadedChildID = parameterChild.getPropertyAsValue("id", nullptr, false).toString();
-				if (loadedChildID.startsWithIgnoreCase(pName)) {
-					//find corresponding parameter
-					for (auto parameterMatrixChild : tree) {
-						String pMatrixName = "m_uModMatDest";
-						String matrixChildID = parameterMatrixChild.getPropertyAsValue("id", nullptr, false).toString();
-						String destName = pMatrixName + loadedChildID.substring(12);
-						if (matrixChildID.equalsIgnoreCase(destName)) {
-							String matrixChildValue = parameterMatrixChild.getPropertyAsValue("value", nullptr, false).toString();
-							String destParam = processor->autoDestinationGetParam(matrixChildValue.getIntValue());
-							AudioProcessorParameterWithID* param = processor->m_parameterState.getParameter(destParam);
-							juce::NormalisableRange<float> range = processor->m_parameterState.getParameterRange(param->paramID);
-							if (range.skew != 1.f) {
-								DBG("Old Parameter: " + String(destParam) + " Skew: " + String(range.skew));
-
-								//looking for tree parameter for destination knob
-
-								float paramValue = 0.f;
-								for (auto parameterDestChild : tree) {
-									String destChildID = parameterDestChild.getPropertyAsValue("id", nullptr, false).toString();
-									if (destChildID.equalsIgnoreCase(destParam)) {
-										DBG("Found! Setting new value.");
-										String destChildValue = parameterDestChild.getPropertyAsValue("value", nullptr, false).toString();
-										String valStr = "0";
-
-										paramValue = destChildValue.getFloatValue();
-										float perc = (paramValue - range.start) / (range.end - range.start);
-										float newVal = range.start + (pow(perc, 1.f / (1.f * range.skew)) * (range.end - range.start));
-										if (destParam.containsIgnoreCase("Freq")) {
-											newVal = destChildValue.getFloatValue() * range.skew * 0.5f;
-										}
-										valStr = String(newVal);
-										parameterDestChild.setProperty(
-											"value",
-											valStr, nullptr);
-
-										break;
-									}
-								}
-
-								String parameterChildValue = parameterChild.getPropertyAsValue("value", nullptr, false).toString();
-								//float perc = 0.25f * (paramValue - range.start) / (range.end - range.start);
-								float minValPerc = parameterChildValue.getFloatValue() * 0.01f;
-								//float newVal = range.start + (pow(abs(perc - minValPerc), 1.f / (2.f * range.skew)) * (range.end - range.start));
-								//float newValPerc = (range.start + newVal) / (range.end - range.start);
-
-								float newVal = (minValPerc * 4.f * range.skew) * 100.f;
-
-								String valStr = String(newVal);
-								//if (destParam.containsIgnoreCase("Freq")) {
-								//	valStr = String(parameterChildValue.getFloatValue() / (1.f / range.skew));
-								//}
-								parameterChild.setProperty(	//m_fModMatVal
-									"value",
-									valStr, nullptr);
-							}
-							break;
-						 }
-					}
-				}
-			}
-		}
-		*/
-
 
 		if (l_chunkTree.isValid()) { //init patch does not have it
 

@@ -53,7 +53,7 @@ public:
 		return m_onOffParamID;
 	}
 
-	void createAndAddParameter(std::atomic<float>** parameterVar, AudioProcessorValueTreeState& stateTree, const String& paramID, const String& paramName,
+	void createAndAddParameter(std::atomic<float>** parameterVar, AudioProcessorValueTreeState& stateTree, int versionHint, const String& paramID, const String& paramName,
 		const String& labelText, int uiSequence,
 		int modMatrixDestination,
 		NormalisableRange<float> r,

@@ -24,7 +24,7 @@ CVASTCombFilterEffect::CVASTCombFilterEffect(VASTAudioProcessor* processor, int 
 void CVASTCombFilterEffect::initParameters() {
 	AudioProcessorValueTreeState& parameters = my_processor->getParameterTree();
 
-	createAndAddParameter(&m_bCombOnOff, parameters, "m_bCombOnOff", "Comb filter on / off (chain effect, not per vocie)", "On", 0,
+	createAndAddParameter(&m_bCombOnOff, parameters, 0, "m_bCombOnOff", "Comb filter on / off (chain effect, not per vocie)", "On", 0,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		CVASTParamState::toggleButtonValueToTextFunction,
@@ -32,7 +32,7 @@ void CVASTCombFilterEffect::initParameters() {
 		false, true, true, true,
 		true);
 	
-	createAndAddParameter(&m_fCombDryWet, parameters, "m_fCombDryWet", "Comb filter mix in (dry - wet)", "DryWet", 1,
+	createAndAddParameter(&m_fCombDryWet, parameters, 0, "m_fCombDryWet", "Comb filter mix in (dry - wet)", "DryWet", 1,
 		MODMATDEST::CombDryWet,
 		NormalisableRange<float>(0, 100), 100.f,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -40,7 +40,7 @@ void CVASTCombFilterEffect::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_fCombFrequOffset, parameters, "m_fCombFrequOffset", "Comb frequency (Hz)", "Frequency", 2,
+	createAndAddParameter(&m_fCombFrequOffset, parameters, 0, "m_fCombFrequOffset", "Comb frequency (Hz)", "Frequency", 2,
 		MODMATDEST::CombFrequency,
 		NormalisableRange<float>(40.f, 18000.f, 0.001f, 0.3f, false), 440.f,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -48,7 +48,7 @@ void CVASTCombFilterEffect::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_fCombDrive, parameters, "m_fCombDrive", "Comb filter drive in dB - pre gain (0 - full, >0 overdrive)", "Drive", 3,
+	createAndAddParameter(&m_fCombDrive, parameters, 0, "m_fCombDrive", "Comb filter drive in dB - pre gain (0 - full, >0 overdrive)", "Drive", 3,
 		MODMATDEST::CombDrive,
 		NormalisableRange<float>(-20, 20), 0.f,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -56,14 +56,14 @@ void CVASTCombFilterEffect::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_fCombLevel, parameters, "m_fCombLevel", "Comb filter level", "Level", 4,
+	createAndAddParameter(&m_fCombLevel, parameters, 0, "m_fCombLevel", "Comb filter level", "Level", 4,
 		MODMATDEST::CombLevel,
 		NormalisableRange<float>(0.f, 100.f), 95.f,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fCombGain, parameters, "m_fCombGain", "Comb filter output gain", "Gain", 5,
+	createAndAddParameter(&m_fCombGain, parameters, 0, "m_fCombGain", "Comb filter output gain", "Gain", 5,
 		MODMATDEST::CombGain,
 		NormalisableRange<float>(0, 200), 100,
 		CVASTParamState::floatSliderValueToTextFunction,

@@ -27,7 +27,7 @@ void CVASTFlanger::initParameters() {
 	AudioProcessorValueTreeState& parameters = my_processor->getParameterTree();
 	int lDestination = 0;
 
-	createAndAddParameter(&m_bFlangerOnOff, parameters, "m_bFlangerOnOff", "Flanger on / off", "On", 0,
+	createAndAddParameter(&m_bFlangerOnOff, parameters, 0, "m_bFlangerOnOff", "Flanger on / off", "On", 0,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		CVASTParamState::toggleButtonValueToTextFunction,
@@ -35,7 +35,7 @@ void CVASTFlanger::initParameters() {
 		false, true, true, true,
 		true);
 	
-	createAndAddParameter(&m_fFlangerDryWet, parameters, "m_fFlangerDryWet", "Flanger mix in (dry - wet)", "DryWet", 1,
+	createAndAddParameter(&m_fFlangerDryWet, parameters, 0, "m_fFlangerDryWet", "Flanger mix in (dry - wet)", "DryWet", 1,
 		MODMATDEST::FlangerDryWet,
 		NormalisableRange<float>(0, 100), 100,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -43,7 +43,7 @@ void CVASTFlanger::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_fFlangerDelay, parameters, "m_fFlangerDelay", "Flanger delay (ms)", "Delay", 2,
+	createAndAddParameter(&m_fFlangerDelay, parameters, 0, "m_fFlangerDelay", "Flanger delay (ms)", "Delay", 2,
 		MODMATDEST::FlangerDelay,
 		NormalisableRange<float>(1.0f, 20.f), 2.5f,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -51,7 +51,7 @@ void CVASTFlanger::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_fFlangerWidth, parameters, "m_fFlangerWidth", "Flanger width", "Width", 3,
+	createAndAddParameter(&m_fFlangerWidth, parameters, 0, "m_fFlangerWidth", "Flanger width", "Width", 3,
 		MODMATDEST::FlangerWidth,
 		NormalisableRange<float>(1.0f, 20.f), 10.f,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -59,7 +59,7 @@ void CVASTFlanger::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_fFlangerFeedback, parameters, "m_fFlangerFeedback", "Flanger feedback", "Feedback", 4,
+	createAndAddParameter(&m_fFlangerFeedback, parameters, 0, "m_fFlangerFeedback", "Flanger feedback", "Feedback", 4,
 		MODMATDEST::FlangerFeedback,
 		NormalisableRange<float>(0.f, 0.5f), 0.f,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -67,7 +67,7 @@ void CVASTFlanger::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_uFlangerLFOWave, parameters, "m_uFlangerLFOWave", "Flanger LFO waveform", "LFOWave", 5,
+	createAndAddParameter(&m_uFlangerLFOWave, parameters, 0, "m_uFlangerLFOWave", "Flanger LFO waveform", "LFOWave", 5,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, LFOWAVE_Array.size() - 1, 1.0f), 0.0f,
 		CVASTParamState::comboBoxValueToTextFunction_LFOWAVE,
@@ -75,28 +75,28 @@ void CVASTFlanger::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_bFlangerSynch, parameters, "m_bFlangerSynch", "Synch flanger to DAW", "Sync", 6,
+	createAndAddParameter(&m_bFlangerSynch, parameters, 0, "m_bFlangerSynch", "Synch flanger to DAW", "Sync", 6,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		CVASTParamState::toggleButtonValueToTextFunction,
 		CVASTParamState::toggleButtonTextToValueFunction,
 		false, true, true, false,
 		true);
-	createAndAddParameter(&m_uFlangerTimeBeats, parameters, "m_uFlangerTimeBeats", "Flanger time in beats when synched to DAW", "DAW", 7,
+	createAndAddParameter(&m_uFlangerTimeBeats, parameters, 0, "m_uFlangerTimeBeats", "Flanger time in beats when synched to DAW", "DAW", 7,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, TIMEBEATS_Array.size() - 1, 1.0f), TIMEBEATS::BEATS1,
 		CVASTParamState::comboBoxValueToTextFunction_TIMEBEATS,
 		CVASTParamState::comboBoxTextToValueFunction_TIMEBEATS,
 		false, true, true, false,
 		true);
-	createAndAddParameter(&m_fFlangerLFOFreq, parameters, "m_fFlangerLFOFreq", "Flanger LFO frequency (Hz)", "Frequency", 8,
+	createAndAddParameter(&m_fFlangerLFOFreq, parameters, 0, "m_fFlangerLFOFreq", "Flanger LFO frequency (Hz)", "Frequency", 8,
 		MODMATDEST::FlangerLFOFrequency,
 		NormalisableRange<float>(0.05f, 2.0f), 0.2f,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fFlangerGain, parameters, "m_fFlangerGain", "Flanger output gain", "Gain", 9,
+	createAndAddParameter(&m_fFlangerGain, parameters, 0, "m_fFlangerGain", "Flanger output gain", "Gain", 9,
 		MODMATDEST::FlangerGain,
 		NormalisableRange<float>(0, 200), 100,
 		CVASTParamState::floatSliderValueToTextFunction,

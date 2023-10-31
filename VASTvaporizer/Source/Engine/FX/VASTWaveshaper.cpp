@@ -35,7 +35,7 @@ void CVASTWaveshaper::initCompatibilityParameters() {
 void CVASTWaveshaper::initCompatibilityParameters5() {
 	AudioProcessorValueTreeState& parameters = my_processor->getParameterTree();
 
-	createAndAddParameter(&m_bWaveshaperOnOff, parameters, "m_bWaveshaperOnOff", "Waveshaper effect on / off", "On", 0,
+	createAndAddParameter(&m_bWaveshaperOnOff, parameters, 0, "m_bWaveshaperOnOff", "Waveshaper effect on / off", "On", 0,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		CVASTParamState::toggleButtonValueToTextFunction,
@@ -43,7 +43,7 @@ void CVASTWaveshaper::initCompatibilityParameters5() {
 		false, true, true, true,
 		true);
 
-	createAndAddParameter(&m_fWaveshaperDryWet, parameters, "m_fWaveshaperDryWet", "Waveshaper dry / wet (no effect - full effect)", "DryWet", 1,
+	createAndAddParameter(&m_fWaveshaperDryWet, parameters, 0, "m_fWaveshaperDryWet", "Waveshaper dry / wet (no effect - full effect)", "DryWet", 1,
 		MODMATDEST::WaveshaperDryWet,
 		NormalisableRange<float>(0, 100), 10.f,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -52,7 +52,7 @@ void CVASTWaveshaper::initCompatibilityParameters5() {
 		true);
 
 
-	createAndAddParameter(&m_uWaveshaperType, parameters, "m_uWaveshaperType", "Waveshaper type", "Type", 2,
+	createAndAddParameter(&m_uWaveshaperType, parameters, 0, "m_uWaveshaperType", "Waveshaper type", "Type", 2,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 3.0f, 1.0f), 0.0f,
 		[](float value) { return StringArray("HardClip", "Asym", "Sinus", "Tanh")[int(value)]; },
@@ -60,7 +60,7 @@ void CVASTWaveshaper::initCompatibilityParameters5() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_fWaveshaperPreGain, parameters, "m_fWaveshaperPreGain", "Waveshaper pre-gain", "PreGain", 3,
+	createAndAddParameter(&m_fWaveshaperPreGain, parameters, 0, "m_fWaveshaperPreGain", "Waveshaper pre-gain", "PreGain", 3,
 		MODMATDEST::WaveshaperPreGain,
 		NormalisableRange<float>(0, 200), 100,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -68,7 +68,7 @@ void CVASTWaveshaper::initCompatibilityParameters5() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_fWaveshaperLowcut, parameters, "m_fWaveshaperLowcut", "Waveshaper lowcut frequency", "Lowcut", 4,
+	createAndAddParameter(&m_fWaveshaperLowcut, parameters, 0, "m_fWaveshaperLowcut", "Waveshaper lowcut frequency", "Lowcut", 4,
 		MODMATDEST::WaveshaperLowCut,
 		NormalisableRange<float>(50.f, 18000.f, 0.001f, 0.3f, false), 50.f,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -76,7 +76,7 @@ void CVASTWaveshaper::initCompatibilityParameters5() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_fWaveshaperHighcut, parameters, "m_fWaveshaperHighcut", "Waveshaper highcut frequency", "Highcut", 5,
+	createAndAddParameter(&m_fWaveshaperHighcut, parameters, 0, "m_fWaveshaperHighcut", "Waveshaper highcut frequency", "Highcut", 5,
 		MODMATDEST::WaveshaperHighCut,
 		NormalisableRange<float>(50.f, 18000.f, 0.001f, 0.3f, false), 18000.f,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -84,7 +84,7 @@ void CVASTWaveshaper::initCompatibilityParameters5() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_uWaveshaperPrePostEq, parameters, "m_uWaveshaperPrePostEq", "Waveshaper pre / post EQ", "EQ", 6,
+	createAndAddParameter(&m_uWaveshaperPrePostEq, parameters, 0, "m_uWaveshaperPrePostEq", "Waveshaper pre / post EQ", "EQ", 6,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		[](float value) { return StringArray("Pre", "Post")[int(value)]; },
@@ -92,7 +92,7 @@ void CVASTWaveshaper::initCompatibilityParameters5() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_fWaveshaperDrive, parameters, "m_fWaveshaperDrive", "Waveshaper drive (pre gain before waveshaping)", "Drive", 7,
+	createAndAddParameter(&m_fWaveshaperDrive, parameters, 0, "m_fWaveshaperDrive", "Waveshaper drive (pre gain before waveshaping)", "Drive", 7,
 		MODMATDEST::WaveshaperDrive,
 		NormalisableRange<float>(0, 100), 30.f,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -100,7 +100,7 @@ void CVASTWaveshaper::initCompatibilityParameters5() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_fWaveshaperGain, parameters, "m_fWaveshaperGain", "Waveshaper output gain", "Gain", 8,
+	createAndAddParameter(&m_fWaveshaperGain, parameters, 0, "m_fWaveshaperGain", "Waveshaper output gain", "Gain", 8,
 		MODMATDEST::WaveshaperGain,
 		NormalisableRange<float>(0, 200), 100,
 		CVASTParamState::floatSliderValueToTextFunction,

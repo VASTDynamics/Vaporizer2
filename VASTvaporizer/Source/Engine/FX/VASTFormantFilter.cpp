@@ -25,7 +25,7 @@ void CVASTFormantFilter::initParameters() {
 	AudioProcessorValueTreeState& parameters = my_processor->getParameterTree();
 	int lDestination = 0;
 
-	createAndAddParameter(&m_bFormantOnOff, parameters, "m_bFormantOnOff", "Formant filter on / off", "On", 0,
+	createAndAddParameter(&m_bFormantOnOff, parameters, 0, "m_bFormantOnOff", "Formant filter on / off", "On", 0,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		CVASTParamState::toggleButtonValueToTextFunction,
@@ -33,7 +33,7 @@ void CVASTFormantFilter::initParameters() {
 		false, true, true, true,
 		true);
 
-	createAndAddParameter(&m_fFormantDryWet, parameters, "m_fFormantDryWet", "Formant filter dry wet", "DryWet", 1,
+	createAndAddParameter(&m_fFormantDryWet, parameters, 0, "m_fFormantDryWet", "Formant filter dry wet", "DryWet", 1,
 		MODMATDEST::FormantFilterDryWet, //tested OK
 		NormalisableRange<float>(0, 100), 100,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -41,28 +41,28 @@ void CVASTFormantFilter::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_fFormantVowelOne, parameters, "m_fFormantVowelOne", "Formant filter first formant vowel", "Vowel1", 2,
+	createAndAddParameter(&m_fFormantVowelOne, parameters, 0, "m_fFormantVowelOne", "Formant filter first formant vowel", "Vowel1", 2,
 		MODMATDEST::FormantFilterFirstVowel, //tested OK
 		NormalisableRange<float>(0.f, 4.f, 1.f), 0.f,
 		[](float value) { return StringArray("A", "E", "I", "O", "U")[int(value)]; },
 		[](String text) { return StringArray("A", "E", "I", "O", "U").indexOf(StringRef(text), true); },
 		false, true, false, false);
 
-	createAndAddParameter(&m_fFormantVowelTwo, parameters, "m_fFormantVowelTwo", "Formant filter second formant vowel", "Vowel2", 3,
+	createAndAddParameter(&m_fFormantVowelTwo, parameters, 0, "m_fFormantVowelTwo", "Formant filter second formant vowel", "Vowel2", 3,
 		MODMATDEST::FormantFilterSecondVowel, //tested OK
 		NormalisableRange<float>(0.f, 4.f, 1.f), 0.f,
 		[](float value) { return StringArray("A", "E", "I", "O", "U")[int(value)]; },
 		[](String text) { return StringArray("A", "E", "I", "O", "U").indexOf(StringRef(text), true); },
 		false, true, false, false);
 
-	createAndAddParameter(&m_fFormantVowelMix, parameters, "m_fFormantVowelMix", "Formant filter vowel mix", "Mix", 4,
+	createAndAddParameter(&m_fFormantVowelMix, parameters, 0, "m_fFormantVowelMix", "Formant filter vowel mix", "Mix", 4,
 		MODMATDEST::FormantFilterMixVowels, //tested OK
 		NormalisableRange<float>(0, 100), 0,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fFormantGain, parameters, "m_fFormantGain", "Formant filter gain", "Gain", 5,
+	createAndAddParameter(&m_fFormantGain, parameters, 0, "m_fFormantGain", "Formant filter gain", "Gain", 5,
 		MODMATDEST::FormantFilterGain,
 		NormalisableRange<float>(0, 200), 100,
 		CVASTParamState::floatSliderValueToTextFunction,

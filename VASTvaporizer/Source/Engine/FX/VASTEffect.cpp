@@ -6,7 +6,7 @@
 #include "VASTEffect.h"
 #include "../../Plugin/VASTAudioProcessor.h"
 
-void CVASTEffect::createAndAddParameter(std::atomic<float>** parameterVar, AudioProcessorValueTreeState& stateTree, const String& paramID, const String& paramName,
+void CVASTEffect::createAndAddParameter(std::atomic<float>** parameterVar, AudioProcessorValueTreeState& stateTree, int versionHint, const String& paramID, const String& paramName,
 	const String& labelText, int uiSequence,
 	int modMatrixDestination,
 	NormalisableRange<float> r,
@@ -31,13 +31,30 @@ void CVASTEffect::createAndAddParameter(std::atomic<float>** parameterVar, Audio
     /*
 	AudioProcessorParameterWithID* p = stateTree.createAndAddParameter( newId, busId + paramName, labelText, r, defaultVal, valueToTextFunction, textToValueFunction, isMetaParameter, isAutomatableParameter, isDiscreteParameter, AudioProcessorParameter::Category::genericParameter); //deprecated
      */
+	
+	jassert(newId.length() <= 31); //AAX max parameter length
+
+#ifdef _DEBUG
+	int lFirstParamVers = 0;
+	for (int i = 0; i < my_processor->getParameters().size(); i++) {
+		AudioProcessorParameterWithID* param = (AudioProcessorParameterWithID*)my_processor->getParameters()[i];
+		ParameterID pid = param->getParameterID();
+		if (pid.getVersionHint() == 0) 
+			lFirstParamVers++;
+	}
+	jassert(lFirstParamVers<755); //755 parameters before VersionHint was introduced --> 0. All new parameters need to get higher VersionHints.
+#endif
 
     using Parameter = AudioProcessorValueTreeState::Parameter;
     AudioProcessorParameterWithID* p = stateTree.createAndAddParameter (std::make_unique<Parameter>
         ( 
-         ParameterID { newId, 1 }, //the version number is important: new parameters have to always get hight numbers
-         busId + paramName, labelText, r, defaultVal, valueToTextFunction, textToValueFunction, isMetaParameter,
-         isAutomatableParameter, isDiscreteParameter, AudioProcessorParameter::Category::genericParameter));
+         
+			/* IMPORTANT */
+			ParameterID { newId, versionHint }, //the version number is important: new parameters have to always get higher numbers
+		    /* IMPORTANT */
+
+			busId + paramName, labelText, r, defaultVal, valueToTextFunction, textToValueFunction, isMetaParameter,
+			isAutomatableParameter, isDiscreteParameter, AudioProcessorParameter::Category::genericParameter));
     
 	//my_parameters.add(p);
 	my_parameters.insert(std::make_pair(uiSequence, p));

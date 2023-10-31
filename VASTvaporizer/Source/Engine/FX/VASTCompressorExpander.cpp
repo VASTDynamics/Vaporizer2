@@ -26,7 +26,7 @@ CVASTCompressorExpander::CVASTCompressorExpander(VASTAudioProcessor* processor, 
 void CVASTCompressorExpander::initParameters() {
 	AudioProcessorValueTreeState& parameters = my_processor->getParameterTree();
 
-	createAndAddParameter(&m_bLimiterOffOn, parameters, "m_bLimiterOffOn", "Limiter on / off", "On", 0,
+	createAndAddParameter(&m_bLimiterOffOn, parameters, 0, "m_bLimiterOffOn", "Limiter on / off", "On", 0,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		CVASTParamState::toggleButtonValueToTextFunction,
@@ -34,46 +34,46 @@ void CVASTCompressorExpander::initParameters() {
 		false, true, true, true,
 		true);
 
-	createAndAddParameter(&m_fLimiterDryWet, parameters, "m_fLimiterDryWet", "Limiter dry / wet (no effect - full effect)", "DryWet", 1,
+	createAndAddParameter(&m_fLimiterDryWet, parameters, 0, "m_fLimiterDryWet", "Limiter dry / wet (no effect - full effect)", "DryWet", 1,
 		MODMATDEST::LimiterDryWet,
 		NormalisableRange<float>(0, 100), 100,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_uLimiterMode, parameters, "m_uLimiterMode", "Limiter mode", "Mode", 2,
+	createAndAddParameter(&m_uLimiterMode, parameters, 0, "m_uLimiterMode", "Limiter mode", "Mode", 2,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		[](float value) { return StringArray("Limiter", "Noise gate")[int(value)]; },
 		[](String text) { return StringArray("Limiter", "Noise gate").indexOf(StringRef(text), true); },
 		false, true, true, false);
-	createAndAddParameter(&m_fLimiterThreshold, parameters, "m_fLimiterThreshold", "Limiter threshold (dB)", "Threshold", 3,
+	createAndAddParameter(&m_fLimiterThreshold, parameters, 0, "m_fLimiterThreshold", "Limiter threshold (dB)", "Threshold", 3,
 		MODMATDEST::LimiterThreshold,
 		NormalisableRange<float>(-60.0f, 0.0f), -24.0f, 
 		[](float value) {return String(value) + " dB" ; },
 		[](String text) {return text.dropLastCharacters(3).getFloatValue(); },
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fLimiterRatio, parameters, "m_fLimiterRatio", "Limiter ratio", "Ratio :1", 4,
+	createAndAddParameter(&m_fLimiterRatio, parameters, 0, "m_fLimiterRatio", "Limiter ratio", "Ratio :1", 4,
 		MODMATDEST::LimiterRatio,
 		NormalisableRange<float>(1.0f, 100.0f), 50.0f, 
 		[](float value) {return ":" + String(value); },
 		[](String text) {return text.substring(1).getFloatValue(); },
 		false, true, false, false, 
 		true);
-	createAndAddParameter(&m_fLimiterAttack, parameters, "m_fLimiterAttack", "Limiter attack (ms)", "Attack", 5,
+	createAndAddParameter(&m_fLimiterAttack, parameters, 0, "m_fLimiterAttack", "Limiter attack (ms)", "Attack", 5,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.1f, 100.0f), 2.0f, 
 		[](float value) {return String(value) + " ms"; },
 		[](String text) {return text.dropLastCharacters(3).getFloatValue(); }, 
 		false, true, false, false);
-	createAndAddParameter(&m_fLimiterRelease, parameters, "m_fLimiterRelease", "Limiter release (ms)", "Release", 6,
+	createAndAddParameter(&m_fLimiterRelease, parameters, 0, "m_fLimiterRelease", "Limiter release (ms)", "Release", 6,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(10.0f, 1000.0f), 300.0f, 
 		[](float value) {return String(value) + " ms"; },
 		[](String text) {return text.dropLastCharacters(3).getFloatValue(); },
 		false, true, false, false);
-	createAndAddParameter(&m_fLimiterMakeupGain, parameters, "m_fLimiterMakeupGain", "Limiter makeup gain (dB)", "Gain", 7,
+	createAndAddParameter(&m_fLimiterMakeupGain, parameters, 0, "m_fLimiterMakeupGain", "Limiter makeup gain (dB)", "Gain", 7,
 		MODMATDEST::LimiterGain,
 		NormalisableRange<float>(-12.0f, 12.0f), 0.0f, 
 		[](float value) {return String(value) + " dB"; },
