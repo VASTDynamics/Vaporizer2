@@ -15,6 +15,7 @@ Has:
 #include "VASTVcf.h"
 #include "VASTSettings.h"
 #include "VASTSynthesiser.h"
+#include "../Plugin/VASTControls/VASTParameterSlider.h"
 #include <vector>
 
 class CVASTPoly; //forward declaration
@@ -222,6 +223,11 @@ private:
 	LinearSmoothedValue<float> m_fOscDCents_smoothed;
 	LinearSmoothedValue<float> m_fSamplerBaseFreqPortamento_smoothed;
 	LinearSmoothedValue<float> m_fSamplerCents_smoothed;
+
+	VASTParameterSlider* Component_buffer_m_fCustomModulator1 = nullptr;
+	VASTParameterSlider* Component_buffer_m_fCustomModulator2 = nullptr;
+	VASTParameterSlider* Component_buffer_m_fCustomModulator3 = nullptr;
+	VASTParameterSlider* Component_buffer_m_fCustomModulator4 = nullptr;
 
 	bool m_bSmoothersTakeNextValue = false;
 	JUCE_LEAK_DETECTOR(CVASTSingleNote)

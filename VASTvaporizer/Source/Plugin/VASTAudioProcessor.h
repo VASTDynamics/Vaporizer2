@@ -232,6 +232,8 @@ public:
 	int getUIFontSize();
 	void setUIFontSize(int size);
 	
+	void setModWheelPermaLink(int permalink);
+	int getModWheelPermaLink();
 	void setUserTuningFile(String filename);
 	
 	void setBendRange(int bendRange);
@@ -347,6 +349,7 @@ private:
 	int m_midiBank = 0;
 
 	int m_MPEmode = 0; // settings
+	int m_ModWheelPermaLink = 0;
 
 	bool m_wasBypassed = false;
 	bool bIsInErrorState = false;

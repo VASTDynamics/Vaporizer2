@@ -1552,6 +1552,16 @@ void VASTAudioProcessor::setUIFontSize(int size) {
 	requestUIInit();
 }
 
+void VASTAudioProcessor::setModWheelPermaLink(int permalink)
+{
+	m_ModWheelPermaLink = permalink;
+}
+
+int VASTAudioProcessor::getModWheelPermaLink()
+{
+	return m_ModWheelPermaLink;
+}
+
 void VASTAudioProcessor::setUserTuningFile(String filename) {
 	m_UserTuningFile = filename;
 	m_pVASTXperience.m_Set.setTuning(m_UserTuningFile);
@@ -2187,6 +2197,8 @@ void VASTAudioProcessor::initSettings() {
         m_iUserTargetPluginWidth = m_iDefaultPluginWidth; //default size from projucer
         m_iUserTargetPluginHeight = m_iDefaultPluginHeight; //default size from projucer
 
+		m_ModWheelPermaLink = 1; //default now CustomModulator1
+
         writeSettingsToFile();
     }
 }
@@ -2208,6 +2220,7 @@ bool VASTAudioProcessor::writeSettingsToFile() {
 	settings->setAttribute("WavetableRootFolder", m_UserWavetableRootFolder);
 	settings->setAttribute("WavRootFolder", m_UserWavRootFolder);
 	settings->setAttribute("TuningFile", m_UserTuningFile);
+	settings->setAttribute("ModWheelPermaLink", String(m_ModWheelPermaLink));
 
 	settings->setAttribute("PluginWidth", String(m_iUserTargetPluginWidth));
 	settings->setAttribute("PluginHeight", String(m_iUserTargetPluginHeight));
@@ -2416,6 +2429,9 @@ bool VASTAudioProcessor::readSettingsFromFile() {
 								m_UserTuningFile = pChild->getAttributeValue(i);
 								setUserTuningFile(m_UserTuningFile);
 							}										
+							else if (pChild->getAttributeName(i).equalsIgnoreCase("ModWheelPermaLink") == true) {
+								m_ModWheelPermaLink = pChild->getAttributeValue(i).getIntValue();
+							}
 							else if (pChild->getAttributeName(i).equalsIgnoreCase("PluginWidth") == true) {
 								m_iUserTargetPluginWidth = pChild->getAttributeValue(i).getIntValue();
 							}

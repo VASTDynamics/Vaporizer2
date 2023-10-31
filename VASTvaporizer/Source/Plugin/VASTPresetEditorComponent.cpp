@@ -460,6 +460,7 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
 
     c_tuning.reset (new juce::TextEditor ("c_tuning"));
     addAndMakeVisible (c_tuning.get());
+    c_tuning->setTooltip (TRANS("AnaMark Tuning file (.TUN) for custom tuning"));
     c_tuning->setMultiLine (false);
     c_tuning->setReturnKeyStartsNewLine (false);
     c_tuning->setReadOnly (true);
@@ -489,6 +490,31 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     c_tuningRemove->setExplicitFocusOrder (18);
     c_tuningRemove->setButtonText (TRANS("Use Default Tuning"));
     c_tuningRemove->addListener (this);
+
+    c_permaLink.reset (new VASTComboBox ("c_permaLink"));
+    addAndMakeVisible (c_permaLink.get());
+    c_permaLink->setTooltip (TRANS("Permanently link Modulation Wheel to Custom Modulators"));
+    c_permaLink->setExplicitFocusOrder (16);
+    c_permaLink->setEditableText (false);
+    c_permaLink->setJustificationType (juce::Justification::centredLeft);
+    c_permaLink->setTextWhenNothingSelected (juce::String());
+    c_permaLink->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
+    c_permaLink->addItem (TRANS("---"), 1);
+    c_permaLink->addItem (TRANS("CUSTOM MODULATOR 1"), 2);
+    c_permaLink->addItem (TRANS("CUSTOM MODULATOR 2"), 3);
+    c_permaLink->addItem (TRANS("CUSTOM MODULATOR 3"), 4);
+    c_permaLink->addItem (TRANS("CUSTOM MODULATOR 4"), 5);
+    c_permaLink->addListener (this);
+
+    label20.reset (new juce::Label ("new label",
+                                    TRANS("MOD.WHEEL PERM.\n")));
+    addAndMakeVisible (label20.get());
+    label20->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label20->setJustificationType (juce::Justification::centredRight);
+    label20->setEditable (false, false, false);
+    label20->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
+    label20->setColour (juce::TextEditor::textColourId, juce::Colours::black);
+    label20->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
 
     //[UserPreSize]
@@ -588,6 +614,8 @@ VASTPresetEditorComponent::~VASTPresetEditorComponent()
     label19 = nullptr;
     c_tuningSelect = nullptr;
     c_tuningRemove = nullptr;
+    c_permaLink = nullptr;
+    label20 = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -658,23 +686,25 @@ void VASTPresetEditorComponent::resized()
     c_presetCategoryCombo->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.1043f), proportionOfWidth (0.1313f), proportionOfHeight (0.0261f));
     label11->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.5965f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
     c_uiThemeCombo->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.5948f), proportionOfWidth (0.2300f), proportionOfHeight (0.0261f));
-    label12->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.7756f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
-    c_WTmode->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.7722f), proportionOfWidth (0.1313f), proportionOfHeight (0.0261f));
+    label12->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.7496f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
+    c_WTmode->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.7461f), proportionOfWidth (0.1313f), proportionOfHeight (0.0261f));
     c_iconMaximizeEditor->setBounds (getWidth() - 1 - proportionOfWidth (0.0150f), 1, proportionOfWidth (0.0150f), proportionOfHeight (0.0209f));
     label14->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.6730f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
     c_disableGFX->setBounds (proportionOfWidth (0.1650f), proportionOfHeight (0.6661f), proportionOfWidth (0.0213f), proportionOfHeight (0.0296f));
-    label15->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.8139f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
+    label15->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.7878f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
     label16->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.6348f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
     c_uiFontSize->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.6330f), proportionOfWidth (0.1313f), proportionOfHeight (0.0261f));
     label17->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.2748f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
     c_presetMPE->setBounds (proportionOfWidth (0.1650f), proportionOfHeight (0.2696f), proportionOfWidth (0.0213f), proportionOfHeight (0.0296f));
-    c_MPEmode->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.8087f), proportionOfWidth (0.1313f), proportionOfHeight (0.0261f));
+    c_MPEmode->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.7826f), proportionOfWidth (0.1313f), proportionOfHeight (0.0261f));
     c_presetBendRange->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.3078f), proportionOfWidth (0.0750f), proportionOfHeight (0.0313f));
     label18->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.3130f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
-    c_tuning->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.8783f), proportionOfWidth (0.3912f), proportionOfHeight (0.0244f));
-    label19->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.8800f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
-    c_tuningSelect->setBounds (proportionOfWidth (0.6088f), proportionOfHeight (0.8783f), proportionOfWidth (0.1600f), proportionOfHeight (0.0244f));
-    c_tuningRemove->setBounds (proportionOfWidth (0.7900f), proportionOfHeight (0.8783f), proportionOfWidth (0.1600f), proportionOfHeight (0.0244f));
+    c_tuning->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.8522f), proportionOfWidth (0.3912f), proportionOfHeight (0.0244f));
+    label19->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.8539f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
+    c_tuningSelect->setBounds (proportionOfWidth (0.6088f), proportionOfHeight (0.8522f), proportionOfWidth (0.1600f), proportionOfHeight (0.0244f));
+    c_tuningRemove->setBounds (proportionOfWidth (0.7900f), proportionOfHeight (0.8522f), proportionOfWidth (0.1600f), proportionOfHeight (0.0244f));
+    c_permaLink->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.8904f), proportionOfWidth (0.2300f), proportionOfHeight (0.0261f));
+    label20->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.8956f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
     //[UserResized] Add your own custom resize handling here..
 	updateAll();
     //[/UserResized]
@@ -908,6 +938,16 @@ void VASTPresetEditorComponent::comboBoxChanged (juce::ComboBox* comboBoxThatHas
             myProcessor->writeSettingsToFile();
         }
         //[/UserComboBoxCode_c_MPEmode]
+    }
+    else if (comboBoxThatHasChanged == c_permaLink.get())
+    {
+        //[UserComboBoxCode_c_permaLink] -- add your combo box handling code here..
+        int val = c_permaLink->getSelectedItemIndex();
+        if (myProcessor->getModWheelPermaLink() != val) {
+            myProcessor->setModWheelPermaLink(val);
+            myProcessor->writeSettingsToFile();
+        }
+        //[/UserComboBoxCode_c_permaLink]
     }
 
     //[UsercomboBoxChanged_Post]
@@ -1202,12 +1242,12 @@ BEGIN_JUCER_METADATA
             items="Classic&#10;IceCubes&#10;BloodTech&#10;Dark" textWhenNonSelected=""
             textWhenNoItems="(no choices)"/>
   <LABEL name="new label" id="5c44d4c6bdd0b7a4" memberName="label12" virtualName=""
-         explicitFocusOrder="0" pos="3% 77.565% 12.875% 1.913%" textCol="ffe2e2e2"
+         explicitFocusOrder="0" pos="3% 74.957% 12.875% 1.913%" textCol="ffe2e2e2"
          edTextCol="ff000000" edBkgCol="0" labelText="WAVET. MODE" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Code Pro Demo"
          fontsize="11.0" kerning="0.0" bold="0" italic="0" justification="34"/>
   <COMBOBOX name="c_WTmode" id="e8666c43909ab931" memberName="c_WTmode" virtualName="VASTComboBox"
-            explicitFocusOrder="16" pos="16.875% 77.217% 13.125% 2.609%"
+            explicitFocusOrder="16" pos="16.875% 74.609% 13.125% 2.609%"
             tooltip="Wavetable frequency calculation mode - Sharp (ideal), Soft (butterworth), Dull (linear)"
             editable="0" layout="33" items="Sharp&#10;Soft&#10;Dull" textWhenNonSelected=""
             textWhenNoItems="(no choices)"/>
@@ -1225,7 +1265,7 @@ BEGIN_JUCER_METADATA
                 buttonText="" connectedEdges="0" needsCallback="1" radioGroupId="0"
                 state="0"/>
   <LABEL name="new label" id="531603d21f1ea7f2" memberName="label15" virtualName=""
-         explicitFocusOrder="0" pos="3% 81.391% 12.875% 1.913%" textCol="ffe2e2e2"
+         explicitFocusOrder="0" pos="3% 78.783% 12.875% 1.913%" textCol="ffe2e2e2"
          edTextCol="ff000000" edBkgCol="0" labelText="MPE MODE" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Code Pro Demo"
          fontsize="11.0" kerning="0.0" bold="0" italic="0" justification="34"/>
@@ -1249,7 +1289,7 @@ BEGIN_JUCER_METADATA
                 buttonText="" connectedEdges="0" needsCallback="1" radioGroupId="0"
                 state="0"/>
   <COMBOBOX name="c_MPEmode" id="b9dfd606cbcb0dff" memberName="c_MPEmode"
-            virtualName="VASTComboBox" explicitFocusOrder="17" pos="16.875% 80.87% 13.125% 2.609%"
+            virtualName="VASTComboBox" explicitFocusOrder="17" pos="16.875% 78.261% 13.125% 2.609%"
             tooltip="Enable MIDI Polyphonic Expression (MPE) mode for supported controllers always per default"
             editable="0" layout="33" items="From preset&#10;Always on&#10;Always off"
             textWhenNonSelected="" textWhenNoItems="(no choices)"/>
@@ -1265,22 +1305,33 @@ BEGIN_JUCER_METADATA
          fontname="Code Pro Demo" fontsize="11.0" kerning="0.0" bold="0"
          italic="0" justification="34"/>
   <TEXTEDITOR name="c_tuning" id="55645c16f0147aa6" memberName="c_tuning" virtualName=""
-              explicitFocusOrder="0" pos="16.875% 87.826% 39.125% 2.435%" initialText=""
-              multiline="0" retKeyStartsLine="0" readonly="1" scrollbars="0"
-              caret="0" popupmenu="1"/>
+              explicitFocusOrder="0" pos="16.875% 85.217% 39.125% 2.435%" tooltip="AnaMark Tuning file (.TUN) for custom tuning"
+              initialText="" multiline="0" retKeyStartsLine="0" readonly="1"
+              scrollbars="0" caret="0" popupmenu="1"/>
   <LABEL name="new label" id="639d4b3c348badbd" memberName="label19" virtualName=""
-         explicitFocusOrder="0" pos="3% 88% 12.875% 1.913%" textCol="ffe2e2e2"
+         explicitFocusOrder="0" pos="3% 85.391% 12.875% 1.913%" textCol="ffe2e2e2"
          edTextCol="ff000000" edBkgCol="0" labelText="TUNING" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Code Pro Demo"
          fontsize="11.0" kerning="0.0" bold="0" italic="0" justification="34"/>
   <TEXTBUTTON name="c_tuningSelect" id="226d55cecbcaa147" memberName="c_tuningSelect"
-              virtualName="" explicitFocusOrder="18" pos="60.875% 87.826% 16% 2.435%"
+              virtualName="" explicitFocusOrder="18" pos="60.875% 85.217% 16% 2.435%"
               buttonText="Select .TUN File" connectedEdges="0" needsCallback="1"
               radioGroupId="0"/>
   <TEXTBUTTON name="c_tuningRemove" id="2188ea1bfef98d5d" memberName="c_tuningRemove"
-              virtualName="" explicitFocusOrder="18" pos="79% 87.826% 16% 2.435%"
+              virtualName="" explicitFocusOrder="18" pos="79% 85.217% 16% 2.435%"
               buttonText="Use Default Tuning" connectedEdges="0" needsCallback="1"
               radioGroupId="0"/>
+  <COMBOBOX name="c_permaLink" id="142ebf586a1b0644" memberName="c_permaLink"
+            virtualName="VASTComboBox" explicitFocusOrder="16" pos="16.875% 89.043% 23% 2.609%"
+            tooltip="Permanently link Modulation Wheel to Custom Modulators"
+            editable="0" layout="33" items="---&#10;CUSTOM MODULATOR 1&#10;CUSTOM MODULATOR 2&#10;CUSTOM MODULATOR 3&#10;CUSTOM MODULATOR 4"
+            textWhenNonSelected="" textWhenNoItems="(no choices)"/>
+  <LABEL name="new label" id="9259004066f0bc20" memberName="label20" virtualName=""
+         explicitFocusOrder="0" pos="3% 89.565% 12.875% 1.913%" textCol="ffe2e2e2"
+         edTextCol="ff000000" edBkgCol="0" labelText="MOD.WHEEL PERM.&#10;"
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Code Pro Demo" fontsize="11.0" kerning="0.0" bold="0"
+         italic="0" justification="34"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

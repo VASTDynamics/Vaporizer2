@@ -97,7 +97,7 @@ private:
     //[UserVariables]   -- You can add your own custom variables in this section.
 	MidiKeyboardState myMidiKeyboardState;
 
-	VASTAudioProcessorEditor * myEditor = nullptr;
+	VASTAudioProcessorEditor* myEditor = nullptr;
 	VASTAudioProcessor* myProcessor = nullptr;
     //[/UserVariables]
 

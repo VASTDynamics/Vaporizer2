@@ -128,6 +128,8 @@ private:
     std::unique_ptr<juce::Label> label19;
     std::unique_ptr<juce::TextButton> c_tuningSelect;
     std::unique_ptr<juce::TextButton> c_tuningRemove;
+    std::unique_ptr<VASTComboBox> c_permaLink;
+    std::unique_ptr<juce::Label> label20;
 
 
     //==============================================================================

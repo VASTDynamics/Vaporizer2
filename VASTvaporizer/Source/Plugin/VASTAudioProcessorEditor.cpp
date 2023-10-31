@@ -132,6 +132,13 @@ void VASTAudioProcessorEditor::timerCallback(int timerID) {
 					float sVal = lslider->getRange().getStart() + (lslider->getRange().getEnd() - lslider->getRange().getStart()) * jlimit<float>(0.f, 1.f, shallComponentUpdateValue);
 					lslider->setValue(sVal, NotificationType::sendNotificationAsync);
 				}
+				else {
+					VASTParameterSlider* lslider = dynamic_cast<VASTParameterSlider*>(shallComponentUpdate);
+					if (lslider != nullptr) {
+						float sVal = lslider->getRange().getStart() + (lslider->getRange().getEnd() - lslider->getRange().getStart()) * jlimit<float>(0.f, 1.f, shallComponentUpdateValue);
+						lslider->setValue(sVal, NotificationType::sendNotificationAsync);
+					}
+				}
 			}
 			bShallComponentValueUpdate = false;
 		}

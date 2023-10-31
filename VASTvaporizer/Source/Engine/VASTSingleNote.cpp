@@ -17,6 +17,8 @@ Has:
 #include "Utils/VASTSynthfunctions.h"
 #include "Utils/VASTSSEHelper.h"
 #include "../Plugin/VASTAudioProcessor.h"
+#include "../Plugin/VASTControls/VASTParameterSlider.h"
+#include "../Plugin/VASTAudioProcessorEditor.h"
 #ifdef _WINDOWS
 #include <time.h>
 #else
@@ -385,15 +387,56 @@ void CVASTSingleNote::controllerMoved(int controllerNumber, int newControllerVal
 {
 	if (controllerNumber == 1) { // MIDI CC 1 Modulation, e.g. VSTHost
 		m_Set->m_uModWheel = newControllerValue; //0..127
-		if (m_Set->m_uModWheel < 0) m_Set->m_uModWheel = 0;
-		if (m_Set->m_uModWheel > 127) m_Set->m_uModWheel = 127;
+		m_Set->m_uModWheel = jlimit(0, 127, m_Set->m_uModWheel);
+
+		//chek for permalink
+		int permalink = m_Poly->getProcessor()->getModWheelPermaLink();
+		if (permalink != 0) {
+			VASTAudioProcessorEditor* _editor = (VASTAudioProcessorEditor*)m_Poly->getProcessor()->getActiveEditor();
+			if (_editor != nullptr) {
+				VASTParameterSlider* lslider = nullptr;
+				if (permalink == 1) {
+					if (Component_buffer_m_fCustomModulator1 == nullptr) {
+						lslider = dynamic_cast<VASTParameterSlider*>(_editor->findChildComponetWithName(_editor->vaporizerComponent, "m_fCustomModulator1"));
+						Component_buffer_m_fCustomModulator1 = lslider;
+					}
+					else lslider = Component_buffer_m_fCustomModulator1;
+					m_Poly->m_fCustomModulator1_smoothed.setValue(m_Set->m_uModWheel / 127.f);
+				} else if (permalink == 2) {
+					if (Component_buffer_m_fCustomModulator2 == nullptr) {
+						lslider = dynamic_cast<VASTParameterSlider*>(_editor->findChildComponetWithName(_editor->vaporizerComponent, "m_fCustomModulator2"));
+						Component_buffer_m_fCustomModulator2 = lslider;
+					}
+					else lslider = Component_buffer_m_fCustomModulator2;
+					m_Poly->m_fCustomModulator2_smoothed.setValue(m_Set->m_uModWheel / 127.f);
+				} else if (permalink == 3) {
+					if (Component_buffer_m_fCustomModulator3 == nullptr) {
+						lslider = dynamic_cast<VASTParameterSlider*>(_editor->findChildComponetWithName(_editor->vaporizerComponent, "m_fCustomModulator3"));
+						Component_buffer_m_fCustomModulator3 = lslider;
+					}
+					else lslider = Component_buffer_m_fCustomModulator3;
+					m_Poly->m_fCustomModulator3_smoothed.setValue(m_Set->m_uModWheel / 127.f);
+				}
+				else if (permalink == 4) {
+					if (Component_buffer_m_fCustomModulator4 == nullptr) {
+						lslider = dynamic_cast<VASTParameterSlider*>(_editor->findChildComponetWithName(_editor->vaporizerComponent, "m_fCustomModulator4"));
+						Component_buffer_m_fCustomModulator4 = lslider;
+					}
+					else lslider = Component_buffer_m_fCustomModulator4;
+					m_Poly->m_fCustomModulator4_smoothed.setValue(m_Set->m_uModWheel / 127.f);
+				}
+
+				if (lslider != nullptr) {
+					_editor->registerComponentValueUpdate(lslider, m_Set->m_uModWheel / 127.f);
+				}
+			}
+		}
 	}
 	else if (controllerNumber == 74) { // MPE Controller Sound Brightness // handleTimbreMSB 
 		DBG("Brightness MSB voice " << mVoiceNo << " " << newControllerValue);
 		m_Set->iMPETimbreMidiNote[getVoiceNo()] = getCurrentlyPlayingNote();
 		m_Set->iMPETimbre[getVoiceNo()] = newControllerValue;
-		if (m_Set->iMPETimbre[getVoiceNo()] < 0) m_Set->iMPETimbre[getVoiceNo()] = 0;
-		if (m_Set->iMPETimbre[getVoiceNo()] > 127) m_Set->iMPETimbre[getVoiceNo()] = 127;
+		m_Set->iMPETimbre[getVoiceNo()] = jlimit( 0, 127, m_Set->iMPETimbre[getVoiceNo()]);
 	}
 	else if (controllerNumber == 106) { // MPE Controller Sound Brightness // handleTimbreLSB    
 		DBG("Brightness LSB voice " << mVoiceNo << newControllerValue);
@@ -403,15 +446,13 @@ void CVASTSingleNote::controllerMoved(int controllerNumber, int newControllerVal
 void CVASTSingleNote::aftertouchChanged(int newAftertouchValue) { //polyphonic aftertouch
 	m_Set->iAftertouchMidiNote[getVoiceNo()] = getCurrentlyPlayingNote();
 	m_Set->iAftertouch[getVoiceNo()] = newAftertouchValue;
-	if (m_Set->iAftertouch[getVoiceNo()] < 0) m_Set->iAftertouch[getVoiceNo()] = 0;
-	if (m_Set->iAftertouch[getVoiceNo()] > 127) m_Set->iAftertouch[getVoiceNo()] = 127;
+	m_Set->iAftertouch[getVoiceNo()] = jlimit(0, 127, m_Set->iAftertouch[getVoiceNo()]);
 }
 
 void CVASTSingleNote::channelPressureChanged(int newChannelPressureValue) { //monophonic aftertouch
 	m_Set->iAftertouchMidiNote[getVoiceNo()] = getCurrentlyPlayingNote(); 
 	m_Set->iAftertouch[getVoiceNo()] = newChannelPressureValue;
-	if (m_Set->iAftertouch[getVoiceNo()] < 0) m_Set->iAftertouch[getVoiceNo()] = 0;
-	if (m_Set->iAftertouch[getVoiceNo()] > 127) m_Set->iAftertouch[getVoiceNo()] = 127;
+	m_Set->iAftertouch[getVoiceNo()] = jlimit(0, 127, m_Set->iAftertouch[getVoiceNo()]);
 }
 
 void CVASTSingleNote::renderNextBlock(sRoutingBuffers& routingBuffers, int startSample, int numSamples)
