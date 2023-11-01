@@ -41,7 +41,7 @@ void CVASTOscillatorBank::init() {
 
 void CVASTOscillatorBank::setWavetable(std::shared_ptr<CVASTWaveTable> wavetable) { //attention - causes clicks in audio process!
 	//only call this when audio process is not running!
-	vassert(myProcessor->m_pVASTXperience.nonThreadsafeIsBlockedProcessingInfo());
+	//vassert(myProcessor->m_pVASTXperience.nonThreadsafeIsBlockedProcessingInfo());
 	const ScopedLock sl(mSharedPtrSoftFadeLock);
 
 	//m_wavetable = wavetable; 

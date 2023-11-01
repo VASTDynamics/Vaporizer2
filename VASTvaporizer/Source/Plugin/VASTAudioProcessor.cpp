@@ -906,6 +906,8 @@ void VASTAudioProcessor::getStateInformation(MemoryBlock& destData)
 
 	// save many presets / bank 
 
+	const ScopedLock sl(getCallbackLock());
+
 	//XmlElement xml = createPatchXML(false); //use internal representation for state // VASTVaporizerParamsV2.00000 behavior
 	XmlElement xml = createPatchXML(true); //VASTVaporizerParamsV2.10000 bevhavior
 	copyXmlToBinary(xml, destData);
@@ -1041,7 +1043,6 @@ bool VASTAudioProcessor::loadPatchXML(XmlDocument* xmlDoc, bool bNameOnly, const
 }
 
 XmlElement VASTAudioProcessor::createPatchXML(bool externalRepresentation) { //for saving
-
 	auto copied_state = m_parameterState.copyState();
 	if (externalRepresentation) {
 		//first clear all parameters //starting with empty tree is better

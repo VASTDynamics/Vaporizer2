@@ -46,54 +46,16 @@ public:
 		int midiNoteForNormalPitch
 	);
 
-	VASTSamplerSound(VASTSamplerSound *sound) { //copy constructor
-		name = sound->name;
-		data = nullptr;
-		data_changed = nullptr;
-		if (sound->data.get() != nullptr) {
-			data.reset(new AudioBuffer<float>(sound->data->getNumChannels(), sound->data->getNumSamples()));
-			for (int ch = 0; ch < sound->data->getNumChannels(); ch++) {
-				data->copyFrom(ch, 0, sound->data->getReadPointer(ch, 0), sound->data->getNumSamples());
-			}
-		}
-		if (sound->data_changed.get() != nullptr) {
-			data_changed.reset(new AudioBuffer<float>(sound->data_changed->getNumChannels(), sound->data_changed->getNumSamples()));
-			for (int ch = 0; ch < sound->data_changed->getNumChannels(); ch++) {
-				data_changed->copyFrom(ch, 0, sound->data_changed->getReadPointer(ch, 0), sound->data_changed->getNumSamples());
-			}
-		}
-	
-		m_zeroCrossings = sound->m_zeroCrossings;
-		m_bChangedFlag = sound->m_bChangedFlag;
-		
-		m_bAudioDataChangedFlag = sound->m_bAudioDataChangedFlag;
-		m_PositionChanged = sound->m_PositionChanged;
-
-		sourceSampleRate = sound->sourceSampleRate;
-		midiNotes = sound->midiNotes;
-
-		attackSamples = sound->attackSamples;
-		releaseSamples = sound->releaseSamples;
-		midiRootNote = sound->midiRootNote;
-		bHasLoop = sound->bHasLoop;
-		iLoopStart = sound->iLoopStart;
-		iLoopEnd = sound->iLoopEnd;
-
-		bHasLoop_changed = sound->bHasLoop_changed;
-		iLoopStart_changed = sound->iLoopStart_changed;
-		iLoopEnd_changed = sound->iLoopEnd_changed;
-	};
+	VASTSamplerSound(VASTSamplerSound* sound);
 
 	/** Destructor. */
 	~VASTSamplerSound();
 
-	void clearAllData() {
-		
-	};
+	void clearAllData();
 
 	//==============================================================================
 	/** Returns the sample's name */
-	const String& getName() const noexcept { return name; }
+	const String& getName() const noexcept;
 
 	/** Returns the audio sample data.
 	This could return nullptr if there was a problem loading the data.
@@ -111,12 +73,12 @@ public:
 	bool appliesToChannel(int midiChannel) override;
 
 	//CHVAST
-	void setName(String changedName) { name = changedName; };
+	void setName(String changedName);
 	void getValueTreeState(ValueTree* tree, UndoManager* undoManager); //save
 	static VASTSamplerSound* getSoundFromTree(ValueTree* tree); //load
 	void setMidiRootNode(int rootNote);
-	int getMidiRootNote() { return midiRootNote; };
-	int getSourceSampleRate() { return sourceSampleRate; };
+	int getMidiRootNote();
+	int getSourceSampleRate();
 
 	bool softFadeExchangeSample();
 	bool hasLoop();
