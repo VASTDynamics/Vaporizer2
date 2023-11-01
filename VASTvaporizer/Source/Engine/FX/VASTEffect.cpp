@@ -39,10 +39,10 @@ void CVASTEffect::createAndAddParameter(std::atomic<float>** parameterVar, Audio
 	for (int i = 0; i < my_processor->getParameters().size(); i++) {
 		AudioProcessorParameterWithID* param = (AudioProcessorParameterWithID*)my_processor->getParameters()[i];
 		ParameterID pid = param->getParameterID();
-		if (pid.getVersionHint() == 0) 
+		if (pid.getVersionHint() <= 1)
 			lFirstParamVers++;
 	}
-	jassert(lFirstParamVers<755); //755 parameters before VersionHint was introduced --> 0. All new parameters need to get higher VersionHints.
+	jassert(lFirstParamVers<755); //755 parameters before VersionHint was introduced --> 1. All new parameters need to get higher VersionHints.
 #endif
 
     using Parameter = AudioProcessorValueTreeState::Parameter;

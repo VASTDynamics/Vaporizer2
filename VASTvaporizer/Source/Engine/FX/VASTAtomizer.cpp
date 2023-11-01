@@ -34,7 +34,7 @@ CVASTAtomizer::~CVASTAtomizer(void) {
 void CVASTAtomizer::initParameters() {
 	AudioProcessorValueTreeState& parameters = my_processor->getParameterTree();
 
-	createAndAddParameter(&m_bAtomizerOnOff, parameters, 0, "m_bAtomizerOnOff", "Atomizer effect on / off", "On", 0,
+	createAndAddParameter(&m_bAtomizerOnOff, parameters, 1, "m_bAtomizerOnOff", "Atomizer effect on / off", "On", 0,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		CVASTParamState::toggleButtonValueToTextFunction,
@@ -42,7 +42,7 @@ void CVASTAtomizer::initParameters() {
 		false, true, true, true,
 		true);
 
-	createAndAddParameter(&m_fAtomizerDryWet, parameters, 0, "m_fAtomizerDryWet", "Atomizer filter mix in (dry - wet)", "DryWet", 1,
+	createAndAddParameter(&m_fAtomizerDryWet, parameters, 1, "m_fAtomizerDryWet", "Atomizer filter mix in (dry - wet)", "DryWet", 1,
 		MODMATDEST::AtomizerDryWet,
 		NormalisableRange<float>(0, 100), 100,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -50,7 +50,7 @@ void CVASTAtomizer::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_fAtomizerLowcut, parameters, 0, "m_fAtomizerLowcut", "Atomizer lowcut", "Lowcut", 2,
+	createAndAddParameter(&m_fAtomizerLowcut, parameters, 1, "m_fAtomizerLowcut", "Atomizer lowcut", "Lowcut", 2,
 		MODMATDEST::AtomizerLowCut,
 		NormalisableRange<float>(0, 100), 0.f,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -58,7 +58,7 @@ void CVASTAtomizer::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_fAtomizerHighcut, parameters, 0, "m_fAtomizerHighcut", "Atomizer highcut", "Hicut", 3,
+	createAndAddParameter(&m_fAtomizerHighcut, parameters, 1, "m_fAtomizerHighcut", "Atomizer highcut", "Hicut", 3,
 		MODMATDEST::AtomizerHighCut,
 		NormalisableRange<float>(0, 100), 100.f,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -66,7 +66,7 @@ void CVASTAtomizer::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_fAtomizerHarmonics, parameters, 0, "m_fAtomizerHarmonics", "Atomizer harmonics", "Harmonics", 4,
+	createAndAddParameter(&m_fAtomizerHarmonics, parameters, 1, "m_fAtomizerHarmonics", "Atomizer harmonics", "Harmonics", 4,
 		MODMATDEST::AtomizerHarmonics,
 		NormalisableRange<float>(0, 100), 0.f,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -74,7 +74,7 @@ void CVASTAtomizer::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_fAtomizerEmphasis, parameters, 0, "m_fAtomizerEmphasis", "Atomizer emphasis", "Emphasis", 5,
+	createAndAddParameter(&m_fAtomizerEmphasis, parameters, 1, "m_fAtomizerEmphasis", "Atomizer emphasis", "Emphasis", 5,
 		MODMATDEST::AtomizerEmphasis,
 		NormalisableRange<float>(0, 100), 0.f,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -82,7 +82,7 @@ void CVASTAtomizer::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_fAtomizerDephase, parameters, 0, "m_fAtomizerDephase", "Atomizer dephase", "Dephase", 6,
+	createAndAddParameter(&m_fAtomizerDephase, parameters, 1, "m_fAtomizerDephase", "Atomizer dephase", "Dephase", 6,
 		MODMATDEST::AtomizerDephase,
 		NormalisableRange<float>(0, 100), 0.f,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -90,7 +90,7 @@ void CVASTAtomizer::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_uAtomizerLFOWave, parameters, 0, "m_uAtomizerLFOWave", "Atomizer LFO waveform", "LFOwave", 7,
+	createAndAddParameter(&m_uAtomizerLFOWave, parameters, 1, "m_uAtomizerLFOWave", "Atomizer LFO waveform", "LFOwave", 7,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, LFOWAVE_Array.size() - 1, 1.0f), 0.0f,
 		CVASTParamState::comboBoxValueToTextFunction_LFOWAVE,
@@ -98,7 +98,7 @@ void CVASTAtomizer::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_bAtomizerSynch, parameters, 0, "m_bAtomizerSynch", "Atomizer sync to DAW", "Sync", 8,
+	createAndAddParameter(&m_bAtomizerSynch, parameters, 1, "m_bAtomizerSynch", "Atomizer sync to DAW", "Sync", 8,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		CVASTParamState::toggleButtonValueToTextFunction,
@@ -106,7 +106,7 @@ void CVASTAtomizer::initParameters() {
 		false, true, true, false,
 		true);
 
-	createAndAddParameter(&m_uAtomizerTimeBeats, parameters, 0, "m_uAtomizerTimeBeats", "Atomizer time in beats when synced to DAW", "DAW", 9,
+	createAndAddParameter(&m_uAtomizerTimeBeats, parameters, 1, "m_uAtomizerTimeBeats", "Atomizer time in beats when synced to DAW", "DAW", 9,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, TIMEBEATS_Array.size() - 1, 1.0f), TIMEBEATS::BEATS1,
 		CVASTParamState::comboBoxValueToTextFunction_TIMEBEATS,
@@ -114,7 +114,7 @@ void CVASTAtomizer::initParameters() {
 		false, true, true, false,
 		true);
 
-	createAndAddParameter(&m_fAtomizerLFOFreq, parameters, 0, "m_fAtomizerLFOFreq", "Atomizer LFO frequency (Hz)", "Frequency", 10,
+	createAndAddParameter(&m_fAtomizerLFOFreq, parameters, 1, "m_fAtomizerLFOFreq", "Atomizer LFO frequency (Hz)", "Frequency", 10,
 		MODMATDEST::AtomizerLFOFrequency,
 		NormalisableRange<float>(0.0f, 20.0f), 1.00f,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -122,7 +122,7 @@ void CVASTAtomizer::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_fAtomizerGain, parameters, 0, "m_fAtomizerGain", "Atomizer output gain", "Gain", 11,
+	createAndAddParameter(&m_fAtomizerGain, parameters, 1, "m_fAtomizerGain", "Atomizer output gain", "Gain", 11,
 		MODMATDEST::AtomizerGain,
 		NormalisableRange<float>(0, 200), 100,
 		CVASTParamState::floatSliderValueToTextFunction,

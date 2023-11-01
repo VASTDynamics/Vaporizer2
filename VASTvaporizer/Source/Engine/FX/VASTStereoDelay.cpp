@@ -25,63 +25,63 @@ CVASTStereoDelay::CVASTStereoDelay(VASTAudioProcessor* processor, int busnr) {
 void CVASTStereoDelay::initParameters() {
 	AudioProcessorValueTreeState& parameters = my_processor->getParameterTree();
 
-	createAndAddParameter(&m_bDelayOnOff, parameters, 0, "m_bDelayOnOff", "Delay on / off", "On", 0,
+	createAndAddParameter(&m_bDelayOnOff, parameters, 1, "m_bDelayOnOff", "Delay on / off", "On", 0,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		CVASTParamState::toggleButtonValueToTextFunction,
 		CVASTParamState::toggleButtonTextToValueFunction,
 		false, true, true, true,
 		true);
-	createAndAddParameter(&m_fDelayWet, parameters, 0, "m_fDelayWet", "Delay dry / wet (no effect - full effect)", "DryWet", 1,
+	createAndAddParameter(&m_fDelayWet, parameters, 1, "m_fDelayWet", "Delay dry / wet (no effect - full effect)", "DryWet", 1,
 		MODMATDEST::DelayDryWet,
 		NormalisableRange<float>(0, 100), 20.f,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_uDelayMode, parameters, 0, "m_uDelayMode", "Delay mode", "Mode", 2,
+	createAndAddParameter(&m_uDelayMode, parameters, 1, "m_uDelayMode", "Delay mode", "Mode", 2,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 2.0f, 1.0f), 0.0f,
 		[](float value) { return StringArray("PingPong", "Cross", "Straight")[int(value)]; },
 		[](String text) { return StringArray("PingPong", "Cross", "Straight").indexOf(StringRef(text), true); },
 		false, true, true, false,
 		true);
-	createAndAddParameter(&m_fDelayLowcut, parameters, 0, "m_fDelayLowcut", "Delay lowcut frequency", "Lowcut", 3,
+	createAndAddParameter(&m_fDelayLowcut, parameters, 1, "m_fDelayLowcut", "Delay lowcut frequency", "Lowcut", 3,
 		MODMATDEST::DelayLowCut,
 		NormalisableRange<float>(50.f, 18000.f, 0.001f, 0.3f, false), 50.f,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fDelayFeedback, parameters, 0, "m_fDelayFeedback", "Delay feedback", "Feedback", 5,
+	createAndAddParameter(&m_fDelayFeedback, parameters, 1, "m_fDelayFeedback", "Delay feedback", "Feedback", 5,
 		MODMATDEST::DelayFeedback,
 		NormalisableRange<float>(0, 100), 40.f,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_bDelaySynch, parameters, 0, "m_bDelaySynch", "Delay sync to DAW", "Sync", 6,
+	createAndAddParameter(&m_bDelaySynch, parameters, 1, "m_bDelaySynch", "Delay sync to DAW", "Sync", 6,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		CVASTParamState::toggleButtonValueToTextFunction,
 		CVASTParamState::toggleButtonTextToValueFunction,
 		false, true, true, false,
 		true);
-	createAndAddParameter(&m_uDelayTimeBeats, parameters, 0, "m_uDelayTimeBeats", "Delay time in beats when synced to DAW", "DAW", 7,
+	createAndAddParameter(&m_uDelayTimeBeats, parameters, 1, "m_uDelayTimeBeats", "Delay time in beats when synced to DAW", "DAW", 7,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, TIMEBEATS_Array.size() - 1, 1.0f), TIMEBEATS::BEATS1,
 		CVASTParamState::comboBoxValueToTextFunction_TIMEBEATS,
 		CVASTParamState::comboBoxTextToValueFunction_TIMEBEATS,
 		false, true, true, false,
 		true);
-	createAndAddParameter(&m_fDelayTime, parameters, 0, "m_fDelayTime", "Delay time in ms", "Time", 8,
+	createAndAddParameter(&m_fDelayTime, parameters, 1, "m_fDelayTime", "Delay time in ms", "Time", 8,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0, 5000), 300.f,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fDelayGain, parameters, 0, "m_fDelayGain", "Delay output gain", "Gain", 9,
+	createAndAddParameter(&m_fDelayGain, parameters, 1, "m_fDelayGain", "Delay output gain", "Gain", 9,
 		MODMATDEST::DelayGain,
 		NormalisableRange<float>(0, 200), 100,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -96,7 +96,7 @@ void CVASTStereoDelay::initParameters() {
 void CVASTStereoDelay::initCompatibilityParameters() {
 	// all new parameters go here
 	AudioProcessorValueTreeState& parameters = my_processor->getParameterTree();
-	createAndAddParameter(&m_fDelayHighcut, parameters, 0, "m_fDelayHighcut", "Delay highcut frequency", "Highcut", 4,
+	createAndAddParameter(&m_fDelayHighcut, parameters, 1, "m_fDelayHighcut", "Delay highcut frequency", "Highcut", 4,
 		MODMATDEST::DelayHighCut,
 		NormalisableRange<float>(50.f, 18000.f, 0.001f, 0.3f, false), 18000.f,
 		CVASTParamState::floatSliderValueToTextFunction,

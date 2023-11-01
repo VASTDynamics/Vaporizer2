@@ -36,7 +36,7 @@ void CVASTBitcrush::initParameters() {
 	AudioProcessorValueTreeState& parameters = my_processor->getParameterTree();
 	int lDestination = 0;
 
-	createAndAddParameter(&m_bBitcrushOnOff, parameters, 0, "m_bBitcrushOnOff", "Bitcrush effect on / off", "On", 0,
+	createAndAddParameter(&m_bBitcrushOnOff, parameters, 1, "m_bBitcrushOnOff", "Bitcrush effect on / off", "On", 0,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		CVASTParamState::toggleButtonValueToTextFunction,
@@ -44,42 +44,42 @@ void CVASTBitcrush::initParameters() {
 		false, true, true, true,
 		true);
 
-	createAndAddParameter(&m_fBitcrushDryWet, parameters, 0, "m_fBitcrushDryWet", "Bitcrush dry / wet (no effect - full effect)", "DryWet", 1,
+	createAndAddParameter(&m_fBitcrushDryWet, parameters, 1, "m_fBitcrushDryWet", "Bitcrush dry / wet (no effect - full effect)", "DryWet", 1,
 		MODMATDEST::BitcrushDryWet,
 		NormalisableRange<float>(0, 100), 60,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fBitcrushLowcut, parameters, 0, "m_fBitcrushLowcut", "Bitcrush lowcut frequency", "Lowcut", 2,
+	createAndAddParameter(&m_fBitcrushLowcut, parameters, 1, "m_fBitcrushLowcut", "Bitcrush lowcut frequency", "Lowcut", 2,
 		MODMATDEST::BitcrushLowCut,
 		NormalisableRange<float>(5.f, 18000.f, 0.001f, 0.3f, false), 50.f,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fBitcrushBitdepth, parameters, 0, "m_fBitcrushBitdepth", "Bitcrush bitdepth", "Bitdepth", 3,
+	createAndAddParameter(&m_fBitcrushBitdepth, parameters, 1, "m_fBitcrushBitdepth", "Bitcrush bitdepth", "Bitdepth", 3,
 		MODMATDEST::BitcrushBitdepth,
 		NormalisableRange<float>(2.6f, 32.0f, 0.001f, 0.3f, false), 4.0f, //skew
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fBitcrushBitrate, parameters, 0, "m_fBitcrushBitrate", "Bitcrush bitrate", "Bitrate", 4,
+	createAndAddParameter(&m_fBitcrushBitrate, parameters, 1, "m_fBitcrushBitrate", "Bitcrush bitrate", "Bitrate", 4,
 		MODMATDEST::BitcrushBitrate,
 		NormalisableRange<float>(0.0f, 100.0f, 1.0f, 3.8f, false), 100.0f, //skew
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, true, false,
 		true);
-	createAndAddParameter(&m_fBitcrushJitter, parameters, 0, "m_fBitcrushJitter", "Bitcrush jitter", "Jitter", 5,
+	createAndAddParameter(&m_fBitcrushJitter, parameters, 1, "m_fBitcrushJitter", "Bitcrush jitter", "Jitter", 5,
 		MODMATDEST::BitcrushJitter,
 		NormalisableRange<float>(0.0f, 100.0f), 0.0f,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fBitcrushGain, parameters, 0, "m_fBitcrushGain", "Bitcrush output gain", "Gain", 6,
+	createAndAddParameter(&m_fBitcrushGain, parameters, 1, "m_fBitcrushGain", "Bitcrush output gain", "Gain", 6,
 		MODMATDEST::BitcrushGain,
 		NormalisableRange<float>(0, 200), 100,
 		CVASTParamState::floatSliderValueToTextFunction,

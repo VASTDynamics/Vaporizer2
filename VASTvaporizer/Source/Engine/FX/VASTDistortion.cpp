@@ -24,7 +24,7 @@ CVASTDistortion::CVASTDistortion(VASTAudioProcessor* processor, int busnr) {
 void CVASTDistortion::initParameters() {
 	AudioProcessorValueTreeState& parameters = my_processor->getParameterTree();
 
-	createAndAddParameter(&m_bDistortionOnOff, parameters, 0, "m_bDistortionOnOff", "Distortion effect on / off", "On", 0,
+	createAndAddParameter(&m_bDistortionOnOff, parameters, 1, "m_bDistortionOnOff", "Distortion effect on / off", "On", 0,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		CVASTParamState::toggleButtonValueToTextFunction,
@@ -32,7 +32,7 @@ void CVASTDistortion::initParameters() {
 		false, true, true, true,
 		true);
 
-	createAndAddParameter(&m_fDistDryWet, parameters, 0, "m_fDistDryWet", "Distortion dry / wet (no effect - full effect)", "DryWet", 1,
+	createAndAddParameter(&m_fDistDryWet, parameters, 1, "m_fDistDryWet", "Distortion dry / wet (no effect - full effect)", "DryWet", 1,
 		MODMATDEST::DistortionDryWet,
 		NormalisableRange<float>(0, 100), 10.f,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -40,7 +40,7 @@ void CVASTDistortion::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_fDistPreGain, parameters, 0, "m_fDistPreGain", "Distortion pre-gain", "PreGain", 2,
+	createAndAddParameter(&m_fDistPreGain, parameters, 1, "m_fDistPreGain", "Distortion pre-gain", "PreGain", 2,
 		MODMATDEST::DistortionPreGain, 
 		NormalisableRange<float>(0, 200), 100,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -48,28 +48,28 @@ void CVASTDistortion::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_fDistLowcut, parameters, 0, "m_fDistLowcut", "Distortion lowcut frequency", "Lowcut", 3,
+	createAndAddParameter(&m_fDistLowcut, parameters, 1, "m_fDistLowcut", "Distortion lowcut frequency", "Lowcut", 3,
 		MODMATDEST::DistortionLowCut,
 		NormalisableRange<float>(50.f, 18000.f, 0.001f, 0.3f, false), 50.f,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fDistDrive, parameters, 0, "m_fDistDrive", "Distortion drive (pre gain before waveshaping)", "Drive", 4,
+	createAndAddParameter(&m_fDistDrive, parameters, 1, "m_fDistDrive", "Distortion drive (pre gain before waveshaping)", "Drive", 4,
 		MODMATDEST::DistortionDrive,
 		NormalisableRange<float>(0, 100), 30.f,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fDistFuzz, parameters, 0, "m_fDistFuzz", "Distortion fuzz level", "Fuzz", 5,
+	createAndAddParameter(&m_fDistFuzz, parameters, 1, "m_fDistFuzz", "Distortion fuzz level", "Fuzz", 5,
 		MODMATDEST::DistortionFuzz,
 		NormalisableRange<float>(0, 100), 10.f,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fDistGain, parameters, 0, "m_fDistGain", "Distortion output gain", "Gain", 6,
+	createAndAddParameter(&m_fDistGain, parameters, 1, "m_fDistGain", "Distortion output gain", "Gain", 6,
 		MODMATDEST::DistortionGain,
 		NormalisableRange<float>(0, 200), 100,
 		CVASTParamState::floatSliderValueToTextFunction,

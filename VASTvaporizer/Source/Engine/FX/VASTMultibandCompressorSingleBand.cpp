@@ -65,7 +65,7 @@ void CVASTMultibandCompressorSingleBand::initParameters() {
 		initGain = 22.f;
 	}
 
-	createAndAddParameter(&m_bMBCompOffOn, parameters, 0, "m_bMBCompOffOn" + suffix, "Single-band compressor on / off", "On", 0,
+	createAndAddParameter(&m_bMBCompOffOn, parameters, 1, "m_bMBCompOffOn" + suffix, "Single-band compressor on / off", "On", 0,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		CVASTParamState::toggleButtonValueToTextFunction,
@@ -73,45 +73,45 @@ void CVASTMultibandCompressorSingleBand::initParameters() {
 		false, true, true, true,
 		true);
 
-	createAndAddParameter(&m_fMBCompFcLow, parameters, 0, "m_fMBCompFcLow" + suffix, "Single-band compressor low band cut frequency (hz)", "Lo(Hz)", 1,
+	createAndAddParameter(&m_fMBCompFcLow, parameters, 1, "m_fMBCompFcLow" + suffix, "Single-band compressor low band cut frequency (hz)", "Lo(Hz)", 1,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(10.0f, 20000.f), initLowFreq,
 		[](float value) {return String(value) + " Hz"; },
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fMBCompFcHigh, parameters, 0, "m_fMBCompFcHigh" + suffix, "Single-band compressor high band cut frequency (hz)", "Hi(Hz)", 2,
+	createAndAddParameter(&m_fMBCompFcHigh, parameters, 1, "m_fMBCompFcHigh" + suffix, "Single-band compressor high band cut frequency (hz)", "Hi(Hz)", 2,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(10.0f, 20000.f), initHighFreq,
 		[](float value) {return String(value) + " Hz"; },
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fMBCompThreshold, parameters, 0, "m_fMBCompThreshold" + suffix, "Single-band compressor threshold low band (dB)", "Threshold", 3,
+	createAndAddParameter(&m_fMBCompThreshold, parameters, 1, "m_fMBCompThreshold" + suffix, "Single-band compressor threshold low band (dB)", "Threshold", 3,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(-60.0f, -0.0001), initThreshold,
 		[](float value) {return String(value) + " dB" ; },
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false);
-	createAndAddParameter(&m_fMBCompRatio, parameters, 0, "m_fMBCompRatio" + suffix, "Single-band compressor ratio low band (:1)", "Ratio", 4,
+	createAndAddParameter(&m_fMBCompRatio, parameters, 1, "m_fMBCompRatio" + suffix, "Single-band compressor ratio low band (:1)", "Ratio", 4,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(1.f, 100, 0.000001f, 0.3f, false), initRatio,
 		[](float value) {return String(value) + " :1"; },
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false);
-	createAndAddParameter(&m_fMBCompAttack, parameters, 0, "m_fMBCompAttack" + suffix, "Single-band compressor attack low band (ms)", "Attack", 5,
+	createAndAddParameter(&m_fMBCompAttack, parameters, 1, "m_fMBCompAttack" + suffix, "Single-band compressor attack low band (ms)", "Attack", 5,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.1f, 80.0), 4.0f,
 		[](float value) {return String(value) + " ms"; },
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false);
-	createAndAddParameter(&m_fMBCompRelease, parameters, 0, "m_fMBCompReleaseLB" + suffix, "Single-band compressor release low band (ms)", "Release", 6,
+	createAndAddParameter(&m_fMBCompRelease, parameters, 1, "m_fMBCompReleaseLB" + suffix, "Single-band compressor release low band (ms)", "Release", 6,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.1f, 1000.0), 4.0f,
 		[](float value) {return String(value) + " ms"; },
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false);
-	createAndAddParameter(&m_fMBCompGain, parameters, 0, "m_fMBCompGain" + suffix, "Single-band compressor gain low band (dB)", "Gain", 7,
+	createAndAddParameter(&m_fMBCompGain, parameters, 1, "m_fMBCompGain" + suffix, "Single-band compressor gain low band (dB)", "Gain", 7,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 40.f), initGain,
 		[](float value) {return String(value) + " dB"; },

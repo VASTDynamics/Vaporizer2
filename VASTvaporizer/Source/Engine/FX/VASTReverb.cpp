@@ -25,14 +25,14 @@ void CVASTReverb::initParameters() {
 	AudioProcessorValueTreeState& parameters = my_processor->getParameterTree();
 	int lDestination = 0;
 
-	createAndAddParameter(&m_bReverbOnOff, parameters, 0, "m_bReverbOnOff", "Reverb on / off", "On", 0,
+	createAndAddParameter(&m_bReverbOnOff, parameters, 1, "m_bReverbOnOff", "Reverb on / off", "On", 0,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		CVASTParamState::toggleButtonValueToTextFunction,
 		CVASTParamState::toggleButtonTextToValueFunction,
 		false, true, true, true,
 		true);
-	createAndAddParameter(&m_fReverbDryWet, parameters, 0, "m_fReverbDryWet", "Reverb dry / wet (no effect - full effect)", "DryWet", 1,
+	createAndAddParameter(&m_fReverbDryWet, parameters, 1, "m_fReverbDryWet", "Reverb dry / wet (no effect - full effect)", "DryWet", 1,
 		MODMATDEST::ReverbDryWet,
 		NormalisableRange<float>(0, 100), 10.f,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -40,49 +40,49 @@ void CVASTReverb::initParameters() {
 		false, true, false, false,
 		true); 
 	
-	createAndAddParameter(&m_uReverbMode, parameters, 0, "m_uReverbMode", "Mode", "Mode", 2,
+	createAndAddParameter(&m_uReverbMode, parameters, 1, "m_uReverbMode", "Mode", "Mode", 2,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 1.0f,
 		[](float value) { return StringArray("Room", "Plate")[int(value)]; },
 		[](String text) { return StringArray("Room", "Plate").indexOf(StringRef(text), true); },
 		false, true, true, false,
 		true);	
-	createAndAddParameter(&m_fReverbLowcut, parameters, 0, "m_fReverbLowcut", "Reverb lowcut frequency", "Lowcut", 3,
+	createAndAddParameter(&m_fReverbLowcut, parameters, 1, "m_fReverbLowcut", "Reverb lowcut frequency", "Lowcut", 3,
 		MODMATDEST::ReverbLowcut,
 		NormalisableRange<float>(50.f, 18000.f, 0.001f, 0.3f, false), 100.f,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fReverbPredelay, parameters, 0, "m_fReverbPredelay", "Reverb predelay (ms)", "Predelay", 5,
+	createAndAddParameter(&m_fReverbPredelay, parameters, 1, "m_fReverbPredelay", "Reverb predelay (ms)", "Predelay", 5,
 		MODMATDEST::ReverbPredelay,
 		NormalisableRange<float>(0.f, 1000.f), 100.f,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fReverbSize, parameters, 0, "m_fReverbSize", "Reverb size - 0 is small room , 100 is plate / cathedral", "Size", 6,
+	createAndAddParameter(&m_fReverbSize, parameters, 1, "m_fReverbSize", "Reverb size - 0 is small room , 100 is plate / cathedral", "Size", 6,
 		MODMATDEST::ReverbSize,
 		NormalisableRange<float>(0, 100), 100.f,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fReverbDamping, parameters, 0, "m_fReverbDamping", "Reverb damping", "Damping", 7,
+	createAndAddParameter(&m_fReverbDamping, parameters, 1, "m_fReverbDamping", "Reverb damping", "Damping", 7,
 		MODMATDEST::ReverbDamping,
 		NormalisableRange<float>(0, 100), 10.f,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fReverbFeedback, parameters, 0, "m_fReverbFeedback", "Reverb feedback", "Feedback", 8,
+	createAndAddParameter(&m_fReverbFeedback, parameters, 1, "m_fReverbFeedback", "Reverb feedback", "Feedback", 8,
 		MODMATDEST::ReverbFeedback,
 		NormalisableRange<float>(0, 5000), 2000.f,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fReverbGain, parameters, 0, "m_fReverbGain", "Reverb output gain", "Gain", 9,
+	createAndAddParameter(&m_fReverbGain, parameters, 1, "m_fReverbGain", "Reverb output gain", "Gain", 9,
 		MODMATDEST::ReverbGain,
 		NormalisableRange<float>(0, 200), 100,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -95,7 +95,7 @@ void CVASTReverb::initCompatibilityParameters() {
 	// all new parameters go here
 	AudioProcessorValueTreeState& parameters = my_processor->getParameterTree();
 	int lDestination = 0;
-	createAndAddParameter(&m_fReverbHighcut, parameters, 0, "m_fReverbHighcut", "Reverb highcut frequency", "Highcut", 4,
+	createAndAddParameter(&m_fReverbHighcut, parameters, 1, "m_fReverbHighcut", "Reverb highcut frequency", "Highcut", 4,
 		MODMATDEST::ReverbHighcut,
 		NormalisableRange<float>(50.f, 18000.f, 0.001f, 0.3f, false), 18000.f,
 		CVASTParamState::floatSliderValueToTextFunction,

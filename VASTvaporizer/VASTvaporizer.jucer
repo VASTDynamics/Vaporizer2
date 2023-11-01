@@ -667,8 +667,7 @@
     </XCODE_MAC>
     <XCODE_MAC targetFolder="Builds/MacOSX_SSE" smallIcon="A2sWSy" bigIcon="A2sWSy"
                iosDevelopmentTeamID="PK93HYD6ZN" extraCompilerFlags="-W2" hardenedRuntime="1"
-               extraDefs="JUCE_DISABLE_CAUTIOUS_PARAMETER_ID_CHECKING JUCE_SILENCE_XCODE_15_LINKER_WARNING "
-               userNotes="This is the universal binary build also supporting arm64 silicon on Neon."
+               extraDefs=" JUCE_SILENCE_XCODE_15_LINKER_WARNING " userNotes="This is the universal binary build also supporting arm64 silicon on Neon."
                extraLinkerFlags="-ld_classic">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="0" name="Release 64bit SSE3" targetName="VASTvaporizer2_64_SSE"
@@ -697,8 +696,7 @@
       </MODULEPATHS>
     </XCODE_MAC>
     <VS2019 targetFolder="Builds/VisualStudio2019" extraCompilerFlags="-W3 /arch:${SSE_AVX} /Qvec-report:1 /permissive- /I&quot;C:\Vaporizer2\asiosdk\common&quot; "
-            extraLinkerFlags="/LTCG /NXCOMPAT:NO" smallIcon="A2sWSy" bigIcon="A2sWSy"
-            extraDefs="JUCE_DISABLE_CAUTIOUS_PARAMETER_ID_CHECKING">
+            extraLinkerFlags="/LTCG /NXCOMPAT:NO" smallIcon="A2sWSy" bigIcon="A2sWSy">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug FLStudio 64bit" targetName="VASTvaporizer2_64_dbg"
                        defines="_WIN64 _WIN64BIT SSE_AVX=AVX" linkTimeOptimisation="0"
@@ -745,8 +743,7 @@
       </MODULEPATHS>
     </VS2019>
     <LINUX_MAKE targetFolder="Builds/LinuxMakefile" externalLibraries="atomic"
-                extraDefs="JUCE_DISABLE_CAUTIOUS_PARAMETER_ID_CHECKING" smallIcon="A2sWSy"
-                bigIcon="A2sWSy">
+                smallIcon="A2sWSy" bigIcon="A2sWSy">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" enablePluginBinaryCopyStep="0" defines="_LINUX _LINUX64BIT SSE_AVX=AVX"/>
         <CONFIGURATION isDebug="0" name="Release" extraLinkerFlags="-fdata-sections -ffunction-sections -Wl,--gc-sections -Wl,-O1 -Wl,--as-needed -Wl,--strip-all"
