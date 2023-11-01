@@ -115,11 +115,11 @@ Source: "..\..\cmake-build\x64\VASTvaporizer2_artefacts\Release\LV2\VASTvaporize
 
 ;*COMPATIBILITY*
 ;VST
-Source: "..\..\cmake-build\x64\VASTvaporizer2_artefacts\Release\VST\VASTvaporizer2.dll"; DestDir: {code:GetPluginDir|0}; DestName: "VASTvaporizer2_64.dll"; Components: vst_win64; Flags: ignoreversion
+Source: "..\..\cmake-build\x64\VASTvaporizer2_artefacts\Release\VST\VASTvaporizer2.dll"; DestDir: {code:GetPluginDir|0}; DestName: "VASTvaporizer2_64.dll"; Components: compatibility; Flags: ignoreversion
 ;VST3
-Source: "..\..\cmake-build\x64\VASTvaporizer2_artefacts\Release\VST3\VASTvaporizer2.vst3"; DestDir: "{code:GetPluginDir|1}\VASTvaporizer2_64.vst3"; Components: vst3_win64; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\cmake-build\x64\VASTvaporizer2_artefacts\Release\VST3\VASTvaporizer2.vst3"; DestDir: "{code:GetPluginDir|1}\VASTvaporizer2_64.vst3"; Components: compatibility; Flags: ignoreversion recursesubdirs createallsubdirs
 ;AAX
-Source: "..\..\cmake-build\x64\VASTvaporizer2_artefacts\Release\AAX\VASTvaporizer2.aaxplugin\*"; DestDir: "{code:GetPluginDir|2}\VASTvaporizer2_64.aaxplugin"; Components: aax_win64; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly 
+Source: "..\..\cmake-build\x64\VASTvaporizer2_artefacts\Release\AAX\VASTvaporizer2.aaxplugin\*"; DestDir: "{code:GetPluginDir|2}\VASTvaporizer2_64.aaxplugin"; Components: compatibility; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly 
 
 ;*OLDCPU*
 ;VST
@@ -151,7 +151,7 @@ Source: "VaporizerUserManual.url"; DestDir: "{app}"; Components: documentation
 Source: "license.txt"; DestDir: "{app}"; Components: license
 
 [Icons]
-Name: {group}\Vaporizer2 {#AppVer} Standalone; Filename: "{app}\VASTvaporizer2_64.exe"; WorkingDir: "{app}";
+Name: {group}\Vaporizer2 {#AppVer} Standalone; Filename: "{app}\VASTvaporizer2.exe"; WorkingDir: "{app}";
 Name: {group}\Vaporizer2 Users Manual; Filename: {app}\VaporizerUserManual.url; Flags: runmaximized
 Name: {group}\Uninstall Vaporizer2 {#AppVer}; Filename: {uninstallexe}
 
@@ -166,7 +166,7 @@ Root: HKLM; Subkey: "Software\VAST Dynamics\Vaporizer2\Settings"; ValueType: str
 Root: HKLM; Subkey: "Software\VAST Dynamics\Vaporizer2\Settings"; ValueType: string; ValueName: "UserNoisesFolder"; ValueData: "{code:GetPluginDir|6}"
   
 [Run]
-Filename: "{app}\VASTvaporizer2_64.exe"; WorkingDir: "{app}"; Description: "Run Vaporizer2 {#AppVer} Standalone"; Components: standalone_win64; Flags: postinstall runascurrentuser nowait
+Filename: "{app}\VASTvaporizer2.exe"; WorkingDir: "{app}"; Description: "Run Vaporizer2 {#AppVer} Standalone"; Components: standalone_win64; Flags: postinstall runascurrentuser nowait
 
 [Code]
 var
