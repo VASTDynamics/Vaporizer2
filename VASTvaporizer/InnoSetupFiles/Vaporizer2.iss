@@ -237,30 +237,31 @@ begin
   end;
 end;
 
-function PrepareToInstall(var NeedsRestart: Boolean): String;
-var
-  ExitCode: integer;
-begin
-  //check for AVX or AVX2
-  Exec(ExpandConstant('{app}\DetectIntrinsicsWin32.exe'), '', '', SW_SHOW, ewWaitUntilTerminated, ExitCode);
-  
-  Result := '';
-  //MsgBox(IntToStr(ExitCode), mbInformation, MB_OK);
-  if ExitCode = 2 then 
-    begin
-      if (WizardIsComponentSelected('vst_win64_SSE2') or WizardIsComponentSelected('vst_win32_SSE2') or WizardIsComponentSelected('vst3_win64_SSE2') or WizardIsComponentSelected('vst3_win32_SSE2') or WizardIsComponentSelected('standalone_win64_SSE2') or WizardIsComponentSelected('standalone_win32_SSE2')) then
-        Result:= 'We have detected that your CPU has full AVX vector extensions support. You do not need to install the versions for SSE2 compatibility. Please go back and deselect.';
-    end
-  else if ExitCode = 1 then 
-    begin
-      if (not (WizardIsComponentSelected('vst_win64_SSE2') or WizardIsComponentSelected('vst_win32_SSE2') or WizardIsComponentSelected('vst3_win64_SSE2') or WizardIsComponentSelected('vst3_win32_SSE2') or WizardIsComponentSelected('standalone_win64_SSE2') or WizardIsComponentSelected('standalone_win32_SSE2'))) then
-        Result:= 'We have detected that your CPU does not support AVX vector extensions but has SSE2 support. Please install the SSE2 compatibility versions and deselect the others in the custom installation options.';
-    end
-  else 
-    begin;
-      Result:= 'We have detected that your CPU neither supports AVX nor SSE2 vector extensions. The plugin will unfortunately not run on this computer.';
-    end;  
-end;
+
+//function PrepareToInstall(var NeedsRestart: Boolean): String;
+//var
+//  ExitCode: integer;
+//begin
+//  //check for AVX or AVX2
+//  Exec(ExpandConstant('{app}\DetectIntrinsicsWin32.exe'), '', '', SW_SHOW, ewWaitUntilTerminated, ExitCode);
+//  
+//  Result := '';
+//  //MsgBox(IntToStr(ExitCode), mbInformation, MB_OK);
+//  if ExitCode = 2 then 
+//    begin
+//      if (WizardIsComponentSelected('vst_win64_SSE2') or WizardIsComponentSelected('vst_win32_SSE2') or WizardIsComponentSelected('vst3_win64_SSE2') or WizardIsComponentSelected('vst3_win32_SSE2') or WizardIsComponentSelected('standalone_win64_SSE2') or WizardIsComponentSelected('standalone_win32_SSE2')) then
+//        Result:= 'We have detected that your CPU has full AVX vector extensions support. You do not need to install the versions for SSE2 compatibility. Please go back and deselect.';
+//    end
+//  else if ExitCode = 1 then 
+//    begin
+//      if (not (WizardIsComponentSelected('vst_win64_SSE2') or WizardIsComponentSelected('vst_win32_SSE2') or WizardIsComponentSelected('vst3_win64_SSE2') or WizardIsComponentSelected('vst3_win32_SSE2') or WizardIsComponentSelected('standalone_win64_SSE2') or WizardIsComponentSelected('standalone_win32_SSE2'))) then
+//        Result:= 'We have detected that your CPU does not support AVX vector extensions but has SSE2 support. Please install the SSE2 compatibility versions and deselect the others in the custom installation options.';
+//    end
+//  else 
+//    begin;
+//      Result:= 'We have detected that your CPU neither supports AVX nor SSE2 vector extensions. The plugin will unfortunately not run on this computer.';
+//    end;  
+//end;
 
 function GetOriginalUserDocumentsPath(): string;
 var

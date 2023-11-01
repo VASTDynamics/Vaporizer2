@@ -5,7 +5,8 @@ echo Building VAST Dynamics Software Vaporizer2 plugin
 
 if "%~1"=="" (
     echo No parameters have been provided. Building all targets.
-    set targets=x64 x64SSE2 Win32 Win32SSE2
+    rem set targets=x64 x64SSE2 Win32 Win32SSE2
+    set targets=x64 x64SSE2
 ) else (
     echo Parameters: %*
     set targets=%*
