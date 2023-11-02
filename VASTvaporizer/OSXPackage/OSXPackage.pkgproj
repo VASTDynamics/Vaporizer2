@@ -112,7 +112,7 @@
 															<key>GID</key>
 															<integer>0</integer>
 															<key>PATH</key>
-															<string>../../cmake-build/x64/VASTvaporizer2_64_artefacts/Release/AU/VASTvaporizer2_64.component</string>
+															<string>../../cmake-build/x64/VASTvaporizer2_artefacts/Release/AU/VASTvaporizer2.component</string>
 															<key>PATH_TYPE</key>
 															<integer>1</integer>
 															<key>PERMISSIONS</key>
@@ -941,7 +941,7 @@
 															<key>GID</key>
 															<integer>0</integer>
 															<key>PATH</key>
-															<string>../../cmake-build/x64/VASTvaporizer2_64_artefacts/Release/Standalone/VASTvaporizer2_64.app</string>
+															<string>../../cmake-build/x64/VASTvaporizer2_artefacts/Release/Standalone/VASTvaporizer2.app</string>
 															<key>PATH_TYPE</key>
 															<integer>1</integer>
 															<key>PERMISSIONS</key>
@@ -1493,7 +1493,7 @@
 															<key>GID</key>
 															<integer>0</integer>
 															<key>PATH</key>
-															<string>../../cmake-build/x64/VASTvaporizer2_64_artefacts/Release/VST3/VASTvaporizer2_64.vst3</string>
+															<string>../../cmake-build/x64/VASTvaporizer2_artefacts/Release/VST3/VASTvaporizer2.vst3</string>
 															<key>PATH_TYPE</key>
 															<integer>1</integer>
 															<key>PERMISSIONS</key>
@@ -2007,7 +2007,7 @@
 											<key>GID</key>
 											<integer>0</integer>
 											<key>PATH</key>
-											<string>../../cmake-build/x64/VASTvaporizer2_64_artefacts/Release/Standalone/VASTvaporizer2_64.app</string>
+											<string>../../cmake-build/x64/VASTvaporizer2_artefacts/Release/Standalone/VASTvaporizer2.app</string>
 											<key>PATH_TYPE</key>
 											<integer>1</integer>
 											<key>PERMISSIONS</key>
@@ -4395,7 +4395,7 @@
 															<key>GID</key>
 															<integer>0</integer>
 															<key>PATH</key>
-															<string>../../cmake-build/x64SSE/VASTvaporizer2_64_SSE_artefacts/Release/VST/VASTvaporizer2_64_SSE.vst</string>
+															<string>../../cmake-build/x64SSE/VASTvaporizer2_artefacts/Release/VST/VASTvaporizer2.vst</string>
 															<key>PATH_TYPE</key>
 															<integer>1</integer>
 															<key>PERMISSIONS</key>
@@ -4980,7 +4980,7 @@
 															<key>GID</key>
 															<integer>0</integer>
 															<key>PATH</key>
-															<string>../../cmake-build/x64SSE/VASTvaporizer2_64_SSE_artefacts/Release/AU/VASTvaporizer2_64_SSE.component</string>
+															<string>../../cmake-build/x64SSE/VASTvaporizer2_artefacts/Release/AU/VASTvaporizer2.component</string>
 															<key>PATH_TYPE</key>
 															<integer>1</integer>
 															<key>PERMISSIONS</key>
@@ -5809,7 +5809,7 @@
 															<key>GID</key>
 															<integer>0</integer>
 															<key>PATH</key>
-															<string>../../cmake-build/x64SSE/VASTvaporizer2_64_SSE_artefacts/Release/VST3/VASTvaporizer2_64_SSE.vst3</string>
+															<string>../../cmake-build/x64SSE/VASTvaporizer2_artefacts/Release/VST3/VASTvaporizer2.vst3</string>
 															<key>PATH_TYPE</key>
 															<integer>1</integer>
 															<key>PERMISSIONS</key>
@@ -6887,7 +6887,7 @@
 																	<key>GID</key>
 																	<integer>0</integer>
 																	<key>PATH</key>
-																	<string>../../cmake-build/x64/VASTvaporizer2_64_artefacts/Release/AAX/VASTvaporizer2_64.aaxplugin</string>
+																	<string>../../cmake-build/x64/VASTvaporizer2_artefacts/Release/AAX/VASTvaporizer2.aaxplugin</string>
 																	<key>PATH_TYPE</key>
 																	<integer>1</integer>
 																	<key>PERMISSIONS</key>
@@ -7440,7 +7440,7 @@
 																	<key>GID</key>
 																	<integer>0</integer>
 																	<key>PATH</key>
-																	<string>../../cmake-build/x64SSE/VASTvaporizer2_64_SSE_artefacts/Release/AAX/VASTvaporizer2_64_SSE.aaxplugin</string>
+																	<string>../../cmake-build/x64SSE/VASTvaporizer2_artefacts/Release/AAX/VASTvaporizer2.aaxplugin</string>
 																	<key>PATH_TYPE</key>
 																	<integer>1</integer>
 																	<key>PERMISSIONS</key>
@@ -7968,7 +7968,7 @@
 											<key>GID</key>
 											<integer>0</integer>
 											<key>PATH</key>
-											<string>../../cmake-build/x64SSE/VASTvaporizer2_64_SSE_artefacts/Release/Standalone/VASTvaporizer2_64_SSE.app</string>
+											<string>../../cmake-build/x64SSE/VASTvaporizer2_artefacts/Release/Standalone/VASTvaporizer2.app</string>
 											<key>PATH_TYPE</key>
 											<integer>1</integer>
 											<key>PERMISSIONS</key>
