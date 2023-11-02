@@ -613,7 +613,7 @@ void CVASTWaveTable::createFreqsIfNeeded(int wtPos, bool preGenerate, int wtMode
 void CVASTWaveTable::setNaiveTable(int wtPos, std::vector<float> vWave, bool preGenerate, int wtMode) {
 	ScopedLock sl(mWavetableChangeLock);
 
-	wtheader.waveTablePositions[wtPos].naiveTable = vWave; //copy data
+	wtheader.waveTablePositions[wtPos].naiveTable = vWave; //copy the data a second time -> bad performance, use perf. method instead if possible
 	wtheader.waveTablePositions[wtPos].dirty = true;
 	wtheader.waveTablePositions[wtPos].isInitial = false;
 	wtheader.changeCounter+=1;
