@@ -74,7 +74,7 @@ public:
 	void sliderValueChanged(Slider* sliderThatWasMoved) override;
 	void buttonClicked(Button* buttonThatWasClicked) override;
 
-	int numFreqThreads = 0;
+	std::atomic<int> numFreqThreads = 0;
 
 	void textEditorTextChanged(TextEditor &) override;
 	void notifySelectionChanged();

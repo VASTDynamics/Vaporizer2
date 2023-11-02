@@ -383,11 +383,15 @@ void CVASTSingleNote::pitchWheelMoved(int newPitchWheelValue, bool zone)
 	}
 }
 
+int CVASTSingleNote::getNumOscsPlaying() {
+    return m_uLast_NumTotalPlaying.load();
+};
+
 void CVASTSingleNote::controllerMoved(int controllerNumber, int newControllerValue)
 {
 	if (controllerNumber == 1) { // MIDI CC 1 Modulation, e.g. VSTHost
 		m_Set->m_uModWheel = newControllerValue; //0..127
-		m_Set->m_uModWheel = jlimit(0, 127, m_Set->m_uModWheel);
+		m_Set->m_uModWheel.store(jlimit(0, 127, m_Set->m_uModWheel.load()));
 
 		//chek for permalink
 		int permalink = m_Poly->getProcessor()->getModWheelPermaLink();
@@ -401,21 +405,21 @@ void CVASTSingleNote::controllerMoved(int controllerNumber, int newControllerVal
 						Component_buffer_m_fCustomModulator1 = lslider;
 					}
 					else lslider = Component_buffer_m_fCustomModulator1;
-					m_Poly->m_fCustomModulator1_smoothed.setValue(m_Set->m_uModWheel / 127.f);
+					m_Poly->m_fCustomModulator1_smoothed.setValue(m_Set->m_uModWheel.load() / 127.f);
 				} else if (permalink == 2) {
 					if (Component_buffer_m_fCustomModulator2 == nullptr) {
 						lslider = dynamic_cast<VASTParameterSlider*>(_editor->findChildComponetWithName(_editor->vaporizerComponent, "m_fCustomModulator2"));
 						Component_buffer_m_fCustomModulator2 = lslider;
 					}
 					else lslider = Component_buffer_m_fCustomModulator2;
-					m_Poly->m_fCustomModulator2_smoothed.setValue(m_Set->m_uModWheel / 127.f);
+					m_Poly->m_fCustomModulator2_smoothed.setValue(m_Set->m_uModWheel.load() / 127.f);
 				} else if (permalink == 3) {
 					if (Component_buffer_m_fCustomModulator3 == nullptr) {
 						lslider = dynamic_cast<VASTParameterSlider*>(_editor->findChildComponetWithName(_editor->vaporizerComponent, "m_fCustomModulator3"));
 						Component_buffer_m_fCustomModulator3 = lslider;
 					}
 					else lslider = Component_buffer_m_fCustomModulator3;
-					m_Poly->m_fCustomModulator3_smoothed.setValue(m_Set->m_uModWheel / 127.f);
+					m_Poly->m_fCustomModulator3_smoothed.setValue(m_Set->m_uModWheel.load() / 127.f);
 				}
 				else if (permalink == 4) {
 					if (Component_buffer_m_fCustomModulator4 == nullptr) {
@@ -423,11 +427,11 @@ void CVASTSingleNote::controllerMoved(int controllerNumber, int newControllerVal
 						Component_buffer_m_fCustomModulator4 = lslider;
 					}
 					else lslider = Component_buffer_m_fCustomModulator4;
-					m_Poly->m_fCustomModulator4_smoothed.setValue(m_Set->m_uModWheel / 127.f);
+					m_Poly->m_fCustomModulator4_smoothed.setValue(m_Set->m_uModWheel.load() / 127.f);
 				}
 
 				if (lslider != nullptr) {
-					_editor->registerComponentValueUpdate(lslider, m_Set->m_uModWheel / 127.f);
+					_editor->registerComponentValueUpdate(lslider, m_Set->m_uModWheel.load() / 127.f);
 				}
 			}
 		}

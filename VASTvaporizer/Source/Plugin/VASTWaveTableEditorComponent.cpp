@@ -1056,7 +1056,7 @@ void VASTWaveTableEditorComponent::threadedFreehandDraw(/*int msbeg, int msend,*
 			samples[i] *= gain;
 		}
 		*/
-		wavetable->setNaiveTable(wtPos, &samples, true, editor->myProcessor->getWTmode()); //do pregeneration
+		wavetable->setNaiveTable(wtPos, samples, true, editor->myProcessor->getWTmode()); //do pregeneration
 
 	}
 	//do stuff
@@ -1129,7 +1129,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 			}
 
 			if ((sliderValue != 0.f) && (editor->m_bSnapToZero || editor->m_bStretchToZero)) editor->stretchToZeroCrossings(samples, wtselstart, wtselend, !editor->m_bStretchToZero);
-			wavetable->setNaiveTable(wtPos, &samples, false, editor->myProcessor->getWTmode());
+			wavetable->setNaiveTable(wtPos, samples, false, editor->myProcessor->getWTmode());
 		}
 		break;
 	}
@@ -1148,7 +1148,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 			}
 
 			if ((sliderValue != 0.f) && (editor->m_bSnapToZero || editor->m_bStretchToZero)) editor->stretchToZeroCrossings(samples, wtselstart, wtselend, !editor->m_bStretchToZero);
-			wavetable->setNaiveTable(wtPos, &samples, false, editor->myProcessor->getWTmode());
+			wavetable->setNaiveTable(wtPos, samples, false, editor->myProcessor->getWTmode());
 		}
 		break;
 	}
@@ -1165,7 +1165,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 			}
 
 			if ((sliderValue != 0.f) && (editor->m_bSnapToZero || editor->m_bStretchToZero)) editor->stretchToZeroCrossings(samples, wtselstart, wtselend, !editor->m_bStretchToZero);
-			wavetable->setNaiveTable(wtPos, &samples, false, editor->myProcessor->getWTmode());
+			wavetable->setNaiveTable(wtPos, samples, false, editor->myProcessor->getWTmode());
 		}
 		break;
 	}
@@ -1178,7 +1178,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 			editor->frequencyModulate((*editor->getCurWavetable()->getNaiveTable(wtPos)), samples, wtselstart, wtselend, sliderValue);
 
 			if ((sliderValue != 0.f) && (editor->m_bSnapToZero || editor->m_bStretchToZero)) editor->stretchToZeroCrossings(samples, wtselstart, wtselend, !editor->m_bStretchToZero);
-			wavetable->setNaiveTable(wtPosTarget, &samples, false, editor->myProcessor->getWTmode());
+			wavetable->setNaiveTable(wtPosTarget, samples, false, editor->myProcessor->getWTmode());
 		}
 		break;
 	}
@@ -1196,7 +1196,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 			}
 
 			if ((sliderValue != 32.f)  && (editor->m_bSnapToZero || editor->m_bStretchToZero)) editor->stretchToZeroCrossings(samples, wtselstart, wtselend, !editor->m_bStretchToZero);
-			wavetable->setNaiveTable(wtPos, &samples, false, editor->myProcessor->getWTmode());
+			wavetable->setNaiveTable(wtPos, samples, false, editor->myProcessor->getWTmode());
 		}
 		break;
 	}
@@ -1211,7 +1211,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 			}
 
 			if ((sliderValue != 0.f) && (editor->m_bSnapToZero || editor->m_bStretchToZero)) editor->stretchToZeroCrossings(samples, wtselstart, wtselend, !editor->m_bStretchToZero);
-			wavetable->setNaiveTable(wtPos, &samples, false, editor->myProcessor->getWTmode());
+			wavetable->setNaiveTable(wtPos, samples, false, editor->myProcessor->getWTmode());
 		}
 		break;
 	}
@@ -1224,7 +1224,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 			editor->calcBend((*editor->getCurWavetable()->getNaiveTable(wtPos)), samples, wtselstart, wtselend, sliderValue);
 
 			if ((sliderValue != 0.f) && (editor->m_bSnapToZero || editor->m_bStretchToZero)) editor->stretchToZeroCrossings(samples, wtselstart, wtselend, !editor->m_bStretchToZero);
-			wavetable->setNaiveTable(wtPos, &samples, false, editor->myProcessor->getWTmode());
+			wavetable->setNaiveTable(wtPos, samples, false, editor->myProcessor->getWTmode());
 		}
 		break;
 	}
@@ -1236,7 +1236,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 			editor->calcBloat((*editor->getCurWavetable()->getNaiveTable(wtPos)), samples, wtselstart, wtselend, sliderValue);
 
 			if ((sliderValue != 0.f) && (editor->m_bSnapToZero || editor->m_bStretchToZero)) editor->stretchToZeroCrossings(samples, wtselstart, wtselend, !editor->m_bStretchToZero);
-			wavetable->setNaiveTable(wtPos, &samples, false, editor->myProcessor->getWTmode());
+			wavetable->setNaiveTable(wtPos, samples, false, editor->myProcessor->getWTmode());
 		}
 		break;
 	}
@@ -1278,7 +1278,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 			}
 
 			if ((sliderValue != 0.f) && (editor->m_bSnapToZero || editor->m_bStretchToZero)) editor->stretchToZeroCrossings(samples, wtselstart, wtselend, !editor->m_bStretchToZero);
-			wavetable->setNaiveTable(wtPos, &samples, false, editor->myProcessor->getWTmode());
+			wavetable->setNaiveTable(wtPos, samples, false, editor->myProcessor->getWTmode());
 		}
 		break;
 	}
@@ -1301,7 +1301,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 			}
 
 			if ((sliderValue != 0.f) && (editor->m_bSnapToZero || editor->m_bStretchToZero)) editor->stretchToZeroCrossings(samples, wtselstart, wtselend, !editor->m_bStretchToZero);
-			wavetable->setNaiveTable(wtPos, &samples, false, editor->myProcessor->getWTmode());
+			wavetable->setNaiveTable(wtPos, samples, false, editor->myProcessor->getWTmode());
 		}
 		break;
 	}
@@ -1332,7 +1332,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 					j++;
 				}
 
-				wavetable->setNaiveTable(wtPos, &samples, true, editor->myProcessor->getWTmode());
+				wavetable->setNaiveTable(wtPos, samples, true, editor->myProcessor->getWTmode());
 			}
 		}
 		break;
@@ -1360,12 +1360,12 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 					if (samples[i] < -1) samples[i] = -1;
 					j++;
 				}
-				wavetable->setNaiveTable(wtPos, &samples, true, editor->myProcessor->getWTmode());
+				wavetable->setNaiveTable(wtPos, samples, true, editor->myProcessor->getWTmode());
 			}
 			else { //single value
 				float val1 = connectval1;
 				samples[wtselstart] = val1;
-				wavetable->setNaiveTable(wtPos, &samples, true, editor->myProcessor->getWTmode());
+				wavetable->setNaiveTable(wtPos, samples, true, editor->myProcessor->getWTmode());
 			}
 		}
 		break;
@@ -1390,7 +1390,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 				float interp = dLinTerp(msbeg, msend, sample_beg, sample_end, wtPos);
 				samples[i] = interp;
 			}
-			wavetable->setNaiveTable(wtPos, &samples, true, editor->myProcessor->getWTmode());
+			wavetable->setNaiveTable(wtPos, samples, true, editor->myProcessor->getWTmode());
 		}
 		break;
 	}
@@ -1410,7 +1410,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 					interpolated = (1.f - fracpart) * (*editor->getCopyPasteWavetable()->getNaiveTable(intpart))[i] + fracpart * (*editor->getCopyPasteWavetable()->getNaiveTable((intpart + 1)))[i];
 				samples[i] = (*activeWavetable->getNaiveTable(wtPos))[i] * interpolated;
 			}
-			wavetable->setNaiveTable(wtPos, &samples, true, editor->myProcessor->getWTmode());
+			wavetable->setNaiveTable(wtPos, samples, true, editor->myProcessor->getWTmode());
 		}
 		break;
 	}
@@ -1431,7 +1431,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 				float factor = (sliderValue * 0.01f);
 				samples[i] = (1.f - factor) * (*activeWavetable->getNaiveTable(wtPos))[i] + factor * interpolated;
 			}
-			wavetable->setNaiveTable(wtPos, &samples, true, editor->myProcessor->getWTmode());
+			wavetable->setNaiveTable(wtPos, samples, true, editor->myProcessor->getWTmode());
 		}
 		break;
 	}
@@ -1504,7 +1504,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 			for (int i = wtselstart; i <= wtselend; i++) {
 				samples[i] *= gain;
 			}
-			wavetable->setNaiveTable(wtPos, &samples, true, editor->myProcessor->getWTmode());
+			wavetable->setNaiveTable(wtPos, samples, true, editor->myProcessor->getWTmode());
 		}
 		break;
 	}
@@ -1520,7 +1520,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 
 			naivePWMTable = activeWavetable->calcPWMNaiveWave(i, selPos, pwmQuota); //read original
 			if (!(std::adjacent_find(naivePWMTable.begin(), naivePWMTable.end(), std::not_equal_to<float>()) == naivePWMTable.end())) { //are all elements the same?
-				wavetable->setNaiveTable(wtPos, &naivePWMTable, true, editor->myProcessor->getWTmode()); // preGenerate
+				wavetable->setNaiveTable(wtPos, naivePWMTable, true, editor->myProcessor->getWTmode()); // preGenerate
 				wtPos++;
 			}
 		}
@@ -1537,7 +1537,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 			float mod = maxFM * (float(wtPos) / (float(C_MAX_NUM_POSITIONS - 1)));
 			if (wtPos == 0) mod = 0.f;
 			frequencyModulate(*activeWavetable->getNaiveTable(selPos), samples, 0, C_WAVE_TABLE_SIZE - 1, mod);
-			wavetable->setNaiveTable(wtPos, &samples, true, editor->myProcessor->getWTmode());
+			wavetable->setNaiveTable(wtPos, samples, true, editor->myProcessor->getWTmode());
 		}
 		wavetable->setSelectedWtPos(0);
 		break;
@@ -1555,7 +1555,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 			naiveSynchTable = activeWavetable->calcSyncNaiveWave(i, selPos, fQuota); //read original
 
 			if (!(std::adjacent_find(naiveSynchTable.begin(), naiveSynchTable.end(), std::not_equal_to<float>()) == naiveSynchTable.end())) { //are all elements the same?
-				wavetable->setNaiveTable(wtPos, &naiveSynchTable, true, editor->myProcessor->getWTmode()); // preGenerate
+				wavetable->setNaiveTable(wtPos, naiveSynchTable, true, editor->myProcessor->getWTmode()); // preGenerate
 				wtPos++;
 			}
 		}
@@ -1572,7 +1572,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 			float mod = -maxBloat + 2.f * maxBloat * (float(wtPos) / (float(C_MAX_NUM_POSITIONS - 1)));
 			//if (wtPos == 0) mod = 0.f;
 			calcBloat(*activeWavetable->getNaiveTable(selPos), samples, 0, C_WAVE_TABLE_SIZE - 1, mod);
-			wavetable->setNaiveTable(wtPos, &samples, true, editor->myProcessor->getWTmode()); //generate
+			wavetable->setNaiveTable(wtPos, samples, true, editor->myProcessor->getWTmode()); //generate
 		}
 		wavetable->setSelectedWtPos(0);
 		break;
@@ -1587,7 +1587,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 			float mod = -maxBend + 2.f * maxBend * (float(wtPos) / (float(C_MAX_NUM_POSITIONS - 1)));
 			//if (wtPos == 0) mod = 0.f;
 			calcBend(*activeWavetable->getNaiveTable(selPos), samples, 0, C_WAVE_TABLE_SIZE - 1, mod);
-			wavetable->setNaiveTable(wtPos, &samples, true, editor->myProcessor->getWTmode());
+			wavetable->setNaiveTable(wtPos, samples, true, editor->myProcessor->getWTmode());
 		}
 		wavetable->setSelectedWtPos(0);
 		break;
@@ -1927,7 +1927,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 
 			if (wtPos == 0) {
 				samples = *activeWavetable->getNaiveTable(selPos);
-				wavetable->setNaiveTable(wtPos, &samples, true, editor->myProcessor->getWTmode());
+				wavetable->setNaiveTable(wtPos, samples, true, editor->myProcessor->getWTmode());
 			}
 			else {
 				std::vector<dsp::Complex<float>> domainBuffer = *activeWavetable->getFreqDomainBuffer(selPos);
@@ -1953,7 +1953,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 
 			if (wtPos == 0) {
 				samples = *activeWavetable->getNaiveTable(selPos);
-				wavetable->setNaiveTable(wtPos, &samples, true, editor->myProcessor->getWTmode());
+				wavetable->setNaiveTable(wtPos, samples, true, editor->myProcessor->getWTmode());
 			}
 			else {
 				std::vector<dsp::Complex<float>> domainBuffer = *activeWavetable->getFreqDomainBuffer(selPos);
@@ -1981,7 +1981,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 
 			if (wtPos == 0) {
 				samples = *activeWavetable->getNaiveTable(selPos);
-				wavetable->setNaiveTable(wtPos, &samples, true, editor->myProcessor->getWTmode());
+				wavetable->setNaiveTable(wtPos, samples, true, editor->myProcessor->getWTmode());
 			}
 			else {
 				std::vector<dsp::Complex<float>> domainBuffer = *activeWavetable->getFreqDomainBuffer(selPos);
@@ -2009,7 +2009,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 
 			if (wtPos == 0) {
 				samples = *activeWavetable->getNaiveTable(selPos);
-				wavetable->setNaiveTable(wtPos, &samples, true, editor->myProcessor->getWTmode());
+				wavetable->setNaiveTable(wtPos, samples, true, editor->myProcessor->getWTmode());
 			}
 			else {
 				std::vector<dsp::Complex<float>> domainBuffer = *activeWavetable->getFreqDomainBuffer(selPos);
@@ -2039,7 +2039,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 
 			if (wtPos == 0) {
 				samples = *activeWavetable->getNaiveTable(selPos);
-				wavetable->setNaiveTable(wtPos, &samples, true, editor->myProcessor->getWTmode());
+				wavetable->setNaiveTable(wtPos, samples, true, editor->myProcessor->getWTmode());
 			}
 			else {
  				std::vector<myFloat> samples = std::vector<myFloat>(C_WAVE_TABLE_SIZE);
@@ -2077,7 +2077,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 				for (int i = wtselstart; i <= wtselend; i++) {
 					samples[i] *= gain;
 				}
-				wavetable->setNaiveTable(wtPos, &samples, true, editor->myProcessor->getWTmode());
+				wavetable->setNaiveTable(wtPos, samples, true, editor->myProcessor->getWTmode());
 			}
 		}
 		wavetable->setSelectedWtPos(0);
@@ -2094,7 +2094,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 
 			if (wtPos == 0) {
 				samples = *activeWavetable->getNaiveTable(selPos);
-				wavetable->setNaiveTable(wtPos, &samples, true, editor->myProcessor->getWTmode());
+				wavetable->setNaiveTable(wtPos, samples, true, editor->myProcessor->getWTmode());
 			}
 			else {
 				std::vector<dsp::Complex<float>> domainBuffer = *activeWavetable->getFreqDomainBuffer(selPos);
@@ -2129,7 +2129,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 
 			if (wtPos == 0) {
 				samples = *activeWavetable->getNaiveTable(selPos);
-				wavetable->setNaiveTable(wtPos, &samples, true, editor->myProcessor->getWTmode());
+				wavetable->setNaiveTable(wtPos, samples, true, editor->myProcessor->getWTmode());
 			}
 			else {
 				std::vector<dsp::Complex<float>> domainBuffer = *activeWavetable->getFreqDomainBuffer(selPos);
@@ -2155,7 +2155,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 
 			if (wtPos == 0) {
 				samples = *activeWavetable->getNaiveTable(selPos);
-				wavetable->setNaiveTable(wtPos, &samples, true, editor->myProcessor->getWTmode());
+				wavetable->setNaiveTable(wtPos, samples, true, editor->myProcessor->getWTmode());
 			}
 			else {
 				std::vector<dsp::Complex<float>> domainBuffer = *activeWavetable->getFreqDomainBuffer(selPos);
@@ -2184,7 +2184,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 				samples[i] = sinf(e * float(j) / float(end));
 				j++;
 			}
-			wavetable->setNaiveTable(wtPos, &samples, false, editor->myProcessor->getWTmode());
+			wavetable->setNaiveTable(wtPos, samples, false, editor->myProcessor->getWTmode());
 		}
 		break;
 	}
@@ -2197,7 +2197,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 				samples[i] = 0;
 				j++;
 			}
-			wavetable->setNaiveTable(wtPos, &samples, false, editor->myProcessor->getWTmode());
+			wavetable->setNaiveTable(wtPos, samples, false, editor->myProcessor->getWTmode());
 		}
 		break;
 	}
@@ -2214,7 +2214,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 					samples[i] = -2.0f + 2.0f * (1.0f / end * j);
 				j++;
 			}
-			wavetable->setNaiveTable(wtPos, &samples, false, editor->myProcessor->getWTmode());
+			wavetable->setNaiveTable(wtPos, samples, false, editor->myProcessor->getWTmode());
 		}
 		break;
 	}
@@ -2258,7 +2258,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 			}
 			*/
 
-			wavetable->setNaiveTable(wtPos, &samples, false, editor->myProcessor->getWTmode());
+			wavetable->setNaiveTable(wtPos, samples, false, editor->myProcessor->getWTmode());
 		}
 		break;
 	}
@@ -2273,7 +2273,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 				samples[i] = sinf(0.5f * e * float(j) / float(end));
 				j++;
 			}
-			wavetable->setNaiveTable(wtPos, &samples, false, editor->myProcessor->getWTmode());
+			wavetable->setNaiveTable(wtPos, samples, false, editor->myProcessor->getWTmode());
 		}
 		break;
 	}
@@ -2290,7 +2290,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 					samples[i] = -1.0;
 				j++;
 			}
-			wavetable->setNaiveTable(wtPos, &samples, false, editor->myProcessor->getWTmode());
+			wavetable->setNaiveTable(wtPos, samples, false, editor->myProcessor->getWTmode());
 		}
 		break;
 	}
@@ -2304,7 +2304,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 				samples[i] = -1.0f + (2.0f / (end / 2)) * (end / 2 - abs((j + end / 4) % end - end / 2));
 				j++;
 			}
-			wavetable->setNaiveTable(wtPos, &samples, false, editor->myProcessor->getWTmode());
+			wavetable->setNaiveTable(wtPos, samples, false, editor->myProcessor->getWTmode());
 		}
 		break;
 	}
@@ -2318,7 +2318,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 				samples[i] = -1.0f + 2 * float(j) / float(end);
 				j++;
 			}
-			wavetable->setNaiveTable(wtPos, &samples, false, editor->myProcessor->getWTmode());
+			wavetable->setNaiveTable(wtPos, samples, false, editor->myProcessor->getWTmode());
 		}
 		break;
 	}
@@ -2332,7 +2332,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 				samples[i] = 2 * rnd.nextDouble() - 1;
 				j++;
 			}
-			wavetable->setNaiveTable(wtPos, &samples, false, editor->myProcessor->getWTmode());
+			wavetable->setNaiveTable(wtPos, samples, false, editor->myProcessor->getWTmode());
 		}
 		break;
 	}
@@ -2355,7 +2355,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 				realLength++;
 				samples[i] = height;
 			}
-			wavetable->setNaiveTable(wtPos, &samples, false, editor->myProcessor->getWTmode());
+			wavetable->setNaiveTable(wtPos, samples, false, editor->myProcessor->getWTmode());
 		}
 		break;
 	}
@@ -2368,7 +2368,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 				samples[i] = -1.0 * (*activeWavetable->getNaiveTable(wtPos))[i];
 				j++;
 			}
-			wavetable->setNaiveTable(wtPos, &samples, false, editor->myProcessor->getWTmode());
+			wavetable->setNaiveTable(wtPos, samples, false, editor->myProcessor->getWTmode());
 		}
 		break;
 	}
@@ -2382,7 +2382,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 				samples[i] = (*activeWavetable->getNaiveTable(wtPos))[wtselstart + end - j];
 				j++;
 			}
-			wavetable->setNaiveTable(wtPos, &samples, false, editor->myProcessor->getWTmode());
+			wavetable->setNaiveTable(wtPos, samples, false, editor->myProcessor->getWTmode());
 		}
 		break;
 	}
@@ -2401,7 +2401,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 				if (samples[i] < -1) samples[i] = -1;
 				j++;
 			}
-			wavetable->setNaiveTable(wtPos, &samples, false, editor->myProcessor->getWTmode());
+			wavetable->setNaiveTable(wtPos, samples, false, editor->myProcessor->getWTmode());
 		}
 		break;
 	}
@@ -2417,7 +2417,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 				samples[i] = val1 + (val2 - val1) * float(j) / float(end);
 				j++;
 			}
-			wavetable->setNaiveTable(wtPos, &samples, false, editor->myProcessor->getWTmode());
+			wavetable->setNaiveTable(wtPos, samples, false, editor->myProcessor->getWTmode());
 		}
 		break;
 	}
@@ -2775,7 +2775,7 @@ void VASTWaveTableEditorComponent::normalizePositions(int beg, int end, CVASTWav
 		for (int i = 0; i < C_WAVE_TABLE_SIZE; i++) {
 			samples[i] = (*bankWavetable->getNaiveTable(wtPos))[i] * gain;
 		}
-		wavetable->setNaiveTable(wtPos, &samples, true, wtMode);
+		wavetable->setNaiveTable(wtPos, samples, true, wtMode);
 	}
 }
 
@@ -2921,7 +2921,7 @@ void VASTWaveTableEditorComponent::stretchAndInterpolateSelectedPositions() {
 					float interp = dLinTerp(msbeg, msend, sample_beg, sample_end, beg + i * 2 + 1);
 					samples[j] = interp;
 				}
-				wavetable->setNaiveTable(beg + i * 2 + 1, &samples, true, myProcessor->m_pVASTXperience.m_Set.m_WTmode);
+				wavetable->setNaiveTable(beg + i * 2 + 1, samples, true, myProcessor->m_pVASTXperience.m_Set.m_WTmode);
 			}
 		}
 		wavetable->setSelection(beg, beg + (end - beg) * 2);
@@ -2940,8 +2940,8 @@ void VASTWaveTableEditorComponent::reverseOrderSelectedPositions() {
 		for (int wtPos = beg; wtPos <= beg + int((end - beg) / 2); wtPos++) {
 			std::vector<float> first = *wavetable->getNaiveTable(wtPos);
 			std::vector<float> second = *wavetable->getNaiveTable(beg + end - wtPos);
-			wavetable->setNaiveTable(wtPos, &second, true, myProcessor->m_pVASTXperience.m_Set.m_WTmode);
-			wavetable->setNaiveTable(beg + end - wtPos, &first, true, myProcessor->m_pVASTXperience.m_Set.m_WTmode);
+			wavetable->setNaiveTable(wtPos, second, true, myProcessor->m_pVASTXperience.m_Set.m_WTmode);
+			wavetable->setNaiveTable(beg + end - wtPos, first, true, myProcessor->m_pVASTXperience.m_Set.m_WTmode);
 		}
 	}
 	myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank]->setWavetableSoftFade(wavetable);
@@ -3283,7 +3283,7 @@ void VASTWaveTableEditorComponent::scaleAudioBufferToWTPos(CVASTWaveTable* wavet
 			else
 				samples[i] = (1 - fracpart) * audioBuffer[intpart] + fracpart * (audioBuffer[(intpart + 1) % (numSamples)]);
 		}
-		wavetable->setNaiveTable(wtPos + startWtPos, &samples, true, myProcessor->m_pVASTXperience.m_Set.m_WTmode);
+		wavetable->setNaiveTable(wtPos + startWtPos, samples, true, myProcessor->m_pVASTXperience.m_Set.m_WTmode);
 	}
 }
 

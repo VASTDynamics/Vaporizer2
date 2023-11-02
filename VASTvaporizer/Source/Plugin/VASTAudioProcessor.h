@@ -332,31 +332,31 @@ private:
 	int StringToFloatArray(String sFloatCSV, float* fData, int maxNumFloat);
 	String StringArrayToString(String* sData, int numFloat);
 	int StringToStringArray(String sStringCSV, String* sData, int maxNumFloat);
-	bool m_initCompleted = false;
+    std::atomic<bool> m_initCompleted = false;
 
 	XmlElement createPatchXML(bool externalRepresentation);
 	void xmlParseToPatch(XmlElement *pRoot, bool bNameOnly, const VASTPresetElement* lPreset, int index, bool externalRepresentation, bool isFromState, VASTPresetElement& resultPresetData);
 
-	bool mUIUpdateFlag = true;
-	bool mUIUpdateFlag_tabs = true;
-	bool mUIUpdateFlag_matrix = true;
-	bool mUIUpdateFlag_sliders = true;
-	int mUIUpdateFlag_slider1dest = -1;
-	int mUIUpdateFlag_slider2dest = -1;
-	bool mUIPresetUpdate = false;
-	bool mUIPresetReloadUpdate = false;
+	std::atomic<bool> mUIUpdateFlag = true;
+    std::atomic<bool> mUIUpdateFlag_tabs = true;
+    std::atomic<bool> mUIUpdateFlag_matrix = true;
+    std::atomic<bool> mUIUpdateFlag_sliders = true;
+    std::atomic<int> mUIUpdateFlag_slider1dest = -1;
+    std::atomic<int> mUIUpdateFlag_slider2dest = -1;
+    std::atomic<bool> mUIPresetUpdate = false;
+    std::atomic<bool> mUIPresetReloadUpdate = false;
 
 	int m_midiBank = 0;
 
 	int m_MPEmode = 0; // settings
 	int m_ModWheelPermaLink = 0;
 
-	bool m_wasBypassed = false;
-	bool bIsInErrorState = false;
-	int iErrorState = 0;
+    std::atomic<bool> m_wasBypassed = false;
+    std::atomic<bool> bIsInErrorState = false;
+    std::atomic<int> iErrorState = 0;
 
-	bool mUIInitFlag;
-	bool mUIAlert;
+	std::atomic<bool> mUIInitFlag;
+    std::atomic<bool> mUIAlert;
 	//bool mUIPresetUpdateFlag;
 
 	int mIntPpq = 0;

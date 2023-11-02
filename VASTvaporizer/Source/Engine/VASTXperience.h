@@ -85,14 +85,14 @@ public:
 
 	juce::ScopedPointer<AudioSampleBuffer> m_oversampledBuffer;
 
-	bool m_bLastChainBufferZero = false;
-	int m_bBufferZeroMilliSeconds = 0;
+    std::atomic<bool> m_bLastChainBufferZero = false;
+    std::atomic<int> m_bBufferZeroMilliSeconds = 0;
 
-	int m_nSampleRate = 44100; //default
+    std::atomic<int> m_nSampleRate = 44100; //default
 
-	int m_iFadeOutSamples = 0;
-	int m_iFadeInSamples = 0;
-	int m_iMaxFadeSamples = 2000;
+    std::atomic<int> m_iFadeOutSamples = 0;
+    std::atomic<int> m_iFadeInSamples = 0;
+    std::atomic<int> m_iMaxFadeSamples = 2000;
 
 	// I/O capabilities
 	MYUINT m_uMaxInputChannels;

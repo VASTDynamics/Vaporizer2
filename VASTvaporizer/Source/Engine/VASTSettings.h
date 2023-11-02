@@ -26,9 +26,9 @@ public:
 	int m_numSamples = 0;
 	int m_numSamplesReal = 0;
 	int m_currentMaxSamplesInit = 0;
-	bool msegUsed[5] = { false, false, false, false, false };
-	bool lfoUsed[5] = { false, false, false };
-	bool stepSeqUsed[3] = { false, false, false };
+    std::atomic<bool> msegUsed[5] = { false, false, false, false, false };
+	std::atomic<bool> lfoUsed[5] = { false, false, false };
+    std::atomic<bool> stepSeqUsed[3] = { false, false, false };
 	ReadWriteLock mReadWriteLock; // the central mutex that shall prevent reads during buffer resize
 
 	//per voice
@@ -373,9 +373,9 @@ public:
 	int _gettimeofday(struct timeval *tv); //for note stealing
 	
 	// Global 
-	int m_nSampleRate = 44100; //standard
-	int m_nExpectedSamplesPerBlock = 0;
-	juce::Atomic<float> m_fMasterTune = 440; //Kammerton a
+	std::atomic<int> m_nSampleRate = 44100; //standard
+    std::atomic<int> m_nExpectedSamplesPerBlock = 0;
+    std::atomic<float> m_fMasterTune = 440; //Kammerton a
 
 	//int m_nOversamplingRatio = 4;
 	//int m_nSampleRateOversampled = m_nSampleRate * m_nOversamplingRatio;
@@ -400,16 +400,16 @@ public:
 	float m_fMasterVolume = 1.f;
 	LinearSmoothedValue<float> m_fMasterVolume_smoothed;	
 
-	double m_dPpqPosition = 0;
-	double m_dPpqBpm = 0;
-	double m_dPpqLoopStart = 0;
-	double m_dPpqLoopEnd = 0;
-	bool m_bPpqIsPlaying = false;
-	bool m_bPpqIsLooping = false;
-	double m_dPpqPositionOfLastBarStart = 0;
+    std::atomic<double> m_dPpqPosition = 0;
+    std::atomic<double> m_dPpqBpm = 0;
+    std::atomic<double> m_dPpqLoopStart = 0;
+    std::atomic<double> m_dPpqLoopEnd = 0;
+    std::atomic<bool> m_bPpqIsPlaying = false;
+    std::atomic<bool> m_bPpqIsLooping = false;
+    std::atomic<double> m_dPpqPositionOfLastBarStart = 0;
 	
 	//Mod Wheel
-	MYUINT m_uModWheel = 0;
+    std::atomic<MYUINT> m_uModWheel = 0;
 
 	std::shared_ptr<CVASTParamState> m_State;	  //the active state
 	
@@ -423,10 +423,10 @@ public:
 	
 	std::atomic<modMatrixInputState> bufferInputState;
 
-	bool modMatrixDestSet[M_MODMATRIX_MAX_DESTINATIONS];
-	bool modMatrixSrceSet[M_MODMATRIX_MAX_SOURCES];
-	bool modMatrixSlotUsed[M_MODMATRIX_MAX_SLOTS];
-	int  modMatrixSlotDest[M_MODMATRIX_MAX_SLOTS];
+	std::atomic<bool> modMatrixDestSet[M_MODMATRIX_MAX_DESTINATIONS];
+    std::atomic<bool> modMatrixSrceSet[M_MODMATRIX_MAX_SOURCES];
+    std::atomic<bool> modMatrixSlotUsed[M_MODMATRIX_MAX_SLOTS];
+    std::atomic<int> modMatrixSlotDest[M_MODMATRIX_MAX_SLOTS];
 	float lastModMatrixSourceVal[M_MODMATRIX_MAX_SLOTS][M_MODMATRIX_MAX_SOURCES][C_MAX_POLY];
 	modMatrixValueLookup modMatrixValueLookupTable[M_MODMATRIX_MAX_SLOTS];
 

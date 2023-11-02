@@ -36,25 +36,24 @@ public:
 private:
 	CVASTSettings * m_Set;
 
-	int m_iSamplesSinceNoteOn = -1;
-	int m_iSamplesSinceSegmentStart = -1;
-	int m_activeSegment = -1;
-	bool m_bRisingSegment;
-	bool m_bIsNoteOff;
-	double m_dEnvelope = 0.0;
-	double m_dSegment = 0.0;
-	bool m_bIsActive = false;
-	bool m_bHardStop;
-	bool m_bHardStopNoteOff;
-	bool m_bRelease = false;
-	double m_dReleaseValue = 0.0;
-	double m_dReleaseVelocity = 0.f;
-	double m_dPlannedReleaseVal = 0.f;
-	int m_voiceNo = -1;
-    int m_mseg = -1;
-    int m_stepSeq = -1;
+    std::atomic<int> m_iSamplesSinceNoteOn = -1;
+    std::atomic<int> m_iSamplesSinceSegmentStart = -1;
+    std::atomic<int> m_activeSegment = -1;
+    std::atomic<bool> m_bRisingSegment;
+    std::atomic<bool> m_bIsNoteOff;
+    std::atomic<double> m_dEnvelope = 0.0;
+    std::atomic<double> m_dSegment = 0.0;
+	std::atomic<bool> m_bIsActive = false;
+    std::atomic<bool> m_bHardStop;
+    std::atomic<bool> m_bHardStopNoteOff;
+    std::atomic<bool> m_bRelease = false;
+    std::atomic<double> m_dReleaseValue = 0.0;
+    std::atomic<double> m_dReleaseVelocity = 0.f;
+    std::atomic<double> m_dPlannedReleaseVal = 0.f;
+    std::atomic<int> m_voiceNo = -1;
+    std::atomic<int> m_mseg = -1;
+    std::atomic<int> m_stepSeq = -1;
 
-	//test
 	float m_iBufferSamples = 0;
 
 	ULong64_t m_startPlayTimestamp = 0;
@@ -63,8 +62,8 @@ private:
 
 	VASTMSEGData::ControlPoint* m_startPoint;
 	VASTMSEGData::ControlPoint* m_endPoint;
-	int m_lastActiveSegment = 0;
-	int m_numSegments = 0;
+    std::atomic<int> m_lastActiveSegment = 0;
+    std::atomic<int> m_numSegments = 0;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CVASTMSEGEnvelope)
 };

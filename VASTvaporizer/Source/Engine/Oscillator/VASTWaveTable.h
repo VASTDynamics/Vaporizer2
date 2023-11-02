@@ -59,9 +59,9 @@ typedef struct sWaveTablePosition {
 
 typedef struct sWaveTableHeader {
 	juce::String waveTableName = "";
-	int numPositions;
+    std::atomic<int> numPositions;
 	std::vector<sWaveTablePosition> waveTablePositions;
-	int changeCounter;
+	std::atomic<int> changeCounter;
 } sWaveTableHeader;
 
 class CVASTOscillatorBank; //forward declaration
@@ -131,7 +131,7 @@ public:
 	
 	std::atomic<bool> m_isBeingUpdated = false;
 
-	void setNaiveTable(int wtPos, std::vector<float>* vWave, bool preGenerate, int wtMode);
+	void setNaiveTable(int wtPos, std::vector<float> vWave, bool preGenerate, int wtMode);
 	void setFreqDomainTables(int wtPos, std::vector<dsp::Complex<float>>* domainBuffer, bool preGenerate, bool clipBins, int wtMode);
 	void deletePosition(int numPos);
 	bool isPositionDirty(int wtPos) { return wtheader.waveTablePositions[wtPos].dirty; };

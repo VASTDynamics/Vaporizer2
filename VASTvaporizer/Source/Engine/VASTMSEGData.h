@@ -80,9 +80,9 @@ public:
 	void setStepSeqTime(double stepSeqTime);
 	
 	//dynamic
-	bool hasLoop = false;
-	int loopStartPoint = -1;
-	int loopEndPoint = -1;
+    std::atomic<bool> hasLoop = false;
+    std::atomic<int> loopStartPoint = -1;
+    std::atomic<int> loopEndPoint = -1;
 
 	int getNumSegments();
 	ControlPoint* getSegmentStart(int segment);
@@ -152,9 +152,9 @@ public:
 	int getDispSegmentLengthInSamples(int voiceNo);
 	bool dispVoicePlaying(int voiceNo);
 
-	double m_fAttackSteps = 1.f;
-	double m_fDecaySteps = 1.f;
-	double m_fReleaseSteps = 1.f;
+    std::atomic<double> m_fAttackSteps = 1.f;
+    std::atomic<double> m_fDecaySteps = 1.f;
+    std::atomic<double> m_fReleaseSteps = 1.f;
 
 private:		
 	void checkLoop();
@@ -165,23 +165,23 @@ private:
 	void insertPoint(int newpos, VASTMSEGData::ControlPoint point); //internal - needs to be locked
 	void removePoint(int delpos); //internal - needs to be locked
 
-	bool isDirty = true;
-	bool m_needsUIUpdate = true;
-	bool m_needsPositionUpdate = true;
+	std::atomic<bool> m_isDirty = true;
+    std::atomic<bool> m_needsUIUpdate = true;
+    std::atomic<bool> m_needsPositionUpdate = true;
 	
-	bool m_bSynch = false;
-	int m_uTimeBeats = 1;
+    std::atomic<bool> m_bSynch = false;
+    std::atomic<int> m_uTimeBeats = 1;
 
 	int m_iSampleRate = 0;
-	double m_fAttackTime = 1.0f; // in ms
-	double m_fDecayTime = 1.0f; // in ms
-	double m_fReleaseTime = 1.0f; // in ms
-	double m_fSustainLevel = 1.0f; // 0..1
+    std::atomic<double> m_fAttackTime = 1.0f; // in ms
+    std::atomic<double> m_fDecayTime = 1.0f; // in ms
+    std::atomic<double> m_fReleaseTime = 1.0f; // in ms
+    std::atomic<double> m_fSustainLevel = 1.0f; // 0..1
 
-	double m_fAttackTimeExternalSet = 1.0f; // in ms
-	double m_fDecayTimeExternalSet = 1.0f; // in ms
-	double m_fReleaseTimeExternalSet = 1.0f; // in ms
-	double m_fSustainLevelExternalSet = 1.0f; // percent
+    std::atomic<double> m_fAttackTimeExternalSet = 1.0f; // in ms
+    std::atomic<double> m_fDecayTimeExternalSet = 1.0f; // in ms
+    std::atomic<double> m_fReleaseTimeExternalSet = 1.0f; // in ms
+    std::atomic<double> m_fSustainLevelExternalSet = 1.0f; // percent
 
 	float m_ss_glide = 0.f;
 	float m_ss_gate = 0.f;
@@ -189,13 +189,13 @@ private:
 	int m_ss_bars_num = 0;
 	float m_fOrigStepSeqTime = 0.f;
 
-	bool m_bADSR_updated = true;
-	bool m_bStepSeq_updated = true;
+    std::atomic<bool> m_bADSR_updated = true;
+    std::atomic<bool> m_bStepSeq_updated = true;
 
-	int m_dispActiveSegment[C_MAX_POLY] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	int m_dispSamplesSinceSegmentStart[C_MAX_POLY] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	int m_dispSegmentLengthInSamples[C_MAX_POLY] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	bool m_dispVoicePlaying[C_MAX_POLY] = { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false };
+    std::atomic<int> m_dispActiveSegment[C_MAX_POLY] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    std::atomic<int> m_dispSamplesSinceSegmentStart[C_MAX_POLY] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    std::atomic<int> m_dispSegmentLengthInSamples[C_MAX_POLY] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    std::atomic<bool> m_dispVoicePlaying[C_MAX_POLY] = { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false };
 
 	JUCE_LEAK_DETECTOR(VASTMSEGData)
 };

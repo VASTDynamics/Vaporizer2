@@ -157,7 +157,7 @@ void VASTQFilter::filterTypeChanged(OwnedArray<VASTSynthesiserVoice>* voices, in
 				((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[1].type = ftype;
 				((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[1].subtype = fsubtype;
 				((CVASTSingleNote*)voice)->m_VCF[filter]->m_filterCoefficientMaker[0].Reset();
-				((CVASTSingleNote*)voice)->m_VCF[filter]->m_filterCoefficientMaker[0].prepareForPlay(m_Set->m_nSampleRate, osFactor, m_Set->m_fMasterTune.get());
+				((CVASTSingleNote*)voice)->m_VCF[filter]->m_filterCoefficientMaker[0].prepareForPlay(m_Set->m_nSampleRate, osFactor, m_Set->m_fMasterTune.load());
 			}
 			//Filter B
 			if (ftype2 != fut_none) {
@@ -168,7 +168,7 @@ void VASTQFilter::filterTypeChanged(OwnedArray<VASTSynthesiserVoice>* voices, in
 				((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[3].type = ftype2;
 				((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[3].subtype = fsubtype2;
 				((CVASTSingleNote*)voice)->m_VCF[filter]->m_filterCoefficientMaker[1].Reset();
-				((CVASTSingleNote*)voice)->m_VCF[filter]->m_filterCoefficientMaker[1].prepareForPlay(m_Set->m_nSampleRate, osFactor, m_Set->m_fMasterTune.get());
+				((CVASTSingleNote*)voice)->m_VCF[filter]->m_filterCoefficientMaker[1].prepareForPlay(m_Set->m_nSampleRate, osFactor, m_Set->m_fMasterTune.load());
 			}
 
 			//Filter C
@@ -180,7 +180,7 @@ void VASTQFilter::filterTypeChanged(OwnedArray<VASTSynthesiserVoice>* voices, in
 				((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[5].type = ftype3;
 				((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[5].subtype = fsubtype3;
 				((CVASTSingleNote*)voice)->m_VCF[filter]->m_filterCoefficientMaker[2].Reset();
-				((CVASTSingleNote*)voice)->m_VCF[filter]->m_filterCoefficientMaker[2].prepareForPlay(m_Set->m_nSampleRate, osFactor, m_Set->m_fMasterTune.get());
+				((CVASTSingleNote*)voice)->m_VCF[filter]->m_filterCoefficientMaker[2].prepareForPlay(m_Set->m_nSampleRate, osFactor, m_Set->m_fMasterTune.load());
 			}
 
 			if (ftype == fut_vastscream)
@@ -197,7 +197,7 @@ void VASTQFilter::filterTypeChanged(OwnedArray<VASTSynthesiserVoice>* voices, in
 			uiVCF[filter]->FBP.FU[1].type = ftype;
 			uiVCF[filter]->FBP.FU[1].subtype = fsubtype;
 			uiVCF[filter]->m_filterCoefficientMaker[0].Reset();
-			uiVCF[filter]->m_filterCoefficientMaker[0].prepareForPlay(m_Set->m_nSampleRate, osFactor, m_Set->m_fMasterTune.get());
+			uiVCF[filter]->m_filterCoefficientMaker[0].prepareForPlay(m_Set->m_nSampleRate, osFactor, m_Set->m_fMasterTune.load());
 		}
 
 		//Filter B
@@ -209,7 +209,7 @@ void VASTQFilter::filterTypeChanged(OwnedArray<VASTSynthesiserVoice>* voices, in
 			uiVCF[filter]->FBP.FU[3].type = ftype2;
 			uiVCF[filter]->FBP.FU[3].subtype = fsubtype2;
 			uiVCF[filter]->m_filterCoefficientMaker[1].Reset();
-			uiVCF[filter]->m_filterCoefficientMaker[1].prepareForPlay(m_Set->m_nSampleRate, osFactor, m_Set->m_fMasterTune.get());
+			uiVCF[filter]->m_filterCoefficientMaker[1].prepareForPlay(m_Set->m_nSampleRate, osFactor, m_Set->m_fMasterTune.load());
 		}
 		//Filter C
 		if (ftype3 != fut_none) {
@@ -220,7 +220,7 @@ void VASTQFilter::filterTypeChanged(OwnedArray<VASTSynthesiserVoice>* voices, in
 			uiVCF[filter]->FBP.FU[5].type = ftype2;
 			uiVCF[filter]->FBP.FU[5].subtype = fsubtype2;
 			uiVCF[filter]->m_filterCoefficientMaker[2].Reset();
-			uiVCF[filter]->m_filterCoefficientMaker[2].prepareForPlay(m_Set->m_nSampleRate, osFactor, m_Set->m_fMasterTune.get());
+			uiVCF[filter]->m_filterCoefficientMaker[2].prepareForPlay(m_Set->m_nSampleRate, osFactor, m_Set->m_fMasterTune.load());
 		}
 
 		if (ftype == fut_vastscream)

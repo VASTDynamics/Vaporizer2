@@ -371,7 +371,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 		}
 
 		//global LFO
-		if (routingBuffers.lfoUsed[0]) {
+		if (routingBuffers.lfoUsed[0].load()) {
 			if (m_Set->modMatrixDestinationSetFast(MODMATDEST::LFO1Frequency) == true) {
 				float fMod = 0.0f;
 				modMatrixInputState inputState = m_Poly->getOldestNotePlayedInputState(i); // make parameter oldest or newest
@@ -386,7 +386,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 				routingBuffers.LFOGlobalBuffer[0]->getWritePointer(0)[i] = lfoval;
 			}
 		}
-		if (routingBuffers.lfoUsed[1]) {
+		if (routingBuffers.lfoUsed[1].load()) {
 			if (m_Set->modMatrixDestinationSetFast(MODMATDEST::LFO2Frequency) == true) {
 				float fMod = 0.0f;
 				modMatrixInputState inputState = m_Poly->getOldestNotePlayedInputState(i); // make parameter oldest or newest
@@ -401,7 +401,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 				routingBuffers.LFOGlobalBuffer[1]->getWritePointer(0)[i] = lfoval;
 			}
 		}
-		if (routingBuffers.lfoUsed[2]) {
+		if (routingBuffers.lfoUsed[2].load()) {
 			if (m_Set->modMatrixDestinationSetFast(MODMATDEST::LFO3Frequency) == true) {
 				float fMod = 0.0f;
 				modMatrixInputState inputState = m_Poly->getOldestNotePlayedInputState(i); // make parameter oldest or newest
@@ -416,7 +416,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 				routingBuffers.LFOGlobalBuffer[2]->getWritePointer(0)[i] = lfoval;
 			}
 		}
-		if (routingBuffers.lfoUsed[3]) {
+		if (routingBuffers.lfoUsed[3].load()) {
 			if (m_Set->modMatrixDestinationSetFast(MODMATDEST::LFO4Frequency) == true) {
 				float fMod = 0.0f;
 				modMatrixInputState inputState = m_Poly->getOldestNotePlayedInputState(i); // make parameter oldest or newest
@@ -431,7 +431,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 				routingBuffers.LFOGlobalBuffer[3]->getWritePointer(0)[i] = lfoval;
 			}
 		}
-		if (routingBuffers.lfoUsed[4]) {
+		if (routingBuffers.lfoUsed[4].load()) {
 			if (m_Set->modMatrixDestinationSetFast(MODMATDEST::LFO5Frequency) == true) {
 				float fMod = 0.0f;
 				modMatrixInputState inputState = m_Poly->getOldestNotePlayedInputState(i); // make parameter oldest or newest
@@ -448,13 +448,13 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 		}
 
 		//stepseqs		
-		if (routingBuffers.stepSeqUsed[0]) { //performance optimization							
+		if (routingBuffers.stepSeqUsed[0].load()) { //performance optimization
 			routingBuffers.StepSeqBuffer[0]->getWritePointer(0)[i] = m_Poly->m_StepSeq_Envelope[0].getEnvelopeStepSeq(startSample + i);
 		}
-		if (routingBuffers.stepSeqUsed[1]) { //performance optimization				
+		if (routingBuffers.stepSeqUsed[1].load()) { //performance optimization
 			routingBuffers.StepSeqBuffer[1]->getWritePointer(0)[i] = m_Poly->m_StepSeq_Envelope[1].getEnvelopeStepSeq(startSample + i);
 		}
-		if (routingBuffers.stepSeqUsed[2]) { //performance optimization				
+		if (routingBuffers.stepSeqUsed[2].load()) { //performance optimization				
 			routingBuffers.StepSeqBuffer[2]->getWritePointer(0)[i] = m_Poly->m_StepSeq_Envelope[2].getEnvelopeStepSeq(startSample + i);
 		}
 	}
@@ -518,7 +518,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 			m_Set->modMatrixSlotGetValues(slot, l_value, l_curvy, l_srce, l_dest, polarity, lastSrceVals);
 			if ((l_srce == MODMATSRCE::LFO1) && ((l_dest >= MODMATDEST::MSEG1Attack) && (l_dest <= MODMATDEST::MSEG5Release))) {
 				if (blfoprocessed[0] == false) {
-					if (routingBuffers.lfoUsed[0]) {
+					if (routingBuffers.lfoUsed[0].load()) {
 						if (m_Set->modMatrixDestinationSetFast(MODMATDEST::LFO1Frequency) == true) {
 							float fMod = 0.0f;
 							inputState.currentFrame = startSample;
@@ -542,7 +542,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 			}
 			if ((l_srce == MODMATSRCE::LFO2) && ((l_dest >= MODMATDEST::MSEG1Attack) && (l_dest <= MODMATDEST::MSEG5Release))) {
 				if (blfoprocessed[1] == false) {
-					if (routingBuffers.lfoUsed[1]) {
+					if (routingBuffers.lfoUsed[1].load()) {
 						if (m_Set->modMatrixDestinationSetFast(MODMATDEST::LFO2Frequency) == true) {
 							float fMod = 0.0f;
 							inputState.currentFrame = startSample;
@@ -565,7 +565,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 			}
 			if ((l_srce == MODMATSRCE::LFO3) && ((l_dest >= MODMATDEST::MSEG1Attack) && (l_dest <= MODMATDEST::MSEG5Release))) {
 				if (blfoprocessed[2] == false) {
-					if (routingBuffers.lfoUsed[2]) {
+					if (routingBuffers.lfoUsed[2].load()) {
 						if (m_Set->modMatrixDestinationSetFast(MODMATDEST::LFO3Frequency) == true) {
 							float fMod = 0.0f;
 							inputState.currentFrame = startSample;
@@ -588,7 +588,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 			}
 			if ((l_srce == MODMATSRCE::LFO4) && ((l_dest >= MODMATDEST::MSEG1Attack) && (l_dest <= MODMATDEST::MSEG5Release))) {
 				if (blfoprocessed[3] == false) {
-					if (routingBuffers.lfoUsed[3]) {
+					if (routingBuffers.lfoUsed[3].load()) {
 						if (m_Set->modMatrixDestinationSetFast(MODMATDEST::LFO4Frequency) == true) {
 							float fMod = 0.0f;
 							inputState.currentFrame = startSample;
@@ -611,7 +611,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 			}
 			if ((l_srce == MODMATSRCE::LFO5) && ((l_dest >= MODMATDEST::MSEG1Attack) && (l_dest <= MODMATDEST::MSEG5Release))) {
 				if (blfoprocessed[4] == false) {
-					if (routingBuffers.lfoUsed[4]) {
+					if (routingBuffers.lfoUsed[4].load()) {
 						if (m_Set->modMatrixDestinationSetFast(MODMATDEST::LFO5Frequency) == true) {
 							float fMod = 0.0f;
 							inputState.currentFrame = startSample;
@@ -648,7 +648,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 				msegpervoice = true;
 
 
-			if (routingBuffers.msegUsed[mseg]) { //performance optimization
+			if (routingBuffers.msegUsed[mseg].load()) { //performance optimization
 				//if (((CVASTSingleNote*)voice)->m_VCA->m_MSEG_Envelope[mseg].isActive() == true) { //This is not valid here!! leads to many issues!!
 
 				float* msegWritePointer = routingBuffers.MSEGBuffer[mseg][voice->mVoiceNo]->getWritePointer(0);
@@ -750,7 +750,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 		bool bPlayiningInRange = ((CVASTSingleNote*)voice)->isPlayingInRange(startSample, numSamples); //requires that mseg is processed before!
 
 		if (bPlayiningInRange) { //perf opt, check with phase and frequency hat is not updated?			
-			if (routingBuffers.lfoUsed[0]) {
+			if (routingBuffers.lfoUsed[0].load()) {
 				if (blfoprocessed[0] == false) {
 					if (m_Set->modMatrixDestinationSetFast(MODMATDEST::LFO1Frequency) == true) {
 						float fMod = 0.0f;
@@ -778,7 +778,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 					}
 				}
 			}
-			if (routingBuffers.lfoUsed[1]) {
+			if (routingBuffers.lfoUsed[1].load()) {
 				if (blfoprocessed[1] == false) {
 					if (m_Set->modMatrixDestinationSetFast(MODMATDEST::LFO2Frequency) == true) {
 						float fMod = 0.0f;
@@ -805,7 +805,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 					}
 				}
 			}
-			if (routingBuffers.lfoUsed[2]) {
+			if (routingBuffers.lfoUsed[2].load()) {
 				if (blfoprocessed[2] == false) {
 					if (m_Set->modMatrixDestinationSetFast(MODMATDEST::LFO3Frequency) == true) {
 						float fMod = 0.0f;
@@ -832,7 +832,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 					}
 				}
 			}
-			if (routingBuffers.lfoUsed[3]) {
+			if (routingBuffers.lfoUsed[3].load()) {
 				if (blfoprocessed[3] == false) {
 					if (m_Set->modMatrixDestinationSetFast(MODMATDEST::LFO4Frequency) == true) {
 						float fMod = 0.0f;
@@ -859,7 +859,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 					}
 				}
 			}
-			if (routingBuffers.lfoUsed[4]) {
+			if (routingBuffers.lfoUsed[4].load()) {
 				if (blfoprocessed[4] == false) {
 					if (m_Set->modMatrixDestinationSetFast(MODMATDEST::LFO5Frequency) == true) {
 						float fMod = 0.0f;
@@ -899,21 +899,21 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 				oldestVoice = voice;
 			}
 			if (oldestVoice != nullptr)
-				m_oldestPlaying = oldestVoice->mVoiceNo;
+				m_oldestPlaying.store(oldestVoice->mVoiceNo);
 
 			if (voice->isKeyDown()) {
 				if ((oldestVoiceKeyDown == nullptr) || (voice->wasStartedBefore(*oldestVoiceKeyDown))) {
 						oldestVoiceKeyDown = voice;
 				}
 				if (oldestVoiceKeyDown != nullptr)
-					m_oldestPlayingKeyDown = oldestVoiceKeyDown->mVoiceNo;
+					m_oldestPlayingKeyDown.store(oldestVoiceKeyDown->mVoiceNo);
 			}
 
 			if ((newestVoice == nullptr) || (newestVoice->wasStartedBefore(*voice))) {
 				newestVoice = voice;
 			}
 			if (newestVoice != nullptr)
-				m_newestPlaying = newestVoice->mVoiceNo;
+				m_newestPlaying.store(newestVoice->mVoiceNo);
 		}
 	} //voices
 

@@ -57,7 +57,7 @@ CVASTXperience::~CVASTXperience(void)
 
 bool CVASTXperience::initializeEngine()
 {	
-	m_Set.m_nSampleRate = m_nSampleRate;
+	m_Set.m_nSampleRate.store(m_nSampleRate.load());
 
 	std::shared_ptr<CVASTParamState> state = std::make_shared<CVASTParamState>();
 	m_Set.m_State.swap(state);
@@ -183,7 +183,7 @@ bool CVASTXperience::prepareForPlay(double sampleRate, int expectedSamplesPerBlo
 	}
 
 	//audiprocesslock should be set outside
-	m_Set.m_nSampleRate = sampleRate;
+	m_Set.m_nSampleRate.store(sampleRate);
 	m_Set.m_nExpectedSamplesPerBlock = samplesPerBlock;
 
 	m_bOversampleBus1_changed = false;
@@ -401,14 +401,14 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
 
 	//===========================================================================================
 	//LFO used?
-	m_Set.m_RoutingBuffers.lfoUsed[0] = m_Set.modMatrixSourceSetFast(MODMATSRCE::LFO1);
-	m_Set.m_RoutingBuffers.lfoUsed[1] = m_Set.modMatrixSourceSetFast(MODMATSRCE::LFO2);
-	m_Set.m_RoutingBuffers.lfoUsed[2] = m_Set.modMatrixSourceSetFast(MODMATSRCE::LFO3);
-	m_Set.m_RoutingBuffers.lfoUsed[3] = m_Set.modMatrixSourceSetFast(MODMATSRCE::LFO4);
-	m_Set.m_RoutingBuffers.lfoUsed[4] = m_Set.modMatrixSourceSetFast(MODMATSRCE::LFO5);
+	m_Set.m_RoutingBuffers.lfoUsed[0].store(m_Set.modMatrixSourceSetFast(MODMATSRCE::LFO1));
+	m_Set.m_RoutingBuffers.lfoUsed[1].store(m_Set.modMatrixSourceSetFast(MODMATSRCE::LFO2));
+	m_Set.m_RoutingBuffers.lfoUsed[2].store(m_Set.modMatrixSourceSetFast(MODMATSRCE::LFO3));
+	m_Set.m_RoutingBuffers.lfoUsed[3].store(m_Set.modMatrixSourceSetFast(MODMATSRCE::LFO4));
+	m_Set.m_RoutingBuffers.lfoUsed[4].store(m_Set.modMatrixSourceSetFast(MODMATSRCE::LFO5));
 
 	//MSEG is used?
-	m_Set.m_RoutingBuffers.msegUsed[0] = (m_Set.modMatrixSourceSetFast(MODMATSRCE::MSEG1Env) ||
+	m_Set.m_RoutingBuffers.msegUsed[0].store((m_Set.modMatrixSourceSetFast(MODMATSRCE::MSEG1Env) ||
 		((*m_Set.m_State->m_uVCAEnv_OscA == MSEGENV::MSEG1) && (*m_Set.m_State->m_bOscOnOff_OscA == SWITCH::SWITCH_ON)) ||
 		((*m_Set.m_State->m_uVCAEnv_OscB == MSEGENV::MSEG1) && (*m_Set.m_State->m_bOscOnOff_OscB == SWITCH::SWITCH_ON)) ||
 		((*m_Set.m_State->m_uVCAEnv_OscC == MSEGENV::MSEG1) && (*m_Set.m_State->m_bOscOnOff_OscC == SWITCH::SWITCH_ON)) ||
@@ -418,11 +418,11 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
 		((*m_Set.m_State->m_uVCFEnv_Filter1 == MSEGENV::MSEG1) && (*m_Set.m_State->m_bOnOff_Filter1 == SWITCH::SWITCH_ON)) ||
 		((*m_Set.m_State->m_uVCFEnv_Filter2 == MSEGENV::MSEG1) && (*m_Set.m_State->m_bOnOff_Filter2 == SWITCH::SWITCH_ON)) ||
 		((*m_Set.m_State->m_uVCFEnv_Filter3 == MSEGENV::MSEG1) && (*m_Set.m_State->m_bOnOff_Filter3 == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO1 == MSEGLFOENV::MSEGLFO1) && (m_Set.m_RoutingBuffers.lfoUsed[0] == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO2 == MSEGLFOENV::MSEGLFO1) && (m_Set.m_RoutingBuffers.lfoUsed[1] == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO3 == MSEGLFOENV::MSEGLFO1) && (m_Set.m_RoutingBuffers.lfoUsed[2] == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO4 == MSEGLFOENV::MSEGLFO1) && (m_Set.m_RoutingBuffers.lfoUsed[3] == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO5 == MSEGLFOENV::MSEGLFO1) && (m_Set.m_RoutingBuffers.lfoUsed[4] == true)));
+		((*m_Set.m_State->m_uLFOMSEG_LFO1 == MSEGLFOENV::MSEGLFO1) && (m_Set.m_RoutingBuffers.lfoUsed[0].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO2 == MSEGLFOENV::MSEGLFO1) && (m_Set.m_RoutingBuffers.lfoUsed[1].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO3 == MSEGLFOENV::MSEGLFO1) && (m_Set.m_RoutingBuffers.lfoUsed[2].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO4 == MSEGLFOENV::MSEGLFO1) && (m_Set.m_RoutingBuffers.lfoUsed[3].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO5 == MSEGLFOENV::MSEGLFO1) && (m_Set.m_RoutingBuffers.lfoUsed[4].load() == true))));
 	m_Set.m_RoutingBuffers.msegUsed[1] = (m_Set.modMatrixSourceSetFast(MODMATSRCE::MSEG2Env) ||
 		((*m_Set.m_State->m_uVCAEnv_OscA == MSEGENV::MSEG2) && (*m_Set.m_State->m_bOscOnOff_OscA == SWITCH::SWITCH_ON)) ||
 		((*m_Set.m_State->m_uVCAEnv_OscB == MSEGENV::MSEG2) && (*m_Set.m_State->m_bOscOnOff_OscB == SWITCH::SWITCH_ON)) ||
@@ -433,12 +433,12 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
 		((*m_Set.m_State->m_uVCFEnv_Filter1 == MSEGENV::MSEG2) && (*m_Set.m_State->m_bOnOff_Filter1 == SWITCH::SWITCH_ON)) ||
 		((*m_Set.m_State->m_uVCFEnv_Filter2 == MSEGENV::MSEG2) && (*m_Set.m_State->m_bOnOff_Filter2 == SWITCH::SWITCH_ON)) ||
 		((*m_Set.m_State->m_uVCFEnv_Filter3 == MSEGENV::MSEG2) && (*m_Set.m_State->m_bOnOff_Filter3 == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO1 == MSEGLFOENV::MSEGLFO2) && (m_Set.m_RoutingBuffers.lfoUsed[0] == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO2 == MSEGLFOENV::MSEGLFO2) && (m_Set.m_RoutingBuffers.lfoUsed[1] == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO3 == MSEGLFOENV::MSEGLFO2) && (m_Set.m_RoutingBuffers.lfoUsed[2] == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO4 == MSEGLFOENV::MSEGLFO2) && (m_Set.m_RoutingBuffers.lfoUsed[3] == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO5 == MSEGLFOENV::MSEGLFO2) && (m_Set.m_RoutingBuffers.lfoUsed[4] == true)));
-	m_Set.m_RoutingBuffers.msegUsed[2] = (m_Set.modMatrixSourceSetFast(MODMATSRCE::MSEG3Env) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO1 == MSEGLFOENV::MSEGLFO2) && (m_Set.m_RoutingBuffers.lfoUsed[0].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO2 == MSEGLFOENV::MSEGLFO2) && (m_Set.m_RoutingBuffers.lfoUsed[1].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO3 == MSEGLFOENV::MSEGLFO2) && (m_Set.m_RoutingBuffers.lfoUsed[2].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO4 == MSEGLFOENV::MSEGLFO2) && (m_Set.m_RoutingBuffers.lfoUsed[3].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO5 == MSEGLFOENV::MSEGLFO2) && (m_Set.m_RoutingBuffers.lfoUsed[4].load() == true)));
+	m_Set.m_RoutingBuffers.msegUsed[2].store((m_Set.modMatrixSourceSetFast(MODMATSRCE::MSEG3Env) ||
 		((*m_Set.m_State->m_uVCAEnv_OscA == MSEGENV::MSEG3) && (*m_Set.m_State->m_bOscOnOff_OscA == SWITCH::SWITCH_ON)) ||
 		((*m_Set.m_State->m_uVCAEnv_OscB == MSEGENV::MSEG3) && (*m_Set.m_State->m_bOscOnOff_OscB == SWITCH::SWITCH_ON)) ||
 		((*m_Set.m_State->m_uVCAEnv_OscC == MSEGENV::MSEG3) && (*m_Set.m_State->m_bOscOnOff_OscC == SWITCH::SWITCH_ON)) ||
@@ -448,12 +448,12 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
 		((*m_Set.m_State->m_uVCFEnv_Filter1 == MSEGENV::MSEG3) && (*m_Set.m_State->m_bOnOff_Filter1 == SWITCH::SWITCH_ON)) ||
 		((*m_Set.m_State->m_uVCFEnv_Filter2 == MSEGENV::MSEG3) && (*m_Set.m_State->m_bOnOff_Filter2 == SWITCH::SWITCH_ON)) ||
 		((*m_Set.m_State->m_uVCFEnv_Filter3 == MSEGENV::MSEG3) && (*m_Set.m_State->m_bOnOff_Filter3 == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO1 == MSEGLFOENV::MSEGLFO3) && (m_Set.m_RoutingBuffers.lfoUsed[0] == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO2 == MSEGLFOENV::MSEGLFO3) && (m_Set.m_RoutingBuffers.lfoUsed[1] == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO3 == MSEGLFOENV::MSEGLFO3) && (m_Set.m_RoutingBuffers.lfoUsed[2] == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO4 == MSEGLFOENV::MSEGLFO3) && (m_Set.m_RoutingBuffers.lfoUsed[3] == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO5 == MSEGLFOENV::MSEGLFO3) && (m_Set.m_RoutingBuffers.lfoUsed[4] == true)));
-	m_Set.m_RoutingBuffers.msegUsed[3] = (m_Set.modMatrixSourceSetFast(MODMATSRCE::MSEG4Env) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO1 == MSEGLFOENV::MSEGLFO3) && (m_Set.m_RoutingBuffers.lfoUsed[0].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO2 == MSEGLFOENV::MSEGLFO3) && (m_Set.m_RoutingBuffers.lfoUsed[1].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO3 == MSEGLFOENV::MSEGLFO3) && (m_Set.m_RoutingBuffers.lfoUsed[2].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO4 == MSEGLFOENV::MSEGLFO3) && (m_Set.m_RoutingBuffers.lfoUsed[3].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO5 == MSEGLFOENV::MSEGLFO3) && (m_Set.m_RoutingBuffers.lfoUsed[4].load() == true))));
+	m_Set.m_RoutingBuffers.msegUsed[3].store((m_Set.modMatrixSourceSetFast(MODMATSRCE::MSEG4Env) ||
 		((*m_Set.m_State->m_uVCAEnv_OscA == MSEGENV::MSEG4) && (*m_Set.m_State->m_bOscOnOff_OscA == SWITCH::SWITCH_ON)) ||
 		((*m_Set.m_State->m_uVCAEnv_OscB == MSEGENV::MSEG4) && (*m_Set.m_State->m_bOscOnOff_OscB == SWITCH::SWITCH_ON)) ||
 		((*m_Set.m_State->m_uVCAEnv_OscC == MSEGENV::MSEG4) && (*m_Set.m_State->m_bOscOnOff_OscC == SWITCH::SWITCH_ON)) ||
@@ -463,12 +463,12 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
 		((*m_Set.m_State->m_uVCFEnv_Filter1 == MSEGENV::MSEG4) && (*m_Set.m_State->m_bOnOff_Filter1 == SWITCH::SWITCH_ON)) ||
 		((*m_Set.m_State->m_uVCFEnv_Filter2 == MSEGENV::MSEG4) && (*m_Set.m_State->m_bOnOff_Filter2 == SWITCH::SWITCH_ON)) ||
 		((*m_Set.m_State->m_uVCFEnv_Filter3 == MSEGENV::MSEG4) && (*m_Set.m_State->m_bOnOff_Filter3 == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO1 == MSEGLFOENV::MSEGLFO4) && (m_Set.m_RoutingBuffers.lfoUsed[0] == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO2 == MSEGLFOENV::MSEGLFO4) && (m_Set.m_RoutingBuffers.lfoUsed[1] == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO3 == MSEGLFOENV::MSEGLFO4) && (m_Set.m_RoutingBuffers.lfoUsed[2] == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO4 == MSEGLFOENV::MSEGLFO4) && (m_Set.m_RoutingBuffers.lfoUsed[3] == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO5 == MSEGLFOENV::MSEGLFO4) && (m_Set.m_RoutingBuffers.lfoUsed[4] == true)));
-	m_Set.m_RoutingBuffers.msegUsed[4] = (m_Set.modMatrixSourceSetFast(MODMATSRCE::MSEG5Env) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO1 == MSEGLFOENV::MSEGLFO4) && (m_Set.m_RoutingBuffers.lfoUsed[0].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO2 == MSEGLFOENV::MSEGLFO4) && (m_Set.m_RoutingBuffers.lfoUsed[1].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO3 == MSEGLFOENV::MSEGLFO4) && (m_Set.m_RoutingBuffers.lfoUsed[2].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO4 == MSEGLFOENV::MSEGLFO4) && (m_Set.m_RoutingBuffers.lfoUsed[3].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO5 == MSEGLFOENV::MSEGLFO4) && (m_Set.m_RoutingBuffers.lfoUsed[4].load() == true))));
+	m_Set.m_RoutingBuffers.msegUsed[4].store((m_Set.modMatrixSourceSetFast(MODMATSRCE::MSEG5Env) ||
 		((*m_Set.m_State->m_uVCAEnv_OscA == MSEGENV::MSEG5) && (*m_Set.m_State->m_bOscOnOff_OscA == SWITCH::SWITCH_ON)) ||
 		((*m_Set.m_State->m_uVCAEnv_OscB == MSEGENV::MSEG5) && (*m_Set.m_State->m_bOscOnOff_OscB == SWITCH::SWITCH_ON)) ||
 		((*m_Set.m_State->m_uVCAEnv_OscC == MSEGENV::MSEG5) && (*m_Set.m_State->m_bOscOnOff_OscC == SWITCH::SWITCH_ON)) ||
@@ -478,15 +478,15 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
 		((*m_Set.m_State->m_uVCFEnv_Filter1 == MSEGENV::MSEG5) && (*m_Set.m_State->m_bOnOff_Filter1 == SWITCH::SWITCH_ON)) ||
 		((*m_Set.m_State->m_uVCFEnv_Filter2 == MSEGENV::MSEG5) && (*m_Set.m_State->m_bOnOff_Filter2 == SWITCH::SWITCH_ON)) ||
 		((*m_Set.m_State->m_uVCFEnv_Filter3 == MSEGENV::MSEG5) && (*m_Set.m_State->m_bOnOff_Filter3 == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO1 == MSEGLFOENV::MSEGLFO5) && (m_Set.m_RoutingBuffers.lfoUsed[0] == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO2 == MSEGLFOENV::MSEGLFO5) && (m_Set.m_RoutingBuffers.lfoUsed[1] == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO3 == MSEGLFOENV::MSEGLFO5) && (m_Set.m_RoutingBuffers.lfoUsed[2] == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO4 == MSEGLFOENV::MSEGLFO5) && (m_Set.m_RoutingBuffers.lfoUsed[3] == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO5 == MSEGLFOENV::MSEGLFO5) && (m_Set.m_RoutingBuffers.lfoUsed[4] == true)));
+		((*m_Set.m_State->m_uLFOMSEG_LFO1 == MSEGLFOENV::MSEGLFO5) && (m_Set.m_RoutingBuffers.lfoUsed[0].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO2 == MSEGLFOENV::MSEGLFO5) && (m_Set.m_RoutingBuffers.lfoUsed[1].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO3 == MSEGLFOENV::MSEGLFO5) && (m_Set.m_RoutingBuffers.lfoUsed[2].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO4 == MSEGLFOENV::MSEGLFO5) && (m_Set.m_RoutingBuffers.lfoUsed[3].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO5 == MSEGLFOENV::MSEGLFO5) && (m_Set.m_RoutingBuffers.lfoUsed[4].load() == true))));
 
-	m_Set.m_RoutingBuffers.stepSeqUsed[0] = m_Set.modMatrixSourceSetFast(MODMATSRCE::StepSeq1);
-	m_Set.m_RoutingBuffers.stepSeqUsed[1] = m_Set.modMatrixSourceSetFast(MODMATSRCE::StepSeq2);
-	m_Set.m_RoutingBuffers.stepSeqUsed[2] = m_Set.modMatrixSourceSetFast(MODMATSRCE::StepSeq3);
+	m_Set.m_RoutingBuffers.stepSeqUsed[0].store(m_Set.modMatrixSourceSetFast(MODMATSRCE::StepSeq1));
+	m_Set.m_RoutingBuffers.stepSeqUsed[1].store(m_Set.modMatrixSourceSetFast(MODMATSRCE::StepSeq2));
+	m_Set.m_RoutingBuffers.stepSeqUsed[2].store(m_Set.modMatrixSourceSetFast(MODMATSRCE::StepSeq3));
 
 	//=================================================================================================
 

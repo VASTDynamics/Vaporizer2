@@ -70,9 +70,7 @@ public:
 	void setGlissandoStart(int midinote, bool reset);
 	void setPortamentoTime(float time); //in s
 	
-	int getNumOscsPlaying() {
-		return m_uLast_NumTotalPlaying;
-	};
+    int getNumOscsPlaying();
 
 	//==============================================================================
 	//from SynthesiserVoice
@@ -128,7 +126,7 @@ public:
 	float m_wtFXVal[4];
 	int m_wtFXType[4];
 	bool m_wtFXTypeChanged[4];	
-	float m_currentWTPosFloatPercentage[4]; //bank
+	std::atomic<float> m_currentWTPosFloatPercentage[4]; //bank
 
 private:
 	void nextNote(bool legato);
@@ -153,11 +151,11 @@ private:
 	float m_fNoiseDivisor = 1.0f;
 	void writeDebugInfo();
 
-	MYUINT m_uLastuNumOscAOscsPlaying = 0;
-	MYUINT m_uLastuNumOscBOscsPlaying = 0;
-	MYUINT m_uLastuNumOscCOscsPlaying = 0;
-	MYUINT m_uLastuNumOscDOscsPlaying = 0;
-	MYUINT m_uLast_NumTotalPlaying = 0;
+    std::atomic<MYUINT> m_uLastuNumOscAOscsPlaying = 0;
+    std::atomic<MYUINT> m_uLastuNumOscBOscsPlaying = 0;
+    std::atomic<MYUINT> m_uLastuNumOscCOscsPlaying = 0;
+    std::atomic<MYUINT> m_uLastuNumOscDOscsPlaying = 0;
+	std::atomic<MYUINT> m_uLast_NumTotalPlaying = 0;
 
 	void syncOscToMaster(int bank, int i);
 	

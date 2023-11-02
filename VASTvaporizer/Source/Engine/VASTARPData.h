@@ -36,7 +36,7 @@ public:
 	void copyDataFrom(const VASTARPData &copyData);
 
 	//dynamic
-	int m_dispActiveStep = 0;
+	std::atomic<int> m_dispActiveStep = 0;
 
 	int getNumSteps();;
 
@@ -70,7 +70,7 @@ public:
 private:
 	std::vector<VASTARPData::ArpStep> arpSteps;
 	int arpStepNum = 0;
-	bool isDirty = true;
+	std::atomic<bool> m_isDirty = true;
 
 	int m_iSampleRate = 0;
 

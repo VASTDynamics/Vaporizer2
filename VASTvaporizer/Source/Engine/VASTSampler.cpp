@@ -106,7 +106,7 @@ VASTSamplerSound::VASTSamplerSound(VASTSamplerSound* sound) { //copy constructor
 	m_bChangedFlag = sound->m_bChangedFlag;
 
 	m_bAudioDataChangedFlag = sound->m_bAudioDataChangedFlag;
-	m_PositionChanged = sound->m_PositionChanged;
+	m_PositionChanged.store(sound->m_PositionChanged.load());
 
 	sourceSampleRate = sound->sourceSampleRate;
 	midiNotes = sound->midiNotes;
@@ -295,12 +295,12 @@ void VASTSamplerSound::calcZeroCrossings() {
 }
 
 void VASTSamplerSound::notifyPositionChanged() {
-	m_PositionChanged = true;
+    m_PositionChanged.store(true);
 }
 
 bool VASTSamplerSound::getPositionChanged() {
-	bool l_PositionChanged = m_PositionChanged;
-	m_PositionChanged = false;
+	bool l_PositionChanged = m_PositionChanged.load();
+	m_PositionChanged.store(false);
 	return l_PositionChanged;
 }
 

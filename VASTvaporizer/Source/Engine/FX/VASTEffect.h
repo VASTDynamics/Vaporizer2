@@ -83,9 +83,9 @@ public:
 	bool m_bOversampling = false;
 	int m_iSampleRate = 41000;
 	int m_iExpectedSamplesPerBlock = 100;
-	bool m_bIsOff = false;
-	bool m_bShallBeOff = false;
-	int m_iSoftFade = 0;
+	std::atomic<bool> m_bIsOff = false;
+    std::atomic<bool> m_bShallBeOff = false;
+    std::atomic<int> m_iSoftFade = 0;
 	int myBusnr = 0;
 	
 	VASTAudioProcessor *my_processor;

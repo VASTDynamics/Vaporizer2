@@ -76,10 +76,10 @@ private:
 			rmsHistory.assign(numBlocks, 0.0f);
 			rmsSum = 0.0;
 			if (numBlocks > 1) {
-				rmsPtr %= rmsHistory.size();
+                rmsPtr.store(rmsPtr.load() % rmsHistory.size());
 			}
 			else {
-				rmsPtr = 0;
+				rmsPtr.store(0);
 			}
 		}
 	private:
@@ -102,7 +102,7 @@ private:
 		std::atomic<juce::int64> hold;
 		std::vector<double>      rmsHistory;
 		std::atomic<double>      rmsSum;
-		int                      rmsPtr;
+        std::atomic<int>         rmsPtr;
 	};
 
 public:

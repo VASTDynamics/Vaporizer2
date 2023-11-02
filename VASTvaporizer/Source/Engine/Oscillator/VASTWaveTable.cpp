@@ -72,7 +72,7 @@ void CVASTWaveTable::copyFrom(const CVASTWaveTable &wavetable) { //copies only t
 
 	clear();
 	wtheader.waveTableName = wavetable.wtheader.waveTableName;
-	wtheader.numPositions = wavetable.wtheader.numPositions;
+	wtheader.numPositions.store(wavetable.wtheader.numPositions.load());
 	//wtheader.waveTablePositions = std::vector<sWaveTablePosition>{};
 
 	//expensive part!!
@@ -99,7 +99,7 @@ void CVASTWaveTable::copyFrom(const CVASTWaveTable &wavetable) { //copies only t
 	});
 	//expensive part!!
 
-	wtheader.changeCounter = wavetable.wtheader.changeCounter;
+	wtheader.changeCounter.store(wavetable.wtheader.changeCounter.load());
 
 	m_multiSelect = wavetable.m_multiSelect;
 	m_iMultiSelectBegin = wavetable.m_iMultiSelectBegin;
@@ -114,7 +114,7 @@ void CVASTWaveTable::copyFrom(const CVASTWaveTable &wavetable) { //copies only t
 }
 
 void CVASTWaveTable::copyWTFreqsFrom(const CVASTWaveTable& wavetable) {
-	for (int wtPos = 0; wtPos < wtheader.numPositions; wtPos++) {
+	for (int wtPos = 0; wtPos < wtheader.numPositions.load(); wtPos++) {
 		wtheader.waveTablePositions[wtPos].dirty = wavetable.wtheader.waveTablePositions[wtPos].dirty; //keep it dirty if it was so!
 		wtheader.waveTablePositions[wtPos].numWaveTableFreqs = wavetable.wtheader.waveTablePositions[wtPos].numWaveTableFreqs;
 		wtheader.waveTablePositions[wtPos].numWaveTableFreqsBuffer = wavetable.wtheader.waveTablePositions[wtPos].numWaveTableFreqsBuffer;
@@ -138,7 +138,7 @@ std::shared_ptr<CVASTWaveTable> CVASTWaveTable::getClonedInstance(bool deleteGen
 void CVASTWaveTable::deleteGeneratedContent() {
 	ScopedLock sl(mWavetableChangeLock);
 
-	for (int wtPos = 0; wtPos < wtheader.numPositions; wtPos++) {
+	for (int wtPos = 0; wtPos < wtheader.numPositions.load(); wtPos++) {
 		wtheader.waveTablePositions[wtPos].waveTableFreqsBuffer.clear();
 		wtheader.waveTablePositions[wtPos].numWaveTableFreqsBuffer = 0;
 		wtheader.waveTablePositions[wtPos].hasFXTable = false;
@@ -171,9 +171,9 @@ void CVASTWaveTable::getValueTreeState(ValueTree* tree, UndoManager* undoManager
 	tree->removeAllProperties(undoManager);
 
 	tree->setProperty("waveTableName", wtheader.waveTableName, undoManager);
-	tree->setProperty("numPositions", wtheader.numPositions, undoManager);
+	tree->setProperty("numPositions", wtheader.numPositions.load(), undoManager);
 	//positions
-	for (int i = 0; i < wtheader.numPositions; i++) {
+	for (int i = 0; i < wtheader.numPositions.load(); i++) {
 		ScopedPointer<ValueTree> waveTablePositionTree = new ValueTree(Identifier("waveTablePosition" + String(i)));
 
 		/*
@@ -214,11 +214,11 @@ bool CVASTWaveTable::setValueTreeState(ValueTree* tree, int wtMode) { //load
 	ScopedLock sl(mWavetableChangeLock);
 	clear();
 	wtheader.waveTableName = tree->getProperty("waveTableName");
-	wtheader.numPositions = tree->getProperty("numPositions");
+	wtheader.numPositions.store(tree->getProperty("numPositions"));
 	wtheader.waveTablePositions = std::vector<sWaveTablePosition>{};
-	wtheader.changeCounter = 0;
+	wtheader.changeCounter.store(0);
 	//positions
-	for (int i = 0; i < wtheader.numPositions; i++) {
+	for (int i = 0; i < wtheader.numPositions.load(); i++) {
 		ValueTree waveTablePositionTree = tree->getChildWithName(Identifier("waveTablePosition" + String(i)));
 		vassert(waveTablePositionTree.isValid());		
 		sWaveTablePosition wtp = emptyPosition();
@@ -280,11 +280,11 @@ bool CVASTWaveTable::setValueTreeState(ValueTree* tree, int wtMode) { //load
 		wtheader.waveTablePositions.push_back(wtp);		
 	}
 
-	for (int i = 0; i < wtheader.numPositions; i++) {
+	for (int i = 0; i < wtheader.numPositions.load(); i++) {
 		if (i != wtheader.waveTablePositions[i].wtPos) return false;
 		//setNaiveTable(wtheader.waveTablePositions[i].wtPos, &wtheader.waveTablePositions[i].naiveTable, true, wtMode); //pregenerate
 		//CHANGE!! no longer pregenerate - is done at the end with FX
-		setNaiveTable(wtheader.waveTablePositions[i].wtPos, &wtheader.waveTablePositions[i].naiveTable, false, wtMode); //dont pregenerate here
+        setNaiveTable(wtheader.waveTablePositions[i].wtPos, wtheader.waveTablePositions[i].naiveTable, false, wtMode); //dont pregenerate here
 	}
 
 	if (!validate()) return false;
@@ -296,7 +296,7 @@ bool CVASTWaveTable::setValueTreeState(ValueTree* tree, int wtMode) { //load
 
 void CVASTWaveTable::markAllWTFreqsDirty() { //to recaclculate wavetable
 	//lock here?
-	for (int wtPos = 0; wtPos < wtheader.numPositions; wtPos++) {
+	for (int wtPos = 0; wtPos < wtheader.numPositions.load(); wtPos++) {
 		for (int wtFreq = 0; wtFreq < wtheader.waveTablePositions[wtPos].waveTableFreqs.size(); wtFreq++) {
 			wtheader.waveTablePositions[wtPos].waveTableFreqs[wtFreq].dirty = true;
 		}
@@ -304,7 +304,7 @@ void CVASTWaveTable::markAllWTFreqsDirty() { //to recaclculate wavetable
 }
 
 void CVASTWaveTable::pregenerateWithWTFX(int wtFxType, float wtFxVal, int wtMode) {
-	for (int wtPos = 0; wtPos < wtheader.numPositions; wtPos++) {
+	for (int wtPos = 0; wtPos < wtheader.numPositions.load(); wtPos++) {
 		DBG("Pregenerating WTPos: " << wtPos << " with wtfxtype - val: " << wtFxType << " " << wtFxVal);
 		for (int wtFreq = 0; wtFreq < wtheader.waveTablePositions[wtPos].waveTableFreqs.size(); wtFreq++) {
 			makeWaveTableFreq(	wtPos, 
@@ -394,8 +394,8 @@ void CVASTWaveTable::duplicatePosition(int wtPos, int newPos) {
 	sWaveTablePosition wtp = wtheader.waveTablePositions[wtPos]; //copy the data
 
 	wtheader.waveTablePositions.insert(wtheader.waveTablePositions.begin() + newPos, wtp);
-	wtheader.numPositions++;
-	wtheader.changeCounter++;
+	wtheader.numPositions+=1;
+	wtheader.changeCounter+=1;
 	for (int i = 0; i < getNumPositions(); i++) {
 		wtheader.waveTablePositions[i].wtPos = i;
 	}
@@ -408,8 +408,8 @@ void CVASTWaveTable::duplicatePosition(int wtPos, int newPos) {
 void CVASTWaveTable::addFromOtherWavetable(int newPos, sWaveTablePosition wtp) {
 	ScopedLock sl(mWavetableChangeLock);
 	wtheader.waveTablePositions.insert(wtheader.waveTablePositions.begin() + newPos, wtp);
-	wtheader.numPositions++; //at the end
-	wtheader.changeCounter++;
+	wtheader.numPositions+=1; //at the end
+	wtheader.changeCounter+=1;
 	for (int i = 0; i < getNumPositions(); i++) {
 		wtheader.waveTablePositions[i].wtPos = i;
 	}
@@ -423,9 +423,9 @@ void CVASTWaveTable::copyPositionToOtherWavetable(int wtPos, int newPos, CVASTWa
 void CVASTWaveTable::clear() {
 	ScopedLock sl(mWavetableChangeLock);
 
-	wtheader.numPositions = 0;
+	wtheader.numPositions.store(0);
 	wtheader.waveTablePositions.clear();
-	wtheader.changeCounter = 0;
+	wtheader.changeCounter.store(0);
 
 	wtheader.waveTableName = String(TRANS(""));
 	
@@ -435,7 +435,7 @@ void CVASTWaveTable::clear() {
 }
 
 int CVASTWaveTable::getNumPositions() {
-	return wtheader.numPositions;
+	return wtheader.numPositions.load();
 }
 
 juce::String CVASTWaveTable::getWaveTableName() {
@@ -453,8 +453,8 @@ void CVASTWaveTable::insertEmptyPosition(int wtPos) {
 	sWaveTablePosition wtp = emptyPosition();
 	wtp.wtPos = wtPos + 1;
 	wtheader.waveTablePositions.insert(wtheader.waveTablePositions.begin() + wtPos + 1, wtp);
-	wtheader.numPositions++; //at the end
-	wtheader.changeCounter++;
+	wtheader.numPositions+=1; //at the end
+	wtheader.changeCounter+=1;
 	for (int i = 0; i < getNumPositions(); i++) {
 		wtheader.waveTablePositions[i].wtPos = i;
 	}
@@ -480,7 +480,7 @@ sWaveTablePosition CVASTWaveTable::emptyPosition() {
 	wtp.naiveTableFXDirty = false;
 	wtp.hasFXTable = false;
 	wtp.frequencyDomainBuffer = std::vector<dsp::Complex<float>>(C_WAVE_TABLE_SIZE, 0.f);
-	wtheader.changeCounter++;
+	wtheader.changeCounter+=1;
 	wtp.maxHarmonics = 0;
 	wtp.dirty = false;
 	wtp.isInitial = true;
@@ -492,10 +492,10 @@ void CVASTWaveTable::addPosition() {
 	if (wtheader.numPositions < C_MAX_NUM_POSITIONS) {
 		ScopedLock sl(mWavetableChangeLock);
 
-		wtheader.numPositions++; // CHECK
-		wtheader.changeCounter++;
+		wtheader.numPositions+=1; // CHECK
+		wtheader.changeCounter+=1;
 		sWaveTablePosition wtp = emptyPosition();
-		wtp.wtPos = wtheader.numPositions - 1;
+		wtp.wtPos = wtheader.numPositions.load() - 1;
 
 		wtheader.waveTablePositions.push_back(wtp);
 		//this is not atomic?
@@ -520,11 +520,11 @@ void CVASTWaveTable::addPositions(int numPos) {
 void CVASTWaveTable::deletePosition(int numPos) {
 	ScopedLock sl(mWavetableChangeLock);
 
-	if (wtheader.numPositions-1 >= numPos) {
-		wtheader.numPositions--; // CHECK
+	if (wtheader.numPositions.load()-1 >= numPos) {
+		wtheader.numPositions-=1; // CHECK
 
 		wtheader.waveTablePositions.erase(wtheader.waveTablePositions.begin() + numPos); //iterator
-		wtheader.changeCounter++;
+		wtheader.changeCounter+=1;
 	}
 	//reassign wtPos
 	for (int i = 0; i < getNumPositions(); i++) {
@@ -610,13 +610,13 @@ void CVASTWaveTable::createFreqsIfNeeded(int wtPos, bool preGenerate, int wtMode
 	wtheader.waveTablePositions[wtPos].isInitial = false;
 }
 
-void CVASTWaveTable::setNaiveTable(int wtPos, std::vector<float>* vWave, bool preGenerate, int wtMode) {
+void CVASTWaveTable::setNaiveTable(int wtPos, std::vector<float> vWave, bool preGenerate, int wtMode) {
 	ScopedLock sl(mWavetableChangeLock);
 
-	wtheader.waveTablePositions[wtPos].naiveTable = *vWave; //copy data
+	wtheader.waveTablePositions[wtPos].naiveTable = vWave; //copy data
 	wtheader.waveTablePositions[wtPos].dirty = true;
 	wtheader.waveTablePositions[wtPos].isInitial = false;
-	wtheader.changeCounter++;
+	wtheader.changeCounter+=1;
 
 	for (int i = 0; i < wtheader.waveTablePositions[wtPos].waveTableFreqs.size(); i++) {
 		wtheader.waveTablePositions[wtPos].waveTableFreqs[i].invalid = true;
@@ -635,11 +635,11 @@ bool CVASTWaveTable::validate() {
 		DBG("CVASTWaveTable::validate() failed: waveTablePositions <= 0");
 		return false;
 	}
-	if (!(wtheader.waveTablePositions.size() == wtheader.numPositions)) {
+	if (!(wtheader.waveTablePositions.size() == wtheader.numPositions.load())) {
 		DBG("CVASTWaveTable::validate() failed: waveTablePositions.size() != wtheader.numPositions");
 		return false;
 	}
-	for (int wtPos = 0; wtPos  < wtheader.numPositions; wtPos++) {		
+	for (int wtPos = 0; wtPos  < wtheader.numPositions.load(); wtPos++) {
 		if (wtPos != wtheader.waveTablePositions[wtPos].wtPos) {
 			DBG("CVASTWaveTable::validate() failed: wtPos != wtheader.waveTablePositions[wtPos].wtPos");
 			return false;
@@ -673,7 +673,7 @@ bool CVASTWaveTable::loadWavFile(wavFile* wavfile, bool preGenerate, int wtMode)
 	addPositions(positionstoprepare);
 	for (int idx = 0; idx < positionstoprepare; idx++) { 
 		std::vector<float> naive = naiveWaveFromWavFile(wavfile, idx);
-		setNaiveTable(idx, &naive, preGenerate, wtMode); //preGenerate true?
+		setNaiveTable(idx, naive, preGenerate, wtMode); //preGenerate true?
 	}
 	String wtname = wavfile->wtname;
 	setWaveTableName(wtname);
@@ -891,7 +891,7 @@ void CVASTWaveTable::setFreqDomainTables(int wtPos, std::vector<dsp::Complex<flo
 			}
 	}
 
-	setNaiveTable(wtPos, &wtp->waveTableFreqs[0].waveTableSamples, preGenerate, wtMode); //first freq now has the new naive
+	setNaiveTable(wtPos, wtp->waveTableFreqs[0].waveTableSamples, preGenerate, wtMode); //first freq now has the new naive
 }
 
 
@@ -1066,7 +1066,7 @@ void CVASTWaveTable::generateWaveTableFreqsFromTimeDomain(int wtPos, int tableLe
 				maxHarmonic = 0; //stop
 		}
 	}
-	wtheader.changeCounter++;
+	wtheader.changeCounter+=1;
 }
 
 void CVASTWaveTable::wTFX_PASS(std::vector<float>* naive, float paramvalue)
@@ -1406,7 +1406,7 @@ int CVASTWaveTable::getID() {
 }
 
 int CVASTWaveTable::getChangeCounter() {
-	return wtheader.changeCounter;
+	return wtheader.changeCounter.load();
 }
 
 void CVASTWaveTable::copyUIFXUpdates() {
@@ -1628,7 +1628,7 @@ void CVASTWaveTable::makeWaveTableFreq(int wtPos, int len, float bottomFreq, flo
 	}
 	else //tableindex must be provided
 		changeWaveTableFreq(wtPos, tableindex, len, fftwave, bottomFreq, ltopFreq, maxHarmonics, isInvalid, false, wtFxVal, lwtFxType);
-	wtheader.changeCounter++;
+	wtheader.changeCounter+=1;
 
 	/*
 	#ifdef _DEBUG
@@ -1721,7 +1721,7 @@ void CVASTWaveTable::addWaveTableFreq(int wtPos, int len, std::vector<float> &wa
 		vassert(wtp->numWaveTableFreqs <= C_MAX_NUM_FREQS);
 		//vassert(wtp->numWaveTableFreqs == wtp->waveTableFreqs.size()); //not right due to invalids
 	}
-	wtheader.changeCounter++;
+	wtheader.changeCounter+=1;
 	vassert(wtp->numWaveTableFreqsBuffer == wtp->waveTableFreqsBuffer.size());
 }
 
@@ -1752,7 +1752,7 @@ void CVASTWaveTable::changeWaveTableFreq(int wtPos, int tableindex, int len, std
 	wtp->waveTableFreqs[tableindex].wtFxType = wtFxType;
 	//wtp->waveTableFreqs[tableindex].isBuffer = buffer;
 	//wtp->naiveTable = naiveWave;
-	wtheader.changeCounter++;
+	wtheader.changeCounter+=1;
 }
 
 void CVASTWaveTable::prepareForPlay(int expectedSamplesPerBlock) {
@@ -1814,14 +1814,14 @@ bool CVASTWaveTable::getWavetableInterpolateBuffer(CVASTWaveTableOscillator* mOs
 			//softfade - take from master wt
 			wtFxVal_begin = masterWTForSync->m_fLastWtFXVal_begin[voiceNo]; //begin! was processed already
 			wtFxType_begin = masterWTForSync->m_iLastWtFXType_begin[voiceNo]; //begin! was processed already
-			//wtPos_begin = masterWTForSync->m_fLastWTPosPerc_begin[voiceNo] * (masterWTForSync->wtheader.numPositions- 1); //begin! was processed already, has to be num positions of master as it can be more or less!
+			//wtPos_begin = masterWTForSync->m_fLastWTPosPerc_begin[voiceNo] * (masterWTForSync->wtheader.numPositions.load()- 1); //begin! was processed already, has to be num positions of master as it can be more or less!
 			wtPos_begin = masterWTForSync->m_fLastWTPosPerc_begin[voiceNo] * (getNumPositions() - 1);
 			lWtPosPerc_begin = masterWTForSync->m_fLastWTPosPerc_begin[voiceNo];
 			wtFxVal_end = masterWTForSync->m_fLastWtFXVal_end[voiceNo];
 			wtFxType_end = masterWTForSync->m_iLastWtFXType_end[voiceNo];
 			wtPos_end = masterWTForSync->m_fLastWTPosPerc_end[voiceNo] * (getNumPositions() - 1);
 			lWtPosPerc_end = masterWTForSync->m_fLastWTPosPerc_end[voiceNo];
-			//if (getNumPositions() != masterWTForSync->wtheader.numPositions)
+			//if (getNumPositions() != masterWTForSync->wtheader.numPositions.load())
 				//DBG("Softfade with different wtpos!");
 		}
 		else {

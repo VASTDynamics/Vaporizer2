@@ -195,7 +195,7 @@ float CVASTSettings::midiNoteGetBaseFreq(MYUINT uMIDINote, float oscMasterTune) 
 }
 
 double CVASTSettings::getMillisecondsPerBeat() {
-	double dawbpm = m_dPpqBpm;
+	double dawbpm = m_dPpqBpm.load();
 	if (dawbpm < 3.0)
 		dawbpm = 120.0; //standard value
 	double millisecondsPerBeat = (1.0 / dawbpm) * 60.0 * 1000.0;
@@ -295,17 +295,17 @@ void CVASTSettings::modMatrixCalcBuffers() {
 		int slotPolarity = 0;
 		modMatrixSlotGetValues(slot, slotValue, slotCurvy, slotSource, slotDestination, slotPolarity, lastSrceVals);
 		if ((slotSource != MODMATSRCE::NoSource) && (slotDestination != MODMATDEST::NoDestination)) //val can be 0? Check
-			modMatrixSlotUsed[slot] = true;
-		else 
-			modMatrixSlotUsed[slot] = false;
+			modMatrixSlotUsed[slot].store(true);
+		else
+            modMatrixSlotUsed[slot].store(false);
 		modMatrixSlotDest[slot] = slotDestination; //onl for UI update
 	}
 
 	for (int j = 0; j < M_MODMATRIX_MAX_DESTINATIONS; j++) {
-		modMatrixDestSet[j] = modMatrixDestinationSet(j);
+		modMatrixDestSet[j].store(modMatrixDestinationSet(j));
 	}
 	for (int j = 0; j < M_MODMATRIX_MAX_SOURCES; j++) {
-		modMatrixSrceSet[j] = modMatrixSourceSet(j);
+		modMatrixSrceSet[j].store(modMatrixSourceSet(j));
 	}
 }
 

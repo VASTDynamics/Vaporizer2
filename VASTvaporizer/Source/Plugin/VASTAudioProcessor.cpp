@@ -53,9 +53,9 @@ VASTAudioProcessor::VASTAudioProcessor() : m_undoManager(3000, 30),
 #endif	
 #endif
 
-	m_initCompleted = false;
-	m_bAudioThreadRunning = false;
-	m_wasBypassed = false;
+	m_initCompleted.store(false);
+    m_bAudioThreadRunning.store(false);
+    m_wasBypassed.store(false);
 
 	initLookAndFeels();
 
@@ -76,14 +76,14 @@ VASTAudioProcessor::VASTAudioProcessor() : m_undoManager(3000, 30),
 	m_sLicenseInformation.m_bExpired = false;
 	m_fTrialSeconds = 0.0;
 
-	mUIAlert = false;
-	mUIUpdateFlag = false;
-	mUIInitFlag = false;
+	mUIAlert.store(false);
+    mUIUpdateFlag.store(false);
+    mUIInitFlag.store(false);
 
 	m_midiBank = 0;
 
-	bIsInErrorState = false;
-	iErrorState = 0;
+	bIsInErrorState.store(false);
+	iErrorState.store(0);
 	m_iNumPassTreeThreads = 0;
 
 	initSettings();
@@ -95,7 +95,7 @@ VASTAudioProcessor::VASTAudioProcessor() : m_undoManager(3000, 30),
 	m_parameterState.undoManager->clearUndoHistory();
 	m_parameterState.undoManager->beginNewTransaction();
 
-	m_initCompleted = true;
+	m_initCompleted.store(true);
 
 	m_presetData.exchangeCurPatchData(*m_presetData.getPreset(0));
 	initializeToDefaults();
@@ -160,73 +160,94 @@ bool VASTAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) cons
 }
 
 void VASTAudioProcessor::setErrorState(int state) {
-	bIsInErrorState = true;
-	iErrorState = state;
+	bIsInErrorState.store(true);
+	iErrorState.store(state);
 }
 
-int VASTAudioProcessor::getErrorState() { return iErrorState; }
+int VASTAudioProcessor::getErrorState() {
+    return iErrorState.load(); }
 
-bool VASTAudioProcessor::wantsUIAlert() { return mUIAlert; }
+bool VASTAudioProcessor::wantsUIAlert() {
+    return mUIAlert.load(); }
 
-void VASTAudioProcessor::clearUIAlertFlag() { mUIAlert = false; }
+void VASTAudioProcessor::clearUIAlertFlag() {
+    mUIAlert.store(false); }
 
-void VASTAudioProcessor::requestUIAlert() { mUIAlert = true; }
+void VASTAudioProcessor::requestUIAlert() {
+    mUIAlert.store(true); }
 
 void VASTAudioProcessor::requestUIPresetUpdate() {
-	mUIUpdateFlag = true;
-	mUIPresetUpdate = true;
+	mUIUpdateFlag.store(true);
+	mUIPresetUpdate.store(true);
 }
 
-bool VASTAudioProcessor::needsUIPresetUpdate() { return mUIPresetUpdate; }
+bool VASTAudioProcessor::needsUIPresetUpdate() {
+    return mUIPresetUpdate.load();
+}
 
-void VASTAudioProcessor::clearUIPresetFlag() { mUIPresetUpdate = false; }
+void VASTAudioProcessor::clearUIPresetFlag() { 
+    mUIPresetUpdate.store(false);
+}
 
 void VASTAudioProcessor::requestUIPresetReloadUpdate() {
-	mUIUpdateFlag = true;
-	mUIPresetReloadUpdate = true;
+	mUIUpdateFlag.store(true);
+	mUIPresetReloadUpdate.store(true);
 }
 
-bool VASTAudioProcessor::needsUIPresetReloadUpdate() { return mUIPresetReloadUpdate; }
+bool VASTAudioProcessor::needsUIPresetReloadUpdate() { 
+    return mUIPresetReloadUpdate.load(); }
 
-void VASTAudioProcessor::clearUIPresetReloadFlag() { mUIPresetReloadUpdate = false; }
+void VASTAudioProcessor::clearUIPresetReloadFlag() {
+    mUIPresetReloadUpdate.store(false); }
 
-bool VASTAudioProcessor::needsUIInit() { return mUIInitFlag; }
+bool VASTAudioProcessor::needsUIInit() {
+    return mUIInitFlag.load(); }
 
-void VASTAudioProcessor::clearUIInitFlag() { mUIInitFlag = false; }
+void VASTAudioProcessor::clearUIInitFlag() {
+    mUIInitFlag.store(false); }
 
-void VASTAudioProcessor::requestUIInit() { mUIInitFlag = true; requestUIUpdate(true, true, true); }
+void VASTAudioProcessor::requestUIInit() {
+    mUIInitFlag.store(true);
+    requestUIUpdate(true, true, true); }
 
-bool VASTAudioProcessor::needsUIUpdate() { return mUIUpdateFlag; }
+bool VASTAudioProcessor::needsUIUpdate() { 
+    return mUIUpdateFlag.load(); }
 
-bool VASTAudioProcessor::needsUIUpdate_tabs() { return mUIUpdateFlag_tabs; }
+bool VASTAudioProcessor::needsUIUpdate_tabs() { 
+    return mUIUpdateFlag_tabs.load(); }
 
-bool VASTAudioProcessor::needsUIUpdate_matrix() { return mUIUpdateFlag_matrix; }
+bool VASTAudioProcessor::needsUIUpdate_matrix() { 
+    return mUIUpdateFlag_matrix.load(); }
 
-bool VASTAudioProcessor::needsUIUpdate_sliders() { return mUIUpdateFlag_sliders; }
+bool VASTAudioProcessor::needsUIUpdate_sliders() { 
+    return mUIUpdateFlag_sliders.load(); }
 
-int VASTAudioProcessor::needsUIUpdate_slider1dest() { return mUIUpdateFlag_slider1dest; }
+int VASTAudioProcessor::needsUIUpdate_slider1dest() { 
+    return mUIUpdateFlag_slider1dest.load(); }
 
-int VASTAudioProcessor::needsUIUpdate_slider2dest() { return mUIUpdateFlag_slider2dest; }
+int VASTAudioProcessor::needsUIUpdate_slider2dest() { 
+    return mUIUpdateFlag_slider2dest.load(); }
 
 void VASTAudioProcessor::clearUIUpdateFlag() {
-	mUIUpdateFlag = false;
-	mUIUpdateFlag_tabs = false;
-	mUIUpdateFlag_matrix = false;
-	mUIUpdateFlag_sliders = false;
-	mUIUpdateFlag_slider1dest = -1;
-	mUIUpdateFlag_slider2dest = -1;
+	mUIUpdateFlag.store(false);
+	mUIUpdateFlag_tabs.store(false);
+	mUIUpdateFlag_matrix.store(false);
+	mUIUpdateFlag_sliders.store(false);
+	mUIUpdateFlag_slider1dest.store(-1);
+	mUIUpdateFlag_slider2dest.store(-1);
 }
 
 void VASTAudioProcessor::requestUIUpdate(bool tabs, bool matrix, bool sliders, int slider1dest, int slider2dest) {
-	mUIUpdateFlag = true;
-	mUIUpdateFlag_tabs = tabs;
-	mUIUpdateFlag_matrix = matrix;
-	mUIUpdateFlag_sliders = sliders;
-	mUIUpdateFlag_slider1dest = slider1dest;
-	mUIUpdateFlag_slider2dest = slider2dest;
+	mUIUpdateFlag.store(true);
+	mUIUpdateFlag_tabs.store(tabs);
+	mUIUpdateFlag_matrix.store(matrix);
+	mUIUpdateFlag_sliders.store(sliders);
+	mUIUpdateFlag_slider1dest.store(slider1dest);
+	mUIUpdateFlag_slider2dest.store(slider2dest);
 }
 
-void VASTAudioProcessor::requestUILoadAlert() { mUIAlert = true; }
+void VASTAudioProcessor::requestUILoadAlert() { 
+    mUIAlert.store(true); }
 
 bool VASTAudioProcessor::acceptsMidi() const
 {
@@ -280,7 +301,7 @@ void VASTAudioProcessor::initializeToDefaults() {
 			std::vector<myFloat> samples = std::vector<myFloat>(C_WAVE_TABLE_SIZE);			
 			wavetable->getNaiveSamplesFromWave(samples, WAVE::saw);
 			wavetable->setWaveTableName(TRANS("Basic Saw"));
-			wavetable->setNaiveTable(0, &samples, true, getWTmode());
+			wavetable->setNaiveTable(0, samples, true, getWTmode());
 		}
 		m_pVASTXperience.m_Poly.m_OscBank[bank]->setWavetableSoftFade(wavetable);		
 	}
@@ -524,7 +545,7 @@ void VASTAudioProcessor::prepareToPlay(double sampleRate, int expectedSamplesPer
 	if ((sampleRate == 0) || (expectedSamplesPerBlock == 0)) return;
 
 	DBG("Audio processor Prepare for play called!");
-	m_pVASTXperience.m_iFadeInSamples = m_pVASTXperience.m_iMaxFadeSamples;
+	m_pVASTXperience.m_iFadeInSamples.store(m_pVASTXperience.m_iMaxFadeSamples);
 
 	//bool b_wasLocked = m_pVASTXperience.getBlockProcessing();
 
@@ -999,7 +1020,7 @@ void VASTAudioProcessor::loadPreset(int index) {
 
 	//stop all playing notes
 	m_pVASTXperience.m_Poly.stopAllNotes(true);
-	m_pVASTXperience.m_iFadeOutSamples = m_pVASTXperience.m_iMaxFadeSamples;
+	m_pVASTXperience.m_iFadeOutSamples.store(m_pVASTXperience.m_iMaxFadeSamples);
 
 	//array defines index!
 	if (m_presetData.getPreset(index)->isFactory == true) { //init patch
@@ -1458,7 +1479,7 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 		//---------------------------------------------------------------------------------------
 	}
 
-	processor->m_pVASTXperience.m_iFadeInSamples = processor->m_pVASTXperience.m_iMaxFadeSamples;
+	processor->m_pVASTXperience.m_iFadeInSamples.store(processor->m_pVASTXperience.m_iMaxFadeSamples);
 	//===============================
 
 	processor->unregisterThread();
@@ -3260,19 +3281,19 @@ void VASTAudioProcessor::dumpBuffers() {
 	*m_DumpOutStream << "==============================================================================================================" << newLine;
 
 	*m_DumpOutStream << newLine;
-	*m_DumpOutStream << "msegUsed[5] = " << ((m_pVASTXperience.m_Set.m_RoutingBuffers.msegUsed[0] == true) ? "true" : "false") << " "
-		<< ((m_pVASTXperience.m_Set.m_RoutingBuffers.msegUsed[1] == true) ? "true" : "false") << " "
-		<< ((m_pVASTXperience.m_Set.m_RoutingBuffers.msegUsed[2] == true) ? "true" : "false") << " "
-		<< ((m_pVASTXperience.m_Set.m_RoutingBuffers.msegUsed[3] == true) ? "true" : "false") << " "
-		<< ((m_pVASTXperience.m_Set.m_RoutingBuffers.msegUsed[4] == true) ? "true" : "false") << newLine;
-	*m_DumpOutStream << "lfoUsed[5] = " << ((m_pVASTXperience.m_Set.m_RoutingBuffers.lfoUsed[0] == true) ? "true" : "false") << " "
-		<< ((m_pVASTXperience.m_Set.m_RoutingBuffers.lfoUsed[1] == true) ? "true" : "false") << " "
-		<< ((m_pVASTXperience.m_Set.m_RoutingBuffers.lfoUsed[2] == true) ? "true" : "false") << " "
-		<< ((m_pVASTXperience.m_Set.m_RoutingBuffers.lfoUsed[3] == true) ? "true" : "false") << " "
-		<< ((m_pVASTXperience.m_Set.m_RoutingBuffers.lfoUsed[4] == true) ? "true" : "false") << newLine;
-	*m_DumpOutStream << "stepSeqUsed[3] = " << ((m_pVASTXperience.m_Set.m_RoutingBuffers.stepSeqUsed[0] == true) ? "true" : "false") << " "
-		<< ((m_pVASTXperience.m_Set.m_RoutingBuffers.stepSeqUsed[1] == true) ? "true" : "false") << " "
-		<< ((m_pVASTXperience.m_Set.m_RoutingBuffers.stepSeqUsed[2] == true) ? "true" : "false") << newLine;
+	*m_DumpOutStream << "msegUsed[5] = " << ((m_pVASTXperience.m_Set.m_RoutingBuffers.msegUsed[0].load() == true) ? "true" : "false") << " "
+		<< ((m_pVASTXperience.m_Set.m_RoutingBuffers.msegUsed[1].load() == true) ? "true" : "false") << " "
+		<< ((m_pVASTXperience.m_Set.m_RoutingBuffers.msegUsed[2].load() == true) ? "true" : "false") << " "
+		<< ((m_pVASTXperience.m_Set.m_RoutingBuffers.msegUsed[3].load() == true) ? "true" : "false") << " "
+		<< ((m_pVASTXperience.m_Set.m_RoutingBuffers.msegUsed[4].load() == true) ? "true" : "false") << newLine;
+	*m_DumpOutStream << "lfoUsed[5] = " << ((m_pVASTXperience.m_Set.m_RoutingBuffers.lfoUsed[0].load() == true) ? "true" : "false") << " "
+		<< ((m_pVASTXperience.m_Set.m_RoutingBuffers.lfoUsed[1].load() == true) ? "true" : "false") << " "
+		<< ((m_pVASTXperience.m_Set.m_RoutingBuffers.lfoUsed[2].load() == true) ? "true" : "false") << " "
+		<< ((m_pVASTXperience.m_Set.m_RoutingBuffers.lfoUsed[3].load() == true) ? "true" : "false") << " "
+		<< ((m_pVASTXperience.m_Set.m_RoutingBuffers.lfoUsed[4].load() == true) ? "true" : "false") << newLine;
+	*m_DumpOutStream << "stepSeqUsed[3] = " << ((m_pVASTXperience.m_Set.m_RoutingBuffers.stepSeqUsed[0].load() == true) ? "true" : "false") << " "
+		<< ((m_pVASTXperience.m_Set.m_RoutingBuffers.stepSeqUsed[1].load() == true) ? "true" : "false") << " "
+		<< ((m_pVASTXperience.m_Set.m_RoutingBuffers.stepSeqUsed[2].load() == true) ? "true" : "false") << newLine;
 	
 	int voicesToDump = 2; //C_MAX_POLY
 

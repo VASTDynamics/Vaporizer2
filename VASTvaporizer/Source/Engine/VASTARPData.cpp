@@ -153,8 +153,8 @@ void VASTARPData::copyDataFrom(const VASTARPData &copyData) {
 	arpStepNum = copyData.arpStepNum;
 	patternName = copyData.patternName;
 
-	m_dispActiveStep = copyData.m_dispActiveStep;
-	isDirty = true;
+	m_dispActiveStep.store(copyData.m_dispActiveStep.load());
+	m_isDirty.store(true);
 }
 
 int VASTARPData::getNumSteps() {
@@ -162,7 +162,7 @@ int VASTARPData::getNumSteps() {
 }
 
 void VASTARPData::setDirty() {
-	isDirty = true;
+	m_isDirty.store(true);
 }
 
 void VASTARPData::initDefaultPattern(int pattern) {
@@ -180,22 +180,23 @@ void VASTARPData::initDefaultPattern(int pattern) {
 }
 
 bool VASTARPData::getAndClearDirtyFlag() {
-	bool lDirty = isDirty;
-	isDirty = false;
+	bool lDirty = m_isDirty.load();
+	m_isDirty.store(false);
 	return lDirty;
 }
 
 void VASTARPData::setDispActiveStep(int step) {
-	if (m_dispActiveStep != step) isDirty = true;
+	if (m_dispActiveStep.load() != step)
+        m_isDirty.store(true);
 	m_dispActiveStep = step;
 }
 
 bool VASTARPData::getIsDirty() {
-	return isDirty;
+	return m_isDirty.load();
 }
 
 void VASTARPData::clearDirtyFlag() {
-	isDirty = false;
+	m_isDirty.store(false);
 }
 
 StringArray VASTARPData::getDefaultPatternNames() {
@@ -214,26 +215,26 @@ VASTARPData::ArpStep VASTARPData::getStep(int step) {
 void VASTARPData::incGate(int step) {
 	arpSteps[step].gate++;
 	arpSteps[step].gate %= 5; //0..4
-	isDirty = true;
+	m_isDirty.store(true);
 }
 
 void VASTARPData::setOctave(int step, int octave) {
 	arpSteps[step].octave = octave;
-	isDirty = true;
+    m_isDirty.store(true);
 }
 
 void VASTARPData::setSemitone(int step, int semitone) {
 	arpSteps[step].semitones = semitone;
-	isDirty = true;
+    m_isDirty.store(true);
 }
 
 void VASTARPData::setVelocity(int step, int velocity) {
 	arpSteps[step].velocity = jlimit<int>(0, 127, velocity);
-	isDirty = true;
+    m_isDirty.store(true);
 }
 
 void VASTARPData::addStep(ArpStep step) {
-	isDirty = true;
+    m_isDirty.store(true);
 	arpStepNum++;
 	if (arpSteps.size() < getNumSteps())
 		arpSteps.push_back(step);
@@ -267,7 +268,7 @@ void VASTARPData::arpChangeSteps(int steps) {
 			addStep(step1);
 		}
 	}
-	isDirty = true;
+    m_isDirty.store(true);
 }
 
 //-------------------------------------------------------------------------------------------
@@ -315,6 +316,6 @@ void VASTARPData::setValueTreeState(ValueTree* tree) { //load
 		initDefaultPattern(0);
 	}
 
-	isDirty = true;
+    m_isDirty.store(true);
 }
 //-------------------------------------------------------------------------------------------

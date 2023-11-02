@@ -169,9 +169,9 @@ void CVASTVcf::init(CVASTSettings &set, MYUINT voiceNo, MYUINT filterNo, bool is
 	//Quad filter
 	memset(&FBP, 0, sizeof(FBP));
 	bfirstRun = true; 
-	m_filterCoefficientMaker[0].prepareForPlay(m_Set->m_nSampleRate, 1, m_Set->m_fMasterTune.get());
-	m_filterCoefficientMaker[1].prepareForPlay(m_Set->m_nSampleRate, 1, m_Set->m_fMasterTune.get());
-	m_filterCoefficientMaker[2].prepareForPlay(m_Set->m_nSampleRate, 1, m_Set->m_fMasterTune.get());
+	m_filterCoefficientMaker[0].prepareForPlay(m_Set->m_nSampleRate, 1, m_Set->m_fMasterTune.load());
+	m_filterCoefficientMaker[1].prepareForPlay(m_Set->m_nSampleRate, 1, m_Set->m_fMasterTune.load());
+	m_filterCoefficientMaker[2].prepareForPlay(m_Set->m_nSampleRate, 1, m_Set->m_fMasterTune.load());
 	
 	SetQFB(0, 0, 0.f, 0.f, 0.f, 0, 0, 0, 0, 0, 0, 0); // init qfilter 
 	   	  
@@ -198,9 +198,9 @@ void CVASTVcf::prepareForPlay() { //called on program change
 	*/
 
 	//Quad filter
-	m_filterCoefficientMaker[0].prepareForPlay(m_Set->m_nSampleRate, 1, m_Set->m_fMasterTune.get()); //for real samplerate!
-	m_filterCoefficientMaker[1].prepareForPlay(m_Set->m_nSampleRate, 1, m_Set->m_fMasterTune.get()); //for real samplerate!
-	m_filterCoefficientMaker[2].prepareForPlay(m_Set->m_nSampleRate, 1, m_Set->m_fMasterTune.get()); //for real samplerate!
+	m_filterCoefficientMaker[0].prepareForPlay(m_Set->m_nSampleRate, 1, m_Set->m_fMasterTune.load()); //for real samplerate!
+	m_filterCoefficientMaker[1].prepareForPlay(m_Set->m_nSampleRate, 1, m_Set->m_fMasterTune.load()); //for real samplerate!
+	m_filterCoefficientMaker[2].prepareForPlay(m_Set->m_nSampleRate, 1, m_Set->m_fMasterTune.load()); //for real samplerate!
 	
 	SetQFB(0, 0, 0.f, 0.f, 0.f, 0, 0, 0, 0, 0, 0, 0); // init qfilter 
 

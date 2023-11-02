@@ -268,8 +268,8 @@ protected:
 	It can also be called at any time during the render callback if the sound happens
 	to have finished, e.g. if it's playing a sample and the sample finishes.
 	*/
-	int mVoiceNo = 0;
-	int currentlyPlayingNote = -1, currentPlayingMidiChannel = 0;
+    std::atomic<int> mVoiceNo = 0;
+	std::atomic<int> currentlyPlayingNote = -1, currentPlayingMidiChannel = 0;
 	juce::SynthesiserSound::Ptr currentlyPlayingSound;
 
 private:
@@ -678,9 +678,9 @@ private:
 	BigInteger sustainPedalsDown;
 
 	AudioSampleBuffer qfilterbuffer;
-	int m_newestPlaying = -1;
-	int m_oldestPlaying = -1;
-	int m_oldestPlayingKeyDown = -1;
+	std::atomic<int> m_newestPlaying = -1;
+    std::atomic<int> m_oldestPlaying = -1;
+    std::atomic<int> m_oldestPlayingKeyDown = -1;
 	bool m_midiNotesKeyDown[256];
 	ULong64_t m_midiNotesKeyDownTime[256];
 

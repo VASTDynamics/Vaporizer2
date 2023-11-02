@@ -57,10 +57,10 @@ public:
             const int curWritePosition = writePosition.get();
             
             // If we need to loop around the ring
-            //if (curWritePosition + numSamples > bufferSize - 1)
-			if (curWritePosition + numSamples > bufferSize)
-            {             
-				int samplesToEdgeOfBuffer = bufferSize - curWritePosition;
+            //if (curWritePosition + numSamples > bufferSize.load() - 1)
+			if (curWritePosition + numSamples > bufferSize.load())
+            {
+				int samplesToEdgeOfBuffer = bufferSize.load() - curWritePosition;
                 
                 audioBuffer->copyFrom (i, curWritePosition, newAudioData, i,
                                        startSample, samplesToEdgeOfBuffer);
@@ -78,8 +78,8 @@ public:
         }
         
         //writePosition += numSamples;
-		//writePosition = writePosition.get() % bufferSize;
-		writePosition = (writePosition.get() + numSamples) % bufferSize;        
+		//writePosition = writePosition.get() % bufferSize.load();
+		writePosition = (writePosition.get() + numSamples) % bufferSize.load();
         
         /*
             Although it would seem that the above two lines could cause a
@@ -118,7 +118,7 @@ public:
     void readSamples (AudioBuffer<Type> & bufferToFill, int readSize)
     {
         // Ensure readSize does not exceed bufferSize
-        jassert (readSize <= bufferSize);
+        jassert (readSize <= bufferSize.load());
 
         /*
             Further, as stated in the class comment, it is also bad to have a
@@ -130,7 +130,7 @@ public:
          */
         
         // Calculate readPosition based on writePosition
-        int readPosition = (writePosition.get() % bufferSize) - readSize;
+        int readPosition = (writePosition.get() % bufferSize.load()) - readSize;
         
         // If read position goes into negative bounds, loop it around the ring
         if (readPosition < 0)
@@ -140,9 +140,9 @@ public:
         {
             // If we need to loop around the ring
             //if (readPosition + readSize > bufferSize - 1)
-			if (readPosition + readSize > bufferSize)
+			if (readPosition + readSize > bufferSize.load())
             {
-                int samplesToEdgeOfBuffer = bufferSize - readPosition;
+                int samplesToEdgeOfBuffer = bufferSize.load() - readPosition;
                 
                 bufferToFill.copyFrom (i, 0, *(audioBuffer.get()), i, readPosition,
                                        samplesToEdgeOfBuffer);
@@ -162,7 +162,7 @@ public:
 	void readSamplesInterpolated(AudioBuffer<Type> & bufferToFill, int readSize, int visualSize)
 	{
 		// Ensure readSize does not exceed bufferSize
-		jassert(readSize <= bufferSize);
+		jassert(readSize <= bufferSize.load());
 
 		/*
 			Further, as stated in the class comment, it is also bad to have a
@@ -174,19 +174,19 @@ public:
 		 */
 
 		 // Calculate readPosition based on writePosition
-		int readPosition = (writePosition.get() % bufferSize) - readSize;
+		int readPosition = (writePosition.get() % bufferSize.load()) - readSize;
 
 		// If read position goes into negative bounds, loop it around the ring
 		if (readPosition < 0)
-			readPosition = bufferSize + readPosition;
+			readPosition = bufferSize.load() + readPosition;
 
 		for (int i = 0; i < numChannels; ++i)
 		{
 			// If we need to loop around the ring
-			//if (readPosition + readSize > bufferSize - 1)
-			if (readPosition + readSize > bufferSize)
+			//if (readPosition + readSize > bufferSize.load() - 1)
+			if (readPosition + readSize > bufferSize.load())
 			{
-				int samplesToEdgeOfBuffer = bufferSize - readPosition;
+				int samplesToEdgeOfBuffer = bufferSize.load() - readPosition;
 
 				bufferToFill.copyFrom(i, 0, *(audioBuffer.get()), i, readPosition,
 					samplesToEdgeOfBuffer);
@@ -221,22 +221,22 @@ public:
 	void readSamplesFIFO(AudioBuffer<Type> & bufferToFill, int readSize) {
 
 		// Ensure readSize does not exceed bufferSize
-		jassert(readSize <= bufferSize);			
+		jassert(readSize <= bufferSize.load());
 
 		 // Calculate readPosition based on writePosition
 		int readPosition = fifoReadPosition.get();
 
 		// If read position goes into negative bounds, loop it around the ring
 		if (readPosition < 0)
-			readPosition = bufferSize + readPosition;
+			readPosition = bufferSize.load() + readPosition;
 
 		for (int i = 0; i < numChannels; ++i)
 		{
 			// If we need to loop around the ring
 			//if (readPosition + readSize > bufferSize - 1)
-			if (readPosition + readSize > bufferSize)
+			if (readPosition + readSize > bufferSize.load())
 			{
-				int samplesToEdgeOfBuffer = bufferSize - readPosition;
+				int samplesToEdgeOfBuffer = bufferSize.load() - readPosition;
 
 				bufferToFill.copyFrom(i, 0, *(audioBuffer.get()), i, readPosition,
 					samplesToEdgeOfBuffer);
@@ -251,12 +251,12 @@ public:
 				bufferToFill.copyFrom(i, 0, *(audioBuffer.get()), i, readPosition, readSize);
 			}
 		}
-		fifoReadPosition = (fifoReadPosition.get() + readSize) % bufferSize;
+		fifoReadPosition = (fifoReadPosition.get() + readSize) % bufferSize.load();
 	}
 
 
 private:
-    int bufferSize;
+    std::atomic<int> bufferSize;
     int numChannels;
     ScopedPointer<AudioBuffer<Type>> audioBuffer;
     Atomic<int> writePosition; // This must be atomic so the consumer does

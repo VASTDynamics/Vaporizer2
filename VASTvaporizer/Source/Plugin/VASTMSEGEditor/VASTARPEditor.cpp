@@ -84,11 +84,11 @@ void VASTARPEditor::updateContent(bool force)
 	float insetPixels = 2.0f  * myProcessor->getPluginScaleWidthFactor() * m_screenWidthScale;
 
 	//current pos marker
-	if ((myDataLive->m_dispActiveStep >= 0) && (numSteps >= myDataLive->m_dispActiveStep)) {
-		g.setColour(myProcessor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colARPEditorPosMarker)); 
+	if ((myDataLive->m_dispActiveStep.load() >= 0) && (numSteps >= myDataLive->m_dispActiveStep.load())) {
+		g.setColour(myProcessor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colARPEditorPosMarker));
 
-		//float markerPos = m_xbounds + myData->m_dispActiveStep * (m_drawwidth / float(numSteps));
-		g.fillRect(juce::Rectangle<float>(m_xbounds + myDataLive->m_dispActiveStep  * stepWidth + insetPixels, m_ybounds + insetPixels, stepWidth - 2.f* insetPixels, m_drawheight -2.f * insetPixels));
+		//float markerPos = m_xbounds + myData->m_dispActiveStep.load() * (m_drawwidth / float(numSteps));
+		g.fillRect(juce::Rectangle<float>(m_xbounds + myDataLive->m_dispActiveStep.load()  * stepWidth + insetPixels, m_ybounds + insetPixels, stepWidth - 2.f* insetPixels, m_drawheight -2.f * insetPixels));
 		//g.drawLine(markerPos, 0.0f + m_ybounds, markerPos, m_drawheight + m_ybounds, 6.0f);
 	}
 

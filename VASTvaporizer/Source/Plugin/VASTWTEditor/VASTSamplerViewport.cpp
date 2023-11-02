@@ -857,9 +857,12 @@ void VASTSamplerViewport::sampleDetermineFreq() {
 	
 	//estimatedZeroCrossingsPerCycle 
 	if (m_selection.dDeterminedFreq > 0.f) {
-		double zeroCycleFreq = 1.f / ((double(m_selection.iWavSelectionEndSample - m_selection.iWavSelectionStartSample) / double((m_selection.iZeroCrossings - 1.0))) / samplerSound->getSourceSampleRate());
-		m_selection.estimatedZeroCrossingsPerCycle = round(zeroCycleFreq / m_selection.dDeterminedFreq);
-		if (m_selection.estimatedZeroCrossingsPerCycle == 0)
+        m_selection.estimatedZeroCrossingsPerCycle = 0;
+        if (((m_selection.iWavSelectionEndSample - m_selection.iWavSelectionStartSample) > 0) && (m_selection.iZeroCrossings > 0)) {
+                double zeroCycleFreq = 1.f / ((double(m_selection.iWavSelectionEndSample - m_selection.iWavSelectionStartSample) / double((m_selection.iZeroCrossings - 1.0))) / samplerSound->getSourceSampleRate());
+                m_selection.estimatedZeroCrossingsPerCycle = round(zeroCycleFreq / m_selection.dDeterminedFreq);
+        }
+        if (m_selection.estimatedZeroCrossingsPerCycle == 0)
 			m_selection.dDeterminedFreq = 0.f;
 	}
 }

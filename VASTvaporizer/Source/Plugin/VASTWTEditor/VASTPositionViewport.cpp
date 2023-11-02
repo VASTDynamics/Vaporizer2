@@ -48,8 +48,12 @@ void VASTPositionViewport::setZoomFactor(int zoom) {
 	m_scaling = zoom;
 	m_dirty = true;
 
-	m_screenWidthScale = float(myWtEditor->getEditorView()->c_viewportPositions->getScreenBounds().getWidth()) / float(myWtEditor->getEditorView()->c_viewportPositions->getWidth());
-	m_screenHeightScale = float(myWtEditor->getEditorView()->c_viewportPositions->getScreenBounds().getHeight()) / float(myWtEditor->getEditorView()->c_viewportPositions->getHeight());
+    m_screenWidthScale = 1.f;
+    m_screenHeightScale = 1.f;
+    if (myWtEditor->getEditorView()->c_viewportPositions->getWidth() > 0)
+        m_screenWidthScale = float(myWtEditor->getEditorView()->c_viewportPositions->getScreenBounds().getWidth()) / float(myWtEditor->getEditorView()->c_viewportPositions->getWidth());
+    if (myWtEditor->getEditorView()->c_viewportPositions->getHeight() > 0)
+        m_screenHeightScale = float(myWtEditor->getEditorView()->c_viewportPositions->getScreenBounds().getHeight()) / float(myWtEditor->getEditorView()->c_viewportPositions->getHeight());
 
 	juce::Rectangle<int> lVisibleArea = myWtEditor->getEditorView()->c_viewportPositions->getViewArea();
 	m_wtImageWidth = (lVisibleArea.getHeight() * m_screenHeightScale - 2.0f) / 6.f * m_scaling;

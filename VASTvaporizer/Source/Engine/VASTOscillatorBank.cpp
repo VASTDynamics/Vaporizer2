@@ -94,9 +94,9 @@ void CVASTOscillatorBank::beginSoftFade() { //to be called at start of buffer pr
 	}
 	else clearSingleNoteSoftFadeCycle();
 
-	jassert(m_numEditingSoftFadeNext >= 0);
-	if (m_numEditingSoftFadeNext < 0) 
-		m_numEditingSoftFadeNext = 0; //Safety CHECK
+	jassert(m_numEditingSoftFadeNext.load() >= 0);
+	if (m_numEditingSoftFadeNext.load() < 0)
+		m_numEditingSoftFadeNext.store(0); //Safety CHECK
 
 	if ((m_wavetable_soft_fade_next.get() != nullptr) || (m_wavetable_soft_fade.get() != nullptr)) {  //avoid atomic lock
 		if ((std::atomic_load(&m_wavetable_soft_fade_next) != nullptr) || (std::atomic_load(&m_wavetable_soft_fade) != nullptr)) { //atomic check for nullptr https://stackoverflow.com/questions/30117975/is-thread-safe-to-assign-a-shared-ptr-nullptr
@@ -398,9 +398,9 @@ std::shared_ptr<CVASTWaveTable> CVASTOscillatorBank::getSoftOrCopyWavetable(bool
 //https://stackoverflow.com/questions/11666610/how-to-give-priority-to-privileged-thread-in-mutex-locking
 
 void CVASTOscillatorBank::addSoftFadeEditor() {
-	m_numEditingSoftFadeNext++;
+	m_numEditingSoftFadeNext+=1;
 }
 
 void CVASTOscillatorBank::removeSoftFadeEditor() {
-	m_numEditingSoftFadeNext--;
+	m_numEditingSoftFadeNext-=1;
 }

@@ -60,7 +60,7 @@ public:
 	void addSoftFadeEditor();
 	void removeSoftFadeEditor();
 
-	int m_numEditingSoftFadeNext = 0;
+	std::atomic<int> m_numEditingSoftFadeNext = 0;
 	
 	void timerCallback() override;
 	int lastWTchangeCounter = -1;

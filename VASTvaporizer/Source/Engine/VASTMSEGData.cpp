@@ -23,11 +23,11 @@ VASTMSEGData::VASTMSEGData(const VASTMSEGData &copyData) { //copy constructor
 }
 
 void VASTMSEGData::init() {	
-	isDirty = true;
-	m_needsUIUpdate = true;
-	m_needsPositionUpdate = true;
-	m_bADSR_updated = true;
-	m_bStepSeq_updated = true;
+    m_isDirty.store(true);
+    m_needsUIUpdate.store(true);
+    m_needsPositionUpdate.store(true);
+    m_bADSR_updated.store(true);
+    m_bStepSeq_updated.store(true);
 	controlPoints.clear();
 
 	memset(m_dispActiveSegment, 0, sizeof(int) * C_MAX_POLY);
@@ -38,23 +38,22 @@ void VASTMSEGData::init() {
 
 void VASTMSEGData::copyDataFrom(const VASTMSEGData &copyData) {
 	controlPoints = copyData.controlPoints;
-	m_fAttackTime = copyData.m_fAttackTime;
-	m_fDecayTime = copyData.m_fDecayTime;
-	m_fSustainLevel = copyData.m_fSustainLevel;
-	m_fReleaseTime = copyData.m_fReleaseTime;
-	m_fAttackTimeExternalSet = copyData.m_fAttackTimeExternalSet;
-	m_fDecayTimeExternalSet = copyData.m_fDecayTimeExternalSet;
-	m_fReleaseTimeExternalSet = copyData.m_fReleaseTimeExternalSet;
-	m_fSustainLevelExternalSet = copyData.m_fSustainLevelExternalSet;
-	hasLoop = copyData.hasLoop;
-	loopStartPoint = copyData.loopStartPoint;
-	loopEndPoint = copyData.loopEndPoint;
-
-	m_bSynch = copyData.m_bSynch;
-	m_uTimeBeats = copyData.m_uTimeBeats;
-	m_fAttackSteps = copyData.m_fAttackSteps;
-	m_fDecaySteps = copyData.m_fDecaySteps;
-	m_fReleaseSteps = copyData.m_fReleaseSteps;
+	m_fAttackTime.store(copyData.m_fAttackTime.load());
+    m_fDecayTime.store(copyData.m_fDecayTime.load());
+    m_fSustainLevel.store(copyData.m_fSustainLevel.load());
+    m_fReleaseTime.store(copyData.m_fReleaseTime.load());
+    m_fAttackTimeExternalSet.store(copyData.m_fAttackTimeExternalSet.load());
+    m_fDecayTimeExternalSet.store(copyData.m_fDecayTimeExternalSet.load());
+    m_fReleaseTimeExternalSet.store(copyData.m_fReleaseTimeExternalSet.load());
+    m_fSustainLevelExternalSet.store(copyData.m_fSustainLevelExternalSet.load());
+	hasLoop.store(copyData.hasLoop);
+	loopStartPoint.store(copyData.loopStartPoint);
+	loopEndPoint.store(copyData.loopEndPoint);
+	m_bSynch.store(copyData.m_bSynch.load());
+	m_uTimeBeats.store(copyData.m_uTimeBeats.load());
+	m_fAttackSteps.store( copyData.m_fAttackSteps.load());
+	m_fDecaySteps.store(copyData.m_fDecaySteps.load());
+	m_fReleaseSteps.store(copyData.m_fReleaseSteps.load());
 
 	memcpy(m_dispActiveSegment, copyData.m_dispActiveSegment, C_MAX_POLY * sizeof(int));
 	memcpy(m_dispSamplesSinceSegmentStart, copyData.m_dispSamplesSinceSegmentStart, C_MAX_POLY * sizeof(int));
@@ -74,10 +73,10 @@ void VASTMSEGData::copyDataFrom(const VASTMSEGData &copyData) {
 	m_msegNo = copyData.m_msegNo;
 	m_fOrigStepSeqTime = copyData.m_fOrigStepSeqTime;
 
-	m_bADSR_updated = true;
-	m_bStepSeq_updated = true;
-	isDirty = true;
-	m_needsUIUpdate = true;	
+	m_bADSR_updated.store(true);
+    m_bStepSeq_updated.store(true);
+    m_isDirty.store(true);
+    m_needsUIUpdate.store(true);
 }
 
 void VASTMSEGData::initToSine(int msegNo) {
@@ -344,14 +343,14 @@ void VASTMSEGData::initToAHDSR(int msegNo) {
 void VASTMSEGData::calcSegmentCoefficients(int samplerate, ULong64_t startPlayTimestamp, int activeSegment, int samplesSinceSegmentStart, int segmentLengthInSamples, CVASTSettings* set, int voiceNo) {
 	if (activeSegment >= getNumSegments()) {
 		activeSegment = 0;
-		isDirty = true;
+		m_isDirty.store(true);
 	}
 	
 	//if (voiceNo == set->m_oldestPlaying) {
 		setUIDisplay(activeSegment, samplesSinceSegmentStart, segmentLengthInSamples, voiceNo, true);
 	//}
 			   
-	if (!((isDirty) || (samplerate != m_iSampleRate))) return;
+	if (!((m_isDirty.load()) || (samplerate != m_iSampleRate))) return;
 
 	m_iSampleRate = samplerate; //samplerate changed?
 
@@ -395,34 +394,36 @@ void VASTMSEGData::calcSegmentCoefficients(int samplerate, ULong64_t startPlayTi
 		}
 	}
 
-	isDirty = false;
-	m_needsUIUpdate = true;
+	m_isDirty.store(false);
+	m_needsUIUpdate.store(true);
 }
 
 double VASTMSEGData::getTotalDuration() {
-	double dur = m_fDecayTimeExternalSet;
-	if (hasAttackPhase()) dur += m_fAttackTimeExternalSet;
+	double dur = m_fDecayTimeExternalSet.load();
+	if (hasAttackPhase()) dur += m_fAttackTimeExternalSet.load();
 	else {
-		m_fAttackTimeExternalSet = 0.0; m_fAttackTime = 0.0;
+		m_fAttackTimeExternalSet.store(0.0);
+        m_fAttackTime.store(0.0);
 	}
-	if (hasReleasePhase()) dur += m_fReleaseTimeExternalSet;
+	if (hasReleasePhase()) dur += m_fReleaseTimeExternalSet.load();
 	else {
-		m_fReleaseTimeExternalSet = 0.0; m_fReleaseTime = 0.0;
+		m_fReleaseTimeExternalSet.store(0.0);
+        m_fReleaseTime.store(0.0);
 	}
 	return dur;
 }
 
 void VASTMSEGData::addPoint(ControlPoint point) { //needs calcADSR() afterwards
-	isDirty = true;
-	m_needsUIUpdate = true;
+	m_isDirty.store(true);
+	m_needsUIUpdate.store(true);
 
 	controlPoints.push_back(point);
 	checkLoop();	
 }
 
 void VASTMSEGData::insertPoint(int newpos, ControlPoint point) { //needs calcADSR() afterwards
-	isDirty = true;
-	m_needsUIUpdate = true;
+    m_isDirty.store(true);
+	m_needsUIUpdate.store(true);
 
 	controlPoints.insert(controlPoints.begin() + newpos, point);
 	checkLoop();
@@ -430,8 +431,8 @@ void VASTMSEGData::insertPoint(int newpos, ControlPoint point) { //needs calcADS
 
 void VASTMSEGData::removePoint(int delpos) {
 	if (controlPoints.size() > 3) {//keep last three points to have decay and release
-		isDirty = true;
-		m_needsUIUpdate = true;
+        m_isDirty.store(true);
+        m_needsUIUpdate.store(true);
 
 		controlPoints.erase(controlPoints.begin() + delpos);
 		checkLoop();
@@ -453,16 +454,16 @@ void VASTMSEGData::removePointUI(int delpos) {
 void VASTMSEGData::setUIDisplay(int dispActiveSegment, int dispSamplesSinceSegmentStart, int dispSegmentLengthInSamples, int voiceNo, bool isPlaying) {
 	if (dispSegmentLengthInSamples < 0)
 		return;
-	if ((m_dispActiveSegment[voiceNo] != dispActiveSegment) ||
-		(m_dispSamplesSinceSegmentStart[voiceNo] != dispSamplesSinceSegmentStart) ||
-		(m_dispSegmentLengthInSamples[voiceNo] != dispSegmentLengthInSamples) ||
-		(m_dispVoicePlaying[voiceNo] != isPlaying)) {
+	if ((m_dispActiveSegment[voiceNo].load() != dispActiveSegment) ||
+		(m_dispSamplesSinceSegmentStart[voiceNo].load() != dispSamplesSinceSegmentStart) ||
+		(m_dispSegmentLengthInSamples[voiceNo].load() != dispSegmentLengthInSamples) ||
+		(m_dispVoicePlaying[voiceNo].load() != isPlaying)) {
 		m_needsPositionUpdate = true;
 	}
-	m_dispVoicePlaying[voiceNo] = isPlaying;
-	m_dispActiveSegment[voiceNo] = dispActiveSegment;
-	m_dispSamplesSinceSegmentStart[voiceNo] = jlimit<float>(0.f, dispSegmentLengthInSamples, dispSamplesSinceSegmentStart);
-	m_dispSegmentLengthInSamples[voiceNo] = dispSegmentLengthInSamples;
+	m_dispVoicePlaying[voiceNo].store(isPlaying);
+	m_dispActiveSegment[voiceNo].store(dispActiveSegment);
+	m_dispSamplesSinceSegmentStart[voiceNo].store(jlimit<float>(0.f, dispSegmentLengthInSamples, dispSamplesSinceSegmentStart));
+	m_dispSegmentLengthInSamples[voiceNo].store(dispSegmentLengthInSamples);
 }
 
 bool VASTMSEGData::getAndClearPositionUpdateFlag() {
@@ -480,44 +481,44 @@ bool VASTMSEGData::getAndClearUIUpdateFlag() {
 //ReadWriteLock mReadWriteLock; //one lock per instance of class
 
 void VASTMSEGData::setDirty() {
-	isDirty = true;
+	m_isDirty.store(true);
 }
 
 void VASTMSEGData::clearDirtyFlag() {
-	isDirty = false;
+    m_isDirty.store(false);
 }
 
 bool VASTMSEGData::isMSEGDirty() {
-	return isDirty;
+	return m_isDirty.load();
 }
 
 bool VASTMSEGData::getADSRUpdated() {
-	return m_bADSR_updated;
+	return m_bADSR_updated.load();
 }
 
 void VASTMSEGData::resetADSRUpdated() {
-	m_bADSR_updated = false;
+	m_bADSR_updated.store(false);
 }
 
 int VASTMSEGData::getDispActiveSegment(int voiceNo) {
-	return m_dispActiveSegment[voiceNo];
+	return m_dispActiveSegment[voiceNo].load();
 }
 
 int VASTMSEGData::getDispSamplesSinceSegmentStart(int voiceNo) {
-	return m_dispSamplesSinceSegmentStart[voiceNo];
+	return m_dispSamplesSinceSegmentStart[voiceNo].load();
 }
 
 int VASTMSEGData::getDispSegmentLengthInSamples(int voiceNo) {
-	return m_dispSegmentLengthInSamples[voiceNo];
+	return m_dispSegmentLengthInSamples[voiceNo].load();
 }
 
 bool VASTMSEGData::dispVoicePlaying(int voiceNo) {
-	return m_dispVoicePlaying[voiceNo];
+	return m_dispVoicePlaying[voiceNo].load();
 }
 
 void VASTMSEGData::setEnvMode(int mode) {
-	isDirty = true;
-	m_needsUIUpdate = true;
+	m_isDirty.store(true);
+    m_needsUIUpdate.store(true);
 
 	env_mode = mode;
 }
@@ -554,8 +555,8 @@ void VASTMSEGData::calcADSR() {
 		float newSustainLevel = controlPoints[susPoint].yVal;
 		if (newSustainLevel != m_fSustainLevel) {
 			m_fSustainLevel = newSustainLevel;			
-			m_fSustainLevelExternalSet = m_fSustainLevel;
-			m_bADSR_updated = true;
+			m_fSustainLevelExternalSet.store(m_fSustainLevel.load());
+			m_bADSR_updated.store(true);
 		}
 	}
 
@@ -591,31 +592,24 @@ void VASTMSEGData::calcADSR() {
 
 	double newAttackTime = totalBefore * attackPerc;
 	jassert(abs((attackPerc + decayPerc + releasePerc) - 1.0) < 0.01);
-	if (newAttackTime != m_fAttackTime) {
-		m_fAttackTime = newAttackTime;
-		
-
-		m_fAttackTimeExternalSet = m_fAttackTime;
-
-		m_bADSR_updated = true;
+	if (newAttackTime != m_fAttackTime.load()) {
+		m_fAttackTime.store(newAttackTime);
+		m_fAttackTimeExternalSet.store(m_fAttackTime);
+		m_bADSR_updated.store(true);
 	}
 
 	double newDecayTime = totalBefore * decayPerc;
-	if (newDecayTime != m_fDecayTime) {
-		m_fDecayTime = newDecayTime;
-
-		m_fDecayTimeExternalSet = m_fDecayTime;
-
-		m_bADSR_updated = true;
+	if (newDecayTime != m_fDecayTime.load()) {
+		m_fDecayTime.store(newDecayTime);
+		m_fDecayTimeExternalSet.store(m_fDecayTime.load());
+        m_bADSR_updated.store(true);
 	}
 
 	double newReleaseTime = totalBefore * releasePerc;
-	if (newReleaseTime != m_fReleaseTime) {
-		m_fReleaseTime = newReleaseTime;
-
-		m_fReleaseTimeExternalSet = m_fReleaseTime;
-
-		m_bADSR_updated = true;
+	if (newReleaseTime != m_fReleaseTime.load()) {
+		m_fReleaseTime.store(newReleaseTime);
+		m_fReleaseTimeExternalSet.store(m_fReleaseTime.load());
+        m_bADSR_updated.store(true);
 	}
 
 	double totalAfter = getTotalDuration(); //needed
@@ -631,17 +625,17 @@ bool VASTMSEGData::hasReleasePhase() {
 }
 
 void VASTMSEGData::setSynch(bool synch) {
-	m_bSynch = synch;
-	isDirty = true;
+    m_bSynch.store(synch);
+    m_isDirty.store(true);
 }
 
 bool VASTMSEGData::getSynch() {
-	return m_bSynch;
+	return m_bSynch.load();
 }
 
 void VASTMSEGData::setTimeBeats(int timeBeats) {
 	m_uTimeBeats = timeBeats;
-	isDirty = true;
+    m_isDirty.store(true);
 }
 
 int VASTMSEGData::getTimeBeats() {
@@ -653,25 +647,25 @@ int VASTMSEGData::getTimeBeats() {
 //float getAttackLevel() { return 0.f; };
 
 double VASTMSEGData::getAttackTime() {
-	return m_fAttackTime;
+	return m_fAttackTime.load();
 }
 
 //ms
 
 double VASTMSEGData::getDecayTime() {
-	return m_fDecayTime;
+	return m_fDecayTime.load();
 }
 
 //ms
 
 double VASTMSEGData::getSustainLevel() {
-	return m_fSustainLevel;
+	return m_fSustainLevel.load();
 }
 
 /** < 0.0 to 1.0. */
 
 double VASTMSEGData::getReleaseTime() {
-	return m_fReleaseTime;
+	return m_fReleaseTime.load();
 }
 
 bool VASTMSEGData::hasAttackPhase() {
@@ -691,7 +685,7 @@ void VASTMSEGData::doADSR() {
 
 	if (controlPoints.size() < 3) return;
 
-	//isDirty = true;
+	//m_isDirty.store(true);
 
 	int susPoint = getSustainPoint();
 	int decayPoint = -1;
@@ -740,13 +734,13 @@ void VASTMSEGData::doADSR() {
 	//double newAttackPerc = ((m_fAttackTimeExternalSet + 0.000001) / getTotalDuration());
 	//double newDecayPerc = ((m_fDecayTimeExternalSet + 0.000001) / getTotalDuration());
 	//double newReleasePerc = ((m_fReleaseTimeExternalSet + 0.000001) / getTotalDuration());
-	double newAttackPerc = ((m_fAttackTimeExternalSet + 0.0000000001) / getTotalDuration());
-	double newDecayPerc = ((m_fDecayTimeExternalSet + 0.0000000001) / getTotalDuration());
-	double newReleasePerc = ((m_fReleaseTimeExternalSet + 0.0000000001) / getTotalDuration());
+	double newAttackPerc = ((m_fAttackTimeExternalSet.load() + 0.0000000001) / getTotalDuration());
+	double newDecayPerc = ((m_fDecayTimeExternalSet.load() + 0.0000000001) / getTotalDuration());
+	double newReleasePerc = ((m_fReleaseTimeExternalSet.load() + 0.0000000001) / getTotalDuration());
 
-	m_fAttackTime = m_fAttackTimeExternalSet; //CHECK
-	m_fDecayTime = m_fDecayTimeExternalSet;//CHECK
-	m_fReleaseTime = m_fReleaseTimeExternalSet; //CHECK
+	m_fAttackTime.store(m_fAttackTimeExternalSet.load()); //CHECK
+	m_fDecayTime.store(m_fDecayTimeExternalSet.load());//CHECK
+	m_fReleaseTime.store(m_fReleaseTimeExternalSet.load()); //CHECK
 
 	double quotaDecay = (decayPerc == 0.0) ? 0.0000000001 : ((decayPerc >= 0.0) ? newDecayPerc / decayPerc : 0.0);
 
@@ -885,9 +879,8 @@ void VASTMSEGData::stepSeqChangeBar(int step, float barheight) {
 	controlPoints[step * 3 + 2].yVal = barheight;
 	*/
 
-
-	isDirty = true;
-	m_needsUIUpdate = true;
+    m_isDirty.store(true);
+    m_needsUIUpdate.store(true);
 }
 
 void VASTMSEGData::stepSeqChangeGate(float gate) {
@@ -906,8 +899,8 @@ void VASTMSEGData::stepSeqChangeGate(float gate) {
 		}
 	}
 	*/
-	isDirty = true;
-	m_needsUIUpdate = true;
+    m_isDirty.store(true);
+    m_needsUIUpdate.store(true);
 #ifdef _DEBUG
 	vassert(validate());
 #endif
@@ -929,8 +922,8 @@ void VASTMSEGData::stepSeqChangeGlide(float glide) {
 	}
 	*/
 
-	isDirty = true;
-	m_needsUIUpdate = true;
+    m_isDirty.store(true);
+    m_needsUIUpdate.store(true);
 }
 
 void VASTMSEGData::stepSeqChangeSteps(int steps, float glide, float gate) {
@@ -952,8 +945,8 @@ void VASTMSEGData::stepSeqChangeSteps(int steps, float glide, float gate) {
 
 	doStepSeq(m_ss_glide, m_ss_gate);
 	
-	isDirty = true;
-	m_needsUIUpdate = true;
+    m_isDirty.store(true);
+    m_needsUIUpdate.store(true);
 #ifdef _DEBUG
 	vassert(validate());
 #endif
@@ -1011,8 +1004,8 @@ void VASTMSEGData::setInvert(bool inv) {
 
 	doStepSeq(m_ss_glide, m_ss_gate);
 
-	isDirty = true;
-	m_needsUIUpdate = true;
+    m_isDirty.store(true);
+    m_needsUIUpdate.store(true);
 }
 
 void VASTMSEGData::doStepSeq(float glide, float gate) { //0..100
@@ -1021,14 +1014,14 @@ void VASTMSEGData::doStepSeq(float glide, float gate) { //0..100
 	m_ss_gate = gate;
 
 	//save vals
-	m_fAttackTime = m_fAttackTimeExternalSet;
-	m_fDecayTime = m_fDecayTimeExternalSet;
-	m_fReleaseTime = m_fReleaseTimeExternalSet;
+	m_fAttackTime.store(m_fAttackTimeExternalSet.load());
+	m_fDecayTime.store(m_fDecayTimeExternalSet.load());
+	m_fReleaseTime.store(m_fReleaseTimeExternalSet.load());
 
 	controlPoints.clear();
 
-	isDirty = true;
-	m_needsUIUpdate = true;
+    m_isDirty.store(true);
+    m_needsUIUpdate.store(true);
 
 	float l_gate = gate;
 	float barlength = 1.0 / float(getStepSeqSteps());
@@ -1135,8 +1128,8 @@ bool VASTMSEGData::validate() {
 }
 
 void VASTMSEGData::setXYValues(int pointno, double newxval, double newyval) {
-	isDirty = true;
-	m_needsUIUpdate = true;
+    m_isDirty.store(true);
+    m_needsUIUpdate.store(true);
 	
 	double xVal = newxval;
 	double yVal = newyval;
@@ -1156,8 +1149,8 @@ void VASTMSEGData::setXYValues(int pointno, double newxval, double newyval) {
 }
 
 void VASTMSEGData::setCurveValues(int pointno, double newval) {
-	isDirty = true;
-	m_needsUIUpdate = true;
+    m_isDirty.store(true);
+    m_needsUIUpdate.store(true);
 
 	double curveVal = newval;
 	curveVal = jmax(0.0, curveVal);
@@ -1167,8 +1160,8 @@ void VASTMSEGData::setCurveValues(int pointno, double newval) {
 
 void VASTMSEGData::toggleDecayPoint(int pointno) {
 //TODO check consistency
-	isDirty = true;
-	m_needsUIUpdate = true;
+    m_isDirty.store(true);
+    m_needsUIUpdate.store(true);
 
 	bool oldVal = controlPoints[pointno].isDecay;
 	for (int i = 0; i < controlPoints.size(); i++)
@@ -1185,8 +1178,8 @@ void VASTMSEGData::toggleDecayPoint(int pointno) {
 
 void VASTMSEGData::toggleLoopStart(int pointno) {
 	//TODO check consistency
-	isDirty = true;
-	m_needsUIUpdate = true;
+    m_isDirty.store(true);
+    m_needsUIUpdate.store(true);
 
 	bool oldVal = controlPoints[pointno].isLoopStart;
 	for (int i = 0; i < controlPoints.size(); i++)
@@ -1199,8 +1192,8 @@ void VASTMSEGData::toggleLoopStart(int pointno) {
 
 void VASTMSEGData::toggleMPELift(int pointno) {
 	//TODO check consistency
-	isDirty = true;
-	m_needsUIUpdate = true;
+    m_isDirty.store(true);
+    m_needsUIUpdate.store(true);
 
 	bool oldVal = controlPoints[pointno].isMPELift;
 	//for (int i = 0; i < controlPoints.size(); i++)
@@ -1213,8 +1206,8 @@ void VASTMSEGData::toggleMPELift(int pointno) {
 
 void VASTMSEGData::toggleSustainPoint(int pointno) {
 	//TODO check consistency
-	isDirty = true;
-	m_needsUIUpdate = true;
+    m_isDirty.store(true);
+    m_needsUIUpdate.store(true);
 
 	bool oldVal = controlPoints[pointno].isSustain;
 	for (int i = 0; i < controlPoints.size(); i++)
@@ -1255,8 +1248,8 @@ void VASTMSEGData::checkLoop() {
 
 void VASTMSEGData::clearLoopPoints() {
 	//TODO check consistency
-	isDirty = true;
-	m_needsUIUpdate = true;
+    m_isDirty.store(true);
+    m_needsUIUpdate.store(true);
 
 	for (int i = 0; i < controlPoints.size(); i++) {
 		controlPoints[i].isSustain = false;
@@ -1268,8 +1261,8 @@ void VASTMSEGData::clearLoopPoints() {
 }
 
 void VASTMSEGData::setCurveStyle(int pointno, int style) {
-	isDirty = true;
-	m_needsUIUpdate = true;
+    m_isDirty.store(true);
+    m_needsUIUpdate.store(true);
 
 	controlPoints[pointno].curveStyle = style;
 }
@@ -1286,15 +1279,15 @@ void VASTMSEGData::getValueTreeState(ValueTree* tree, UndoManager* undoManager, 
 	if (isMseg) {
 		tree->setProperty("env_mode", env_mode, undoManager);
 
-		tree->setProperty("m_bSynch", m_bSynch, undoManager);
-		tree->setProperty("m_uTimeBeats", m_uTimeBeats, undoManager);
-		tree->setProperty("m_fSustainLevelExternalSet", m_fSustainLevelExternalSet, undoManager);
-		tree->setProperty("m_fAttackTimeExternalSet", m_fAttackTimeExternalSet, undoManager);
-		tree->setProperty("m_fDecayTimeExternalSet", m_fDecayTimeExternalSet, undoManager);
-		tree->setProperty("m_fReleaseTimeExternalSet", m_fReleaseTimeExternalSet, undoManager);
-		tree->setProperty("m_fAttackSteps", m_fAttackSteps, undoManager);
-		tree->setProperty("m_fDecaySteps", m_fDecaySteps, undoManager);
-		tree->setProperty("m_fReleaseSteps", m_fReleaseSteps, undoManager);
+		tree->setProperty("m_bSynch", m_bSynch.load(), undoManager);
+		tree->setProperty("m_uTimeBeats", m_uTimeBeats.load(), undoManager);
+		tree->setProperty("m_fSustainLevelExternalSet", m_fSustainLevelExternalSet.load(), undoManager);
+		tree->setProperty("m_fAttackTimeExternalSet", m_fAttackTimeExternalSet.load(), undoManager);
+		tree->setProperty("m_fDecayTimeExternalSet", m_fDecayTimeExternalSet.load(), undoManager);
+		tree->setProperty("m_fReleaseTimeExternalSet", m_fReleaseTimeExternalSet.load(), undoManager);
+		tree->setProperty("m_fAttackSteps", m_fAttackSteps.load(), undoManager);
+		tree->setProperty("m_fDecaySteps", m_fDecaySteps.load(), undoManager);
+		tree->setProperty("m_fReleaseSteps", m_fReleaseSteps.load(), undoManager);
 
 		//points
 		tree->setProperty("numControlPoints", int(controlPoints.size()), undoManager);
@@ -1335,16 +1328,16 @@ void VASTMSEGData::setValueTreeState(ValueTree* tree, bool isMseg, CVASTSettings
 		m_bSynch = tree->getProperty("m_bSynch");
 		m_uTimeBeats = tree->getProperty("m_uTimeBeats");
 
-		m_fAttackTimeExternalSet = tree->getProperty("m_fAttackTimeExternalSet");
-		m_fAttackTime = m_fAttackTimeExternalSet;
-		m_fDecayTimeExternalSet = tree->getProperty("m_fDecayTimeExternalSet");
-		m_fDecayTime = m_fDecayTimeExternalSet;
-		m_fReleaseTimeExternalSet = tree->getProperty("m_fReleaseTimeExternalSet");
-		m_fReleaseTime = m_fReleaseTimeExternalSet;
+		m_fAttackTimeExternalSet.store(tree->getProperty("m_fAttackTimeExternalSet"));
+		m_fAttackTime.store(m_fAttackTimeExternalSet.load());
+		m_fDecayTimeExternalSet.store(tree->getProperty("m_fDecayTimeExternalSet"));
+		m_fDecayTime.store(m_fDecayTimeExternalSet.load());
+		m_fReleaseTimeExternalSet.store(tree->getProperty("m_fReleaseTimeExternalSet"));
+		m_fReleaseTime.store(m_fReleaseTimeExternalSet.load());
 
-		m_fAttackSteps = tree->getProperty("m_fAttackSteps");
-		m_fDecaySteps = tree->getProperty("m_fDecaySteps");
-		m_fReleaseSteps = tree->getProperty("m_fReleaseSteps");
+		m_fAttackSteps.store(tree->getProperty("m_fAttackSteps"));
+		m_fDecaySteps.store(tree->getProperty("m_fDecaySteps"));
+		m_fReleaseSteps.store(tree->getProperty("m_fReleaseSteps"));
 		
 		//points
 		controlPoints.clear();
@@ -1376,8 +1369,8 @@ void VASTMSEGData::setValueTreeState(ValueTree* tree, bool isMseg, CVASTSettings
 		if (tree->hasProperty("m_fSustainLevelExternalSet"))   //was added later – compatibility for old presets
 			m_fSustainLevelExternalSet = tree->getProperty("m_fSustainLevelExternalSet");
 		else
-			m_fSustainLevelExternalSet = sustainYVal;
-		m_fSustainLevel = m_fSustainLevelExternalSet;
+			m_fSustainLevelExternalSet.store(sustainYVal);
+		m_fSustainLevel.store(m_fSustainLevelExternalSet.load());
 	}
 	else { //stepSeq
 		if (!tree->hasProperty("invert")) {
@@ -1398,8 +1391,8 @@ void VASTMSEGData::setValueTreeState(ValueTree* tree, bool isMseg, CVASTSettings
 		}
 	}
 	
-	isDirty = true;
-	m_needsUIUpdate = true;
+    m_isDirty.store(true);
+    m_needsUIUpdate.store(true);
 
 	if (isMseg) {
 		if (m_bSynch) {
@@ -1410,7 +1403,7 @@ void VASTMSEGData::setValueTreeState(ValueTree* tree, bool isMseg, CVASTSettings
 
 		checkLoop();
 		calcADSR();
-		m_bADSR_updated = true;
+        m_bADSR_updated.store(true);
 	}
 	else { //StepSeq
 		doStepSeq(m_ss_glide, m_ss_gate);
@@ -1425,10 +1418,10 @@ void VASTMSEGData::setAttackSteps(double attackSteps, CVASTSettings* set) {
 	if (hasAttackPhase()) {
 		m_fAttackSteps = attackSteps;
 		float millisPerBeat = set->getMillisecondsPerBeat();
-		float intRatio = set->getIntervalRatio(m_uTimeBeats);
+		float intRatio = set->getIntervalRatio(m_uTimeBeats.load());
 		float time = (intRatio * attackSteps) * millisPerBeat;
 		setAttackTime(time);
-		isDirty = true;
+        m_isDirty.store(true);
 	}
 }
 void VASTMSEGData::setDecaySteps(double decaySteps, CVASTSettings* set) {
@@ -1436,31 +1429,31 @@ void VASTMSEGData::setDecaySteps(double decaySteps, CVASTSettings* set) {
 	if (decayPoint != (controlPoints.size() - 1)) { //shall not be last
 		m_fDecaySteps = decaySteps;
 		float millisPerBeat = set->getMillisecondsPerBeat();
-		float intRatio = set->getIntervalRatio(m_uTimeBeats);
+		float intRatio = set->getIntervalRatio(m_uTimeBeats.load());
 		float time = (intRatio * decaySteps) * millisPerBeat;
 		setDecayTime(time);
-		isDirty = true;
+        m_isDirty.store(true);
 	}
 }
 void VASTMSEGData::setReleaseSteps(double releaseSteps, CVASTSettings* set) {
 	if (hasReleasePhase()) {
 		m_fReleaseSteps = releaseSteps;
 		float millisPerBeat = set->getMillisecondsPerBeat();
-		float intRatio = set->getIntervalRatio(m_uTimeBeats);
+		float intRatio = set->getIntervalRatio(m_uTimeBeats.load());
 		float time = (intRatio * releaseSteps) * millisPerBeat;
 		setReleaseTime(time);
-		isDirty = true;
+        m_isDirty.store(true);
 	}
 }
 
 float VASTMSEGData::getAttackSteps() {
-	return m_fAttackSteps;
+	return m_fAttackSteps.load();
 }
 
 float VASTMSEGData::calcStepsFromTime(double time, CVASTSettings* set) {
 	float millisPerBeat = set->getMillisecondsPerBeat();
-	float intRatio = set->getIntervalRatio(m_uTimeBeats);
-	float steps = (time / millisPerBeat) / intRatio; 
+	float intRatio = set->getIntervalRatio(m_uTimeBeats.load());
+	float steps = (time / millisPerBeat) / intRatio;
 	return steps;
 }
 
@@ -1469,94 +1462,98 @@ void VASTMSEGData::setAttackTime(double attackTime) {
 		m_fAttackTimeExternalSet = attackTime;
 		m_fAttackTime = attackTime;
 		doADSR();
-		isDirty = true;
-		m_needsUIUpdate = true;
+        m_isDirty.store(true);
+        m_needsUIUpdate.store(true);
 	}
 	else
-		m_fAttackTimeExternalSet = 0.0;
+		m_fAttackTimeExternalSet.store(0.0);
 }
 
 void VASTMSEGData::setDecayTime(double decayTime) {
 	int decayPoint = getDecayPoint();
 	if (decayPoint != (controlPoints.size() - 1)) { //shall not be last
-		m_fDecayTimeExternalSet = decayTime;
-		m_fDecayTime = decayTime;
+		m_fDecayTimeExternalSet.store(decayTime);
+		m_fDecayTime.store(decayTime);
 		doADSR();
-		isDirty = true;
-		m_needsUIUpdate = true;
+        m_isDirty.store(true);
+        m_needsUIUpdate.store(true);
 	}
 }
 
 void VASTMSEGData::setReleaseTime(double releaseTime) {
 	if (hasReleasePhase()) {
-		m_fReleaseTimeExternalSet = releaseTime; //CHECK this was commented out but why??? with comment it cannot be automated!
-		m_fReleaseTime = releaseTime;
+		m_fReleaseTimeExternalSet.store(releaseTime); //CHECK this was commented out but why??? with comment it cannot be automated!
+		m_fReleaseTime.store(releaseTime);
 		doADSR();
-		isDirty = true;
-		m_needsUIUpdate = true;
+        m_isDirty.store(true);
+        m_needsUIUpdate.store(true);
 	}
 	else
-		m_fReleaseTimeExternalSet = 0.0;
+		m_fReleaseTimeExternalSet.store(0.0);
 }
 
 void VASTMSEGData::setSustainLevel(double sustainLevel) { //0..1
-	m_fSustainLevel = sustainLevel;
+	m_fSustainLevel.store(sustainLevel);
 	//m_fSustainLevelExternalSet = sustainLevel; //new
-	if (m_fSustainLevel > 1.0) m_fSustainLevel = 1.0;
-	if (m_fSustainLevel < 0.0) m_fSustainLevel = 0.0;
+	if (m_fSustainLevel.load() > 1.0)
+        m_fSustainLevel.store(1.0);
+	if (m_fSustainLevel.load() < 0.0)
+        m_fSustainLevel.store(0.0);
 	int susPoint = getSustainPoint();
 	if (susPoint != -1) {
 		controlPoints[susPoint].yVal = sustainLevel;
-		isDirty = true;
-		m_needsUIUpdate = true;
+        m_isDirty.store(true);
+        m_needsUIUpdate.store(true);
 	}
 }
 
 void VASTMSEGData::setAttackTimeSlider(double attackTime) {
 	if (hasAttackPhase()) {
-		m_fAttackTimeExternalSet = attackTime;
-		m_fAttackTime = attackTime;
+		m_fAttackTimeExternalSet.store(attackTime);
+		m_fAttackTime.store(attackTime);
 		doADSR();
-		isDirty = true;
-		m_needsUIUpdate = true;
+        m_isDirty.store(true);
+        m_needsUIUpdate.store(true);
 	}
 	else
-		m_fAttackTimeExternalSet = 0.0;
+		m_fAttackTimeExternalSet.store(0.0);
 }
 
 void VASTMSEGData::setDecayTimeSlider(double decayTime) {
 	int decayPoint = getDecayPoint();
 	if (decayPoint != (controlPoints.size() - 1)) { //shall not be last
-		m_fDecayTimeExternalSet = decayTime;
-		m_fDecayTime = decayTime;
+		m_fDecayTimeExternalSet.store(decayTime);
+		m_fDecayTime.store(decayTime);
 		doADSR();
-		isDirty = true;
-		m_needsUIUpdate = true;
+        m_isDirty.store(true);
+        m_needsUIUpdate.store(true);
 	}
 }
 
 void VASTMSEGData::setReleaseTimeSlider(double releaseTime) {
 	if (hasReleasePhase()) {
-		m_fReleaseTimeExternalSet = releaseTime;
-		m_fReleaseTime = releaseTime;
+		m_fReleaseTimeExternalSet.store(releaseTime);
+		m_fReleaseTime.store(releaseTime);
 		doADSR();
-		isDirty = true;
-		m_needsUIUpdate = true;
+        m_isDirty.store(true);
+        m_needsUIUpdate.store(true);
 	}
 	else
-		m_fReleaseTimeExternalSet = 0.0;
+		m_fReleaseTimeExternalSet.store(0.0);
 }
 
 void VASTMSEGData::setSustainLevelSlider(double sustainLevel) { //0..1
-	m_fSustainLevel = sustainLevel;
-	m_fSustainLevelExternalSet = sustainLevel; //new
-	if (m_fSustainLevel > 1.0) m_fSustainLevel = 1.0;
-	if (m_fSustainLevel < 0.0) m_fSustainLevel = 0.0;
+	m_fSustainLevel.store(sustainLevel);
+    m_fSustainLevelExternalSet.store(sustainLevel);
+	if (m_fSustainLevel.load() > 1.0) 
+        m_fSustainLevel.store(1.0);
+	if (m_fSustainLevel.load() < 0.0)
+        m_fSustainLevel.store(0.0);
 	int susPoint = getSustainPoint();
 	if (susPoint != -1) {
 		controlPoints[susPoint].yVal = sustainLevel;
-		isDirty = true;
-		m_needsUIUpdate = true;
+        m_isDirty.store(true);
+        m_needsUIUpdate.store(true);
 	}
 }
 
@@ -1564,16 +1561,16 @@ void VASTMSEGData::setStepSeqTime(double stepSeqTime) {
 	int cursteps = getStepSeqSteps();
 	double decaytime = stepSeqTime * cursteps;
 	m_fOrigStepSeqTime = stepSeqTime;
-	m_fDecayTimeExternalSet = decaytime;
-	m_fAttackTime = 0.0;
-	m_fReleaseTime = 0.0;
-	m_fAttackTimeExternalSet = 0.0;
-	m_fReleaseTimeExternalSet = 0.0;
-	m_fSustainLevelExternalSet = 0.0; //new
-	m_fDecayTime = decaytime;
+	m_fDecayTimeExternalSet.store(decaytime);
+	m_fAttackTime.store(0.0);
+	m_fReleaseTime.store(0.0);
+	m_fAttackTimeExternalSet.store(0.0);
+	m_fReleaseTimeExternalSet.store(0.0);
+	m_fSustainLevelExternalSet.store(0.0);
+	m_fDecayTime.store(decaytime);
 
-	isDirty = true;
-	m_needsUIUpdate = true;
+    m_isDirty.store(true);
+    m_needsUIUpdate.store(true);
 }
 
 int VASTMSEGData::getNumSegments() { return controlPoints.size() - 1; }
@@ -1591,9 +1588,9 @@ VASTMSEGData::ControlPoint* VASTMSEGData::getSegmentEnd(int segment) {
 }
 
 float VASTMSEGData::getDecaySteps() {
-	return m_fDecaySteps;
+	return m_fDecaySteps.load();
 }
 
 float VASTMSEGData::getReleaseSteps() {
-	return m_fReleaseSteps;
+	return m_fReleaseSteps.load();
 }

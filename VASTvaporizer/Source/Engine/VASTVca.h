@@ -31,7 +31,7 @@ private:
 	
 	CVASTSettings* m_Set;
 	MYUINT m_voiceNo = 0;
-	bool m_bNoteOff = true;
+	std::atomic<bool> m_bNoteOff = true;
 	ULong64_t m_startPlayTimestamp = 0;
 
 	JUCE_LEAK_DETECTOR(CVASTVca)

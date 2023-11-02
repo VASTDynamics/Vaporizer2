@@ -296,9 +296,9 @@ void VASTFreqDomainViewport::mouseExit(const MouseEvent& event) {
 
 void VASTFreqDomainViewport::adjustFreqDomainInternalThreaded(std::vector<sFreqDomainBuffer> domainBuffer, bool clipBins, VASTWaveTableEditorComponent* myWtEditor, VASTAudioProcessor* myProcessor) {
     
-    if (myWtEditor->numFreqThreads > 0) return; //just ignore if other thread is running
+    if (myWtEditor->numFreqThreads.load() > 0) return; //just ignore if other thread is running
     
-    myWtEditor->numFreqThreads++;
+    myWtEditor->numFreqThreads+=1;
 	myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->addSoftFadeEditor();
 	std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->getSoftOrCopyWavetable(); //check!
 
@@ -313,7 +313,7 @@ void VASTFreqDomainViewport::adjustFreqDomainInternalThreaded(std::vector<sFreqD
 
 	myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->getOscBank()]->setWavetableSoftFade(wavetable);
 	myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->removeSoftFadeEditor();
-    myWtEditor->numFreqThreads--;
+    myWtEditor->numFreqThreads-=1;
 }
 
 static const double c_freqbin_maxdb = -16.f;

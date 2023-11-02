@@ -90,51 +90,51 @@ void CVASTEffect::useOversampling(int sampleRate, bool oversample) {
 }
 
 bool CVASTEffect::isOff() {
-	return m_bIsOff || m_bShallBeOff;
+	return m_bIsOff.load() || m_bShallBeOff.load();
 }
 
 void CVASTEffect::switchOff() {
-	m_bShallBeOff = true;
+	m_bShallBeOff.store(true);
 	my_processor->requestUIUpdate(true, false, false);
 }
 
 void CVASTEffect::switchOn() {
-	m_bShallBeOff = false;
+	m_bShallBeOff.store(false);
 	my_processor->requestUIUpdate(true, false, false);
 }
 
 bool CVASTEffect::isOffAndShallBeOff() {
-	return m_bIsOff && m_bShallBeOff;
+	return m_bIsOff.load() && m_bShallBeOff.load();
 }
 
 bool CVASTEffect::shallBeOff() {
-	return m_bShallBeOff;
+	return m_bShallBeOff.load();
 }
 
 void CVASTEffect::checkSoftFade() {
-	if (m_bShallBeOff == true) {
-		if (m_bIsOff == true) {
-			m_iSoftFade = 0;
+	if (m_bShallBeOff.load() == true) {
+		if (m_bIsOff.load() == true) {
+			m_iSoftFade.store(0);
 			return;
 		}
-		if (m_iSoftFade <= 0) {
+		if (m_iSoftFade.load() <= 0) {
 			//reset();
-			m_bIsOff = true;
-			m_iSoftFade = 0;
+			m_bIsOff.store(true);
+			m_iSoftFade.store(0);
 		}
 		else
-			m_iSoftFade--;
+			m_iSoftFade-=1;
 	}
 	else { //shall be on
-		if (m_bIsOff == false) {
-			m_iSoftFade = C_MAX_SOFTFADE;
+		if (m_bIsOff.load() == false) {
+			m_iSoftFade.store(C_MAX_SOFTFADE);
 			return;
 		}
-		if (m_iSoftFade >= C_MAX_SOFTFADE) {
-			m_bIsOff = false;
-			m_iSoftFade = C_MAX_SOFTFADE;
+		if (m_iSoftFade.load() >= C_MAX_SOFTFADE) {
+			m_bIsOff.store(false);
+			m_iSoftFade.store(C_MAX_SOFTFADE);
 		}
 		else
-			m_iSoftFade++;
+			m_iSoftFade+=1;
 	}
 }
