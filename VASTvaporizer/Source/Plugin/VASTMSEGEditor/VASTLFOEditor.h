@@ -85,8 +85,6 @@ private:
 
 	String mySuffix = "";
 	
-	CVASTWaveTable m_wavetable = { *&myProcessor->m_pVASTXperience.m_Set };
-
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(VASTLFOEditor)
 };
 

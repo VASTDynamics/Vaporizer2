@@ -298,10 +298,10 @@ void VASTAudioProcessor::initializeToDefaults() {
 		wavetable->addPosition();
 		if (bank == 0) {
 			//init bank A to saw
-			std::vector<myFloat> samples = std::vector<myFloat>(C_WAVE_TABLE_SIZE);			
-			wavetable->getNaiveSamplesFromWave(samples, WAVE::saw);
+			std::vector<myFloat> *samples = wavetable->getNaiveTable(0);
+			wavetable->getNaiveSamplesFromWave(*samples, WAVE::saw);
 			wavetable->setWaveTableName(TRANS("Basic Saw"));
-			wavetable->setNaiveTable(0, samples, true, getWTmode());
+			wavetable->setNaiveTableFast(0, true, getWTmode());
 		}
 		m_pVASTXperience.m_Poly.m_OscBank[bank]->setWavetableSoftFade(wavetable);		
 	}
@@ -451,7 +451,7 @@ void VASTAudioProcessor::initializeToDefaults() {
 	m_pVASTXperience.m_fxBus2.initSequence();
 	m_pVASTXperience.m_fxBus3.initSequence();
 	
-	m_parameterState.undoManager->clearUndoHistory();
+	//m_parameterState.undoManager->clearUndoHistory(); //TODO: there is a sporadic segfault here!
 	m_parameterState.undoManager->beginNewTransaction(); //start new transcation only here?
 }
 
@@ -927,6 +927,8 @@ void VASTAudioProcessor::getStateInformation(MemoryBlock& destData)
 
 	// save many presets / bank 
 
+	DBG("VASTAudioProcessor::getStateInformation called from Thread " << (Thread::getCurrentThread()==nullptr ? "Main UI Thread" : Thread::getCurrentThread()->getThreadName()));
+
 	const ScopedLock sl(getCallbackLock());
 
 	//XmlElement xml = createPatchXML(false); //use internal representation for state // VASTVaporizerParamsV2.00000 behavior
@@ -971,11 +973,10 @@ void VASTAudioProcessor::setCurrentProgramStateInformation(const void *data, int
 }
 
 void VASTAudioProcessor::savePatchXML(File *selectedFile) {
-	XmlElement root = createPatchXML(true); //use external representation for preset files
-
-	//  copyXmlToBinary (*xml, destData);???
-
-	String fileText = root.createDocument("", false, true);
+	std::unique_ptr<XmlElement> root (new XmlElement(createPatchXML(true))); //use external representation for preset files
+	//String fileText = root.createDocument("", false, true); //deprecated
+	XmlElement::TextFormat xmlformat;
+	String fileText = root->toString(xmlformat);
 	selectedFile->deleteFile();
 	FileOutputStream out(*selectedFile);
 	if (out.failedToOpen()) {
@@ -985,7 +986,7 @@ void VASTAudioProcessor::savePatchXML(File *selectedFile) {
 	}
 	out.writeText(fileText, false, false, "\n"); //slash n new?
 	out.flush();
-	root.deleteAllChildElements();
+	root->deleteAllChildElements();
 }
 
 int VASTAudioProcessor::getNumFactoryPresets() {
@@ -2340,7 +2341,8 @@ bool VASTAudioProcessor::writeSettingsToFile() {
 		bankD->setAttribute(*ccStr.get(), *paramString);
 	}
 
-	String myXmlDoc = root.createDocument(String()); //empty is deprecated
+	//String myXmlDoc = root.createDocument(String()); //empty is deprecated
+	String myXmlDoc = root.toString();
 
 	//check if user folders have to be created
 	if (!File(m_UserPresetRootFolder).exists())

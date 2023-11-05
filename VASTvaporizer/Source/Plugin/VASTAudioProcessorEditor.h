@@ -34,7 +34,7 @@ public:
 	//==============================================================================
 	VASTAudioProcessor* getProcessor();
 	juce::ScopedPointer<VASTVaporizerComponent> vaporizerComponent;
-
+	
 	juce::Array<Component*> m_VASTComponentsAll;
 
 	//const int m_iMinWidth = 800;

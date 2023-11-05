@@ -11,11 +11,15 @@ option(BUILD_AVX "Build AVX optimized code" ON)
 option(BUILD_32 "Build for 32bit" OFF)
 option(VASTBUILD "Build compatibility version for existing licenses distributed by VAST Dynamics Software as installers" OFF)
 
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
+endif()
+
 if(EXISTS "VASTvaporizer/Source/Plugin/VASTCommercial/VASTLicense.h")
   set(VASTBUILD ON CACHE BOOL "Build compatibility version for existing licenses distributed by VAST Dynamics Software as installers" FORCE)
 endif()
 
-message(STATUS "Building VAST Dynamics Vaporizer2 plugin, version ${PLUGIN_VERSION} on architecture: ${CMAKE_GENERATOR_PLATFORM}")
+message(STATUS "Building VAST Dynamics Vaporizer2 plugin, version ${PLUGIN_VERSION} on architecture: ${CMAKE_GENERATOR_PLATFORM} with CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
 
 if(NOT USE_SYSTEM_JUCE)
   message(STATUS "Using JUCE from source tree")
@@ -23,45 +27,25 @@ if(NOT USE_SYSTEM_JUCE)
 else()
   message(STATUS "Using system provided JUCE")
   find_package(JUCE CONFIG REQUIRED)
-endif()
+endif(NOT USE_SYSTEM_JUCE)
 
 #new: all targets are build with project name "Vaporizer2" compatibility with old filenames will be guaranteed by installer if needed
-#if (BUILD_32)
-#  if (BUILD_AVX)  
-#	project("VASTvaporizer2")
-#  else()
-#    if (WIN32) #keep compatibility with old plugin filenames
-#	  project("VASTvaporizer2_SSE2")
-#    else()
-#      project("VASTvaporizer2_SSE")
-#    endif()
-#  endif()
-#else()
-#  if (BUILD_AVX)  
-#	project("VASTvaporizer2_64")
-#  else()
-#    if (WIN32) #keep compatibility with old plugin filenames
-#      project("VASTvaporizer2_64_SSE2")
-#    else()
-#      project("VASTvaporizer2_64_SSE")
-#    endif()
-#  endif()
-#endif()
-
 project("VASTvaporizer2")
 message(STATUS "Project name" ${PROJECT_NAME})
 
-if (AAX_SDK_LOCATION)
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
+if(AAX_SDK_LOCATION)
     juce_set_aax_sdk_path(${AAX_SDK_LOCATION})
     message(STATUS "Enabling AAX - caution, non FOSS build")
     list(APPEND PLUGIN_FORMATS AAX)
-endif()
+endif(AAX_SDK_LOCATION)
 
-if (VST2_SDK_LOCATION)
+if(VST2_SDK_LOCATION)
     juce_set_vst2_sdk_path(${VST2_SDK_LOCATION})
     message(STATUS "Enabling VST2 - caution, non FOSS build")
     list(APPEND PLUGIN_FORMATS VST)
-endif()
+endif(VST2_SDK_LOCATION)
 list(APPEND PLUGIN_FORMATS VST3 AU Standalone LV2)
 
 juce_add_plugin(${PROJECT_NAME}
@@ -77,43 +61,76 @@ juce_add_plugin(${PROJECT_NAME}
   PLUGIN_MANUFACTURER_CODE "Vast"
   PLUGIN_CODE "Vap2"
   IS_SYNTH TRUE
+  HARDENED_RUNTIME_ENABLED TRUE
   NEEDS_MIDI_INPUT TRUE
   LV2URI "https://www.vast-dynamics.com/plugins/VASTvaporizer2"
   AAX_IDENTIFIER "com.vastdynamics.VAST2"
+  AAX_CATEGORY "AAX_ePlugInCategory_SWGenerators"
   AU_EXPORT_PREFIX "VAST2AU"
   AU_MAIN_TYPE "kAudioUnitType_MusicDevice"
+  VST2_CATEGORY "kPlugCategSynth"
+  VST3_CATEGORIES "Instrument Synth"
   ICON_BIG "VASTvaporizer/Resources/logokreisvdalpha.png"
   ICON_SMALL "VASTvaporizer/Resources/logokreisvdalpha.png"  
+  PLUGINHOST_AU FALSE
 )
 
 juce_generate_juce_header(${PROJECT_NAME})
 
+macro(remove_cxx_flag flag)
+  string(REPLACE "${flag}" "" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
+  string(REPLACE "${flag}" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+  string(REPLACE "${flag}" "" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
+endmacro()
+
 if(MSVC)
-  target_compile_options(${PROJECT_NAME} PRIVATE /w)
+  list(APPEND MY_PUBLIC_COMPILE_OPTIONS "/w")
 else()
-  target_compile_options(${PROJECT_NAME} PRIVATE -w)
-endif()
+  list(APPEND MY_PUBLIC_COMPILE_OPTIONS "-w")
+endif(MSVC)
 
-if (WIN32)
-  message( STATUS "Building on Windows ${CMAKE_GENERATOR_PLATFORM} with AVX flags: ${BUILD_AVX}")
-  if (BUILD_32)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE _WIN32 _WIN32BIT NDEBUG)
-    if (BUILD_AVX)     	  
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX")
-    else()
-      target_compile_definitions(${PROJECT_NAME} PRIVATE _SSE2_VERSION)
-    endif(BUILD_AVX)
+ if (BUILD_AVX)  
+  target_compile_definitions(${PROJECT_NAME} PRIVATE SSE_AVX=AVX)
+  target_compile_options(${PROJECT_NAME} PRIVATE /arch:AVX)
+else()
+  target_compile_definitions(${PROJECT_NAME} PRIVATE SSE_AVX=SSE2 _SSE2_VERSION)
+endif(BUILD_AVX)
+	
+if(WIN32)
+  remove_cxx_flag("/O3")
+  remove_cxx_flag("/Ox")
+  remove_cxx_flag("/Ob2")
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /O2")
+  message(STATUS "Building on Windows ${CMAKE_GENERATOR_PLATFORM} with AVX flags: ${BUILD_AVX}")  
+  list(APPEND MY_PUBLIC_COMPILE_OPTIONS "/Zc:preprocessor")
+  list(APPEND MY_PUBLIC_COMPILE_OPTIONS "/Zc:wchar_t")
+  list(APPEND MY_PUBLIC_COMPILE_OPTIONS "/Zc:inline")
+  list(APPEND MY_PUBLIC_COMPILE_OPTIONS "/Zc:forScope")
+  list(APPEND MY_PUBLIC_COMPILE_OPTIONS "/permissive-")
+  list(APPEND MY_PUBLIC_COMPILE_OPTIONS "/fp:fast")
+  list(APPEND MY_PUBLIC_COMPILE_OPTIONS "/MT")
+  list(APPEND MY_PUBLIC_COMPILE_OPTIONS "/MP")
+  list(APPEND MY_PUBLIC_COMPILE_OPTIONS "/GS")
+  list(APPEND MY_PUBLIC_COMPILE_OPTIONS "/GL")
+  list(APPEND MY_PUBLIC_COMPILE_OPTIONS "/Zi")
+  list(APPEND MY_PUBLIC_COMPILE_OPTIONS "/O2")
+  list(APPEND MY_PUBLIC_COMPILE_OPTIONS "/Qpar")
+  list(APPEND MY_PUBLIC_COMPILE_OPTIONS "/Qpar-report:1")
+  list(APPEND MY_PUBLIC_COMPILE_OPTIONS "/Qvec-report:1")
+  list(APPEND MY_PUBLIC_COMPILE_OPTIONS "/std:c++latest")
+  list(APPEND MY_PUBLIC_COMPILE_OPTIONS "/WX-")
+	  
+  target_link_options(${PROJECT_NAME} BEFORE PUBLIC /LTCG /NXCOMPAT:NO)  
+  target_compile_definitions(${PROJECT_NAME} PUBLIC _SILENCE_ALL_CXX20_DEPRECATION_WARNINGS)
+  if(BUILD_32)
+    target_compile_options(${PROJECT_NAME} PRIVATE _WIN32 _WIN32BIT NDEBUG)   
   else()#64bit
-    target_compile_definitions(${PROJECT_NAME} PRIVATE _WIN64 _WIN64BIT NDEBUG)
-    if (BUILD_AVX)  
-	  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX")
-    else()
-      target_compile_definitions(${PROJECT_NAME} PRIVATE _SSE2_VERSION)   
-    endif(BUILD_AVX)
-  endif()
-
-  if (ASIO_SDK_LOCATION) #ASIO is windows only
-    message( STATUS "Including ASIO from ${ASIO_SDK_LOCATION}")
+    target_compile_definitions(${PROJECT_NAME} PRIVATE _WIN64 _WIN64BIT NDEBUG)    
+  endif(BUILD_32)
+  
+  if(ASIO_SDK_LOCATION) #ASIO is windows only
+    message(STATUS "Including ASIO from ${ASIO_SDK_LOCATION}")
     target_compile_definitions(${PROJECT_NAME} PRIVATE JUCE_ASIO=1)
     target_include_directories(${PROJECT_NAME} PRIVATE ${ASIO_SDK_LOCATION}/common)
   endif(ASIO_SDK_LOCATION)
@@ -124,41 +141,41 @@ macro (set_xcode_property TARGET XCODE_PROPERTY XCODE_VALUE)
         XCODE_ATTRIBUTE_${XCODE_PROPERTY} ${XCODE_VALUE})
 endmacro (set_xcode_property)
 
-if (APPLE)
-  message( STATUS "Building on Apple macOS ${CMAKE_GENERATOR_PLATFORM} with AVX flags: ${BUILD_AVX}")
-  if (VASTBUILD) 
+if(APPLE)
+  message(STATUS "Building on Apple macOS ${CMAKE_GENERATOR_PLATFORM} with AVX flags: ${BUILD_AVX}")
+  add_target_compile_definitions(${PROJECT_NAME} PUBLIC JUCE_SILENCE_XCODE_15_LINKER_WARNING) #temporarily due to xcode 15 issue
+  add_target_link_options(${PROJECT_NAME} PUBLIC -ld_classic) #temporarily due to xcode 15 issue
+
+  if(VASTBUILD) 
       set_xcode_property(${PROJECT_NAME} CODE_SIGN_STYLE "Manual")
       set_xcode_property(${PROJECT_NAME} DEVELOPMENT_TEAM "PK93HYD6ZN") 
       set_xcode_property(${PROJECT_NAME} CODE_SIGN_IDENTITY "Developer ID Application")
-      #set_xcode_property(${PROJECT_NAME} CODE_SIGN_IDENTITY ${CODESIGNIDENTITY})
-      #set_xcode_property(${PROJECT_NAME} DEVELOPMENT_TEAM ${DEVELOPMENT_TEAM_ID})
-      #set_xcode_property(${PROJECT_NAME} PROVISIONING_PROFILE_SPECIFIER ${PROVISIONING_PROFILE_NAME})
       set_xcode_property(${PROJECT_NAME} ENABLE_HARDENED_RUNTIME "TRUE")
-      target_compile_definitions(${PROJECT_NAME} PRIVATE "JUCE_SILENCE_XCODE_15_LINKER_WARNING") #temporarily due to xcode 15 issue
-      target_link_options(${PROJECT_NAME} PRIVATE " -ld_classic") #temporarily due to xcode 15 issue
+  endif(VASTBUILD)
+  
+  if(CMAKE_BUILD_TYPE MATCHES Release)
+      set_xcode_property(${PROJECT_NAME} GCC_GENERATE_DEBUGGING_SYMBOLS "NO")
+	  set_xcode_property(${PROJECT_NAME} STRIP_INSTALLED_PRODUCT "YES")
+	  set_xcode_property(${PROJECT_NAME} STRIP_INSTALLED_PRODUCT "YES")
+	  set_xcode_property(${PROJECT_NAME} STRIP_TYLE "ALL")
+	  set_xcode_property(${PROJECT_NAME} SEPARATE_STRIP "YES")
   endif()
-  if (BUILD_32)
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32")
-    set (CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -m32")
+  
+  if(BUILD_AVX)  
+    set_xcode_property(${PROJECT_NAME} CLANG_X86_VECTOR_INSTRUCTIONS "avx")
+  endif(BUILD_AVX)
+
+  if(BUILD_32)
+    target_compile_options(${PROJECT_NAME} PUBLIC -m32)
     target_compile_definitions(${PROJECT_NAME} PRIVATE _MACOSX _MACOSX32BIT NDEBUG)
-    if (BUILD_AVX)     	  
-      set_xcode_property(${PROJECT_NAME} CLANG_X86_VECTOR_INSTRUCTIONS "avx")
-    else()
-      target_compile_definitions(${PROJECT_NAME} PRIVATE _SSE2_VERSION)
-    endif(BUILD_AVX)
   else() #64bit
     target_compile_definitions(${PROJECT_NAME} PRIVATE _MACOSX _MACOSX64BIT NDEBUG)
-    if (BUILD_AVX)  
-	  set_xcode_property(${PROJECT_NAME} CLANG_X86_VECTOR_INSTRUCTIONS "avx")
-    else()
-      target_compile_definitions(${PROJECT_NAME} PRIVATE _SSE2_VERSION)   
-    endif(BUILD_AVX)
-  endif()  
+  endif(BUILD_32)   
 endif(APPLE)
 
 if(UNIX AND NOT APPLE) #linux
-  message( STATUS "Building on Linux ${CMAKE_GENERATOR_PLATFORM} with AVX flags: ${BUILD_AVX}")
-endif()
+  message(STATUS "Building on Linux ${CMAKE_GENERATOR_PLATFORM} with AVX flags: ${BUILD_AVX}")
+endif(UNIX AND NOT APPLE)
 
 target_compile_definitions(${PROJECT_NAME}
   PUBLIC
@@ -173,6 +190,11 @@ target_compile_definitions(${PROJECT_NAME}
     JUCE_WEB_BROWSER=0
     JUCE_WIN_PER_MONITOR_DPI_AWARE=0
     JUCE_DISPLAY_SPLASH_SCREEN=0
+)
+
+target_compile_options(${PROJECT_NAME} 
+	BEFORE PUBLIC         
+	${MY_PUBLIC_COMPILE_OPTIONS}
 )
 
 target_sources(${PROJECT_NAME}
@@ -320,15 +342,16 @@ target_sources(${PROJECT_NAME}
     "VASTvaporizer/Source/muFFT/fft.c"
     "VASTvaporizer/Source/muFFT/kernel.c"
 )
-if (VASTBUILD) 
-  message( STATUS "Building as VASTBUILD")
+
+if(VASTBUILD) 
+  message(STATUS "Building as VASTBUILD")
   target_sources(${PROJECT_NAME}
   PRIVATE
     "VASTvaporizer/Source/Plugin/VASTCommercial/VASTLicense.cpp"
     "VASTvaporizer/Source/Plugin/VASTCommercial/VASTLicenseEditor.cpp"
   )
   target_compile_definitions(${PROJECT_NAME} PRIVATE VASTBUILD)
-endif ()
+endif(VASTBUILD)
 
 juce_add_binary_data(VASTvaporizer2_BinaryData
   SOURCES
@@ -345,6 +368,11 @@ juce_add_binary_data(VASTvaporizer2_BinaryData
 )
 
 set_target_properties(VASTvaporizer2_BinaryData PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+
+target_compile_options(VASTvaporizer2_BinaryData
+	BEFORE PUBLIC         
+	${MY_PUBLIC_COMPILE_OPTIONS}
+)
 
 if(UNIX AND NOT APPLE) #linux
   target_link_libraries(${PROJECT_NAME} PRIVATE atomic)
@@ -368,8 +396,18 @@ target_link_libraries(${PROJECT_NAME}
     juce::juce_gui_basics
     juce::juce_gui_extra
     juce::juce_opengl
-  PUBLIC
-    juce::juce_recommended_config_flags
-    juce::juce_recommended_lto_flags
-    juce::juce_recommended_warning_flags
 )
+
+if(NOT WIN32)
+  target_link_libraries(${PROJECT_NAME}
+    PUBLIC
+      juce::juce_recommended_config_flags
+      juce::juce_recommended_lto_flags
+      juce::juce_recommended_warning_flags
+  )
+endif(NOT WIN32)
+
+get_target_property(MAIN_CFLAGS ${PROJECT_NAME} COMPILE_OPTIONS)
+message("-- COMPILE_OPTIONS compiler flags are: ${MAIN_CFLAGS}")
+message("-- CMAKE_CXX_FLAGS compiler flags are: ${CMAKE_CXX_FLAGS}")
+message("-- CMAKE_CXX_FLAGS_RELEASE compiler flags are: ${CMAKE_CXX_FLAGS_RELEASE}")

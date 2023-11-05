@@ -186,9 +186,11 @@ void CVASTWaveTable::getValueTreeState(ValueTree* tree, UndoManager* undoManager
 
 		waveTablePositionTree->setProperty("isInitial", wtheader.waveTablePositions[i].isInitial, undoManager);
 
+
 		if (wtheader.waveTablePositions[i].isInitial == false) {
 			String nTable = "";
-			nTable.preallocateBytes(C_WAVE_TABLE_SIZE * 8);
+			//nTable.preallocateBytes(C_WAVE_TABLE_SIZE * 8);
+			nTable.preallocateBytes(C_WAVE_TABLE_SIZE * 32); //due to UTF-8!
 			auto* dest = (char*)nTable.getCharPointer().getAddress();
 
 			for (int n = 0; n < C_WAVE_TABLE_SIZE; n++) {
@@ -196,11 +198,12 @@ void CVASTWaveTable::getValueTreeState(ValueTree* tree, UndoManager* undoManager
 				unsigned int* sint = (unsigned int*)&sval;
 				String s1 = String::toHexString(*sint);
 				s1 += String::repeatedString("0", 8 - s1.length());
-				
+
 				memcpy(dest + n * 8, s1.getCharPointer().getAddress(), 8);
 			}
 			waveTablePositionTree->setProperty("naiveTable", nTable, undoManager);
 		}
+
 		waveTablePositionTree->setProperty("maxHarmonics", wtheader.waveTablePositions[i].maxHarmonics, undoManager);
 		waveTablePositionTree->setProperty("numWaveTableFreqs", wtheader.waveTablePositions[i].numWaveTableFreqs, undoManager);
 		waveTablePositionTree->setProperty("wtPos", wtheader.waveTablePositions[i].wtPos, undoManager);
@@ -282,9 +285,8 @@ bool CVASTWaveTable::setValueTreeState(ValueTree* tree, int wtMode) { //load
 
 	for (int i = 0; i < wtheader.numPositions.load(); i++) {
 		if (i != wtheader.waveTablePositions[i].wtPos) return false;
-		//setNaiveTable(wtheader.waveTablePositions[i].wtPos, &wtheader.waveTablePositions[i].naiveTable, true, wtMode); //pregenerate
 		//CHANGE!! no longer pregenerate - is done at the end with FX
-        setNaiveTable(wtheader.waveTablePositions[i].wtPos, wtheader.waveTablePositions[i].naiveTable, false, wtMode); //dont pregenerate here
+        setNaiveTableFast(wtheader.waveTablePositions[i].wtPos, false, wtMode); //dont pregenerate here
 	}
 
 	if (!validate()) return false;
@@ -608,6 +610,25 @@ void CVASTWaveTable::createFreqsIfNeeded(int wtPos, bool preGenerate, int wtMode
 	}
 	wtheader.waveTablePositions[wtPos].dirty = false;
 	wtheader.waveTablePositions[wtPos].isInitial = false;
+}
+
+void CVASTWaveTable::setNaiveTableFast(int wtPos, bool preGenerate, int wtMode) {
+	ScopedLock sl(mWavetableChangeLock);
+	// isswtheader.waveTablePositions[wtPos].naiveTable
+	wtheader.waveTablePositions[wtPos].dirty = true;
+	wtheader.waveTablePositions[wtPos].isInitial = false;
+	wtheader.changeCounter += 1;
+
+	for (int i = 0; i < wtheader.waveTablePositions[wtPos].waveTableFreqs.size(); i++) {
+		wtheader.waveTablePositions[wtPos].waveTableFreqs[i].invalid = true;
+		wtheader.waveTablePositions[wtPos].waveTableFreqs[i].dirty = true;
+	}
+
+	createFreqsIfNeeded(wtPos, preGenerate, wtMode);
+
+#ifdef _DEBUG
+	vassert(validate());
+#endif
 }
 
 void CVASTWaveTable::setNaiveTable(int wtPos, std::vector<float> vWave, bool preGenerate, int wtMode) {
@@ -1005,8 +1026,8 @@ void CVASTWaveTable::generateWaveTableFreqsFromTimeDomain(int wtPos, int tableLe
 	if (maxHarmonic == 0) {
 		float bottomFreq = 0.0f; 
 		float topFreq = 1.0f; 
-		std::vector<float> emptyTable(C_WAVE_TABLE_SIZE);
-		addWaveTableFreq(wtPos, tableLen, emptyTable, bottomFreq, topFreq, maxHarmonic, false, false, 0.f, 0, false, wtp->naiveTableFX);
+		//std::vector<float> m_emptyTable(C_WAVE_TABLE_SIZE);
+		addWaveTableFreq(wtPos, tableLen, mc_emptyTable, bottomFreq, topFreq, maxHarmonic, false, false, 0.f, 0, false, wtp->naiveTableFX);
 	}
 	else {
 
@@ -1481,8 +1502,7 @@ void CVASTWaveTable::makeWaveTableFreq(int wtPos, int len, float bottomFreq, flo
 
 	std::vector<dsp::Complex<float>> timeBuffer = std::vector<dsp::Complex<float>>(C_WAVE_TABLE_SIZE, 0.0f);
 	std::vector<dsp::Complex<float>> outBuffer = std::vector<dsp::Complex<float>>(C_WAVE_TABLE_SIZE, 0.0f);
-	std::vector<dsp::Complex<float>> newBuffer = std::vector<dsp::Complex<float>>(C_WAVE_TABLE_SIZE, 0.0f);
-
+	
 	//***********************************************************
 	std::vector<dsp::Complex<float>>* fdBuffer = &wtp->frequencyDomainBuffer;
 	int lwtFxType = wtFxType;
@@ -1494,7 +1514,7 @@ void CVASTWaveTable::makeWaveTableFreq(int wtPos, int len, float bottomFreq, flo
 		(this->*fxPtr)(&wtp->naiveTableFX, wtFxVal);
 		wtp->naiveTableFXDirty = true;
 		wtp->hasFXTable = true;
-		fdBuffer = &newBuffer;
+		fdBuffer = &mc_newBuffer;
 		frequencyDomainBufferFromNaive(C_WAVE_TABLE_SIZE, wtp->naiveTableFX, *fdBuffer);
 
 		/*
@@ -2480,3 +2500,27 @@ bool CVASTWaveTable::fillInterpolateBuffersRange(const bool next, sWaveTablePosi
 
 	return true;	
 }
+
+/*
+test: clearing an existing wavetable vector is ten times faster than creating a new one	
+{
+	std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+	for (int i = 0; i < 10000; i++) {
+		std::vector<float> a1 = std::vector<float>(C_WAVE_TABLE_SIZE, 0.f);
+	}
+	std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
+	auto duration = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+	DBG("Duration: " << duration);
+}
+
+{
+	std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+	std::vector<float> a2 = std::vector<float>(C_WAVE_TABLE_SIZE);
+	for (int i = 0; i < 10000; i++) {
+		std::fill(a2.begin(), a2.end(), 0.f);
+	}
+	std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
+	auto duration = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+	DBG("Duration: " << duration);
+}	
+*/

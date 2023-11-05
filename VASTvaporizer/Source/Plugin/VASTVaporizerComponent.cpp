@@ -418,6 +418,8 @@ void VASTVaporizerComponent::initAll() {
 	getOscillatorComponent(2)->initAll();
 	getOscillatorComponent(3)->initAll();
 
+	masterVoicingComponent->initAll();
+
 	//updateAll();
 	repaint(); //CHECK
 	myProcessor->requestUIUpdate();

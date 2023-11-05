@@ -639,7 +639,7 @@
                        vstBinaryLocation="/Library/Audio/Plug-Ins/VST/" auBinaryLocation="/Library/Audio/Plug-Ins/Components/"
                        customXcodeFlags="VALID_ARCHS = &quot;x86_64&quot;,  CLANG_X86_VECTOR_INSTRUCTIONS=avx"
                        vst3BinaryLocation="/Library/Audio/Plug-Ins/VST3/" fastMath="1"/>
-        <CONFIGURATION name="Release 64bit" isDebug="0" optimisation="3" targetName="VASTvaporizer2_64"
+        <CONFIGURATION name="Release 64bit" isDebug="0" optimisation="3" targetName="VASTvaporizer2"
                        linkTimeOptimisation="1" defines="_MACOSX _MACOSX64BIT NDEBUG  SSE_AVX=AVX"
                        enablePluginBinaryCopyStep="1" vstBinaryLocation="/Library/Audio/Plug-Ins/VST/"
                        auBinaryLocation="/Library/Audio/Plug-Ins/Components/" customXcodeFlags="VALID_ARCHS = &quot;x86_64&quot;,  CLANG_X86_VECTOR_INSTRUCTIONS=avx"
@@ -670,7 +670,7 @@
                extraDefs=" JUCE_SILENCE_XCODE_15_LINKER_WARNING " userNotes="This is the universal binary build also supporting arm64 silicon on Neon."
                extraLinkerFlags="-ld_classic">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="0" name="Release 64bit SSE3" targetName="VASTvaporizer2_64_SSE"
+        <CONFIGURATION isDebug="0" name="Release 64bit SSE3" targetName="VASTvaporizer2"
                        defines="_MACOSX _MACOSX64BIT NDEBUG  SSE_AVX=SSE2 _SSE2_VERSION "
                        vst3BinaryLocation="/Library/Audio/Plug-Ins/VST3/" auBinaryLocation="/Library/Audio/Plug-Ins/Components/"
                        vstBinaryLocation="/Library/Audio/Plug-Ins/VST/" optimisation="3"
@@ -698,17 +698,17 @@
     <VS2019 targetFolder="Builds/VisualStudio2019" extraCompilerFlags="-W3 /arch:${SSE_AVX} /Qvec-report:1 /permissive- /I&quot;C:\Vaporizer2\asiosdk\common&quot; "
             extraLinkerFlags="/LTCG /NXCOMPAT:NO" smallIcon="A2sWSy" bigIcon="A2sWSy">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug FLStudio 64bit" targetName="VASTvaporizer2_64_dbg"
+        <CONFIGURATION isDebug="1" name="Debug FLStudio 64bit" targetName="VASTvaporizer2_dbg"
                        defines="_WIN64 _WIN64BIT SSE_AVX=AVX" linkTimeOptimisation="0"
                        enablePluginBinaryCopyStep="1" vstBinaryLocation="%ProgramW6432%\Steinberg\VSTPlugins\VASTvaporizer"
                        winArchitecture="x64" debugInformationFormat="ProgramDatabase"
                        fastMath="1" optimisation="1" useRuntimeLibDLL="0" generateManifest="1"/>
-        <CONFIGURATION isDebug="0" name="Release Optimized 64bit" targetName="VASTvaporizer2_64"
+        <CONFIGURATION isDebug="0" name="Release Optimized 64bit" targetName="VASTvaporizer2"
                        defines="_WIN64 _WIN64BIT NDEBUG SSE_AVX=AVX " linkTimeOptimisation="1"
                        enablePluginBinaryCopyStep="1" vstBinaryLocation="%ProgramW6432%\Steinberg\VSTPlugins\Vaporizer2"
                        winArchitecture="x64" fastMath="1" useRuntimeLibDLL="0" generateManifest="1"
                        winWarningLevel="4" optimisation="4"/>
-        <CONFIGURATION isDebug="0" name="Release Optimized 64bit SSE2" targetName="VASTvaporizer2_64_SSE2"
+        <CONFIGURATION isDebug="0" name="Release Optimized 64bit SSE2" targetName="VASTvaporizer2"
                        defines="_WIN64 _WIN64BIT NDEBUG SSE_AVX=SSE2 _SSE2_VERSION"
                        linkTimeOptimisation="1" enablePluginBinaryCopyStep="1" vstBinaryLocation="%ProgramW6432%\Steinberg\VSTPlugins\Vaporizer2"
                        winArchitecture="x64" fastMath="1" useRuntimeLibDLL="0" generateManifest="1"
@@ -718,7 +718,7 @@
                        enablePluginBinaryCopyStep="1" vstBinaryLocation="%ProgramW6432%\Steinberg\VSTPlugins\Vaporizer2"
                        winArchitecture="Win32" fastMath="1" useRuntimeLibDLL="0" generateManifest="1"
                        optimisation="4" winWarningLevel="2"/>
-        <CONFIGURATION isDebug="0" name="Release Optimized 32bit SSE2" targetName="VASTvaporizer2_SSE2"
+        <CONFIGURATION isDebug="0" name="Release Optimized 32bit SSE2" targetName="VASTvaporizer2"
                        defines="_WIN32 _WIN32BIT NDEBUG SSE_AVX=SSE2 _SSE2_VERSION"
                        linkTimeOptimisation="1" enablePluginBinaryCopyStep="1" vstBinaryLocation="%ProgramW6432%\Steinberg\VSTPlugins\Vaporizer2"
                        winArchitecture="Win32" fastMath="1" useRuntimeLibDLL="0" generateManifest="1"
@@ -745,10 +745,11 @@
     <LINUX_MAKE targetFolder="Builds/LinuxMakefile" externalLibraries="atomic"
                 smallIcon="A2sWSy" bigIcon="A2sWSy">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" enablePluginBinaryCopyStep="0" defines="_LINUX _LINUX64BIT SSE_AVX=AVX"/>
+        <CONFIGURATION isDebug="1" name="Debug" enablePluginBinaryCopyStep="0" defines="_LINUX _LINUX64BIT SSE_AVX=AVX"
+                       targetName="VASTvaporizer2"/>
         <CONFIGURATION isDebug="0" name="Release" extraLinkerFlags="-fdata-sections -ffunction-sections -Wl,--gc-sections -Wl,-O1 -Wl,--as-needed -Wl,--strip-all"
                        extraCompilerFlags="-fvisibility=hidden" enablePluginBinaryCopyStep="0"
-                       defines="_LINUX _LINUX64BIT NDEBUG SSE_AVX=AVX"/>
+                       defines="_LINUX _LINUX64BIT NDEBUG SSE_AVX=AVX" targetName="VASTvaporizer2"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_audio_basics" path="../JUCE/modules"/>

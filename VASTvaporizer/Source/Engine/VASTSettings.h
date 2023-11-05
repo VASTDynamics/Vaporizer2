@@ -45,23 +45,19 @@ public:
 	OwnedArray<AudioSampleBuffer> FilterVoices[3]; // Filter 1..3 [voice]
 	
 	//global
-	juce::ScopedPointer<AudioSampleBuffer> OscBuffer[4]; //A, B, C, D 
-	juce::ScopedPointer<AudioSampleBuffer> NoiseBuffer;
-	juce::ScopedPointer<AudioSampleBuffer> SamplerBuffer;
-	juce::ScopedPointer<AudioSampleBuffer> FilterBuffer[3]; //Filter 1,2,3
-	juce::ScopedPointer<AudioSampleBuffer> FxBusBuffer[3]; //FxBus 1,2,3
-	juce::ScopedPointer<AudioSampleBuffer> MasterOutBuffer;
-	juce::ScopedPointer<AudioSampleBuffer> LFOGlobalBuffer[5];
-	juce::ScopedPointer<AudioSampleBuffer> StepSeqBuffer[3]; 
-	juce::ScopedPointer<AudioSampleBuffer> CustomModulatorBuffer[4];
+	std::unique_ptr<AudioSampleBuffer> OscBuffer[4]; //A, B, C, D 
+	std::unique_ptr<AudioSampleBuffer> NoiseBuffer;
+	std::unique_ptr<AudioSampleBuffer> SamplerBuffer;
+	std::unique_ptr<AudioSampleBuffer> FilterBuffer[3]; //Filter 1,2,3
+	std::unique_ptr<AudioSampleBuffer> FxBusBuffer[3]; //FxBus 1,2,3
+	std::unique_ptr<AudioSampleBuffer> MasterOutBuffer;
+	std::unique_ptr<AudioSampleBuffer> LFOGlobalBuffer[5];
+	std::unique_ptr<AudioSampleBuffer> StepSeqBuffer[3];
+	std::unique_ptr<AudioSampleBuffer> CustomModulatorBuffer[4];
 	
 	// the buffers
-	juce::ScopedPointer<AudioSampleBuffer> fAudioInputBuffer;
-	juce::ScopedPointer<AudioSampleBuffer> fInputEnvelopeBuffer;
-
-	//juce::ScopedPointer<AudioSampleBuffer> CircularFilterOutput;
-	//int m_circularFilterOutputPos = 0;
-	//int m_circularFilterOutputLen = 2048 * multiplier;
+	std::unique_ptr<AudioSampleBuffer> fAudioInputBuffer;
+	std::unique_ptr<AudioSampleBuffer> fInputEnvelopeBuffer;
 
 	~sRoutingBuffers() {
 		OscBuffer[0] = nullptr; OscBuffer[1] = nullptr; OscBuffer[2] = nullptr; OscBuffer[3] = nullptr;
@@ -126,39 +122,39 @@ public:
 
 		//stereos
 		for (int bank = 0; bank < 4; bank++) {
-			OscBuffer[bank] = new AudioSampleBuffer(2, initSize);
+			OscBuffer[bank].reset(new AudioSampleBuffer(2, initSize));
 		}
 
-		NoiseBuffer = new AudioSampleBuffer(2, initSize);
-		SamplerBuffer = new AudioSampleBuffer(2, initSize);
+		NoiseBuffer.reset(new AudioSampleBuffer(2, initSize));
+		SamplerBuffer.reset(new AudioSampleBuffer(2, initSize));
         
 		for (int filter = 0; filter < 3; filter++) {
-            FilterBuffer[filter] = new AudioSampleBuffer(2, initSize);
+            FilterBuffer[filter].reset(new AudioSampleBuffer(2, initSize));
 		}
 
 		for (int fxbus = 0; fxbus < 3; fxbus++) {
-			FxBusBuffer[fxbus] = new AudioSampleBuffer(2, initSize);
+			FxBusBuffer[fxbus].reset(new AudioSampleBuffer(2, initSize));
 		}
 
-		MasterOutBuffer = new AudioSampleBuffer(2, initSize);
+		MasterOutBuffer.reset(new AudioSampleBuffer(2, initSize));
 
 		//LFO global
 		for (int lfo = 0; lfo < 5; lfo++) {
-			LFOGlobalBuffer[lfo] = new AudioSampleBuffer(1, initSize);
+			LFOGlobalBuffer[lfo].reset(new AudioSampleBuffer(1, initSize));
 		}
 
 		//stepseq
 		for (int stepseq = 0; stepseq < 3; stepseq++) {
-			StepSeqBuffer[stepseq] = new AudioSampleBuffer(1, initSize);
+			StepSeqBuffer[stepseq].reset(new AudioSampleBuffer(1, initSize));
 		}
 
 		//custom modulators
 		for (int custmod = 0; custmod < 4; custmod++) {
-			CustomModulatorBuffer[custmod] = new AudioSampleBuffer(1, initSize);
+			CustomModulatorBuffer[custmod].reset(new AudioSampleBuffer(1, initSize));
 		}
 
-		fAudioInputBuffer = new AudioSampleBuffer(1, initSize);
-		fInputEnvelopeBuffer = new AudioSampleBuffer(1, initSize);
+		fAudioInputBuffer.reset(new AudioSampleBuffer(1, initSize));
+		fInputEnvelopeBuffer.reset(new AudioSampleBuffer(1, initSize));
 
 		//CircularFilterOutput = new AudioSampleBuffer(1, m_circularFilterOutputLen);
 		//CircularFilterOutput->clear();

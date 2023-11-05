@@ -131,6 +131,7 @@ public:
 	
 	std::atomic<bool> m_isBeingUpdated = false;
 
+	void setNaiveTableFast(int wtPos, bool preGenerate, int wtMode);
 	void setNaiveTable(int wtPos, std::vector<float> vWave, bool preGenerate, int wtMode);
 	void setFreqDomainTables(int wtPos, std::vector<dsp::Complex<float>>* domainBuffer, bool preGenerate, bool clipBins, int wtMode);
 	void deletePosition(int numPos);
@@ -145,6 +146,9 @@ public:
 	void markAllWTFreqsDirty(); //need recalc
 	void pregenerateWithWTFX(int wtFxType, float wtFxVal, int wtMode);
 
+	std::vector<float>* getEmptySamplesWorkarea();
+	std::vector<float>* getEmptySecondSamplesWorkarea();
+
 	void setSelectedWtPos(int wtPos);
 	int getSelectedWtPos();
 	bool isMultiSelected();
@@ -156,7 +160,7 @@ public:
 	void setSelection(int begin, int end);
 	bool loadWavFile(wavFile* wavfile, bool preGenerate, int wtMode);
 	
-	void getNaiveSamplesFromWave(std::vector<float> &nsamples, int wave);
+	static void getNaiveSamplesFromWave(std::vector<float> &nsamples, int wave);
 	std::vector<float> getSyncNaiveWave(std::vector<float> &naive, float paramvalue);
 	std::vector<float> calcSyncNaiveWave(int wtPos, int naiveWtPos, float syncQuota);
 	std::vector<float> getPWMNaiveWave(std::vector<float> &naive, float paramvalue);
@@ -183,6 +187,8 @@ public:
 
 private:	
 	sWaveTableHeader wtheader;
+	std::vector<float> mc_emptyTable = std::vector<float>(C_WAVE_TABLE_SIZE, 0.0f);
+	std::vector<dsp::Complex<float>> mc_newBuffer = std::vector<dsp::Complex<float>>(C_WAVE_TABLE_SIZE, 0.0f);
 
 	void copyFrom(const CVASTWaveTable &wavetable);
 	bool positionIsPrepared(int wtPos);
@@ -228,7 +234,6 @@ private:
 	ScopedPointer<AudioSampleBuffer> m_valBeginBufferNext;
 	ScopedPointer<AudioSampleBuffer> m_valEndBuffer;
 	ScopedPointer<AudioSampleBuffer> m_valEndBufferNext;
-
 
 	float* m_x0_curPos_writePointer = nullptr;
 	float* m_y0_curPos_writePointer = nullptr;

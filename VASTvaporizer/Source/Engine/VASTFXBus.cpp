@@ -256,7 +256,7 @@ void CVASTFXBus::processBuffers(sRoutingBuffers& routingBuffers, MidiBuffer& mid
 	float l_monoFrequency = 0.0f;
 	switch (myBusnr) {
 	case 0:
-		inBuffer = routingBuffers.FxBusBuffer[0];
+		inBuffer = routingBuffers.FxBusBuffer[0].get();
 		//l_oversample = *m_Set->m_State->m_bOversampleBus;
 		l_monoFrequency = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fMBMonoFrequency, MODMATDEST::Fxbus1MonoFrequency, &inputState);
 
@@ -312,7 +312,7 @@ void CVASTFXBus::processBuffers(sRoutingBuffers& routingBuffers, MidiBuffer& mid
 		}
 		break;
 	case 1:
-		inBuffer = routingBuffers.FxBusBuffer[1];
+		inBuffer = routingBuffers.FxBusBuffer[1].get();
 		//l_oversample = *m_Set->m_State->m_bOversampleBus_Bus2;
 		l_monoFrequency = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fMBMonoFrequency_Bus2, MODMATDEST::Fxbus2MonoFrequency, &inputState);
 
@@ -372,7 +372,7 @@ void CVASTFXBus::processBuffers(sRoutingBuffers& routingBuffers, MidiBuffer& mid
 		}
 		break;
 	case 2:
-		inBuffer = routingBuffers.FxBusBuffer[2];
+		inBuffer = routingBuffers.FxBusBuffer[2].get();
 		//l_oversample = *m_Set->m_State->m_bOversampleBus_Bus3;
 		l_monoFrequency = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fMBMonoFrequency_Bus3, MODMATDEST::Fxbus3MonoFrequency, &inputState);
 

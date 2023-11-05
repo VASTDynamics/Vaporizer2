@@ -213,7 +213,7 @@ void VASTLFOEditor::updateContent(bool force) {
 
 	std::vector<float> l_waveBuffer = std::vector<float>(C_WAVE_TABLE_SIZE);
 	
-	m_wavetable.getNaiveSamplesFromWave(l_waveBuffer, myDrawState.wave);
+	CVASTWaveTable::getNaiveSamplesFromWave(l_waveBuffer, myDrawState.wave);
 
 	if (myDrawState.wave == WAVE::noise) {
 		l_waveBuffer = m_noise_buffer;

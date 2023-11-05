@@ -13,24 +13,12 @@ using namespace ::juce::gl;
 VASTOscilloscopeOGL2D::VASTOscilloscopeOGL2D(VASTAudioProcessorEditor *editor, std::unique_ptr<VASTRingBuffer<GLfloat>> * ringBuffer)
 : readBuffer (1, OGL2D_RING_BUFFER_SIZE), myEditor(editor)
 {
-	// Sets the OpenGL version to 3.2	
-    openGLContext.setOpenGLVersionRequired (OpenGLContext::OpenGLVersion::openGL3_2);
-        
+    openGLContext.setOpenGLVersionRequired (OpenGLContext::OpenGLVersion::defaultGLVersion);        
 	openGLContext.setComponentPaintingEnabled(false);
 
-    this->ringBuffer = ringBuffer;
-        
-    // Attach the OpenGL context but do not start [ see start() ]
-    //openGLContext.setRenderer(this);
-    //openGLContext.attachTo(*this);
-        
+    this->ringBuffer = ringBuffer;       
+       
 	m_bContRepaint = false;
-	
-	// Setup GUI Overlay Label: Status of Shaders, compiler errors, etc.
-	//addAndMakeVisible (statusLabel);
-    //statusLabel.setJustificationType (Justification::topLeft);
-    //statusLabel.setFont (Font (14.0f));	
-
 	m_osciColour = myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeLine);
 }
     
@@ -49,7 +37,6 @@ VASTOscilloscopeOGL2D::~VASTOscilloscopeOGL2D()
     
 void VASTOscilloscopeOGL2D::start()
 {
-	// Attach the OpenGL context but do not start [ see start() ]
 	openGLContext.setRenderer(this);
 	openGLContext.attachTo(*this);
     openGLContext.setContinuousRepainting (true);
@@ -252,8 +239,10 @@ void VASTOscilloscopeOGL2D::paint (Graphics& g)
 {
 	if (m_bContRepaint == false) {
 		g.fillAll(Colour(0xff0b0b0b));
-		start();
-		m_bContRepaint = true;
+        if (isVisible()) {
+            start();
+            m_bContRepaint = true;
+        }
 	}	
 }
     

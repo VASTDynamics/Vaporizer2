@@ -239,7 +239,7 @@ VASTMasterVoicingComponent::VASTMasterVoicingComponent (AudioProcessorEditor *ed
 	//c_underruns->setOpaque(true);
 	c_voices->setOpaque(true);
 
-	//oscilloscopeOLG2D->start();
+    oscilloscopeOLG2D->setVisible(false); //make visible after initAll()
 	oscilloscopeOLG2D->setOpaque(true);
 
 	//debug controls
@@ -272,6 +272,7 @@ VASTMasterVoicingComponent::VASTMasterVoicingComponent (AudioProcessorEditor *ed
 		}
 	}
 	setOpaque(true);
+    m_initDone = false;
     //[/UserPreSize]
 
     setSize (668, 76);
@@ -313,16 +314,22 @@ VASTMasterVoicingComponent::~VASTMasterVoicingComponent()
     //[/Destructor]
 }
 
+void VASTMasterVoicingComponent::initAll()
+{
+    m_initDone = true;
+}
+
 //==============================================================================
 void VASTMasterVoicingComponent::paint (juce::Graphics& g)
 {
     //[UserPrePaint] Add your own custom painting code here..
+    if (m_initDone) {
 #if defined JUCE_LINUX
-    oscilloscopeOLG2D->setVisible(false);
+        oscilloscopeOLG2D->setVisible(false);
 #else
-    oscilloscopeOLG2D->setVisible(!myProcessor->m_disableOpenGLGFX);
+        oscilloscopeOLG2D->setVisible(!myProcessor->m_disableOpenGLGFX);
 #endif
-
+    }
     //[/UserPrePaint]
 
     g.fillAll (juce::Colour (0xff0b0b0b));

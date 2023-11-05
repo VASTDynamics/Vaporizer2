@@ -9,6 +9,7 @@ VAST Dynamics Software
 #include <math.h>
 //#include <stdlib.h> // for memory leak detection
 #define _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
+#define _SILENCE_ALL_CXX20_DEPRECATION_WARNINGS
 
 // For WIN vs MacOS
 // XCode requires these be defined for compatibility
@@ -27,9 +28,6 @@ VAST Dynamics Software
 	typedef unsigned long long ULong64_t;//Portable unsigned long integer 8 byte
 #endif							 
 										 
-//#include "VASTPluginConstants.h"
-//#include "Utils/VASTSynthfunctions.h"
-
 // platform independent assert
 #ifdef _WINDOWS
 	#ifndef v_ANALYZER_NORETURN
@@ -45,8 +43,7 @@ VAST Dynamics Software
 #else
 	#define vassertfalse   // do nothing     
     #define vassert(expression)  // do nothing
-#endif
-						   // TODO platform independent assert
+#endif						   
 
 #include <float.h>
 //#define MAXFLOAT FLT_MAX //redefined if set here
