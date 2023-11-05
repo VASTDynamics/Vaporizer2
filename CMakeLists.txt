@@ -89,9 +89,8 @@ else()
   list(APPEND MY_PUBLIC_COMPILE_OPTIONS "-w")
 endif(MSVC)
 
- if (BUILD_AVX)  
+if (BUILD_AVX)  
   target_compile_definitions(${PROJECT_NAME} PRIVATE SSE_AVX=AVX)
-  target_compile_options(${PROJECT_NAME} PRIVATE /arch:AVX)
 else()
   target_compile_definitions(${PROJECT_NAME} PRIVATE SSE_AVX=SSE2 _SSE2_VERSION)
 endif(BUILD_AVX)
@@ -128,6 +127,10 @@ if(WIN32)
   else()#64bit
     target_compile_definitions(${PROJECT_NAME} PRIVATE _WIN64 _WIN64BIT NDEBUG)    
   endif(BUILD_32)
+  
+  if (BUILD_AVX)  
+    target_compile_options(${PROJECT_NAME} PRIVATE /arch:AVX)
+  endif(BUILD_AVX)
   
   if(ASIO_SDK_LOCATION) #ASIO is windows only
     message(STATUS "Including ASIO from ${ASIO_SDK_LOCATION}")
