@@ -143,8 +143,8 @@ endmacro (set_xcode_property)
 
 if(APPLE)
   message(STATUS "Building on Apple macOS ${CMAKE_GENERATOR_PLATFORM} with AVX flags: ${BUILD_AVX}")
-  add_target_compile_definitions(${PROJECT_NAME} PUBLIC JUCE_SILENCE_XCODE_15_LINKER_WARNING) #temporarily due to xcode 15 issue
-  add_target_link_options(${PROJECT_NAME} PUBLIC -ld_classic) #temporarily due to xcode 15 issue
+  target_compile_definitions(${PROJECT_NAME} PUBLIC JUCE_SILENCE_XCODE_15_LINKER_WARNING) #temporarily due to xcode 15 issue
+  target_link_options(${PROJECT_NAME} PUBLIC -ld_classic) #temporarily due to xcode 15 issue
 
   if(VASTBUILD) 
       set_xcode_property(${PROJECT_NAME} CODE_SIGN_STYLE "Manual")
