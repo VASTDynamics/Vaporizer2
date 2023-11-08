@@ -236,7 +236,7 @@ void CVASTFXBus::swapSlots(int first, int second) {
 	mFXBusSequence.swap(first, second);
 }
 
-int CVASTFXBus::getSequence(int slot) {
+int CVASTFXBus::getSequence(int slot) const {
 	return mFXBusSequence[slot];
 }
 

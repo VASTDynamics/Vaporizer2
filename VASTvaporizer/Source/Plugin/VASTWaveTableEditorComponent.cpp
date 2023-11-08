@@ -1023,8 +1023,6 @@ void VASTWaveTableEditorComponent::threadedFreehandDraw(/*int msbeg, int msend,*
 		samplescopy = samples;
 
 		//smooth
-		float local_max_before = 0.0f; //for normalize
-		float local_max_after = 0.0f; //for normalize
 		float smoothvalue = 2.f;
 		float e = ((smoothvalue + .5f) / 100.f) * 100; //no zero values
 		int r = 0;
@@ -1431,7 +1429,6 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 			for (int i = 1; i < C_WAVE_TABLE_SIZE / 2; i++) {
 				int intpart = int(posfromCopy);
 				float fracpart = posfromCopy - intpart;
-				float interpolated = 0.f;
 				if ((copyPos == 1) || (posfromCopy + 1 >= copyPos))
 					domainBuffer[i] = domainBuffer[i] * domainCopyBuffer[i]; //complex multiplication --> convolute
 				else
@@ -2324,8 +2321,6 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 		std::vector<myFloat> samples = std::vector<myFloat>(C_WAVE_TABLE_SIZE);
 		for (int wtPos = msbeg; wtPos <= msend; wtPos++) {
 			samples = (*editor->getCurWavetable()->getNaiveTable(wtPos));
-			int j = 0;
-			int end = wtselend - wtselstart + 1;
 			int length = -1;
 			float height = 0.f;
 			int realLength = 0;
@@ -3062,7 +3057,6 @@ void VASTWaveTableEditorComponent::calcMirror(const std::vector<myFloat> &inSamp
 	if (approximatelyEqual(mirrorValue, 0.f))
 		return;
 	int j = 0;
-	int end = endSample - startSample;
 	float distance = (mirrorValue / 100.f) * (endSample - startSample);
 	float endRange = startSample + distance;
 	float step = distance / float(int(endRange) - startSample);
@@ -3078,7 +3072,6 @@ void VASTWaveTableEditorComponent::calcMirror(const std::vector<myFloat> &inSamp
 void VASTWaveTableEditorComponent::calcBreed(const std::vector<myFloat> &inSamples, std::vector<myFloat> &outSamples, int startSample, int endSample, float breedValue) {
 	if (approximatelyEqual(breedValue, 0.f))
 		return;
-	int j = 0;
 	int length = endSample - startSample + 1;
 
 	double start = startSample;
@@ -3125,7 +3118,6 @@ void VASTWaveTableEditorComponent::calcWindow(const std::vector<myFloat> &inSamp
 	double start = startSample;
 	double len1 = length * 0.5;
 	double end = start + len1;
-	float maxabs = 0.f;
 	float j = 0;
 	for (int i = start; i < end - 1; i++) { //skip the middle
 		float fval = j / (end - 1 - start); //0..1
@@ -3137,7 +3129,6 @@ void VASTWaveTableEditorComponent::calcWindow(const std::vector<myFloat> &inSamp
 }
 
 void VASTWaveTableEditorComponent::calcSincify(const std::vector<myFloat> &inSamples, std::vector<myFloat> &outSamples, int startSample, int endSample, float sincifyValue) {
-	int j = 0;
 	int length = endSample - startSample + 1;
 
 	float sindivval = 20.f + ((100.f - sincifyValue) / 100.f) * 300.f;
@@ -3159,7 +3150,6 @@ void VASTWaveTableEditorComponent::calcSincify(const std::vector<myFloat> &inSam
 
 	start = end;
 	end = endSample;
-	double len2 = length * 0.5;
 	for (int i = start + 1; i <= end; i++) {
 		float c1 = (float(i) / (endSample - startSample)) * 2.f - 1.f; //0..1
 		float c2 = sin((end - 1 - i) / sindivval); //start with 0
@@ -3348,7 +3338,7 @@ void VASTWaveTableEditorComponent::wavSelectionToWavetablePatch(bool stereo, boo
 
 		wavSelectionToWt(1, wavetable);
 		wavetable->setSelection(0, wavetable->getNumPositions() - 1);
-		threadedEditorFunction(EditorFunction::Normalize, 0.f, /*0, /*wavetable->getNumPositions() - 1,*/ 0, 0, this, 0.f, 0.f, wavetable);
+		threadedEditorFunction(EditorFunction::Normalize, 0.f, /*0, wavetable->getNumPositions() - 1,*/ 0, 0, this, 0.f, 0.f, wavetable);
 
 		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank]->setWavetableSoftFade(wavetable);
 		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank]->removeSoftFadeEditor();
@@ -3531,8 +3521,6 @@ void VASTWaveTableEditorComponent::wavSelectionToWt(int channel, std::shared_ptr
 		}
 
 		int numSamples = copyEnd - copyStart;
-
-		bool copiedSomething = false;
 
 			//third Logic
 

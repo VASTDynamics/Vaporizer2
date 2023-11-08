@@ -164,10 +164,10 @@ void VASTAudioProcessor::setErrorState(int state) {
 	iErrorState.store(state);
 }
 
-int VASTAudioProcessor::getErrorState() {
+int VASTAudioProcessor::getErrorState() const {
     return iErrorState.load(); }
 
-bool VASTAudioProcessor::wantsUIAlert() {
+bool VASTAudioProcessor::wantsUIAlert() const {
     return mUIAlert.load(); }
 
 void VASTAudioProcessor::clearUIAlertFlag() {
@@ -181,7 +181,7 @@ void VASTAudioProcessor::requestUIPresetUpdate() {
 	mUIPresetUpdate.store(true);
 }
 
-bool VASTAudioProcessor::needsUIPresetUpdate() {
+bool VASTAudioProcessor::needsUIPresetUpdate() const {
     return mUIPresetUpdate.load();
 }
 
@@ -194,13 +194,13 @@ void VASTAudioProcessor::requestUIPresetReloadUpdate() {
 	mUIPresetReloadUpdate.store(true);
 }
 
-bool VASTAudioProcessor::needsUIPresetReloadUpdate() { 
+bool VASTAudioProcessor::needsUIPresetReloadUpdate() const {
     return mUIPresetReloadUpdate.load(); }
 
 void VASTAudioProcessor::clearUIPresetReloadFlag() {
     mUIPresetReloadUpdate.store(false); }
 
-bool VASTAudioProcessor::needsUIInit() {
+bool VASTAudioProcessor::needsUIInit() const {
     return mUIInitFlag.load(); }
 
 void VASTAudioProcessor::clearUIInitFlag() {
@@ -210,22 +210,22 @@ void VASTAudioProcessor::requestUIInit() {
     mUIInitFlag.store(true);
     requestUIUpdate(true, true, true); }
 
-bool VASTAudioProcessor::needsUIUpdate() { 
+bool VASTAudioProcessor::needsUIUpdate() const {
     return mUIUpdateFlag.load(); }
 
-bool VASTAudioProcessor::needsUIUpdate_tabs() { 
+bool VASTAudioProcessor::needsUIUpdate_tabs() const {
     return mUIUpdateFlag_tabs.load(); }
 
-bool VASTAudioProcessor::needsUIUpdate_matrix() { 
+bool VASTAudioProcessor::needsUIUpdate_matrix() const {
     return mUIUpdateFlag_matrix.load(); }
 
-bool VASTAudioProcessor::needsUIUpdate_sliders() { 
+bool VASTAudioProcessor::needsUIUpdate_sliders() const {
     return mUIUpdateFlag_sliders.load(); }
 
-int VASTAudioProcessor::needsUIUpdate_slider1dest() { 
+int VASTAudioProcessor::needsUIUpdate_slider1dest() const {
     return mUIUpdateFlag_slider1dest.load(); }
 
-int VASTAudioProcessor::needsUIUpdate_slider2dest() { 
+int VASTAudioProcessor::needsUIUpdate_slider2dest() const {
     return mUIUpdateFlag_slider2dest.load(); }
 
 void VASTAudioProcessor::clearUIUpdateFlag() {
@@ -528,7 +528,7 @@ int VASTAudioProcessor::getCurrentProgram()
 	return l_prog;
 }
 
-int VASTAudioProcessor::getCurrentPresetProgram()
+int VASTAudioProcessor::getCurrentPresetProgram() const
 {
 	//int l_prog = m_curPatchData.presetarrayindex; // this is set lazy in thread 
 	int l_prog = m_curPatchDataLoadRequestedIndex;
@@ -989,11 +989,11 @@ void VASTAudioProcessor::savePatchXML(File *selectedFile) {
 	root->deleteAllChildElements();
 }
 
-int VASTAudioProcessor::getNumFactoryPresets() {
+int VASTAudioProcessor::getNumFactoryPresets() const {
 	return 1;
 }
 
-int VASTAudioProcessor::getNumUserPresets() {
+int VASTAudioProcessor::getNumUserPresets() const {
 	return m_presetData.getNumPresets();
 }
 
@@ -1548,11 +1548,11 @@ void VASTAudioProcessor::setWTmode(int wtMode) {
 	}
 }
 
-int VASTAudioProcessor::getWTmode() {
+int VASTAudioProcessor::getWTmode() const {
 	return m_pVASTXperience.m_Set.m_WTmode;
 }
 
-int VASTAudioProcessor::getMPEmode() {
+int VASTAudioProcessor::getMPEmode() const {
 	return m_MPEmode;
 }
 
@@ -1564,7 +1564,7 @@ bool VASTAudioProcessor::isMPEenabled() {
 	return (m_MPEmode == 1) || ((m_MPEmode == 0) && (m_presetData.getCurPatchData().mpepreset));
 }
 
-int VASTAudioProcessor::getUIFontSize() {
+int VASTAudioProcessor::getUIFontSize() const {
 	return m_uiFontSize;
 }
 
@@ -1580,7 +1580,7 @@ void VASTAudioProcessor::setModWheelPermaLink(int permalink)
 	m_ModWheelPermaLink = permalink;
 }
 
-int VASTAudioProcessor::getModWheelPermaLink()
+int VASTAudioProcessor::getModWheelPermaLink() const
 {
 	return m_ModWheelPermaLink;
 }
@@ -1595,17 +1595,17 @@ void VASTAudioProcessor::setBendRange(int bendRange) {
 	requestUIUpdate(true, false, false);
 }
 
-int VASTAudioProcessor::getBendRange() {
+int VASTAudioProcessor::getBendRange() const {
 	return m_pVASTXperience.m_Set.m_iBendRange;
 }
 
-int VASTAudioProcessor::getDrawMode() { return m_iWTEditorDrawMode; }
+int VASTAudioProcessor::getDrawMode() const { return m_iWTEditorDrawMode; }
 
-int VASTAudioProcessor::getGridMode() { return m_iWTEditorGridMode; }
+int VASTAudioProcessor::getGridMode() const { return m_iWTEditorGridMode; }
 
-int VASTAudioProcessor::getBinMode() { return m_iWTEditorBinMode; }
+int VASTAudioProcessor::getBinMode() const { return m_iWTEditorBinMode; }
 
-int VASTAudioProcessor::getBinEditMode() { return m_iWTEditorBinEditMode; }
+int VASTAudioProcessor::getBinEditMode() const { return m_iWTEditorBinEditMode; }
 
 int VASTAudioProcessor::autoParamGetDestination(String parametername) {
 	std::unordered_map<String, int>::iterator it;
@@ -2072,7 +2072,8 @@ bool VASTAudioProcessor::isLicensed() {
 }
 
 // http://www.experts-exchange.com/Programming/Languages/CPP/Q_26823608.html
-
+JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE("-Wconversion")
+JUCE_BEGIN_IGNORE_WARNINGS_MSVC(4244 4267)
 std::string VASTAudioProcessor::XOREncrypt(std::string a_sValue, std::string a_sKey)
 {
 	std::string sRet;
@@ -2122,6 +2123,8 @@ std::string  VASTAudioProcessor::XORDecrypt(std::string a_sValue, std::string  a
 
 	return sRet;
 }
+JUCE_END_IGNORE_WARNINGS_MSVC
+JUCE_END_IGNORE_WARNINGS_GCC_LIKE
 
 void VASTAudioProcessor::convertASCIIhexToString(std::string & output, std::string & input) {
 	const char* const lut = "0123456789ABCDEF";

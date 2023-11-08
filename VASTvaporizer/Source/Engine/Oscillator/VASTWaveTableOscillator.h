@@ -61,7 +61,7 @@ public:
 	bool updatePhase(int unisonOsci);
 	float drift_noise(float& lastval);
 
-	MYUINT getOscType();
+	MYUINT getOscType() const;
 	void noteOn(MYUINT uChannel, MYUINT uMIDINote, MYUINT uVelocity);
 	void noteOff();
 

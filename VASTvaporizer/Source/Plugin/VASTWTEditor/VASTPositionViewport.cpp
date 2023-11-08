@@ -311,7 +311,7 @@ void VASTPositionViewport::mouseDoubleClick(const MouseEvent &e) {
 	
 }
 
-int VASTPositionViewport::getArrayIdx(float logicalX) {
+int VASTPositionViewport::getArrayIdx(float logicalX) const {
 	juce::Rectangle<int> lVisibleArea = myWtEditor->getEditorView()->c_viewportPositions->getViewArea();
 	float x = logicalX - lVisibleArea.getX();
 
@@ -327,7 +327,6 @@ void VASTPositionViewport::mouseMove(const MouseEvent &e) {
 	if (myWtEditor == nullptr) return;
 	std::shared_ptr<CVASTWaveTable> wavetable = myWtEditor->getBankWavetable();
 	int x = e.getMouseDownX();
-	int posY = e.getPosition().getY();
 	int arrayidx = getArrayIdx(x);
 	if (arrayidx > wavetable->getNumPositions()) arrayidx = wavetable->getNumPositions(); //+ sign
 	if (arrayidx < 0) arrayidx = 0;

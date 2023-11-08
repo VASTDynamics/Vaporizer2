@@ -23,8 +23,6 @@ CVASTReverb::CVASTReverb(VASTAudioProcessor* processor, int busnr){
 
 void CVASTReverb::initParameters() {
 	AudioProcessorValueTreeState& parameters = my_processor->getParameterTree();
-	int lDestination = 0;
-
 	createAndAddParameter(&m_bReverbOnOff, parameters, 1, "m_bReverbOnOff", "Reverb on / off", "On", 0,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
@@ -94,7 +92,6 @@ void CVASTReverb::initParameters() {
 void CVASTReverb::initCompatibilityParameters() {
 	// all new parameters go here
 	AudioProcessorValueTreeState& parameters = my_processor->getParameterTree();
-	int lDestination = 0;
 	createAndAddParameter(&m_fReverbHighcut, parameters, 1, "m_fReverbHighcut", "Reverb highcut frequency", "Highcut", 4,
 		MODMATDEST::ReverbHighcut,
 		NormalisableRange<float>(50.f, 18000.f, 0.001f, 0.3f, false), 18000.f,

@@ -383,7 +383,7 @@ void CVASTSingleNote::pitchWheelMoved(int newPitchWheelValue, bool zone)
 	}
 }
 
-int CVASTSingleNote::getNumOscsPlaying() {
+int CVASTSingleNote::getNumOscsPlaying() const {
     return m_uLast_NumTotalPlaying.load();
 };
 
@@ -880,7 +880,7 @@ void CVASTSingleNote::samplerUpdatePitch(VASTSamplerSound* sound, bool force) {
 	}
 }
 
-int CVASTSingleNote::getVoiceNo() {
+int CVASTSingleNote::getVoiceNo() const {
 	return mVoiceNo;
 }
 
@@ -1053,13 +1053,13 @@ void CVASTSingleNote::generate_normalized_irrationals(float *destination, int co
 	}
 }
 
-bool CVASTSingleNote::isPlayingCalledFromUI() {
-	if (isVoiceActive()) 
+bool CVASTSingleNote::isPlayingCalledFromUI() const {
+	if (isVoiceActive())
 		return true;
 	return false;
 }
 
-bool CVASTSingleNote::isPlayingInRange(int startsample, int numsamples) {
+bool CVASTSingleNote::isPlayingInRange(int startsample, int numsamples) const {
 	//approximation range is true if start or end is used - in between not checken
 	if (m_Set->m_RoutingBuffers.MSEGActiveBuffer[0][mVoiceNo][startsample] || m_Set->m_RoutingBuffers.MSEGActiveBuffer[0][mVoiceNo][startsample + numsamples - 1])
 		return true;
@@ -1074,7 +1074,7 @@ bool CVASTSingleNote::isPlayingInRange(int startsample, int numsamples) {
 	return false;
 }
 
-bool CVASTSingleNote::isPlayingAtSamplePosition(int sample) {
+bool CVASTSingleNote::isPlayingAtSamplePosition(int sample) const {
 	if (m_Set->m_RoutingBuffers.MSEGActiveBuffer[0][mVoiceNo][sample])
 		return true;
 	if (m_Set->m_RoutingBuffers.MSEGActiveBuffer[1][mVoiceNo][sample])
@@ -1088,11 +1088,11 @@ bool CVASTSingleNote::isPlayingAtSamplePosition(int sample) {
 	return false;	
 }
 
-MYUINT CVASTSingleNote::getChannel() {
+MYUINT CVASTSingleNote::getChannel() const {
 	return m_uChannel;
 }
 
-MYUINT CVASTSingleNote::getMIDINote() {
+MYUINT CVASTSingleNote::getMIDINote() const {
 	return m_uMIDINote;
 }
 
@@ -1759,9 +1759,7 @@ void CVASTSingleNote::doWavetableBufferGet(const int bank, CVASTWaveTableOscilla
 					m_localVoiceBankWavetableSoftfade[bank] = m_Poly->m_OscBank.getUnchecked(bank)->getNewSharedSoftFadeWavetable();
 					if (m_localVoiceBankWavetableSoftfade[bank] != nullptr) { //fade to nullptr???
 						m_bSoftFadeCycleStarted[bank] = true; //other voice has started the cycle! pick up next zero loop
-						int numPos = m_localVoiceBankWavetableSoftfade[bank]->getNumPositions(); //for debug only
 						m_Poly->m_OscBank.getUnchecked(bank)->m_iSingleNoteSoftFadeID = m_localVoiceBankWavetableSoftfade[bank]->getID(); //needed?
-						//DBG("Starting softfade cycle - doWavetableBufferGet Voice " + String(mVoiceNo) + " SoftFadeWTID " + String(m_Poly->m_OscBank.getUnchecked(bank)->m_iSingleNoteSoftFadeID) + " numPos " + String(numPos) + " wtPosPerc " + String(m_currentWTPosFloatPercentage[bank]) + " bank " + String(bank));
 						m_Poly->m_OscBank.getUnchecked(bank)->addSingleNoteSoftFadeCycle(mVoiceNo); //one more cycling voice
 					}
 				}

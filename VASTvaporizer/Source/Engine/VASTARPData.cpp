@@ -157,8 +157,8 @@ void VASTARPData::copyDataFrom(const VASTARPData &copyData) {
 	m_isDirty.store(true);
 }
 
-int VASTARPData::getNumSteps() {
-	return arpStepNum; ;
+int VASTARPData::getNumSteps() const {
+	return arpStepNum;
 }
 
 void VASTARPData::setDirty() {

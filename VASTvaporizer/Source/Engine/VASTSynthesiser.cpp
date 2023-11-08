@@ -1547,8 +1547,6 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 
 				if ((!shallSteal) || (m_midiNotesNumKeyDown > 1))
 					if (m_bGlissandoUsed) {
-						int assigned = 0;
-
 						bool sameStacks = true;
 						for (int i = 0; i < 256; i++) {
 							if (m_oldChordStack[i] != m_newChordStack[i]) {

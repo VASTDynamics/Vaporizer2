@@ -23,6 +23,7 @@ VAST Dynamics Audio Software (TM)
 #define ARC4RANDOMMAX 4294967295 // (2^32 - 1)
 #define EXTRACT_BITS(the_val, bits_start, bits_len) ((the_val >> (bits_start - 1)) & ((1 << bits_len) - 1))
 
+JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE("-Wconversion")
 JUCE_BEGIN_IGNORE_WARNINGS_MSVC(4244 4267) //C4244 conversion from 'type1' to 'type2', possible loss of data //C4267 conversion from 'size_t' to 'type', possible loss of data
 
 enum fu_type
@@ -2029,3 +2030,4 @@ inline char* addStrings(char* pString1, char* pString2)
 }
 
 JUCE_END_IGNORE_WARNINGS_MSVC
+JUCE_END_IGNORE_WARNINGS_GCC_LIKE

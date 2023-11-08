@@ -488,11 +488,11 @@ void VASTMSEGData::clearDirtyFlag() {
     m_isDirty.store(false);
 }
 
-bool VASTMSEGData::isMSEGDirty() {
+bool VASTMSEGData::isMSEGDirty() const {
 	return m_isDirty.load();
 }
 
-bool VASTMSEGData::getADSRUpdated() {
+bool VASTMSEGData::getADSRUpdated() const {
 	return m_bADSR_updated.load();
 }
 
@@ -500,15 +500,15 @@ void VASTMSEGData::resetADSRUpdated() {
 	m_bADSR_updated.store(false);
 }
 
-int VASTMSEGData::getDispActiveSegment(int voiceNo) {
+int VASTMSEGData::getDispActiveSegment(int voiceNo) const {
 	return m_dispActiveSegment[voiceNo].load();
 }
 
-int VASTMSEGData::getDispSamplesSinceSegmentStart(int voiceNo) {
+int VASTMSEGData::getDispSamplesSinceSegmentStart(int voiceNo) const {
 	return m_dispSamplesSinceSegmentStart[voiceNo].load();
 }
 
-int VASTMSEGData::getDispSegmentLengthInSamples(int voiceNo) {
+int VASTMSEGData::getDispSegmentLengthInSamples(int voiceNo) const {
 	return m_dispSegmentLengthInSamples[voiceNo].load();
 }
 
@@ -523,7 +523,7 @@ void VASTMSEGData::setEnvMode(int mode) {
 	env_mode = mode;
 }
 
-int VASTMSEGData::getDecayPoint() {
+int VASTMSEGData::getDecayPoint() const {
 	int decayPoint = -1;
 	for (int i = 0; i < controlPoints.size(); i++) {
 		if (controlPoints[i].isDecay)
@@ -616,7 +616,7 @@ void VASTMSEGData::calcADSR() {
 	jassert(abs(totalAfter - totalBefore) < 0.001);
 }
 
-bool VASTMSEGData::hasReleasePhase() {
+bool VASTMSEGData::hasReleasePhase() const {
 	bool hasRelease = true;
 	int sp = getSustainPoint();
 	if ((sp == -1) || (controlPoints.size() <= sp + 1))
@@ -629,7 +629,7 @@ void VASTMSEGData::setSynch(bool synch) {
     m_isDirty.store(true);
 }
 
-bool VASTMSEGData::getSynch() {
+bool VASTMSEGData::getSynch() const {
 	return m_bSynch.load();
 }
 
@@ -638,7 +638,7 @@ void VASTMSEGData::setTimeBeats(int timeBeats) {
     m_isDirty.store(true);
 }
 
-int VASTMSEGData::getTimeBeats() {
+int VASTMSEGData::getTimeBeats() const {
 	return m_uTimeBeats;
 }
 
@@ -646,29 +646,29 @@ int VASTMSEGData::getTimeBeats() {
 // design time interface
 //float getAttackLevel() { return 0.f; };
 
-double VASTMSEGData::getAttackTime() {
+double VASTMSEGData::getAttackTime() const {
 	return m_fAttackTime.load();
 }
 
 //ms
 
-double VASTMSEGData::getDecayTime() {
+double VASTMSEGData::getDecayTime() const {
 	return m_fDecayTime.load();
 }
 
 //ms
 
-double VASTMSEGData::getSustainLevel() {
+double VASTMSEGData::getSustainLevel() const {
 	return m_fSustainLevel.load();
 }
 
 /** < 0.0 to 1.0. */
 
-double VASTMSEGData::getReleaseTime() {
+double VASTMSEGData::getReleaseTime() const {
 	return m_fReleaseTime.load();
 }
 
-bool VASTMSEGData::hasAttackPhase() {
+bool VASTMSEGData::hasAttackPhase() const {
 	bool hasAttack = true;
 	int decayPoint = -1;
 	for (int i = 0; i < controlPoints.size(); i++) {
@@ -699,7 +699,7 @@ void VASTMSEGData::doADSR() {
 
 	if (susPoint == -1) {
 		//susPoint = controlPoints.size() - 2; // prelast point
-		susPoint = controlPoints.size() - 1; // last point
+		susPoint = int(controlPoints.size()) - 1; // last point
 	}
 
 	double attackPerc = 0.0f;
@@ -1223,7 +1223,7 @@ void VASTMSEGData::toggleSustainPoint(int pointno) {
 	calcADSR();
 }
 
-int VASTMSEGData::getSustainPoint() {
+int VASTMSEGData::getSustainPoint() const {
 	int point = -1;
 	for (int i = 0; i < controlPoints.size(); i++) {
 		if (controlPoints[i].isSustain == true)
@@ -1408,7 +1408,7 @@ void VASTMSEGData::setValueTreeState(ValueTree* tree, bool isMseg, CVASTSettings
 	}
 }
 
-bool VASTMSEGData::getInvert() {
+bool VASTMSEGData::getInvert() const {
 	return invert;
 }
 
@@ -1444,7 +1444,7 @@ void VASTMSEGData::setReleaseSteps(double releaseSteps, CVASTSettings* set) {
 	}
 }
 
-float VASTMSEGData::getAttackSteps() {
+float VASTMSEGData::getAttackSteps() const {
 	return m_fAttackSteps.load();
 }
 
@@ -1571,7 +1571,7 @@ void VASTMSEGData::setStepSeqTime(double stepSeqTime) {
     m_needsUIUpdate.store(true);
 }
 
-int VASTMSEGData::getNumSegments() { return controlPoints.size() - 1; }
+int VASTMSEGData::getNumSegments() const { return int(controlPoints.size()) - 1; }
 
 VASTMSEGData::ControlPoint* VASTMSEGData::getSegmentStart(int segment) {
 	vassert(segment < getNumSegments());
@@ -1585,10 +1585,10 @@ VASTMSEGData::ControlPoint* VASTMSEGData::getSegmentEnd(int segment) {
 	return &controlPoints[segment + 1];
 }
 
-float VASTMSEGData::getDecaySteps() {
+float VASTMSEGData::getDecaySteps() const {
 	return m_fDecaySteps.load();
 }
 
-float VASTMSEGData::getReleaseSteps() {
+float VASTMSEGData::getReleaseSteps() const {
 	return m_fReleaseSteps.load();
 }

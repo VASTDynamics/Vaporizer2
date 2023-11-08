@@ -465,8 +465,6 @@ void VASTSamplerViewport::notifySelectionChanged() {
 		while ((counter < numSamples - 1) && (lz < numlz)) {
 			counter++;
 			int sPos = m_selection.iWavSelectionStartSample + counter;
-			float val = samplerSound->getAudioDataChanged()->getSample(0, sPos);
-			float valp1 = samplerSound->getAudioDataChanged()->getSample(0, sPos + 1);
 			while ((lz < numlz) && (lZeroCrossings[lz] < sPos)) {
 				lz++;
 			}

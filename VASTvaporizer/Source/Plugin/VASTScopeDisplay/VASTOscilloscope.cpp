@@ -134,7 +134,6 @@ void VASTOscilloscope::renderOpenGL() {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); //GL_LINEAR?
 
 		// Draw a textured quad
-		/*
 		glBegin(GL_QUADS);
 		float w = getWidth();
 		float h = getHeight();
@@ -164,7 +163,6 @@ void VASTOscilloscope::resized()
 	float scale = 1.f;
 	if (myProcessor != nullptr) {
 		m_screenWidthScale = float(getScreenBounds().getWidth()) / float(getWidth());
-		float scale = Desktop::getInstance().getGlobalScaleFactor() * m_screenWidthScale;
 	}
 	waveformImageBufferOff = waveformImageBufferOff.rescaled(jmax(1, int(getScreenBounds().getWidth() * scale)), jmax(1, int(getScreenBounds().getHeight() * scale)), juce::Graphics::ResamplingQuality::lowResamplingQuality);
 	waveformImageWithBorder = waveformImageWithBorder.rescaled(jmax(1, int(getScreenBounds().getWidth() * scale)), jmax(1, int(getScreenBounds().getHeight() * scale)), juce::Graphics::ResamplingQuality::highResamplingQuality);
@@ -1067,7 +1065,6 @@ void VASTOscilloscope::mouseWheelMove(const MouseEvent &event, const MouseWheelD
 	ModifierKeys modifiers = ModifierKeys::getCurrentModifiersRealtime();
 	int numGridlines = pow(2, myProcessor->m_iWTEditorGridMode + 1);
 	float stepx = (C_WAVE_TABLE_SIZE / numGridlines);
-	float stepy = (1.0f / numGridlines);
 
 	myWtEditor->copySelectionToLocalBuffer();
 
@@ -1185,9 +1182,6 @@ void VASTOscilloscope::handleBorderDisplay() {
 		return;
 
 	int l_oscillatorBank = 0;
-
-	const int width = waveformImage.getWidth();
-	const float halfHeight = waveformImage.getHeight() * 0.5f;
 
 	String l_oscbank = getParentComponent()->getComponentID();
 	//int bank = 0;
@@ -1689,8 +1683,6 @@ void VASTOscilloscope::singleCycleFromMSEG(int msegNo) {
 	
 	float numSamples = (totDur / 1000) * myProcessor->m_pVASTXperience.m_Set.m_nSampleRate;
 	float skips = numSamples / float(C_WAVE_TABLE_SIZE);
-	float lastval = 0.f;
-
 	float* envptr;
 	int arraySize = static_cast<int>(ceil(skips) * C_WAVE_TABLE_SIZE);
 	envptr = new float[arraySize];

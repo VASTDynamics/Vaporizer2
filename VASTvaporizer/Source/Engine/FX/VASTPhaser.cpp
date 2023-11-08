@@ -25,8 +25,6 @@ CVASTPhaser::CVASTPhaser(VASTAudioProcessor* processor, int busnr) {
 
 void CVASTPhaser::initParameters() {
 	AudioProcessorValueTreeState& parameters = my_processor->getParameterTree();
-	int lDestination = 0;
-
 	createAndAddParameter(&m_bPhaserOnOff, parameters, 1, "m_bPhaserOnOff", "Phaser on / off", "On", 0,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,

@@ -1,5 +1,4 @@
 /*
-/*
 VAST Dynamics Audio Software (TM)
 
 Global settings for AUDIO THREAD!
@@ -59,6 +58,9 @@ Destroy variables allocated in the contructor()
 */
 CVASTSettings::~CVASTSettings(void) {	
 }
+
+JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE("-Wconversion")
+JUCE_BEGIN_IGNORE_WARNINGS_MSVC(4244 4267)
 
 float CVASTSettings::getFrequencyFactorFromLUT(float octave) {
 	int intpart = floorf(octave);
@@ -913,16 +915,15 @@ float CVASTSettings::getParameterValueWithMatrixModulation(std::atomic<float> *p
 	double  modEndPercentage = curValPercentage + abs(modVal * 0.01f);
 	if (modEndPercentage > 1.f) modEndPercentage = 1.f;
 	if (modEndPercentage < 0.f) modEndPercentage = 0.f;	
-	if (firstRelevantSlotPolarity == POLARITY::Unipolar)
-		if (modVal > 0.f) {
-			modStartPercentage = curValPercentage;
-		}
-		else {
-			modEndPercentage = modStartPercentage;
-			modStartPercentage = curValPercentage;
-		}
-		
-	//jassert(modEndPercentage >= modStartPercentage);
+    if (firstRelevantSlotPolarity == POLARITY::Unipolar) {
+        if (modVal > 0.f) {
+            modStartPercentage = curValPercentage;
+        }
+        else {
+            modEndPercentage = modStartPercentage;
+            modStartPercentage = curValPercentage;
+        }
+    }
 	
 	jassert(skew > 0);
 		
@@ -996,3 +997,5 @@ float CVASTSettings::driftNoiseFast(int slot)
 	return m_fDriftLfoFast[slot] * c_randdriftm_fast;
 }
 
+JUCE_END_IGNORE_WARNINGS_GCC_LIKE
+JUCE_END_IGNORE_WARNINGS_MSVC

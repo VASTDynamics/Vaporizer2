@@ -25,24 +25,24 @@ public:
 	void beginSoftFade();
 	bool endSoftFade(); //returns if done
 
-	std::shared_ptr<CVASTWaveTable> getNewSharedWavetable();
-	const std::shared_ptr<CVASTWaveTable>& getWavetablePointer();
+	std::shared_ptr<CVASTWaveTable> getNewSharedWavetable() const;
+	const std::shared_ptr<CVASTWaveTable>& getWavetablePointer()  const;
 
-	std::shared_ptr<CVASTWaveTable> getNewSharedSoftFadeWavetable();
-	const std::shared_ptr<CVASTWaveTable>& getSoftFadeWavetablePointer();
+	std::shared_ptr<CVASTWaveTable> getNewSharedSoftFadeWavetable()  const;
+	const std::shared_ptr<CVASTWaveTable>& getSoftFadeWavetablePointer()  const;
 
-	std::shared_ptr<CVASTWaveTable> getNewSharedSoftFadeWavetableNext();
-	const std::shared_ptr<CVASTWaveTable>& getSoftFadeWavetablePointerNext();
+	std::shared_ptr<CVASTWaveTable> getNewSharedSoftFadeWavetableNext()  const;
+	const std::shared_ptr<CVASTWaveTable>& getSoftFadeWavetablePointerNext()  const;
 
 	void recalcWavetable();
 
 	void prepareForPlay(int expectedSamplesPerBlock);
 
-	int getBankno();
+	int getBankno() const;
 	
 	void setChangedFlagOsc();
 	void setChangedFlag();
-	bool isChanged();
+	bool isChanged() const;
 	bool getAndClearSoftChangedFlagStructure();
 	bool getAndClearSoftChangedFlagFdv();
 	bool getAndClearSoftChangedFlagOsc();
@@ -50,7 +50,7 @@ public:
 	bool getAndClearSoftChangedFlagPos();
 	
 	void setSoloMode(bool solo);
-	bool getSoloMode();
+	bool getSoloMode() const;
 
 	std::shared_ptr<CVASTWaveTable> getSoftOrCopyWavetable(bool getCopy = false, bool copyAlsoFreqs = false); //returns a reference of an exisitng shared_ptr - not a new one - has to be ensured that SFNext is not used
 
@@ -64,12 +64,12 @@ public:
 	
 	void timerCallback() override;
 	int lastWTchangeCounter = -1;
-	bool needsUndo();
+	bool needsUndo() const;
 	void undoLastWTChange();
 	
 	void addSingleNoteSoftFadeCycle(int voiceNo);
 	void removeSingleNoteSoftFadeCycle(int voiceNo);
-	int isInSingleNoteSoftFadeCycle();
+	int isInSingleNoteSoftFadeCycle() const;
 	void clearSingleNoteSoftFadeCycle();
 	std::atomic<bool> m_iSingleNoteSoftFadeCycle[C_MAX_POLY] = { false, false, false, false, false, false, false, false,
 																 false, false, false, false, false, false, false, false };

@@ -665,7 +665,7 @@ void CVASTWaveTableOscillator::setPitchBendNote(float pitchbend) { //multiplier
 	m_fPitchBendNote = pitchbend;
 }
 
-MYUINT CVASTWaveTableOscillator::getOscType() {
+MYUINT CVASTWaveTableOscillator::getOscType() const {
 	return m_uOscType;
 }
 

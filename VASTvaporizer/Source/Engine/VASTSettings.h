@@ -262,7 +262,7 @@ public:
 		SamplerBuffer->clear(0, numSamples);  //needs clearing
 	}
 
-	int getNumSamples() {
+	int getNumSamples() const {
 		return m_numSamples;
 	};
 

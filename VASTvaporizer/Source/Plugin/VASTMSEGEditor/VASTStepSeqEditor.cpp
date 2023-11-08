@@ -435,9 +435,7 @@ void VASTStepSeqEditor::mouseMove(const MouseEvent& e) {
 	updateContent(true);
 
 	int numSteps = myData->getStepSeqSteps();
-	float mouseY = e.getMouseDownY();
 	float mouseX = e.getMouseDownX();
-	int numIsClicked = -1;
 	float stepWidth = (m_drawwidth / m_screenWidthScale) / numSteps;
 	Graphics g(waveformImage);
 	for (int i = 0; i < numSteps; i++) {

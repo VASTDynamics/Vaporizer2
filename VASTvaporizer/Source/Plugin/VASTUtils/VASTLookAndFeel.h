@@ -250,7 +250,7 @@ public:
 	BorderSize<int> getLabelBorderSize(Label& label) override;
 
 	Array<int> getWidthsForTextButtons(AlertWindow&, const Array<TextButton*>& buttons) override;
-	int getAlertWindowButtonHeight();
+	int getAlertWindowButtonHeight() override;
 
 	int getCallOutBoxBorderSize(const CallOutBox &) override;
 	float getCallOutBoxCornerSize(const CallOutBox &) override;

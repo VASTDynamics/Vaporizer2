@@ -352,11 +352,11 @@ void CVASTWaveTable::setSelectedWtPos(int wtPos) {
 	clearMultiSelect();
 }
 
-int CVASTWaveTable::getSelectedWtPos() {
+int CVASTWaveTable::getSelectedWtPos() const {
 	return m_iSelectedPosition;
 }
 
-bool CVASTWaveTable::isMultiSelected() {
+bool CVASTWaveTable::isMultiSelected() const {
 #ifdef _DEBUG
 	if (m_multiSelect)
 		vassert((m_iSelectedPosition >= m_iMultiSelectBegin) && (m_iSelectedPosition <= m_iMultiSelectEnd));
@@ -364,13 +364,13 @@ bool CVASTWaveTable::isMultiSelected() {
 	return m_multiSelect;
 }
 
-int CVASTWaveTable::getMultiSelectBegin() {
+int CVASTWaveTable::getMultiSelectBegin() const {
 	if (!m_multiSelect)
 		return m_iSelectedPosition;
 	return m_iMultiSelectBegin;
 }
 
-int CVASTWaveTable::getMultiSelectEnd() {
+int CVASTWaveTable::getMultiSelectEnd() const {
 	if (!m_multiSelect)
 		return m_iSelectedPosition;
 	return m_iMultiSelectEnd;
@@ -462,7 +462,7 @@ void CVASTWaveTable::clear() {
 	m_lastPhaseInc = -1; //performance optimize
 }
 
-int CVASTWaveTable::getNumPositions() {
+int CVASTWaveTable::getNumPositions() const {
 	return wtheader.numPositions.load();
 }
 
@@ -571,7 +571,7 @@ void CVASTWaveTable::deletePosition(int numPos) {
 	}
 }
 
-bool CVASTWaveTable::positionIsPrepared(int wtPos) {
+bool CVASTWaveTable::positionIsPrepared(int wtPos) const {
 //	int wtsize = wtheader.waveTablePositions.size();
 //	if (wtPos < wtheader.numPositionsPrepared) {
 		//if (wtPos < wtsize) {
@@ -582,7 +582,7 @@ bool CVASTWaveTable::positionIsPrepared(int wtPos) {
 	return !wtheader.waveTablePositions[wtPos].dirty;
 }
 
-bool CVASTWaveTable::getWaveTablePosition(int wtPos, sWaveTablePosition* &waveTablePosition) {
+bool CVASTWaveTable::getWaveTablePosition(int wtPos, sWaveTablePosition* &waveTablePosition)  {
 	vassert(wtheader.waveTablePositions.size() + 1 > wtPos);
 	if (wtheader.waveTablePositions.size() < wtPos + 1) return false;
 	waveTablePosition = &wtheader.waveTablePositions[wtPos];
@@ -876,7 +876,7 @@ void CVASTWaveTable::setFreqDomainTables(int wtPos, std::vector<dsp::Complex<flo
 	ScopedLock sl(mWavetableChangeLock);
 
 	//only called from freq domain viewport!
-	int tableLen = (*domainBuffer).size();
+	int tableLen = int((*domainBuffer).size());
 
 	//----------------------
 	for (int i = 1; i < C_WAVE_TABLE_SIZE; i++) {
@@ -1028,7 +1028,7 @@ void CVASTWaveTable::generateWaveTableFreqsFromTimeDomain(int wtPos, int tableLe
 		return;
 	}
 
-	int wtsize = wtp->waveTableFreqs.size();
+	int wtsize = int(wtp->waveTableFreqs.size());
 	for (int i = 0; i < wtsize; i++) {
 		wtp->waveTableFreqs[i].invalid = true;
 	}
@@ -1448,11 +1448,11 @@ bool CVASTWaveTable::wtFreqCheckForChange(sWaveTableFreq &wtFreq, float wtFxVal,
 	return false;
 }
 
-int CVASTWaveTable::getID() {
+int CVASTWaveTable::getID() const {
 	return m_iWaveTableID;
 }
 
-int CVASTWaveTable::getChangeCounter() {
+int CVASTWaveTable::getChangeCounter() const {
 	return wtheader.changeCounter.load();
 }
 

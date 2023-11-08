@@ -2304,7 +2304,6 @@ __m128 VASTQFilter::COMBquad_SSE1(VASTQFilterStepState* __restrict f, __m128 in)
 {
 	assert(FIRipol_M == 256); // changing the constant requires updating the code below
 	const __m128 m256 = _mm_set1_ps(256.f);
-	const __m128i m0xff = _mm_set1_epi32(0xff);
 
 	f->C[0] = _mm_add_ps(f->C[0], f->dC[0]);
 	f->C[1] = _mm_add_ps(f->C[1], f->dC[1]);
@@ -2783,10 +2782,6 @@ VASTQFilter::WaveshaperQFPtr VASTQFilter::GetQFPtrWaveshaper(int type)
 template <bool WS, bool A, bool B, bool C>
 void VASTQFilter::ProcessFBQuad(VASTQFilterProcessState& d, Fbq_global& g, float* OutL, float* OutR, float VoicesL[][4], float VoicesR[][4], int numSamples)
 {
-	const __m128 hb_c = _mm_set1_ps(0.5f); // If this is changed from 0.5, make sure to change
-										   // this in the code because it is assumed to be half
-	const __m128 one = _mm_set1_ps(1.0f);
-
 	for (int k = 0; k < numSamples; k++)
 	{
 		d.FB = _mm_add_ps(d.FB, d.dFB); //TODO Check feedback - only to A?

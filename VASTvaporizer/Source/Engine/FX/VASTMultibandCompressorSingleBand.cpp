@@ -29,8 +29,6 @@ CVASTMultibandCompressorSingleBand::CVASTMultibandCompressorSingleBand(VASTAudio
 
 void CVASTMultibandCompressorSingleBand::initParameters() {
 	AudioProcessorValueTreeState& parameters = my_processor->getParameterTree();
-	int lDestination = 0;
-
 	float initLowFreq = 0.f;
 	float initHighFreq = 0.f;
 	float initThreshold = 0.0f;

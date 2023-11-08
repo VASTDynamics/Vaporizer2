@@ -105,7 +105,7 @@ public:
 	};
 	*/
 
-	int getConcertinaStatus() {
+	int getConcertinaStatus() const {
 		return concertinaStatus;
 	};
 

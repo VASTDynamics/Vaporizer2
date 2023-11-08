@@ -46,11 +46,11 @@ public:
 	void updateTiming();
 	OwnedArray<insertEffect> effectBus;
 	void swapSlots(int first, int second);
-	int getSequence(int slot);
+	int getSequence(int slot) const;
 	int findPosition(int slot);
 
 	void initSequence();
-	void getValueTreeState(ValueTree* tree, UndoManager* undoManager);
+	void getValueTreeState(ValueTree* tree, UndoManager* undoManager); //not const
 	void setValueTreeState(ValueTree* tree);
 
 private:
