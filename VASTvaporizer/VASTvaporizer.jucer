@@ -632,20 +632,23 @@
                        enablePluginBinaryCopyStep="1" vstBinaryLocation="/Library/Audio/Plug-Ins/VST/"
                        auBinaryLocation="/Library/Audio/Plug-Ins/Components/" customXcodeFlags="VALID_ARCHS = &quot;x86_64&quot;,  CLANG_X86_VECTOR_INSTRUCTIONS=avx"
                        vst3BinaryLocation="/Library/Audio/Plug-Ins/VST3/" osxArchitecture="64BitIntel"
-                       fastMath="1" macOSDeploymentTarget="10.13"/>
+                       fastMath="1" macOSDeploymentTarget="10.13" lv2BinaryLocation="/Library/Audio/Plug-Ins/LV2/"
+                       aaxBinaryLocation="/Library/Application Support/Avid/Audio/Plug-Ins/"/>
         <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="VASTvaporizer2"
                        linkTimeOptimisation="1" defines="_MACOSX _MACOSX32BIT NDEBUG  SSE_AVX=AVX "
                        enablePluginBinaryCopyStep="1" osxArchitecture="32BitUniversal"
                        vstBinaryLocation="/Library/Audio/Plug-Ins/VST/" auBinaryLocation="/Library/Audio/Plug-Ins/Components/"
                        customXcodeFlags="VALID_ARCHS = &quot;x86_64&quot;,  CLANG_X86_VECTOR_INSTRUCTIONS=avx"
-                       vst3BinaryLocation="/Library/Audio/Plug-Ins/VST3/" fastMath="1"/>
+                       vst3BinaryLocation="/Library/Audio/Plug-Ins/VST3/" fastMath="1"
+                       stripLocalSymbols="1" lv2BinaryLocation="/Library/Audio/Plug-Ins/LV2/"
+                       aaxBinaryLocation="/Library/Application Support/Avid/Audio/Plug-Ins/"/>
         <CONFIGURATION name="Release 64bit" isDebug="0" optimisation="3" targetName="VASTvaporizer2"
                        linkTimeOptimisation="1" defines="_MACOSX _MACOSX64BIT NDEBUG  SSE_AVX=AVX"
                        enablePluginBinaryCopyStep="1" vstBinaryLocation="/Library/Audio/Plug-Ins/VST/"
                        auBinaryLocation="/Library/Audio/Plug-Ins/Components/" customXcodeFlags="VALID_ARCHS = &quot;x86_64&quot;,  CLANG_X86_VECTOR_INSTRUCTIONS=avx"
                        vst3BinaryLocation="/Library/Audio/Plug-Ins/VST3/" fastMath="1"
                        stripLocalSymbols="1" aaxBinaryLocation="/Library/Application Support/Avid/Audio/Plug-Ins/"
-                       osxArchitecture="64BitIntel"/>
+                       osxArchitecture="64BitIntel" lv2BinaryLocation="/Library/Audio/Plug-Ins/LV2/"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_gui_extra" path="../JUCE/modules"/>
@@ -675,7 +678,8 @@
                        vst3BinaryLocation="/Library/Audio/Plug-Ins/VST3/" auBinaryLocation="/Library/Audio/Plug-Ins/Components/"
                        vstBinaryLocation="/Library/Audio/Plug-Ins/VST/" optimisation="3"
                        customXcodeFlags="VALID_ARCHS = &quot;x86_64 arm64&quot;" fastMath="1"
-                       stripLocalSymbols="1" userNotes="This is the universal binary build also supporting arm64 silicon on Neon."/>
+                       stripLocalSymbols="1" userNotes="This is the universal binary build also supporting arm64 silicon on Neon."
+                       lv2BinaryLocation="/Library/Audio/Plug-Ins/LV2/" aaxBinaryLocation="/Library/Application Support/Avid/Audio/Plug-Ins/"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_gui_extra" path="../JUCE/modules"/>

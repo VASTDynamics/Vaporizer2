@@ -286,9 +286,6 @@
   <PARAM id="m_fMBMonoFrequency" text="0"/>
   <PARAM id="m_fMBMonoFrequency_Bus2" text="0"/>
   <PARAM id="m_fMBMonoFrequency_Bus3" text="0"/>
-  <PARAM id="m_bOversampleBus" text="Off"/>
-  <PARAM id="m_bOversampleBus_Bus2" text="Off"/>
-  <PARAM id="m_bOversampleBus_Bus3" text="Off"/>
   <PARAM id="m_uFxBusRouting" text="Master"/>
   <PARAM id="m_uFxBusRouting_Bus2" text="Master"/>
   <PARAM id="m_uFxBusRouting_Bus3" text="Master"/>

@@ -193,6 +193,8 @@ void VASTSynthesiser::renderNextBlock(sRoutingBuffers& routingBuffers,
 				DBG(outstr);
 #endif			
 				for (auto* voice : voices) {
+                    if (voice->getCurrentlyPlayingNote()<0)
+                        continue;
 					if (m_newChordStack[voice->getCurrentlyPlayingNote()] == true) {
 
 						//TODO check if voice is not hard stopping / tailing off!!

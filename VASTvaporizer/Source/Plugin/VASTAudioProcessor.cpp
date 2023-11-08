@@ -38,7 +38,7 @@ using namespace BinaryData;
 #define S_KEY_UITEXTS "sjkdfhskjdfhkjsdfkhsdfkjs4" //this is not the license encryption key
 
 //==============================================================================
-VASTAudioProcessor::VASTAudioProcessor() : m_undoManager(3000, 30), 
+VASTAudioProcessor::VASTAudioProcessor() :
 			m_parameterState(*this, &m_undoManager), 
 			m_pVASTXperience(this) {
                 
@@ -1639,7 +1639,7 @@ void VASTAudioProcessor::setParameterText(StringRef parName, StringRef textVal, 
 }
 
 AudioProcessorValueTreeState& VASTAudioProcessor::getParameterTree() {
-	return m_parameterState;
+    return m_parameterState;
 }
 
 VASTVUMeterSource* VASTAudioProcessor::getMeterSource() {
@@ -3511,14 +3511,22 @@ String VASTAudioProcessor::getVersionString() {
 #elif  _WIN32BIT //_WIN32 also defined for WIN64!!
 	lVersion.append("Win32", 5);
 #endif
-#if _SSE2_VERSION
-	lVersion.append(" SSE2", 5);
+#ifdef _SSE2_VERSION
+    #if JUCE_MAC
+        #ifdef JUCE_ARM
+            lVersion.append(" UBarm", 7);
+        #else
+            lVersion.append(" UBint", 7);
+        #endif
+    #else
+        lVersion.append(" SSE2", 5);
+    #endif
 #endif
-#if _DEBUG
+#ifdef _DEBUG
 	lVersion.append(" (Debug)", 8);
 #endif
-#if VASTBUILD || VASTCOMMERCIAL
-	lVersion.append("v", 1);
+#ifdef VASTBUILD || VASTCOMMERCIAL
+	lVersion.append(" v", 2);
 #endif
 	return lVersion;
 }

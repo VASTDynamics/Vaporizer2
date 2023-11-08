@@ -186,23 +186,49 @@ void CVASTWaveTable::getValueTreeState(ValueTree* tree, UndoManager* undoManager
 
 		waveTablePositionTree->setProperty("isInitial", wtheader.waveTablePositions[i].isInitial, undoManager);
 
+        /* old logic
+        {
+            std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+            if (wtheader.waveTablePositions[i].isInitial == false) {
+                String nTable = "";
+                //nTable.preallocateBytes(C_WAVE_TABLE_SIZE * 8);
+                nTable.preallocateBytes(C_WAVE_TABLE_SIZE * 32); //due to UTF-8!
+                auto* dest = (char*)nTable.getCharPointer().getAddress();
 
-		if (wtheader.waveTablePositions[i].isInitial == false) {
-			String nTable = "";
-			//nTable.preallocateBytes(C_WAVE_TABLE_SIZE * 8);
-			nTable.preallocateBytes(C_WAVE_TABLE_SIZE * 32); //due to UTF-8!
-			auto* dest = (char*)nTable.getCharPointer().getAddress();
+                for (int n = 0; n < C_WAVE_TABLE_SIZE; n++) {
+                    float sval = wtheader.waveTablePositions[i].naiveTable[n];
+                    unsigned int* sint = (unsigned int*)&sval;
+                    String s1 = String::toHexString(*sint);
+                    s1 += String::repeatedString("0", 8 - s1.length());
 
-			for (int n = 0; n < C_WAVE_TABLE_SIZE; n++) {
-				float sval = wtheader.waveTablePositions[i].naiveTable[n];
-				unsigned int* sint = (unsigned int*)&sval;
-				String s1 = String::toHexString(*sint);
-				s1 += String::repeatedString("0", 8 - s1.length());
+                    memcpy(dest + n * 8, s1.getCharPointer().getAddress(), 8);
+                }
+                waveTablePositionTree->setProperty("naiveTable", nTable, undoManager);
+            }
+            std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+            DBG("Duration: " << duration);
+        }
+        */
 
-				memcpy(dest + n * 8, s1.getCharPointer().getAddress(), 8);
-			}
-			waveTablePositionTree->setProperty("naiveTable", nTable, undoManager);
-		}
+        {
+            //std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+            if (wtheader.waveTablePositions[i].isInitial == false) {
+                String nTable = String::repeatedString("0", C_WAVE_TABLE_SIZE * 8); //fill with 0s
+                auto* dest = (char*)nTable.getCharPointer().getAddress();
+                for (int n = 0; n < C_WAVE_TABLE_SIZE; n++) {
+                    float sval = wtheader.waveTablePositions[i].naiveTable[n];
+                    unsigned int* sint = (unsigned int*)&sval;
+                    String s1 = String::toHexString(*sint);
+                    int s1Len = s1.length();
+                    memcpy(dest + n * 8 +(8-s1Len), s1.getCharPointer().getAddress(), s1Len); //memcpy is OK since chars are ASCII
+                }
+                waveTablePositionTree->setProperty("naiveTable", nTable, undoManager);
+            }
+            //std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
+            //auto duration = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+            //DBG("Duration: " << duration);
+        }
 
 		waveTablePositionTree->setProperty("maxHarmonics", wtheader.waveTablePositions[i].maxHarmonics, undoManager);
 		waveTablePositionTree->setProperty("numWaveTableFreqs", wtheader.waveTablePositions[i].numWaveTableFreqs, undoManager);

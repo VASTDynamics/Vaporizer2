@@ -62,7 +62,7 @@ bool CVASTXperience::initializeEngine()
 	std::shared_ptr<CVASTParamState> state = std::make_shared<CVASTParamState>();
 	m_Set.m_State.swap(state);
 
-	AudioProcessorValueTreeState& parameters = myProcessor->getParameterTree();
+    AudioProcessorValueTreeState& parameters = myProcessor->getParameterTree();
 
 	//--------------------------------------------------------------------------------
 	//start of standard parameters that will never get changed anymore

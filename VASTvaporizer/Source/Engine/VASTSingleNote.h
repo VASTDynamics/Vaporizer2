@@ -116,7 +116,7 @@ public:
 	MYUINT m_uMIDINote;
 	MYUINT m_uVelocity;
 
-	bool m_bLastFilterOutputZero[3]; //filters
+    bool m_bLastFilterOutputZero[3] = {true, true, true}; //filters
 
 	float m_safePhaseFloat[4];
 	int m_iCurCycleSamples[4] = { 0, 0, 0, 0 };

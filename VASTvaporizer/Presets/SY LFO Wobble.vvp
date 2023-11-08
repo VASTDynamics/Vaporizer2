@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<VASTvaporizer2 PatchVersion="VASTVaporizerParamsV2.00000" PatchName="LFO Wobble "
+<VASTvaporizer2 PatchVersion="VASTVaporizerParamsV2.00000" PatchName="LFO Wobble"
                 PatchCategory="SY" PatchTag="Factory" PatchAuthor="VASTDynamics"
                 PatchComments="" CustomModulator1Text="Custom1" CustomModulator2Text="Custom2"
                 CustomModulator3Text="Custom3" CustomModulator4Text="Custom4">

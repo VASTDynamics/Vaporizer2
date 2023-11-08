@@ -195,7 +195,7 @@ public:
 	std::unordered_map<String, int> m_mapParameterNameToModdest; //declare before vastxperience	
 	Array<VASTParameterSlider*> m_mapParameterNameToControl; //declare before vastxperience
 
-	UndoManager m_undoManager; //declare before parameterState
+    UndoManager m_undoManager {3000, 30}; //declare before parameterState
 	AudioProcessorValueTreeState m_parameterState; //declare before vastxperience
 	
 	//==============================================================================
