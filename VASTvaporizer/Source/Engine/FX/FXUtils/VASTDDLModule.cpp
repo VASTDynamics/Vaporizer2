@@ -19,7 +19,7 @@ CDDLModule::CDDLModule() {
 	m_fFeedback_pct = 0;
 	m_fWetLevel = 0;
 	
-	m_pBuffer = new AudioSampleBuffer(1, 16); // inital value
+	m_pBuffer = std::make_unique<AudioSampleBuffer>(1, 16); // inital value
 
 	// reset 
 	m_nReadIndex = 0;

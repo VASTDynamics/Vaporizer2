@@ -83,7 +83,7 @@ public:
 	bool getBlockProcessing();
 	bool nonThreadsafeIsBlockedProcessingInfo();
 
-	juce::ScopedPointer<AudioSampleBuffer> m_oversampledBuffer;
+    std::unique_ptr<AudioSampleBuffer> m_oversampledBuffer;
 
     std::atomic<bool> m_bLastChainBufferZero = false;
     std::atomic<int> m_bBufferZeroMilliSeconds = 0;

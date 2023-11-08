@@ -645,7 +645,7 @@ void VASTFreqDomainViewport::mouseDown(const MouseEvent &e) {
 				l_veditor->setTextPhase(String(lCurPhaseValue));
 
 				//CallOutBox &cb =
-				juce::CallOutBox::launchAsynchronously(std::move(l_veditor), newBounds, myEditor->vaporizerComponent);
+				juce::CallOutBox::launchAsynchronously(std::move(l_veditor), newBounds, myEditor->vaporizerComponent.get());
 			}
 			else if (result == 11) {
 				myWtEditor->setBinMode(BinMode::ClipBin);

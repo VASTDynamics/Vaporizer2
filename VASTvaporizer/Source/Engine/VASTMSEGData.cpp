@@ -1292,8 +1292,7 @@ void VASTMSEGData::getValueTreeState(ValueTree* tree, UndoManager* undoManager, 
 		//points
 		tree->setProperty("numControlPoints", int(controlPoints.size()), undoManager);
 		for (int i = 0; i < controlPoints.size(); i++) {
-			ScopedPointer<ValueTree> subtree;
-			subtree = new ValueTree(Identifier("msegPoint" + String(i)));
+            std::unique_ptr<ValueTree> subtree(new ValueTree(Identifier("msegPoint" + String(i))));
 			subtree->setProperty("isDecay", controlPoints[i].isDecay, undoManager);
 			subtree->setProperty("isSustain", controlPoints[i].isSustain, undoManager);
 			subtree->setProperty("isLoopStart", controlPoints[i].isLoopStart, undoManager);
@@ -1310,8 +1309,7 @@ void VASTMSEGData::getValueTreeState(ValueTree* tree, UndoManager* undoManager, 
 		tree->setProperty("invert", invert, undoManager);
 		tree->setProperty("numSteps", int(getStepSeqSteps()), undoManager);
 		for (int i = 0; i < getStepSeqSteps(); i++) {
-			ScopedPointer<ValueTree> subtree;
-			subtree = new ValueTree(Identifier("stepSeqStep" + String(i)));
+            std::unique_ptr<ValueTree> subtree(new ValueTree(Identifier("stepSeqStep" + String(i))));
 			subtree->setProperty("barHeight", m_ss_bars[i], undoManager);
 			tree->appendChild(*subtree.get(), undoManager);
 		}

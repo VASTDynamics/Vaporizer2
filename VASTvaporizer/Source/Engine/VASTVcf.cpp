@@ -18,7 +18,7 @@ VAST Dynamics Audio Software (TM)
 #define C_FILTER_OVERSAMPLINGFACTOR 4
 
 CVASTVcf::CVASTVcf() {
-	inBufferUp = new AudioSampleBuffer(2, C_FILTER_BLOCKSIZE * C_FILTER_OVERSAMPLINGFACTOR);
+	inBufferUp = std::make_unique<AudioSampleBuffer>(2, C_FILTER_BLOCKSIZE * C_FILTER_OVERSAMPLINGFACTOR);
 }
 
 /* destructor()

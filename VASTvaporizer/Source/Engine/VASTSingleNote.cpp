@@ -52,10 +52,10 @@ void CVASTSingleNote::init(CVASTSettings &set, CVASTPoly* poly, MYUINT voiceNo) 
 		m_Oscillator.add(new CVASTWaveTableOscillator());
 		m_Oscillator.getUnchecked(bank)->init(*m_Set, poly->m_OscBank.getUnchecked(bank));
 	}
-	m_OscillatorNoise = new CVASTWaveTableOscillator();
+	m_OscillatorNoise = std::make_unique<CVASTWaveTableOscillator>();
 	m_OscillatorNoise->init(*m_Set);
 
-	m_VCA = new CVASTVca();
+	m_VCA = std::make_unique<CVASTVca>();
 	m_VCA->init(*m_Set, mVoiceNo);
 	for (int filter = 0; filter < 3; filter++) {
 		m_VCF.add(new CVASTVcf());
@@ -106,8 +106,8 @@ void CVASTSingleNote::init(CVASTSettings &set, CVASTPoly* poly, MYUINT voiceNo) 
 		m_wtFXType[bank] = 0;
 		m_wtFXTypeChanged[bank] = false;
 	}	
-	m_centerBuffer = new AudioSampleBuffer(1, initSize);
-	m_velocityBuffer = new AudioSampleBuffer(1, initSize);
+	m_centerBuffer = std::make_unique<AudioSampleBuffer>(1, initSize);
+	m_velocityBuffer = std::make_unique<AudioSampleBuffer>(1, initSize);
 }
 
 void CVASTSingleNote::resetSmoothers() {
@@ -401,21 +401,21 @@ void CVASTSingleNote::controllerMoved(int controllerNumber, int newControllerVal
 				VASTParameterSlider* lslider = nullptr;
 				if (permalink == 1) {
 					if (Component_buffer_m_fCustomModulator1 == nullptr) {
-						lslider = dynamic_cast<VASTParameterSlider*>(_editor->findChildComponetWithName(_editor->vaporizerComponent, "m_fCustomModulator1"));
+						lslider = dynamic_cast<VASTParameterSlider*>(_editor->findChildComponetWithName(_editor->vaporizerComponent.get(), "m_fCustomModulator1"));
 						Component_buffer_m_fCustomModulator1 = lslider;
 					}
 					else lslider = Component_buffer_m_fCustomModulator1;
 					m_Poly->m_fCustomModulator1_smoothed.setValue(m_Set->m_uModWheel.load() / 127.f);
 				} else if (permalink == 2) {
 					if (Component_buffer_m_fCustomModulator2 == nullptr) {
-						lslider = dynamic_cast<VASTParameterSlider*>(_editor->findChildComponetWithName(_editor->vaporizerComponent, "m_fCustomModulator2"));
+						lslider = dynamic_cast<VASTParameterSlider*>(_editor->findChildComponetWithName(_editor->vaporizerComponent.get(), "m_fCustomModulator2"));
 						Component_buffer_m_fCustomModulator2 = lslider;
 					}
 					else lslider = Component_buffer_m_fCustomModulator2;
 					m_Poly->m_fCustomModulator2_smoothed.setValue(m_Set->m_uModWheel.load() / 127.f);
 				} else if (permalink == 3) {
 					if (Component_buffer_m_fCustomModulator3 == nullptr) {
-						lslider = dynamic_cast<VASTParameterSlider*>(_editor->findChildComponetWithName(_editor->vaporizerComponent, "m_fCustomModulator3"));
+						lslider = dynamic_cast<VASTParameterSlider*>(_editor->findChildComponetWithName(_editor->vaporizerComponent.get(), "m_fCustomModulator3"));
 						Component_buffer_m_fCustomModulator3 = lslider;
 					}
 					else lslider = Component_buffer_m_fCustomModulator3;
@@ -423,7 +423,7 @@ void CVASTSingleNote::controllerMoved(int controllerNumber, int newControllerVal
 				}
 				else if (permalink == 4) {
 					if (Component_buffer_m_fCustomModulator4 == nullptr) {
-						lslider = dynamic_cast<VASTParameterSlider*>(_editor->findChildComponetWithName(_editor->vaporizerComponent, "m_fCustomModulator4"));
+						lslider = dynamic_cast<VASTParameterSlider*>(_editor->findChildComponetWithName(_editor->vaporizerComponent.get(), "m_fCustomModulator4"));
 						Component_buffer_m_fCustomModulator4 = lslider;
 					}
 					else lslider = Component_buffer_m_fCustomModulator4;
@@ -1718,12 +1718,12 @@ void CVASTSingleNote::doWavetableBufferGet(const int bank, CVASTWaveTableOscilla
 			if (m_bSoftFadeCycleStarted[bank] && !m_bSoftFadeCycleEnded[bank]) { //end softfade here
 				//vassert(m_localVoiceBankWavetableSoftfade[bank]->getID() == m_Poly->m_OscBank.getUnchecked(bank)->m_iSingleNoteSoftFadeID); //must not be changed in meantime //is changed by dynamic generation??
 				if (m_localVoiceBankWavetableSoftfade[bank] != nullptr) { //check why??				
-					ScopedPointer<AudioSampleBuffer> softFadeBuffer = new AudioSampleBuffer(2, lOscBuffer->getNumSamples());
+                    std::unique_ptr<AudioSampleBuffer> softFadeBuffer(new AudioSampleBuffer(2, lOscBuffer->getNumSamples()));
 					softFadeBuffer->clear();
 					bool lUpdated = false;
 					if (sectionlength > 0) {
 						//DBG("doWavetableBufferGet  getWavetableInterpolateBuffer m_localVoiceBankWavetableSoftfade voice " + String(mVoiceNo) + " startSample " + String(nextStart) + " numSamples " + String(sectionlength) + " wtPosPerc " + String(m_currentWTPosFloatPercentage[bank]));
-						m_localVoiceBankWavetableSoftfade[bank]->getWavetableInterpolateBuffer(mOscillator, osciCount, softFadeBuffer, nextStart, sectionlength, bInverter, m_Set->m_WTmode, mVoiceNo, bank, &m_Poly->m_OscBank, m_bIsFirstCycle[bank], m_bIsStartOfCycle[bank], m_currentWTPosFloatPercentage[bank], m_wtFXVal[bank], m_wtFXType[bank], m_iLastCycleSamples[bank], m_iCurCycleSamples[bank], m_localVoiceBankWavetable[bank].get(), lUpdated, m_Poly->m_OscBank.getUnchecked(bank)->getSoloMode());
+						m_localVoiceBankWavetableSoftfade[bank]->getWavetableInterpolateBuffer(mOscillator, osciCount, softFadeBuffer.get(), nextStart, sectionlength, bInverter, m_Set->m_WTmode, mVoiceNo, bank, &m_Poly->m_OscBank, m_bIsFirstCycle[bank], m_bIsStartOfCycle[bank], m_currentWTPosFloatPercentage[bank], m_wtFXVal[bank], m_wtFXType[bank], m_iLastCycleSamples[bank], m_iCurCycleSamples[bank], m_localVoiceBankWavetable[bank].get(), lUpdated, m_Poly->m_OscBank.getUnchecked(bank)->getSoloMode());
 						if (lUpdated)
 							m_Poly->m_OscBank.getUnchecked(bank)->setChangedFlagOsc();
 					}
@@ -1810,12 +1810,12 @@ void CVASTSingleNote::doWavetableBufferGet(const int bank, CVASTWaveTableOscilla
 	if (m_bSoftFadeCycleStarted[bank] && !m_bSoftFadeCycleEnded[bank]) {
 		//vassert(m_localVoiceBankWavetableSoftfade[bank]->getID() == m_Poly->m_OscBank.getUnchecked(bank)->m_iSingleNoteSoftFadeID); //must not be changed in meantime //is changed by dynamic generation??
 		if (m_localVoiceBankWavetableSoftfade[bank] != nullptr) { //check why??		
-			ScopedPointer<AudioSampleBuffer> softFadeBuffer = new AudioSampleBuffer(2, lOscBuffer->getNumSamples());
+            std::unique_ptr<AudioSampleBuffer> softFadeBuffer(new AudioSampleBuffer(2, lOscBuffer->getNumSamples()));
 			softFadeBuffer->clear();
 			bool lUpdated = false;
 			if (restlength > 0) {
 				//DBG("doWavetableBufferGet  getWavetableInterpolateBuffer m_localVoiceBankWavetableSoftfade restlength voice " + String(mVoiceNo) + " startSample " + String(nextStart) + " numSamples " + String(restlength) + " wtPosPerc " + String(m_currentWTPosFloatPercentage[bank]));
-				m_localVoiceBankWavetableSoftfade[bank]->getWavetableInterpolateBuffer(mOscillator, osciCount, softFadeBuffer, nextStart, restlength, bInverter, m_Set->m_WTmode, mVoiceNo, bank, &m_Poly->m_OscBank, m_bIsFirstCycle[bank], m_bIsStartOfCycle[bank], m_currentWTPosFloatPercentage[bank], m_wtFXVal[bank], m_wtFXType[bank], m_iLastCycleSamples[bank], m_iCurCycleSamples[bank], m_localVoiceBankWavetable[bank].get(), lUpdated, m_Poly->m_OscBank.getUnchecked(bank)->getSoloMode());
+				m_localVoiceBankWavetableSoftfade[bank]->getWavetableInterpolateBuffer(mOscillator, osciCount, softFadeBuffer.get(), nextStart, restlength, bInverter, m_Set->m_WTmode, mVoiceNo, bank, &m_Poly->m_OscBank, m_bIsFirstCycle[bank], m_bIsStartOfCycle[bank], m_currentWTPosFloatPercentage[bank], m_wtFXVal[bank], m_wtFXType[bank], m_iLastCycleSamples[bank], m_iCurCycleSamples[bank], m_localVoiceBankWavetable[bank].get(), lUpdated, m_Poly->m_OscBank.getUnchecked(bank)->getSoloMode());
 				if (lUpdated)
 					m_Poly->m_OscBank.getUnchecked(bank)->setChangedFlagOsc();
 			}

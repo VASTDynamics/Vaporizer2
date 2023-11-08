@@ -518,13 +518,13 @@ void VASTPositionViewport::mouseDown(const MouseEvent &e) {
 					wtFile.deleteFile();
 					std::unique_ptr<FileOutputStream> outputStream(wtFile.createOutputStream());
 					StringPairArray sarray;
-					juce::ScopedPointer<AudioFormatWriter> writer = wavFormat.createWriterFor(outputStream.get(), 44100.0, 1, 32, sarray, 0); //check params 32 bit?, no metadata, quality options ignored, mono (1 channel)
+                    std::unique_ptr<AudioFormatWriter> writer(wavFormat.createWriterFor(outputStream.get(), 44100.0, 1, 32, sarray, 0)); //check params 32 bit?, no metadata, quality options ignored, mono (1 channel)
 					if (writer != nullptr)
 					{
 						outputStream.release();
 						int wtPos = arrayidx;
 
-						juce::ScopedPointer<AudioSampleBuffer> buffer = new AudioSampleBuffer(1, C_WAV_FORMAT_WT_SIZE);
+						std::unique_ptr<AudioSampleBuffer> buffer(new AudioSampleBuffer(1, C_WAV_FORMAT_WT_SIZE));
 						for (int i = 0; i < C_WAVE_TABLE_SIZE; i++) {
 							buffer->setSample(0, i, (*wavetable->getNaiveTable(wtPos))[i]);
 							//if C_WAVE_TABLE_SIZE != C_WAV_FORMAT_WT_SIZE scale here?

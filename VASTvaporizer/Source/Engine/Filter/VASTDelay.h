@@ -26,7 +26,7 @@ protected:
 
 	// pointer to our circular buffer
 	//float m_pBuffer[C_MAX_SAMPLE_RATE * C_OVERSAMPLING_RATIO * 2]; //caused 300 MB memory
-	juce::ScopedPointer<AudioSampleBuffer> m_pBuffer;
+    std::unique_ptr<AudioSampleBuffer> m_pBuffer;
 
 	// read/write index values for circ buffer
 	int m_nReadIndex;

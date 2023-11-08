@@ -214,26 +214,26 @@ private:
 	int m_lastWaveTableIdxNext = 0; //performance optimize
 	double m_lastPhaseInc = 0; //performance optimize
 
-	ScopedPointer<AudioSampleBuffer> m_x0_curPos;
-	ScopedPointer<AudioSampleBuffer> m_y0_curPos;
-	ScopedPointer<AudioSampleBuffer> m_y1_curPos;
-	ScopedPointer<AudioSampleBuffer> m_x0_nextPos;
-	ScopedPointer<AudioSampleBuffer> m_y0_nextPos;
-	ScopedPointer<AudioSampleBuffer> m_y1_nextPos;
-	ScopedPointer<AudioSampleBuffer> m_begin_curPosBuffer;
-	ScopedPointer<AudioSampleBuffer> m_begin_curPosBufferNextWtfxtype;
-	ScopedPointer<AudioSampleBuffer> m_begin_nextPosBuffer;
-	ScopedPointer<AudioSampleBuffer> m_begin_nextPosBufferNextWtfxtype;
-	ScopedPointer<AudioSampleBuffer> m_end_curPosBuffer;
-	ScopedPointer<AudioSampleBuffer> m_end_curPosBufferNextWtfxtype;
-	ScopedPointer<AudioSampleBuffer> m_end_nextPosBuffer;
-	ScopedPointer<AudioSampleBuffer> m_end_nextPosBufferNextWtfxtype;
-	ScopedPointer<AudioSampleBuffer> m_oscBuffer;
+    std::unique_ptr<AudioSampleBuffer> m_x0_curPos;
+    std::unique_ptr<AudioSampleBuffer> m_y0_curPos;
+    std::unique_ptr<AudioSampleBuffer> m_y1_curPos;
+    std::unique_ptr<AudioSampleBuffer> m_x0_nextPos;
+    std::unique_ptr<AudioSampleBuffer> m_y0_nextPos;
+    std::unique_ptr<AudioSampleBuffer> m_y1_nextPos;
+    std::unique_ptr<AudioSampleBuffer> m_begin_curPosBuffer;
+    std::unique_ptr<AudioSampleBuffer> m_begin_curPosBufferNextWtfxtype;
+    std::unique_ptr<AudioSampleBuffer> m_begin_nextPosBuffer;
+    std::unique_ptr<AudioSampleBuffer> m_begin_nextPosBufferNextWtfxtype;
+    std::unique_ptr<AudioSampleBuffer> m_end_curPosBuffer;
+    std::unique_ptr<AudioSampleBuffer> m_end_curPosBufferNextWtfxtype;
+    std::unique_ptr<AudioSampleBuffer> m_end_nextPosBuffer;
+    std::unique_ptr<AudioSampleBuffer> m_end_nextPosBufferNextWtfxtype;
+    std::unique_ptr<AudioSampleBuffer> m_oscBuffer;
 
-	ScopedPointer<AudioSampleBuffer> m_valBeginBuffer;
-	ScopedPointer<AudioSampleBuffer> m_valBeginBufferNext;
-	ScopedPointer<AudioSampleBuffer> m_valEndBuffer;
-	ScopedPointer<AudioSampleBuffer> m_valEndBufferNext;
+    std::unique_ptr<AudioSampleBuffer> m_valBeginBuffer;
+    std::unique_ptr<AudioSampleBuffer> m_valBeginBufferNext;
+    std::unique_ptr<AudioSampleBuffer> m_valEndBuffer;
+    std::unique_ptr<AudioSampleBuffer> m_valEndBufferNext;
 
 	float* m_x0_curPos_writePointer = nullptr;
 	float* m_y0_curPos_writePointer = nullptr;
@@ -244,7 +244,7 @@ private:
 	float* m_nextPosBuffer_writePointer = nullptr;
 	float* m_curPosBuffer_writePointer = nullptr;
 	
-	ScopedPointer<AudioSampleBuffer> m_fracPartBuffer;
+    std::unique_ptr<AudioSampleBuffer> m_fracPartBuffer;
 
 	JUCE_LEAK_DETECTOR(CVASTWaveTable)
 };

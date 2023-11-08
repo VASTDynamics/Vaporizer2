@@ -50,9 +50,9 @@ CVASTWaveTableOscillator::CVASTWaveTableOscillator(void) {
 		m_fOscDetune[i] = 1.0f;
 		//m_fExciterDetune[i] = 0.0f;
 		m_fPlayedFrequency_Hz[i] = 0.0f;
-		m_phasedPhasorBuffer[i] = new AudioSampleBuffer(1, initSize);
+		m_phasedPhasorBuffer[i] = std::make_unique<AudioSampleBuffer>(1, initSize);
 		m_phasedPhasorBufferPointer[i] = m_phasedPhasorBuffer[i]->getWritePointer(0);
-		m_phaseIncBuffer[i] = new AudioSampleBuffer(1, initSize);
+		m_phaseIncBuffer[i] = std::make_unique<AudioSampleBuffer>(1, initSize);
 		m_phaseIncBufferPointer[i] = m_phaseIncBuffer[i]->getWritePointer(0);
 		phasor[i] = 0.0;       // phase accumulator
 		phaseInc[i] = 0.0;

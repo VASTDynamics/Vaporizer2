@@ -251,9 +251,9 @@ void VASTFilterDisplay::updateThread(VASTFilterDisplay* display, bool force) {
 		return;
 	}
 
-	//ScopedPointer<dsp::FFT> fft;
+	//std::unique_ptr<dsp::FFT> fft;
 	//AudioSampleBuffer fftResults;
-	//ScopedPointer<CVASTVcf> m_VCF[3];
+	//std::unique_ptr<CVASTVcf> m_VCF[3];
 	//VASTQFilter m_QFilter;
 
 	bool l_display = true;
@@ -281,7 +281,7 @@ void VASTFilterDisplay::updateThread(VASTFilterDisplay* display, bool force) {
 		display->m_QFilter.initQuadFilter(&display->myProcessor->m_pVASTXperience.m_Set);
 		display->fft = new dsp::FFT(c_fftOrder); //scoped pointer
 		for (int filter = 0; filter < 3; filter++) {
-			display->m_VCF[filter] = new CVASTVcf();
+			display->m_VCF[filter] = std::make_unique<CVASTVcf>();
 		}
 		display->mb_init = true;
 	}

@@ -283,7 +283,7 @@ void VASTARPData::getValueTreeState(ValueTree* tree, UndoManager* undoManager) {
 	//steps
 	tree->setProperty("numSteps", int(getNumSteps()), undoManager);
 	for (int i = 0; i < arpSteps.size(); i++) {
-		ScopedPointer<ValueTree> subtree = new ValueTree(Identifier("arpStep"+String(i)));
+        std::unique_ptr<ValueTree> subtree(new ValueTree(Identifier("arpStep"+String(i))));
 		subtree->setProperty("octave", arpSteps[i].octave, undoManager);
 		subtree->setProperty("semitones", arpSteps[i].semitones, undoManager);
 		subtree->setProperty("gate", arpSteps[i].gate, undoManager);

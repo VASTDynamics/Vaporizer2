@@ -671,7 +671,7 @@ void VASTAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mid
 							VASTAudioProcessorEditor* _editor = (VASTAudioProcessorEditor*)getActiveEditor();
 							if (_editor != nullptr) {							
 								for (int i = 0; i < m_mapParameterNameToControl.size(); i++) {
-									VASTSlider* lslider = dynamic_cast<VASTSlider*>(_editor->findChildComponetWithName(_editor->vaporizerComponent, uiComponentName));
+									VASTSlider* lslider = dynamic_cast<VASTSlider*>(_editor->findChildComponetWithName(_editor->vaporizerComponent.get(), uiComponentName));
 									if (lslider != nullptr) {
 										if (lslider->getComponentID().equalsIgnoreCase(uiComponentName)) {
 											_editor->registerComponentValueUpdate(lslider, lValue);
@@ -998,9 +998,9 @@ int VASTAudioProcessor::getNumUserPresets() {
 }
 
 bool VASTAudioProcessor::loadUserPatchMetaData(File file, VASTPresetElement& lPreset) {
-	ScopedPointer<juce::XmlDocument> xml = new XmlDocument(file);
+    std::unique_ptr<juce::XmlDocument> xml(new XmlDocument(file));
 	const VASTPresetElement lElem = lPreset;
-	bool success = loadPatchXML(xml, true, &lElem, lPreset.presetarrayindex, lPreset); //names only
+	bool success = loadPatchXML(xml.get(), true, &lElem, lPreset.presetarrayindex, lPreset); //names only
 	return success;
 }
 
@@ -1033,10 +1033,10 @@ void VASTAudioProcessor::loadPreset(int index) {
 	}
 	else { // user preset
 		File jFile = File(m_presetData.getPreset(index)->internalid); //change to fullpathname
-		ScopedPointer<juce::XmlDocument> xmlDoc = new XmlDocument(jFile);
+        std::unique_ptr<juce::XmlDocument> xmlDoc(new XmlDocument(jFile));
 
 		VASTPresetElement lPatch = m_presetData.getCurPatchData();
-		bool success = loadPatchXML(xmlDoc, false, &m_presetData.getCurPatchData(), index, lPatch);
+		bool success = loadPatchXML(xmlDoc.get(), false, &m_presetData.getCurPatchData(), index, lPatch);
 		if (!success) {
 			m_presetData.reloadPresetArray();
 			setCurrentProgram(0); //revert to init
@@ -1082,7 +1082,7 @@ XmlElement VASTAudioProcessor::createPatchXML(bool externalRepresentation) { //f
 			//AudioProcessorParameterWithID* param = (AudioProcessorParameterWithID*)getParameters()[parameterIndex];
 			AudioProcessorParameterWithID* param = (AudioProcessorParameterWithID*)getParameters()[parameterIndex];
 
-			ScopedPointer<ValueTree> parameterChild = new ValueTree(Identifier("PARAM"));
+            std::unique_ptr<ValueTree> parameterChild(new ValueTree(Identifier("PARAM")));
 			if (parameterChild->isValid()) {
 				//add new text property
 				parameterChild->setProperty(
@@ -2294,50 +2294,50 @@ bool VASTAudioProcessor::writeSettingsToFile() {
 	XmlElement* mapping = root.createNewChildElement("MIDIMapping");
 	XmlElement* controller = mapping->createNewChildElement("ControllerCC");
 	for (int i = 0; i < 128; i++) {
-		ScopedPointer<String> ccStr = new String("CC" + String(i));
-		ScopedPointer<String> paramString;
+        std::unique_ptr<String> ccStr(new String("CC" + String(i)));
+        std::unique_ptr<String> paramString;
 		if (m_MidiMapping[i].paramID >= 0) {
 			if (m_MidiMapping[i].paramID == 9999) //UI only
-				paramString = new String(m_MidiMapping[i].componentVariableName);
+				paramString = std::make_unique<String>(m_MidiMapping[i].componentVariableName);
 			else {
 				AudioProcessorParameterWithID* param = (AudioProcessorParameterWithID*)getParameters()[m_MidiMapping[i].paramID];
-				paramString = new String(param->paramID);
+				paramString = std::make_unique<String>(param->paramID);
 			}
 		}
 		else
-			paramString = new String("---");
+			paramString = std::make_unique<String>("---");
 		controller->setAttribute(*ccStr.get(), *paramString);
 	}
 	XmlElement* bankA = mapping->createNewChildElement("ProgramChangeBankA");
 	StringArray pcd = m_presetData.getProgramChangeData(0);
 	for (int i = 0; i < pcd.size(); i++) {
-		ScopedPointer<String> ccStr = new String("Prog" + String(i));
-		ScopedPointer<String> paramString;
-		paramString = new String(pcd[i]);
+        std::unique_ptr<String> ccStr(new String("Prog" + String(i)));
+        std::unique_ptr<String> paramString;
+		paramString = std::make_unique<String>(pcd[i]);
 		bankA->setAttribute(*ccStr.get(), *paramString);
 	}
 	XmlElement* bankB = mapping->createNewChildElement("ProgramChangeBankB");
 	pcd = m_presetData.getProgramChangeData(1);
 	for (int i = 0; i < pcd.size(); i++) {
-		ScopedPointer<String> ccStr = new String("Prog" + String(i));
-		ScopedPointer<String> paramString;
-		paramString = new String(pcd[i]);
+        std::unique_ptr<String> ccStr(new String("Prog" + String(i)));
+        std::unique_ptr<String> paramString;
+		paramString = std::make_unique<String>(pcd[i]);
 		bankB->setAttribute(*ccStr.get(), *paramString);
 	}
 	XmlElement* bankC = mapping->createNewChildElement("ProgramChangeBankC");
 	pcd = m_presetData.getProgramChangeData(2);
 	for (int i = 0; i < pcd.size(); i++) {
-		ScopedPointer<String> ccStr = new String("Prog" + String(i));
-		ScopedPointer<String> paramString;
-		paramString = new String(pcd[i]);
+        std::unique_ptr<String> ccStr(new String("Prog" + String(i)));
+        std::unique_ptr<String> paramString;
+		paramString = std::make_unique<String>(pcd[i]);
 		bankC->setAttribute(*ccStr.get(), *paramString);
 	}
 	XmlElement* bankD = mapping->createNewChildElement("ProgramChangeBankD");
 	pcd = m_presetData.getProgramChangeData(3);
 	for (int i = 0; i < pcd.size(); i++) {
-		ScopedPointer<String> ccStr = new String("Prog" + String(i));
-		ScopedPointer<String> paramString;
-		paramString = new String(pcd[i]);
+        std::unique_ptr<String> ccStr(new String("Prog" + String(i)));
+        std::unique_ptr<String> paramString;
+		paramString = std::make_unique<String>(pcd[i]);
 		bankD->setAttribute(*ccStr.get(), *paramString);
 	}
 
@@ -2570,9 +2570,9 @@ bool VASTAudioProcessor::readSettingsFromFile() {
 							{
 								for (int i = 0; i < pMIDIMapping->getNumAttributes(); i++) {
 									int lCC = -1;
-									ScopedPointer<String> attName = new String(pMIDIMapping->getAttributeName(i));
+                                    std::unique_ptr<String> attName(new String(pMIDIMapping->getAttributeName(i)));
 									lCC = attName->fromLastOccurrenceOf("CC", false, false).getIntValue();
-									ScopedPointer<String> attValue = new String(pMIDIMapping->getAttributeValue(i));
+                                    std::unique_ptr<String> attValue(new String(pMIDIMapping->getAttributeValue(i)));
 									if (!(attValue->equalsIgnoreCase("---"))) {
 										auto param = m_parameterState.getParameter(StringRef(*attValue.get()));
 										if (param != nullptr) {
@@ -2592,7 +2592,7 @@ bool VASTAudioProcessor::readSettingsFromFile() {
 								for (int j = 0; j < 128; j++) {
 									bool found = false;
 									for (int i = 0; i < pMIDIMapping->getNumAttributes(); i++) {
-										ScopedPointer<String> attName = new String(pMIDIMapping->getAttributeName(i));
+                                        std::unique_ptr<String> attName(new String(pMIDIMapping->getAttributeName(i)));
 										int posi = attName->fromLastOccurrenceOf("Prog", false, false).getIntValue();
 										if (i == j) {
 											pcd.add(pMIDIMapping->getAttributeValue(i));
@@ -2609,7 +2609,7 @@ bool VASTAudioProcessor::readSettingsFromFile() {
 								for (int j = 0; j < 128; j++) {
 									bool found = false;
 									for (int i = 0; i < pMIDIMapping->getNumAttributes(); i++) {
-										ScopedPointer<String> attName = new String(pMIDIMapping->getAttributeName(i));
+                                        std::unique_ptr<String> attName(new String(pMIDIMapping->getAttributeName(i)));
 										int posi = attName->fromLastOccurrenceOf("Prog", false, false).getIntValue();
 										if (i == j) {
 											pcd.add(pMIDIMapping->getAttributeValue(i));
@@ -2626,7 +2626,7 @@ bool VASTAudioProcessor::readSettingsFromFile() {
 								for (int j = 0; j < 128; j++) {
 									bool found = false;
 									for (int i = 0; i < pMIDIMapping->getNumAttributes(); i++) {
-										ScopedPointer<String> attName = new String(pMIDIMapping->getAttributeName(i));
+                                        std::unique_ptr<String> attName(new String(pMIDIMapping->getAttributeName(i)));
 										int posi = attName->fromLastOccurrenceOf("Prog", false, false).getIntValue();
 										if (i == j) {
 											pcd.add(pMIDIMapping->getAttributeValue(i));
@@ -2643,7 +2643,7 @@ bool VASTAudioProcessor::readSettingsFromFile() {
 								for (int j = 0; j < 128; j++) {
 									bool found = false;
 									for (int i = 0; i < pMIDIMapping->getNumAttributes(); i++) {
-										ScopedPointer<String> attName = new String(pMIDIMapping->getAttributeName(i));
+                                        std::unique_ptr<String> attName(new String(pMIDIMapping->getAttributeName(i)));
 										int posi = attName->fromLastOccurrenceOf("Prog", false, false).getIntValue();
 										if (i == j) {
 											pcd.add(pMIDIMapping->getAttributeValue(i));
@@ -2928,7 +2928,7 @@ void VASTAudioProcessor::loadDefaultMidiMapping() {
 	}
 	int lSize = sizeof(lMapping) / sizeof(lMapping[0]); //size of array
 	for (int i = 0; i < lSize; i++) {
-		ScopedPointer<String> variableName = new String(lMapping[i].variableName);
+        std::unique_ptr<String> variableName(new String(lMapping[i].variableName));
 		for (int i = 0; i < getParameters().size(); i++) {
 			AudioProcessorParameterWithID* param = (AudioProcessorParameterWithID*)getParameters()[i];			
 			if (param->paramID.equalsIgnoreCase(*variableName.get())) {
@@ -2950,11 +2950,11 @@ void VASTAudioProcessor::loadDefaultMidiMapping() {
 			assert(true);
 		}
 		for (int i = 0; i < lSize; i++) {
-			ScopedPointer<String> variableName = new String(lMapping[i].variableName);
+            std::unique_ptr<String> variableName(new String(lMapping[i].variableName));
 			for (int i = 0; i < getParameters().size(); i++) {
 				AudioProcessorParameterWithID* param = (AudioProcessorParameterWithID*)getParameters()[i];
 				if (param->paramID.equalsIgnoreCase(*variableName.get())) {
-					ScopedPointer<String> outLine = new String(String(lMapping[i].midiCC) + "," + param->paramID + "," + lMapping[i].variableName + "\n");
+                    std::unique_ptr<String> outLine(new String(String(lMapping[i].midiCC) + "," + param->paramID + "," + lMapping[i].variableName + "\n"));
 					out.writeText(*outLine.get(), false, false, "\n");
 				}
 			}

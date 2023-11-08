@@ -394,7 +394,7 @@ private:
     std::shared_ptr<CVASTWaveTable> m_cur_wavetable;
     std::shared_ptr<CVASTWaveTable> m_copypaste_wavetable;
 
-	ScopedPointer<juce::AlertWindow> m_alertWindow;
+    std::unique_ptr<juce::AlertWindow> m_alertWindow;
 	std::unique_ptr<FileChooser> myChooser;
 
 	bool mFileChoserIsOpen = false;

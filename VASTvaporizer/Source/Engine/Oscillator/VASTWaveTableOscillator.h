@@ -89,9 +89,9 @@ public:
 
 	void resetSmoothers();
 
-	ScopedPointer<AudioSampleBuffer> m_phasedPhasorBuffer[C_MAX_PARALLEL_OSC];
+    std::unique_ptr<AudioSampleBuffer> m_phasedPhasorBuffer[C_MAX_PARALLEL_OSC];
 	float* m_phasedPhasorBufferPointer[C_MAX_PARALLEL_OSC];
-	ScopedPointer<AudioSampleBuffer> m_phaseIncBuffer[C_MAX_PARALLEL_OSC];
+    std::unique_ptr<AudioSampleBuffer> m_phaseIncBuffer[C_MAX_PARALLEL_OSC];
 	float* m_phaseIncBufferPointer[C_MAX_PARALLEL_OSC];
 	int m_unisonOscis = 1;
 	CVASTSettings *m_Set; 

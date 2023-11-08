@@ -41,14 +41,14 @@ private:
 	VASTAudioProcessorEditor* my_editor;
 	int my_slotno = 0;
 
-	ScopedPointer<VASTImageButton> ddImageButton; //drag button
-	ScopedPointer<VASTParameterComboBox> m_uModMatSrce; 
-	ScopedPointer<VASTParameterComboBox> m_uModMatPolarity;
-	ScopedPointer<VASTParameterComboBox> m_uModMatDest;
-	ScopedPointer<VASTParameterSlider> m_fModMatVal;
-	ScopedPointer<VASTParameterSlider> m_fModMatCurve;
-	ScopedPointer<VASTModMatCurveDisplay> c_curveDisplay;
-	ScopedPointer<VASTDrawableButton>c_iconDelSlot;
+    std::unique_ptr<VASTImageButton> ddImageButton; //drag button
+    std::unique_ptr<VASTParameterComboBox> m_uModMatSrce;
+    std::unique_ptr<VASTParameterComboBox> m_uModMatPolarity;
+    std::unique_ptr<VASTParameterComboBox> m_uModMatDest;
+    std::unique_ptr<VASTParameterSlider> m_fModMatVal;
+    std::unique_ptr<VASTParameterSlider> m_fModMatCurve;
+    std::unique_ptr<VASTModMatCurveDisplay> c_curveDisplay;
+    std::unique_ptr<VASTDrawableButton>c_iconDelSlot;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(VASTDragMatrix)
 };

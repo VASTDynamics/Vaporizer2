@@ -65,16 +65,16 @@ private:
 	CVASTBiQuad m_lowPassBiQuadL;
 	CVASTBiQuad m_lowPassBiQuadR;
 	bool m_lastCycleLowBandCalculated = true;
-	juce::ScopedPointer<AudioSampleBuffer> m_lowbandMono;
-	juce::ScopedPointer<AudioSampleBuffer> m_chainBuffer;
-	juce::ScopedPointer<AudioSampleBuffer> m_chainProc;
-	juce::ScopedPointer<AudioSampleBuffer> m_chainResult;
+	std::unique_ptr<AudioSampleBuffer> m_lowbandMono;
+	std::unique_ptr<AudioSampleBuffer> m_chainBuffer;
+	std::unique_ptr<AudioSampleBuffer> m_chainProc;
+	std::unique_ptr<AudioSampleBuffer> m_chainResult;
 
 	//Oversampling
 	CVASTOversampler m_Oversampler;
 	CVASTOversampler m_Oversampler2;
 	CVASTOversampler m_Oversampler3;
-	juce::ScopedPointer<AudioSampleBuffer> m_inBufferOversampled;
+    std::unique_ptr<AudioSampleBuffer> m_inBufferOversampled;
 	
 	CVASTEq m_Eq;
 	CVASTChorus m_Chorus;

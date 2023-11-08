@@ -104,12 +104,12 @@ public:
 	void resetSmoothers();
 	
 	// public instances
-	ScopedPointer<CVASTVca> m_VCA;
+    std::unique_ptr<CVASTVca> m_VCA;
 	OwnedArray<CVASTVcf> m_VCF;
 
 	// instances
 	OwnedArray<CVASTWaveTableOscillator> m_Oscillator;
-	ScopedPointer<CVASTWaveTableOscillator> m_OscillatorNoise;	
+    std::unique_ptr<CVASTWaveTableOscillator> m_OscillatorNoise;
 	OwnedArray<CVASTWaveTableOscillator> m_LFO_Osc; // LFOs 1-5
 
 	MYUINT m_uChannel;
@@ -159,8 +159,8 @@ private:
 
 	void syncOscToMaster(int bank, int i);
 	
-	ScopedPointer<AudioSampleBuffer> m_centerBuffer;
-	ScopedPointer<AudioSampleBuffer> m_velocityBuffer;
+    std::unique_ptr<AudioSampleBuffer> m_centerBuffer;
+    std::unique_ptr<AudioSampleBuffer> m_velocityBuffer;
 
 	float mSpread[4]; //per bank
 

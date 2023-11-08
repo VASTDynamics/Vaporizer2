@@ -164,11 +164,11 @@ void CVASTFXBus::init(CVASTSettings &set) {
 	m_Oversampler3.init(*m_Set);
 	int initSize = 16;
 	
-	m_inBufferOversampled = new AudioSampleBuffer(2, initSize);
-	m_lowbandMono = new AudioSampleBuffer(1, initSize);
-	m_chainBuffer = new AudioSampleBuffer(2, initSize);
-	m_chainResult = new AudioSampleBuffer(2, initSize);
-	m_chainProc = new AudioSampleBuffer(2, initSize);
+	m_inBufferOversampled = std::make_unique<AudioSampleBuffer>(2, initSize);
+	m_lowbandMono = std::make_unique<AudioSampleBuffer>(1, initSize);
+	m_chainBuffer = std::make_unique<AudioSampleBuffer>(2, initSize);
+	m_chainResult = std::make_unique<AudioSampleBuffer>(2, initSize);
+	m_chainProc = std::make_unique<AudioSampleBuffer>(2, initSize);
 	mFXBusSequence.clear();
 	for (int i = 0; i < effectBus.size(); i++) {
 		effectBus[i]->effectPlugin->init(set);
@@ -666,7 +666,7 @@ void CVASTFXBus::getValueTreeState(ValueTree* tree, UndoManager* undoManager) { 
 
 	tree->setProperty("numFX", int(mFXBusSequence.size()), undoManager);
 	for (int i = 0; i < mFXBusSequence.size(); i++) {
-		ScopedPointer<ValueTree> subtree = new ValueTree(Identifier("fxSequence" + String(i)));
+        std::unique_ptr<ValueTree> subtree(new ValueTree(Identifier("fxSequence" + String(i))));
 		subtree->setProperty("fxNo", mFXBusSequence[i], undoManager);
 		tree->appendChild(*subtree.get(), undoManager);
 	}

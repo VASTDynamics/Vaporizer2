@@ -27,8 +27,8 @@ public:
 	void labelTextChanged(Label* labelThatHasChanged) override;
 
 private:
-	ScopedPointer<VASTImageButton> ddImageButton;
-	ScopedPointer<Label> ddLabel;
+    std::unique_ptr<VASTImageButton> ddImageButton;
+    std::unique_ptr<Label> ddLabel;
 	bool m_noLabel = false;
 
 	VASTAudioProcessor *m_processor;

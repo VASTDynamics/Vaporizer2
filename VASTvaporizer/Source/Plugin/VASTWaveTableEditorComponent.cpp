@@ -2466,16 +2466,16 @@ void VASTWaveTableEditorComponent::saveWTFileThreaded(juce::File file, CVASTWave
 
 void VASTWaveTableEditorComponent::loadWTFileThread(juce::File file, VASTWaveTableEditorComponent* editor) { //this actually loads a WT
 	//expensive part
-	juce::ScopedPointer<AudioFormatManager> formatManager = new AudioFormatManager();
+	std::unique_ptr<AudioFormatManager> formatManager(new AudioFormatManager());
 	formatManager->registerBasicFormats();
-	juce::ScopedPointer<AudioFormatReader> reader = formatManager->createReaderFor(file); //use first hit
+    std::unique_ptr<AudioFormatReader> reader(formatManager->createReaderFor(file)); //use first hit
 	if (reader != nullptr)
 	{
 		int len = reader->lengthInSamples;
 		int wTIndex = 0;
 		//serum format has always 2048 samples
 
-		juce::ScopedPointer<wavFile> wFile = new wavFile;
+        std::unique_ptr<wavFile> wFile(new wavFile);
 		memset(wFile->WTBuffer, 0, sizeof(wFile->WTBuffer)); //init
 
 		while ((len >= C_WAV_FORMAT_WT_SIZE) && (wTIndex < C_WAV_FORMAT_WT_SIZE)) {
@@ -2502,7 +2502,7 @@ void VASTWaveTableEditorComponent::loadWTFileThread(juce::File file, VASTWaveTab
 		}
 		else {
 			std::shared_ptr<CVASTWaveTable> l_wavetable(new CVASTWaveTable(editor->myProcessor->m_pVASTXperience.m_Set));
-			l_wavetable->loadWavFile(wFile, true, editor->myProcessor->getWTmode()); //pre generate!
+			l_wavetable->loadWavFile(wFile.get(), true, editor->myProcessor->getWTmode()); //pre generate!
 			editor->newWTToUpdate = l_wavetable;
 			editor->newWTToUpdate_failed = false;
 		}
@@ -3394,7 +3394,7 @@ float VASTWaveTableEditorComponent::sampleDetermineFreq(int s_start, int s_end, 
 	//based on FFT
 	const int FFTFactor = 32;
 	const int FFTAccuracy = C_WAVE_TABLE_SIZE * FFTFactor;
-	ScopedPointer<dsp::FFT> fft = new dsp::FFT(log2(FFTAccuracy));
+    std::unique_ptr<dsp::FFT> fft(new dsp::FFT(log2(FFTAccuracy)));
 	std::vector<dsp::Complex<float>> l_filterBuffer_in = std::vector<dsp::Complex<float>>(FFTAccuracy);
 	std::vector<dsp::Complex<float>> l_filterBuffer_out = std::vector<dsp::Complex<float>>(FFTAccuracy);
 	VASTSamplerSound* samplerSound = getCurSamplerSound();
@@ -3419,7 +3419,7 @@ float VASTWaveTableEditorComponent::sampleDetermineFreq(int s_start, int s_end, 
 		else
 			buffer[idx] = 0.f;
 	}
-	ScopedPointer<dsp::WindowingFunction<float>> window = new dsp::WindowingFunction<float>(samplerSound->getLoopEndChanged() - samplerSound->getLoopStartChanged(), dsp::WindowingFunction<float>::hann, true, 0.0f);
+    std::unique_ptr<dsp::WindowingFunction<float>> window(new dsp::WindowingFunction<float>(samplerSound->getLoopEndChanged() - samplerSound->getLoopStartChanged(), dsp::WindowingFunction<float>::hann, true, 0.0f));
 	window->multiplyWithWindowingTable(buffer, FFTAccuracy);
 
 	for (int idx = 0; idx < FFTAccuracy; idx++) {
@@ -3723,7 +3723,7 @@ void VASTWaveTableEditorComponent::importFilesAsCycles(const StringArray& files,
 	for (int i = 0; i < files.size(); i++) {
 		if (!(files[i].endsWithIgnoreCase(".wav") || files[i].endsWithIgnoreCase(".aif"))) continue;
 		String fname = files[i];
-		ScopedPointer<VASTSamplerSound> lVASTSamplerSound = loadWavFile(fname);
+        std::unique_ptr<VASTSamplerSound> lVASTSamplerSound(loadWavFile(fname));
 		if (lVASTSamplerSound == nullptr) continue;
 		added++;
 
@@ -3771,7 +3771,7 @@ VASTSamplerSound* VASTWaveTableEditorComponent::loadWavFile(String filename) {
 
 	AudioFormatManager formatManager;
 	formatManager.registerBasicFormats();
-	ScopedPointer<AudioFormatReader> reader = formatManager.createReaderFor(File(filename));
+    std::unique_ptr<AudioFormatReader> reader(formatManager.createReaderFor(File(filename)));
 	if (reader != nullptr && reader->lengthInSamples > 0 && reader->numChannels > 0)
 	{
 		auto duration = reader->lengthInSamples / reader->sampleRate;
@@ -3954,7 +3954,7 @@ void VASTWaveTableEditorComponent::updateAll(bool force) {
 void VASTWaveTableEditorComponent::copySelectionToLocalBuffer() {
 	sliderThatWasLastMoved = nullptr;
 	//sSelection* sel = c_editorOscilloscope->getSelection();
-	//juce::ScopedPointer<CVASTWaveTable> wavetable = new CVASTWaveTable(*getBankWavetable()); //copy constructor
+	//std::unique_ptr<CVASTWaveTable> wavetable = new CVASTWaveTable(*getBankWavetable()); //copy constructor
 	//CVASTWaveTable wavetable;
 	//wavetable.copyFrom(*getBankWavetable());
 
