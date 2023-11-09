@@ -116,7 +116,7 @@ bool CVASTEnvelope::isHardStopNoteOff() { //NoteOff during Hardstop
 
 void CVASTEnvelope::calculateTimes() {
 	float lMinAttack = 1.0f; //minimum attack time 1 ms
-	//if (*m_Set->m_State->m_bOscRetrigOnOff_OscA == SWITCH::SWITCH_ON) //TODO CHECK OSCA!!!
+	//if (*m_Set->m_State->m_bOscRetrigOnOff_OscA == static_cast<int>(SWITCH::SWITCH_ON)) //TODO CHECK OSCA!!!
 	lMinAttack = 3.0; //if random retrig attack time 3 ms
 	
 	float fSamples = m_Set->m_nSampleRate * (((m_fAttackTime + lMinAttack) / 1000.0f));

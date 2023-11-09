@@ -20,7 +20,7 @@ VAST Dynamics Audio Software (TM)
 
 union vec4 {
 	struct { float x, y, z, w; };
-	__m128 sse;
+	__m128 sse{ 0.f, 0.f, 0.f, 0.f };
 
 	inline vec4(void) {}
 	inline vec4(__m128 val) { sse = val; }

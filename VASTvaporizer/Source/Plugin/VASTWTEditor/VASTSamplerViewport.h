@@ -111,7 +111,7 @@ public:
 	VASTViewport(const String& componentName = String()) : Viewport(componentName) {
 	};
 
-	bool keyPressed(const KeyPress& key) override
+	bool keyPressed(const KeyPress& ) override
 	{
 		/*
 		const bool isUpDownKey = Viewport::isUpDownKeyPress(key);

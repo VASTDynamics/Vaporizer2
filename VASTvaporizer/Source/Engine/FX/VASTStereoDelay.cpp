@@ -107,7 +107,7 @@ void CVASTStereoDelay::initCompatibilityParameters() {
 
 void CVASTStereoDelay::parameterChanged(const String& parameterID, float newValue) {
 	if (parameterID.startsWith("m_bDelayOnOff")) {
-		if (newValue == SWITCH::SWITCH_ON)
+		if (newValue == static_cast<int>(SWITCH::SWITCH_ON))
 			switchOn();
 		else
 			switchOff();
@@ -254,7 +254,7 @@ inline void CVASTStereoDelay::setDelayRatio(double d) { m_dDelayRatio = d; }
 
 void CVASTStereoDelay::update() {
 	float l_fDelayTime = 0.f;
-	if (*m_bDelaySynch == SWITCH::SWITCH_OFF) {
+	if (*m_bDelaySynch == static_cast<int>(SWITCH::SWITCH_OFF)) {
 		l_fDelayTime = m_fTimeMod;
 	}
 	else { //bpm synch

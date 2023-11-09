@@ -179,7 +179,7 @@ CVASTMultibandCompressor::~CVASTMultibandCompressor() {
 
 void CVASTMultibandCompressor::parameterChanged(const String& parameterID, float newValue) {
 	if (parameterID.startsWith("m_bMBCompOffOn")) {
-		if (newValue == SWITCH::SWITCH_ON)
+		if (newValue == static_cast<int>(SWITCH::SWITCH_ON))
 			switchOn();
 		else
 			switchOff();
@@ -431,7 +431,7 @@ void CVASTMultibandCompressor::processBlock (AudioSampleBuffer& buffer, MidiBuff
 	//   Apply Compressors to Buffers                    //
 	//===================================================//
 
-	if (*m_bMBCompOffOn == SWITCH::SWITCH_ON)
+	if (*m_bMBCompOffOn == static_cast<int>(SWITCH::SWITCH_ON))
 	{
 		lpCompFilterBuffer.addFrom(0, 0, lpFilterBuffer, 0, 0, numSamples, 0.5);
 		lpCompFilterBuffer.addFrom(0, 0, lpFilterBuffer, 1, 0, numSamples, 0.5);

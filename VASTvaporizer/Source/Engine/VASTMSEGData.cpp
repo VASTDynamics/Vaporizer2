@@ -800,13 +800,13 @@ void VASTMSEGData::doADSR() {
 		jassert(controlPoints.size() > 0);
 		double firstx = controlPoints[0].xVal;
 		if (firstx > 0.0)
-			for (int i = 0; i < controlPoints.size(); i++)
-				controlPoints[i].xVal -= firstx; //bring first point to 0.0;
+			for (int j = 0; j < controlPoints.size(); j++)
+				controlPoints[j].xVal -= firstx; //bring first point to 0.0;
 		double lastx = controlPoints[controlPoints.size() - 1].xVal;
 		jassert(lastx > 0.0);
 		if (lastx < 1.0)
-			for (int i = 0; i < controlPoints.size(); i++)
-				controlPoints[i].xVal /= lastx; //bring last point to 1.0;
+			for (int j = 0; j < controlPoints.size(); j++)
+				controlPoints[j].xVal /= lastx; //bring last point to 1.0;
 	}
 
 	//adjust to percentages

@@ -36,19 +36,19 @@ void CVASTPoly::init() {
 	}
 
 	m_global_LFO_Osc[0].init(*m_Set);
-	m_global_LFO_Osc[0].updateMainVariables(m_Set->m_nSampleRate, *m_Set->m_State->m_uLFOWave_LFO1, 1, 0, 0, 0);
+	m_global_LFO_Osc[0].updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO1), 1, 0, 0, 0);
 
 	m_global_LFO_Osc[1].init(*m_Set);
-	m_global_LFO_Osc[1].updateMainVariables(m_Set->m_nSampleRate, *m_Set->m_State->m_uLFOWave_LFO2, 1, 0, 0, 0);
+	m_global_LFO_Osc[1].updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO2), 1, 0, 0, 0);
 
 	m_global_LFO_Osc[2].init(*m_Set);
-	m_global_LFO_Osc[2].updateMainVariables(m_Set->m_nSampleRate, *m_Set->m_State->m_uLFOWave_LFO3, 1, 0, 0, 0);
+	m_global_LFO_Osc[2].updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO3), 1, 0, 0, 0);
 
 	m_global_LFO_Osc[3].init(*m_Set);
-	m_global_LFO_Osc[3].updateMainVariables(m_Set->m_nSampleRate, *m_Set->m_State->m_uLFOWave_LFO4, 1, 0, 0, 0);
+	m_global_LFO_Osc[3].updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO4), 1, 0, 0, 0);
 
 	m_global_LFO_Osc[4].init(*m_Set);
-	m_global_LFO_Osc[4].updateMainVariables(m_Set->m_nSampleRate, *m_Set->m_State->m_uLFOWave_LFO5, 1, 0, 0, 0);
+	m_global_LFO_Osc[4].updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO5), 1, 0, 0, 0);
 
 	for (int stepSeq = 0; stepSeq < 3; stepSeq++) {
 		if (stepSeq == 0) {
@@ -65,7 +65,7 @@ void CVASTPoly::init() {
 		m_StepSeq_Envelope[stepSeq].init(*m_Set, m_Set->m_StepSeqData[stepSeq], m_Set->m_StepSeqData_changed[stepSeq], 0, 0, stepSeq); //voiceno 0??
 		struct timeval tp;
 		m_Set->_gettimeofday(&tp);
-		m_StepSeq_Envelope[stepSeq].noteOn(tp.tv_sec * 1000 + tp.tv_usec / 1000, false);
+		m_StepSeq_Envelope[stepSeq].noteOn(static_cast<ULong64_t>(tp.tv_sec) * 1000 + tp.tv_usec / 1000, false);
 	}
 
 	const double smoothTime = 0.005;
@@ -104,19 +104,19 @@ void CVASTPoly::prepareForPlay() {
 	m_ppq_playing = false;
 	
 	m_global_LFO_Osc[0].init(*m_Set);
-	m_global_LFO_Osc[0].updateMainVariables(m_Set->m_nSampleRate, *m_Set->m_State->m_uLFOWave_LFO1, 1, 0, 0, 0);
+	m_global_LFO_Osc[0].updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO1), 1, 0, 0, 0);
 
 	m_global_LFO_Osc[1].init(*m_Set);
-	m_global_LFO_Osc[1].updateMainVariables(m_Set->m_nSampleRate, *m_Set->m_State->m_uLFOWave_LFO2, 1, 0, 0, 0);
+	m_global_LFO_Osc[1].updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO2), 1, 0, 0, 0);
 
 	m_global_LFO_Osc[2].init(*m_Set);
-	m_global_LFO_Osc[2].updateMainVariables(m_Set->m_nSampleRate, *m_Set->m_State->m_uLFOWave_LFO3, 1, 0, 0, 0);
+	m_global_LFO_Osc[2].updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO3), 1, 0, 0, 0);
 
 	m_global_LFO_Osc[3].init(*m_Set);
-	m_global_LFO_Osc[3].updateMainVariables(m_Set->m_nSampleRate, *m_Set->m_State->m_uLFOWave_LFO4, 1, 0, 0, 0);
+	m_global_LFO_Osc[3].updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO4), 1, 0, 0, 0);
 
 	m_global_LFO_Osc[4].init(*m_Set);
-	m_global_LFO_Osc[4].updateMainVariables(m_Set->m_nSampleRate, *m_Set->m_State->m_uLFOWave_LFO5, 1, 0, 0, 0);
+	m_global_LFO_Osc[4].updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO5), 1, 0, 0, 0);
 
 	updateLFO(0);
 	updateLFO(1);
@@ -212,10 +212,8 @@ bool CVASTPoly::voicesMSEGStillActive() {
 }
 
 modMatrixInputState CVASTPoly::getOldestNotePlayedInputState(int currentFrame) {
-	modMatrixInputState inputState;
 	int voiceNo = getOldestNotePlayed(); // make parameter oldest or newest
-	inputState.voiceNo = (voiceNo < 0) ? 0 : voiceNo;
-	inputState.currentFrame = currentFrame;
+	modMatrixInputState inputState{ (voiceNo < 0) ? 0 : voiceNo, currentFrame };
 	return inputState;
 }
 
@@ -256,20 +254,18 @@ void CVASTPoly::initArp() {
 }
 
 modMatrixInputState CVASTPoly::getLastNotePlayedInputState(int currentFrame) {
-	modMatrixInputState inputState;
 	int voiceNo = getLastNotePlayed(); // make parameter oldest or newest
-	inputState.voiceNo = (voiceNo < 0) ? 0 : voiceNo;
-	inputState.currentFrame = currentFrame;
+	modMatrixInputState inputState{ (voiceNo < 0) ? 0 : voiceNo , currentFrame };
 	return inputState;
 }
 
 void CVASTPoly::updateLFO(int lfono) {
 	switch (lfono) {
 	case 0: {
-		if (*m_Set->m_State->m_bLFOSynch_LFO1 == SWITCH::SWITCH_ON) {
+		if (*m_Set->m_State->m_bLFOSynch_LFO1 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			float l_fIntervalTime = m_Set->getIntervalTimeFromDAWBeats(*m_Set->m_State->m_uLFOTimeBeats_LFO1);
 
-			if (*m_Set->m_State->m_bLFOPerVoice_LFO1 == SWITCH::SWITCH_ON) {
+			if (*m_Set->m_State->m_bLFOPerVoice_LFO1 == static_cast<int>(SWITCH::SWITCH_ON)) {
 				for (int i = 0; i < C_MAX_POLY; i++) {
 					m_singleNote[i]->m_LFO_Osc[0]->updateMainVariables(m_Set->m_nSampleRate, *m_Set->m_State->m_uLFOWave_LFO1, 1, 0, 0, 0);
 					m_singleNote[i]->m_LFO_Osc[0]->startLFOFrequency(1000.f / l_fIntervalTime, 0); //lfono 0
@@ -281,7 +277,7 @@ void CVASTPoly::updateLFO(int lfono) {
 			}
 		}
 		else {
-			if (*m_Set->m_State->m_bLFOPerVoice_LFO1 == SWITCH::SWITCH_ON) {
+			if (*m_Set->m_State->m_bLFOPerVoice_LFO1 == static_cast<int>(SWITCH::SWITCH_ON)) {
 				for (int i = 0; i < C_MAX_POLY; i++) {
 					m_singleNote[i]->m_LFO_Osc[0]->updateMainVariables(m_Set->m_nSampleRate, *m_Set->m_State->m_uLFOWave_LFO1, 1, 0, 0, 0);
 					m_singleNote[i]->m_LFO_Osc[0]->startLFOFrequency(*m_Set->m_State->m_fLFOFreq_LFO1, 0); //lfono 0
@@ -295,10 +291,10 @@ void CVASTPoly::updateLFO(int lfono) {
 		break;
 	}
 	case 1: {
-		if (*m_Set->m_State->m_bLFOSynch_LFO2 == SWITCH::SWITCH_ON) {
+		if (*m_Set->m_State->m_bLFOSynch_LFO2 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			float l_fIntervalTime = m_Set->getIntervalTimeFromDAWBeats(*m_Set->m_State->m_uLFOTimeBeats_LFO2);
 
-			if (*m_Set->m_State->m_bLFOPerVoice_LFO2 == SWITCH::SWITCH_ON) {
+			if (*m_Set->m_State->m_bLFOPerVoice_LFO2 == static_cast<int>(SWITCH::SWITCH_ON)) {
 				for (int i = 0; i < C_MAX_POLY; i++) {
 					m_singleNote[i]->m_LFO_Osc[1]->updateMainVariables(m_Set->m_nSampleRate, *m_Set->m_State->m_uLFOWave_LFO2, 1, 0, 0, 0);
 					m_singleNote[i]->m_LFO_Osc[1]->startLFOFrequency(1000.f / l_fIntervalTime, 1); //lfono 1
@@ -310,7 +306,7 @@ void CVASTPoly::updateLFO(int lfono) {
 			}
 		}
 		else {
-			if (*m_Set->m_State->m_bLFOPerVoice_LFO2 == SWITCH::SWITCH_ON) {
+			if (*m_Set->m_State->m_bLFOPerVoice_LFO2 == static_cast<int>(SWITCH::SWITCH_ON)) {
 				for (int i = 0; i < C_MAX_POLY; i++) {
 					m_singleNote[i]->m_LFO_Osc[1]->updateMainVariables(m_Set->m_nSampleRate, *m_Set->m_State->m_uLFOWave_LFO2, 1, 0, 0, 0);
 					m_singleNote[i]->m_LFO_Osc[1]->startLFOFrequency(*m_Set->m_State->m_fLFOFreq_LFO2, 1); //lfono 1
@@ -324,10 +320,10 @@ void CVASTPoly::updateLFO(int lfono) {
 		break;
 	}
 	case 2: {
-		if (*m_Set->m_State->m_bLFOSynch_LFO3 == SWITCH::SWITCH_ON) {
+		if (*m_Set->m_State->m_bLFOSynch_LFO3 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			float l_fIntervalTime = m_Set->getIntervalTimeFromDAWBeats(*m_Set->m_State->m_uLFOTimeBeats_LFO3);
 
-			if (*m_Set->m_State->m_bLFOPerVoice_LFO3 == SWITCH::SWITCH_ON) {
+			if (*m_Set->m_State->m_bLFOPerVoice_LFO3 == static_cast<int>(SWITCH::SWITCH_ON)) {
 				for (int i = 0; i < C_MAX_POLY; i++) {
 					m_singleNote[i]->m_LFO_Osc[2]->updateMainVariables(m_Set->m_nSampleRate, *m_Set->m_State->m_uLFOWave_LFO3, 1, 0, 0, 0);
 					m_singleNote[i]->m_LFO_Osc[2]->startLFOFrequency(1000.f / l_fIntervalTime, 2); //lfono 2
@@ -339,7 +335,7 @@ void CVASTPoly::updateLFO(int lfono) {
 			}
 		}
 		else {
-			if (*m_Set->m_State->m_bLFOPerVoice_LFO3 == SWITCH::SWITCH_ON) {
+			if (*m_Set->m_State->m_bLFOPerVoice_LFO3 == static_cast<int>(SWITCH::SWITCH_ON)) {
 				for (int i = 0; i < C_MAX_POLY; i++) {
 					m_singleNote[i]->m_LFO_Osc[2]->updateMainVariables(m_Set->m_nSampleRate, *m_Set->m_State->m_uLFOWave_LFO3, 1, 0, 0, 0);
 					m_singleNote[i]->m_LFO_Osc[2]->startLFOFrequency(*m_Set->m_State->m_fLFOFreq_LFO3, 2); //lfono 2
@@ -353,10 +349,10 @@ void CVASTPoly::updateLFO(int lfono) {
 		break;
 	}
 	case 3: {
-		if (*m_Set->m_State->m_bLFOSynch_LFO4 == SWITCH::SWITCH_ON) {
+		if (*m_Set->m_State->m_bLFOSynch_LFO4 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			float l_fIntervalTime = m_Set->getIntervalTimeFromDAWBeats(*m_Set->m_State->m_uLFOTimeBeats_LFO4);
 
-			if (*m_Set->m_State->m_bLFOPerVoice_LFO4 == SWITCH::SWITCH_ON) {
+			if (*m_Set->m_State->m_bLFOPerVoice_LFO4 == static_cast<int>(SWITCH::SWITCH_ON)) {
 				for (int i = 0; i < C_MAX_POLY; i++) {
 					m_singleNote[i]->m_LFO_Osc[3]->updateMainVariables(m_Set->m_nSampleRate, *m_Set->m_State->m_uLFOWave_LFO4, 1, 0, 0, 0);
 					m_singleNote[i]->m_LFO_Osc[3]->startLFOFrequency(1000.f / l_fIntervalTime, 3); //lfono 3
@@ -368,7 +364,7 @@ void CVASTPoly::updateLFO(int lfono) {
 			}
 		}
 		else {
-			if (*m_Set->m_State->m_bLFOPerVoice_LFO4 == SWITCH::SWITCH_ON) {
+			if (*m_Set->m_State->m_bLFOPerVoice_LFO4 == static_cast<int>(SWITCH::SWITCH_ON)) {
 				for (int i = 0; i < C_MAX_POLY; i++) {
 					m_singleNote[i]->m_LFO_Osc[3]->updateMainVariables(m_Set->m_nSampleRate, *m_Set->m_State->m_uLFOWave_LFO4, 1, 0, 0, 0);
 					m_singleNote[i]->m_LFO_Osc[3]->startLFOFrequency(*m_Set->m_State->m_fLFOFreq_LFO4, 3); //lfono 2
@@ -382,10 +378,10 @@ void CVASTPoly::updateLFO(int lfono) {
 		break;
 	}
 	case 4: {
-		if (*m_Set->m_State->m_bLFOSynch_LFO5 == SWITCH::SWITCH_ON) {
+		if (*m_Set->m_State->m_bLFOSynch_LFO5 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			float l_fIntervalTime = m_Set->getIntervalTimeFromDAWBeats(*m_Set->m_State->m_uLFOTimeBeats_LFO5);
 
-			if (*m_Set->m_State->m_bLFOPerVoice_LFO5 == SWITCH::SWITCH_ON) {
+			if (*m_Set->m_State->m_bLFOPerVoice_LFO5 == static_cast<int>(SWITCH::SWITCH_ON)) {
 				for (int i = 0; i < C_MAX_POLY; i++) {
 					m_singleNote[i]->m_LFO_Osc[4]->updateMainVariables(m_Set->m_nSampleRate, *m_Set->m_State->m_uLFOWave_LFO5, 1, 0, 0, 0);
 					m_singleNote[i]->m_LFO_Osc[4]->startLFOFrequency(1000.f / l_fIntervalTime, 4); //lfono 4
@@ -397,7 +393,7 @@ void CVASTPoly::updateLFO(int lfono) {
 			}
 		}
 		else {
-			if (*m_Set->m_State->m_bLFOPerVoice_LFO5 == SWITCH::SWITCH_ON) {
+			if (*m_Set->m_State->m_bLFOPerVoice_LFO5 == static_cast<int>(SWITCH::SWITCH_ON)) {
 				for (int i = 0; i < C_MAX_POLY; i++) {
 					m_singleNote[i]->m_LFO_Osc[4]->updateMainVariables(m_Set->m_nSampleRate, *m_Set->m_State->m_uLFOWave_LFO5, 1, 0, 0, 0);
 					m_singleNote[i]->m_LFO_Osc[4]->startLFOFrequency(*m_Set->m_State->m_fLFOFreq_LFO5, 2); //lfono 4
@@ -419,8 +415,8 @@ JUCE_BEGIN_IGNORE_WARNINGS_MSVC(4244 4267)
 void CVASTPoly::resynchLFO() {
 	#define FREERUN_LFO_RETRIGGER_RESET 1000 //1s
 
-	if (*m_Set->m_State->m_bLFORetrigOnOff_LFO1 == SWITCH::SWITCH_ON) {
-		if (*m_Set->m_State->m_bLFOPerVoice_LFO1 == SWITCH::SWITCH_ON) {
+	if (*m_Set->m_State->m_bLFORetrigOnOff_LFO1 == static_cast<int>(SWITCH::SWITCH_ON)) {
+		if (*m_Set->m_State->m_bLFOPerVoice_LFO1 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			/*
 			for (int i = 0; i < C_MAX_POLY; i++) {
 				m_singleNote[i]->m_LFO_Osc[0].resynch(true);
@@ -439,7 +435,7 @@ void CVASTPoly::resynchLFO() {
 			if (note->isKeyDown() == false) {
 				struct timeval tp;
 				m_Set->_gettimeofday(&tp);
-				int diff = (tp.tv_sec * 1000 + tp.tv_usec / 1000) - note->m_startPlayTimestamp;
+				int diff = (static_cast<unsigned long long>(tp.tv_sec) * 1000 + tp.tv_usec / 1000) - note->m_startPlayTimestamp;
 				if (diff > FREERUN_LFO_RETRIGGER_RESET) {
 					m_global_LFO_Osc[0].resynchWithFade(true);
 				}
@@ -447,8 +443,8 @@ void CVASTPoly::resynchLFO() {
 		}
 	}
 
-	if (*m_Set->m_State->m_bLFORetrigOnOff_LFO2 == SWITCH::SWITCH_ON) {
-		if (*m_Set->m_State->m_bLFOPerVoice_LFO2 == SWITCH::SWITCH_ON) {
+	if (*m_Set->m_State->m_bLFORetrigOnOff_LFO2 == static_cast<int>(SWITCH::SWITCH_ON)) {
+		if (*m_Set->m_State->m_bLFOPerVoice_LFO2 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			/*
 			for (int i = 0; i < C_MAX_POLY; i++) {
 				m_singleNote[i]->m_LFO_Osc[1].resynch(true);
@@ -467,7 +463,7 @@ void CVASTPoly::resynchLFO() {
 			if (note->isKeyDown() == false) {
 				struct timeval tp;
 				m_Set->_gettimeofday(&tp);
-				int diff = (tp.tv_sec * 1000 + tp.tv_usec / 1000) - note->m_startPlayTimestamp;
+				int diff = (static_cast<unsigned long long>(tp.tv_sec) * 1000 + tp.tv_usec / 1000) - note->m_startPlayTimestamp;
 				if (diff > FREERUN_LFO_RETRIGGER_RESET) {
 					m_global_LFO_Osc[1].resynchWithFade(true);
 				}
@@ -475,8 +471,8 @@ void CVASTPoly::resynchLFO() {
 		}
 	}
 
-	if (*m_Set->m_State->m_bLFORetrigOnOff_LFO3 == SWITCH::SWITCH_ON) {
-		if (*m_Set->m_State->m_bLFOPerVoice_LFO3 == SWITCH::SWITCH_ON) {
+	if (*m_Set->m_State->m_bLFORetrigOnOff_LFO3 == static_cast<int>(SWITCH::SWITCH_ON)) {
+		if (*m_Set->m_State->m_bLFOPerVoice_LFO3 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			/*
 			for (int i = 0; i < C_MAX_POLY; i++) {
 				m_singleNote[i]->m_LFO_Osc[2].resynch(true);
@@ -496,7 +492,7 @@ void CVASTPoly::resynchLFO() {
 			if (note->isKeyDown() == false) {
 				struct timeval tp;
 				m_Set->_gettimeofday(&tp);
-				int diff = (tp.tv_sec * 1000 + tp.tv_usec / 1000) - note->m_startPlayTimestamp;
+				int diff = (static_cast<unsigned long long>(tp.tv_sec) * 1000 + tp.tv_usec / 1000) - note->m_startPlayTimestamp;
 				if (diff > FREERUN_LFO_RETRIGGER_RESET) {
 					m_global_LFO_Osc[2].resynchWithFade(true);
 				}
@@ -504,8 +500,8 @@ void CVASTPoly::resynchLFO() {
 		}
 	}
 
-	if (*m_Set->m_State->m_bLFORetrigOnOff_LFO4 == SWITCH::SWITCH_ON) {
-		if (*m_Set->m_State->m_bLFOPerVoice_LFO4 == SWITCH::SWITCH_ON) {
+	if (*m_Set->m_State->m_bLFORetrigOnOff_LFO4 == static_cast<int>(SWITCH::SWITCH_ON)) {
+		if (*m_Set->m_State->m_bLFOPerVoice_LFO4 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			/*
 			for (int i = 0; i < C_MAX_POLY; i++) {
 			m_singleNote[i]->m_LFO_Osc[3].resynch(true);
@@ -525,7 +521,7 @@ void CVASTPoly::resynchLFO() {
 			if (note->isKeyDown() == false) {
 				struct timeval tp;
 				m_Set->_gettimeofday(&tp);
-				int diff = (tp.tv_sec * 1000 + tp.tv_usec / 1000) - note->m_startPlayTimestamp;
+				int diff = (static_cast<unsigned long long>(tp.tv_sec) * 1000 + tp.tv_usec / 1000) - note->m_startPlayTimestamp;
 				if (diff > FREERUN_LFO_RETRIGGER_RESET) {
 					m_global_LFO_Osc[3].resynchWithFade(true);
 				}
@@ -533,8 +529,8 @@ void CVASTPoly::resynchLFO() {
 		}
 	}
 
-	if (*m_Set->m_State->m_bLFORetrigOnOff_LFO5 == SWITCH::SWITCH_ON) {
-		if (*m_Set->m_State->m_bLFOPerVoice_LFO5 == SWITCH::SWITCH_ON) {
+	if (*m_Set->m_State->m_bLFORetrigOnOff_LFO5 == static_cast<int>(SWITCH::SWITCH_ON)) {
+		if (*m_Set->m_State->m_bLFOPerVoice_LFO5 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			/*
 			for (int i = 0; i < C_MAX_POLY; i++) {
 			m_singleNote[i]->m_LFO_Osc[4].resynch(true);
@@ -554,7 +550,7 @@ void CVASTPoly::resynchLFO() {
 			if (note->isKeyDown() == false) {
 				struct timeval tp;
 				m_Set->_gettimeofday(&tp);
-				int diff = (tp.tv_sec * 1000 + tp.tv_usec / 1000) - note->m_startPlayTimestamp;
+				int diff = (static_cast<unsigned long long>(tp.tv_sec) * 1000 + tp.tv_usec / 1000) - note->m_startPlayTimestamp;
 				if (diff > FREERUN_LFO_RETRIGGER_RESET) {
 					m_global_LFO_Osc[4].resynchWithFade(true);
 				}
@@ -585,7 +581,7 @@ void CVASTPoly::doArp(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages)
 
 	// get step duration
 	double stepDuration = 0;
-	if ((*m_Set->m_State->m_bARPSynch == SWITCH::SWITCH_ON) && (m_Set->m_bPpqIsPlaying)) {
+	if ((*m_Set->m_State->m_bARPSynch == static_cast<int>(SWITCH::SWITCH_ON)) && (m_Set->m_bPpqIsPlaying)) {
 		if (m_last_bpm != m_Set->m_dPpqBpm) { //bpm was changed??
 			bStart = true;
 		}
@@ -596,7 +592,7 @@ void CVASTPoly::doArp(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages)
 			m_ARP_time = stepDuration; //ARP time can only increase value!   
 	}
 	else {
-		if (*m_Set->m_State->m_bARPSynch == SWITCH::SWITCH_ON) { //synch but not playing
+		if (*m_Set->m_State->m_bARPSynch == static_cast<int>(SWITCH::SWITCH_ON)) { //synch but not playing
 			double l_fIntervalTime = m_Set->getIntervalTimeFromDAWBeats(*m_Set->m_State->m_uARPTimeBeats);
 			m_fARP_Speed_smoothed.setCurrentAndTargetValue(l_fIntervalTime);
 		}
@@ -710,12 +706,12 @@ void CVASTPoly::doArp(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages)
 			auto offset = jmax(0, jmin((int)(stepDuration - m_ARP_time), numSamples - 1));
 			//collect what needs to be triggered
 			m_ARP_currentARPNoteValues.clear();
-			if (*m_Set->m_State->m_uARPMode == ARPMODE::POLY) {
+			if (*m_Set->m_State->m_uARPMode == static_cast<int>(ARPMODE::POLY)) {
 				for (int note = 0; note < m_ARP_midiInNotes.size(); note++) {
 					m_ARP_currentARPNoteValues.add(m_ARP_midiInNotes[note]);
 				}
 			}
-			else if (*m_Set->m_State->m_uARPMode == ARPMODE::UP) {
+			else if (*m_Set->m_State->m_uARPMode == static_cast<int>(ARPMODE::UP)) {
 				m_ARP_direction = +1;
 
 				if (m_ARP_currentStep == 0) {
@@ -727,7 +723,7 @@ void CVASTPoly::doArp(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages)
 				}
 				m_ARP_currentARPNoteValues.add(m_ARP_midiInNotes[m_ARP_currentNote]);
 			}
-			else if (*m_Set->m_State->m_uARPMode == ARPMODE::DOWN) {
+			else if (*m_Set->m_State->m_uARPMode == static_cast<int>(ARPMODE::DOWN)) {
 				m_ARP_direction = -1;
 				if (m_ARP_currentStep == 0) {
 					m_ARP_currentNote = (m_ARP_midiInNotes.size() + m_ARP_currentNote + m_ARP_direction) % m_ARP_midiInNotes.size();
@@ -738,7 +734,7 @@ void CVASTPoly::doArp(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages)
 				}
 				m_ARP_currentARPNoteValues.add(m_ARP_midiInNotes[m_ARP_currentNote]);
 			}
-			else if (*m_Set->m_State->m_uARPMode == ARPMODE::UPDOWN) {
+			else if (*m_Set->m_State->m_uARPMode == static_cast<int>(ARPMODE::UPDOWN)) {
 				if (m_ARP_currentStep == 0) {
 					m_ARP_currentNote = (m_ARP_midiInNotes.size() + m_ARP_currentNote + m_ARP_direction) % m_ARP_midiInNotes.size();
 					if ((m_ARP_direction == 1) && (m_ARP_currentNote >= m_ARP_midiInNotes.size() - 1))
@@ -757,7 +753,7 @@ void CVASTPoly::doArp(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages)
 			//trigger them all
 			for (int note = 0; note < m_ARP_currentARPNoteValues.size(); note++) {
 				VASTARPData::ArpStep curStepData = arpData->getStep(m_ARP_currentStep);
-				float curVelocity = curStepData.velocity;
+				float curVelocity = static_cast<int>(curStepData.velocity);
 				int newNote = m_ARP_currentARPNoteValues[note] + curStepData.octave * 12 + curStepData.semitones;
 
 				if ((curStepData.gate > 0) && (newNote > 0) && (newNote < 127)) {
@@ -792,64 +788,64 @@ void CVASTPoly::processAudioBuffer(sRoutingBuffers& routingBuffers, MidiBuffer& 
 	//Check for StepSeq restart
 	if (m_ppq_playing != m_Set->m_bPpqIsPlaying) {	//status changed
 		if (m_Set->m_bPpqIsPlaying) { //now just started
-			if (*m_Set->m_State->m_bARPSynch == SWITCH::SWITCH_ON)
+			if (*m_Set->m_State->m_bARPSynch == static_cast<int>(SWITCH::SWITCH_ON))
 				initArp();
 
 			struct timeval tp;
 			m_Set->_gettimeofday(&tp);
-			if (*m_Set->m_State->m_bStepSeqSynch_STEPSEQ1 == SWITCH::SWITCH_ON) {
+			if (*m_Set->m_State->m_bStepSeqSynch_STEPSEQ1 == static_cast<int>(SWITCH::SWITCH_ON)) {
 				m_StepSeq_Envelope[0].noteOff();
 			}
-			if (*m_Set->m_State->m_bStepSeqSynch_STEPSEQ2 == SWITCH::SWITCH_ON) {
+			if (*m_Set->m_State->m_bStepSeqSynch_STEPSEQ2 == static_cast<int>(SWITCH::SWITCH_ON)) {
 				m_StepSeq_Envelope[1].noteOff();
 			}
-			if (*m_Set->m_State->m_bStepSeqSynch_STEPSEQ3 == SWITCH::SWITCH_ON) {
+			if (*m_Set->m_State->m_bStepSeqSynch_STEPSEQ3 == static_cast<int>(SWITCH::SWITCH_ON)) {
 				m_StepSeq_Envelope[2].noteOff();
 			}
 
 			//struct timeval tp;
 			//m_Set->_gettimeofday(&tp);
-			if (*m_Set->m_State->m_bStepSeqSynch_STEPSEQ1 == SWITCH::SWITCH_ON) {
-				m_StepSeq_Envelope[0].noteOn(tp.tv_sec * 1000 + tp.tv_usec / 1000, false);
+			if (*m_Set->m_State->m_bStepSeqSynch_STEPSEQ1 == static_cast<int>(SWITCH::SWITCH_ON)) {
+				m_StepSeq_Envelope[0].noteOn(static_cast<ULong64_t>(tp.tv_sec) * 1000 + tp.tv_usec / 1000, false);
 			}
-			if (*m_Set->m_State->m_bStepSeqSynch_STEPSEQ2 == SWITCH::SWITCH_ON) {
-				m_StepSeq_Envelope[1].noteOn(tp.tv_sec * 1000 + tp.tv_usec / 1000, false);
+			if (*m_Set->m_State->m_bStepSeqSynch_STEPSEQ2 == static_cast<int>(SWITCH::SWITCH_ON)) {
+				m_StepSeq_Envelope[1].noteOn(static_cast<ULong64_t>(tp.tv_sec) * 1000 + tp.tv_usec / 1000, false);
 			}
-			if (*m_Set->m_State->m_bStepSeqSynch_STEPSEQ3 == SWITCH::SWITCH_ON) {
-				m_StepSeq_Envelope[2].noteOn(tp.tv_sec * 1000 + tp.tv_usec / 1000, false);
+			if (*m_Set->m_State->m_bStepSeqSynch_STEPSEQ3 == static_cast<int>(SWITCH::SWITCH_ON)) {
+				m_StepSeq_Envelope[2].noteOn(static_cast<ULong64_t>(tp.tv_sec) * 1000 + tp.tv_usec / 1000, false);
 			}
 
-			if (*m_Set->m_State->m_bStepSeqSynch_STEPSEQ1 == SWITCH::SWITCH_ON) {
+			if (*m_Set->m_State->m_bStepSeqSynch_STEPSEQ1 == static_cast<int>(SWITCH::SWITCH_ON)) {
 				if (m_Set->m_dPpqBpm != 0.f) {
-					float l_fIntervalTime = m_Set->getIntervalTimeFromDAWBeats(*m_Set->m_State->m_uStepSeqTimeBeats_STEPSEQ1);
+					float l_fIntervalTime = m_Set->getIntervalTimeFromDAWBeats(static_cast<int>(*m_Set->m_State->m_uStepSeqTimeBeats_STEPSEQ1));
 					m_Set->m_StepSeqData[0].setStepSeqTime(l_fIntervalTime); //is in ms
 				}
 			}
-			if (*m_Set->m_State->m_bStepSeqSynch_STEPSEQ2 == SWITCH::SWITCH_ON) {
+			if (*m_Set->m_State->m_bStepSeqSynch_STEPSEQ2 == static_cast<int>(SWITCH::SWITCH_ON)) {
 				if (m_Set->m_dPpqBpm != 0.f) {
-					float l_fIntervalTime = m_Set->getIntervalTimeFromDAWBeats(*m_Set->m_State->m_uStepSeqTimeBeats_STEPSEQ2);
+					float l_fIntervalTime = m_Set->getIntervalTimeFromDAWBeats(static_cast<int>(*m_Set->m_State->m_uStepSeqTimeBeats_STEPSEQ2));
 					m_Set->m_StepSeqData[1].setStepSeqTime(l_fIntervalTime); //is in ms
 				}
 			}
-			if (*m_Set->m_State->m_bStepSeqSynch_STEPSEQ3 == SWITCH::SWITCH_ON) {
+			if (*m_Set->m_State->m_bStepSeqSynch_STEPSEQ3 == static_cast<int>(SWITCH::SWITCH_ON)) {
 				if (m_Set->m_dPpqBpm != 0.f) {
-					float l_fIntervalTime = m_Set->getIntervalTimeFromDAWBeats(*m_Set->m_State->m_uStepSeqTimeBeats_STEPSEQ3);
+					float l_fIntervalTime = m_Set->getIntervalTimeFromDAWBeats(static_cast<int>(*m_Set->m_State->m_uStepSeqTimeBeats_STEPSEQ3));
 					m_Set->m_StepSeqData[2].setStepSeqTime(l_fIntervalTime); //is in ms
 				}
 			}
 
 		}
 		else { //now just stopped			
-			if (*m_Set->m_State->m_bARPSynch == SWITCH::SWITCH_ON)
+			if (*m_Set->m_State->m_bARPSynch == static_cast<int>(SWITCH::SWITCH_ON))
 				initArp();
 			
 			//do nothing
 			/*
-			if (*m_Set->m_State->m_bStepSeqSynch_STEPSEQ1 == SWITCH::SWITCH_ON)
+			if (*m_Set->m_State->m_bStepSeqSynch_STEPSEQ1 == static_cast<int>(SWITCH::SWITCH_ON))
 				m_Set->m_StepSeqData[0].setStepSeqTime(*m_Set->m_State->m_fStepSeqSpeed_STEPSEQ1); //is in ms
-			if (*m_Set->m_State->m_bStepSeqSynch_STEPSEQ2 == SWITCH::SWITCH_ON)
+			if (*m_Set->m_State->m_bStepSeqSynch_STEPSEQ2 == static_cast<int>(SWITCH::SWITCH_ON))
 				m_Set->m_StepSeqData[1].setStepSeqTime(*m_Set->m_State->m_fStepSeqSpeed_STEPSEQ2); //is in ms
-			if (*m_Set->m_State->m_bStepSeqSynch_STEPSEQ3 == SWITCH::SWITCH_ON)
+			if (*m_Set->m_State->m_bStepSeqSynch_STEPSEQ3 == static_cast<int>(SWITCH::SWITCH_ON))
 				m_Set->m_StepSeqData[2].setStepSeqTime(*m_Set->m_State->m_fStepSeqSpeed_STEPSEQ3); //is in ms
 			*/
 
@@ -860,7 +856,7 @@ void CVASTPoly::processAudioBuffer(sRoutingBuffers& routingBuffers, MidiBuffer& 
 	//===========================================================================================
 	//Check ARP
 	if (m_shallInitARP) initArpInternal(midiMessages);
-	if (*m_Set->m_State->m_bARPOnOff == SWITCH::SWITCH_ON) {
+	if (*m_Set->m_State->m_bARPOnOff == static_cast<int>(SWITCH::SWITCH_ON)) {
 		doArp(routingBuffers, midiMessages);
 	}
 	else {

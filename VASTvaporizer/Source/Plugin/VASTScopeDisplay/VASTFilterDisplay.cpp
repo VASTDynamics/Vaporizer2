@@ -329,7 +329,7 @@ void VASTFilterDisplay::updateThread(VASTFilterDisplay* display, bool force) {
 			onoff = *l_Set->m_State->m_bOnOff_Filter3;
 			break;
 		}
-		if (onoff == SWITCH::SWITCH_ON) {
+		if (onoff == static_cast<int>(SWITCH::SWITCH_ON)) {
 			//process filter					
 			if (((ftype >= FILTERTYPE::DQFLPF12) && (ftype <= FILTERTYPE::DQFCOMBWSSINE)) || 
 				(ftype == FILTERTYPE::COMBFILTER) || (ftype == FILTERTYPE::SCREAMFILTER))
@@ -501,7 +501,7 @@ void VASTFilterDisplay::updateContent(bool force) {
 			onoff = *l_Set->m_State->m_bOnOff_Filter3;
 			break;
 		}
-		if (onoff == SWITCH::SWITCH_ON) {
+		if (onoff == static_cast<int>(SWITCH::SWITCH_ON)) {
 			//process filter					
 			if ((ftype >= FILTERTYPE::DQFLPF12) && (ftype <= FILTERTYPE::DQFCOMBWSSINE))
 				m_QFilter.processBlock(nullptr, &l_inputState, nullptr, l_Set, filter, filterBlock, 0, c_fftSize, true, false, m_VCF, true); //warmup

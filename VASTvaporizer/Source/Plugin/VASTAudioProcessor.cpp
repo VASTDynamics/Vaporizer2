@@ -795,11 +795,12 @@ void VASTAudioProcessor::addChunkTreeState(ValueTree* treeState) { //for save
 	DBG("Appending chunk data for stateInformation");
 	String childName = "chunkData";
 	ValueTree l_chunkTree = ValueTree(Identifier(childName));
+	ValueTree l_tree{};
 	treeState->appendChild(l_chunkTree, nullptr);
 
 	for (int i = 0; i < 4; i++) {
-		String childName = "oscBank" + String(i);
-		ValueTree l_tree = ValueTree(Identifier(childName));
+		childName = "oscBank" + String(i);
+		l_tree = ValueTree(Identifier(childName));
 		std::shared_ptr<CVASTWaveTable> wavetable = m_pVASTXperience.m_Poly.m_OscBank[i]->getWavetablePointer();
 		if (wavetable->bufferedValueTree.hasProperty("waveTableName")) {
 			l_tree.copyPropertiesAndChildrenFrom(wavetable->bufferedValueTree, nullptr);
@@ -813,8 +814,8 @@ void VASTAudioProcessor::addChunkTreeState(ValueTree* treeState) { //for save
 	//WAV File
 	if (m_pVASTXperience.m_Poly.getSamplerSound() != nullptr) {
 		VASTSamplerSound* sound = (VASTSamplerSound*)m_pVASTXperience.m_Poly.getSamplerSound();
-		String childName = "sampleData";
-		ValueTree l_tree = ValueTree(Identifier(childName));
+		childName = "sampleData";
+		l_tree = ValueTree(Identifier(childName));
 		l_chunkTree.appendChild(l_tree, nullptr);
 		vassert(l_tree.isValid());
 		sound->getValueTreeState(&l_tree, nullptr /*&m_undoManager*/);
@@ -822,8 +823,8 @@ void VASTAudioProcessor::addChunkTreeState(ValueTree* treeState) { //for save
 
 	//msegs
 	for (int i = 0; i < 5; i++) {
-		String childName = "msegData" + String(i);
-		ValueTree l_tree = ValueTree(Identifier(childName));
+		childName = "msegData" + String(i);
+		l_tree = ValueTree(Identifier(childName));
 		l_chunkTree.appendChild(l_tree, nullptr);
 		vassert(l_tree.isValid());
 		if (l_tree.isValid())
@@ -834,8 +835,8 @@ void VASTAudioProcessor::addChunkTreeState(ValueTree* treeState) { //for save
 
 	//step seqs
 	for (int i = 0; i < 3; i++) {
-		String childName = "stepSeqData" + String(i);
-		ValueTree l_tree = ValueTree(Identifier(childName));
+		childName = "stepSeqData" + String(i);
+		l_tree = ValueTree(Identifier(childName));
 		l_chunkTree.appendChild(l_tree, nullptr);
 		vassert(l_tree.isValid());
 		if (l_tree.isValid())
@@ -846,8 +847,8 @@ void VASTAudioProcessor::addChunkTreeState(ValueTree* treeState) { //for save
 
 	//arp
 	for (int i = 0; i < 1; i++) { //only one arp
-		String childName = "arpData" + String(i);
-		ValueTree l_tree = ValueTree(Identifier(childName));
+		childName = "arpData" + String(i);
+		l_tree = ValueTree(Identifier(childName));
 		l_chunkTree.appendChild(l_tree, nullptr);
 		vassert(l_tree.isValid());
 		if (l_tree.isValid())
@@ -858,8 +859,8 @@ void VASTAudioProcessor::addChunkTreeState(ValueTree* treeState) { //for save
 
 	//fx bus
 	{
-		String childName = "fxBusData" + String(1);
-		ValueTree l_tree = ValueTree(Identifier(childName));
+		childName = "fxBusData" + String(1);
+		l_tree = ValueTree(Identifier(childName));
 		l_chunkTree.appendChild(l_tree, nullptr);
 		vassert(l_tree.isValid());
 		if (l_tree.isValid())
@@ -868,8 +869,8 @@ void VASTAudioProcessor::addChunkTreeState(ValueTree* treeState) { //for save
 			setErrorState(24);
 	}
 	{
-		String childName = "fxBusData" + String(2);
-		ValueTree l_tree = ValueTree(Identifier(childName));
+		childName = "fxBusData" + String(2);
+		l_tree = ValueTree(Identifier(childName));
 		l_chunkTree.appendChild(l_tree, nullptr);
 		vassert(l_tree.isValid());
 		if (l_tree.isValid())
@@ -878,8 +879,8 @@ void VASTAudioProcessor::addChunkTreeState(ValueTree* treeState) { //for save
 			setErrorState(24);
 	}
 	{
-		String childName = "fxBusData" + String(3);
-		ValueTree l_tree = ValueTree(Identifier(childName));
+		childName = "fxBusData" + String(3);
+		l_tree = ValueTree(Identifier(childName));
 		l_chunkTree.appendChild(l_tree, nullptr);
 		vassert(l_tree.isValid());
 		if (l_tree.isValid())

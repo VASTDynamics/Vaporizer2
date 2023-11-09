@@ -89,7 +89,7 @@ void CVASTCombFilterEffect::releaseResources() {
 
 void CVASTCombFilterEffect::parameterChanged(const String& parameterID, float newValue) {
 	if (parameterID.startsWith("m_bCombOnOff")) {
-		if (newValue == SWITCH::SWITCH_ON)
+		if (newValue == static_cast<int>(SWITCH::SWITCH_ON))
 			switchOn();
 		else
 			switchOff();
@@ -154,7 +154,7 @@ void CVASTCombFilterEffect::init(CVASTSettings &set) {
 	reset();
 }
 
-void CVASTCombFilterEffect::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages, const int numSamples) {
+void CVASTCombFilterEffect::processBlock(AudioSampleBuffer& buffer, MidiBuffer&, const int numSamples) {
 	if (isOffAndShallBeOff() == true) return;
 
 	modMatrixInputState inputState;
@@ -197,7 +197,7 @@ void CVASTCombFilterEffect::processBlock(AudioSampleBuffer& buffer, MidiBuffer& 
 	}
 }
 
-bool CVASTCombFilterEffect::processAudioFrame(float* pInputBuffer, float* pOutputBuffer, MYUINT uNumInputChannels, MYUINT uNumOutputChannels, int currentFrameOSAdjusted, modMatrixInputState* inputState) {
+bool CVASTCombFilterEffect::processAudioFrame(float* pInputBuffer, float* pOutputBuffer, MYUINT uNumInputChannels, MYUINT uNumOutputChannels, int, modMatrixInputState* inputState) {
 	// read the delay line to get w(n-D); call base class
 	float ynL = mDelayLeft.readDelay();
 	float ynR = mDelayRight.readDelay();
@@ -259,13 +259,13 @@ void CVASTCombFilterEffect::setDelay_mSec(float fmSec) {
 
 //==============================================================================
 
-void CVASTCombFilterEffect::getStateInformation(MemoryBlock& destData)
+void CVASTCombFilterEffect::getStateInformation(MemoryBlock&)
 {
 	//std::unique_ptr<XmlElement> xml (parameters.valueTreeState.state.createXml());
 	//copyXmlToBinary (*xml, destData);
 }
 
-void CVASTCombFilterEffect::setStateInformation(const void* data, int sizeInBytes)
+void CVASTCombFilterEffect::setStateInformation(const void*, int)
 {
 	//std::unique_ptr<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
 	//if (xmlState != nullptr)

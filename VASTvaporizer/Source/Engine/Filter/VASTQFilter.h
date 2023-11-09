@@ -127,12 +127,12 @@ public:
 	//
 
 	VASTQFilterProcessState* FBQ[3]; //3 filters
-	FBQFPtr ProcessQuadFB;
+	FBQFPtr ProcessQuadFB{};
 
 private:
     std::unique_ptr<AudioSampleBuffer> inBufferUp;
-	int m_paramType[3]; //per filter
-	alignas(16) CDecimator m_Decimator[3]; //per filter
-	alignas(16) CDecimator m_DecimatorVoices[3][C_MAX_POLY];
+	int m_paramType[3]{ 0,0,0 }; //per filter
+	alignas(16) CDecimator m_Decimator[3]{}; //per filter
+	alignas(16) CDecimator m_DecimatorVoices[3][C_MAX_POLY]{};
 	void ProcessLegacy(dsp::AudioBlock<float> filterBlock, sRoutingBuffers* routingBuffers, int numSamples, int startSample, int ftype, int fsubtype, int ftype2, int fsubtype2, int ftype3, int fsubtype3, int fws, int osFactor, OwnedArray<VASTSynthesiserVoice>* voices, int filter, float gain, float drive, float feedback, bool isUI, bool hasNextFilter, std::unique_ptr<CVASTVcf>* uiVCF, bool warmup);
 };

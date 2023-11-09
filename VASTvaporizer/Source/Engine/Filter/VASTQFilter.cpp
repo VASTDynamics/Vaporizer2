@@ -321,7 +321,7 @@ int VASTQFilter::processBlock(OwnedArray<VASTSynthesiserVoice>* voices, modMatri
 	    
 	//while (samplesToProcess >= c_blocksize_q) {
 	while (samplesToProcess > 0) {
-		matrixInputState->currentFrame = startSample + i;
+		matrixInputState->currentFrame = static_cast<uint64_t>(startSample) + i;
 
 		int curNumSamples = (samplesToProcess >= c_blocksize_q) ? c_blocksize_q : samplesToProcess;
 
@@ -354,19 +354,19 @@ int VASTQFilter::processBlock(OwnedArray<VASTSynthesiserVoice>* voices, modMatri
 				} 
 				else {
 					{
-						if (paramFilterEnv == MSEGENV::MSEG1) {
+						if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG1)) {
 							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[0][voiceNo]->getSample(0, int(matrixInputState->currentFrame));
 						}
-						else if (paramFilterEnv == MSEGENV::MSEG2) {
+						else if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG2)) {
 							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[1][voiceNo]->getSample(0, int(matrixInputState->currentFrame));
 						}
-						else if (paramFilterEnv == MSEGENV::MSEG3) {
+						else if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG3)) {
 							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[2][voiceNo]->getSample(0, int(matrixInputState->currentFrame));
 						}
-						else if (paramFilterEnv == MSEGENV::MSEG4) {
+						else if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG4)) {
 							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[3][voiceNo]->getSample(0, int(matrixInputState->currentFrame));
 						}
-						else if (paramFilterEnv == MSEGENV::MSEG5) {
+						else if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG5)) {
 							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[4][voiceNo]->getSample(0, int(matrixInputState->currentFrame));
 						}
 						lFilterEnvMod = m_Set->getParameterValueWithMatrixModulation(&paramFilterEnvMod, paramIDFilterEnvMod, matrixInputState);
@@ -1629,12 +1629,8 @@ void VASTQFilter::ProcessLegacy(dsp::AudioBlock<float> filterBlock, sRoutingBuff
 						//vcf->m_TFHPF_uNonLinearProcessing = vcf->OFF; 
 					vcf->KorgThreeFiveHPFmkIIupdateFilters();
 					for (int i = 0; i < numSamples; i++) {
-						double lFilterIn[2];
-						lFilterIn[0] = inBlock.getSample(0, i);
-						lFilterIn[1] = inBlock.getSample(1, i);
-						double fOut[2];
-						fOut[0] = 0;
-						fOut[1] = 0;
+						double lFilterIn[2]{ inBlock.getSample(0, i), inBlock.getSample(1, i) };
+						double fOut[2]{ 0, 0 };
 						//do filter
 						vcf->KorgThreeFiveHPFmkIIdoFilter(lFilterIn, fOut);
 						if (!warmup) {
@@ -2368,8 +2364,8 @@ __m128 VASTQFilter::COMBquad_SSE2(VASTQFilterStepState* __restrict f, __m128 in)
 
 	__m128 a = _mm_mul_ps(f->C[0], m256);
 	__m128i e = _mm_cvtps_epi32(a);
-	int DTi alignas(16)[4],
-		SEi alignas(16)[4];
+	int DTi alignas(16)[4]{},
+		SEi alignas(16)[4]{};	
 	__m128i DT = _mm_srli_epi32(e, 8);
 	_mm_store_si128((__m128i*)DTi, DT);
 	__m128i SE = _mm_and_si128(e, m0xff);
@@ -2536,7 +2532,7 @@ __m128 VASTQFilter::SINUS_SSE2(__m128 in, __m128 drive)
 	e4[3] = _mm_cvtsi128_si32(_mm_shufflelo_epi16(e, _MM_SHUFFLE(3, 3, 3, 3)));
 #else
 	// on PC write to memory & back as XMM -> GPR is slow on K8
-	short e4 alignas(16)[8];
+	short e4 alignas(16)[8]{};
 	_mm_store_si128((__m128i*)&e4, e);
 #endif
 
@@ -2625,7 +2621,7 @@ __m128 VASTQFilter::ASYM_SSE2(__m128 in, __m128 drive)
 
 #else
 	// on PC write to memory & back as XMM -> GPR is slow on K8
-	short e4 alignas(16)[8];
+	short e4 alignas(16)[8]{};
 	_mm_store_si128((__m128i*)&e4, e);
 #endif
 

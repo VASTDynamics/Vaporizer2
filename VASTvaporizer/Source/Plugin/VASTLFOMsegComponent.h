@@ -117,7 +117,7 @@ public:
 		TabChangedFunc(index);
 	}
 
-	TabBarButton* createTabButton(const String &tabName, int tabIndex) override {
+	TabBarButton* createTabButton(const String &tabName, int ) override {
 		return new VASTDnDTabBarButton(myProcessor, tabName, getTabbedButtonBar());
 	}
 };
@@ -168,7 +168,7 @@ public:
 		TabChangedFunc(index);
 	}
 
-	TabBarButton* createTabButton(const String &tabName, int tabIndex) override {
+	TabBarButton* createTabButton(const String &tabName, int ) override {
 		return new VASTDnDTabBarButton(myProcessor, tabName, getTabbedButtonBar());
 	}
 };

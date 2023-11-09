@@ -197,7 +197,7 @@ void VASTARPEditor::mouseDown(const MouseEvent & e)
 	repaint();
 }
 
-void VASTARPEditor::mouseUp(const MouseEvent & e) {
+void VASTARPEditor::mouseUp(const MouseEvent &) {
 	m_isDragged = -1;
 }
 
@@ -247,7 +247,7 @@ void VASTARPEditor::mouseMove(const MouseEvent& e) {
 	repaint();
 }
 
-void VASTARPEditor::mouseExit(const MouseEvent& e) {
+void VASTARPEditor::mouseExit(const MouseEvent& ) {
 	updateContent(true);
 }
 
@@ -274,7 +274,7 @@ inline bool VASTARPEditor::isInterestedInFileDrag(const StringArray& files) {
 	return false;
 }
 
-void VASTARPEditor::filesDropped(const StringArray& files, int x, int y) {
+void VASTARPEditor::filesDropped(const StringArray& files, int, int) {
 	String file = files[0];
 	File midiFile = File(file);
 	std::unique_ptr<FileInputStream> midiFileInputStream;

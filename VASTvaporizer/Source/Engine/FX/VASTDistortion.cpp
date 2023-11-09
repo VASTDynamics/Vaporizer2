@@ -92,7 +92,7 @@ CVASTDistortion::~CVASTDistortion(void) {
 
 void CVASTDistortion::parameterChanged(const String& parameterID, float newValue) {
 	if (parameterID.startsWith("m_bDistortionOnOff")) {
-		if (newValue == SWITCH::SWITCH_ON)
+		if (newValue == static_cast<int>(SWITCH::SWITCH_ON))
 			switchOn();
 		else
 			switchOff();
@@ -159,7 +159,7 @@ void CVASTDistortion::reset() {
 	}
 }
 
-void CVASTDistortion::prepareToPlay(double sampleRate, int samplesPerBlock) {
+void CVASTDistortion::prepareToPlay(double, int samplesPerBlock) {
 	//m_iSampleRate is set in useroversampling
 	m_iExpectedSamplesPerBlock = samplesPerBlock;
 
@@ -190,7 +190,7 @@ void CVASTDistortion::releaseResources()
 {
 }
 
-void CVASTDistortion::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages, const int numSamples) {
+void CVASTDistortion::processBlock(AudioSampleBuffer& buffer, MidiBuffer&, const int numSamples) {
 	if (isOffAndShallBeOff() == true) return;
 
 	modMatrixInputState inputState;
@@ -239,7 +239,7 @@ void CVASTDistortion::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMe
 	}
 }
 
-bool CVASTDistortion::processAudioFrame(float* pInputBuffer, float* pOutputBuffer, MYUINT uNumInputChannels, MYUINT uNumOutputChannels, modMatrixInputState &inputState)
+bool CVASTDistortion::processAudioFrame(float* pInputBuffer, float* pOutputBuffer, MYUINT uNumInputChannels, MYUINT, modMatrixInputState &inputState)
 {
 	//pre - eq(bandpass) > pre - gain > nonlinear waveshaping function > post - eq(lowpass) > post - gain and you may wish to eliminate aliasing using the bandlimited polynomials or by oversampling.
 	//http://music.columbia.edu/cmc/music-dsp/FAQs/guitar_distortion_FAQ.html
@@ -331,13 +331,13 @@ bool CVASTDistortion::processAudioFrame(float* pInputBuffer, float* pOutputBuffe
 
 //==============================================================================
 
-void CVASTDistortion::getStateInformation(MemoryBlock& destData)
+void CVASTDistortion::getStateInformation(MemoryBlock&)
 {
 	//std::unique_ptr<XmlElement> xml (parameters.valueTreeState.state.createXml());
 	//copyXmlToBinary (*xml, destData);
 }
 
-void CVASTDistortion::setStateInformation(const void* data, int sizeInBytes)
+void CVASTDistortion::setStateInformation(const void*, int)
 {
 	//std::unique_ptr<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
 	//if (xmlState != nullptr)

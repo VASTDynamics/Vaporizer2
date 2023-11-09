@@ -97,8 +97,8 @@ private:
 	void doArp(sRoutingBuffers &routingBuffers, MidiBuffer& midiMessages);	
 	SortedSet<int> m_ARP_currentARPNoteValues;
 	
-	int m_ARP_currentNote, m_ARP_currentStep, m_ARP_direction;
-	double m_ARP_time;
+	int m_ARP_currentNote, m_ARP_currentStep, m_ARP_direction = 0;
+	double m_ARP_time = 0;
 	
 	VASTSynthesiser m_OscillatorSynthesizer;
 

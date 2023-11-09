@@ -293,7 +293,7 @@ public:
 	- LFO5Buffer - clear
 	*/
 
-} sRoutingBuffers;
+} sRoutingBuffers;;
 
 typedef struct {
 	uint64_t voiceNo; //to avoid error C2338

@@ -30,9 +30,7 @@ CVASTSettings::CVASTSettings(VASTAudioProcessor* processor) : my_processor(proce
 
 	//std::shared_ptr<CVASTParamState> m_State(std::make_shared<CVASTParamState>());
 	
-	modMatrixInputState l_inputState;
-	l_inputState.voiceNo = 0; // or -1? 
-	l_inputState.currentFrame = 0;
+	modMatrixInputState l_inputState{ 0,0 };
 	bufferInputState.store(l_inputState);
 
 	for (int stepSeq = 0; stepSeq < 3; stepSeq++) {
@@ -528,22 +526,22 @@ void CVASTSettings::modMatrixSlotGetValuesWithMod(int slot, float &slotValue, fl
 }
 
 bool CVASTSettings::modMatrixSourceSet(MYUINT source) {
-	if (((*m_State->m_uModMatDest1 != MODMATDEST::NoDestination) && (*m_State->m_uModMatSrce1 == source) && (*m_State->m_fModMatVal1 != 0.0f)) ||
-		((*m_State->m_uModMatDest2 != MODMATDEST::NoDestination) && (*m_State->m_uModMatSrce2 == source) && (*m_State->m_fModMatVal2 != 0.0f)) ||
-		((*m_State->m_uModMatDest3 != MODMATDEST::NoDestination) && (*m_State->m_uModMatSrce3 == source) && (*m_State->m_fModMatVal3 != 0.0f)) ||
-		((*m_State->m_uModMatDest4 != MODMATDEST::NoDestination) && (*m_State->m_uModMatSrce4 == source) && (*m_State->m_fModMatVal4 != 0.0f)) ||
-		((*m_State->m_uModMatDest5 != MODMATDEST::NoDestination) && (*m_State->m_uModMatSrce5 == source) && (*m_State->m_fModMatVal5 != 0.0f)) ||
-		((*m_State->m_uModMatDest6 != MODMATDEST::NoDestination) && (*m_State->m_uModMatSrce6 == source) && (*m_State->m_fModMatVal6 != 0.0f)) ||
-		((*m_State->m_uModMatDest7 != MODMATDEST::NoDestination) && (*m_State->m_uModMatSrce7 == source) && (*m_State->m_fModMatVal7 != 0.0f)) ||
-		((*m_State->m_uModMatDest8 != MODMATDEST::NoDestination) && (*m_State->m_uModMatSrce8 == source) && (*m_State->m_fModMatVal8 != 0.0f)) ||
-		((*m_State->m_uModMatDest9 != MODMATDEST::NoDestination) && (*m_State->m_uModMatSrce9 == source) && (*m_State->m_fModMatVal9 != 0.0f)) ||
-		((*m_State->m_uModMatDest10 != MODMATDEST::NoDestination) && (*m_State->m_uModMatSrce10 == source) && (*m_State->m_fModMatVal10 != 0.0f)) ||
-		((*m_State->m_uModMatDest11 != MODMATDEST::NoDestination) && (*m_State->m_uModMatSrce11 == source) && (*m_State->m_fModMatVal11 != 0.0f)) ||
-		((*m_State->m_uModMatDest12 != MODMATDEST::NoDestination) && (*m_State->m_uModMatSrce12 == source) && (*m_State->m_fModMatVal12 != 0.0f)) ||
-		((*m_State->m_uModMatDest13 != MODMATDEST::NoDestination) && (*m_State->m_uModMatSrce13 == source) && (*m_State->m_fModMatVal13 != 0.0f)) ||
-		((*m_State->m_uModMatDest14 != MODMATDEST::NoDestination) && (*m_State->m_uModMatSrce14 == source) && (*m_State->m_fModMatVal14 != 0.0f)) ||
-		((*m_State->m_uModMatDest15 != MODMATDEST::NoDestination) && (*m_State->m_uModMatSrce15 == source) && (*m_State->m_fModMatVal15 != 0.0f)) ||
-		((*m_State->m_uModMatDest16 != MODMATDEST::NoDestination) && (*m_State->m_uModMatSrce16 == source) && (*m_State->m_fModMatVal16 != 0.0f)))
+	if (((*m_State->m_uModMatDest1 != static_cast<int>(MODMATDEST::NoDestination)) && (*m_State->m_uModMatSrce1 == source) && (*m_State->m_fModMatVal1 != 0.0f)) ||
+		((*m_State->m_uModMatDest2 != static_cast<int>(MODMATDEST::NoDestination)) && (*m_State->m_uModMatSrce2 == source) && (*m_State->m_fModMatVal2 != 0.0f)) ||
+		((*m_State->m_uModMatDest3 != static_cast<int>(MODMATDEST::NoDestination)) && (*m_State->m_uModMatSrce3 == source) && (*m_State->m_fModMatVal3 != 0.0f)) ||
+		((*m_State->m_uModMatDest4 != static_cast<int>(MODMATDEST::NoDestination)) && (*m_State->m_uModMatSrce4 == source) && (*m_State->m_fModMatVal4 != 0.0f)) ||
+		((*m_State->m_uModMatDest5 != static_cast<int>(MODMATDEST::NoDestination)) && (*m_State->m_uModMatSrce5 == source) && (*m_State->m_fModMatVal5 != 0.0f)) ||
+		((*m_State->m_uModMatDest6 != static_cast<int>(MODMATDEST::NoDestination)) && (*m_State->m_uModMatSrce6 == source) && (*m_State->m_fModMatVal6 != 0.0f)) ||
+		((*m_State->m_uModMatDest7 != static_cast<int>(MODMATDEST::NoDestination)) && (*m_State->m_uModMatSrce7 == source) && (*m_State->m_fModMatVal7 != 0.0f)) ||
+		((*m_State->m_uModMatDest8 != static_cast<int>(MODMATDEST::NoDestination)) && (*m_State->m_uModMatSrce8 == source) && (*m_State->m_fModMatVal8 != 0.0f)) ||
+		((*m_State->m_uModMatDest9 != static_cast<int>(MODMATDEST::NoDestination)) && (*m_State->m_uModMatSrce9 == source) && (*m_State->m_fModMatVal9 != 0.0f)) ||
+		((*m_State->m_uModMatDest10 != static_cast<int>(MODMATDEST::NoDestination)) && (*m_State->m_uModMatSrce10 == source) && (*m_State->m_fModMatVal10 != 0.0f)) ||
+		((*m_State->m_uModMatDest11 != static_cast<int>(MODMATDEST::NoDestination)) && (*m_State->m_uModMatSrce11 == source) && (*m_State->m_fModMatVal11 != 0.0f)) ||
+		((*m_State->m_uModMatDest12 != static_cast<int>(MODMATDEST::NoDestination)) && (*m_State->m_uModMatSrce12 == source) && (*m_State->m_fModMatVal12 != 0.0f)) ||
+		((*m_State->m_uModMatDest13 != static_cast<int>(MODMATDEST::NoDestination)) && (*m_State->m_uModMatSrce13 == source) && (*m_State->m_fModMatVal13 != 0.0f)) ||
+		((*m_State->m_uModMatDest14 != static_cast<int>(MODMATDEST::NoDestination)) && (*m_State->m_uModMatSrce14 == source) && (*m_State->m_fModMatVal14 != 0.0f)) ||
+		((*m_State->m_uModMatDest15 != static_cast<int>(MODMATDEST::NoDestination)) && (*m_State->m_uModMatSrce15 == source) && (*m_State->m_fModMatVal15 != 0.0f)) ||
+		((*m_State->m_uModMatDest16 != static_cast<int>(MODMATDEST::NoDestination)) && (*m_State->m_uModMatSrce16 == source) && (*m_State->m_fModMatVal16 != 0.0f)))
 		return true;
 	return false;
 }
@@ -609,22 +607,22 @@ bool CVASTSettings::modMatrixSourceSetFast(MYUINT source) {
 }
 
 bool CVASTSettings::modMatrixDestinationSet(MYUINT destination) {
-	if (((*m_State->m_uModMatSrce1 != MODMATSRCE::NoSource) && (*m_State->m_uModMatDest1 == destination) && (*m_State->m_fModMatVal1 != 0.0f)) ||
-		((*m_State->m_uModMatSrce2 != MODMATSRCE::NoSource) && (*m_State->m_uModMatDest2 == destination) && (*m_State->m_fModMatVal2 != 0.0f)) ||
-		((*m_State->m_uModMatSrce3 != MODMATSRCE::NoSource) && (*m_State->m_uModMatDest3 == destination) && (*m_State->m_fModMatVal3 != 0.0f)) ||
-		((*m_State->m_uModMatSrce4 != MODMATSRCE::NoSource) && (*m_State->m_uModMatDest4 == destination) && (*m_State->m_fModMatVal4 != 0.0f)) ||
-		((*m_State->m_uModMatSrce5 != MODMATSRCE::NoSource) && (*m_State->m_uModMatDest5 == destination) && (*m_State->m_fModMatVal5 != 0.0f)) ||
-		((*m_State->m_uModMatSrce6 != MODMATSRCE::NoSource) && (*m_State->m_uModMatDest6 == destination) && (*m_State->m_fModMatVal6 != 0.0f)) ||
-		((*m_State->m_uModMatSrce7 != MODMATSRCE::NoSource) && (*m_State->m_uModMatDest7 == destination) && (*m_State->m_fModMatVal7 != 0.0f)) ||
-		((*m_State->m_uModMatSrce8 != MODMATSRCE::NoSource) && (*m_State->m_uModMatDest8 == destination) && (*m_State->m_fModMatVal8 != 0.0f)) ||
-		((*m_State->m_uModMatSrce9 != MODMATSRCE::NoSource) && (*m_State->m_uModMatDest9 == destination) && (*m_State->m_fModMatVal9 != 0.0f)) ||
-		((*m_State->m_uModMatSrce10 != MODMATSRCE::NoSource) && (*m_State->m_uModMatDest10 == destination) && (*m_State->m_fModMatVal10 != 0.0f)) ||
-		((*m_State->m_uModMatSrce11 != MODMATSRCE::NoSource) && (*m_State->m_uModMatDest11 == destination) && (*m_State->m_fModMatVal11 != 0.0f)) ||
-		((*m_State->m_uModMatSrce12 != MODMATSRCE::NoSource) && (*m_State->m_uModMatDest12 == destination) && (*m_State->m_fModMatVal12 != 0.0f)) ||
-		((*m_State->m_uModMatSrce13 != MODMATSRCE::NoSource) && (*m_State->m_uModMatDest13 == destination) && (*m_State->m_fModMatVal13 != 0.0f)) ||
-		((*m_State->m_uModMatSrce14 != MODMATSRCE::NoSource) && (*m_State->m_uModMatDest14 == destination) && (*m_State->m_fModMatVal14 != 0.0f)) ||
-		((*m_State->m_uModMatSrce15 != MODMATSRCE::NoSource) && (*m_State->m_uModMatDest15 == destination) && (*m_State->m_fModMatVal15 != 0.0f)) ||
-		((*m_State->m_uModMatSrce16 != MODMATSRCE::NoSource) && (*m_State->m_uModMatDest16 == destination) && (*m_State->m_fModMatVal16 != 0.0f)))
+	if (((*m_State->m_uModMatSrce1 != static_cast<int>(MODMATSRCE::NoSource)) && (*m_State->m_uModMatDest1 == destination) && (*m_State->m_fModMatVal1 != 0.0f)) ||
+		((*m_State->m_uModMatSrce2 != static_cast<int>(MODMATSRCE::NoSource)) && (*m_State->m_uModMatDest2 == destination) && (*m_State->m_fModMatVal2 != 0.0f)) ||
+		((*m_State->m_uModMatSrce3 != static_cast<int>(MODMATSRCE::NoSource)) && (*m_State->m_uModMatDest3 == destination) && (*m_State->m_fModMatVal3 != 0.0f)) ||
+		((*m_State->m_uModMatSrce4 != static_cast<int>(MODMATSRCE::NoSource)) && (*m_State->m_uModMatDest4 == destination) && (*m_State->m_fModMatVal4 != 0.0f)) ||
+		((*m_State->m_uModMatSrce5 != static_cast<int>(MODMATSRCE::NoSource)) && (*m_State->m_uModMatDest5 == destination) && (*m_State->m_fModMatVal5 != 0.0f)) ||
+		((*m_State->m_uModMatSrce6 != static_cast<int>(MODMATSRCE::NoSource)) && (*m_State->m_uModMatDest6 == destination) && (*m_State->m_fModMatVal6 != 0.0f)) ||
+		((*m_State->m_uModMatSrce7 != static_cast<int>(MODMATSRCE::NoSource)) && (*m_State->m_uModMatDest7 == destination) && (*m_State->m_fModMatVal7 != 0.0f)) ||
+		((*m_State->m_uModMatSrce8 != static_cast<int>(MODMATSRCE::NoSource)) && (*m_State->m_uModMatDest8 == destination) && (*m_State->m_fModMatVal8 != 0.0f)) ||
+		((*m_State->m_uModMatSrce9 != static_cast<int>(MODMATSRCE::NoSource)) && (*m_State->m_uModMatDest9 == destination) && (*m_State->m_fModMatVal9 != 0.0f)) ||
+		((*m_State->m_uModMatSrce10 != static_cast<int>(MODMATSRCE::NoSource)) && (*m_State->m_uModMatDest10 == destination) && (*m_State->m_fModMatVal10 != 0.0f)) ||
+		((*m_State->m_uModMatSrce11 != static_cast<int>(MODMATSRCE::NoSource)) && (*m_State->m_uModMatDest11 == destination) && (*m_State->m_fModMatVal11 != 0.0f)) ||
+		((*m_State->m_uModMatSrce12 != static_cast<int>(MODMATSRCE::NoSource)) && (*m_State->m_uModMatDest12 == destination) && (*m_State->m_fModMatVal12 != 0.0f)) ||
+		((*m_State->m_uModMatSrce13 != static_cast<int>(MODMATSRCE::NoSource)) && (*m_State->m_uModMatDest13 == destination) && (*m_State->m_fModMatVal13 != 0.0f)) ||
+		((*m_State->m_uModMatSrce14 != static_cast<int>(MODMATSRCE::NoSource)) && (*m_State->m_uModMatDest14 == destination) && (*m_State->m_fModMatVal14 != 0.0f)) ||
+		((*m_State->m_uModMatSrce15 != static_cast<int>(MODMATSRCE::NoSource)) && (*m_State->m_uModMatDest15 == destination) && (*m_State->m_fModMatVal15 != 0.0f)) ||
+		((*m_State->m_uModMatSrce16 != static_cast<int>(MODMATSRCE::NoSource)) && (*m_State->m_uModMatDest16 == destination) && (*m_State->m_fModMatVal16 != 0.0f)))
 		return true;
 	return false;
 }
@@ -648,76 +646,76 @@ void CVASTSettings::getMatrixModulationSlotMultiplier(int slot, float& modVal, f
 		switch (slotSource) {
 		case MODMATSRCE::MSEG1Env: {
 			sourceVal = m_RoutingBuffers.MSEGBuffer[0][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame); //0..1
-			if (*m_State->m_uMSEGPolarity_MSEG1 == POLARITY::Bipolar)
+			if (*m_State->m_uMSEGPolarity_MSEG1 == static_cast<int>(POLARITY::Bipolar))
 				sourceVal = (sourceVal - 0.5f) * 2.f; //-1..1	
 			break;
 		}
 		case MODMATSRCE::MSEG2Env: {
 			sourceVal = m_RoutingBuffers.MSEGBuffer[1][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame); //0..1
-			if (*m_State->m_uMSEGPolarity_MSEG2 == POLARITY::Bipolar)
+			if (*m_State->m_uMSEGPolarity_MSEG2 == static_cast<int>(POLARITY::Bipolar))
 				sourceVal = (sourceVal - 0.5f) * 2.f; //-1..1	
 			break;
 		}
 		case MODMATSRCE::MSEG3Env: {
 			sourceVal = m_RoutingBuffers.MSEGBuffer[2][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame); //0..1
-			if (*m_State->m_uMSEGPolarity_MSEG3 == POLARITY::Bipolar)
+			if (*m_State->m_uMSEGPolarity_MSEG3 == static_cast<int>(POLARITY::Bipolar))
 				sourceVal = (sourceVal - 0.5f) * 2.f; //-1..1	
 			break;
 		}
 		case MODMATSRCE::MSEG4Env: {
 			sourceVal = m_RoutingBuffers.MSEGBuffer[3][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame); //0..1
-			if (*m_State->m_uMSEGPolarity_MSEG4 == POLARITY::Bipolar)
+			if (*m_State->m_uMSEGPolarity_MSEG4 == static_cast<int>(POLARITY::Bipolar))
 				sourceVal = (sourceVal - 0.5f) * 2.f; //-1..1	
 			break;
 		}
 		case MODMATSRCE::MSEG5Env: {
 			sourceVal = m_RoutingBuffers.MSEGBuffer[4][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame); //0..1
-			if (*m_State->m_uMSEGPolarity_MSEG5 == POLARITY::Bipolar)
+			if (*m_State->m_uMSEGPolarity_MSEG5 == static_cast<int>(POLARITY::Bipolar))
 				sourceVal = (sourceVal - 0.5f) * 2.f; //-1..1	
 			break;
 		}
 		case MODMATSRCE::LFO1: {
-			if (*m_State->m_bLFOPerVoice_LFO1 == SWITCH::SWITCH_ON)
+			if (*m_State->m_bLFOPerVoice_LFO1 == static_cast<int>(SWITCH::SWITCH_ON))
 				sourceVal = m_RoutingBuffers.LFOBuffer[0][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame); //-1 ..1 				
 			else
 				sourceVal = m_RoutingBuffers.LFOGlobalBuffer[0]->getSample(0, matrixInputState->currentFrame); //-1 ..1
-			if (*m_State->m_uLFOPolarity_LFO1 == POLARITY::Unipolar)
+			if (*m_State->m_uLFOPolarity_LFO1 == static_cast<int>(POLARITY::Unipolar))
 				sourceVal = (sourceVal + 1.f) * 0.5f; //0..1				
 			break;
 		}
 		case MODMATSRCE::LFO2: {
-			if (*m_State->m_bLFOPerVoice_LFO2 == SWITCH::SWITCH_ON)
+			if (*m_State->m_bLFOPerVoice_LFO2 == static_cast<int>(SWITCH::SWITCH_ON))
 				sourceVal = m_RoutingBuffers.LFOBuffer[1][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame); //-1 ..1 				
 			else
 				sourceVal = m_RoutingBuffers.LFOGlobalBuffer[1]->getSample(0, matrixInputState->currentFrame); //-1 ..1
-			if (*m_State->m_uLFOPolarity_LFO2 == POLARITY::Unipolar)
+			if (*m_State->m_uLFOPolarity_LFO2 == static_cast<int>(POLARITY::Unipolar))
 				sourceVal = (sourceVal + 1.f) * 0.5f; //0..1				
 			break;
 		}
 		case MODMATSRCE::LFO3: {
-			if (*m_State->m_bLFOPerVoice_LFO3 == SWITCH::SWITCH_ON)
+			if (*m_State->m_bLFOPerVoice_LFO3 == static_cast<int>(SWITCH::SWITCH_ON))
 				sourceVal = m_RoutingBuffers.LFOBuffer[2][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame); //-1 ..1 				
 			else
 				sourceVal = m_RoutingBuffers.LFOGlobalBuffer[2]->getSample(0, matrixInputState->currentFrame); //-1 ..1
-			if (*m_State->m_uLFOPolarity_LFO3 == POLARITY::Unipolar)
+			if (*m_State->m_uLFOPolarity_LFO3 == static_cast<int>(POLARITY::Unipolar))
 				sourceVal = (sourceVal + 1.f) * 0.5f; //0..1				
 			break;
 		}
 		case MODMATSRCE::LFO4: {
-			if (*m_State->m_bLFOPerVoice_LFO4 == SWITCH::SWITCH_ON)
+			if (*m_State->m_bLFOPerVoice_LFO4 == static_cast<int>(SWITCH::SWITCH_ON))
 				sourceVal = m_RoutingBuffers.LFOBuffer[3][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame); //-1 ..1 				
 			else
 				sourceVal = m_RoutingBuffers.LFOGlobalBuffer[3]->getSample(0, matrixInputState->currentFrame); //-1 ..1
-			if (*m_State->m_uLFOPolarity_LFO4 == POLARITY::Unipolar)
+			if (*m_State->m_uLFOPolarity_LFO4 == static_cast<int>(POLARITY::Unipolar))
 				sourceVal = (sourceVal + 1.f) * 0.5f; //0..1				
 			break;
 		}
 		case MODMATSRCE::LFO5: {
-			if (*m_State->m_bLFOPerVoice_LFO5 == SWITCH::SWITCH_ON)
+			if (*m_State->m_bLFOPerVoice_LFO5 == static_cast<int>(SWITCH::SWITCH_ON))
 				sourceVal = m_RoutingBuffers.LFOBuffer[4][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame); //-1 ..1 				
 			else
 				sourceVal = m_RoutingBuffers.LFOGlobalBuffer[4]->getSample(0, matrixInputState->currentFrame); //-1 ..1
-			if (*m_State->m_uLFOPolarity_LFO5 == POLARITY::Unipolar)
+			if (*m_State->m_uLFOPolarity_LFO5 == static_cast<int>(POLARITY::Unipolar))
 				sourceVal = (sourceVal + 1.f) * 0.5f; //0..1				
 			break;
 		}

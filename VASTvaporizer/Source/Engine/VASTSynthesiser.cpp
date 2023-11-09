@@ -220,9 +220,9 @@ void VASTSynthesiser::renderNextBlock(sRoutingBuffers& routingBuffers,
 						}
 
 						//CHTS mono legato
-						//if (((m_Set->m_uMaxPoly) == 1) && (*m_Set->m_State->m_bLegatoMode == SWITCH::SWITCH_ON)) {
+						//if (((m_Set->m_uMaxPoly) == 1) && (*m_Set->m_State->m_bLegatoMode == static_cast<int>(SWITCH::SWITCH_ON))) {
 						if ((m_Set->m_uMaxPoly) == 1)  {
-							if (*m_Set->m_State->m_bLegatoMode == SWITCH::SWITCH_ON) {
+							if (*m_Set->m_State->m_bLegatoMode == static_cast<int>(SWITCH::SWITCH_ON)) {
 								if (numNew == 1) 
 									samePosOldStackMidiNote = -1; //reset in every case when mono and there is only one key pressed --> no porta
 
@@ -382,7 +382,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 				m_Poly->m_global_LFO_Osc[0].setFrequency(0, false);
 			}
 
-			if (*m_Set->m_State->m_bLFOPerVoice_LFO1 == SWITCH::SWITCH_OFF) {
+			if (*m_Set->m_State->m_bLFOPerVoice_LFO1 == static_cast<int>(SWITCH::SWITCH_OFF)) {
 				float lfoval = 0.0f;
 				m_Poly->m_global_LFO_Osc[0].getOscillation(&lfoval);
 				routingBuffers.LFOGlobalBuffer[0]->getWritePointer(0)[i] = lfoval;
@@ -397,7 +397,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 				m_Poly->m_global_LFO_Osc[1].setFrequency(0, false);
 			}
 
-			if (*m_Set->m_State->m_bLFOPerVoice_LFO2 == SWITCH::SWITCH_OFF) {
+			if (*m_Set->m_State->m_bLFOPerVoice_LFO2 == static_cast<int>(SWITCH::SWITCH_OFF)) {
 				float lfoval = 0.0f;
 				m_Poly->m_global_LFO_Osc[1].getOscillation(&lfoval);
 				routingBuffers.LFOGlobalBuffer[1]->getWritePointer(0)[i] = lfoval;
@@ -412,7 +412,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 				m_Poly->m_global_LFO_Osc[2].setFrequency(0, false);
 			}
 
-			if (*m_Set->m_State->m_bLFOPerVoice_LFO3 == SWITCH::SWITCH_OFF) {
+			if (*m_Set->m_State->m_bLFOPerVoice_LFO3 == static_cast<int>(SWITCH::SWITCH_OFF)) {
 				float lfoval = 0.0f;
 				m_Poly->m_global_LFO_Osc[2].getOscillation(&lfoval);
 				routingBuffers.LFOGlobalBuffer[2]->getWritePointer(0)[i] = lfoval;
@@ -427,7 +427,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 				m_Poly->m_global_LFO_Osc[3].setFrequency(0, false);
 			}
 
-			if (*m_Set->m_State->m_bLFOPerVoice_LFO4 == SWITCH::SWITCH_OFF) {
+			if (*m_Set->m_State->m_bLFOPerVoice_LFO4 == static_cast<int>(SWITCH::SWITCH_OFF)) {
 				float lfoval = 0.0f;
 				m_Poly->m_global_LFO_Osc[3].getOscillation(&lfoval);
 				routingBuffers.LFOGlobalBuffer[3]->getWritePointer(0)[i] = lfoval;
@@ -442,7 +442,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 				m_Poly->m_global_LFO_Osc[4].setFrequency(0, false);
 			}
 
-			if (*m_Set->m_State->m_bLFOPerVoice_LFO5 == SWITCH::SWITCH_OFF) {
+			if (*m_Set->m_State->m_bLFOPerVoice_LFO5 == static_cast<int>(SWITCH::SWITCH_OFF)) {
 				float lfoval = 0.0f;
 				m_Poly->m_global_LFO_Osc[4].getOscillation(&lfoval);
 				routingBuffers.LFOGlobalBuffer[4]->getWritePointer(0)[i] = lfoval;
@@ -504,8 +504,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 
 	m_oldestPlayingKeyDown = -1;
 	for (auto* voice : voices) {
-		modMatrixInputState inputState;
-		inputState.voiceNo = ((CVASTSingleNote*)voice)->getVoiceNo();
+		modMatrixInputState inputState{ ((CVASTSingleNote*)voice)->getVoiceNo(), 0};
 
 		//per voice LFO modulating mseg?
 		bool blfoprocessed[5];
@@ -529,7 +528,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 							((CVASTSingleNote*)voice)->m_LFO_Osc[0]->setFrequency(0, false);
 						}
 
-						if (*m_Set->m_State->m_bLFOPerVoice_LFO1 == SWITCH::SWITCH_ON) {
+						if (*m_Set->m_State->m_bLFOPerVoice_LFO1 == static_cast<int>(SWITCH::SWITCH_ON)) {
 							for (int currentFrame = startSample; currentFrame < startSample + numSamples; currentFrame++) {
 								float lfoval = 0.0f;
 								inputState.currentFrame = startSample;
@@ -553,7 +552,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 							((CVASTSingleNote*)voice)->m_LFO_Osc[1]->setFrequency(0, false);
 						}
 
-						if (*m_Set->m_State->m_bLFOPerVoice_LFO2 == SWITCH::SWITCH_ON) {
+						if (*m_Set->m_State->m_bLFOPerVoice_LFO2 == static_cast<int>(SWITCH::SWITCH_ON)) {
 							for (int currentFrame = startSample; currentFrame < startSample + numSamples; currentFrame++) {
 								float lfoval = 0.0f;
 								((CVASTSingleNote*)voice)->m_LFO_Osc[1]->getOscillation(&lfoval);
@@ -576,7 +575,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 							((CVASTSingleNote*)voice)->m_LFO_Osc[2]->setFrequency(0, false);
 						}
 
-						if (*m_Set->m_State->m_bLFOPerVoice_LFO3 == SWITCH::SWITCH_ON) {
+						if (*m_Set->m_State->m_bLFOPerVoice_LFO3 == static_cast<int>(SWITCH::SWITCH_ON)) {
 							for (int currentFrame = startSample; currentFrame < startSample + numSamples; currentFrame++) {
 								float lfoval = 0.0f;
 								((CVASTSingleNote*)voice)->m_LFO_Osc[2]->getOscillation(&lfoval);
@@ -599,7 +598,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 							((CVASTSingleNote*)voice)->m_LFO_Osc[3]->setFrequency(0, false);
 						}
 
-						if (*m_Set->m_State->m_bLFOPerVoice_LFO4 == SWITCH::SWITCH_ON) {
+						if (*m_Set->m_State->m_bLFOPerVoice_LFO4 == static_cast<int>(SWITCH::SWITCH_ON)) {
 							for (int currentFrame = startSample; currentFrame < startSample + numSamples; currentFrame++) {
 								float lfoval = 0.0f;
 								((CVASTSingleNote*)voice)->m_LFO_Osc[3]->getOscillation(&lfoval);
@@ -622,7 +621,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 							((CVASTSingleNote*)voice)->m_LFO_Osc[4]->setFrequency(0, false);
 						}
 
-						if (*m_Set->m_State->m_bLFOPerVoice_LFO5 == SWITCH::SWITCH_ON) {
+						if (*m_Set->m_State->m_bLFOPerVoice_LFO5 == static_cast<int>(SWITCH::SWITCH_ON)) {
 							for (int currentFrame = startSample; currentFrame < startSample + numSamples; currentFrame++) {
 								float lfoval = 0.0f;
 								((CVASTSingleNote*)voice)->m_LFO_Osc[4]->getOscillation(&lfoval);
@@ -638,15 +637,15 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 
 		for (int mseg = 4; mseg >= 0; mseg--) {
 			bool msegpervoice = false;
-			if ((mseg == 0) && (*m_Set->m_State->m_bMSEGPerVoice_MSEG1 == SWITCH::SWITCH_ON))
+			if ((mseg == 0) && (*m_Set->m_State->m_bMSEGPerVoice_MSEG1 == static_cast<int>(SWITCH::SWITCH_ON)))
 				msegpervoice = true;
-			if ((mseg == 1) && (*m_Set->m_State->m_bMSEGPerVoice_MSEG2 == SWITCH::SWITCH_ON))
+			if ((mseg == 1) && (*m_Set->m_State->m_bMSEGPerVoice_MSEG2 == static_cast<int>(SWITCH::SWITCH_ON)))
 				msegpervoice = true;
-			if ((mseg == 2) && (*m_Set->m_State->m_bMSEGPerVoice_MSEG3 == SWITCH::SWITCH_ON))
+			if ((mseg == 2) && (*m_Set->m_State->m_bMSEGPerVoice_MSEG3 == static_cast<int>(SWITCH::SWITCH_ON)))
 				msegpervoice = true;
-			if ((mseg == 3) && (*m_Set->m_State->m_bMSEGPerVoice_MSEG4 == SWITCH::SWITCH_ON))
+			if ((mseg == 3) && (*m_Set->m_State->m_bMSEGPerVoice_MSEG4 == static_cast<int>(SWITCH::SWITCH_ON)))
 				msegpervoice = true;
-			if ((mseg == 4) && (*m_Set->m_State->m_bMSEGPerVoice_MSEG5 == SWITCH::SWITCH_ON))
+			if ((mseg == 4) && (*m_Set->m_State->m_bMSEGPerVoice_MSEG5 == static_cast<int>(SWITCH::SWITCH_ON)))
 				msegpervoice = true;
 
 
@@ -667,7 +666,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 						std::fill(msegActivePointer + currentFrame, msegActivePointer + currentFrame + numFrames, bIsActive);
 						if (mseg == 0) {
 							if (bMSEG1Sustain) m_Set->m_MSEGData[0].setSustainLevel(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fSustainLevel_MSEG1, MODMATDEST::MSEG1Sustain, &inputState) * 0.01f);
-							if (*m_Set->m_State->m_bMSEGSynch_MSEG1 == SWITCH::SWITCH_OFF) {
+							if (*m_Set->m_State->m_bMSEGSynch_MSEG1 == static_cast<int>(SWITCH::SWITCH_OFF)) {
 								if (bMSEG1Attack) m_Set->m_MSEGData[0].setAttackTime(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fAttackTime_MSEG1, MODMATDEST::MSEG1Attack, &inputState));
 								if (bMSEG1Decay) m_Set->m_MSEGData[0].setDecayTime(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fDecayTime_MSEG1, MODMATDEST::MSEG1Decay, &inputState));
 								if (bMSEG1Release) m_Set->m_MSEGData[0].setReleaseTime(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fReleaseTime_MSEG1, MODMATDEST::MSEG1Release, &inputState));
@@ -680,7 +679,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 						}
 						if (mseg == 1) {
 							if (bMSEG2Sustain) m_Set->m_MSEGData[1].setSustainLevel(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fSustainLevel_MSEG2, MODMATDEST::MSEG2Sustain, &inputState) * 0.01f);
-							if (*m_Set->m_State->m_bMSEGSynch_MSEG2 == SWITCH::SWITCH_OFF) {
+							if (*m_Set->m_State->m_bMSEGSynch_MSEG2 == static_cast<int>(SWITCH::SWITCH_OFF)) {
 								if (bMSEG2Attack) m_Set->m_MSEGData[1].setAttackTime(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fAttackTime_MSEG2, MODMATDEST::MSEG2Attack, &inputState));
 								if (bMSEG2Decay) m_Set->m_MSEGData[1].setDecayTime(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fDecayTime_MSEG2, MODMATDEST::MSEG2Decay, &inputState));					
 								if (bMSEG2Release) m_Set->m_MSEGData[1].setReleaseTime(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fReleaseTime_MSEG2, MODMATDEST::MSEG2Release, &inputState));
@@ -693,7 +692,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 						}
 						if (mseg == 2) {
 							if (bMSEG3Sustain) m_Set->m_MSEGData[2].setSustainLevel(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fSustainLevel_MSEG3, MODMATDEST::MSEG3Sustain, &inputState) * 0.01f);
-							if (*m_Set->m_State->m_bMSEGSynch_MSEG3 == SWITCH::SWITCH_OFF) {
+							if (*m_Set->m_State->m_bMSEGSynch_MSEG3 == static_cast<int>(SWITCH::SWITCH_OFF)) {
 								if (bMSEG3Attack) m_Set->m_MSEGData[2].setAttackTime(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fAttackTime_MSEG3, MODMATDEST::MSEG3Attack, &inputState));
 								if (bMSEG3Decay) m_Set->m_MSEGData[2].setDecayTime(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fDecayTime_MSEG3, MODMATDEST::MSEG3Decay, &inputState));					
 								if (bMSEG3Release) m_Set->m_MSEGData[2].setReleaseTime(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fReleaseTime_MSEG3, MODMATDEST::MSEG3Release, &inputState));
@@ -707,7 +706,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 						}
 						if (mseg == 3) {
 							if (bMSEG4Sustain) m_Set->m_MSEGData[3].setSustainLevel(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fSustainLevel_MSEG4, MODMATDEST::MSEG4Sustain, &inputState) * 0.01f);
-							if (*m_Set->m_State->m_bMSEGSynch_MSEG4 == SWITCH::SWITCH_OFF) {
+							if (*m_Set->m_State->m_bMSEGSynch_MSEG4 == static_cast<int>(SWITCH::SWITCH_OFF)) {
 								if (bMSEG4Attack) m_Set->m_MSEGData[3].setAttackTime(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fAttackTime_MSEG4, MODMATDEST::MSEG4Attack, &inputState));
 								if (bMSEG4Decay) m_Set->m_MSEGData[3].setDecayTime(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fDecayTime_MSEG4, MODMATDEST::MSEG4Decay, &inputState));
 								if (bMSEG4Release) m_Set->m_MSEGData[3].setReleaseTime(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fReleaseTime_MSEG4, MODMATDEST::MSEG4Release, &inputState));
@@ -720,7 +719,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 						}
 						if (mseg == 4) {
 							if (bMSEG5Sustain) m_Set->m_MSEGData[4].setSustainLevel(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fSustainLevel_MSEG5, MODMATDEST::MSEG5Sustain, &inputState) * 0.01f);
-							if (*m_Set->m_State->m_bMSEGSynch_MSEG5 == SWITCH::SWITCH_OFF) {
+							if (*m_Set->m_State->m_bMSEGSynch_MSEG5 == static_cast<int>(SWITCH::SWITCH_OFF)) {
 								if (bMSEG5Attack) m_Set->m_MSEGData[4].setAttackTime(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fAttackTime_MSEG5, MODMATDEST::MSEG5Attack, &inputState));
 								if (bMSEG5Decay) m_Set->m_MSEGData[4].setDecayTime(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fDecayTime_MSEG5, MODMATDEST::MSEG5Decay, &inputState));
 								if (bMSEG5Release) m_Set->m_MSEGData[4].setReleaseTime(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fReleaseTime_MSEG5, MODMATDEST::MSEG5Release, &inputState));
@@ -762,7 +761,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 						((CVASTSingleNote*)voice)->m_LFO_Osc[0]->setFrequency(0, false);
 					}
 
-					if (*m_Set->m_State->m_bLFOPerVoice_LFO1 == SWITCH::SWITCH_ON) {
+					if (*m_Set->m_State->m_bLFOPerVoice_LFO1 == static_cast<int>(SWITCH::SWITCH_ON)) {
 						float* lfoWriteBuffer = routingBuffers.LFOBuffer[0][voice->mVoiceNo]->getWritePointer(0);
 						for (int currentFrame = startSample; currentFrame < startSample + numSamples; currentFrame++) {
 							float lfoval = 0.0f;
@@ -770,7 +769,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 							((CVASTSingleNote*)voice)->m_LFO_Osc[0]->getOscillation(&lfoval);
 
 							float msegmult = 1.f;
-							if (*m_Set->m_State->m_uLFOMSEG_LFO1 != MSEGLFONONE) {
+							if (*m_Set->m_State->m_uLFOMSEG_LFO1 != static_cast<int>(MSEGLFONONE)) {
 								msegmult = routingBuffers.MSEGBuffer[int(*m_Set->m_State->m_uLFOMSEG_LFO1) - 1][voice->mVoiceNo]->getSample(0, currentFrame);
 							}
 
@@ -790,14 +789,14 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 						((CVASTSingleNote*)voice)->m_LFO_Osc[1]->setFrequency(0, false);
 					}
 
-					if (*m_Set->m_State->m_bLFOPerVoice_LFO2 == SWITCH::SWITCH_ON) {
+					if (*m_Set->m_State->m_bLFOPerVoice_LFO2 == static_cast<int>(SWITCH::SWITCH_ON)) {
 						float* lfoWriteBuffer = routingBuffers.LFOBuffer[1][voice->mVoiceNo]->getWritePointer(0);
 						for (int currentFrame = startSample; currentFrame < startSample + numSamples; currentFrame++) {
 							float lfoval = 0.0f;
 							((CVASTSingleNote*)voice)->m_LFO_Osc[1]->getOscillation(&lfoval);
 
 							float msegmult = 1.f;
-							if (*m_Set->m_State->m_uLFOMSEG_LFO2 != MSEGLFONONE) {
+							if (*m_Set->m_State->m_uLFOMSEG_LFO2 != static_cast<int>(MSEGLFONONE)) {
 								msegmult = routingBuffers.MSEGBuffer[int(*m_Set->m_State->m_uLFOMSEG_LFO2) - 1][voice->mVoiceNo]->getSample(0, currentFrame);
 							}
 
@@ -817,14 +816,14 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 						((CVASTSingleNote*)voice)->m_LFO_Osc[2]->setFrequency(0, false);
 					}
 
-					if (*m_Set->m_State->m_bLFOPerVoice_LFO3 == SWITCH::SWITCH_ON) {
+					if (*m_Set->m_State->m_bLFOPerVoice_LFO3 == static_cast<int>(SWITCH::SWITCH_ON)) {
 						float* lfoWriteBuffer = routingBuffers.LFOBuffer[2][voice->mVoiceNo]->getWritePointer(0);
 						for (int currentFrame = startSample; currentFrame < startSample + numSamples; currentFrame++) {
 							float lfoval = 0.0f;
 							((CVASTSingleNote*)voice)->m_LFO_Osc[2]->getOscillation(&lfoval);
 
 							float msegmult = 1.f;
-							if (*m_Set->m_State->m_uLFOMSEG_LFO3 != MSEGLFONONE) {
+							if (*m_Set->m_State->m_uLFOMSEG_LFO3 != static_cast<int>(MSEGLFONONE)) {
 								msegmult = routingBuffers.MSEGBuffer[int(*m_Set->m_State->m_uLFOMSEG_LFO3) - 1][voice->mVoiceNo]->getSample(0, currentFrame);
 							}
 
@@ -844,7 +843,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 						((CVASTSingleNote*)voice)->m_LFO_Osc[3]->setFrequency(0, false);
 					}
 
-					if (*m_Set->m_State->m_bLFOPerVoice_LFO4 == SWITCH::SWITCH_ON) {
+					if (*m_Set->m_State->m_bLFOPerVoice_LFO4 == static_cast<int>(SWITCH::SWITCH_ON)) {
 						float* lfoWriteBuffer = routingBuffers.LFOBuffer[3][voice->mVoiceNo]->getWritePointer(0);
 						for (int currentFrame = startSample; currentFrame < startSample + numSamples; currentFrame++) {
 							float lfoval = 0.0f;
@@ -871,14 +870,14 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 						((CVASTSingleNote*)voice)->m_LFO_Osc[4]->setFrequency(0, false);
 					}
 
-					if (*m_Set->m_State->m_bLFOPerVoice_LFO5 == SWITCH::SWITCH_ON) {
+					if (*m_Set->m_State->m_bLFOPerVoice_LFO5 == static_cast<int>(SWITCH::SWITCH_ON)) {
 						float* lfoWriteBuffer = routingBuffers.LFOBuffer[4][voice->mVoiceNo]->getWritePointer(0);
 						for (int currentFrame = startSample; currentFrame < startSample + numSamples; currentFrame++) {
 							float lfoval = 0.0f;
 							((CVASTSingleNote*)voice)->m_LFO_Osc[4]->getOscillation(&lfoval);
 
 							float msegmult = 1.f;
-							if (*m_Set->m_State->m_uLFOMSEG_LFO5 != MSEGLFONONE) {
+							if (*m_Set->m_State->m_uLFOMSEG_LFO5 != static_cast<int>(MSEGLFONONE)) {
 								msegmult = routingBuffers.MSEGBuffer[int(*m_Set->m_State->m_uLFOMSEG_LFO5) - 1][voice->mVoiceNo]->getSample(0, currentFrame);
 							}
 
@@ -931,8 +930,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 	//====================================================================================
 	//Filters
 
-	modMatrixInputState l_inputState;
-	l_inputState.currentFrame = startSample;
+	modMatrixInputState l_inputState{ 0, startSample };
 
 	bool anyFilterContent[3][C_MAX_POLY];
 	memset(anyFilterContent, false, 3 * C_MAX_POLY * sizeof(bool));
@@ -1017,7 +1015,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 				{
 				*/
 		int numPlaying = 0;
-		if (onoff == SWITCH::SWITCH_ON) {
+		if (onoff == static_cast<int>(SWITCH::SWITCH_ON)) {
 			bool bAddedSomething = false;
 			bool bAllVoicesLastOutputZero = true;
 
@@ -1076,61 +1074,61 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 						dryWet = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fFilterDryWet_Filter3, MODMATDEST::Filter3Mixin, &l_inputState) * 0.01f;
 
 					//if (bPlayiningInRange) {
-					if ((*m_Set->m_State->m_bOscOnOff_OscA == SWITCH::SWITCH_ON) &&
+					if ((*m_Set->m_State->m_bOscOnOff_OscA == static_cast<int>(SWITCH::SWITCH_ON)) &&
 						((*m_Set->m_State->m_uOscRouting1_OscA == fR) || (*m_Set->m_State->m_uOscRouting2_OscA == fR))) {
 						routingBuffers.FilterVoices[filter][mVoiceNo]->addFrom(0, startSample, routingBuffers.OscVoices[0][mVoiceNo]->getReadPointer(0, startSample), numSamples, dryWet);
 						routingBuffers.FilterVoices[filter][mVoiceNo]->addFrom(1, startSample, routingBuffers.OscVoices[0][mVoiceNo]->getReadPointer(1, startSample), numSamples, dryWet);
 						bAddedSomething = true;
 					}
-					if ((*m_Set->m_State->m_bOscOnOff_OscB == SWITCH::SWITCH_ON) &&
+					if ((*m_Set->m_State->m_bOscOnOff_OscB == static_cast<int>(SWITCH::SWITCH_ON)) &&
 						((*m_Set->m_State->m_uOscRouting1_OscB == fR) || (*m_Set->m_State->m_uOscRouting2_OscB == fR))) {
 						routingBuffers.FilterVoices[filter][mVoiceNo]->addFrom(0, startSample, routingBuffers.OscVoices[1][mVoiceNo]->getReadPointer(0, startSample), numSamples, dryWet);
 						routingBuffers.FilterVoices[filter][mVoiceNo]->addFrom(1, startSample, routingBuffers.OscVoices[1][mVoiceNo]->getReadPointer(1, startSample), numSamples, dryWet);
 						bAddedSomething = true;
 					}
-					if ((*m_Set->m_State->m_bOscOnOff_OscC == SWITCH::SWITCH_ON) &&
+					if ((*m_Set->m_State->m_bOscOnOff_OscC == static_cast<int>(SWITCH::SWITCH_ON)) &&
 						((*m_Set->m_State->m_uOscRouting1_OscC == fR) || (*m_Set->m_State->m_uOscRouting2_OscC == fR))) {
 						routingBuffers.FilterVoices[filter][mVoiceNo]->addFrom(0, startSample, routingBuffers.OscVoices[2][mVoiceNo]->getReadPointer(0, startSample), numSamples, dryWet);
 						routingBuffers.FilterVoices[filter][mVoiceNo]->addFrom(1, startSample, routingBuffers.OscVoices[2][mVoiceNo]->getReadPointer(1, startSample), numSamples, dryWet);
 						bAddedSomething = true;
 					}
-					if ((*m_Set->m_State->m_bOscOnOff_OscD == SWITCH::SWITCH_ON) &&
+					if ((*m_Set->m_State->m_bOscOnOff_OscD == static_cast<int>(SWITCH::SWITCH_ON)) &&
 						((*m_Set->m_State->m_uOscRouting1_OscD == fR) || (*m_Set->m_State->m_uOscRouting2_OscD == fR))) {
 						routingBuffers.FilterVoices[filter][mVoiceNo]->addFrom(0, startSample, routingBuffers.OscVoices[3][mVoiceNo]->getReadPointer(0, startSample), numSamples, dryWet);
 						routingBuffers.FilterVoices[filter][mVoiceNo]->addFrom(1, startSample, routingBuffers.OscVoices[3][mVoiceNo]->getReadPointer(1, startSample), numSamples, dryWet);
 						bAddedSomething = true;
 					}
-					if ((*m_Set->m_State->m_bNoiseOnOff == SWITCH::SWITCH_ON) &&
+					if ((*m_Set->m_State->m_bNoiseOnOff == static_cast<int>(SWITCH::SWITCH_ON)) &&
 						((*m_Set->m_State->m_uNoiseRouting1 == fR) || (*m_Set->m_State->m_uNoiseRouting2 == fR))) {
 						routingBuffers.FilterVoices[filter][mVoiceNo]->addFrom(0, startSample, routingBuffers.NoiseVoices[mVoiceNo]->getReadPointer(0, startSample), numSamples, dryWet);
 						routingBuffers.FilterVoices[filter][mVoiceNo]->addFrom(1, startSample, routingBuffers.NoiseVoices[mVoiceNo]->getReadPointer(1, startSample), numSamples, dryWet);
 						bAddedSomething = true;
 					}
-					if ((*m_Set->m_State->m_bSamplerOnOff == SWITCH::SWITCH_ON) &&
+					if ((*m_Set->m_State->m_bSamplerOnOff == static_cast<int>(SWITCH::SWITCH_ON)) &&
 						((*m_Set->m_State->m_uSamplerRouting1 == fR) || (*m_Set->m_State->m_uSamplerRouting2 == fR))) {
 						routingBuffers.FilterVoices[filter][mVoiceNo]->addFrom(0, startSample, routingBuffers.SamplerVoices[mVoiceNo]->getReadPointer(0, startSample), numSamples, dryWet);
 						routingBuffers.FilterVoices[filter][mVoiceNo]->addFrom(1, startSample, routingBuffers.SamplerVoices[mVoiceNo]->getReadPointer(1, startSample), numSamples, dryWet);
 						bAddedSomething = true;
 					}
-					if ((*m_Set->m_State->m_bOnOff_Filter1 == SWITCH::SWITCH_ON) &&
+					if ((*m_Set->m_State->m_bOnOff_Filter1 == static_cast<int>(SWITCH::SWITCH_ON)) &&
 						(*m_Set->m_State->m_uFilterRouting_Filter1 == frFilter1)) {
 						routingBuffers.FilterVoices[filter][mVoiceNo]->addFrom(0, startSample, routingBuffers.FilterVoices[0][mVoiceNo]->getReadPointer(0, startSample), numSamples, dryWet);
 						routingBuffers.FilterVoices[filter][mVoiceNo]->addFrom(1, startSample, routingBuffers.FilterVoices[0][mVoiceNo]->getReadPointer(1, startSample), numSamples, dryWet);
 						bAddedSomething = true;
 					}
-					if ((*m_Set->m_State->m_bOnOff_Filter1 == SWITCH::SWITCH_ON) &&
+					if ((*m_Set->m_State->m_bOnOff_Filter1 == static_cast<int>(SWITCH::SWITCH_ON)) &&
 						(*m_Set->m_State->m_uFilterRouting2_Filter1 == frFilter1)) {
 						routingBuffers.FilterVoices[filter][mVoiceNo]->addFrom(0, startSample, routingBuffers.FilterVoices[0][mVoiceNo]->getReadPointer(0, startSample), numSamples, dryWet);
 						routingBuffers.FilterVoices[filter][mVoiceNo]->addFrom(1, startSample, routingBuffers.FilterVoices[0][mVoiceNo]->getReadPointer(1, startSample), numSamples, dryWet);
 						bAddedSomething = true;
 					}
-					if ((*m_Set->m_State->m_bOnOff_Filter2 == SWITCH::SWITCH_ON) &&
+					if ((*m_Set->m_State->m_bOnOff_Filter2 == static_cast<int>(SWITCH::SWITCH_ON)) &&
 						(*m_Set->m_State->m_uFilterRouting_Filter2 == frFilter2)) {
 						routingBuffers.FilterVoices[filter][mVoiceNo]->addFrom(0, startSample, routingBuffers.FilterVoices[1][mVoiceNo]->getReadPointer(0, startSample), numSamples, dryWet);
 						routingBuffers.FilterVoices[filter][mVoiceNo]->addFrom(1, startSample, routingBuffers.FilterVoices[1][mVoiceNo]->getReadPointer(1, startSample), numSamples, dryWet);
 						bAddedSomething = true;
 					}
-					if ((*m_Set->m_State->m_bOnOff_Filter2 == SWITCH::SWITCH_ON) &&
+					if ((*m_Set->m_State->m_bOnOff_Filter2 == static_cast<int>(SWITCH::SWITCH_ON)) &&
 						(*m_Set->m_State->m_uFilterRouting2_Filter2 == frFilter2)) {
 						routingBuffers.FilterVoices[filter][mVoiceNo]->addFrom(0, startSample, routingBuffers.FilterVoices[1][mVoiceNo]->getReadPointer(0, startSample), numSamples, dryWet);
 						routingBuffers.FilterVoices[filter][mVoiceNo]->addFrom(1, startSample, routingBuffers.FilterVoices[1][mVoiceNo]->getReadPointer(1, startSample), numSamples, dryWet);
@@ -1474,7 +1472,7 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 				VASTSynthesiserVoice* voice = nullptr;
 
 				bool shallSteal = false;
-				if (*m_Set->m_State->m_bLegatoMode == SWITCH::SWITCH_OFF) {
+				if (*m_Set->m_State->m_bLegatoMode == static_cast<int>(SWITCH::SWITCH_OFF)) {
 					for (auto* voice : voices) {
 						if (voice->isVoiceActive()) {
 							((CVASTSingleNote*)voice)->m_VCA->hardStop(); //TODO Sampler???
@@ -1674,7 +1672,7 @@ void VASTSynthesiser::startVoice(VASTSynthesiserVoice* const voice,
 	if ((voice != nullptr) && (sound != nullptr))
 	{
 		bool bLegato = false;
-		if ((*m_Set->m_State->m_bLegatoMode == SWITCH::SWITCH_OFF) || (m_Set->m_uMaxPoly > 1)) {
+		if ((*m_Set->m_State->m_bLegatoMode == static_cast<int>(SWITCH::SWITCH_OFF)) || (m_Set->m_uMaxPoly > 1)) {
 			voice->stopNote(0.0f, false);
 		}
 		else { //mono legato mode
@@ -1711,15 +1709,15 @@ void VASTSynthesiser::startVoice(VASTSynthesiserVoice* const voice,
 		//single mseg
 		for (int mseg = 4; mseg >= 0; mseg--) {
 			bool msegpervoice = false;
-			if ((mseg == 0) && (*m_Set->m_State->m_bMSEGPerVoice_MSEG1 == SWITCH::SWITCH_ON))
+			if ((mseg == 0) && (*m_Set->m_State->m_bMSEGPerVoice_MSEG1 == static_cast<int>(SWITCH::SWITCH_ON)))
 				msegpervoice = true;
-			if ((mseg == 1) && (*m_Set->m_State->m_bMSEGPerVoice_MSEG2 == SWITCH::SWITCH_ON))
+			if ((mseg == 1) && (*m_Set->m_State->m_bMSEGPerVoice_MSEG2 == static_cast<int>(SWITCH::SWITCH_ON)))
 				msegpervoice = true;
-			if ((mseg == 2) && (*m_Set->m_State->m_bMSEGPerVoice_MSEG3 == SWITCH::SWITCH_ON))
+			if ((mseg == 2) && (*m_Set->m_State->m_bMSEGPerVoice_MSEG3 == static_cast<int>(SWITCH::SWITCH_ON)))
 				msegpervoice = true;
-			if ((mseg == 3) && (*m_Set->m_State->m_bMSEGPerVoice_MSEG4 == SWITCH::SWITCH_ON))
+			if ((mseg == 3) && (*m_Set->m_State->m_bMSEGPerVoice_MSEG4 == static_cast<int>(SWITCH::SWITCH_ON)))
 				msegpervoice = true;
-			if ((mseg == 4) && (*m_Set->m_State->m_bMSEGPerVoice_MSEG5 == SWITCH::SWITCH_ON))
+			if ((mseg == 4) && (*m_Set->m_State->m_bMSEGPerVoice_MSEG5 == static_cast<int>(SWITCH::SWITCH_ON)))
 				msegpervoice = true;
 			if (!msegpervoice) {
 				if ((m_oldestPlayingKeyDown >= 0) && voices[m_oldestPlayingKeyDown]->isKeyDown()) { 
@@ -1742,7 +1740,7 @@ void VASTSynthesiser::stopVoice(VASTSynthesiserVoice* voice, float velocity, con
 	DBG("StopVoice " << voice->mVoiceNo);
 
 	//int iLegatoNote = 0;
-	if ((*m_Set->m_State->m_bLegatoMode == SWITCH::SWITCH_ON) && m_Set->m_uMaxPoly == 1) { //mono legato
+	if ((*m_Set->m_State->m_bLegatoMode == static_cast<int>(SWITCH::SWITCH_ON)) && m_Set->m_uMaxPoly == 1) { //mono legato
 		int keyDown = -1;
 		for (int i = numElementsInArray(m_midiNotesKeyDown) - 1; i >= 0; --i) {
 			if ((m_midiNotesKeyDown[i] == true) && (m_midiNotesKeyDown[voice->currentlyPlayingNote] != true)) { //CHECK

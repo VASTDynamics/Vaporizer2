@@ -42,13 +42,13 @@ public:
 	float m_fFeedbackIn;		// the user supplied feedback sample value
 
 	// current FB is fb*output
-	float getCurrentFeedbackOutput(){ return m_fFeedback * m_pBuffer->getReadPointer(0)[m_nReadIndex]; }
+	float getCurrentFeedbackOutput();
 
 	// set the feedback sample
-	void  setCurrentFeedbackInput(float f){ m_fFeedbackIn = f; }
+	void  setCurrentFeedbackInput(float f);
 
 	// enable/disable external FB source
-	void  setUsesExternalFeedback(bool b){ m_bUseExternalFeedback = false; }
+	void  setUsesExternalFeedback(bool);
 
 	float m_fDelay_ms;
 	float m_fFeedback_pct;

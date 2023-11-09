@@ -112,29 +112,29 @@ public:
     std::unique_ptr<CVASTWaveTableOscillator> m_OscillatorNoise;
 	OwnedArray<CVASTWaveTableOscillator> m_LFO_Osc; // LFOs 1-5
 
-	MYUINT m_uChannel;
-	MYUINT m_uMIDINote;
-	MYUINT m_uVelocity;
+	MYUINT m_uChannel = 0;
+	MYUINT m_uMIDINote = 0;
+	MYUINT m_uVelocity = 0;
 
     bool m_bLastFilterOutputZero[3] = {true, true, true}; //filters
 
-	float m_safePhaseFloat[4];
+	float m_safePhaseFloat[4]{ 0.f,0.f,0.f,0.f };
 	int m_iCurCycleSamples[4] = { 0, 0, 0, 0 };
 	int m_iLastCycleSamples[4] = { 0, 0, 0, 0 };
 
 	LinearSmoothedValue<float> m_wtFXVal_smoothed[4];
-	float m_wtFXVal[4];
-	int m_wtFXType[4];
-	bool m_wtFXTypeChanged[4];	
-	std::atomic<float> m_currentWTPosFloatPercentage[4]; //bank
+	float m_wtFXVal[4] {0.f,0.f,0.f,0.f};
+	int m_wtFXType[4]{ 0, 0, 0, 0 };
+	bool m_wtFXTypeChanged[4]{ false, false, false, false };
+	std::atomic<float> m_currentWTPosFloatPercentage[4] { 0.f,0.f,0.f,0.f }; //bank
 
 private:
 	void nextNote(bool legato);
 
-	MYUINT m_uChannelNext;
-	MYUINT m_uMIDINoteNext;
-	MYUINT m_uVelocityNext;
-	int m_iNumParallelOsc;
+	MYUINT m_uChannelNext = 0;
+	MYUINT m_uMIDINoteNext = 0;
+	MYUINT m_uVelocityNext = 0;
+	int m_iNumParallelOsc = 0;
 
 	float m_lLeftCosPan = 0;
 	float m_lRightCosPan = 0;
@@ -162,7 +162,7 @@ private:
     std::unique_ptr<AudioSampleBuffer> m_centerBuffer;
     std::unique_ptr<AudioSampleBuffer> m_velocityBuffer;
 
-	float mSpread[4]; //per bank
+	float mSpread[4] { 0.f,0.f,0.f,0.f }; //per bank
 
 	float m_pitchBendNote = 1.f; //for sampler
 
@@ -186,9 +186,9 @@ private:
 	std::shared_ptr<CVASTWaveTable> m_localVoiceBankWavetable[4] = { nullptr, nullptr, nullptr, nullptr }; //can be nullptr, can hold a WT longer than bank, bank is only copy template
 	std::shared_ptr<CVASTWaveTable> m_localVoiceBankWavetableSoftfade[4] = { nullptr, nullptr, nullptr, nullptr }; //can be nullptr, can hold a WT longer than bank, bank is only copy template
 
-	float normalized_irrational[4][C_MAX_PARALLEL_OSC + 1]; //for detune / "fixed detune"
-	float delta[4][C_MAX_PARALLEL_OSC + 1];
-	float detune[4][C_MAX_PARALLEL_OSC];
+	float normalized_irrational[4][C_MAX_PARALLEL_OSC + 1]{}; //for detune / "fixed detune"
+	float delta[4][C_MAX_PARALLEL_OSC + 1]{};
+	float detune[4][C_MAX_PARALLEL_OSC]{};
 
 	void updateDetune(int bank, float detuneValue, bool updateFrequency);
 	bool prepareNextPhaseCycle(int bank, int skips, int startSample, bool bTakeNextValue, bool wtfxFXTypeChanged);

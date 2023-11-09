@@ -241,7 +241,7 @@ void CVASTSingleNote::clearCurrentNote()
 bool CVASTSingleNote::canPlaySound(SynthesiserSound*)
 {
 	
-	if ((*m_Set->m_State->m_bLegatoMode == SWITCH::SWITCH_OFF) || (m_Set->m_uMaxPoly > 1)) {
+	if ((*m_Set->m_State->m_bLegatoMode == static_cast<int>(SWITCH::SWITCH_OFF)) || (m_Set->m_uMaxPoly > 1)) {
 		//polymode handled in synthesizer voice
 		return true;
 	} 
@@ -260,28 +260,28 @@ bool CVASTSingleNote::isPlayingButReleased() {
 void CVASTSingleNote::startNote(int midiNoteNumber, float velocity, SynthesiserSound* sound, int currentPitchWheelPosition, bool legato)
 {		
 	//retrig lfo?
-	if (*m_Set->m_State->m_bLFORetrigOnOff_LFO1 == SWITCH::SWITCH_ON) {
-		if (*m_Set->m_State->m_bLFOPerVoice_LFO1 == SWITCH::SWITCH_ON) {
+	if (*m_Set->m_State->m_bLFORetrigOnOff_LFO1 == static_cast<int>(SWITCH::SWITCH_ON)) {
+		if (*m_Set->m_State->m_bLFOPerVoice_LFO1 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			m_LFO_Osc[0]->resynch(0, true);
 		}
 	}
-	if (*m_Set->m_State->m_bLFORetrigOnOff_LFO2 == SWITCH::SWITCH_ON) {
-		if (*m_Set->m_State->m_bLFOPerVoice_LFO2 == SWITCH::SWITCH_ON) {
+	if (*m_Set->m_State->m_bLFORetrigOnOff_LFO2 == static_cast<int>(SWITCH::SWITCH_ON)) {
+		if (*m_Set->m_State->m_bLFOPerVoice_LFO2 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			m_LFO_Osc[1]->resynch(0, true);
 		}
 	}
-	if (*m_Set->m_State->m_bLFORetrigOnOff_LFO3 == SWITCH::SWITCH_ON) {
-		if (*m_Set->m_State->m_bLFOPerVoice_LFO3 == SWITCH::SWITCH_ON) {
+	if (*m_Set->m_State->m_bLFORetrigOnOff_LFO3 == static_cast<int>(SWITCH::SWITCH_ON)) {
+		if (*m_Set->m_State->m_bLFOPerVoice_LFO3 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			m_LFO_Osc[2]->resynch(0, true);
 		}
 	}
-	if (*m_Set->m_State->m_bLFORetrigOnOff_LFO4 == SWITCH::SWITCH_ON) {
-		if (*m_Set->m_State->m_bLFOPerVoice_LFO4 == SWITCH::SWITCH_ON) {
+	if (*m_Set->m_State->m_bLFORetrigOnOff_LFO4 == static_cast<int>(SWITCH::SWITCH_ON)) {
+		if (*m_Set->m_State->m_bLFOPerVoice_LFO4 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			m_LFO_Osc[3]->resynch(0, true);
 		}
 	}
-	if (*m_Set->m_State->m_bLFORetrigOnOff_LFO5 == SWITCH::SWITCH_ON) {
-		if (*m_Set->m_State->m_bLFOPerVoice_LFO5 == SWITCH::SWITCH_ON) {
+	if (*m_Set->m_State->m_bLFORetrigOnOff_LFO5 == static_cast<int>(SWITCH::SWITCH_ON)) {
+		if (*m_Set->m_State->m_bLFOPerVoice_LFO5 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			m_LFO_Osc[4]->resynch(0, true);
 		}
 	}
@@ -298,7 +298,7 @@ void CVASTSingleNote::startNote(int midiNoteNumber, float velocity, SynthesiserS
 		m_allSampleCount = 0;
 
 		if (sSound != nullptr) {
-			if (*m_Set->m_State->m_bSamplerPoly == SWITCH::SWITCH_OFF) {
+			if (*m_Set->m_State->m_bSamplerPoly == static_cast<int>(SWITCH::SWITCH_OFF)) {
 				for (int i = 0; i < C_MAX_POLY; i++) {
 					//clear all vother voices // all grains
 					for (int grain = 0; grain < m_Poly->m_singleNote[i]->m_grainTable.size(); grain++) {
@@ -330,9 +330,7 @@ void CVASTSingleNote::startNote(int midiNoteNumber, float velocity, SynthesiserS
 				samplerUpdatePitch(sSound, true);
 
 				m_grainTable.clear();
-				modMatrixInputState inputState;
-				inputState.currentFrame = 0; //CHECK!
-				inputState.voiceNo = getVoiceNo();
+				modMatrixInputState inputState{ 0, getVoiceNo() };
 				float samplerGrainShape = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fSamplerGrainShape, MODMATDEST::SamplerGrainShape, &inputState);
 				samplerNewGrain(0, samplerGrainShape, 0.f);
 			}
@@ -493,7 +491,7 @@ void CVASTSingleNote::samplerNewGrain(int delayedStart, float samplerGrainShape,
 	newGrain.samplePositionRandomIncrement = samplePositionRandomIncrement;
 	newGrain.sampler_fadeFactor = 1.f;
 
-	if ((*m_Set->m_State->m_bSamplerLoopOnly == SWITCH::SWITCH_ON) && (sSound->hasLoop()))
+	if ((*m_Set->m_State->m_bSamplerLoopOnly == static_cast<int>(SWITCH::SWITCH_ON)) && (sSound->hasLoop()))
 		newGrain.sourceSamplePosition = sSound->getLoopStart();
 	else
 		newGrain.sourceSamplePosition = 0.0;
@@ -533,16 +531,14 @@ void CVASTSingleNote::samplerRenderNextBlock(AudioSampleBuffer* outputBuffer, in
 
 		VASTSamplerSound* samplerSound = playingSound->getSamplerSound();
 
-		modMatrixInputState inputState;
-		inputState.currentFrame = startSample;
-		inputState.voiceNo = getVoiceNo();
+		modMatrixInputState inputState{ startSample, getVoiceNo() };
 		const int iMaxFadeSteps = 20;
 		auto& data = *samplerSound->getAudioData(); //play live data
 		int soundLength = samplerSound->getLength(); //play live data
 		int loopLength = (samplerSound->hasLoop()) ? samplerSound->getLoopEnd() - samplerSound->getLoopStart() : samplerSound->getLength();
-		bool bSwitchSamplerLoop = *m_Set->m_State->m_bSamplerLoop == SWITCH::SWITCH_ON;
-		bool bSwitchSamplerLoopPingpong = *m_Set->m_State->m_bSamplerLoopPingpong == SWITCH::SWITCH_ON;
-		bool bSwitchSamplerLoopOnly = *m_Set->m_State->m_bSamplerLoopOnly == SWITCH::SWITCH_ON;
+		bool bSwitchSamplerLoop = *m_Set->m_State->m_bSamplerLoop == static_cast<int>(SWITCH::SWITCH_ON);
+		bool bSwitchSamplerLoopPingpong = *m_Set->m_State->m_bSamplerLoopPingpong == static_cast<int>(SWITCH::SWITCH_ON);
+		bool bSwitchSamplerLoopOnly = *m_Set->m_State->m_bSamplerLoopOnly == static_cast<int>(SWITCH::SWITCH_ON);
 		float samplerGrainInteronset = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fSamplerGrainInteronset, MODMATDEST::SamplerGrainInteronset, &inputState);
 		float samplerGrainRandom = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fSamplerGrainRandom, MODMATDEST::SamplerGrainRandom, &inputState);
 		float samplerGrainShape = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fSamplerGrainShape, MODMATDEST::SamplerGrainShape, &inputState);
@@ -595,7 +591,7 @@ void CVASTSingleNote::samplerRenderNextBlock(AudioSampleBuffer* outputBuffer, in
 		while (--lnumSamples >= 0)
 		{
 			counter++;
-			inputState.currentFrame = startSample + counter;
+			inputState.currentFrame = static_cast<uint64_t>(startSample) + counter;
 
 			float lValGrains = 0.f;
 			float rValGrains = 0.f;
@@ -855,7 +851,7 @@ void CVASTSingleNote::samplerUpdatePitch(VASTSamplerSound* sound, bool force) {
 	float lPitchMod = m_fPitchModSampler_smoothed.getNextValue(); //-1 .. 1
 	float lSamplerCents = m_fSamplerCents_smoothed.getNextValue(); //-1200 .. 1200
 
-	if (*m_Set->m_State->m_bSamplerKeytrack == SWITCH::SWITCH_ON) {
+	if (*m_Set->m_State->m_bSamplerKeytrack == static_cast<int>(SWITCH::SWITCH_ON)) {
 		float baseFreq = 0.f;
 		if ((*m_Set->m_State->m_fPortamento == 0.f) || force) { //check unsafe comparison
 			baseFreq = (m_samplerMidiNoteNumber - sound->getMidiRootNote()) / 12.0;
@@ -968,30 +964,30 @@ void CVASTSingleNote::updateVariables() { //called once on prepareForPlay and on
 	}
 
 	//Detune A
-	if (*m_Set->m_State->m_bOscOnOff_OscA == SWITCH::SWITCH_ON) {
+	if (*m_Set->m_State->m_bOscOnOff_OscA == static_cast<int>(SWITCH::SWITCH_ON)) {
 		generate_normalized_irrationals(normalized_irrational[0], *m_Set->m_State->m_iNumOscs_OscA + 1);
 		updateDetune(0, *m_Set->m_State->m_fOscDetune_OscA, true); //call setFrequency	
 	}
 
 	//Detune B
-	if (*m_Set->m_State->m_bOscOnOff_OscB == SWITCH::SWITCH_ON) {
+	if (*m_Set->m_State->m_bOscOnOff_OscB == static_cast<int>(SWITCH::SWITCH_ON)) {
 		generate_normalized_irrationals(normalized_irrational[1], *m_Set->m_State->m_iNumOscs_OscB + 1);
 		updateDetune(1, *m_Set->m_State->m_fOscDetune_OscB, true); //call setFrequency
 	}
 
 	//Detune C	
-	if (*m_Set->m_State->m_bOscOnOff_OscC == SWITCH::SWITCH_ON) {
+	if (*m_Set->m_State->m_bOscOnOff_OscC == static_cast<int>(SWITCH::SWITCH_ON)) {
 		generate_normalized_irrationals(normalized_irrational[2], *m_Set->m_State->m_iNumOscs_OscC + 1);
 		updateDetune(2, *m_Set->m_State->m_fOscDetune_OscC, true); //call setFrequency
 	}
 
 	//Detune D
-	if (*m_Set->m_State->m_bOscOnOff_OscD == SWITCH::SWITCH_ON) {
+	if (*m_Set->m_State->m_bOscOnOff_OscD == static_cast<int>(SWITCH::SWITCH_ON)) {
 		generate_normalized_irrationals(normalized_irrational[3], *m_Set->m_State->m_iNumOscs_OscD + 1);
 		updateDetune(3, *m_Set->m_State->m_fOscDetune_OscD, true); //call setFrequency
 	}
 	
-	if (*m_Set->m_State->m_bNoiseOnOff == SWITCH::SWITCH_ON) {
+	if (*m_Set->m_State->m_bNoiseOnOff == static_cast<int>(SWITCH::SWITCH_ON)) {
 		m_OscillatorNoise->updateMainVariables(m_Set->m_nSampleRate, WAVE::noise, 1, *m_Set->m_State->m_fMasterTune, 0, 0);
 	}
 
@@ -1126,7 +1122,7 @@ void CVASTSingleNote::nextNote(bool legato) {
 
 	struct timeval tp;
 	m_Set->_gettimeofday(&tp);
-	m_startPlayTimestamp = tp.tv_sec * 1000 + tp.tv_usec / 1000;
+	m_startPlayTimestamp = static_cast<ULong64_t>(tp.tv_sec) * 1000 + tp.tv_usec / 1000;
 
 	m_Set->iAftertouch[getVoiceNo()] = -1;
 	m_Set->iAftertouchMidiNote[getVoiceNo()] = -1;
@@ -1310,9 +1306,7 @@ void CVASTSingleNote::resetSoftFadeState() { //when nothing is playing anymore
 }
 
 bool CVASTSingleNote::prepareFrequency(int bank, int skips, int startSample, bool bTakeNextValue, bool bIsStartOfCycle) {
-	modMatrixInputState l_inputState;
-	l_inputState.voiceNo = mVoiceNo;
-	l_inputState.currentFrame = startSample;
+	modMatrixInputState l_inputState{ mVoiceNo, startSample };
 	float fDetuneMod = 1.0;
 	bool bHasToBeDoneForEachSample = false;
 	bool isModulating = false;
@@ -1412,9 +1406,7 @@ bool CVASTSingleNote::prepareFrequency(int bank, int skips, int startSample, boo
 }
 
 bool CVASTSingleNote::prepareNextPhaseCycle(int bank, int skips, int startSample, bool bTakeNextValue, bool wtfxFXTypeChanged) {
-	modMatrixInputState l_inputState;
-	l_inputState.voiceNo = mVoiceNo;
-	l_inputState.currentFrame = startSample; 
+	modMatrixInputState l_inputState{ mVoiceNo, startSample };
 	float l_WTPosOscA = 0.f;
 	float l_WTPosOscB = 0.f;
 	float l_WTPosOscC = 0.f;
@@ -1467,10 +1459,7 @@ bool CVASTSingleNote::prepareNextPhaseCycle(int bank, int skips, int startSample
 }
 
 bool CVASTSingleNote::prepareEachSample(int bank, int currentFrame, bool &freqsHaveToBeDoneForEachSample, bool bTakeNextValue) {
-	modMatrixInputState l_inputState;
-	l_inputState.voiceNo = mVoiceNo;
-	l_inputState.currentFrame = currentFrame;
-
+	modMatrixInputState l_inputState{ mVoiceNo,currentFrame };
 	bool wrap = false;
 	int skips = m_Oscillator.getUnchecked(bank)->m_unisonOscis * 10 - 9; //1 - 11 - 21 ...
 
@@ -1517,12 +1506,7 @@ bool CVASTSingleNote::prepareEachSample(int bank, int currentFrame, bool &freqsH
 
 	//---------------------------------------------------------------------------------
     //most expensive loop
-    CVASTWaveTableOscillator* l_Oscillator[4]; //perf optimization
-    l_Oscillator[0] = m_Oscillator[0];
-    l_Oscillator[1] = m_Oscillator[1];
-    l_Oscillator[2] = m_Oscillator[2];
-    l_Oscillator[3] = m_Oscillator[3];
-    
+	CVASTWaveTableOscillator* l_Oscillator[4]{ m_Oscillator[0],m_Oscillator[1], m_Oscillator[2], m_Oscillator[3] };    
 	float l_phaseOffset = 0.f;
 	if (bank == 0) {
 		l_phaseOffset = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fOscPhase_OscA, MODMATDEST::OscAPhase, &l_inputState);
@@ -1645,16 +1629,16 @@ void CVASTSingleNote::doWavetableBufferGet(const int bank, CVASTWaveTableOscilla
 	bool bInverter = false;
 	switch (bank) {
 	case 0:
-		bInverter = *m_Set->m_State->m_bOscInverterOnOff_OscA == SWITCH::SWITCH_ON;
+		bInverter = *m_Set->m_State->m_bOscInverterOnOff_OscA == static_cast<int>(SWITCH::SWITCH_ON);
 		break;
 	case 1:
-		bInverter = *m_Set->m_State->m_bOscInverterOnOff_OscB == SWITCH::SWITCH_ON;
+		bInverter = *m_Set->m_State->m_bOscInverterOnOff_OscB == static_cast<int>(SWITCH::SWITCH_ON);
 		break;
 	case 2:
-		bInverter = *m_Set->m_State->m_bOscInverterOnOff_OscC == SWITCH::SWITCH_ON;
+		bInverter = *m_Set->m_State->m_bOscInverterOnOff_OscC == static_cast<int>(SWITCH::SWITCH_ON);
 		break;
 	case 3:
-		bInverter = *m_Set->m_State->m_bOscInverterOnOff_OscD == SWITCH::SWITCH_ON;
+		bInverter = *m_Set->m_State->m_bOscInverterOnOff_OscD == static_cast<int>(SWITCH::SWITCH_ON);
 		break;
 	}
 	
@@ -1870,11 +1854,7 @@ void CVASTSingleNote::doWavetableBufferGet(const int bank, CVASTWaveTableOscilla
 //=============================================================================================================
 
 void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSample, int numSamples) {
-	modMatrixInputState l_inputState;
-	l_inputState.voiceNo = mVoiceNo;
-	l_inputState.currentFrame = startSample;
-
-
+	modMatrixInputState l_inputState{ mVoiceNo,startSample };
 	if (!isPlayingInRange(startSample, numSamples) || (m_iNumParallelOsc == 0)) {
 		clearCurrentNote(); 
 		
@@ -1900,10 +1880,10 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 
 		//who is really playing
 		MYUINT uNumOscAOscsPlaying = 0;
-		if (*m_Set->m_State->m_bOscOnOff_OscA == SWITCH::SWITCH_ON) {
+		if (*m_Set->m_State->m_bOscOnOff_OscA == static_cast<int>(SWITCH::SWITCH_ON)) {
 			//for (int i = 0; i < *m_Set->m_State->m_iNumOscs_OscA; i++) if (m_Oscillator[0][i].isPlaying() == true) uNumOscAOscsPlaying++;
 			uNumOscAOscsPlaying = m_Oscillator[0]->m_unisonOscis;
-			if (*m_Set->m_State->m_bOscRetrigOnOff_OscA == SWITCH::SWITCH_ON)
+			if (*m_Set->m_State->m_bOscRetrigOnOff_OscA == static_cast<int>(SWITCH::SWITCH_ON))
 				if (m_uLastuNumOscAOscsPlaying < uNumOscAOscsPlaying) { //added oscis generating
 					for (int i = m_uLastuNumOscAOscsPlaying - 1; i < uNumOscAOscsPlaying; i++) { //sync new oscis to master
 						if (i > 0)
@@ -1914,10 +1894,10 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 		m_uLastuNumOscAOscsPlaying = uNumOscAOscsPlaying;
 
 		MYUINT uNumOscBOscsPlaying = 0;
-		if (*m_Set->m_State->m_bOscOnOff_OscB == SWITCH::SWITCH_ON) {
+		if (*m_Set->m_State->m_bOscOnOff_OscB == static_cast<int>(SWITCH::SWITCH_ON)) {
 			//for (int i = 0; i < *m_Set->m_State->m_iNumOscs_OscB; i++) if (m_Oscillator[1][i].isPlaying() == true) uNumOscBOscsPlaying++;
 			uNumOscBOscsPlaying = m_Oscillator[1]->m_unisonOscis;
-			if (*m_Set->m_State->m_bOscRetrigOnOff_OscB == SWITCH::SWITCH_ON)
+			if (*m_Set->m_State->m_bOscRetrigOnOff_OscB == static_cast<int>(SWITCH::SWITCH_ON))
 				if (m_uLastuNumOscBOscsPlaying < uNumOscBOscsPlaying) { //added oscis generating
 					for (int i = m_uLastuNumOscBOscsPlaying - 1; i < uNumOscBOscsPlaying; i++) { //sync new oscis to master
 						if (i > 0)
@@ -1928,10 +1908,10 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 		m_uLastuNumOscBOscsPlaying = uNumOscBOscsPlaying;
 
 		MYUINT uNumOscCOscsPlaying = 0;
-		if (*m_Set->m_State->m_bOscOnOff_OscC == SWITCH::SWITCH_ON) {
+		if (*m_Set->m_State->m_bOscOnOff_OscC == static_cast<int>(SWITCH::SWITCH_ON)) {
 			//for (int i = 0; i < *m_Set->m_State->m_iNumOscs_OscC; i++) if (m_Oscillator[2][i].isPlaying() == true) uNumOscCOscsPlaying++;
 			uNumOscCOscsPlaying = m_Oscillator[2]->m_unisonOscis;
-			if (*m_Set->m_State->m_bOscRetrigOnOff_OscC == SWITCH::SWITCH_ON)
+			if (*m_Set->m_State->m_bOscRetrigOnOff_OscC == static_cast<int>(SWITCH::SWITCH_ON))
 				if (m_uLastuNumOscCOscsPlaying < uNumOscCOscsPlaying) { //added oscis generating
 					for (int i = m_uLastuNumOscCOscsPlaying - 1; i < uNumOscCOscsPlaying; i++) { //sync new oscis to master
 						if (i > 0)
@@ -1942,10 +1922,10 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 		m_uLastuNumOscCOscsPlaying = uNumOscCOscsPlaying;
 
 		MYUINT uNumOscDOscsPlaying = 0;
-		if (*m_Set->m_State->m_bOscOnOff_OscD == SWITCH::SWITCH_ON) {			
+		if (*m_Set->m_State->m_bOscOnOff_OscD == static_cast<int>(SWITCH::SWITCH_ON)) {			
 			//for (int i = 0; i < *m_Set->m_State->m_iNumOscs_OscD; i++) if (m_Oscillator[3][i].isPlaying() == true) uNumOscDOscsPlaying++;
 			uNumOscDOscsPlaying = m_Oscillator[3]->m_unisonOscis;
-			if (*m_Set->m_State->m_bOscRetrigOnOff_OscD == SWITCH::SWITCH_ON)
+			if (*m_Set->m_State->m_bOscRetrigOnOff_OscD == static_cast<int>(SWITCH::SWITCH_ON))
 				if (m_uLastuNumOscDOscsPlaying < uNumOscDOscsPlaying) { //added oscis generating
 					for (int i = m_uLastuNumOscDOscsPlaying - 1; i < uNumOscDOscsPlaying; i++) { //sync new oscis to master
 						if (i > 0)
@@ -1956,7 +1936,7 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 		m_uLastuNumOscDOscsPlaying = uNumOscDOscsPlaying;
 
 		MYUINT uNumOscNoisePlaying = 0;
-		if (*m_Set->m_State->m_bNoiseOnOff == SWITCH::SWITCH_ON) {
+		if (*m_Set->m_State->m_bNoiseOnOff == static_cast<int>(SWITCH::SWITCH_ON)) {
 			if (m_OscillatorNoise->isPlaying() == true) uNumOscNoisePlaying++;
 		}
 		MYUINT uNumTotalPlaying = uNumOscAOscsPlaying + uNumOscBOscsPlaying + uNumOscCOscsPlaying + uNumOscDOscsPlaying + uNumOscNoisePlaying;
@@ -2271,7 +2251,7 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 
 		//====================================================================================
 		//sampler
-		if (*m_Set->m_State->m_bSamplerOnOff == SWITCH::SWITCH_ON) {
+		if (*m_Set->m_State->m_bSamplerOnOff == static_cast<int>(SWITCH::SWITCH_ON)) {
             m_bSmoothersTakeNextValue ? m_fSamplerPan_smoothed.setCurrentAndTargetValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fSamplerPan, MODMATDEST::SamplerPan, &l_inputState) * 0.01f) : m_fSamplerPan_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fSamplerPan, MODMATDEST::SamplerPan, &l_inputState) * 0.01f);
 			float fPanBegin = (m_fSamplerPan_smoothed.getNextValue() + 1.f) * M_PI / 4.0f; // equal power calculation
 			m_fSamplerPan_smoothed.skip(numSamples - 2);
@@ -2311,19 +2291,19 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 		//if (!routingBuffers.OscVoices[0][mVoiceNo]->hasBeenCleared()) {
 		if (uNumOscAOscsPlaying > 0) {
 			const float* envBuffer = nullptr;
-			if (*m_Set->m_State->m_uVCAEnv_OscA == MSEGENV::MSEG1) {
+			if (*m_Set->m_State->m_uVCAEnv_OscA == static_cast<int>(MSEGENV::MSEG1)) {
 				envBuffer = routingBuffers.MSEGBuffer[0][mVoiceNo]->getReadPointer(0, startSample);
 			}
-			else if (*m_Set->m_State->m_uVCAEnv_OscA == MSEGENV::MSEG2) {
+			else if (*m_Set->m_State->m_uVCAEnv_OscA == static_cast<int>(MSEGENV::MSEG2)) {
 				envBuffer = routingBuffers.MSEGBuffer[1][mVoiceNo]->getReadPointer(0, startSample);
 			}
-			else if (*m_Set->m_State->m_uVCAEnv_OscA == MSEGENV::MSEG3) {
+			else if (*m_Set->m_State->m_uVCAEnv_OscA == static_cast<int>(MSEGENV::MSEG3)) {
 				envBuffer = routingBuffers.MSEGBuffer[2][mVoiceNo]->getReadPointer(0, startSample);
 			}
-			else if (*m_Set->m_State->m_uVCAEnv_OscA == MSEGENV::MSEG4) {
+			else if (*m_Set->m_State->m_uVCAEnv_OscA == static_cast<int>(MSEGENV::MSEG4)) {
 				envBuffer = routingBuffers.MSEGBuffer[3][mVoiceNo]->getReadPointer(0, startSample);
 			}
-			else if (*m_Set->m_State->m_uVCAEnv_OscA == MSEGENV::MSEG5) {
+			else if (*m_Set->m_State->m_uVCAEnv_OscA == static_cast<int>(MSEGENV::MSEG5)) {
 				envBuffer = routingBuffers.MSEGBuffer[4][mVoiceNo]->getReadPointer(0, startSample);
 			}
 			if (envBuffer) {
@@ -2340,19 +2320,19 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 		//if (!routingBuffers.OscVoices[1][mVoiceNo]->hasBeenCleared()) {
 		if (uNumOscBOscsPlaying > 0) {
 			const float* envBuffer = nullptr;
-			if (*m_Set->m_State->m_uVCAEnv_OscB == MSEGENV::MSEG1) {
+			if (*m_Set->m_State->m_uVCAEnv_OscB == static_cast<int>(MSEGENV::MSEG1)) {
 				envBuffer = routingBuffers.MSEGBuffer[0][mVoiceNo]->getReadPointer(0, startSample);
 			}
-			else if (*m_Set->m_State->m_uVCAEnv_OscB == MSEGENV::MSEG2) {
+			else if (*m_Set->m_State->m_uVCAEnv_OscB == static_cast<int>(MSEGENV::MSEG2)) {
 				envBuffer = routingBuffers.MSEGBuffer[1][mVoiceNo]->getReadPointer(0, startSample);
 			}
-			else if (*m_Set->m_State->m_uVCAEnv_OscB == MSEGENV::MSEG3) {
+			else if (*m_Set->m_State->m_uVCAEnv_OscB == static_cast<int>(MSEGENV::MSEG3)) {
 				envBuffer = routingBuffers.MSEGBuffer[2][mVoiceNo]->getReadPointer(0, startSample);
 			}
-			else if (*m_Set->m_State->m_uVCAEnv_OscB == MSEGENV::MSEG4) {
+			else if (*m_Set->m_State->m_uVCAEnv_OscB == static_cast<int>(MSEGENV::MSEG4)) {
 				envBuffer = routingBuffers.MSEGBuffer[3][mVoiceNo]->getReadPointer(0, startSample);
 			}
-			else if (*m_Set->m_State->m_uVCAEnv_OscB == MSEGENV::MSEG5) {
+			else if (*m_Set->m_State->m_uVCAEnv_OscB == static_cast<int>(MSEGENV::MSEG5)) {
 				envBuffer = routingBuffers.MSEGBuffer[4][mVoiceNo]->getReadPointer(0, startSample);
 			}
 			if (envBuffer) {
@@ -2368,19 +2348,19 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 		//if (!routingBuffers.OscVoices[2][mVoiceNo]->hasBeenCleared()) {
 		if (uNumOscCOscsPlaying > 0) {
 			const float* envBuffer = nullptr;
-			if (*m_Set->m_State->m_uVCAEnv_OscC == MSEGENV::MSEG1) {
+			if (*m_Set->m_State->m_uVCAEnv_OscC == static_cast<int>(MSEGENV::MSEG1)) {
 				envBuffer = routingBuffers.MSEGBuffer[0][mVoiceNo]->getReadPointer(0, startSample);
 			}
-			else if (*m_Set->m_State->m_uVCAEnv_OscC == MSEGENV::MSEG2) {
+			else if (*m_Set->m_State->m_uVCAEnv_OscC == static_cast<int>(MSEGENV::MSEG2)) {
 				envBuffer = routingBuffers.MSEGBuffer[1][mVoiceNo]->getReadPointer(0, startSample);
 			}
-			else if (*m_Set->m_State->m_uVCAEnv_OscC == MSEGENV::MSEG3) {
+			else if (*m_Set->m_State->m_uVCAEnv_OscC == static_cast<int>(MSEGENV::MSEG3)) {
 				envBuffer = routingBuffers.MSEGBuffer[2][mVoiceNo]->getReadPointer(0, startSample);
 			}
-			else if (*m_Set->m_State->m_uVCAEnv_OscC == MSEGENV::MSEG4) {
+			else if (*m_Set->m_State->m_uVCAEnv_OscC == static_cast<int>(MSEGENV::MSEG4)) {
 				envBuffer = routingBuffers.MSEGBuffer[3][mVoiceNo]->getReadPointer(0, startSample);
 			}
-			else if (*m_Set->m_State->m_uVCAEnv_OscC == MSEGENV::MSEG5) {
+			else if (*m_Set->m_State->m_uVCAEnv_OscC == static_cast<int>(MSEGENV::MSEG5)) {
 				envBuffer = routingBuffers.MSEGBuffer[4][mVoiceNo]->getReadPointer(0, startSample);
 			}
 			if (envBuffer) {
@@ -2397,19 +2377,19 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 		//if (!routingBuffers.OscVoices[3][mVoiceNo]->hasBeenCleared()) {
 		if (uNumOscDOscsPlaying > 0) {
 			const float* envBuffer = nullptr;
-			if (*m_Set->m_State->m_uVCAEnv_OscD == MSEGENV::MSEG1) {
+			if (*m_Set->m_State->m_uVCAEnv_OscD == static_cast<int>(MSEGENV::MSEG1)) {
 				envBuffer = routingBuffers.MSEGBuffer[0][mVoiceNo]->getReadPointer(0, startSample);
 			}
-			else if (*m_Set->m_State->m_uVCAEnv_OscD == MSEGENV::MSEG2) {
+			else if (*m_Set->m_State->m_uVCAEnv_OscD == static_cast<int>(MSEGENV::MSEG2)) {
 				envBuffer = routingBuffers.MSEGBuffer[1][mVoiceNo]->getReadPointer(0, startSample);
 			}
-			else if (*m_Set->m_State->m_uVCAEnv_OscD == MSEGENV::MSEG3) {
+			else if (*m_Set->m_State->m_uVCAEnv_OscD == static_cast<int>(MSEGENV::MSEG3)) {
 				envBuffer = routingBuffers.MSEGBuffer[2][mVoiceNo]->getReadPointer(0, startSample);
 			}
-			else if (*m_Set->m_State->m_uVCAEnv_OscD == MSEGENV::MSEG4) {
+			else if (*m_Set->m_State->m_uVCAEnv_OscD == static_cast<int>(MSEGENV::MSEG4)) {
 				envBuffer = routingBuffers.MSEGBuffer[3][mVoiceNo]->getReadPointer(0, startSample);
 			}
-			else if (*m_Set->m_State->m_uVCAEnv_OscD == MSEGENV::MSEG5) {
+			else if (*m_Set->m_State->m_uVCAEnv_OscD == static_cast<int>(MSEGENV::MSEG5)) {
 				envBuffer = routingBuffers.MSEGBuffer[4][mVoiceNo]->getReadPointer(0, startSample);
 			}
 			if (envBuffer) {
@@ -2425,19 +2405,19 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 		//if (!routingBuffers.NoiseVoices[mVoiceNo]->hasBeenCleared()) {
 		if (uNumOscNoisePlaying > 0) {
 			const float* envBuffer = nullptr;;
-			if (*m_Set->m_State->m_uVCAEnv_Noise == MSEGENV::MSEG1) {
+			if (*m_Set->m_State->m_uVCAEnv_Noise == static_cast<int>(MSEGENV::MSEG1)) {
 				envBuffer = routingBuffers.MSEGBuffer[0][mVoiceNo]->getReadPointer(0, startSample);
 			}
-			else if (*m_Set->m_State->m_uVCAEnv_Noise == MSEGENV::MSEG2) {
+			else if (*m_Set->m_State->m_uVCAEnv_Noise == static_cast<int>(MSEGENV::MSEG2)) {
 				envBuffer = routingBuffers.MSEGBuffer[1][mVoiceNo]->getReadPointer(0, startSample);
 			}
-			else if (*m_Set->m_State->m_uVCAEnv_Noise == MSEGENV::MSEG3) {
+			else if (*m_Set->m_State->m_uVCAEnv_Noise == static_cast<int>(MSEGENV::MSEG3)) {
 				envBuffer = routingBuffers.MSEGBuffer[2][mVoiceNo]->getReadPointer(0, startSample);
 			}
-			else if (*m_Set->m_State->m_uVCAEnv_Noise == MSEGENV::MSEG4) {
+			else if (*m_Set->m_State->m_uVCAEnv_Noise == static_cast<int>(MSEGENV::MSEG4)) {
 				envBuffer = routingBuffers.MSEGBuffer[3][mVoiceNo]->getReadPointer(0, startSample);
 			}
-			else if (*m_Set->m_State->m_uVCAEnv_Noise == MSEGENV::MSEG5) {
+			else if (*m_Set->m_State->m_uVCAEnv_Noise == static_cast<int>(MSEGENV::MSEG5)) {
 				envBuffer = routingBuffers.MSEGBuffer[4][mVoiceNo]->getReadPointer(0, startSample);
 			}
 			FloatVectorOperations::multiply(routingBuffers.NoiseVoices[mVoiceNo]->getWritePointer(0, startSample), envBuffer, numSamples); //voice = voice * mseg
@@ -2446,21 +2426,21 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 			routingBuffers.NoiseBuffer->addFrom(1, startSample, routingBuffers.NoiseVoices[mVoiceNo]->getReadPointer(1, startSample), numSamples);
 		}		
 		//if (!routingBuffers.SamplerVoices[mVoiceNo]->hasBeenCleared()) {
-		if (*m_Set->m_State->m_bSamplerOnOff == SWITCH::SWITCH_ON) {
+		if (*m_Set->m_State->m_bSamplerOnOff == static_cast<int>(SWITCH::SWITCH_ON)) {
 			const float* envBuffer = nullptr;
-			if (*m_Set->m_State->m_uVCAEnv_Sampler == MSEGENV::MSEG1) {
+			if (*m_Set->m_State->m_uVCAEnv_Sampler == static_cast<int>(MSEGENV::MSEG1)) {
 				envBuffer = routingBuffers.MSEGBuffer[0][mVoiceNo]->getReadPointer(0, startSample);
 			}
-			else if (*m_Set->m_State->m_uVCAEnv_Sampler == MSEGENV::MSEG2) {
+			else if (*m_Set->m_State->m_uVCAEnv_Sampler == static_cast<int>(MSEGENV::MSEG2)) {
 				envBuffer = routingBuffers.MSEGBuffer[1][mVoiceNo]->getReadPointer(0, startSample);
 			}
-			else if (*m_Set->m_State->m_uVCAEnv_Sampler == MSEGENV::MSEG3) {
+			else if (*m_Set->m_State->m_uVCAEnv_Sampler == static_cast<int>(MSEGENV::MSEG3)) {
 				envBuffer = routingBuffers.MSEGBuffer[2][mVoiceNo]->getReadPointer(0, startSample);
 			}
-			else if (*m_Set->m_State->m_uVCAEnv_Sampler == MSEGENV::MSEG4) {
+			else if (*m_Set->m_State->m_uVCAEnv_Sampler == static_cast<int>(MSEGENV::MSEG4)) {
 				envBuffer = routingBuffers.MSEGBuffer[3][mVoiceNo]->getReadPointer(0, startSample);
 			}
-			else if (*m_Set->m_State->m_uVCAEnv_Sampler == MSEGENV::MSEG5) {
+			else if (*m_Set->m_State->m_uVCAEnv_Sampler == static_cast<int>(MSEGENV::MSEG5)) {
 				envBuffer = routingBuffers.MSEGBuffer[4][mVoiceNo]->getReadPointer(0, startSample);
 			}
 			if (envBuffer) {

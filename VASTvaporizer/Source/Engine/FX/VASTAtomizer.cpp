@@ -140,7 +140,7 @@ void CVASTAtomizer::releaseResources() {
 
 void CVASTAtomizer::parameterChanged(const String& parameterID, float newValue) {
 	if (parameterID.startsWith("m_bAtomizerOnOff")) {
-		if (newValue == SWITCH::SWITCH_ON)
+		if (newValue == static_cast<int>(SWITCH::SWITCH_ON))
 			switchOn();
 		else
 			switchOff();
@@ -206,7 +206,7 @@ void CVASTAtomizer::updateTiming() {
 }
 
 void CVASTAtomizer::updateLFOFreq() {
-	if (*m_bAtomizerSynch == SWITCH::SWITCH_OFF) {
+	if (*m_bAtomizerSynch == static_cast<int>(SWITCH::SWITCH_OFF)) {
 		m_fAtomizerLFOFreq_smoothed.setTargetValue(*m_fAtomizerLFOFreq); //  *m_fTimeMod;
 	}
 	else { //bpm synch
@@ -222,7 +222,7 @@ void CVASTAtomizer::updateLFOFreq() {
 	}
 }
 
-void CVASTAtomizer::prepareToPlay(double sampleRate, int samplesPerBlock) {
+void CVASTAtomizer::prepareToPlay(double , int samplesPerBlock) {
 	//m_iSampleRate is set in useOversampling
 	m_iExpectedSamplesPerBlock = samplesPerBlock;
 	setup(2);
@@ -274,7 +274,7 @@ void CVASTAtomizer::init(CVASTSettings &set) {
 	m_LFO.startLFOFrequency(*m_fAtomizerLFOFreq, -1);
 }
 
-void CVASTAtomizer::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages, const int numSamples) {
+void CVASTAtomizer::processBlock(AudioSampleBuffer& buffer, MidiBuffer& , const int numSamples) {
 	if (isOffAndShallBeOff() == true) return;
 
 	ScopedNoDenormals noDenormals;
@@ -328,7 +328,7 @@ void CVASTAtomizer::processSTFTBlock(AudioSampleBuffer& block, const int numSamp
 		m_fAtomizerGain_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fAtomizerGain, MODMATDEST::AtomizerGain, &inputState));
 		setGain(m_fAtomizerGain_smoothed.getNextValue());
 
-		if (*m_bAtomizerSynch == SWITCH::SWITCH_OFF)
+		if (*m_bAtomizerSynch == static_cast<int>(SWITCH::SWITCH_OFF))
 			m_fAtomizerLFOFreq_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fAtomizerLFOFreq, MODMATDEST::AtomizerLFOFrequency, &inputState));
 		if (m_fAtomizerLFOFreq_smoothed.isSmoothing())
 			m_LFO.startLFOFrequency(m_fAtomizerLFOFreq_smoothed.getNextValue(), -1);
@@ -493,13 +493,13 @@ void CVASTAtomizer::modification() {
 	fft->perform(frequencyDomainBuffer, timeDomainBuffer, true);
 }
 
-void CVASTAtomizer::getStateInformation(MemoryBlock& destData)
+void CVASTAtomizer::getStateInformation(MemoryBlock& )
 {
 	//std::unique_ptr<XmlElement> xml (parameters.valueTreeState.state.createXml());
 	//copyXmlToBinary (*xml, destData);
 }
 
-void CVASTAtomizer::setStateInformation(const void* data, int sizeInBytes)
+void CVASTAtomizer::setStateInformation(const void* , int )
 {
 	//std::unique_ptr<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
 	//if (xmlState != nullptr)

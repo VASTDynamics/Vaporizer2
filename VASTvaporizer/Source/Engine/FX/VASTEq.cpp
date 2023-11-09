@@ -170,7 +170,7 @@ void CVASTEq::reset() {
 	}
 }
 
-void CVASTEq::prepareToPlay(double sampleRate, int samplesPerBlock) {
+void CVASTEq::prepareToPlay(double, int samplesPerBlock) {
 	//m_iSampleRate is set in useroversampling
 	m_iExpectedSamplesPerBlock = samplesPerBlock;
 	
@@ -185,7 +185,7 @@ void CVASTEq::parameterChanged(const String& parameterID, float newValue) {
 	float fQ = sqrt2over2; //was 1.0f
 		
 	if (parameterID.startsWith("m_bEQOnOff")) {
-		if (newValue == SWITCH::SWITCH_ON)
+		if (newValue == static_cast<int>(SWITCH::SWITCH_ON))
 			switchOn();
 		else
 			switchOff();
@@ -349,7 +349,7 @@ void CVASTEq::updateVariables() {
 	*/
 }
 
-void CVASTEq::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages, const int numSamples) {
+void CVASTEq::processBlock(AudioSampleBuffer& buffer, MidiBuffer&, const int numSamples) {
 	if (isOffAndShallBeOff() == true) return;
 
 	float* bufferWritePointerL = buffer.getWritePointer(0);
@@ -389,7 +389,7 @@ void CVASTEq::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages, 
 	//=================================================================================================	
 }
 
-bool CVASTEq::processAudioFrame(float* pInputBuffer, float* pOutputBuffer, MYUINT uNumInputChannels, MYUINT uNumOutputChannels)
+bool CVASTEq::processAudioFrame(float* pInputBuffer, float* pOutputBuffer, MYUINT, MYUINT)
 {
 	//if (m_iSoftFade != C_MAX_SOFTFADE)
 		//updateVariables();
@@ -583,13 +583,13 @@ bool CVASTEq::processAudioFrame(float* pInputBuffer, float* pOutputBuffer, MYUIN
 
 //==============================================================================
 
-void CVASTEq::getStateInformation(MemoryBlock& destData)
+void CVASTEq::getStateInformation(MemoryBlock&)
 {
 	//std::unique_ptr<XmlElement> xml (parameters.valueTreeState.state.createXml());
 	//copyXmlToBinary (*xml, destData);
 }
 
-void CVASTEq::setStateInformation(const void* data, int sizeInBytes)
+void CVASTEq::setStateInformation(const void*, int)
 {
 	//std::unique_ptr<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
 	//if (xmlState != nullptr)

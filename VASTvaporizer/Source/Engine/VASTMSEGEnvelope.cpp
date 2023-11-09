@@ -214,7 +214,7 @@ float CVASTMSEGEnvelope::getValue() { // just to get the value
 void CVASTMSEGEnvelope::resynchNoteOn() {
 	struct timeval tp;
 	m_Set->_gettimeofday(&tp);
-	noteOn(tp.tv_sec * 1000 + tp.tv_usec / 1000, false);
+	noteOn(static_cast<ULong64_t>(tp.tv_sec) * 1000 + tp.tv_usec / 1000, false);
 }
 
 
@@ -436,7 +436,7 @@ float CVASTMSEGEnvelope::getEnvelopeStepSeq(int bufferSample) { //called during 
 		beats = *m_Set->m_State->m_uStepSeqTimeBeats_STEPSEQ3;
 	};
 
-	if ((synch == SWITCH::SWITCH_ON) && (m_Set->m_bPpqIsPlaying)) {
+	if ((synch == static_cast<int>(SWITCH::SWITCH_ON)) && (m_Set->m_bPpqIsPlaying)) {
 		if (!m_Set->m_bPpqIsPlaying) return 0.f;
 		float l_fIntervalTime = m_Set->getIntervalTimeFromDAWBeats(beats);
 		float stepDuration = static_cast<int> (std::ceil(m_Set->m_nSampleRate * (l_fIntervalTime / 1000.f)));  //interval time is in milliseconds, stepduration in samples

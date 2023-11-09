@@ -47,6 +47,21 @@ void CDDLModule::resetDelay(int nDelayLength)
 	m_fDDLOutput = 0;
 }
 
+// set the feedback sample
+
+
+// current FB is fb*output
+
+float CDDLModule::getCurrentFeedbackOutput() { return m_fFeedback * m_pBuffer->getReadPointer(0)[m_nReadIndex]; }
+
+void CDDLModule::setCurrentFeedbackInput(float f) { m_fFeedbackIn = f; }
+
+// enable/disable external FB source
+
+void CDDLModule::setUsesExternalFeedback(bool) {
+	m_bUseExternalFeedback = false;
+}
+
 /* destructor()
 	Destroy variables allocated in the contructor()
 

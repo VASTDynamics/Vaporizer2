@@ -92,7 +92,7 @@ void CVASTBitcrush::initCompatibilityParameters() {
 
 void CVASTBitcrush::parameterChanged(const String& parameterID, float newValue) {
 	if (parameterID.startsWith("m_bBitcrushOnOff")) {
-		if (newValue == SWITCH::SWITCH_ON)
+		if (newValue == static_cast<int>(SWITCH::SWITCH_ON))
 			switchOn();
 		else
 			switchOff();
@@ -139,7 +139,7 @@ void CVASTBitcrush::reset() {
 	}
 }
 
-void CVASTBitcrush::prepareToPlay(double sampleRate, int samplesPerBlock) {
+void CVASTBitcrush::prepareToPlay(double, int samplesPerBlock) {
 	//m_iSampleRate is set in useroversampling
 	m_iExpectedSamplesPerBlock = samplesPerBlock;
 	reset();
@@ -155,7 +155,7 @@ void CVASTBitcrush::releaseResources()
 {
 }
 
-void CVASTBitcrush::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages, const int numSamples) {
+void CVASTBitcrush::processBlock(AudioSampleBuffer& buffer, MidiBuffer& , const int numSamples) {
 	if (isOffAndShallBeOff() == true) return;
 
 	modMatrixInputState inputState;
@@ -256,13 +256,13 @@ void CVASTBitcrush::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMess
 
 //==============================================================================
 
-void CVASTBitcrush::getStateInformation(MemoryBlock& destData)
+void CVASTBitcrush::getStateInformation(MemoryBlock& )
 {
 	//std::unique_ptr<XmlElement> xml (parameters.valueTreeState.state.createXml());
 	//copyXmlToBinary (*xml, destData);
 }
 
-void CVASTBitcrush::setStateInformation(const void* data, int sizeInBytes)
+void CVASTBitcrush::setStateInformation(const void* , int )
 {
 	//std::unique_ptr<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
 	//if (xmlState != nullptr)

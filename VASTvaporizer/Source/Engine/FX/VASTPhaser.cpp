@@ -131,7 +131,7 @@ void CVASTPhaser::releaseResources() {
 
 void CVASTPhaser::parameterChanged(const String& parameterID, float newValue) {
 	if (parameterID.startsWith("m_bPhaserOnOff")) {
-		if (newValue == SWITCH::SWITCH_ON)
+		if (newValue == static_cast<int>(SWITCH::SWITCH_ON))
 			switchOn();
 		else
 			switchOff();
@@ -168,7 +168,7 @@ void CVASTPhaser::parameterChanged(const String& parameterID, float newValue) {
 }
 
 void CVASTPhaser::updateLFOFreq() {
-	if (*m_bPhaserSynch == SWITCH::SWITCH_OFF) {
+	if (*m_bPhaserSynch == static_cast<int>(SWITCH::SWITCH_OFF)) {
 		m_fPhaserLFOFreq_smoothed.setTargetValue(*m_fPhaserLFOFreq); //  *m_fTimeMod;
 	}
 	else { //bpm synch
@@ -259,7 +259,7 @@ void CVASTPhaser::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessag
 		checkSoftFade();
 		
 		inputState = ((VASTAudioProcessor*)my_processor)->m_pVASTXperience.m_Poly.getOldestNotePlayedInputState(currentFrameOSAdjusted); // make parameter oldest or newest
-		if (*m_bPhaserSynch == SWITCH::SWITCH_OFF)
+		if (*m_bPhaserSynch == static_cast<int>(SWITCH::SWITCH_OFF))
 			m_fPhaserLFOFreq_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fPhaserLFOFreq, MODMATDEST::PhaserLFOFrequency, &inputState));
 		if (m_fPhaserLFOFreq_smoothed.isSmoothing()) {
 			m_LFO.startLFOFrequency(m_fPhaserLFOFreq_smoothed.getNextValue(), -1);

@@ -96,7 +96,7 @@ CVASTCompressorExpander::~CVASTCompressorExpander() {
 
 void CVASTCompressorExpander::parameterChanged(const String& parameterID, float newValue) {
 	if (parameterID.startsWith("m_bLimiterOffOn")) {
-		if (newValue == SWITCH::SWITCH_ON)
+		if (newValue == static_cast<int>(SWITCH::SWITCH_ON))
 			switchOn();
 		else
 			switchOff();
@@ -132,7 +132,7 @@ void CVASTCompressorExpander::reset() {
 
 //==============================================================================
 
-void CVASTCompressorExpander::prepareToPlay (double sampleRate, int samplesPerBlock) {
+void CVASTCompressorExpander::prepareToPlay (double , int samplesPerBlock) {
 	//m_iSampleRate is set in useoversampling
 	m_iExpectedSamplesPerBlock = samplesPerBlock;
 
@@ -170,7 +170,7 @@ void CVASTCompressorExpander::releaseResources()
 {
 }
 
-void CVASTCompressorExpander::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages, const int numSamples) {
+void CVASTCompressorExpander::processBlock (AudioSampleBuffer& buffer, MidiBuffer& , const int numSamples) {
 	if (isOffAndShallBeOff() == true) return;
 
  	ScopedNoDenormals noDenormals;
@@ -299,13 +299,13 @@ float CVASTCompressorExpander::calculateAttackOrRelease (float value)
 
 //==============================================================================
 
-void CVASTCompressorExpander::getStateInformation (MemoryBlock& destData)
+void CVASTCompressorExpander::getStateInformation (MemoryBlock& )
 {
     //std::unique_ptr<XmlElement> xml (parameters.valueTreeState.state.createXml());
     //copyXmlToBinary (*xml, destData);
 }
 
-void CVASTCompressorExpander::setStateInformation (const void* data, int sizeInBytes)
+void CVASTCompressorExpander::setStateInformation (const void* , int )
 {
     //std::unique_ptr<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
     //if (xmlState != nullptr)

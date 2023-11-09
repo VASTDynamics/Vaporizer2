@@ -17,10 +17,10 @@ public:
 		m_samplerSound_changed.clear();
 	};
 
-	bool appliesToNote(int midiNoteNumber) {
+	bool appliesToNote(int) {
 		return true;
 	};
-	bool appliesToChannel(int midiChannel) {
+	bool appliesToChannel(int) {
 		return true;
 	};
 

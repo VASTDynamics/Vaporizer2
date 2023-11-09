@@ -403,7 +403,7 @@ void VASTOscilloscope::updateContent(bool force) {
 			m_screenWidthScale = float(getScreenBounds().getWidth()) / float(getWidth());
 			float scale = Desktop::getInstance().getGlobalScaleFactor() * m_screenWidthScale;
 			if (l_oscillatorBank == 0) {
-				if ((*m_myNote->m_Set->m_State->m_iNumOscs_OscA > 0) && (*myProcessor->m_pVASTXperience.m_Set.m_State->m_bOscOnOff_OscA == SWITCH::SWITCH_ON)) {
+				if ((*m_myNote->m_Set->m_State->m_iNumOscs_OscA > 0) && (*myProcessor->m_pVASTXperience.m_Set.m_State->m_bOscOnOff_OscA == static_cast<int>(SWITCH::SWITCH_ON))) {
 					l_display = true;
 				}
 				else {
@@ -414,7 +414,7 @@ void VASTOscilloscope::updateContent(bool force) {
 			}
 			else {
 				if (l_oscillatorBank == 1) {
-					if ((*m_myNote->m_Set->m_State->m_iNumOscs_OscB > 0) && (*myProcessor->m_pVASTXperience.m_Set.m_State->m_bOscOnOff_OscB == SWITCH::SWITCH_ON)) {
+					if ((*m_myNote->m_Set->m_State->m_iNumOscs_OscB > 0) && (*myProcessor->m_pVASTXperience.m_Set.m_State->m_bOscOnOff_OscB == static_cast<int>(SWITCH::SWITCH_ON))) {
 						l_display = true;
 					}
 					else {
@@ -425,7 +425,7 @@ void VASTOscilloscope::updateContent(bool force) {
 				}
 				else {
 					if (l_oscillatorBank == 2) {
-						if ((*m_myNote->m_Set->m_State->m_iNumOscs_OscC > 0) && (*myProcessor->m_pVASTXperience.m_Set.m_State->m_bOscOnOff_OscC == SWITCH::SWITCH_ON)) {
+						if ((*m_myNote->m_Set->m_State->m_iNumOscs_OscC > 0) && (*myProcessor->m_pVASTXperience.m_Set.m_State->m_bOscOnOff_OscC == static_cast<int>(SWITCH::SWITCH_ON))) {
 							l_display = true;
 						}
 						else {
@@ -436,7 +436,7 @@ void VASTOscilloscope::updateContent(bool force) {
 					}
 					else {
 						if (l_oscillatorBank == 3) {
-							if ((*m_myNote->m_Set->m_State->m_iNumOscs_OscD > 0) && (*myProcessor->m_pVASTXperience.m_Set.m_State->m_bOscOnOff_OscD == SWITCH::SWITCH_ON)) {
+							if ((*m_myNote->m_Set->m_State->m_iNumOscs_OscD > 0) && (*myProcessor->m_pVASTXperience.m_Set.m_State->m_bOscOnOff_OscD == static_cast<int>(SWITCH::SWITCH_ON))) {
 								l_display = true;
 							}
 							else {
@@ -831,7 +831,7 @@ void VASTOscilloscope::mouseDrag(const MouseEvent &e) { // show value
 	if (myWtEditor == nullptr) return;
 	ModifierKeys modifiers = ModifierKeys::getCurrentModifiersRealtime();
 	int numGridlines = pow(2, myProcessor->m_iWTEditorGridMode + 1);
-	float stepx = (C_WAVE_TABLE_SIZE / numGridlines);
+	float stepx = (static_cast<float>(C_WAVE_TABLE_SIZE) / numGridlines);
 	float stepy = (1.0f / numGridlines);
 	if (myProcessor->m_iWTEditorDrawMode == OscillatorEditMode::SelectMode) {
 		if (modifiers.isShiftDown()) { //adjust selection
@@ -985,7 +985,7 @@ void VASTOscilloscope::mouseDrag(const MouseEvent &e) { // show value
 }
 
 
-void VASTOscilloscope::mouseDoubleClick(const MouseEvent &e) {
+void VASTOscilloscope::mouseDoubleClick(const MouseEvent&) {
 	if (myWtEditor == nullptr) {
 		if (myEditor != nullptr) {			
 			auto* cTabbedComponent = myEditor->vaporizerComponent->getTabbedComponent();
@@ -1065,7 +1065,7 @@ void VASTOscilloscope::mouseWheelMove(const MouseEvent &event, const MouseWheelD
 
 	ModifierKeys modifiers = ModifierKeys::getCurrentModifiersRealtime();
 	int numGridlines = pow(2, myProcessor->m_iWTEditorGridMode + 1);
-	float stepx = (C_WAVE_TABLE_SIZE / numGridlines);
+	float stepx = (static_cast<float>(C_WAVE_TABLE_SIZE) / numGridlines);
 
 	myWtEditor->copySelectionToLocalBuffer();
 
@@ -1118,7 +1118,7 @@ void VASTOscilloscope::mouseWheelMove(const MouseEvent &event, const MouseWheelD
 			std::shared_ptr<CVASTWaveTable> wavetable = myWtEditor->getCurWavetable();
 			if (lExtend) {
 				while (m_selection.iWTSelectionStart > 0) {					
-					if ((*wavetable->getNaiveTable(myWtEditor->getWtPos()))[m_selection.iWTSelectionStart] * (*wavetable->getNaiveTable(myWtEditor->getWtPos()))[m_selection.iWTSelectionStart - 1] > 0.f)
+					if ((*wavetable->getNaiveTable(myWtEditor->getWtPos()))[m_selection.iWTSelectionStart] * (*wavetable->getNaiveTable(myWtEditor->getWtPos()))[static_cast<std::vector<float, std::allocator<float>>::size_type>(m_selection.iWTSelectionStart) - 1] > 0.f)
 						m_selection.iWTSelectionStart--;
 					else {
 						m_selection.iWTSelectionStart--;
@@ -1126,7 +1126,7 @@ void VASTOscilloscope::mouseWheelMove(const MouseEvent &event, const MouseWheelD
 					}
 				}
 				while (m_selection.iWTSelectionEnd < C_WAVE_TABLE_SIZE - 1) {
-					if ((*wavetable->getNaiveTable(myWtEditor->getWtPos()))[m_selection.iWTSelectionEnd] * (*wavetable->getNaiveTable(myWtEditor->getWtPos()))[m_selection.iWTSelectionEnd + 1] > 0.f)
+					if ((*wavetable->getNaiveTable(myWtEditor->getWtPos()))[m_selection.iWTSelectionEnd] * (*wavetable->getNaiveTable(myWtEditor->getWtPos()))[static_cast<std::vector<float, std::allocator<float>>::size_type>(m_selection.iWTSelectionEnd) + 1] > 0.f)
 						m_selection.iWTSelectionEnd++;
 					else {
 						m_selection.iWTSelectionEnd++;
@@ -1136,7 +1136,7 @@ void VASTOscilloscope::mouseWheelMove(const MouseEvent &event, const MouseWheelD
 			}
 			else {
 				while (m_selection.iWTSelectionStart < m_selection.iWTSelectionEnd) {
-					if ((*wavetable->getNaiveTable(myWtEditor->getWtPos()))[m_selection.iWTSelectionStart] * (*wavetable->getNaiveTable(myWtEditor->getWtPos()))[m_selection.iWTSelectionStart + 1] > 0.f)
+					if ((*wavetable->getNaiveTable(myWtEditor->getWtPos()))[m_selection.iWTSelectionStart] * (*wavetable->getNaiveTable(myWtEditor->getWtPos()))[static_cast<std::vector<float, std::allocator<float>>::size_type>(m_selection.iWTSelectionStart) + 1] > 0.f)
 						m_selection.iWTSelectionStart++;
 					else {
 						m_selection.iWTSelectionStart++;
@@ -1144,7 +1144,7 @@ void VASTOscilloscope::mouseWheelMove(const MouseEvent &event, const MouseWheelD
 					}
 				}
 				while (m_selection.iWTSelectionEnd > m_selection.iWTSelectionStart) {
-					if ((*wavetable->getNaiveTable(myWtEditor->getWtPos()))[m_selection.iWTSelectionEnd] * (*wavetable->getNaiveTable(myWtEditor->getWtPos()))[m_selection.iWTSelectionEnd - 1] > 0.f)
+					if ((*wavetable->getNaiveTable(myWtEditor->getWtPos()))[m_selection.iWTSelectionEnd] * (*wavetable->getNaiveTable(myWtEditor->getWtPos()))[static_cast<std::vector<float, std::allocator<float>>::size_type>(m_selection.iWTSelectionEnd) - 1] > 0.f)
 						m_selection.iWTSelectionEnd--;
 					else {
 						m_selection.iWTSelectionEnd--;
@@ -1490,7 +1490,7 @@ void VASTOscilloscope::mouseDown(const MouseEvent &e) {
 							samples[i] = (*myWtEditor->getBankWavetable()->getNaiveTable(myWtEditor->getWtPos()))[newPos];
 							int intpart = newPos;
 							float fracpart = newPos - intpart;
-							samples[i] = (1 - fracpart) * (*myWtEditor->getBankWavetable()->getNaiveTable(myWtEditor->getWtPos()))[intpart] + fracpart * ((*myWtEditor->getBankWavetable()->getNaiveTable(myWtEditor->getWtPos()))[((intpart + 1) < C_WAVE_TABLE_SIZE - 1) ? intpart + 1 : intpart]);
+							samples[i] = (1 - fracpart) * (*myWtEditor->getBankWavetable()->getNaiveTable(myWtEditor->getWtPos()))[intpart] + fracpart * ((*myWtEditor->getBankWavetable()->getNaiveTable(myWtEditor->getWtPos()))[((intpart + 1) < C_WAVE_TABLE_SIZE - 1) ? static_cast<std::vector<float, std::allocator<float>>::size_type>(intpart) + 1 : intpart]);
 						}
 					}
 					wt->setNaiveTable(myWtEditor->getWtPos(), samples, false, myProcessor->getWTmode());
@@ -1515,7 +1515,7 @@ void VASTOscilloscope::mouseDown(const MouseEvent &e) {
 						newPos = (m_selection.iWTSelectionStart / step + i) * step;
 						int intpart = newPos;
 						float fracpart = newPos - intpart;
-						samples[i] = (1 - fracpart) * (*myWtEditor->getBankWavetable()->getNaiveTable(myWtEditor->getWtPos()))[intpart] + fracpart * ((*myWtEditor->getBankWavetable()->getNaiveTable(myWtEditor->getWtPos()))[((intpart + 1) < C_WAVE_TABLE_SIZE - 1) ? intpart + 1 : intpart]);
+						samples[i] = (1 - fracpart) * (*myWtEditor->getBankWavetable()->getNaiveTable(myWtEditor->getWtPos()))[intpart] + fracpart * ((*myWtEditor->getBankWavetable()->getNaiveTable(myWtEditor->getWtPos()))[((intpart + 1) < C_WAVE_TABLE_SIZE - 1) ? static_cast<std::vector<float, std::allocator<float>>::size_type>(intpart) + 1 : intpart]);
 					}
 					wt->setNaiveTable(myWtEditor->getWtPos(), samples, false, myProcessor->getWTmode());
 					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->setWavetableSoftFade(wt);

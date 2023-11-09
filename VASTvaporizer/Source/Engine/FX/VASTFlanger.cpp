@@ -125,7 +125,7 @@ void CVASTFlanger::updateTiming() {
 
 void CVASTFlanger::parameterChanged(const String& parameterID, float newValue) {
 	if (parameterID.startsWith("m_bFlangerOnOff")) {
-		if (newValue == SWITCH::SWITCH_ON)
+		if (newValue == static_cast<int>(SWITCH::SWITCH_ON))
 			switchOn();
 		else
 			switchOff();
@@ -166,7 +166,7 @@ void CVASTFlanger::parameterChanged(const String& parameterID, float newValue) {
 }
 
 void CVASTFlanger::updateLFOFreq() {
-	if (*m_bFlangerSynch == SWITCH::SWITCH_OFF) {
+	if (*m_bFlangerSynch == static_cast<int>(SWITCH::SWITCH_OFF)) {
 		m_fFlangerLFOFreq_smoothed.setTargetValue(*m_fFlangerLFOFreq); //  *m_fTimeMod;
 	}
 	else { //bpm synch
@@ -261,7 +261,7 @@ void CVASTFlanger::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessa
 
 		inputState = ((VASTAudioProcessor*)my_processor)->m_pVASTXperience.m_Poly.getOldestNotePlayedInputState(currentFrameOSAdjusted); // make parameter oldest or newest
 
-		if (*m_bFlangerSynch == SWITCH::SWITCH_OFF)
+		if (*m_bFlangerSynch == static_cast<int>(SWITCH::SWITCH_OFF))
 			m_fFlangerLFOFreq_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fFlangerLFOFreq, MODMATDEST::FlangerLFOFrequency, &inputState));
 		if (m_fFlangerLFOFreq_smoothed.isSmoothing()) {
 			m_LFO.startLFOFrequency(m_fFlangerLFOFreq_smoothed.getNextValue(), -1);

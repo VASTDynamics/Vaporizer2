@@ -29,7 +29,7 @@ public:
 	/** Destructor. */
 	~VASTConcertinaPanel();
 
-	void paint(Graphics& g) override {		
+	void paint(Graphics& ) override {		
 	};
 
 	void addVASTPanels(Component* firstComponent, Component* secondComponent, int maxSizeFirst, int maxSizeSecond, float firstPercentage, bool firstCollapsable, bool secondCollapsable, bool allowInbetweenSizes);

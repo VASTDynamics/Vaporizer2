@@ -277,19 +277,19 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
 	if (m_Set.m_dPpqBpm != bpm) {
 		DBG("BPM changed! Now: " << bpm);
 		m_Set.m_dPpqBpm = bpm;
-		if (*m_Set.m_State->m_bLFOSynch_LFO1 == SWITCH::SWITCH_ON) {
+		if (*m_Set.m_State->m_bLFOSynch_LFO1 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			m_Poly.updateLFO(0);
 		}
-		if (*m_Set.m_State->m_bLFOSynch_LFO2 == SWITCH::SWITCH_ON) {
+		if (*m_Set.m_State->m_bLFOSynch_LFO2 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			m_Poly.updateLFO(1);
 		}
-		if (*m_Set.m_State->m_bLFOSynch_LFO3 == SWITCH::SWITCH_ON) {
+		if (*m_Set.m_State->m_bLFOSynch_LFO3 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			m_Poly.updateLFO(2);
 		}
-		if (*m_Set.m_State->m_bLFOSynch_LFO4 == SWITCH::SWITCH_ON) {
+		if (*m_Set.m_State->m_bLFOSynch_LFO4 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			m_Poly.updateLFO(4);
 		}
-		if (*m_Set.m_State->m_bLFOSynch_LFO5 == SWITCH::SWITCH_ON) {
+		if (*m_Set.m_State->m_bLFOSynch_LFO5 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			m_Poly.updateLFO(5);
 		}
 		m_fxBus1.updateTiming();
@@ -308,7 +308,7 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
 			else if (mseg == 3) { synch = *m_Set.m_State->m_bMSEGSynch_MSEG4; }
 			else if (mseg == 4) { synch = *m_Set.m_State->m_bMSEGSynch_MSEG5; }
 
-			if (synch == SWITCH::SWITCH_ON) {
+			if (synch == static_cast<int>(SWITCH::SWITCH_ON)) {
 				m_Set.m_MSEGData[mseg].setSynch(true);
 				m_Set.m_MSEGData_changed[mseg].setSynch(true);
 				m_Set.m_MSEGData[mseg].setAttackSteps(m_Set.m_MSEGData[mseg].getAttackSteps(), &m_Set);
@@ -326,17 +326,17 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
 
 		//if (m_Set.m_bPpqIsPlaying) {
 		float l_fIntervalTime = 0.f;
-		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ1 == SWITCH::SWITCH_ON) {
+		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ1 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			l_fIntervalTime = m_Set.getIntervalTimeFromDAWBeats(*m_Set.m_State->m_uStepSeqTimeBeats_STEPSEQ1);
 			m_Set.m_StepSeqData[0].setStepSeqTime(l_fIntervalTime); //is in ms
 			m_Set.m_StepSeqData_changed[0].setStepSeqTime(l_fIntervalTime); //is in ms
 		}
-		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ2 == SWITCH::SWITCH_ON) {
+		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ2 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			l_fIntervalTime = m_Set.getIntervalTimeFromDAWBeats(*m_Set.m_State->m_uStepSeqTimeBeats_STEPSEQ2);
 			m_Set.m_StepSeqData[1].setStepSeqTime(l_fIntervalTime); //is in ms
 			m_Set.m_StepSeqData_changed[1].setStepSeqTime(l_fIntervalTime); //is in ms
 		}
-		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ3 == SWITCH::SWITCH_ON) {
+		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ3 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			l_fIntervalTime = m_Set.getIntervalTimeFromDAWBeats(*m_Set.m_State->m_uStepSeqTimeBeats_STEPSEQ3);
 			m_Set.m_StepSeqData[2].setStepSeqTime(l_fIntervalTime); //is in ms
 			m_Set.m_StepSeqData_changed[2].setStepSeqTime(l_fIntervalTime); //is in ms
@@ -374,7 +374,7 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
 	//Hardcore check
 	if ((m_bLastChainBufferZero) && (m_iFadeOutSamples == 0) && (m_iFadeInSamples == 0) &&
 		(midiMessages.isEmpty() && (m_Poly.getSynthesizer()->getNumMidiNotesKeyDown() == 0) && (!m_Poly.voicesMSEGStillActive()) &&
-		((*m_Set.m_State->m_bARPOnOff == SWITCH::SWITCH_OFF) || (m_Poly.m_ARP_midiInNotes.size() == 0))
+		((*m_Set.m_State->m_bARPOnOff == static_cast<int>(SWITCH::SWITCH_OFF)) || (m_Poly.m_ARP_midiInNotes.size() == 0))
 			)) {
 
 		for (int bank = 0; bank < 4; bank++)
@@ -405,80 +405,80 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
 
 	//MSEG is used?
 	m_Set.m_RoutingBuffers.msegUsed[0].store((m_Set.modMatrixSourceSetFast(MODMATSRCE::MSEG1Env) ||
-		((*m_Set.m_State->m_uVCAEnv_OscA == MSEGENV::MSEG1) && (*m_Set.m_State->m_bOscOnOff_OscA == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCAEnv_OscB == MSEGENV::MSEG1) && (*m_Set.m_State->m_bOscOnOff_OscB == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCAEnv_OscC == MSEGENV::MSEG1) && (*m_Set.m_State->m_bOscOnOff_OscC == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCAEnv_OscD == MSEGENV::MSEG1) && (*m_Set.m_State->m_bOscOnOff_OscD == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCAEnv_Noise == MSEGENV::MSEG1) && (*m_Set.m_State->m_bNoiseOnOff == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCAEnv_Sampler == MSEGENV::MSEG1) && (*m_Set.m_State->m_bSamplerOnOff == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCFEnv_Filter1 == MSEGENV::MSEG1) && (*m_Set.m_State->m_bOnOff_Filter1 == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCFEnv_Filter2 == MSEGENV::MSEG1) && (*m_Set.m_State->m_bOnOff_Filter2 == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCFEnv_Filter3 == MSEGENV::MSEG1) && (*m_Set.m_State->m_bOnOff_Filter3 == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO1 == MSEGLFOENV::MSEGLFO1) && (m_Set.m_RoutingBuffers.lfoUsed[0].load() == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO2 == MSEGLFOENV::MSEGLFO1) && (m_Set.m_RoutingBuffers.lfoUsed[1].load() == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO3 == MSEGLFOENV::MSEGLFO1) && (m_Set.m_RoutingBuffers.lfoUsed[2].load() == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO4 == MSEGLFOENV::MSEGLFO1) && (m_Set.m_RoutingBuffers.lfoUsed[3].load() == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO5 == MSEGLFOENV::MSEGLFO1) && (m_Set.m_RoutingBuffers.lfoUsed[4].load() == true))));
+		((*m_Set.m_State->m_uVCAEnv_OscA == static_cast<int>(MSEGENV::MSEG1)) && (*m_Set.m_State->m_bOscOnOff_OscA == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCAEnv_OscB == static_cast<int>(MSEGENV::MSEG1)) && (*m_Set.m_State->m_bOscOnOff_OscB == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCAEnv_OscC == static_cast<int>(MSEGENV::MSEG1)) && (*m_Set.m_State->m_bOscOnOff_OscC == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCAEnv_OscD == static_cast<int>(MSEGENV::MSEG1)) && (*m_Set.m_State->m_bOscOnOff_OscD == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCAEnv_Noise == static_cast<int>(MSEGENV::MSEG1)) && (*m_Set.m_State->m_bNoiseOnOff == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCAEnv_Sampler == static_cast<int>(MSEGENV::MSEG1)) && (*m_Set.m_State->m_bSamplerOnOff == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCFEnv_Filter1 == static_cast<int>(MSEGENV::MSEG1)) && (*m_Set.m_State->m_bOnOff_Filter1 == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCFEnv_Filter2 == static_cast<int>(MSEGENV::MSEG1)) && (*m_Set.m_State->m_bOnOff_Filter2 == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCFEnv_Filter3 == static_cast<int>(MSEGENV::MSEG1)) && (*m_Set.m_State->m_bOnOff_Filter3 == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO1 == static_cast<int>(MSEGLFOENV::MSEGLFO1)) && (m_Set.m_RoutingBuffers.lfoUsed[0].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO2 == static_cast<int>(MSEGLFOENV::MSEGLFO1)) && (m_Set.m_RoutingBuffers.lfoUsed[1].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO3 == static_cast<int>(MSEGLFOENV::MSEGLFO1)) && (m_Set.m_RoutingBuffers.lfoUsed[2].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO4 == static_cast<int>(MSEGLFOENV::MSEGLFO1)) && (m_Set.m_RoutingBuffers.lfoUsed[3].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO5 == static_cast<int>(MSEGLFOENV::MSEGLFO1)) && (m_Set.m_RoutingBuffers.lfoUsed[4].load() == true))));
 	m_Set.m_RoutingBuffers.msegUsed[1] = (m_Set.modMatrixSourceSetFast(MODMATSRCE::MSEG2Env) ||
-		((*m_Set.m_State->m_uVCAEnv_OscA == MSEGENV::MSEG2) && (*m_Set.m_State->m_bOscOnOff_OscA == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCAEnv_OscB == MSEGENV::MSEG2) && (*m_Set.m_State->m_bOscOnOff_OscB == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCAEnv_OscC == MSEGENV::MSEG2) && (*m_Set.m_State->m_bOscOnOff_OscC == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCAEnv_OscD == MSEGENV::MSEG2) && (*m_Set.m_State->m_bOscOnOff_OscD == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCAEnv_Noise == MSEGENV::MSEG2) && (*m_Set.m_State->m_bNoiseOnOff == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCAEnv_Sampler == MSEGENV::MSEG2) && (*m_Set.m_State->m_bSamplerOnOff == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCFEnv_Filter1 == MSEGENV::MSEG2) && (*m_Set.m_State->m_bOnOff_Filter1 == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCFEnv_Filter2 == MSEGENV::MSEG2) && (*m_Set.m_State->m_bOnOff_Filter2 == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCFEnv_Filter3 == MSEGENV::MSEG2) && (*m_Set.m_State->m_bOnOff_Filter3 == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO1 == MSEGLFOENV::MSEGLFO2) && (m_Set.m_RoutingBuffers.lfoUsed[0].load() == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO2 == MSEGLFOENV::MSEGLFO2) && (m_Set.m_RoutingBuffers.lfoUsed[1].load() == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO3 == MSEGLFOENV::MSEGLFO2) && (m_Set.m_RoutingBuffers.lfoUsed[2].load() == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO4 == MSEGLFOENV::MSEGLFO2) && (m_Set.m_RoutingBuffers.lfoUsed[3].load() == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO5 == MSEGLFOENV::MSEGLFO2) && (m_Set.m_RoutingBuffers.lfoUsed[4].load() == true)));
+		((*m_Set.m_State->m_uVCAEnv_OscA == static_cast<int>(MSEGENV::MSEG2)) && (*m_Set.m_State->m_bOscOnOff_OscA == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCAEnv_OscB == static_cast<int>(MSEGENV::MSEG2)) && (*m_Set.m_State->m_bOscOnOff_OscB == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCAEnv_OscC == static_cast<int>(MSEGENV::MSEG2)) && (*m_Set.m_State->m_bOscOnOff_OscC == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCAEnv_OscD == static_cast<int>(MSEGENV::MSEG2)) && (*m_Set.m_State->m_bOscOnOff_OscD == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCAEnv_Noise == static_cast<int>(MSEGENV::MSEG2)) && (*m_Set.m_State->m_bNoiseOnOff == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCAEnv_Sampler == static_cast<int>(MSEGENV::MSEG2)) && (*m_Set.m_State->m_bSamplerOnOff == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCFEnv_Filter1 == static_cast<int>(MSEGENV::MSEG2)) && (*m_Set.m_State->m_bOnOff_Filter1 == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCFEnv_Filter2 == static_cast<int>(MSEGENV::MSEG2)) && (*m_Set.m_State->m_bOnOff_Filter2 == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCFEnv_Filter3 == static_cast<int>(MSEGENV::MSEG2)) && (*m_Set.m_State->m_bOnOff_Filter3 == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO1 == static_cast<int>(MSEGLFOENV::MSEGLFO2)) && (m_Set.m_RoutingBuffers.lfoUsed[0].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO2 == static_cast<int>(MSEGLFOENV::MSEGLFO2)) && (m_Set.m_RoutingBuffers.lfoUsed[1].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO3 == static_cast<int>(MSEGLFOENV::MSEGLFO2)) && (m_Set.m_RoutingBuffers.lfoUsed[2].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO4 == static_cast<int>(MSEGLFOENV::MSEGLFO2)) && (m_Set.m_RoutingBuffers.lfoUsed[3].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO5 == static_cast<int>(MSEGLFOENV::MSEGLFO2)) && (m_Set.m_RoutingBuffers.lfoUsed[4].load() == true)));
 	m_Set.m_RoutingBuffers.msegUsed[2].store((m_Set.modMatrixSourceSetFast(MODMATSRCE::MSEG3Env) ||
-		((*m_Set.m_State->m_uVCAEnv_OscA == MSEGENV::MSEG3) && (*m_Set.m_State->m_bOscOnOff_OscA == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCAEnv_OscB == MSEGENV::MSEG3) && (*m_Set.m_State->m_bOscOnOff_OscB == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCAEnv_OscC == MSEGENV::MSEG3) && (*m_Set.m_State->m_bOscOnOff_OscC == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCAEnv_OscD == MSEGENV::MSEG3) && (*m_Set.m_State->m_bOscOnOff_OscD == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCAEnv_Noise == MSEGENV::MSEG3) && (*m_Set.m_State->m_bNoiseOnOff == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCAEnv_Sampler == MSEGENV::MSEG3) && (*m_Set.m_State->m_bSamplerOnOff == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCFEnv_Filter1 == MSEGENV::MSEG3) && (*m_Set.m_State->m_bOnOff_Filter1 == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCFEnv_Filter2 == MSEGENV::MSEG3) && (*m_Set.m_State->m_bOnOff_Filter2 == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCFEnv_Filter3 == MSEGENV::MSEG3) && (*m_Set.m_State->m_bOnOff_Filter3 == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO1 == MSEGLFOENV::MSEGLFO3) && (m_Set.m_RoutingBuffers.lfoUsed[0].load() == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO2 == MSEGLFOENV::MSEGLFO3) && (m_Set.m_RoutingBuffers.lfoUsed[1].load() == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO3 == MSEGLFOENV::MSEGLFO3) && (m_Set.m_RoutingBuffers.lfoUsed[2].load() == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO4 == MSEGLFOENV::MSEGLFO3) && (m_Set.m_RoutingBuffers.lfoUsed[3].load() == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO5 == MSEGLFOENV::MSEGLFO3) && (m_Set.m_RoutingBuffers.lfoUsed[4].load() == true))));
+		((*m_Set.m_State->m_uVCAEnv_OscA == static_cast<int>(MSEGENV::MSEG3)) && (*m_Set.m_State->m_bOscOnOff_OscA == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCAEnv_OscB == static_cast<int>(MSEGENV::MSEG3)) && (*m_Set.m_State->m_bOscOnOff_OscB == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCAEnv_OscC == static_cast<int>(MSEGENV::MSEG3)) && (*m_Set.m_State->m_bOscOnOff_OscC == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCAEnv_OscD == static_cast<int>(MSEGENV::MSEG3)) && (*m_Set.m_State->m_bOscOnOff_OscD == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCAEnv_Noise == static_cast<int>(MSEGENV::MSEG3)) && (*m_Set.m_State->m_bNoiseOnOff == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCAEnv_Sampler == static_cast<int>(MSEGENV::MSEG3)) && (*m_Set.m_State->m_bSamplerOnOff == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCFEnv_Filter1 == static_cast<int>(MSEGENV::MSEG3)) && (*m_Set.m_State->m_bOnOff_Filter1 == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCFEnv_Filter2 == static_cast<int>(MSEGENV::MSEG3)) && (*m_Set.m_State->m_bOnOff_Filter2 == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCFEnv_Filter3 == static_cast<int>(MSEGENV::MSEG3)) && (*m_Set.m_State->m_bOnOff_Filter3 == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO1 == static_cast<int>(MSEGLFOENV::MSEGLFO3)) && (m_Set.m_RoutingBuffers.lfoUsed[0].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO2 == static_cast<int>(MSEGLFOENV::MSEGLFO3)) && (m_Set.m_RoutingBuffers.lfoUsed[1].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO3 == static_cast<int>(MSEGLFOENV::MSEGLFO3)) && (m_Set.m_RoutingBuffers.lfoUsed[2].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO4 == static_cast<int>(MSEGLFOENV::MSEGLFO3)) && (m_Set.m_RoutingBuffers.lfoUsed[3].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO5 == static_cast<int>(MSEGLFOENV::MSEGLFO3)) && (m_Set.m_RoutingBuffers.lfoUsed[4].load() == true))));
 	m_Set.m_RoutingBuffers.msegUsed[3].store((m_Set.modMatrixSourceSetFast(MODMATSRCE::MSEG4Env) ||
-		((*m_Set.m_State->m_uVCAEnv_OscA == MSEGENV::MSEG4) && (*m_Set.m_State->m_bOscOnOff_OscA == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCAEnv_OscB == MSEGENV::MSEG4) && (*m_Set.m_State->m_bOscOnOff_OscB == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCAEnv_OscC == MSEGENV::MSEG4) && (*m_Set.m_State->m_bOscOnOff_OscC == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCAEnv_OscD == MSEGENV::MSEG4) && (*m_Set.m_State->m_bOscOnOff_OscD == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCAEnv_Noise == MSEGENV::MSEG4) && (*m_Set.m_State->m_bNoiseOnOff == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCAEnv_Sampler == MSEGENV::MSEG4) && (*m_Set.m_State->m_bSamplerOnOff == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCFEnv_Filter1 == MSEGENV::MSEG4) && (*m_Set.m_State->m_bOnOff_Filter1 == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCFEnv_Filter2 == MSEGENV::MSEG4) && (*m_Set.m_State->m_bOnOff_Filter2 == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCFEnv_Filter3 == MSEGENV::MSEG4) && (*m_Set.m_State->m_bOnOff_Filter3 == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO1 == MSEGLFOENV::MSEGLFO4) && (m_Set.m_RoutingBuffers.lfoUsed[0].load() == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO2 == MSEGLFOENV::MSEGLFO4) && (m_Set.m_RoutingBuffers.lfoUsed[1].load() == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO3 == MSEGLFOENV::MSEGLFO4) && (m_Set.m_RoutingBuffers.lfoUsed[2].load() == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO4 == MSEGLFOENV::MSEGLFO4) && (m_Set.m_RoutingBuffers.lfoUsed[3].load() == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO5 == MSEGLFOENV::MSEGLFO4) && (m_Set.m_RoutingBuffers.lfoUsed[4].load() == true))));
+		((*m_Set.m_State->m_uVCAEnv_OscA == static_cast<int>(MSEGENV::MSEG4)) && (*m_Set.m_State->m_bOscOnOff_OscA == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCAEnv_OscB == static_cast<int>(MSEGENV::MSEG4)) && (*m_Set.m_State->m_bOscOnOff_OscB == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCAEnv_OscC == static_cast<int>(MSEGENV::MSEG4)) && (*m_Set.m_State->m_bOscOnOff_OscC == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCAEnv_OscD == static_cast<int>(MSEGENV::MSEG4)) && (*m_Set.m_State->m_bOscOnOff_OscD == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCAEnv_Noise == static_cast<int>(MSEGENV::MSEG4)) && (*m_Set.m_State->m_bNoiseOnOff == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCAEnv_Sampler == static_cast<int>(MSEGENV::MSEG4)) && (*m_Set.m_State->m_bSamplerOnOff == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCFEnv_Filter1 == static_cast<int>(MSEGENV::MSEG4)) && (*m_Set.m_State->m_bOnOff_Filter1 == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCFEnv_Filter2 == static_cast<int>(MSEGENV::MSEG4)) && (*m_Set.m_State->m_bOnOff_Filter2 == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCFEnv_Filter3 == static_cast<int>(MSEGENV::MSEG4)) && (*m_Set.m_State->m_bOnOff_Filter3 == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO1 == static_cast<int>(MSEGLFOENV::MSEGLFO4)) && (m_Set.m_RoutingBuffers.lfoUsed[0].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO2 == static_cast<int>(MSEGLFOENV::MSEGLFO4)) && (m_Set.m_RoutingBuffers.lfoUsed[1].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO3 == static_cast<int>(MSEGLFOENV::MSEGLFO4)) && (m_Set.m_RoutingBuffers.lfoUsed[2].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO4 == static_cast<int>(MSEGLFOENV::MSEGLFO4)) && (m_Set.m_RoutingBuffers.lfoUsed[3].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO5 == static_cast<int>(MSEGLFOENV::MSEGLFO4)) && (m_Set.m_RoutingBuffers.lfoUsed[4].load() == true))));
 	m_Set.m_RoutingBuffers.msegUsed[4].store((m_Set.modMatrixSourceSetFast(MODMATSRCE::MSEG5Env) ||
-		((*m_Set.m_State->m_uVCAEnv_OscA == MSEGENV::MSEG5) && (*m_Set.m_State->m_bOscOnOff_OscA == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCAEnv_OscB == MSEGENV::MSEG5) && (*m_Set.m_State->m_bOscOnOff_OscB == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCAEnv_OscC == MSEGENV::MSEG5) && (*m_Set.m_State->m_bOscOnOff_OscC == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCAEnv_OscD == MSEGENV::MSEG5) && (*m_Set.m_State->m_bOscOnOff_OscD == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCAEnv_Noise == MSEGENV::MSEG5) && (*m_Set.m_State->m_bNoiseOnOff == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCAEnv_Sampler == MSEGENV::MSEG5) && (*m_Set.m_State->m_bSamplerOnOff == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCFEnv_Filter1 == MSEGENV::MSEG5) && (*m_Set.m_State->m_bOnOff_Filter1 == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCFEnv_Filter2 == MSEGENV::MSEG5) && (*m_Set.m_State->m_bOnOff_Filter2 == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uVCFEnv_Filter3 == MSEGENV::MSEG5) && (*m_Set.m_State->m_bOnOff_Filter3 == SWITCH::SWITCH_ON)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO1 == MSEGLFOENV::MSEGLFO5) && (m_Set.m_RoutingBuffers.lfoUsed[0].load() == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO2 == MSEGLFOENV::MSEGLFO5) && (m_Set.m_RoutingBuffers.lfoUsed[1].load() == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO3 == MSEGLFOENV::MSEGLFO5) && (m_Set.m_RoutingBuffers.lfoUsed[2].load() == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO4 == MSEGLFOENV::MSEGLFO5) && (m_Set.m_RoutingBuffers.lfoUsed[3].load() == true)) ||
-		((*m_Set.m_State->m_uLFOMSEG_LFO5 == MSEGLFOENV::MSEGLFO5) && (m_Set.m_RoutingBuffers.lfoUsed[4].load() == true))));
+		((*m_Set.m_State->m_uVCAEnv_OscA == static_cast<int>(MSEGENV::MSEG5)) && (*m_Set.m_State->m_bOscOnOff_OscA == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCAEnv_OscB == static_cast<int>(MSEGENV::MSEG5)) && (*m_Set.m_State->m_bOscOnOff_OscB == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCAEnv_OscC == static_cast<int>(MSEGENV::MSEG5)) && (*m_Set.m_State->m_bOscOnOff_OscC == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCAEnv_OscD == static_cast<int>(MSEGENV::MSEG5)) && (*m_Set.m_State->m_bOscOnOff_OscD == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCAEnv_Noise == static_cast<int>(MSEGENV::MSEG5)) && (*m_Set.m_State->m_bNoiseOnOff == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCAEnv_Sampler == static_cast<int>(MSEGENV::MSEG5)) && (*m_Set.m_State->m_bSamplerOnOff == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCFEnv_Filter1 == static_cast<int>(MSEGENV::MSEG5)) && (*m_Set.m_State->m_bOnOff_Filter1 == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCFEnv_Filter2 == static_cast<int>(MSEGENV::MSEG5)) && (*m_Set.m_State->m_bOnOff_Filter2 == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uVCFEnv_Filter3 == static_cast<int>(MSEGENV::MSEG5)) && (*m_Set.m_State->m_bOnOff_Filter3 == static_cast<int>(SWITCH::SWITCH_ON))) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO1 == static_cast<int>(MSEGLFOENV::MSEGLFO5)) && (m_Set.m_RoutingBuffers.lfoUsed[0].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO2 == static_cast<int>(MSEGLFOENV::MSEGLFO5)) && (m_Set.m_RoutingBuffers.lfoUsed[1].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO3 == static_cast<int>(MSEGLFOENV::MSEGLFO5)) && (m_Set.m_RoutingBuffers.lfoUsed[2].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO4 == static_cast<int>(MSEGLFOENV::MSEGLFO5)) && (m_Set.m_RoutingBuffers.lfoUsed[3].load() == true)) ||
+		((*m_Set.m_State->m_uLFOMSEG_LFO5 == static_cast<int>(MSEGLFOENV::MSEGLFO5)) && (m_Set.m_RoutingBuffers.lfoUsed[4].load() == true))));
 
 	m_Set.m_RoutingBuffers.stepSeqUsed[0].store(m_Set.modMatrixSourceSetFast(MODMATSRCE::StepSeq1));
 	m_Set.m_RoutingBuffers.stepSeqUsed[1].store(m_Set.modMatrixSourceSetFast(MODMATSRCE::StepSeq2));
@@ -528,65 +528,65 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
 	//Master Volume
 	//Fill output buffer	
 	//do routing
-	if ((*m_Set.m_State->m_uOscRouting1_OscA == OSCROUTE::OSCROUTE_Master) || (*m_Set.m_State->m_uOscRouting2_OscA == OSCROUTE::OSCROUTE_Master)) {
+	if ((*m_Set.m_State->m_uOscRouting1_OscA == static_cast<int>(OSCROUTE::OSCROUTE_Master)) || (*m_Set.m_State->m_uOscRouting2_OscA == static_cast<int>(OSCROUTE::OSCROUTE_Master))) {
 		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.OscBuffer[0]->getReadPointer(0, 0), numFrames); //gain??
 		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.OscBuffer[0]->getReadPointer(1, 0), numFrames); //gain??
 	}
-	if ((*m_Set.m_State->m_uOscRouting1_OscB == OSCROUTE::OSCROUTE_Master) || (*m_Set.m_State->m_uOscRouting2_OscB == OSCROUTE::OSCROUTE_Master)) {
+	if ((*m_Set.m_State->m_uOscRouting1_OscB == static_cast<int>(OSCROUTE::OSCROUTE_Master)) || (*m_Set.m_State->m_uOscRouting2_OscB == static_cast<int>(OSCROUTE::OSCROUTE_Master))) {
 		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.OscBuffer[1]->getReadPointer(0, 0), numFrames); //gain??
 		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.OscBuffer[1]->getReadPointer(1, 0), numFrames); //gain??
 	}
-	if ((*m_Set.m_State->m_uOscRouting1_OscC == OSCROUTE::OSCROUTE_Master) || (*m_Set.m_State->m_uOscRouting2_OscC == OSCROUTE::OSCROUTE_Master)) {
+	if ((*m_Set.m_State->m_uOscRouting1_OscC == static_cast<int>(OSCROUTE::OSCROUTE_Master)) || (*m_Set.m_State->m_uOscRouting2_OscC == static_cast<int>(OSCROUTE::OSCROUTE_Master))) {
 		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.OscBuffer[2]->getReadPointer(0, 0), numFrames); //gain??
 		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.OscBuffer[2]->getReadPointer(1, 0), numFrames); //gain??
 	}
-	if ((*m_Set.m_State->m_uOscRouting1_OscD == OSCROUTE::OSCROUTE_Master) || (*m_Set.m_State->m_uOscRouting2_OscD == OSCROUTE::OSCROUTE_Master)) {
+	if ((*m_Set.m_State->m_uOscRouting1_OscD == static_cast<int>(OSCROUTE::OSCROUTE_Master)) || (*m_Set.m_State->m_uOscRouting2_OscD == static_cast<int>(OSCROUTE::OSCROUTE_Master))) {
 		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.OscBuffer[3]->getReadPointer(0, 0), numFrames); //gain??
 		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.OscBuffer[3]->getReadPointer(1, 0), numFrames); //gain??
 	}
-	if ((*m_Set.m_State->m_uNoiseRouting1 == OSCROUTE::OSCROUTE_Master) || (*m_Set.m_State->m_uNoiseRouting2 == OSCROUTE::OSCROUTE_Master)) {
+	if ((*m_Set.m_State->m_uNoiseRouting1 == static_cast<int>(OSCROUTE::OSCROUTE_Master)) || (*m_Set.m_State->m_uNoiseRouting2 == static_cast<int>(OSCROUTE::OSCROUTE_Master))) {
 		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.NoiseBuffer->getReadPointer(0, 0), numFrames); //gain??
 		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.NoiseBuffer->getReadPointer(1, 0), numFrames); //gain??
 	}
-	if ((*m_Set.m_State->m_uSamplerRouting1 == OSCROUTE::OSCROUTE_Master) || (*m_Set.m_State->m_uSamplerRouting2 == OSCROUTE::OSCROUTE_Master)) {
+	if ((*m_Set.m_State->m_uSamplerRouting1 == static_cast<int>(OSCROUTE::OSCROUTE_Master)) || (*m_Set.m_State->m_uSamplerRouting2 == static_cast<int>(OSCROUTE::OSCROUTE_Master))) {
 		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.SamplerBuffer->getReadPointer(0, 0), numFrames); //gain??
 		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.SamplerBuffer->getReadPointer(1, 0), numFrames); //gain??
 	}
 	//filter
-	if (*m_Set.m_State->m_uFilterRouting_Filter1 == FILTER1ROUTE::FILTER1ROUTE_Master) {
+	if (*m_Set.m_State->m_uFilterRouting_Filter1 == static_cast<int>(FILTER1ROUTE::FILTER1ROUTE_Master)) {
 		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.FilterBuffer[0]->getReadPointer(0, 0), numFrames); //gain??
 		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.FilterBuffer[0]->getReadPointer(1, 0), numFrames); //gain??
 	}
-	if (*m_Set.m_State->m_uFilterRouting2_Filter1 == FILTER1ROUTE::FILTER1ROUTE_Master) {
+	if (*m_Set.m_State->m_uFilterRouting2_Filter1 == static_cast<int>(FILTER1ROUTE::FILTER1ROUTE_Master)) {
 		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.FilterBuffer[0]->getReadPointer(0, 0), numFrames); //gain??
 		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.FilterBuffer[0]->getReadPointer(1, 0), numFrames); //gain??
 	}
-	if (*m_Set.m_State->m_uFilterRouting_Filter2 == FILTER2ROUTE::FILTER2ROUTE_Master) {
+	if (*m_Set.m_State->m_uFilterRouting_Filter2 == static_cast<int>(FILTER2ROUTE::FILTER2ROUTE_Master)) {
 		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.FilterBuffer[1]->getReadPointer(0, 0), numFrames); //gain??
 		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.FilterBuffer[1]->getReadPointer(1, 0), numFrames); //gain??
 	}
-	if (*m_Set.m_State->m_uFilterRouting2_Filter2 == FILTER2ROUTE::FILTER2ROUTE_Master) {
+	if (*m_Set.m_State->m_uFilterRouting2_Filter2 == static_cast<int>(FILTER2ROUTE::FILTER2ROUTE_Master)) {
 		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.FilterBuffer[1]->getReadPointer(0, 0), numFrames); //gain??
 		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.FilterBuffer[1]->getReadPointer(1, 0), numFrames); //gain??
 	}
-	if (*m_Set.m_State->m_uFilterRouting_Filter3 == FILTER3ROUTE::FILTER3ROUTE_Master) {
+	if (*m_Set.m_State->m_uFilterRouting_Filter3 == static_cast<int>(FILTER3ROUTE::FILTER3ROUTE_Master)) {
 		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.FilterBuffer[2]->getReadPointer(0, 0), numFrames); //gain??
 		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.FilterBuffer[2]->getReadPointer(1, 0), numFrames); //gain??
 	}
-	if (*m_Set.m_State->m_uFilterRouting2_Filter3 == FILTER3ROUTE::FILTER3ROUTE_Master) {
+	if (*m_Set.m_State->m_uFilterRouting2_Filter3 == static_cast<int>(FILTER3ROUTE::FILTER3ROUTE_Master)) {
 		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.FilterBuffer[2]->getReadPointer(0, 0), numFrames); //gain??
 		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.FilterBuffer[2]->getReadPointer(1, 0), numFrames); //gain??
 	}
 	//fxbusses
-	if (*m_Set.m_State->m_uFxBusRouting == FXBUSROUTE::FXBUSROUTE_Master) {
+	if (*m_Set.m_State->m_uFxBusRouting == static_cast<int>(FXBUSROUTE::FXBUSROUTE_Master)) {
 		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.FxBusBuffer[0]->getReadPointer(0, 0), numFrames); //gain??
 		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.FxBusBuffer[0]->getReadPointer(1, 0), numFrames); //gain??
 	}
-	if (*m_Set.m_State->m_uFxBusRouting_Bus2 == FXBUSROUTE::FXBUSROUTE_Master) {
+	if (*m_Set.m_State->m_uFxBusRouting_Bus2 == static_cast<int>(FXBUSROUTE::FXBUSROUTE_Master)) {
 		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.FxBusBuffer[1]->getReadPointer(0, 0), numFrames); //gain??
 		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.FxBusBuffer[1]->getReadPointer(1, 0), numFrames); //gain??
 	}
-	if (*m_Set.m_State->m_uFxBusRouting_Bus3 == FXBUSROUTE::FXBUSROUTE_Master) {
+	if (*m_Set.m_State->m_uFxBusRouting_Bus3 == static_cast<int>(FXBUSROUTE::FXBUSROUTE_Master)) {
 		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.FxBusBuffer[2]->getReadPointer(0, 0), numFrames); //gain??
 		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.FxBusBuffer[2]->getReadPointer(1, 0), numFrames); //gain??
 	}
@@ -685,10 +685,10 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 	// normal post procs
 
 	if (0 == parameterID.compare("m_uPolyMode")) {
-		if (*m_Set.m_State->m_uPolyMode == POLYMODE::MONO)
+		if (*m_Set.m_State->m_uPolyMode == static_cast<int>(POLYMODE::MONO))
 			m_Set.m_uMaxPoly = 1;
 		else
-			if (*m_Set.m_State->m_uPolyMode == POLYMODE::POLY4)
+			if (*m_Set.m_State->m_uPolyMode == static_cast<int>(POLYMODE::POLY4))
 				m_Set.m_uMaxPoly = 4;
 			else
 				m_Set.m_uMaxPoly = 16;
@@ -1272,7 +1272,7 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 
 	if (0 == parameterID.compare("m_bStepSeqSynch_STEPSEQ1")) {
 
-		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ1 == SWITCH::SWITCH_ON) {
+		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ1 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			float l_fIntervalTime = m_Set.getIntervalTimeFromDAWBeats(*m_Set.m_State->m_uStepSeqTimeBeats_STEPSEQ1);
 			m_Set.m_StepSeqData[0].setStepSeqTime(l_fIntervalTime); //is in ms
 			m_Set.m_StepSeqData_changed[0].setStepSeqTime(l_fIntervalTime); //is in ms
@@ -1283,16 +1283,16 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 		}
 
 		/*
-		if (*m_Set->m_State->m_bStepSeqSynch_STEPSEQ1 == SWITCH::SWITCH_ON)
+		if (*m_Set->m_State->m_bStepSeqSynch_STEPSEQ1 == static_cast<int>(SWITCH::SWITCH_ON))
 		m_Set->m_StepSeqData[0].setStepSeqTime(*m_Set->m_State->m_fStepSeqSpeed_STEPSEQ1); //is in ms
-		if (*m_Set->m_State->m_bStepSeqSynch_STEPSEQ2 == SWITCH::SWITCH_ON)
+		if (*m_Set->m_State->m_bStepSeqSynch_STEPSEQ2 == static_cast<int>(SWITCH::SWITCH_ON))
 		m_Set->m_StepSeqData[1].setStepSeqTime(*m_Set->m_State->m_fStepSeqSpeed_STEPSEQ2); //is in ms
-		if (*m_Set->m_State->m_bStepSeqSynch_STEPSEQ3 == SWITCH::SWITCH_ON)
+		if (*m_Set->m_State->m_bStepSeqSynch_STEPSEQ3 == static_cast<int>(SWITCH::SWITCH_ON))
 		m_Set->m_StepSeqData[2].setStepSeqTime(*m_Set->m_State->m_fStepSeqSpeed_STEPSEQ3); //is in ms
 		*/
 
 		/*
-		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ1 == SWITCH::SWITCH_ON) {
+		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ1 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			if (m_Set.m_dPpqBpm == 0.f) return;
 			float l_fIntervalTime = m_Set.getIntervalTimeFromDAWBeats(*m_Set.m_State->m_uStepSeqTimeBeats_STEPSEQ1);
 			//if (l_fIntervalTime < 0.1f) l_fIntervalTime = 0.1f; // minimum //CHECK
@@ -1310,7 +1310,7 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 	}
 
 	if (0 == parameterID.compare("m_bStepSeqSynch_STEPSEQ2")) {
-		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ2 == SWITCH::SWITCH_ON) {
+		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ2 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			float l_fIntervalTime = m_Set.getIntervalTimeFromDAWBeats(*m_Set.m_State->m_uStepSeqTimeBeats_STEPSEQ2);
 			m_Set.m_StepSeqData[1].setStepSeqTime(l_fIntervalTime); //is in ms
 			m_Set.m_StepSeqData_changed[1].setStepSeqTime(l_fIntervalTime); //is in ms
@@ -1323,7 +1323,7 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 
 
 		/*
-		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ2 == SWITCH::SWITCH_ON) {
+		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ2 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			if (m_Set.m_dPpqBpm == 0.f) return;
 			float l_fIntervalTime = m_Set.getIntervalTimeFromDAWBeats(*m_Set.m_State->m_uStepSeqTimeBeats_STEPSEQ2);
 			//if (l_fIntervalTime < 0.1f) l_fIntervalTime = 0.1f; // minimum //CHECK
@@ -1342,7 +1342,7 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 	}
 
 	if (0 == parameterID.compare("m_bStepSeqSynch_STEPSEQ3")) {
-		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ3 == SWITCH::SWITCH_ON) {
+		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ3 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			float l_fIntervalTime = m_Set.getIntervalTimeFromDAWBeats(*m_Set.m_State->m_uStepSeqTimeBeats_STEPSEQ3);
 			m_Set.m_StepSeqData[2].setStepSeqTime(l_fIntervalTime); //is in ms
 			m_Set.m_StepSeqData_changed[2].setStepSeqTime(l_fIntervalTime); //is in ms
@@ -1354,7 +1354,7 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 		}
 
 		/*
-		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ3 == SWITCH::SWITCH_ON) {
+		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ3 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			if (m_Set.m_dPpqBpm == 0.f) return;
 			float l_fIntervalTime = m_Set.getIntervalTimeFromDAWBeats(*m_Set.m_State->m_uStepSeqTimeBeats_STEPSEQ3);
 			//if (l_fIntervalTime < 0.1f) l_fIntervalTime = 0.1f; // minimum //CHECK
@@ -1372,7 +1372,7 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 	}
 
 	if (0 == parameterID.compare("m_fStepSeqSpeed_STEPSEQ1")) {
-		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ1 == SWITCH::SWITCH_OFF) {
+		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ1 == static_cast<int>(SWITCH::SWITCH_OFF)) {
 			m_Set.m_StepSeqData[0].setStepSeqTime(*m_Set.m_State->m_fStepSeqSpeed_STEPSEQ1); //is in ms
 			m_Set.m_StepSeqData_changed[0].setStepSeqTime(*m_Set.m_State->m_fStepSeqSpeed_STEPSEQ1); //is in ms
 		}
@@ -1380,7 +1380,7 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 	}
 
 	if (0 == parameterID.compare("m_fStepSeqSpeed_STEPSEQ2")) {
-		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ2 == SWITCH::SWITCH_OFF) {
+		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ2 == static_cast<int>(SWITCH::SWITCH_OFF)) {
 			m_Set.m_StepSeqData[1].setStepSeqTime(*m_Set.m_State->m_fStepSeqSpeed_STEPSEQ2); //is in ms
 			m_Set.m_StepSeqData_changed[1].setStepSeqTime(*m_Set.m_State->m_fStepSeqSpeed_STEPSEQ2); //is in ms
 		}
@@ -1388,7 +1388,7 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 	}
 
 	if (0 == parameterID.compare("m_fStepSeqSpeed_STEPSEQ3")) {
-		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ3 == SWITCH::SWITCH_OFF) {
+		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ3 == static_cast<int>(SWITCH::SWITCH_OFF)) {
 			m_Set.m_StepSeqData[2].setStepSeqTime(*m_Set.m_State->m_fStepSeqSpeed_STEPSEQ3); //is in ms
 			m_Set.m_StepSeqData_changed[2].setStepSeqTime(*m_Set.m_State->m_fStepSeqSpeed_STEPSEQ3); //is in ms
 		}
@@ -1396,14 +1396,14 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 	}
 
 	if (0 == parameterID.compare("m_uStepSeqTimeBeats_STEPSEQ1")) {
-		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ1 == SWITCH::SWITCH_ON) {
+		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ1 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			float l_fIntervalTime = m_Set.getIntervalTimeFromDAWBeats(*m_Set.m_State->m_uStepSeqTimeBeats_STEPSEQ1);
 			m_Set.m_StepSeqData[0].setStepSeqTime(l_fIntervalTime); //is in ms
 			m_Set.m_StepSeqData_changed[0].setStepSeqTime(l_fIntervalTime); //is in ms
 		}
 
 		/*
-		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ1 == SWITCH::SWITCH_ON) {
+		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ1 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			if (m_Set.m_dPpqBpm == 0.f) return;
 			float l_fIntervalTime = m_Set.getIntervalTimeFromDAWBeats(*m_Set.m_State->m_uStepSeqTimeBeats_STEPSEQ1);
 			//if (l_fIntervalTime < 0.1f) l_fIntervalTime = 0.1f; // minimum //CHECK
@@ -1415,14 +1415,14 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 	}
 
 	if (0 == parameterID.compare("m_uStepSeqTimeBeats_STEPSEQ2")) {
-		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ2 == SWITCH::SWITCH_ON) {
+		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ2 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			float l_fIntervalTime = m_Set.getIntervalTimeFromDAWBeats(*m_Set.m_State->m_uStepSeqTimeBeats_STEPSEQ2);
 			m_Set.m_StepSeqData[1].setStepSeqTime(l_fIntervalTime); //is in ms
 			m_Set.m_StepSeqData_changed[1].setStepSeqTime(l_fIntervalTime); //is in ms
 		}
 
 		/*
-		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ2 == SWITCH::SWITCH_ON) {
+		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ2 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			if (m_Set.m_dPpqBpm == 0.f) return;
 			float l_fIntervalTime = m_Set.getIntervalTimeFromDAWBeats(*m_Set.m_State->m_uStepSeqTimeBeats_STEPSEQ2);
 			//if (l_fIntervalTime < 0.1f) l_fIntervalTime = 0.1f; // minimum //CHECK
@@ -1434,14 +1434,14 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 	}
 
 	if (0 == parameterID.compare("m_uStepSeqTimeBeats_STEPSEQ3")) {
-		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ3 == SWITCH::SWITCH_ON) {
+		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ3 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			float l_fIntervalTime = m_Set.getIntervalTimeFromDAWBeats(*m_Set.m_State->m_uStepSeqTimeBeats_STEPSEQ3);
 			m_Set.m_StepSeqData[2].setStepSeqTime(l_fIntervalTime); //is in ms
 			m_Set.m_StepSeqData_changed[2].setStepSeqTime(l_fIntervalTime); //is in ms
 		}
 
 		/*
-		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ3 == SWITCH::SWITCH_ON) {
+		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ3 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			if (m_Set.m_dPpqBpm == 0.f) return;
 			float l_fIntervalTime = m_Set.getIntervalTimeFromDAWBeats(*m_Set.m_State->m_uStepSeqTimeBeats_STEPSEQ3);
 			//if (l_fIntervalTime < 0.1f) l_fIntervalTime = 0.1f; // minimum //CHECK

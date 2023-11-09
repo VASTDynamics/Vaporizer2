@@ -45,16 +45,16 @@ public:
 		double ppqPosition, bool isLooping, double ppqPositionOfLastBarStart, double bpm);
 
 	//VASTEffectInterface
-	void init(CVASTSettings &set) override {};
+	void init(CVASTSettings &) override {};
 	void initCompatibilityParameters() override {}; //implemented in state
 	void initCompatibilityParameters5() override {}; //new parameters go here
-	void prepareToPlay(double sampleRate, int samplesPerBlock) override {};
+	void prepareToPlay(double, int) override {};
 	void releaseResources() override {};
-	void processBlock(AudioSampleBuffer&, MidiBuffer&, const int numSamples) override {};
-	void getStateInformation(MemoryBlock& destData) override {};
-	void setStateInformation(const void* data, int sizeInBytes) override {};
+	void processBlock(AudioSampleBuffer&, MidiBuffer&, const int) override {};
+	void getStateInformation(MemoryBlock&) override {};
+	void setStateInformation(const void*, int) override {};
 	void updateTiming() override {};
-	void parameterChanged(const String& parameterID, float newValue) override;
+	void parameterChanged(const String&, float) override;
 
 	CVASTSettings m_Set;
 	VASTAudioProcessor* myProcessor;

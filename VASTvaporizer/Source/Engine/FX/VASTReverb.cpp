@@ -103,7 +103,7 @@ void CVASTReverb::initCompatibilityParameters() {
 
 void CVASTReverb::parameterChanged(const String& parameterID, float newValue) {
 	if (parameterID.startsWith("m_bReverbOnOff")) {
-		if (newValue == SWITCH::SWITCH_ON)
+		if (newValue == static_cast<int>(SWITCH::SWITCH_ON))
 			switchOn();
 		else
 			switchOff();

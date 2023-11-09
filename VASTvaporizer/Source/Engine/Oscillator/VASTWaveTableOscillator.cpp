@@ -169,10 +169,10 @@ void CVASTWaveTableOscillator::setFrequency(int unisonOsci, bool restart) {
 	float driftAmount = 0.f;
 	if (m_oscBank != nullptr) {
 		int bankNo = m_oscBank->getBankno();
-		if (((bankNo == 0) && (*m_Set->m_State->m_bExciterOnOff_OscA) == SWITCH::SWITCH_ON) ||
-			((bankNo == 1) && (*m_Set->m_State->m_bExciterOnOff_OscB) == SWITCH::SWITCH_ON) ||
-			((bankNo == 2) && (*m_Set->m_State->m_bExciterOnOff_OscC) == SWITCH::SWITCH_ON) ||
-			((bankNo == 3) && (*m_Set->m_State->m_bExciterOnOff_OscD) == SWITCH::SWITCH_ON)) {
+		if (((bankNo == 0) && (*m_Set->m_State->m_bExciterOnOff_OscA) == static_cast<int>(SWITCH::SWITCH_ON)) ||
+			((bankNo == 1) && (*m_Set->m_State->m_bExciterOnOff_OscB) == static_cast<int>(SWITCH::SWITCH_ON)) ||
+			((bankNo == 2) && (*m_Set->m_State->m_bExciterOnOff_OscC) == static_cast<int>(SWITCH::SWITCH_ON)) ||
+			((bankNo == 3) && (*m_Set->m_State->m_bExciterOnOff_OscD) == static_cast<int>(SWITCH::SWITCH_ON))) {
 			driftAmount = 1.0f;
 			m_fDriftLfo[unisonOsci] = drift_noise(m_fDriftLfo2[unisonOsci]);
 		}
@@ -572,10 +572,10 @@ void CVASTWaveTableOscillator::updateMainVariables(int samplerate, MYUINT OscTyp
 void CVASTWaveTableOscillator::resynch(int unisonOsci, bool lfo) {
 	if (!(m_bLFO == true)) 
 		if (m_oscBank != nullptr) {
-			if (((m_oscBank->getBankno() == 0) && (*m_Set->m_State->m_bOscRetrigOnOff_OscA == SWITCH::SWITCH_OFF)) ||
-				((m_oscBank->getBankno() == 1) && (*m_Set->m_State->m_bOscRetrigOnOff_OscB == SWITCH::SWITCH_OFF)) ||
-				((m_oscBank->getBankno() == 2) && (*m_Set->m_State->m_bOscRetrigOnOff_OscC == SWITCH::SWITCH_OFF)) ||
-				((m_oscBank->getBankno() == 3) && (*m_Set->m_State->m_bOscRetrigOnOff_OscD == SWITCH::SWITCH_OFF)))
+			if (((m_oscBank->getBankno() == 0) && (*m_Set->m_State->m_bOscRetrigOnOff_OscA == static_cast<int>(SWITCH::SWITCH_OFF))) ||
+				((m_oscBank->getBankno() == 1) && (*m_Set->m_State->m_bOscRetrigOnOff_OscB == static_cast<int>(SWITCH::SWITCH_OFF))) ||
+				((m_oscBank->getBankno() == 2) && (*m_Set->m_State->m_bOscRetrigOnOff_OscC == static_cast<int>(SWITCH::SWITCH_OFF))) ||
+				((m_oscBank->getBankno() == 3) && (*m_Set->m_State->m_bOscRetrigOnOff_OscD == static_cast<int>(SWITCH::SWITCH_OFF))))
 			{
 				random_retrig(unisonOsci); // in the middle random retrig it
 			}

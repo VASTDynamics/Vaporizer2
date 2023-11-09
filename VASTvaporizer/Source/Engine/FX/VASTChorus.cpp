@@ -116,7 +116,7 @@ void CVASTChorus::updateTiming() {
 
 void CVASTChorus::parameterChanged(const String& parameterID, float newValue) {
 	if (parameterID.startsWith("m_bChorusOnOff")) {
-		if (newValue == SWITCH::SWITCH_ON) {
+		if (newValue == static_cast<int>(SWITCH::SWITCH_ON)) {
 			switchOn();
 		}
 		else {
@@ -147,7 +147,7 @@ void CVASTChorus::parameterChanged(const String& parameterID, float newValue) {
 }
 
 void CVASTChorus::updateLFOFreq() {
-	if (*m_bChorusSynch == SWITCH::SWITCH_OFF) {
+	if (*m_bChorusSynch == static_cast<int>(SWITCH::SWITCH_OFF)) {
 		m_fChorusRate_hz_smoothed.setTargetValue(*m_fChorusRate_hz); //  *m_fTimeMod;
 	}
 	else { //bpm synch
@@ -215,7 +215,7 @@ void CVASTChorus::updateModules()
 
 }
 
-void CVASTChorus::prepareToPlay(double sampleRate, int samplesPerBlock) {	
+void CVASTChorus::prepareToPlay(double, int samplesPerBlock) {	
 	//m_iSampleRate is set in use oversampling
 	m_iExpectedSamplesPerBlock = samplesPerBlock;
 	m_ModDelayLeft.prepareForPlay(m_iSampleRate);
@@ -255,7 +255,7 @@ void CVASTChorus::reset() {
 void CVASTChorus::releaseResources() {
 }
 
-void CVASTChorus::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages, const int numSamples) {
+void CVASTChorus::processBlock(AudioSampleBuffer& buffer, MidiBuffer&, const int numSamples) {
 	if (isOffAndShallBeOff() == true) return;
 
 	modMatrixInputState inputState;
@@ -271,7 +271,7 @@ void CVASTChorus::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessag
 		inputState = ((VASTAudioProcessor*)my_processor)->m_pVASTXperience.m_Poly.getOldestNotePlayedInputState(currentFrameOSAdjusted); // make parameter oldest or newest
 
 		//Frequency Mod
-		if (*m_bChorusSynch == SWITCH::SWITCH_OFF)
+		if (*m_bChorusSynch == static_cast<int>(SWITCH::SWITCH_OFF))
 			m_fChorusRate_hz_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fChorusRate_hz, MODMATDEST::ChorusFrequency, &inputState));
 		bool bUpdate = false;
 		if (m_fFrequency != m_fChorusRate_hz_smoothed.getNextValue()) {
@@ -297,10 +297,8 @@ void CVASTChorus::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessag
 		if (m_fChorusRate_hz_smoothed.isSmoothing() || m_fChorusDepth_smoothed.isSmoothing() || bUpdate)
 			updateModules();
 
-		float fIn[2];
-		float fOut[2];
-		fIn[0] = bufferWritePointerL[currentFrame];
-		fIn[1] = bufferWritePointerR[currentFrame];
+		float fIn[2]{ bufferWritePointerL[currentFrame] , bufferWritePointerR[currentFrame] };
+		float fOut[2]{ 0.f,0.f };
 		
 		//do chorus
 		float fChorusOut_L = 0;
@@ -337,13 +335,13 @@ void CVASTChorus::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessag
 
 //==============================================================================
 
-void CVASTChorus::getStateInformation(MemoryBlock& destData)
+void CVASTChorus::getStateInformation(MemoryBlock&)
 {
 	//std::unique_ptr<XmlElement> xml (parameters.valueTreeState.state.createXml());
 	//copyXmlToBinary (*xml, destData);
 }
 
-void CVASTChorus::setStateInformation(const void* data, int sizeInBytes)
+void CVASTChorus::setStateInformation(const void*, int)
 {
 	//std::unique_ptr<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
 	//if (xmlState != nullptr)
