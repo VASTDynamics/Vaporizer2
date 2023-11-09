@@ -45,6 +45,16 @@ VAST Dynamics Software
     #define vassert(expression)  // do nothing
 #endif						   
 
+//portable UNUSED macro
+#ifdef UNUSED
+#elif defined(__GNUC__)
+# define UNUSED(x) UNUSED_ ## x __attribute__((unused))
+#elif defined(__LCLINT__)
+# define UNUSED(x) /*@unused@*/ x
+#else
+# define UNUSED(x) x
+#endif
+
 #include <float.h>
 //#define MAXFLOAT FLT_MAX //redefined if set here
 #ifndef _WINDOWS

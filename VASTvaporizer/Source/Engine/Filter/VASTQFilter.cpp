@@ -1352,7 +1352,7 @@ int VASTQFilter::processQFilter(dsp::AudioBlock<float> filterBlock, sRoutingBuff
 		ProcessLegacy(filterBlock, routingBuffers, numSamples, startSample, ftype, fsubtype, ftype2, fsubtype2, ftype3, fsubtype3, fws, osFactor, voices, filter, gain, drive, feedback, isUI, hasNextFilter, uiVCF, warmup);
 	} 
 	else {
-		Fbq_global g;
+		Fbq_global g{};
 		g.FU1ptr = VASTQFilter::GetQFPtrFilterUnit(ftype, fsubtype); //first filter A	
 		if (ftype2 != fut_none) //second filter B
 			g.FU2ptr = VASTQFilter::GetQFPtrFilterUnit(ftype2, fsubtype2);

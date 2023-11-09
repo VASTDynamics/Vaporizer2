@@ -169,7 +169,7 @@ void VASTManualRenameEditor::buttonClicked (juce::Button* buttonThatWasClicked)
 			lElem.internalid = newfilename;
 			myProcessor->m_presetData.exchangeCurPatchData(lElem);
 			myProcessor->savePatchXML(&presetFile);
-			bool success __unused = presetFile.moveFileTo(newfilename);
+			bool UNUSED(success) = presetFile.moveFileTo(newfilename);
 			mPresetComponent->reloadPresets();
 		}
 		getParentComponent()->exitModalState(0);

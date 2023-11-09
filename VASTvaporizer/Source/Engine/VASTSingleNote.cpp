@@ -1848,18 +1848,18 @@ void CVASTSingleNote::doWavetableBufferGet(const int bank, CVASTWaveTableOscilla
 	for (int i = startSample; i < numSamples - 1; i++) {
 		//within buffer
 		if (abs(lOscBuffer->getSample(0, i) - lOscBuffer->getSample(0, i + 1)) > l_tolerance) {
-			const float* buffer __unused = lOscBuffer->getReadPointer(0);
+			const float* UNUSED(buffer) = lOscBuffer->getReadPointer(0);
 			//DBG("Outliers!!!!!");
 		}
 		if (abs(lOscBuffer->getSample(1, i) - lOscBuffer->getSample(1, i + 1)) > l_tolerance) {
-			const float* buffer __unused = lOscBuffer->getReadPointer(1);
+			const float* UNUSED(buffer) = lOscBuffer->getReadPointer(1);
 			//DBG("Outliers!!!!!");
 		}
 	}
 	//buffer wrap
 	if (m_fLastRenderedSample[bank] != 0.f) {
 		if (abs(lOscBuffer->getSample(1, startSample) - m_fLastRenderedSample[bank]) > l_tolerance) { //right only
-			const float* buffer __unused = lOscBuffer->getReadPointer(1);
+			const float* UNUSED(buffer) = lOscBuffer->getReadPointer(1);
 			//DBG("Outlier at wrap!!!!!");
 		}
 	}

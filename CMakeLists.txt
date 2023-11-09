@@ -21,7 +21,7 @@ endif()
 
 message(STATUS "Building VAST Dynamics Vaporizer2 plugin, version ${PLUGIN_VERSION} on architecture: ${CMAKE_GENERATOR_PLATFORM} with CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
 
-#new: all targets are build with project name "Vaporizer2" compatibility with old filenames will be guaranteed by installer if needed
+#new: all targets are build with project name "VASTvaporizer2" compatibility with old filenames will be guaranteed by installer if needed
 project("VASTvaporizer2")
 message(STATUS "Project name" ${PROJECT_NAME})
 
