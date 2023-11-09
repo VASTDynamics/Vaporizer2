@@ -563,9 +563,10 @@ void CVASTFXBus::processBuffers(sRoutingBuffers& routingBuffers, MidiBuffer& mid
 						lOversampler = &m_Oversampler2;
 					else if (useOversampler == 2)
 						lOversampler = &m_Oversampler3;
-					else
-						vassertfalse;
-
+                    else {
+                        lOversampler = &m_Oversampler;
+                        vassertfalse;
+                    }
 					lOversampler->downsampleAudioBuffer4(dsp::AudioBlock<float>(*m_inBufferOversampled), dsp::AudioBlock<float>(*inBuffer), m_inBufferOversampled->getNumSamples());
 					b_upsampled = false;
 					useOversampler++;

@@ -97,19 +97,19 @@ void CVASTCombFilterEffect::parameterChanged(const String& parameterID, float ne
 	}
 
 	else if (parameterID.startsWith("m_fCombFrequOffset")) {
-		m_fCombFrequOffset_smoothed.setValue(newValue);
+		m_fCombFrequOffset_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fCombLevel")) {
-		m_fCombLevel_smoothed.setValue(newValue);
+		m_fCombLevel_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fCombDrive")) {
-		m_fCombDrive_smoothed.setValue(newValue);
+		m_fCombDrive_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fCombDryWet")) {
-		m_fCombDryWet_smoothed.setValue(newValue);
+		m_fCombDryWet_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fCombGain")) {
-		m_fCombGain_smoothed.setValue(newValue);
+		m_fCombGain_smoothed.setTargetValue(newValue);
 	}
 }
 
@@ -169,13 +169,13 @@ void CVASTCombFilterEffect::processBlock(AudioSampleBuffer& buffer, MidiBuffer& 
 
 		inputState = ((VASTAudioProcessor*)my_processor)->m_pVASTXperience.m_Poly.getOldestNotePlayedInputState(currentFrameOSAdjusted); // make parameter oldest or newest
 
-		m_fCombFrequOffset_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fCombFrequOffset, MODMATDEST::CombFrequency, &inputState));
+		m_fCombFrequOffset_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fCombFrequOffset, MODMATDEST::CombFrequency, &inputState));
 		float lFreqOffset = m_fCombFrequOffset_smoothed.getNextValue();
 
-		m_fCombDrive_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fCombDrive, MODMATDEST::CombDrive, &inputState));
+		m_fCombDrive_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fCombDrive, MODMATDEST::CombDrive, &inputState));
 		float lCombDrive = m_fCombDrive_smoothed.getNextValue();
 
-		m_fCombGain_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fCombGain, MODMATDEST::CombGain, &inputState));
+		m_fCombGain_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fCombGain, MODMATDEST::CombGain, &inputState));
 		float lCombGain = m_fCombGain_smoothed.getNextValue();
 
 		float lFreq = (lFreqOffset < 50.0f) ? 50.0f : lFreqOffset;
@@ -214,10 +214,10 @@ bool CVASTCombFilterEffect::processAudioFrame(float* pInputBuffer, float* pOutpu
 // test https://christianfloisand.wordpress.com/tag/comb-filter/
 // test http://www.cs.cf.ac.uk/Dave/CM0268/PDF/10_CM0268_Audio_FX.pdf
 	
-	m_fCombLevel_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fCombLevel, MODMATDEST::CombLevel, inputState));
+	m_fCombLevel_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fCombLevel, MODMATDEST::CombLevel, inputState));
 	float lCombLevel = m_fCombLevel_smoothed.getNextValue();
 
-	m_fCombDryWet_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fCombDryWet, MODMATDEST::CombDryWet, inputState));
+	m_fCombDryWet_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fCombDryWet, MODMATDEST::CombDryWet, inputState));
 	float lCombDryWet = m_fCombDryWet_smoothed.getNextValue();
 
 	float fbL = pInputBuffer[0] + powf(0.001, (1.0 - (lCombLevel / 101.0f))) * ynL;

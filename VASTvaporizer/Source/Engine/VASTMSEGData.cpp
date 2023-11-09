@@ -571,7 +571,7 @@ void VASTMSEGData::calcADSR() {
 
 	if (susPoint == -1) {
 		//susPoint = controlPoints.size() - 2; // prelast point
-		susPoint = controlPoints.size() - 1; // last point
+		susPoint = int(controlPoints.size()) - 1; // last point
 	}
 
 	double attackPerc = 0.0f;
@@ -821,7 +821,7 @@ void VASTMSEGData::doADSR() {
 	}
 	int lastDecayPoint = getSustainPoint();
 	if (!releasePhase) 
-		lastDecayPoint = controlPoints.size() - 1;	
+		lastDecayPoint = int(controlPoints.size()) - 1;
 	for (int i = lastAttackPoint + 1; i <= lastDecayPoint; i++) {
 		if (controlPoints[lastDecayPoint].xVal - controlPoints[lastAttackPoint].xVal)
 			controlPoints[i].xVal = newAttackPerc + ((controlPoints[i].xVal - controlPoints[lastAttackPoint].xVal) / (controlPoints[lastDecayPoint].xVal - controlPoints[lastAttackPoint].xVal)) * newDecayPerc;
@@ -829,7 +829,7 @@ void VASTMSEGData::doADSR() {
 		if (controlPoints[i].xVal < 0.f) controlPoints[i].xVal = 0.f;
 	}
 	if (releasePhase) {
-		int lastReleasePoint = controlPoints.size() - 1;
+		int lastReleasePoint = int(controlPoints.size()) - 1;
 		for (int i = lastDecayPoint + 1; i <= lastReleasePoint; i++) {
 			if (controlPoints[lastReleasePoint].xVal != controlPoints[lastDecayPoint].xVal)
 				controlPoints[i].xVal = newAttackPerc + newDecayPerc + ((controlPoints[i].xVal - controlPoints[lastDecayPoint].xVal) / (controlPoints[lastReleasePoint].xVal - controlPoints[lastDecayPoint].xVal)) * newReleasePerc;
@@ -928,7 +928,7 @@ void VASTMSEGData::stepSeqChangeGlide(float glide) {
 
 void VASTMSEGData::stepSeqChangeSteps(int steps, float glide, float gate) {
 	//const ScopedWriteLock myScopedLock(mReadWriteLock);
-	int bsize = m_ss_bars.size();
+	int bsize = int(m_ss_bars.size());
 	if (steps < bsize) {
 		//for (int i=0; i< bsize - steps; i++)
 			//keep it

@@ -548,9 +548,9 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
 
 	c_iconMaximizeEditor->addListener(this);
 
-	c_uiThemeCombo->setSelectedItemIndex(myProcessor->m_activeLookAndFeel, true); //dont send
-	c_WTmode->setSelectedItemIndex(myProcessor->getWTmode(), true); //dont send
-	c_uiFontSize->setSelectedItemIndex(myProcessor->m_uiFontSize, true); //dont send
+	c_uiThemeCombo->setSelectedItemIndex(myProcessor->m_activeLookAndFeel, NotificationType::dontSendNotification); //dont send
+	c_WTmode->setSelectedItemIndex(myProcessor->getWTmode(), NotificationType::dontSendNotification); //dont send
+	c_uiFontSize->setSelectedItemIndex(myProcessor->m_uiFontSize, NotificationType::dontSendNotification); //dont send
 
     //[/UserPreSize]
 
@@ -1021,22 +1021,22 @@ void VASTPresetEditorComponent::updateAll() {
 			break;
 		}
 
-	c_uiThemeCombo->setSelectedItemIndex(myProcessor->m_activeLookAndFeel, false); //dont send
+	c_uiThemeCombo->setSelectedItemIndex(myProcessor->m_activeLookAndFeel, NotificationType::dontSendNotification); //dont send
 	c_uiThemeCombo->repaint();
-	c_uiFontSize->setSelectedItemIndex(myProcessor->m_uiFontSize, false); //dont send
+	c_uiFontSize->setSelectedItemIndex(myProcessor->m_uiFontSize, NotificationType::dontSendNotification); //dont send
 	c_uiFontSize->repaint();
-	c_disableGFX->setToggleState(myProcessor->m_disableOpenGLGFX, false);
-	c_WTmode->setSelectedItemIndex(myProcessor->getWTmode(), false);
+	c_disableGFX->setToggleState(myProcessor->m_disableOpenGLGFX, NotificationType::dontSendNotification);
+	c_WTmode->setSelectedItemIndex(myProcessor->getWTmode(), NotificationType::dontSendNotification);
 	c_WTmode->repaint();
-    c_MPEmode->setSelectedItemIndex(myProcessor->getMPEmode(), false);
+    c_MPEmode->setSelectedItemIndex(myProcessor->getMPEmode(), NotificationType::dontSendNotification);
     c_MPEmode->repaint();
-    c_permaLink->setSelectedItemIndex(myProcessor->getModWheelPermaLink(), false);
+    c_permaLink->setSelectedItemIndex(myProcessor->getModWheelPermaLink(), NotificationType::dontSendNotification);
     c_permaLink->repaint();
 
-	c_presetAuthor->setText(myProcessor->m_presetData.getCurPatchData().authorname, false);
-	c_presetTag->setText(myProcessor->m_presetData.getCurPatchData().freetag, false);
-	c_presetComments->setText(myProcessor->m_presetData.getCurPatchData().comments, false);
-    c_presetMPE->setToggleState(myProcessor->m_presetData.getCurPatchData().mpepreset, false);
+	c_presetAuthor->setText(myProcessor->m_presetData.getCurPatchData().authorname, NotificationType::dontSendNotification);
+	c_presetTag->setText(myProcessor->m_presetData.getCurPatchData().freetag, NotificationType::dontSendNotification);
+	c_presetComments->setText(myProcessor->m_presetData.getCurPatchData().comments, NotificationType::dontSendNotification);
+    c_presetMPE->setToggleState(myProcessor->m_presetData.getCurPatchData().mpepreset, NotificationType::dontSendNotification);
     c_presetBendRange->setValue(myProcessor->m_presetData.getCurPatchData().mpebendrange, NotificationType::dontSendNotification);
 
 	c_presetFolder->setText(myProcessor->m_UserPresetRootFolder, false);

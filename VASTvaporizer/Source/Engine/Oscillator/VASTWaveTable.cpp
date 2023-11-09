@@ -1707,7 +1707,7 @@ void CVASTWaveTable::addWaveTableFreq(int wtPos, int len, std::vector<float> &wa
 
 	sWaveTableFreq wtf;
 	if (!buffer) {
-		int wtsize = wtp->waveTableFreqs.size();
+		int wtsize = int(wtp->waveTableFreqs.size());
 		int i = 0;
 		while ((i < wtsize) && (b_new)) {
 			if (wtp->waveTableFreqs[i].invalid == true) { // reassign first invalid
@@ -2379,7 +2379,7 @@ bool CVASTWaveTable::fillInterpolateBuffersRange(const bool next, sWaveTablePosi
 
 			//look in buffer
 			bool foundInBuffer = false;
-			int windex = wtp->waveTableFreqsBuffer.size();
+			int windex = int(wtp->waveTableFreqsBuffer.size());
 			if ((wtFxType > 0) && (wtp->waveTableFreqs[waveTableIdx].wtFxType == wtFxType)) {
 				while (windex > 0) {
 					windex--;

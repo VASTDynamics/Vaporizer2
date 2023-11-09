@@ -222,7 +222,7 @@ void VASTStepSeqEditor::updateContent(bool force)
 
 	float prevxPos = 0.0f;
 	float prevyPos = 0.0f;
-	int numPoints = myData->controlPoints.size();	
+	int numPoints = int(myData->controlPoints.size());	
 	Path parea;
 
 	for (int i = 0; i < numPoints; i++) {
@@ -410,8 +410,6 @@ void VASTStepSeqEditor::mouseDown(const MouseEvent & e)
 				//y value
 				float yval = myData->getStepSeqBar(numIsClicked);
 				std::unique_ptr<VASTPositionEditor> l_veditor = std::make_unique<VASTPositionEditor>(myProcessor, yval, this, false, numIsClicked); //OK will be owned by the cb
-				VASTAudioProcessorEditor* myEditor = (VASTAudioProcessorEditor*)myProcessor->getActiveEditor();
-
 				l_veditor->setLookAndFeel(myProcessor->getCurrentVASTLookAndFeel());
 				l_veditor->setSize(300.f * myProcessor->getPluginScaleWidthFactor(), 30.f * myProcessor->getPluginScaleHeightFactor());
 				l_veditor->setOpaque(true);

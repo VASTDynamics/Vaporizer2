@@ -598,12 +598,12 @@ void CVASTPoly::doArp(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages)
 	else {
 		if (*m_Set->m_State->m_bARPSynch == SWITCH::SWITCH_ON) { //synch but not playing
 			double l_fIntervalTime = m_Set->getIntervalTimeFromDAWBeats(*m_Set->m_State->m_uARPTimeBeats);
-			m_fARP_Speed_smoothed.setValue(l_fIntervalTime, true);
+			m_fARP_Speed_smoothed.setCurrentAndTargetValue(l_fIntervalTime);
 		}
 
 		double speed = m_fARP_Speed_smoothed.getNextValue();
 		if (speed == 0.0) {
-			m_fARP_Speed_smoothed.setValue(*m_Set->m_State->m_fARPSpeed, true);
+			m_fARP_Speed_smoothed.setCurrentAndTargetValue(*m_Set->m_State->m_fARPSpeed);
 			speed = m_fARP_Speed_smoothed.getNextValue();
 		}
 		stepDuration = m_Set->m_nSampleRate * (speed * 0.001);
@@ -882,7 +882,7 @@ void CVASTPoly::processAudioBuffer(sRoutingBuffers& routingBuffers, MidiBuffer& 
 
 	//ARP speed mod
 	modMatrixInputState inputState = getOldestNotePlayedInputState(0); // make parameter oldest or newest
-	m_fARP_Speed_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fARPSpeed, MODMATDEST::ArpSpeed, &inputState), false);
+	m_fARP_Speed_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fARPSpeed, MODMATDEST::ArpSpeed, &inputState));
 
 	//===========================================================================================
 	// attenuate

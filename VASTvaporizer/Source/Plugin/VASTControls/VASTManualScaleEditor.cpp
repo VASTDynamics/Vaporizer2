@@ -34,7 +34,7 @@
 
 //==============================================================================
 VASTManualScaleEditor::VASTManualScaleEditor (VASTAudioProcessor* processor, VASTWaveTableEditorComponent* wtEditor, VASTSamplerViewport* samplerViewport)
-    : myProcessor(processor), mWTEditor(wtEditor), mSamplerViewport(samplerViewport)
+    : myProcessor(processor), mSamplerViewport(samplerViewport), mWTEditor(wtEditor)
 {
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]

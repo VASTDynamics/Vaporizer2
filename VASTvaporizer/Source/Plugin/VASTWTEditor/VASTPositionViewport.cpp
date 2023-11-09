@@ -132,7 +132,7 @@ void VASTPositionViewport::updateContent(bool force) {
 
 	juce::Rectangle<int> lVisibleArea = myWtEditor->getEditorView()->c_viewportPositions->getViewArea();
 	AffineTransform af;
-	lVisibleArea = lVisibleArea.transformed(af.scaled(m_screenWidthScale, m_screenHeightScale));
+	lVisibleArea = lVisibleArea.transformedBy(af.scaled(m_screenWidthScale, m_screenHeightScale));
 
 	waveformImage = Image(Image::RGB, jmax(1, lVisibleArea.getWidth()), jmax(1, lVisibleArea.getHeight()), false);
 	waveformImage.clear(waveformImage.getBounds(), myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeOff));
@@ -316,7 +316,7 @@ int VASTPositionViewport::getArrayIdx(float logicalX) const {
 	float x = logicalX - lVisibleArea.getX();
 
 	AffineTransform af;
-	lVisibleArea = lVisibleArea.transformed(af.scaled(m_screenWidthScale, m_screenHeightScale));
+	lVisibleArea = lVisibleArea.transformedBy(af.scaled(m_screenWidthScale, m_screenHeightScale));
 	int visiStart = int(lVisibleArea.getBottomLeft().getX() / (m_ImageTotalWidth + m_Offset)) * (m_ImageTotalWidth + m_Offset);
 	int startPos = (visiStart) / (m_ImageTotalWidth + m_Offset);
 	int pos = startPos + (x * m_screenWidthScale) / (m_ImageTotalWidth + m_Offset);

@@ -25,7 +25,6 @@ CVASTFlanger::CVASTFlanger(VASTAudioProcessor* processor, int busnr) {
 
 void CVASTFlanger::initParameters() {
 	AudioProcessorValueTreeState& parameters = my_processor->getParameterTree();
-	int lDestination = 0;
 
 	createAndAddParameter(&m_bFlangerOnOff, parameters, 1, "m_bFlangerOnOff", "Flanger on / off", "On", 0,
 		MODMATDEST::NoDestination,
@@ -134,22 +133,22 @@ void CVASTFlanger::parameterChanged(const String& parameterID, float newValue) {
 	}
 
 	else if (parameterID.startsWith("m_fFlangerDelay")) {
-		m_fFlangerDelay_smoothed.setValue(newValue);
+		m_fFlangerDelay_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fFlangerWidth")) {
-		m_fFlangerWidth_smoothed.setValue(newValue);
+		m_fFlangerWidth_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fFlangerFeedback")) {
-		m_fFlangerFeedback_smoothed.setValue(newValue);
+		m_fFlangerFeedback_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fFlangerFeedback")) {
-		m_fFlangerFeedback_smoothed.setValue(newValue);
+		m_fFlangerFeedback_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fFlangerDryWet")) {
-		m_fFlangerDryWet_smoothed.setValue(newValue);
+		m_fFlangerDryWet_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fFlangerGain")) {
-		m_fFlangerGain_smoothed.setValue(newValue);
+		m_fFlangerGain_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fFlangerLFOFreq")) {
 		updateLFOFreq();
@@ -168,7 +167,7 @@ void CVASTFlanger::parameterChanged(const String& parameterID, float newValue) {
 
 void CVASTFlanger::updateLFOFreq() {
 	if (*m_bFlangerSynch == SWITCH::SWITCH_OFF) {
-		m_fFlangerLFOFreq_smoothed.setValue(*m_fFlangerLFOFreq); //  *m_fTimeMod;
+		m_fFlangerLFOFreq_smoothed.setTargetValue(*m_fFlangerLFOFreq); //  *m_fTimeMod;
 	}
 	else { //bpm synch
 		float l_fIntervalTime = 0.f;
@@ -178,8 +177,8 @@ void CVASTFlanger::updateLFOFreq() {
 		//if (l_fIntervalTime > 5000.0f) l_fIntervalTime = 5000.f; // maximum
 		if (l_fIntervalTime > 100000.0f) l_fIntervalTime = 100000.0f; // maximum  //CHTS 3.0.1
 
-		m_fFlangerLFOFreq_smoothed.setValue(1, true); //reset it
-		m_fFlangerLFOFreq_smoothed.setValue(1.0f / (l_fIntervalTime / 1000.f));
+		m_fFlangerLFOFreq_smoothed.setCurrentAndTargetValue(1); //reset it
+		m_fFlangerLFOFreq_smoothed.setTargetValue(1.0f / (l_fIntervalTime / 1000.f));
 	}
 }
 
@@ -263,24 +262,24 @@ void CVASTFlanger::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessa
 		inputState = ((VASTAudioProcessor*)my_processor)->m_pVASTXperience.m_Poly.getOldestNotePlayedInputState(currentFrameOSAdjusted); // make parameter oldest or newest
 
 		if (*m_bFlangerSynch == SWITCH::SWITCH_OFF)
-			m_fFlangerLFOFreq_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fFlangerLFOFreq, MODMATDEST::FlangerLFOFrequency, &inputState));
+			m_fFlangerLFOFreq_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fFlangerLFOFreq, MODMATDEST::FlangerLFOFrequency, &inputState));
 		if (m_fFlangerLFOFreq_smoothed.isSmoothing()) {
 			m_LFO.startLFOFrequency(m_fFlangerLFOFreq_smoothed.getNextValue(), -1);
 		}
 		
-		m_fFlangerDelay_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fFlangerDelay, MODMATDEST::FlangerDelay, &inputState));
+		m_fFlangerDelay_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fFlangerDelay, MODMATDEST::FlangerDelay, &inputState));
 		float lFlangerDelay = m_fFlangerDelay_smoothed.getNextValue() * 0.001f;
 
-		m_fFlangerWidth_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fFlangerWidth, MODMATDEST::FlangerWidth, &inputState));
+		m_fFlangerWidth_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fFlangerWidth, MODMATDEST::FlangerWidth, &inputState));
 		float lFlangerWidth = m_fFlangerWidth_smoothed.getNextValue() * 0.001f;
 
-		m_fFlangerFeedback_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fFlangerFeedback, MODMATDEST::FlangerFeedback, &inputState));
+		m_fFlangerFeedback_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fFlangerFeedback, MODMATDEST::FlangerFeedback, &inputState));
 		float lFlangerFeedback = m_fFlangerFeedback_smoothed.getNextValue();
 
-		m_fFlangerDryWet_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fFlangerDryWet, MODMATDEST::FlangerDryWet, &inputState));
+		m_fFlangerDryWet_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fFlangerDryWet, MODMATDEST::FlangerDryWet, &inputState));
 		float lFlangerDryWet = m_fFlangerDryWet_smoothed.getNextValue();
 
-		m_fFlangerGain_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fFlangerGain, MODMATDEST::FlangerGain, &inputState));
+		m_fFlangerGain_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fFlangerGain, MODMATDEST::FlangerGain, &inputState));
 		float lFlangerGain = m_fFlangerGain_smoothed.getNextValue();
 		
 		const float in_left = bufferWritePointerL[currentFrame];

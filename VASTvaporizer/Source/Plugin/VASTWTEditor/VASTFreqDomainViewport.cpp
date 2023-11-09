@@ -124,7 +124,7 @@ void VASTFreqDomainViewport::updateContent(bool force) {
 
 	juce::Rectangle<int> lVisibleArea = myWtEditor->getFreqDomainViewport()->getViewArea();
 	AffineTransform af;
-	lVisibleArea = lVisibleArea.transformed(af.scaled(m_screenWidthScale, m_screenHeightScale));
+	lVisibleArea = lVisibleArea.transformedBy(af.scaled(m_screenWidthScale, m_screenHeightScale));
 
 	waveformImage = Image(Image::RGB, jmax(1, lVisibleArea.getWidth()), jmax(1, lVisibleArea.getHeight()), false);
 	waveformImage.clear(waveformImage.getBounds(), myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colFreqDomainBinBackground));

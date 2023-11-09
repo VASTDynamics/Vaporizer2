@@ -621,9 +621,8 @@
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
-    <XCODE_MAC targetFolder="Builds/MacOSX" vstFolder="/SDKs/VST3-SDK" extraCompilerFlags="-W2"
-               iosDevelopmentTeamID="PK93HYD6ZN" smallIcon="A2sWSy" bigIcon="A2sWSy"
-               hardenedRuntime="1" extraDefs=" JUCE_SILENCE_XCODE_15_LINKER_WARNING "
+    <XCODE_MAC targetFolder="Builds/MacOSX" vstFolder="/SDKs/VST3-SDK" iosDevelopmentTeamID="PK93HYD6ZN"
+               smallIcon="A2sWSy" bigIcon="A2sWSy" hardenedRuntime="1" extraDefs=" JUCE_SILENCE_XCODE_15_LINKER_WARNING "
                xcodeValidArchs="i386,x86_64" extraLinkerFlags="-ld_classic"
                userNotes="JUCE_DISABLE_CAUTIOUS_PARAMETER_ID_CHECKING">
       <CONFIGURATIONS>
@@ -669,8 +668,8 @@
       </MODULEPATHS>
     </XCODE_MAC>
     <XCODE_MAC targetFolder="Builds/MacOSX_SSE" smallIcon="A2sWSy" bigIcon="A2sWSy"
-               iosDevelopmentTeamID="PK93HYD6ZN" extraCompilerFlags="-W2" hardenedRuntime="1"
-               extraDefs=" JUCE_SILENCE_XCODE_15_LINKER_WARNING " userNotes="This is the universal binary build also supporting arm64 silicon on Neon."
+               iosDevelopmentTeamID="PK93HYD6ZN" hardenedRuntime="1" extraDefs=" JUCE_SILENCE_XCODE_15_LINKER_WARNING "
+               userNotes="This is the universal binary build also supporting arm64 silicon on Neon."
                extraLinkerFlags="-ld_classic">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="0" name="Release 64bit SSE3" targetName="VASTvaporizer2"
@@ -699,7 +698,7 @@
         <MODULEPATH id="juce_opengl" path="../JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
-    <VS2019 targetFolder="Builds/VisualStudio2019" extraCompilerFlags="-W3 /arch:${SSE_AVX} /Qvec-report:1 /permissive- /I&quot;C:\Vaporizer2\asiosdk\common&quot; "
+    <VS2019 targetFolder="Builds/VisualStudio2019" extraCompilerFlags="/arch:${SSE_AVX} /Qvec-report:1 /permissive- /I&quot;C:\Vaporizer2\asiosdk\common&quot; "
             extraLinkerFlags="/LTCG /NXCOMPAT:NO" smallIcon="A2sWSy" bigIcon="A2sWSy">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug FLStudio 64bit" targetName="VASTvaporizer2_dbg"

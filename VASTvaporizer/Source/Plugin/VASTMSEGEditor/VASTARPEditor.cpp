@@ -233,7 +233,6 @@ void VASTARPEditor::mouseMove(const MouseEvent& e) {
 	updateContent(true);
 
 	int numSteps = myData->getNumSteps();
-	float mouseY = e.getMouseDownY();
 	float mouseX = e.getMouseDownX();
 	m_mouseOverStep = ((mouseX - m_xbounds / m_screenWidthScale) / (m_drawwidth / m_screenWidthScale)) * float(numSteps);
 	for (int step = 0; step < numSteps; step++) {
@@ -303,7 +302,6 @@ void VASTARPEditor::filesDropped(const StringArray& files, int x, int y) {
 		}
 		
 		if (bHasNotes) {
-			int arpNotes = numEvents;
 			int arpNoteReal = -1;
 			
 			//clear??

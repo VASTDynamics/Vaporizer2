@@ -50,7 +50,7 @@ public:
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
 	void updateAll();
-	void lookAndFeelChanged();
+	void lookAndFeelChanged() override;
 	void startAutoUpdate() {
         if (isShowing()) grabKeyboardFocus();
     };

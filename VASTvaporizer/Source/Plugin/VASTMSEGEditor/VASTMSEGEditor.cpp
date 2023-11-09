@@ -166,7 +166,7 @@ void VASTMSEGEditor::updateContent(bool force)
 
 	float prevxPos = 0.0f;
 	float prevyPos = 0.0f;
-	int numPoints = myData->controlPoints.size();	
+	int numPoints = int(myData->controlPoints.size());	
 	Path parea;
 
 	//sync grid
@@ -387,7 +387,7 @@ void VASTMSEGEditor::mouseDown(const MouseEvent & e)
 
 	ModifierKeys modifiers = ModifierKeys::getCurrentModifiersRealtime();
 	// check the mod keys ..
-	int numPoints = myData->controlPoints.size();
+	int numPoints = int(myData->controlPoints.size());
 	float mouseY = e.getMouseDownY();
 	float mouseX = e.getMouseDownX();
 
@@ -585,7 +585,7 @@ void VASTMSEGEditor::mouseDown(const MouseEvent & e)
 
 void VASTMSEGEditor::mouseMove(const MouseEvent& e) {	
 
-	int numPoints = myData->controlPoints.size();
+	int numPoints = int(myData->controlPoints.size());
 	float mouseY = e.getMouseDownY();
 	float mouseX = e.getMouseDownX();
 

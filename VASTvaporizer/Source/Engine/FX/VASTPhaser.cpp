@@ -138,19 +138,19 @@ void CVASTPhaser::parameterChanged(const String& parameterID, float newValue) {
 		return;
 	}
 	else if (parameterID.startsWith("m_fPhaserWidth")) {
-		m_fPhaserWidth_smoothed.setValue(newValue);
+		m_fPhaserWidth_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fPhaserFeedback")) {
-		m_fPhaserFeedback_smoothed.setValue(newValue);
+		m_fPhaserFeedback_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fPhaserMinFrequency")) {
-		m_fPhaserMinFrequency_smoothed.setValue(newValue);
+		m_fPhaserMinFrequency_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fPhaserDryWet")) {
-		m_fPhaserDryWet_smoothed.setValue(newValue);
+		m_fPhaserDryWet_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fPhaserGain")) {
-		m_fPhaserGain_smoothed.setValue(newValue);
+		m_fPhaserGain_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fPhaserLFOFreq")) {
 		updateLFOFreq();
@@ -169,7 +169,7 @@ void CVASTPhaser::parameterChanged(const String& parameterID, float newValue) {
 
 void CVASTPhaser::updateLFOFreq() {
 	if (*m_bPhaserSynch == SWITCH::SWITCH_OFF) {
-		m_fPhaserLFOFreq_smoothed.setValue(*m_fPhaserLFOFreq); //  *m_fTimeMod;
+		m_fPhaserLFOFreq_smoothed.setTargetValue(*m_fPhaserLFOFreq); //  *m_fTimeMod;
 	}
 	else { //bpm synch
 		float l_fIntervalTime = 0.f;
@@ -180,8 +180,8 @@ void CVASTPhaser::updateLFOFreq() {
 		//if (l_fIntervalTime > 5000.0f) l_fIntervalTime = 5000.f; // maximum
 		if (l_fIntervalTime > 100000.0f) l_fIntervalTime = 100000.0f; // maximum  //CHTS 3.0.1
 
-		m_fPhaserLFOFreq_smoothed.setValue(1, true); //reset it
-		m_fPhaserLFOFreq_smoothed.setValue(1.0f / (l_fIntervalTime / 1000.f));
+		m_fPhaserLFOFreq_smoothed.setCurrentAndTargetValue(1); //reset it
+		m_fPhaserLFOFreq_smoothed.setTargetValue(1.0f / (l_fIntervalTime / 1000.f));
 	}
 }
 
@@ -260,21 +260,21 @@ void CVASTPhaser::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessag
 		
 		inputState = ((VASTAudioProcessor*)my_processor)->m_pVASTXperience.m_Poly.getOldestNotePlayedInputState(currentFrameOSAdjusted); // make parameter oldest or newest
 		if (*m_bPhaserSynch == SWITCH::SWITCH_OFF)
-			m_fPhaserLFOFreq_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fPhaserLFOFreq, MODMATDEST::PhaserLFOFrequency, &inputState));
+			m_fPhaserLFOFreq_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fPhaserLFOFreq, MODMATDEST::PhaserLFOFrequency, &inputState));
 		if (m_fPhaserLFOFreq_smoothed.isSmoothing()) {
 			m_LFO.startLFOFrequency(m_fPhaserLFOFreq_smoothed.getNextValue(), -1);
 		}
 																																									 
-		m_fPhaserDryWet_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fPhaserDryWet, MODMATDEST::PhaserDryWet, &inputState));
+		m_fPhaserDryWet_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fPhaserDryWet, MODMATDEST::PhaserDryWet, &inputState));
 		float lPhaserDryWet = m_fPhaserDryWet_smoothed.getNextValue();
 
-		m_fPhaserGain_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fPhaserGain, MODMATDEST::PhaserGain, &inputState));
+		m_fPhaserGain_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fPhaserGain, MODMATDEST::PhaserGain, &inputState));
 		float lPhaserGain = m_fPhaserGain_smoothed.getNextValue();
 
-		m_fPhaserWidth_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fPhaserWidth, MODMATDEST::PhaserWidth, &inputState));
+		m_fPhaserWidth_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fPhaserWidth, MODMATDEST::PhaserWidth, &inputState));
 		float lPhaserWidth = m_fPhaserWidth_smoothed.getNextValue();
 
-		m_fPhaserFeedback_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fPhaserFeedback, MODMATDEST::PhaserFeedback, &inputState));
+		m_fPhaserFeedback_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fPhaserFeedback, MODMATDEST::PhaserFeedback, &inputState));
 		float lPhaserFeedback = m_fPhaserFeedback_smoothed.getNextValue();
 
 		float fLFOOsc = 0.f;

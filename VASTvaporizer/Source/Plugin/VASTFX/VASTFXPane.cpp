@@ -48,7 +48,7 @@ VASTFXPane::VASTFXPane (AudioProcessorEditor *editor, AudioProcessor* processor,
 
 
     //[UserPreSize]
-	c_fxviewport->setScrollOnDragEnabled(false); //not good when on
+	c_fxviewport->setScrollOnDragMode(Viewport::ScrollOnDragMode::never); //not good when on
 	setOpaque(true);
     //[/UserPreSize]
 

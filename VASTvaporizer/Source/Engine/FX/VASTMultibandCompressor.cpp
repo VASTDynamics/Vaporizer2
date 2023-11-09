@@ -185,41 +185,41 @@ void CVASTMultibandCompressor::parameterChanged(const String& parameterID, float
 			switchOff();
 	}
 	else if (parameterID.startsWith("m_fMBCompFcLow")) {	
-		m_fMBCompFcLow_smoothed.setValue(*m_fMBCompFcLow);
+		m_fMBCompFcLow_smoothed.setTargetValue(*m_fMBCompFcLow);
 		adjustLowband();
 	}
 	else if (parameterID.startsWith("m_fMBCompFcHigh")) {
-		m_fMBCompFcHigh_smoothed.setValue(*m_fMBCompFcHigh);
+		m_fMBCompFcHigh_smoothed.setTargetValue(*m_fMBCompFcHigh);
 		adjustHighband();
 	}
 	else if (parameterID.startsWith("m_fMBCompThresholdLB")) {
-		m_fMBCompThresholdLB_smoothed.setValue(newValue);
+		m_fMBCompThresholdLB_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fMBCompThresholdHB")) {
-		m_fMBCompThresholdHB_smoothed.setValue(newValue);
+		m_fMBCompThresholdHB_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fMBCompThresholdMB")) {
-		m_fMBCompThresholdMB_smoothed.setValue(newValue);
+		m_fMBCompThresholdMB_smoothed.setTargetValue(newValue);
 	}
 
 	else if (parameterID.startsWith("m_fMBCompRatioLB")) {
-		m_fMBCompRatioLB_smoothed.setValue(newValue);
+		m_fMBCompRatioLB_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fMBCompRatioHB")) {
-		m_fMBCompRatioHB_smoothed.setValue(newValue);
+		m_fMBCompRatioHB_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fMBCompRatioMB")) {
-		m_fMBCompRatioMB_smoothed.setValue(newValue);
+		m_fMBCompRatioMB_smoothed.setTargetValue(newValue);
 	}
 
 	else if (parameterID.startsWith("m_fMBCompGainLB")) {
-		m_fMBCompGainLB_smoothed.setValue(newValue);
+		m_fMBCompGainLB_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fMBCompGainHB")) {
-		m_fMBCompGainHB_smoothed.setValue(newValue);
+		m_fMBCompGainHB_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fMBCompGainMB")) {
-		m_fMBCompGainMB_smoothed.setValue(newValue);
+		m_fMBCompGainMB_smoothed.setTargetValue(newValue);
 	}
 }
 
@@ -308,8 +308,8 @@ void CVASTMultibandCompressor::prepareToPlay (double sampleRate, int samplesPerB
 	//          Calculate Coefficients                   //
 	//===================================================//
 
-	m_fMBCompFcLow_smoothed.setValue(*m_fMBCompFcLow);
-	m_fMBCompFcHigh_smoothed.setValue(*m_fMBCompFcHigh);
+	m_fMBCompFcLow_smoothed.setTargetValue(*m_fMBCompFcLow);
+	m_fMBCompFcHigh_smoothed.setTargetValue(*m_fMBCompFcHigh);
 
 	adjustLowband();
 	adjustHighband();
@@ -394,13 +394,13 @@ void CVASTMultibandCompressor::processBlock (AudioSampleBuffer& buffer, MidiBuff
 	
 	modMatrixInputState l_inputState = ((VASTAudioProcessor*)my_processor)->m_pVASTXperience.m_Poly.getOldestNotePlayedInputState(0); // make parameter oldest or newest
 	if (m_Set->modMatrixDestinationSetFast(MODMATDEST::CompressorLowFreq)) {
-		m_fMBCompFcLow_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fMBCompFcLow, MODMATDEST::CompressorLowFreq, &l_inputState));
+		m_fMBCompFcLow_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fMBCompFcLow, MODMATDEST::CompressorLowFreq, &l_inputState));
 	}
 	if (m_fMBCompFcLow_smoothed.isSmoothing())
 		adjustLowband();
 	m_fMBCompFcLow_smoothed.skip(numSamples);
 	if (m_Set->modMatrixDestinationSetFast(MODMATDEST::CompressorHighFreq)) {
-		m_fMBCompFcHigh_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fMBCompFcHigh, MODMATDEST::CompressorHighFreq, &l_inputState));
+		m_fMBCompFcHigh_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fMBCompFcHigh, MODMATDEST::CompressorHighFreq, &l_inputState));
 	}
 	if (m_fMBCompFcHigh_smoothed.isSmoothing())
 		adjustHighband();
@@ -500,17 +500,17 @@ void CVASTMultibandCompressor::compressorLB(AudioSampleBuffer &buffer, int m, mo
 	{
 		inputState.currentFrame = i;
 		if (m_Set->modMatrixDestinationSetFast(MODMATDEST::CompressorThresholdLowBand)) {
-			m_fMBCompThresholdLB_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fMBCompThresholdLB, MODMATDEST::CompressorThresholdLowBand, &inputState));
+			m_fMBCompThresholdLB_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fMBCompThresholdLB, MODMATDEST::CompressorThresholdLowBand, &inputState));
 		}
 		thresholdLB = m_fMBCompThresholdLB_smoothed.getNextValue();
 		
 		if (m_Set->modMatrixDestinationSetFast(MODMATDEST::CompressorRatioLowBand)) {
-			m_fMBCompRatioLB_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fMBCompRatioLB, MODMATDEST::CompressorRatioLowBand, &inputState));
+			m_fMBCompRatioLB_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fMBCompRatioLB, MODMATDEST::CompressorRatioLowBand, &inputState));
 		}
 		ratioLB = m_fMBCompRatioLB_smoothed.getNextValue();
 
 		if (m_Set->modMatrixDestinationSetFast(MODMATDEST::CompressorLowGain)) {
-			m_fMBCompGainLB_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fMBCompGainLB, MODMATDEST::CompressorLowGain, &inputState));
+			m_fMBCompGainLB_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fMBCompGainLB, MODMATDEST::CompressorLowGain, &inputState));
 		}
 		makeUpGainLB = m_fMBCompGainLB_smoothed.getNextValue();
 
@@ -544,17 +544,17 @@ void CVASTMultibandCompressor::compressorMB(AudioSampleBuffer &buffer, int m, mo
 	{
 		inputState.currentFrame = i;
 		if (m_Set->modMatrixDestinationSetFast(MODMATDEST::CompressorThresholdMidBand)) {
-			m_fMBCompThresholdMB_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fMBCompThresholdMB, MODMATDEST::CompressorThresholdMidBand, &inputState));
+			m_fMBCompThresholdMB_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fMBCompThresholdMB, MODMATDEST::CompressorThresholdMidBand, &inputState));
 		}
 		thresholdMB = m_fMBCompThresholdMB_smoothed.getNextValue();
 
 		if (m_Set->modMatrixDestinationSetFast(MODMATDEST::CompressorRatioMidBand)) {
-			m_fMBCompRatioMB_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fMBCompRatioMB, MODMATDEST::CompressorRatioMidBand, &inputState));
+			m_fMBCompRatioMB_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fMBCompRatioMB, MODMATDEST::CompressorRatioMidBand, &inputState));
 		}
 		ratioMB = m_fMBCompRatioMB_smoothed.getNextValue();
 
 		if (m_Set->modMatrixDestinationSetFast(MODMATDEST::CompressorMidGain)) {
-			m_fMBCompGainMB_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fMBCompGainMB, MODMATDEST::CompressorMidGain, &inputState));
+			m_fMBCompGainMB_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fMBCompGainMB, MODMATDEST::CompressorMidGain, &inputState));
 		}
 		makeUpGainMB = m_fMBCompGainMB_smoothed.getNextValue();
 
@@ -588,17 +588,17 @@ void CVASTMultibandCompressor::compressorHB(AudioSampleBuffer &buffer, int m, mo
 	{
 		inputState.currentFrame = i;
 		if (m_Set->modMatrixDestinationSetFast(MODMATDEST::CompressorThresholdHighBand)) {
-			m_fMBCompThresholdHB_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fMBCompThresholdHB, MODMATDEST::CompressorThresholdHighBand, &inputState));
+			m_fMBCompThresholdHB_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fMBCompThresholdHB, MODMATDEST::CompressorThresholdHighBand, &inputState));
 		}
 		thresholdHB = m_fMBCompThresholdHB_smoothed.getNextValue();
 
 		if (m_Set->modMatrixDestinationSetFast(MODMATDEST::CompressorRatioHighBand)) {
-			m_fMBCompRatioHB_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fMBCompRatioHB, MODMATDEST::CompressorRatioHighBand, &inputState));
+			m_fMBCompRatioHB_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fMBCompRatioHB, MODMATDEST::CompressorRatioHighBand, &inputState));
 		}
 		ratioHB = m_fMBCompRatioHB_smoothed.getNextValue();
 
 		if (m_Set->modMatrixDestinationSetFast(MODMATDEST::CompressorHighGain)) {
-			m_fMBCompGainHB_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fMBCompGainHB, MODMATDEST::CompressorHighGain, &inputState));
+			m_fMBCompGainHB_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fMBCompGainHB, MODMATDEST::CompressorHighGain, &inputState));
 		}
 		makeUpGainHB = m_fMBCompGainHB_smoothed.getNextValue();
 

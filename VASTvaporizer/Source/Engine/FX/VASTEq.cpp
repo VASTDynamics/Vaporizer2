@@ -25,7 +25,6 @@ CVASTEq::CVASTEq(VASTAudioProcessor* processor, int busnr) {
 
 void CVASTEq::initParameters() {
 	AudioProcessorValueTreeState& parameters = my_processor->getParameterTree();
-	int lDestination = 0;
 
 	createAndAddParameter(&m_bEQOnOff, parameters, 1, "m_bEQOnOff", "EQ on / off", "On", 0,
 		MODMATDEST::NoDestination,
@@ -288,7 +287,7 @@ void CVASTEq::parameterChanged(const String& parameterID, float newValue) {
 	}
 
 	else if (parameterID.startsWith("m_fEQGain")) {
-		m_fEQGain_smoothed.setValue(newValue);
+		m_fEQGain_smoothed.setTargetValue(newValue);
 	}
 }
 

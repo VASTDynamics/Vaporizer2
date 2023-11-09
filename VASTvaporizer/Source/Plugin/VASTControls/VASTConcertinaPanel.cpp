@@ -439,8 +439,8 @@ private:
 
 //==============================================================================
 VASTConcertinaPanel::VASTConcertinaPanel(VASTAudioProcessor* _processor, bool vertical)
-	: currentSizes(new PanelSizes()),
-	myProcessor(_processor),
+	: myProcessor(_processor),
+    currentSizes(new PanelSizes()),
 	headerHeight(10) //check
 {
 	mbIsVertical = vertical;

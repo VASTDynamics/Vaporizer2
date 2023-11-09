@@ -103,17 +103,17 @@ void CVASTCompressorExpander::parameterChanged(const String& parameterID, float 
 	}
 
 	else if (parameterID.startsWith("m_fLimiterDryWet")) {
-		m_fLimiterDryWet_smoothed.setValue(newValue);
+		m_fLimiterDryWet_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fLimiterThreshold")) {
-		m_fLimiterThreshold_smoothed.setValue(newValue);
+		m_fLimiterThreshold_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fLimiterMakeupGain")) {
-		m_fLimiterGain_smoothed.setValue(newValue);
+		m_fLimiterGain_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fLimiterRatio")) {
-		m_fLimiterRatio_smoothed.setValue(newValue);
-	}		
+		m_fLimiterRatio_smoothed.setTargetValue(newValue);
+	}
 }
 
 void CVASTCompressorExpander::init(CVASTSettings &set) {
@@ -190,16 +190,16 @@ void CVASTCompressorExpander::processBlock (AudioSampleBuffer& buffer, MidiBuffe
 		checkSoftFade();
 
 		inputState.currentFrame = sample;
-		m_fLimiterDryWet_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fLimiterDryWet, MODMATDEST::LimiterDryWet, &inputState));
+		m_fLimiterDryWet_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fLimiterDryWet, MODMATDEST::LimiterDryWet, &inputState));
 		float lLimiterDryWet = m_fLimiterDryWet_smoothed.getNextValue();
 
-		m_fLimiterThreshold_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fLimiterThreshold, MODMATDEST::LimiterThreshold, &inputState));
+		m_fLimiterThreshold_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fLimiterThreshold, MODMATDEST::LimiterThreshold, &inputState));
 		float T = m_fLimiterThreshold_smoothed.getNextValue();
 
-		m_fLimiterRatio_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fLimiterRatio, MODMATDEST::LimiterRatio, &inputState));
+		m_fLimiterRatio_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fLimiterRatio, MODMATDEST::LimiterRatio, &inputState));
 		float R = m_fLimiterRatio_smoothed.getNextValue();
 
-		m_fLimiterGain_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fLimiterMakeupGain, MODMATDEST::LimiterGain, &inputState));
+		m_fLimiterGain_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fLimiterMakeupGain, MODMATDEST::LimiterGain, &inputState));
 		float lLimiterGain = m_fLimiterGain_smoothed.getNextValue();
 		
 		float inputSquared_left = powf(bufferWritePointerL[sample], 2.0f);

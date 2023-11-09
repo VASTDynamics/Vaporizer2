@@ -75,7 +75,6 @@ void VASTFilterDisplay::resized()
 		cBack.darker(1.00f), waveformImageBuffer->getWidth(), (float)waveformImageBuffer->getHeight(), false));
 	g.fillRect(0, 0, waveformImageBuffer->getWidth(), waveformImageBuffer->getHeight());
 	//scales
-	int l_numVertical = 24;
 	float fGridHeight = waveformImageBuffer->getHeight() / 8.f;
 
 	for (int horiz = 0; horiz < 8; horiz++) {

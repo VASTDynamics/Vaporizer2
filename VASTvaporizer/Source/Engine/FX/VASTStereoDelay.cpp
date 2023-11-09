@@ -133,29 +133,29 @@ void CVASTStereoDelay::parameterChanged(const String& parameterID, float newValu
 	}
 	else if (parameterID.startsWith("m_fDelayTime")) {
 		//only if changed!!
-		m_fDelayTime_smoothed.setValue(newValue);
+		m_fDelayTime_smoothed.setTargetValue(newValue);
 		update();
 	}
 	else if (parameterID.startsWith("m_fDelayDryWet")) {
-		m_fDelayDryWet_smoothed.setValue(newValue);
+		m_fDelayDryWet_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fDelayGain")) {
-		m_fDelayGain_smoothed.setValue(newValue);
+		m_fDelayGain_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fDelayFeedback")) {
-		m_fDelayFeedback_smoothed.setValue(newValue);
+		m_fDelayFeedback_smoothed.setTargetValue(newValue);
 	}
 	
 	else if (parameterID.startsWith("m_uDelayTimeBeats")) {
 		//only if changed!!
-		//m_fDelayTime_smoothed.setValue(*m_fDelayTime);
+		//m_fDelayTime_smoothed.setTargetValue(*m_fDelayTime);
 		update();
 	}
 	else if (parameterID.startsWith("m_fDelayLowcut")) {
-		m_fDelayLowcut_smoothed.setValue(newValue);
+		m_fDelayLowcut_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fDelayHighcut")) {
-		m_fDelayHighcut_smoothed.setValue(newValue);
+		m_fDelayHighcut_smoothed.setTargetValue(newValue);
 	}
 
 }
@@ -243,7 +243,7 @@ void CVASTStereoDelay::prepareToPlay(double sampleRate, int samplesPerBlock) {
 	m_fDelayLowcut_smoothed.reset(m_iSampleRate, smoothTime);
 	m_fDelayHighcut_smoothed.reset(m_iSampleRate, smoothTime);
 	
-	m_fDelayTime_smoothed.setValue(*m_fDelayTime);
+	m_fDelayTime_smoothed.setTargetValue(*m_fDelayTime);
 	m_fTimeMod = *m_fDelayTime;
 	update();
 }
@@ -303,17 +303,17 @@ void CVASTStereoDelay::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiM
 		if (m_fDelayTime_smoothed.isSmoothing())
 			update();
 
-		m_fDelayFeedback_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fDelayFeedback, MODMATDEST::DelayFeedback, &inputState));
+		m_fDelayFeedback_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fDelayFeedback, MODMATDEST::DelayFeedback, &inputState));
 		m_fFeedbackMod = m_fDelayFeedback_smoothed.getNextValue();
 
-		m_fDelayDryWet_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fDelayWet, MODMATDEST::DelayDryWet, &inputState));
+		m_fDelayDryWet_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fDelayWet, MODMATDEST::DelayDryWet, &inputState));
 		m_fDrywetMod = m_fDelayDryWet_smoothed.getNextValue();
 
-		m_fDelayGain_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fDelayGain, MODMATDEST::DelayGain, &inputState));
+		m_fDelayGain_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fDelayGain, MODMATDEST::DelayGain, &inputState));
 		lDelayGain = m_fDelayGain_smoothed.getNextValue();
 
 		//Lowcut Mod
-		m_fDelayLowcut_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fDelayLowcut, MODMATDEST::DelayLowCut, &inputState));
+		m_fDelayLowcut_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fDelayLowcut, MODMATDEST::DelayLowCut, &inputState));
 		if (m_fDelayLowcut_smoothed.isSmoothing()) {
 			float lDelayLowcut = m_fDelayLowcut_smoothed.getNextValue();
 			float fQ = sqrt2over2;
@@ -322,7 +322,7 @@ void CVASTStereoDelay::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiM
 		}
 
 		//Highcut Mod
-		m_fDelayHighcut_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fDelayHighcut, MODMATDEST::DelayHighCut, &inputState));
+		m_fDelayHighcut_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fDelayHighcut, MODMATDEST::DelayHighCut, &inputState));
 		if (m_fDelayHighcut_smoothed.isSmoothing()) {
 			float lDelayHighcut = m_fDelayHighcut_smoothed.getNextValue();
 			float fQ = sqrt2over2;

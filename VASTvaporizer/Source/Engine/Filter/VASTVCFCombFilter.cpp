@@ -13,23 +13,23 @@ CVASTVCFCombFilter::CVASTVCFCombFilter() {
 
 void CVASTVCFCombFilter::parameterChanged(const String& parameterID, float newValue, bool takeNext, int skips) {
 	if (parameterID.startsWith("m_fCombFrequOffset")) {
-		m_fCombFrequOffset_smoothed.setValue(newValue, takeNext);
+        takeNext ? m_fCombFrequOffset_smoothed.setCurrentAndTargetValue(newValue) : m_fCombFrequOffset_smoothed.setTargetValue(newValue);
 		m_fCombFrequOffset_smoothed.skip(skips);
 	}
 	else if (parameterID.startsWith("m_fCombLevel")) {
-		m_fCombLevel_smoothed.setValue(newValue, takeNext);
+        takeNext ? m_fCombLevel_smoothed.setCurrentAndTargetValue(newValue) : m_fCombLevel_smoothed.setTargetValue(newValue);
 		m_fCombLevel_smoothed.skip(skips);
 	}
 	else if (parameterID.startsWith("m_fCombDrive")) {
-		m_fCombDrive_smoothed.setValue(newValue, takeNext);
+        takeNext ? m_fCombDrive_smoothed.setCurrentAndTargetValue(newValue) : m_fCombDrive_smoothed.setTargetValue(newValue);
 		m_fCombDrive_smoothed.skip(skips);
 	}
 	else if (parameterID.startsWith("m_fCombDryWet")) {
-		m_fCombDryWet_smoothed.setValue(newValue, takeNext);
+        takeNext ? m_fCombDryWet_smoothed.setCurrentAndTargetValue(newValue) : m_fCombDryWet_smoothed.setTargetValue(newValue);
 		m_fCombDryWet_smoothed.skip(skips);
 	}
 	else if (parameterID.startsWith("m_fCombGain")) {
-		m_fCombGain_smoothed.setValue(newValue, takeNext);
+        takeNext ? m_fCombGain_smoothed.setCurrentAndTargetValue(newValue) : m_fCombGain_smoothed.setTargetValue(newValue);
 		m_fCombGain_smoothed.skip(skips);
 	}
 }

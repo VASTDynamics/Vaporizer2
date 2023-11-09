@@ -388,7 +388,7 @@ void VASTWaveTableEditorComponent::setOscBank(int bank) {
 	vassert(wt->getNumPositions() > 0); //CHECK SAFETY
 	setCurWavetable(wt);
 	getBankWavetable()->setSelectedWtPos(0);
-	c_waveTableEditorView->getHeader()->c_soloSelection->setToggleState(false, true);
+	c_waveTableEditorView->getHeader()->c_soloSelection->setToggleState(false, NotificationType::sendNotification);
 	myEditor->vaporizerComponent->getOscillatorComponent(0)->updateAll(); //for borders
 	myEditor->vaporizerComponent->getOscillatorComponent(1)->updateAll(); //for borders
 	myEditor->vaporizerComponent->getOscillatorComponent(2)->updateAll(); //for borders
@@ -3851,8 +3851,8 @@ void VASTWaveTableEditorComponent::initAll() {
 	m_positionviewport->startAutoUpdate();
 	c_waveTableEditorView->getHeader()->getGenMaxSlider()->setValue(100.f, juce::NotificationType::dontSendNotification); //changed from 75
 	c_waveTableEditorView->getHeader()->getApplyMaxSlider()->setValue(100.f, juce::NotificationType::dontSendNotification); //changed from 75
-	c_waveTableEditorView->getHeader()->c_soloSelection->setToggleState(false, true);
-	c_waveTableEditorView->getHeader()->c_snap->setToggleState(false, true);
+	c_waveTableEditorView->getHeader()->c_soloSelection->setToggleState(false, NotificationType::sendNotification);
+	c_waveTableEditorView->getHeader()->c_snap->setToggleState(false, NotificationType::sendNotification);
 	requestUIUpdate(); //was true
 }
 

@@ -188,7 +188,7 @@ void VASTSamplerViewport::updateContent(bool force) {
 	setSelectionFromSound();
 
 	AffineTransform af;
-	lVisibleArea = lVisibleArea.transformed(af.scaled(m_screenWidthScale, m_screenHeightScale));
+	lVisibleArea = lVisibleArea.transformedBy(af.scaled(m_screenWidthScale, m_screenHeightScale));
 
 	double iViewPortwidth = getScreenBounds().getWidth() * scale;
 	double iImageBottom = lVisibleArea.getHeight();
@@ -519,7 +519,7 @@ void VASTSamplerViewport::handleBorderDisplay() {
 
 	juce::Rectangle<int> lVisibleArea = myWtEditor->getSamplerViewport()->getViewArea();
 	AffineTransform af;
-	lVisibleArea = lVisibleArea.transformed(af.scaled(m_screenWidthScale, m_screenHeightScale));
+	lVisibleArea = lVisibleArea.transformedBy(af.scaled(m_screenWidthScale, m_screenHeightScale));
 
 	float lDrawheight = lVisibleArea.getHeight();
 	if (m_bMouseover) {

@@ -87,7 +87,7 @@ VASTWaveTableEditorView::VASTWaveTableEditorView (AudioProcessorEditor *editor, 
 	myWTEditor->m_positionviewport->setEditor(myEditor);
 	myWTEditor->m_positionviewport->setWTEditor(myWTEditor);
 
-	c_viewportPositions->setScrollOnDragEnabled(false);
+	c_viewportPositions->setScrollOnDragMode(Viewport::ScrollOnDragMode::never);
 
 	myWTEditor->m_samplerviewport = (VASTSamplerViewport*)myWTEditor->getSamplerEditor()->getSamplerViewport()->getViewedComponent();
 	myWTEditor->m_samplerviewport->setProcessor(myProcessor);

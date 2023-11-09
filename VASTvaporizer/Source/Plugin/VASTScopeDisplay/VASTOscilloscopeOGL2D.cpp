@@ -11,7 +11,7 @@ OpenGL Fragment-Shader based
 using namespace ::juce::gl;
 
 VASTOscilloscopeOGL2D::VASTOscilloscopeOGL2D(VASTAudioProcessorEditor *editor, std::unique_ptr<VASTRingBuffer<GLfloat>> * ringBuffer)
-: readBuffer (1, OGL2D_RING_BUFFER_SIZE), myEditor(editor)
+: myEditor(editor), readBuffer (1, OGL2D_RING_BUFFER_SIZE) 
 {
     openGLContext.setOpenGLVersionRequired (OpenGLContext::OpenGLVersion::defaultGLVersion);        
 	openGLContext.setComponentPaintingEnabled(false);

@@ -144,8 +144,6 @@ void VASTQFilter::initQuadFilter(CVASTSettings* m_Set) {
 void VASTQFilter::filterTypeChanged(OwnedArray<VASTSynthesiserVoice>* voices, int filter, int ftype, int fsubtype, int ftype2, int fsubtype2, int ftype3, int fsubtype3, int osFactor, bool isUI, std::unique_ptr<CVASTVcf>* uiVCF, CVASTSettings* m_Set) {
 	if (!isUI) {
 		for (auto* voice : *voices) {
-			int mVoiceNo = voice->getVoiceNo();
-
 			//check prepareforplay comb filter!!
 
 			//Filter A
@@ -357,19 +355,19 @@ int VASTQFilter::processBlock(OwnedArray<VASTSynthesiserVoice>* voices, modMatri
 				else {
 					{
 						if (paramFilterEnv == MSEGENV::MSEG1) {
-							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[0][voiceNo]->getSample(0, matrixInputState->currentFrame);
+							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[0][voiceNo]->getSample(0, int(matrixInputState->currentFrame));
 						}
 						else if (paramFilterEnv == MSEGENV::MSEG2) {
-							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[1][voiceNo]->getSample(0, matrixInputState->currentFrame);
+							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[1][voiceNo]->getSample(0, int(matrixInputState->currentFrame));
 						}
 						else if (paramFilterEnv == MSEGENV::MSEG3) {
-							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[2][voiceNo]->getSample(0, matrixInputState->currentFrame);
+							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[2][voiceNo]->getSample(0, int(matrixInputState->currentFrame));
 						}
 						else if (paramFilterEnv == MSEGENV::MSEG4) {
-							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[3][voiceNo]->getSample(0, matrixInputState->currentFrame);
+							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[3][voiceNo]->getSample(0, int(matrixInputState->currentFrame));
 						}
 						else if (paramFilterEnv == MSEGENV::MSEG5) {
-							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[4][voiceNo]->getSample(0, matrixInputState->currentFrame);
+							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[4][voiceNo]->getSample(0, int(matrixInputState->currentFrame));
 						}
 						lFilterEnvMod = m_Set->getParameterValueWithMatrixModulation(&paramFilterEnvMod, paramIDFilterEnvMod, matrixInputState);
 					}

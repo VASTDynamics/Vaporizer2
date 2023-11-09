@@ -124,13 +124,13 @@ void CVASTChorus::parameterChanged(const String& parameterID, float newValue) {
 		}
 	}
 	else if (parameterID.startsWith("m_fChorusGain")) {
-		m_fChorusGain_smoothed.setValue(newValue);
+		m_fChorusGain_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fChorusDryWet")) {
-		m_fChorusDryWet_smoothed.setValue(newValue);
+		m_fChorusDryWet_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fChorusDepth")) {
-		m_fChorusDepth_smoothed.setValue(newValue);
+		m_fChorusDepth_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fChorusRate_hz")) {
 		updateLFOFreq();
@@ -148,7 +148,7 @@ void CVASTChorus::parameterChanged(const String& parameterID, float newValue) {
 
 void CVASTChorus::updateLFOFreq() {
 	if (*m_bChorusSynch == SWITCH::SWITCH_OFF) {
-		m_fChorusRate_hz_smoothed.setValue(*m_fChorusRate_hz); //  *m_fTimeMod;
+		m_fChorusRate_hz_smoothed.setTargetValue(*m_fChorusRate_hz); //  *m_fTimeMod;
 	}
 	else { //bpm synch
 		float l_fIntervalTime = 0.f;
@@ -158,8 +158,8 @@ void CVASTChorus::updateLFOFreq() {
 		//if (l_fIntervalTime > 5000.0f) l_fIntervalTime = 5000.f; // maximum
 		if (l_fIntervalTime > 100000.0f) l_fIntervalTime = 100000.0f; // maximum  //CHTS 3.0.1
 		
-		m_fChorusRate_hz_smoothed.setValue(1, true); //reset it
-		m_fChorusRate_hz_smoothed.setValue(1.0f / (l_fIntervalTime / 1000.f));
+		m_fChorusRate_hz_smoothed.setCurrentAndTargetValue(1); //reset it
+		m_fChorusRate_hz_smoothed.setTargetValue(1.0f / (l_fIntervalTime / 1000.f));
 	}
 }
 
@@ -272,7 +272,7 @@ void CVASTChorus::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessag
 
 		//Frequency Mod
 		if (*m_bChorusSynch == SWITCH::SWITCH_OFF)
-			m_fChorusRate_hz_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fChorusRate_hz, MODMATDEST::ChorusFrequency, &inputState));
+			m_fChorusRate_hz_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fChorusRate_hz, MODMATDEST::ChorusFrequency, &inputState));
 		bool bUpdate = false;
 		if (m_fFrequency != m_fChorusRate_hz_smoothed.getNextValue()) {
 			m_fFrequency = m_fChorusRate_hz_smoothed.getNextValue();
@@ -280,18 +280,18 @@ void CVASTChorus::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessag
 		}
 
 		//Depth Mod
-		m_fChorusDepth_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fChorusDepth, MODMATDEST::ChorusDepth, &inputState));
+		m_fChorusDepth_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fChorusDepth, MODMATDEST::ChorusDepth, &inputState));
 		if (m_fDepth != m_fChorusDepth_smoothed.getNextValue()) { //max is 100
 			m_fDepth = m_fChorusDepth_smoothed.getNextValue();
 			bUpdate = true;
 		}
 
 		//DryWet Mod
-		m_fChorusDryWet_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fChorusDryWet, MODMATDEST::ChorusDryWet, &inputState));
+		m_fChorusDryWet_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fChorusDryWet, MODMATDEST::ChorusDryWet, &inputState));
 		m_fDrywetMod = m_fChorusDryWet_smoothed.getNextValue() * 0.01f;
 
 		//Gain Mod
-		m_fChorusGain_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fChorusGain, MODMATDEST::ChorusGain, &inputState));
+		m_fChorusGain_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fChorusGain, MODMATDEST::ChorusGain, &inputState));
 		m_fGain = m_fChorusGain_smoothed.getNextValue();				
 
 		if (m_fChorusRate_hz_smoothed.isSmoothing() || m_fChorusDepth_smoothed.isSmoothing() || bUpdate)

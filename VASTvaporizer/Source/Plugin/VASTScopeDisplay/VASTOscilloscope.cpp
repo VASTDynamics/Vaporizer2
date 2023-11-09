@@ -498,13 +498,14 @@ void VASTOscilloscope::updateContent(bool force) {
 		return;
 	}
 
-	if (!bPerspectiveDisplay)
+    if (!bPerspectiveDisplay) {
 		if (l_waveBuffer != nullptr) {
 			if (l_waveBuffer->empty()) {
 				l_display = false;
 			}
 		} else 
 			l_display = false;
+    } 
 	
 	if (l_display == false) {
 		//repaint();

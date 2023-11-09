@@ -203,13 +203,11 @@ bool CVASTXperience::prepareForPlay(double sampleRate, int expectedSamplesPerBlo
 	
 	m_Set.modMatrixCalcBuffers();
 
-	m_Set.m_fMasterVolume_smoothed.setValue(pow(10.0, *m_Set.m_State->m_fMasterVolumedB / 20.0), true);  // take next value
+	m_Set.m_fMasterVolume_smoothed.setCurrentAndTargetValue(pow(10.0, *m_Set.m_State->m_fMasterVolumedB / 20.0));  // take next value
 
 	//for daw synchronization
 	m_Set.m_dPpqPosition = 0;
 	m_Set.m_dPpqBpm = 0;
-	m_Set.m_dPpqLoopStart = 0;
-	m_Set.m_dPpqLoopEnd = 0;
 	m_Set.m_bPpqIsPlaying = false;
 	m_Set.m_bPpqIsLooping = false;
 	m_Set.m_dPpqPositionOfLastBarStart = 0;
@@ -258,7 +256,7 @@ void CVASTXperience::endSoftFade() {
 //==========================================================================================================================
 
 bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& midiMessages, MYUINT uNumChannels, bool isPlaying,
-	double ppqPosition, bool isLooping, double ppqLoopStart, double ppqLoopEnd, double ppqPositionOfLastBarStart, double bpm) {
+	double ppqPosition, bool isLooping, double ppqPositionOfLastBarStart, double bpm) {
 
 	if (buffer.getNumSamples() > C_MAX_BUFFER_SIZE) {
 		myProcessor->setErrorState(25); //buffer size to large
@@ -273,8 +271,6 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
 
 	//time code at buffer start position
 	m_Set.m_dPpqPosition = ppqPosition;
-	m_Set.m_dPpqLoopStart = ppqLoopStart;
-	m_Set.m_dPpqLoopEnd = ppqLoopEnd;
 	m_Set.m_bPpqIsPlaying = isPlaying;
 	m_Set.m_bPpqIsLooping = isLooping;
 	m_Set.m_dPpqPositionOfLastBarStart = ppqPositionOfLastBarStart;
@@ -1458,22 +1454,22 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 
 	//custom modulators
 	if (0 == parameterID.compare("m_fCustomModulator1")) {
-		m_Poly.m_fCustomModulator1_smoothed.setValue(*m_Set.m_State->m_fCustomModulator1 * 0.01f);
+		m_Poly.m_fCustomModulator1_smoothed.setTargetValue(*m_Set.m_State->m_fCustomModulator1 * 0.01f);
 		return;
 	}
 	
 	if (0 == parameterID.compare("m_fCustomModulator2")) {
-		m_Poly.m_fCustomModulator2_smoothed.setValue(*m_Set.m_State->m_fCustomModulator2 * 0.01f);
+		m_Poly.m_fCustomModulator2_smoothed.setTargetValue(*m_Set.m_State->m_fCustomModulator2 * 0.01f);
 		return;
 	}
 	
 	if (0 == parameterID.compare("m_fCustomModulator3")) {
-		m_Poly.m_fCustomModulator3_smoothed.setValue(*m_Set.m_State->m_fCustomModulator3 * 0.01f);
+		m_Poly.m_fCustomModulator3_smoothed.setTargetValue(*m_Set.m_State->m_fCustomModulator3 * 0.01f);
 		return;
 	}
 	
 	if (0 == parameterID.compare("m_fCustomModulator4")) {
-		m_Poly.m_fCustomModulator4_smoothed.setValue(*m_Set.m_State->m_fCustomModulator4 * 0.01f);
+		m_Poly.m_fCustomModulator4_smoothed.setTargetValue(*m_Set.m_State->m_fCustomModulator4 * 0.01f);
 		return;
 	}
 

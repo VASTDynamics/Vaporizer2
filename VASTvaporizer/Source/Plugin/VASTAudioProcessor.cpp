@@ -706,8 +706,7 @@ void VASTAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mid
 
 	//do synth
 	m_pVASTXperience.processAudioBuffer(buffer, midiMessages, getTotalNumOutputChannels(),
-		positionInfo.isPlaying, positionInfo.ppqPosition, positionInfo.isLooping,
-		positionInfo.ppqLoopStart, positionInfo.ppqLoopEnd, positionInfo.ppqPositionOfLastBarStart, positionInfo.bpm);
+		positionInfo.isPlaying, positionInfo.ppqPosition, positionInfo.isLooping, positionInfo.ppqPositionOfLastBarStart, positionInfo.bpm);
 
 	//VU meter
 	m_meterSource.measureBlock(buffer);
@@ -1419,8 +1418,6 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 				m_bank_wavetableToUpdate[bank]->pregenerateWithWTFX(wtFxType, wtFxVal, processor->getWTmode());
 				processor->m_pVASTXperience.m_Poly.m_OscBank[bank]->setWavetable(m_bank_wavetableToUpdate[bank]);
 			}
-
-			int i = 1;
 		}
 		else
 			processor->setErrorState(10);
@@ -2017,7 +2014,7 @@ String VASTAudioProcessor::getLocalMachineID() {
 const String VASTAudioProcessor::shiftHexEncryptString(const String& str)
 {
     CharPointer_UTF8 cp = str.getCharPointer();
-    String enc = String::toHexString(cp, cp.length());
+    String enc = String::toHexString(cp, int(cp.length()));
     enc = enc.removeCharacters(" ");
     CharPointer_UTF8 encbytes = enc.getCharPointer();
     String result = "";
@@ -2596,8 +2593,7 @@ bool VASTAudioProcessor::readSettingsFromFile() {
 									bool found = false;
 									for (int i = 0; i < pMIDIMapping->getNumAttributes(); i++) {
                                         std::unique_ptr<String> attName(new String(pMIDIMapping->getAttributeName(i)));
-										int posi = attName->fromLastOccurrenceOf("Prog", false, false).getIntValue();
-										if (i == j) {
+                                        if (i == j) {
 											pcd.add(pMIDIMapping->getAttributeValue(i));
 											found = true;
 										}
@@ -2613,8 +2609,7 @@ bool VASTAudioProcessor::readSettingsFromFile() {
 									bool found = false;
 									for (int i = 0; i < pMIDIMapping->getNumAttributes(); i++) {
                                         std::unique_ptr<String> attName(new String(pMIDIMapping->getAttributeName(i)));
-										int posi = attName->fromLastOccurrenceOf("Prog", false, false).getIntValue();
-										if (i == j) {
+                                    	if (i == j) {
 											pcd.add(pMIDIMapping->getAttributeValue(i));
 											found = true;
 										}
@@ -2630,8 +2625,7 @@ bool VASTAudioProcessor::readSettingsFromFile() {
 									bool found = false;
 									for (int i = 0; i < pMIDIMapping->getNumAttributes(); i++) {
                                         std::unique_ptr<String> attName(new String(pMIDIMapping->getAttributeName(i)));
-										int posi = attName->fromLastOccurrenceOf("Prog", false, false).getIntValue();
-										if (i == j) {
+                                        if (i == j) {
 											pcd.add(pMIDIMapping->getAttributeValue(i));
 											found = true;
 										}
@@ -2647,8 +2641,7 @@ bool VASTAudioProcessor::readSettingsFromFile() {
 									bool found = false;
 									for (int i = 0; i < pMIDIMapping->getNumAttributes(); i++) {
                                         std::unique_ptr<String> attName(new String(pMIDIMapping->getAttributeName(i)));
-										int posi = attName->fromLastOccurrenceOf("Prog", false, false).getIntValue();
-										if (i == j) {
+                                        if (i == j) {
 											pcd.add(pMIDIMapping->getAttributeValue(i));
 											found = true;
 										}

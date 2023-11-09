@@ -64,7 +64,7 @@ public:
 		TabChangedFunc(index);
 	}
 
-	TabBarButton* createTabButton(const String &tabName, int tabIndex) {
+	TabBarButton* createTabButton(const String &tabName, int tabIndex) override {
 		return new VASTDnDTabBarButton(myProcessor, tabName, getTabbedButtonBar());
 	}
 };
@@ -95,7 +95,7 @@ public:
 	void lookAndFeelChanged() override;
 	void startAutoUpdate();
 	void stopAutoUpdate();
-	void buttonClicked(Button* buttonThatWasClicked);
+	void buttonClicked(Button* buttonThatWasClicked) override;
 	void mouseWheelMove(const MouseEvent &event, const MouseWheelDetails &wheel) override;
     //[/UserMethods]
 

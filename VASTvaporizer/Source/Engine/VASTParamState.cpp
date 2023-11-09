@@ -2,7 +2,6 @@
 VAST Dynamics Audio Software (TM)
 */
 
-#pragma warning( disable : 4244 ) //for float to int
 #include "VASTEngineHeader.h"
 #include "VASTParamState.h"
 #include "FX/VASTEffect.h"
@@ -18,6 +17,9 @@ CVASTParamState::CVASTParamState()
 CVASTParamState::~CVASTParamState(void)
 {	
 }
+
+JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE("-Wconversion")
+JUCE_BEGIN_IGNORE_WARNINGS_MSVC(4244 4267) //C4244 conversion from 'type1' to 'type2', possible loss of data //C4267 conversion
 
 float CVASTParamState::toggleButtonTextToValueFunction(const String& text) { //static
 	return float(text.equalsIgnoreCase("On") || text.equalsIgnoreCase("1") || text.equalsIgnoreCase("SWITCH_ON"));
@@ -3085,4 +3087,6 @@ bool CVASTParamState::initCompatibilityParameters4(AudioProcessorValueTreeState&
 		false, true, false, false);
 
 	return true;
+    JUCE_END_IGNORE_WARNINGS_MSVC
+    JUCE_END_IGNORE_WARNINGS_GCC_LIKE
 }

@@ -176,7 +176,7 @@ void VASTARPData::initDefaultPattern(int pattern) {
 		step.gate = VASTARPData::mARPPattern[pattern].gate[i]; // can be 0..4
 		addStep(step);
 	}
-	arpStepNum = arpSteps.size();
+	arpStepNum = int(arpSteps.size());
 }
 
 bool VASTARPData::getAndClearDirtyFlag() {

@@ -41,7 +41,7 @@ void VASTImageButton::mouseDrag(const MouseEvent &e) {
 	g.setColour(m_processor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colDragSource));
 	g.drawImage(img, result.getBounds().getSmallestIntegerContainer().toFloat(), RectanglePlacement::onlyReduceInSize, true);
 
-	editor->vaporizerComponent->startDragging(getName(), this, result, false);
+	editor->vaporizerComponent->startDragging(getName(), this, (ScaledImage)result, false);
 	ImageButton::mouseDrag(e);
 }
 

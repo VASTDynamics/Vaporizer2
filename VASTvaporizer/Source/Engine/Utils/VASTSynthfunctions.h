@@ -1946,39 +1946,6 @@ inline float calcSliderVariable(float fMin, float fMax, float fVar)
 	return fCookedData;
 }
 
-//
-// String Helpers: these convert to and from strings
-//
-// user must delete char array when done!
-inline char* MYUINTToString(long value)
-{
-//#pragma clang diagnostic push
-//#pragma clang diagnostic ignored "-Wformat"
-	char* text = new char[33];
-	ltoa(value, text, 10);
-	return text;
-//#pragma clang diagnostic pop
-}
-
-inline MYUINT stringToMYUINT(char* p)
-{
-//#pragma clang diagnostic push
-//#pragma clang diagnostic ignored "-Wformat"
-	return atol(p);
-//#pragma clang diagnostic pop
-}
-
-// user must delete char array when done!
-inline char* intToString(long value)
-{
-//#pragma clang diagnostic push
-//#pragma clang diagnostic ignored "-Wformat"
-	char* text = new char[33];
-	itoa(value, text, 10);
-	return text;
-//#pragma clang diagnostic pop
-}
-
 inline double stringToDouble(char* p)
 {
 	return atof(p);
@@ -2001,7 +1968,7 @@ inline char* floatToString(float value, int nSigDigits)
 	if (nSigDigits > 32)
 		nSigDigits = 32;
 	// gcvt (value, nSigDigits, text);
-	sprintf(text, "%.*f", nSigDigits, value);
+	//sprintf(text, "%.*f", nSigDigits, value);
 
 	return text;
 }
@@ -2013,7 +1980,7 @@ inline char* doubleToString(double value, int nSigDigits)
 	if (nSigDigits > 32)
 		nSigDigits = 32;
 	// gcvt (value, nSigDigits, text);
-	sprintf(text, "%.*f", nSigDigits, value);
+	//sprintf(text, "%.*f", nSigDigits, value);
 	return text;
 }
 

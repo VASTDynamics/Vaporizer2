@@ -21,7 +21,7 @@ VAST Dynamics Audio Software (TM)
 CVASTWaveTableOscillator::CVASTWaveTableOscillator(void) {
 	//from VASTOscillator
 	//NOISE /* Generate a new random seed from system time - do this once in your constructor */
-	srand(time(0));
+	srand(int(time(0)));
 	m_seed = rand();
 	m_uOscType = 999; // set invalid so that first check is changed
 
@@ -131,11 +131,11 @@ void CVASTWaveTableOscillator::updateNoiseBiquad() {
 	float noiseHighCut = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fNoiseHighCut, MODMATDEST::NoiseHighCut, &inputstate);
 	float noiseResonance = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fNoiseResonance, MODMATDEST::NoiseResonance, &inputstate);
 
-	m_fNoiseLowCut_smoothed.setValue(noiseLowCut, m_bSmoothersTakeNextValue);
+    m_bSmoothersTakeNextValue ? m_fNoiseLowCut_smoothed.setCurrentAndTargetValue(noiseLowCut) : m_fNoiseLowCut_smoothed.setTargetValue(noiseLowCut);
 	noiseLowCut = m_fNoiseLowCut_smoothed.getNextValue();
-	m_fNoiseHighCut_smoothed.setValue(noiseHighCut, m_bSmoothersTakeNextValue);
+    m_bSmoothersTakeNextValue ? m_fNoiseHighCut_smoothed.setCurrentAndTargetValue(noiseHighCut) : m_fNoiseHighCut_smoothed.setTargetValue(noiseHighCut);
 	noiseHighCut = m_fNoiseHighCut_smoothed.getNextValue();
-	m_fNoiseResonance_smoothed.setValue(noiseResonance, m_bSmoothersTakeNextValue);
+    m_bSmoothersTakeNextValue ? m_fNoiseResonance_smoothed.setCurrentAndTargetValue(noiseResonance) : m_fNoiseResonance_smoothed.setTargetValue(noiseResonance);
 	noiseResonance = (m_fNoiseResonance_smoothed.getNextValue() + 0.707f) * 0.1f; //as in vcf
 
 	if ((noiseLowCut != m_fNoiseLowCut) || (noiseResonance != m_fNoiseResonance)) {
@@ -230,11 +230,11 @@ void CVASTWaveTableOscillator::setPortamentoStart(int midinote, bool reset) {
 	float keepTarget = m_fBaseFreqPortamento_smoothed.getTargetValue();
 	
 	if (!reset) {
-		m_fBaseFreqPortamento_smoothed.setValue(startFreq, true); //force take it!	
-		m_fBaseFreqPortamento_smoothed.setValue(keepTarget); //old target freq
+		m_fBaseFreqPortamento_smoothed.setCurrentAndTargetValue(startFreq); //force take it!
+		m_fBaseFreqPortamento_smoothed.setTargetValue(keepTarget); //old target freq
 	}
 	else {
-		m_fBaseFreqPortamento_smoothed.setValue(keepTarget, true); //force take it!	
+		m_fBaseFreqPortamento_smoothed.setCurrentAndTargetValue(keepTarget); //force take it!
 	}
 }
 
@@ -757,9 +757,9 @@ void CVASTWaveTableOscillator::noteOn(MYUINT uChannel, MYUINT uMIDINote, MYUINT 
 	//update smoothers
 	resetSmoothers();
 	if (!m_fBaseFreqPortamento_smoothed.isSmoothing())
-		m_fBaseFreqPortamento_smoothed.setValue(m_fBaseFrequency_Hz, true); //is set afterwards
-	else 
-		m_fBaseFreqPortamento_smoothed.setValue(m_fBaseFrequency_Hz, false); //is set afterwards
+		m_fBaseFreqPortamento_smoothed.setCurrentAndTargetValue(m_fBaseFrequency_Hz); //is set afterwards
+	else
+		m_fBaseFreqPortamento_smoothed.setTargetValue(m_fBaseFrequency_Hz); //is set afterwards
 
 	/*
 	if (m_oscBank != nullptr) {

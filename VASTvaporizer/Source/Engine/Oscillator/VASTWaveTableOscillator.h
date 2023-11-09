@@ -140,7 +140,7 @@ private:
 
 	CVASTOscillatorBank* m_oscBank;
 
-	int m_seed = 0; // for random
+	long m_seed = 0; // for random
 	float m_fRsHoldValue = 0.0f; // sample & hold
 	float m_fRshCounter = -1.0f;
 	
