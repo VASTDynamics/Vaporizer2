@@ -168,7 +168,7 @@ void CVASTPoly::updateVariables() {
 	}	
 }
 
-int CVASTPoly::numNotesPlaying() { //UI only
+int CVASTPoly::numNotesPlaying() const { //UI only
 	//const ScopedReadLock myScopedLock(m_Set->m_RoutingBuffers.mReadWriteLock); //CHECK THIS!!!
 
 	int num = 0;
@@ -178,7 +178,7 @@ int CVASTPoly::numNotesPlaying() { //UI only
 	return num;
 }
 
-int CVASTPoly::numOscsPlaying() { //UI only
+int CVASTPoly::numOscsPlaying() const { //UI only
 	//const ScopedReadLock myScopedLock(m_Set->m_RoutingBuffers.mReadWriteLock); //CHECK THIS!!!
 
 	int num = 0;
@@ -190,11 +190,11 @@ int CVASTPoly::numOscsPlaying() { //UI only
 	return num;
 }
 
-int CVASTPoly::getLastNotePlayed() { //-1 if none playing
+int CVASTPoly::getLastNotePlayed() const { //-1 if none playing
 	return m_OscillatorSynthesizer.getLastPlayedVoiceNo();
 }
 
-int CVASTPoly::getOldestNotePlayed() { //-1 if none playing
+int CVASTPoly::getOldestNotePlayed() const { //-1 if none playing
 	return m_OscillatorSynthesizer.getOldestPlayedVoiceNo();
 }
 
@@ -413,6 +413,8 @@ void CVASTPoly::updateLFO(int lfono) {
 	}
 }
 
+JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE("-Wconversion")
+JUCE_BEGIN_IGNORE_WARNINGS_MSVC(4244 4267)
 //called on noteOn
 void CVASTPoly::resynchLFO() {
 	#define FREERUN_LFO_RETRIGGER_RESET 1000 //1s
@@ -560,6 +562,8 @@ void CVASTPoly::resynchLFO() {
 		}
 	}
 }
+JUCE_END_IGNORE_WARNINGS_MSVC
+JUCE_END_IGNORE_WARNINGS_GCC_LIKE
 
 void CVASTPoly::doArp(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages) {
 	VASTARPData* arpData = &m_Set->m_ARPData;
@@ -581,7 +585,6 @@ void CVASTPoly::doArp(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages)
 
 	// get step duration
 	double stepDuration = 0;
-	int l_ARP_synch_currentStep = 0;
 	if ((*m_Set->m_State->m_bARPSynch == SWITCH::SWITCH_ON) && (m_Set->m_bPpqIsPlaying)) {
 		if (m_last_bpm != m_Set->m_dPpqBpm) { //bpm was changed??
 			bStart = true;
@@ -595,12 +598,12 @@ void CVASTPoly::doArp(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages)
 	else {
 		if (*m_Set->m_State->m_bARPSynch == SWITCH::SWITCH_ON) { //synch but not playing
 			double l_fIntervalTime = m_Set->getIntervalTimeFromDAWBeats(*m_Set->m_State->m_uARPTimeBeats);
-			m_fARP_Speed_smoothed.setValue(l_fIntervalTime, true);
+			m_fARP_Speed_smoothed.setCurrentAndTargetValue(l_fIntervalTime);
 		}
 
 		double speed = m_fARP_Speed_smoothed.getNextValue();
 		if (speed == 0.0) {
-			m_fARP_Speed_smoothed.setValue(*m_Set->m_State->m_fARPSpeed, true);
+			m_fARP_Speed_smoothed.setCurrentAndTargetValue(*m_Set->m_State->m_fARPSpeed);
 			speed = m_fARP_Speed_smoothed.getNextValue();
 		}
 		stepDuration = m_Set->m_nSampleRate * (speed * 0.001);
@@ -879,7 +882,7 @@ void CVASTPoly::processAudioBuffer(sRoutingBuffers& routingBuffers, MidiBuffer& 
 
 	//ARP speed mod
 	modMatrixInputState inputState = getOldestNotePlayedInputState(0); // make parameter oldest or newest
-	m_fARP_Speed_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fARPSpeed, MODMATDEST::ArpSpeed, &inputState), false);
+	m_fARP_Speed_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fARPSpeed, MODMATDEST::ArpSpeed, &inputState));
 
 	//===========================================================================================
 	// attenuate

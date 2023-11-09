@@ -87,7 +87,7 @@ void VASTQFilter::initQuadFilter(CVASTSettings* m_Set) {
 		InitQFilterProcessStateToZero(&(FBQ[2][i]));
 	}
 
-	inBufferUp = new AudioSampleBuffer(2, c_blocksize_q * c_max_os_factor_q);
+	inBufferUp = std::make_unique<AudioSampleBuffer>(2, c_blocksize_q * c_max_os_factor_q);
 
 	double mult = 1.0 / 32.0;
 	for (int i = 0; i < 1024; i++)
@@ -141,11 +141,9 @@ void VASTQFilter::initQuadFilter(CVASTSettings* m_Set) {
 	updateVariables();
 }
 
-void VASTQFilter::filterTypeChanged(OwnedArray<VASTSynthesiserVoice>* voices, int filter, int ftype, int fsubtype, int ftype2, int fsubtype2, int ftype3, int fsubtype3, int osFactor, bool isUI, ScopedPointer<CVASTVcf>* uiVCF, CVASTSettings* m_Set) {
+void VASTQFilter::filterTypeChanged(OwnedArray<VASTSynthesiserVoice>* voices, int filter, int ftype, int fsubtype, int ftype2, int fsubtype2, int ftype3, int fsubtype3, int osFactor, bool isUI, std::unique_ptr<CVASTVcf>* uiVCF, CVASTSettings* m_Set) {
 	if (!isUI) {
 		for (auto* voice : *voices) {
-			int mVoiceNo = voice->getVoiceNo();
-
 			//check prepareforplay comb filter!!
 
 			//Filter A
@@ -228,7 +226,7 @@ void VASTQFilter::filterTypeChanged(OwnedArray<VASTSynthesiserVoice>* voices, in
 	}
 }
 
-int VASTQFilter::processBlock(OwnedArray<VASTSynthesiserVoice>* voices, modMatrixInputState* matrixInputState, sRoutingBuffers* routingBuffers, CVASTSettings* m_Set, int filter, dsp::AudioBlock<float> filterBlock, int startSample, int numSamples, bool isUI, bool hasNextFilter, ScopedPointer<CVASTVcf>* uiVCF, bool warmup) {
+int VASTQFilter::processBlock(OwnedArray<VASTSynthesiserVoice>* voices, modMatrixInputState* matrixInputState, sRoutingBuffers* routingBuffers, CVASTSettings* m_Set, int filter, dsp::AudioBlock<float> filterBlock, int startSample, int numSamples, bool isUI, bool hasNextFilter, std::unique_ptr<CVASTVcf>* uiVCF, bool warmup) {
 
 	float fVCFEnvelopeMod = 0.f; //CHECK
 	int paramType = 0;
@@ -336,7 +334,7 @@ int VASTQFilter::processBlock(OwnedArray<VASTSynthesiserVoice>* voices, modMatri
 		{
 			bool doit = true;
 			if (isUI) {
-				vcf = uiVCF[filter];
+				vcf = uiVCF[filter].get();
 				complete = true;
 			}
 			else {
@@ -357,19 +355,19 @@ int VASTQFilter::processBlock(OwnedArray<VASTSynthesiserVoice>* voices, modMatri
 				else {
 					{
 						if (paramFilterEnv == MSEGENV::MSEG1) {
-							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[0][voiceNo]->getSample(0, matrixInputState->currentFrame);
+							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[0][voiceNo]->getSample(0, int(matrixInputState->currentFrame));
 						}
 						else if (paramFilterEnv == MSEGENV::MSEG2) {
-							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[1][voiceNo]->getSample(0, matrixInputState->currentFrame);
+							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[1][voiceNo]->getSample(0, int(matrixInputState->currentFrame));
 						}
 						else if (paramFilterEnv == MSEGENV::MSEG3) {
-							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[2][voiceNo]->getSample(0, matrixInputState->currentFrame);
+							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[2][voiceNo]->getSample(0, int(matrixInputState->currentFrame));
 						}
 						else if (paramFilterEnv == MSEGENV::MSEG4) {
-							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[3][voiceNo]->getSample(0, matrixInputState->currentFrame);
+							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[3][voiceNo]->getSample(0, int(matrixInputState->currentFrame));
 						}
 						else if (paramFilterEnv == MSEGENV::MSEG5) {
-							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[4][voiceNo]->getSample(0, matrixInputState->currentFrame);
+							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[4][voiceNo]->getSample(0, int(matrixInputState->currentFrame));
 						}
 						lFilterEnvMod = m_Set->getParameterValueWithMatrixModulation(&paramFilterEnvMod, paramIDFilterEnvMod, matrixInputState);
 					}
@@ -1344,7 +1342,7 @@ void VASTQFilter::calcFilterSettings(bool isUi, int ftype, int fsubtype, int fty
 
 }
 
-int VASTQFilter::processQFilter(dsp::AudioBlock<float> filterBlock, sRoutingBuffers* routingBuffers, int numSamples, int startSample, int ftype, int fsubtype, int ftype2, int fsubtype2, int ftype3, int fsubtype3, int fws, int osFactor, OwnedArray<VASTSynthesiserVoice>* voices, int filter, float gain, float drive, float feedback, bool isUI, bool hasNextFilter, ScopedPointer<CVASTVcf>* uiVCF, bool warmup) {	
+int VASTQFilter::processQFilter(dsp::AudioBlock<float> filterBlock, sRoutingBuffers* routingBuffers, int numSamples, int startSample, int ftype, int fsubtype, int ftype2, int fsubtype2, int ftype3, int fsubtype3, int fws, int osFactor, OwnedArray<VASTSynthesiserVoice>* voices, int filter, float gain, float drive, float feedback, bool isUI, bool hasNextFilter, std::unique_ptr<CVASTVcf>* uiVCF, bool warmup) {
 	int numFilterVoices = 0;
 
 	bool isLegacy = false;
@@ -1396,7 +1394,7 @@ int VASTQFilter::processQFilter(dsp::AudioBlock<float> filterBlock, sRoutingBuff
 		{
 			bool doit = true;
 			if (isUI) {
-				vcf = uiVCF[filter];
+				vcf = uiVCF[filter].get();
 				complete = true;
 			}
 			else {
@@ -1568,7 +1566,7 @@ int VASTQFilter::processQFilter(dsp::AudioBlock<float> filterBlock, sRoutingBuff
     return numFilterVoices;
 }
 
-void VASTQFilter::ProcessLegacy(dsp::AudioBlock<float> filterBlock, sRoutingBuffers* routingBuffers, int numSamples, int startSample, int ftype, int fsubtype, int ftype2, int fsubtype2, int ftype3, int fsubtype3, int fws, int osFactor, OwnedArray<VASTSynthesiserVoice>* voices, int filter, float gain, float drive, float feedback, bool isUI, bool hasNextFilter, ScopedPointer<CVASTVcf>* uiVCF, bool warmup) {
+void VASTQFilter::ProcessLegacy(dsp::AudioBlock<float> filterBlock, sRoutingBuffers* routingBuffers, int numSamples, int startSample, int ftype, int fsubtype, int ftype2, int fsubtype2, int ftype3, int fsubtype3, int fws, int osFactor, OwnedArray<VASTSynthesiserVoice>* voices, int filter, float gain, float drive, float feedback, bool isUI, bool hasNextFilter, std::unique_ptr<CVASTVcf>* uiVCF, bool warmup) {
 	int filterBlocksize = numSamples; //??
 	
 	AudioSampleBuffer inBufferUp(2, numSamples * osFactor); //the on in vcf not needed anymore?
@@ -1581,7 +1579,7 @@ void VASTQFilter::ProcessLegacy(dsp::AudioBlock<float> filterBlock, sRoutingBuff
 	{
 		bool doit = true;
 		if (isUI) {
-			vcf = uiVCF[filter];
+			vcf = uiVCF[filter].get();
 			complete = true;
 		}
 		else {
@@ -2304,7 +2302,6 @@ __m128 VASTQFilter::COMBquad_SSE1(VASTQFilterStepState* __restrict f, __m128 in)
 {
 	assert(FIRipol_M == 256); // changing the constant requires updating the code below
 	const __m128 m256 = _mm_set1_ps(256.f);
-	const __m128i m0xff = _mm_set1_epi32(0xff);
 
 	f->C[0] = _mm_add_ps(f->C[0], f->dC[0]);
 	f->C[1] = _mm_add_ps(f->C[1], f->dC[1]);
@@ -2783,10 +2780,6 @@ VASTQFilter::WaveshaperQFPtr VASTQFilter::GetQFPtrWaveshaper(int type)
 template <bool WS, bool A, bool B, bool C>
 void VASTQFilter::ProcessFBQuad(VASTQFilterProcessState& d, Fbq_global& g, float* OutL, float* OutR, float VoicesL[][4], float VoicesR[][4], int numSamples)
 {
-	const __m128 hb_c = _mm_set1_ps(0.5f); // If this is changed from 0.5, make sure to change
-										   // this in the code because it is assumed to be half
-	const __m128 one = _mm_set1_ps(1.0f);
-
 	for (int k = 0; k < numSamples; k++)
 	{
 		d.FB = _mm_add_ps(d.FB, d.dFB); //TODO Check feedback - only to A?

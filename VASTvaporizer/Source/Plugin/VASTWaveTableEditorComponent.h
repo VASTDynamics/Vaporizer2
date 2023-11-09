@@ -89,9 +89,9 @@ public:
 		setDrawMode(dmode);
 	};
 
-	int getOscBank() { return m_bank; };
+	int getOscBank()  const { return m_bank; };
 	void setOscBank(int bank);
-	std::shared_ptr<CVASTWaveTable> getBankWavetable() {
+	std::shared_ptr<CVASTWaveTable> getBankWavetable() const {
 		return myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank]->getNewSharedWavetable(); };
 	std::shared_ptr<CVASTWaveTable> getBankWavetable(int bank) {
 		return myProcessor->m_pVASTXperience.m_Poly.m_OscBank[bank]->getNewSharedWavetable(); };
@@ -125,7 +125,7 @@ public:
 	void stopAutoUpdate();
 	void initAll();
 	void updateAll(bool force);
-	int getWtPos() {
+	int getWtPos() const {
 		return getBankWavetable()->getSelectedWtPos();
 		//return m_wtPos;
 	};
@@ -172,10 +172,10 @@ public:
 	/*bool isMultiSelected() {
 		return m_multiSelect;
 	};
-	int getMultiSelectBegin() {
+	int getMultiSelectBegin()  const {
 		return m_multiSelectBegin;
 	};
-	int getMultiSelectEnd() {
+	int getMultiSelectEnd()  const {
 		return m_multiSelectEnd;
 	};
 
@@ -394,7 +394,7 @@ private:
     std::shared_ptr<CVASTWaveTable> m_cur_wavetable;
     std::shared_ptr<CVASTWaveTable> m_copypaste_wavetable;
 
-	ScopedPointer<juce::AlertWindow> m_alertWindow;
+    std::unique_ptr<juce::AlertWindow> m_alertWindow;
 	std::unique_ptr<FileChooser> myChooser;
 
 	bool mFileChoserIsOpen = false;

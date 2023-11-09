@@ -33,7 +33,7 @@ public:
 	void cookVariables();
 	void resetDelay(int nDelayLength);
 	
-	juce::ScopedPointer<AudioSampleBuffer> m_pBuffer;
+    std::unique_ptr<AudioSampleBuffer> m_pBuffer;
 
 	int m_nReadIndex;
 	int m_nWriteIndex;

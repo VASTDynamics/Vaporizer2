@@ -147,34 +147,34 @@ void CVASTAtomizer::parameterChanged(const String& parameterID, float newValue) 
 		return;
 	}
 	else if (parameterID.startsWith("m_fAtomizerDryWet")) {
-		m_fAtomizerDryWet_smoothed.setValue(newValue);
+		m_fAtomizerDryWet_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fAtomizerHarmonics")) {
-		m_fAtomizerHarmonics_smoothed.setValue(newValue);
+		m_fAtomizerHarmonics_smoothed.setTargetValue(newValue);
 		setHarmonics(m_fAtomizerHarmonics_smoothed.getNextValue());
 	}
 	else if (parameterID.startsWith("m_fAtomizerGain")) {
-		m_fAtomizerGain_smoothed.setValue(newValue);
+		m_fAtomizerGain_smoothed.setTargetValue(newValue);
 		setGain(m_fAtomizerGain_smoothed.getNextValue());
 	}
 	else if (parameterID.startsWith("m_fAtomizerEmphasis")) {
-		m_fAtomizerEmphasis_smoothed.setValue(newValue);
+		m_fAtomizerEmphasis_smoothed.setTargetValue(newValue);
 		setEmphasis(m_fAtomizerEmphasis_smoothed.getNextValue());
 	}
 	else if (parameterID.startsWith("m_fAtomizerLowcut")) {
-		m_fAtomizerLowCut_smoothed.setValue(newValue);
+		m_fAtomizerLowCut_smoothed.setTargetValue(newValue);
 		setLowcut(m_fAtomizerLowCut_smoothed.getNextValue());
 	}
 	else if (parameterID.startsWith("m_fAtomizerHighcut")) {
-		m_fAtomizerHighCut_smoothed.setValue(newValue);
+		m_fAtomizerHighCut_smoothed.setTargetValue(newValue);
 		setHighcut(m_fAtomizerHighCut_smoothed.getNextValue());
 	}
 	else if (parameterID.startsWith("m_fAtomizerDephase")) {
-		m_fAtomizerDephase_smoothed.setValue(newValue);
+		m_fAtomizerDephase_smoothed.setTargetValue(newValue);
 		setDephase(m_fAtomizerDephase_smoothed.getNextValue());
 	}
 	else if (parameterID.startsWith("m_fAtomizerLFOFreq")) {
-		m_fAtomizerLFOFreq_smoothed.setValue(newValue);
+		m_fAtomizerLFOFreq_smoothed.setTargetValue(newValue);
 		updateLFOFreq();
 	}
 	else if (parameterID.startsWith("m_bAtomizerSynch")) {
@@ -207,7 +207,7 @@ void CVASTAtomizer::updateTiming() {
 
 void CVASTAtomizer::updateLFOFreq() {
 	if (*m_bAtomizerSynch == SWITCH::SWITCH_OFF) {
-		m_fAtomizerLFOFreq_smoothed.setValue(*m_fAtomizerLFOFreq); //  *m_fTimeMod;
+		m_fAtomizerLFOFreq_smoothed.setTargetValue(*m_fAtomizerLFOFreq); //  *m_fTimeMod;
 	}
 	else { //bpm synch
 		float l_fIntervalTime = 0.f;
@@ -217,8 +217,8 @@ void CVASTAtomizer::updateLFOFreq() {
 		//if (l_fIntervalTime > 5000.0f) l_fIntervalTime = 5000.f; // maximum
 		if (l_fIntervalTime > 100000.0f) l_fIntervalTime = 100000.0f; // maximum  //CHTS 3.0.1
 
-		m_fAtomizerLFOFreq_smoothed.setValue(1, true); //reset it
-		m_fAtomizerLFOFreq_smoothed.setValue(1.0f / (l_fIntervalTime / 1000.f));
+		m_fAtomizerLFOFreq_smoothed.setCurrentAndTargetValue(1); //reset it
+		m_fAtomizerLFOFreq_smoothed.setTargetValue(1.0f / (l_fIntervalTime / 1000.f));
 	}
 }
 
@@ -307,29 +307,29 @@ void CVASTAtomizer::processSTFTBlock(AudioSampleBuffer& block, const int numSamp
 	for (int sample = 0; sample < numSamples; ++sample) {
 		checkSoftFade();
 		inputState.currentFrame = sample;
-		m_fAtomizerDryWet_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fAtomizerDryWet, MODMATDEST::AtomizerDryWet, &inputState));
+		m_fAtomizerDryWet_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fAtomizerDryWet, MODMATDEST::AtomizerDryWet, &inputState));
 		float lAtomizerDryWet = m_fAtomizerDryWet_smoothed.getNextValue();
 
-		m_fAtomizerDephase_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fAtomizerDephase, MODMATDEST::AtomizerDephase, &inputState));
+		m_fAtomizerDephase_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fAtomizerDephase, MODMATDEST::AtomizerDephase, &inputState));
 		setDephase(m_fAtomizerDephase_smoothed.getNextValue());
 
-		m_fAtomizerEmphasis_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fAtomizerEmphasis, MODMATDEST::AtomizerEmphasis, &inputState));
+		m_fAtomizerEmphasis_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fAtomizerEmphasis, MODMATDEST::AtomizerEmphasis, &inputState));
 		setEmphasis(m_fAtomizerEmphasis_smoothed.getNextValue());
 
-		m_fAtomizerHarmonics_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fAtomizerHarmonics, MODMATDEST::AtomizerHarmonics, &inputState));
+		m_fAtomizerHarmonics_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fAtomizerHarmonics, MODMATDEST::AtomizerHarmonics, &inputState));
 		setHarmonics(m_fAtomizerHarmonics_smoothed.getNextValue());
 
-		m_fAtomizerHighCut_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fAtomizerHighcut, MODMATDEST::AtomizerHighCut, &inputState));
+		m_fAtomizerHighCut_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fAtomizerHighcut, MODMATDEST::AtomizerHighCut, &inputState));
 		setHighcut(m_fAtomizerHighCut_smoothed.getNextValue());
 
-		m_fAtomizerLowCut_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fAtomizerLowcut, MODMATDEST::AtomizerLowCut, &inputState));
+		m_fAtomizerLowCut_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fAtomizerLowcut, MODMATDEST::AtomizerLowCut, &inputState));
 		setLowcut(m_fAtomizerLowCut_smoothed.getNextValue());
 
-		m_fAtomizerGain_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fAtomizerGain, MODMATDEST::AtomizerGain, &inputState));
+		m_fAtomizerGain_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fAtomizerGain, MODMATDEST::AtomizerGain, &inputState));
 		setGain(m_fAtomizerGain_smoothed.getNextValue());
 
 		if (*m_bAtomizerSynch == SWITCH::SWITCH_OFF)
-			m_fAtomizerLFOFreq_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fAtomizerLFOFreq, MODMATDEST::AtomizerLFOFrequency, &inputState));
+			m_fAtomizerLFOFreq_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fAtomizerLFOFreq, MODMATDEST::AtomizerLFOFrequency, &inputState));
 		if (m_fAtomizerLFOFreq_smoothed.isSmoothing())
 			m_LFO.startLFOFrequency(m_fAtomizerLFOFreq_smoothed.getNextValue(), -1);
 
@@ -495,13 +495,13 @@ void CVASTAtomizer::modification() {
 
 void CVASTAtomizer::getStateInformation(MemoryBlock& destData)
 {
-	//ScopedPointer<XmlElement> xml (parameters.valueTreeState.state.createXml());
+	//std::unique_ptr<XmlElement> xml (parameters.valueTreeState.state.createXml());
 	//copyXmlToBinary (*xml, destData);
 }
 
 void CVASTAtomizer::setStateInformation(const void* data, int sizeInBytes)
 {
-	//ScopedPointer<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
+	//std::unique_ptr<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
 	//if (xmlState != nullptr)
 	//  if (xmlState->hasTagName (parameters.valueTreeState.state.getType()))
 	//    parameters.valueTreeState.state = ValueTree::fromXml (*xmlState);

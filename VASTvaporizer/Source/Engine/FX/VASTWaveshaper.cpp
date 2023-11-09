@@ -125,22 +125,22 @@ void CVASTWaveshaper::parameterChanged(const String& parameterID, float newValue
 			switchOff();
 	}
 	else if (parameterID.startsWith("m_fWaveshaperDryWet")) {
-		m_fWaveshaperDryWet_smoothed.setValue(newValue);
+		m_fWaveshaperDryWet_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fWaveshaperDrive")) {
-		m_fWaveshaperDrive_smoothed.setValue(newValue);
+		m_fWaveshaperDrive_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fWaveshaperLowcut")) {
-		m_fWaveshaperLowcut_smoothed.setValue(newValue);
+		m_fWaveshaperLowcut_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fWaveshaperHighcut")) {
-		m_fWaveshaperHighcut_smoothed.setValue(newValue);
+		m_fWaveshaperHighcut_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fWaveshaperGain")) {
-		m_fWaveshaperGain_smoothed.setValue(newValue);
+		m_fWaveshaperGain_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fWaveshaperPreGain")) {
-		m_fWaveshaperPreGain_smoothed.setValue(newValue);
+		m_fWaveshaperPreGain_smoothed.setTargetValue(newValue);
 	}
 }
 
@@ -247,7 +247,7 @@ void CVASTWaveshaper::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMe
 		
 		processAudioFrame(fIn, fOut, 2, 2, inputState);
 
-		m_fWaveshaperGain_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fWaveshaperGain, MODMATDEST::WaveshaperGain, &inputState));
+		m_fWaveshaperGain_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fWaveshaperGain, MODMATDEST::WaveshaperGain, &inputState));
 		float lWaveshaperGain = m_fWaveshaperGain_smoothed.getNextValue();
 
 		bufferWritePointerL[currentFrame] = fOut[0] * lWaveshaperGain * 0.01f;
@@ -280,19 +280,19 @@ bool CVASTWaveshaper::processAudioFrame(float* pInputBuffer, float* pOutputBuffe
 	//http://music.columbia.edu/cmc/music-dsp/FAQs/guitar_distortion_FAQ.html
 		
 	//DryWet Mod
-	m_fWaveshaperDryWet_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fWaveshaperDryWet, MODMATDEST::WaveshaperDryWet, &inputState));
+	m_fWaveshaperDryWet_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fWaveshaperDryWet, MODMATDEST::WaveshaperDryWet, &inputState));
 	float lWaveshaperWet = m_fWaveshaperDryWet_smoothed.getNextValue();
 
 	//Drive Mod
-	m_fWaveshaperDrive_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fWaveshaperDrive, MODMATDEST::WaveshaperDrive, &inputState));
+	m_fWaveshaperDrive_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fWaveshaperDrive, MODMATDEST::WaveshaperDrive, &inputState));
 	float lWaveshaperDrive = m_fWaveshaperDrive_smoothed.getNextValue();
 
 	//Pregain Mod
-	m_fWaveshaperPreGain_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fWaveshaperPreGain, MODMATDEST::WaveshaperPreGain, &inputState));
+	m_fWaveshaperPreGain_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fWaveshaperPreGain, MODMATDEST::WaveshaperPreGain, &inputState));
 	float lWaveshaperPreGain = m_fWaveshaperPreGain_smoothed.getNextValue();
 
 	//Lowcut Mod
-	m_fWaveshaperLowcut_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fWaveshaperLowcut, MODMATDEST::WaveshaperLowCut, &inputState));
+	m_fWaveshaperLowcut_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fWaveshaperLowcut, MODMATDEST::WaveshaperLowCut, &inputState));
 	if (m_fWaveshaperLowcut_smoothed.isSmoothing()) {
 		float lWaveshaperLowcut = m_fWaveshaperLowcut_smoothed.getNextValue();
 		float fQ = sqrt2over2;
@@ -301,7 +301,7 @@ bool CVASTWaveshaper::processAudioFrame(float* pInputBuffer, float* pOutputBuffe
 	}
 
 	//Highcut Mod
-	m_fWaveshaperHighcut_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fWaveshaperHighcut, MODMATDEST::WaveshaperHighCut, &inputState));
+	m_fWaveshaperHighcut_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fWaveshaperHighcut, MODMATDEST::WaveshaperHighCut, &inputState));
 	if (m_fWaveshaperHighcut_smoothed.isSmoothing()) {
 		float lWaveshaperHighcut = m_fWaveshaperHighcut_smoothed.getNextValue();
 		float fQ = sqrt2over2;
@@ -353,7 +353,8 @@ bool CVASTWaveshaper::processAudioFrame(float* pInputBuffer, float* pOutputBuffe
 			oulr = TANH(inlr, drive);
 			break;
 	default:
-		vassertfalse;
+            oulr = CLIP(inlr, drive);
+            vassertfalse;
 	}
 	ynL = get1f(oulr, 0);
 	ynR = get1f(oulr, 1);
@@ -515,13 +516,13 @@ __m128 CVASTWaveshaper::ASYM_SSE2(__m128 in, __m128 drive)
 
 void CVASTWaveshaper::getStateInformation(MemoryBlock& destData)
 {
-	//ScopedPointer<XmlElement> xml (parameters.valueTreeState.state.createXml());
+	//std::unique_ptr<XmlElement> xml (parameters.valueTreeState.state.createXml());
 	//copyXmlToBinary (*xml, destData);
 }
 
 void CVASTWaveshaper::setStateInformation(const void* data, int sizeInBytes)
 {
-	//ScopedPointer<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
+	//std::unique_ptr<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
 	//if (xmlState != nullptr)
 	//  if (xmlState->hasTagName (parameters.valueTreeState.state.getType()))
 	//    parameters.valueTreeState.state = ValueTree::fromXml (*xmlState);

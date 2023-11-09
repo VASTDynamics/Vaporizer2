@@ -90,28 +90,28 @@ public:
 
 	bool isInErrorState() { return bIsInErrorState; };
 	void setErrorState(int state);
-	int getErrorState();
-	bool wantsUIAlert();
+	int getErrorState() const;
+	bool wantsUIAlert() const;
 	void clearUIAlertFlag();
 	void requestUIAlert();
 	void requestUIPresetUpdate();
-	bool needsUIPresetUpdate();
+	bool needsUIPresetUpdate() const;
 	void clearUIPresetFlag();
 
 	void requestUIPresetReloadUpdate();
-	bool needsUIPresetReloadUpdate();
+	bool needsUIPresetReloadUpdate() const;
 	void clearUIPresetReloadFlag();
 
-	bool needsUIInit();
+	bool needsUIInit() const;
 	void clearUIInitFlag();
 	void requestUIInit();
 
-	bool needsUIUpdate();
-	bool needsUIUpdate_tabs();
-	bool needsUIUpdate_matrix();
-	bool needsUIUpdate_sliders();
-	int needsUIUpdate_slider1dest();
-	int needsUIUpdate_slider2dest();
+	bool needsUIUpdate() const;
+	bool needsUIUpdate_tabs() const;
+	bool needsUIUpdate_matrix() const;
+	bool needsUIUpdate_sliders() const;
+	int needsUIUpdate_slider1dest() const;
+	int needsUIUpdate_slider2dest() const;
 	void clearUIUpdateFlag();
 	void requestUIUpdate(bool tabs = true, bool matrix = true, bool sliders = true, int slider1dest = -1, int slider2dest = -1);
 	void requestUILoadAlert();
@@ -139,11 +139,11 @@ public:
     //==============================================================================
     int getNumPrograms() override;
 
-	int getNumFactoryPresets();
-	int getNumUserPresets();
+	int getNumFactoryPresets() const;
+	int getNumUserPresets() const;
 
     int getCurrentProgram() override;
-	int getCurrentPresetProgram();
+	int getCurrentPresetProgram() const;
 	void setCurrentProgram (int index) override;
 	void initializeToDefaults();
     const String getProgramName (int index) override;
@@ -195,7 +195,7 @@ public:
 	std::unordered_map<String, int> m_mapParameterNameToModdest; //declare before vastxperience	
 	Array<VASTParameterSlider*> m_mapParameterNameToControl; //declare before vastxperience
 
-	UndoManager m_undoManager; //declare before parameterState
+    UndoManager m_undoManager {3000, 30}; //declare before parameterState
 	AudioProcessorValueTreeState m_parameterState; //declare before vastxperience
 	
 	//==============================================================================
@@ -225,28 +225,28 @@ public:
 	bool m_bTogglePerspectiveDisplay[4] = { false, false, false, false }; //per oscbank
 
 	void setWTmode(int wtMode);
-	int getWTmode();
-	int getMPEmode();
+	int getWTmode() const;
+	int getMPEmode() const;
 	void setMPEmode(int mode);
 	bool isMPEenabled();
-	int getUIFontSize();
+	int getUIFontSize() const;
 	void setUIFontSize(int size);
 	
 	void setModWheelPermaLink(int permalink);
-	int getModWheelPermaLink();
+	int getModWheelPermaLink() const;
 	void setUserTuningFile(String filename);
 	
 	void setBendRange(int bendRange);
-	int getBendRange();
+	int getBendRange() const;
 
 	int m_iWTEditorDrawMode = OscillatorEditMode::SelectMode;
 	int m_iWTEditorGridMode = OscillatorGridMode::NoGrid;
 	int m_iWTEditorBinMode = BinMode::ClipBin;
 	int m_iWTEditorBinEditMode = FreqEditMode::SingleBin;
-	int getDrawMode();
-	int getGridMode();
-	int getBinMode();
-	int getBinEditMode();
+	int getDrawMode() const;
+	int getGridMode() const;
+	int getBinMode() const;
+	int getBinEditMode() const;
 
 	//--------------------------------------------------------------------------------------------------------------------
 

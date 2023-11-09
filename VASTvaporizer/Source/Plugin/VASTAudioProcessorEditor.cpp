@@ -25,7 +25,7 @@ VASTAudioProcessorEditor::VASTAudioProcessorEditor(VASTAudioProcessor& p)
 	resizeCalledFromConstructor = true;
 
 	processor.m_mapParameterNameToControl.clear(); //clear slider mapping
-	vaporizerComponent = new VASTVaporizerComponent(this, &processor);
+	vaporizerComponent = std::make_unique<VASTVaporizerComponent>(this, &processor);
 	
 	//VASTAudioProcessor* _processor = getProcessor();
 
@@ -46,7 +46,7 @@ VASTAudioProcessorEditor::VASTAudioProcessorEditor(VASTAudioProcessor& p)
 
 	tooltipWindow.setLookAndFeel(getProcessor()->getCurrentVASTLookAndFeel());
 	
-	addAndMakeVisible(vaporizerComponent);
+	addAndMakeVisible(vaporizerComponent.get());
 	resizeCalledFromConstructor = true;
 	//setSize(processor.m_iUserTargetPluginWidth, processor.m_iUserTargetPluginHeight);
 	resizeCalledFromConstructor = true;
@@ -315,13 +315,13 @@ VASTLookAndFeel* VASTAudioProcessorEditor::getCurrentVASTLookAndFeel() {
 void VASTAudioProcessorEditor::showNewerVersionPopup() {
 	getProcessor()->m_showNewerVersionPopup = false;
 	//transportable alertwindows without modalloop! https://forum.juce.com/t/is-there-a-easy-way-to-replace-alertwindow-runmodalloop/15072/16
-	m_alertWindow = new juce::AlertWindow(TRANS("Newer version " + getProcessor()->m_newerVersionThatIsAvailble +" available"), TRANS("Please visit the website and download the newest version of Vaporizer2."), juce::AlertWindow::InfoIcon, this);
+	m_alertWindow = std::make_unique<juce::AlertWindow>(TRANS("Newer version " + getProcessor()->m_newerVersionThatIsAvailble +" available"), TRANS("Please visit the website and download the newest version of Vaporizer2."), juce::AlertWindow::InfoIcon, this);
 	m_alertWindow->setLookAndFeel(getProcessor()->getCurrentVASTLookAndFeel());
 	m_alertWindow->addButton("Continue", 0, juce::KeyPress(), juce::KeyPress());
 	m_alertWindow->addButton("Open Website", 1, juce::KeyPress(), juce::KeyPress());
 	m_alertWindow->addTextBlock(L"Please download here: https://www.vast-dynamics.com/?q=products.");
 	m_alertWindow->grabKeyboardFocus();
-	vaporizerComponent->addChildComponent(m_alertWindow);
+	vaporizerComponent->addChildComponent(m_alertWindow.get());
 	m_alertWindow->setCentreRelative(0.5f, 0.5f);
 	m_alertWindow->enterModalState(true, ModalCallbackFunction::create([this](int returnValue) {
 		if (returnValue == 1) {

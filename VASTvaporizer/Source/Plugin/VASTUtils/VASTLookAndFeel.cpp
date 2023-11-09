@@ -866,11 +866,6 @@ void VASTLookAndFeel::drawLinearSliderThumb(Graphics& g, int x, int y, int width
 {
 	auto sliderRadius = (float)getSliderThumbRadius(slider);
 	auto grey = Colour(0xff2b2e33);
-	auto knobColour = slider.findColour(Slider::rotarySliderFillColourId)
-		.withMultipliedSaturation((slider.hasKeyboardFocus(false)) ? 1.3f : 0.9f)
-		.withMultipliedAlpha(slider.isEnabled() ? 1.0f : 0.7f);
-
-
 	g.setColour(Colour(grey).withMultipliedSaturation(0.8f));
 
 	if (style == Slider::LinearHorizontal)
@@ -899,9 +894,7 @@ void VASTLookAndFeel::drawLinearSliderThumb(Graphics& g, int x, int y, int width
 
 		float ky;
 		ky = sliderPos;
-		int outlineThickness = 0.f;
 		auto grey = Colour(0xff444951);
-
 
 		float sliderWidth = width * 0.7f; //smaller due to shadow;
 		drawRoundShape(g,
@@ -1764,7 +1757,7 @@ void VASTLookAndFeel::drawRotarySlider(Graphics& g, int x, int y, int width, int
 
 	bool isParameterSlider = false;
 	VASTParameterSlider* _parameterslider = nullptr;
-	if (_parameterslider = dynamic_cast<VASTParameterSlider*>(&slider)) {
+    if ((_parameterslider = dynamic_cast<VASTParameterSlider*>(&slider))) {
 		isParameterSlider = true;
 		myProcessor = _parameterslider->getAudioProcessor();
 		if (myProcessor != NULL) {

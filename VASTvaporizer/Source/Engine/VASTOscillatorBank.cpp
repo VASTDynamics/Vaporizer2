@@ -193,36 +193,36 @@ bool CVASTOscillatorBank::endSoftFade() { //to be called at start of buffer proc
 	return lResult;
 }
 
-std::shared_ptr<CVASTWaveTable> CVASTOscillatorBank::getNewSharedWavetable() { //by value: share ownership
+std::shared_ptr<CVASTWaveTable> CVASTOscillatorBank::getNewSharedWavetable() const { //by value: share ownership
 	//return m_wavetable;	//can be changed in meantime, need atomic_store here??
 	std::shared_ptr<CVASTWaveTable> localtr;
 	std::atomic_store(&localtr, m_wavetable); //assigning a new instance to a shared pointer make thread safe: https://www.modernescpp.com/index.php/atomic-smart-pointers
 	return localtr;
 }
 
-const std::shared_ptr<CVASTWaveTable>& CVASTOscillatorBank::getWavetablePointer() {
+const std::shared_ptr<CVASTWaveTable>& CVASTOscillatorBank::getWavetablePointer() const {
 	return m_wavetable;
 }
 
-std::shared_ptr<CVASTWaveTable> CVASTOscillatorBank::getNewSharedSoftFadeWavetable() {
+std::shared_ptr<CVASTWaveTable> CVASTOscillatorBank::getNewSharedSoftFadeWavetable() const {
 //	return m_wavetable_soft_fade; //can be changed in meantime, need atomic_store here??
 	std::shared_ptr<CVASTWaveTable> localtr;
 	std::atomic_store(&localtr, m_wavetable_soft_fade); //assigning a new instance to a shared pointer make thread safe: https://www.modernescpp.com/index.php/atomic-smart-pointers
 	return localtr;
 }
 
-const std::shared_ptr<CVASTWaveTable>& CVASTOscillatorBank::getSoftFadeWavetablePointer() {
+const std::shared_ptr<CVASTWaveTable>& CVASTOscillatorBank::getSoftFadeWavetablePointer() const {
 	return m_wavetable_soft_fade;
 }
 
-std::shared_ptr<CVASTWaveTable> CVASTOscillatorBank::getNewSharedSoftFadeWavetableNext() {
+std::shared_ptr<CVASTWaveTable> CVASTOscillatorBank::getNewSharedSoftFadeWavetableNext() const {
 	//return m_wavetable_soft_fade_next; //can be changed in meantime, need atomic_store here??
 	std::shared_ptr<CVASTWaveTable> localtr;
 	std::atomic_store(&localtr, m_wavetable_soft_fade_next); //assigning a new instance to a shared pointer make thread safe: https://www.modernescpp.com/index.php/atomic-smart-pointers
 	return localtr;
 }
 
-const std::shared_ptr<CVASTWaveTable>& CVASTOscillatorBank::getSoftFadeWavetablePointerNext() {
+const std::shared_ptr<CVASTWaveTable>& CVASTOscillatorBank::getSoftFadeWavetablePointerNext() const {
 	return m_wavetable_soft_fade_next;
 }
 
@@ -239,7 +239,7 @@ void CVASTOscillatorBank::prepareForPlay(int expectedSamplesPerBlock) {
 	m_wavetable->prepareForPlay(expectedSamplesPerBlock);
 }
 
-int CVASTOscillatorBank::getBankno() { return m_bankno; }
+int CVASTOscillatorBank::getBankno() const { return m_bankno; }
 
 void CVASTOscillatorBank::setChangedFlagOsc() {
 	m_bWtSoftChangedOsc = true; //CHECK
@@ -253,7 +253,7 @@ void CVASTOscillatorBank::setChangedFlag() {
 
 }
 
-bool CVASTOscillatorBank::isChanged() {
+bool CVASTOscillatorBank::isChanged() const {
 	return
 		(m_bWtSoftChangedFdv || m_bWtSoftChangedOsc || m_bWtSoftChangedOscEditor || m_bWtSoftChangedPos);
 }
@@ -293,7 +293,7 @@ void CVASTOscillatorBank::setSoloMode(bool solo) {
 	m_bWtSoftChangedOsc = true;
 }
 
-bool CVASTOscillatorBank::getSoloMode() {
+bool CVASTOscillatorBank::getSoloMode() const {
 	return m_soloMode;
 }
 
@@ -322,7 +322,7 @@ void CVASTOscillatorBank::timerCallback() { //for WT copy / undo
 	m_bSoftFadeSinceLastUndoCheck = false;
 }
 
-bool CVASTOscillatorBank::needsUndo() {
+bool CVASTOscillatorBank::needsUndo() const {
 	return ((m_wavetable_undo_buffered_before != nullptr) && (m_wavetable_undo_buffered_before->getChangeCounter() != m_wavetable->getChangeCounter()));
 }
 
@@ -348,7 +348,7 @@ void CVASTOscillatorBank::removeSingleNoteSoftFadeCycle(int voiceNo) {
 	//DBG("removeSingleNoteSoftFadeCycle SingleNoteSoftFadeCycle now " + String((isInSingleNoteSoftFadeCycle())));
 }
 
-int CVASTOscillatorBank::isInSingleNoteSoftFadeCycle() {
+int CVASTOscillatorBank::isInSingleNoteSoftFadeCycle() const {
 	return m_iSingleNoteSoftFadeCycle[0] + m_iSingleNoteSoftFadeCycle[1] + m_iSingleNoteSoftFadeCycle[2] + m_iSingleNoteSoftFadeCycle[3] +
 		m_iSingleNoteSoftFadeCycle[4] + m_iSingleNoteSoftFadeCycle[5] + m_iSingleNoteSoftFadeCycle[6] + m_iSingleNoteSoftFadeCycle[7] +
 		m_iSingleNoteSoftFadeCycle[8] + m_iSingleNoteSoftFadeCycle[9] + m_iSingleNoteSoftFadeCycle[10] + m_iSingleNoteSoftFadeCycle[11] +

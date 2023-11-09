@@ -134,10 +134,10 @@ private:
 
 
 	/*
-	ScopedPointer<VASTValueTreeItem> rootItemTreeFiles;
-	ScopedPointer<VASTValueTreeItem> rootItemTreeCategory;
-	ScopedPointer<VASTValueTreeItem> rootItemTreeAuthor;
-	ScopedPointer<VASTValueTreeItem> rootItemTreeTags;
+     std::unique_ptr<VASTValueTreeItem> rootItemTreeFiles;
+     std::unique_ptr<VASTValueTreeItem> rootItemTreeCategory;
+     std::unique_ptr<VASTValueTreeItem> rootItemTreeAuthor;
+     std::unique_ptr<VASTValueTreeItem> rootItemTreeTags;
 	*/
 
 	class PresetTableComponent : public Component,

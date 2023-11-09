@@ -40,7 +40,7 @@
 
 //==============================================================================
 VASTMSEGEditorPane::VASTMSEGEditorPane (AudioProcessorEditor *editor, AudioProcessor* processor, VASTMSEGData* data, VASTMSEGData* datalive, String parameterSuffix, int msegNo)
-    : myEditor((VASTAudioProcessorEditor*)editor), myProcessor((VASTAudioProcessor*)processor), myData(data), myDataLive(datalive), mySuffix(parameterSuffix), myMSEGNo(msegNo)
+    : myEditor((VASTAudioProcessorEditor*)editor), myProcessor((VASTAudioProcessor*)processor), myData(data), myDataLive(datalive), myMSEGNo(msegNo), mySuffix(parameterSuffix)
 {
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]

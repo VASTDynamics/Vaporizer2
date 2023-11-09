@@ -23,6 +23,7 @@ VAST Dynamics Audio Software (TM)
 #define ARC4RANDOMMAX 4294967295 // (2^32 - 1)
 #define EXTRACT_BITS(the_val, bits_start, bits_len) ((the_val >> (bits_start - 1)) & ((1 << bits_len) - 1))
 
+JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE("-Wconversion")
 JUCE_BEGIN_IGNORE_WARNINGS_MSVC(4244 4267) //C4244 conversion from 'type1' to 'type2', possible loss of data //C4267 conversion from 'size_t' to 'type', possible loss of data
 
 enum fu_type
@@ -1945,39 +1946,6 @@ inline float calcSliderVariable(float fMin, float fMax, float fVar)
 	return fCookedData;
 }
 
-//
-// String Helpers: these convert to and from strings
-//
-// user must delete char array when done!
-inline char* MYUINTToString(long value)
-{
-//#pragma clang diagnostic push
-//#pragma clang diagnostic ignored "-Wformat"
-	char* text = new char[33];
-	ltoa(value, text, 10);
-	return text;
-//#pragma clang diagnostic pop
-}
-
-inline MYUINT stringToMYUINT(char* p)
-{
-//#pragma clang diagnostic push
-//#pragma clang diagnostic ignored "-Wformat"
-	return atol(p);
-//#pragma clang diagnostic pop
-}
-
-// user must delete char array when done!
-inline char* intToString(long value)
-{
-//#pragma clang diagnostic push
-//#pragma clang diagnostic ignored "-Wformat"
-	char* text = new char[33];
-	itoa(value, text, 10);
-	return text;
-//#pragma clang diagnostic pop
-}
-
 inline double stringToDouble(char* p)
 {
 	return atof(p);
@@ -2000,7 +1968,7 @@ inline char* floatToString(float value, int nSigDigits)
 	if (nSigDigits > 32)
 		nSigDigits = 32;
 	// gcvt (value, nSigDigits, text);
-	sprintf(text, "%.*f", nSigDigits, value);
+	//sprintf(text, "%.*f", nSigDigits, value);
 
 	return text;
 }
@@ -2012,7 +1980,7 @@ inline char* doubleToString(double value, int nSigDigits)
 	if (nSigDigits > 32)
 		nSigDigits = 32;
 	// gcvt (value, nSigDigits, text);
-	sprintf(text, "%.*f", nSigDigits, value);
+	//sprintf(text, "%.*f", nSigDigits, value);
 	return text;
 }
 
@@ -2029,3 +1997,4 @@ inline char* addStrings(char* pString1, char* pString2)
 }
 
 JUCE_END_IGNORE_WARNINGS_MSVC
+JUCE_END_IGNORE_WARNINGS_GCC_LIKE

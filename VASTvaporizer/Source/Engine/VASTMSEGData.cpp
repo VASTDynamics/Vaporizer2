@@ -488,11 +488,11 @@ void VASTMSEGData::clearDirtyFlag() {
     m_isDirty.store(false);
 }
 
-bool VASTMSEGData::isMSEGDirty() {
+bool VASTMSEGData::isMSEGDirty() const {
 	return m_isDirty.load();
 }
 
-bool VASTMSEGData::getADSRUpdated() {
+bool VASTMSEGData::getADSRUpdated() const {
 	return m_bADSR_updated.load();
 }
 
@@ -500,15 +500,15 @@ void VASTMSEGData::resetADSRUpdated() {
 	m_bADSR_updated.store(false);
 }
 
-int VASTMSEGData::getDispActiveSegment(int voiceNo) {
+int VASTMSEGData::getDispActiveSegment(int voiceNo) const {
 	return m_dispActiveSegment[voiceNo].load();
 }
 
-int VASTMSEGData::getDispSamplesSinceSegmentStart(int voiceNo) {
+int VASTMSEGData::getDispSamplesSinceSegmentStart(int voiceNo) const {
 	return m_dispSamplesSinceSegmentStart[voiceNo].load();
 }
 
-int VASTMSEGData::getDispSegmentLengthInSamples(int voiceNo) {
+int VASTMSEGData::getDispSegmentLengthInSamples(int voiceNo) const {
 	return m_dispSegmentLengthInSamples[voiceNo].load();
 }
 
@@ -523,7 +523,7 @@ void VASTMSEGData::setEnvMode(int mode) {
 	env_mode = mode;
 }
 
-int VASTMSEGData::getDecayPoint() {
+int VASTMSEGData::getDecayPoint() const {
 	int decayPoint = -1;
 	for (int i = 0; i < controlPoints.size(); i++) {
 		if (controlPoints[i].isDecay)
@@ -571,7 +571,7 @@ void VASTMSEGData::calcADSR() {
 
 	if (susPoint == -1) {
 		//susPoint = controlPoints.size() - 2; // prelast point
-		susPoint = controlPoints.size() - 1; // last point
+		susPoint = int(controlPoints.size()) - 1; // last point
 	}
 
 	double attackPerc = 0.0f;
@@ -616,7 +616,7 @@ void VASTMSEGData::calcADSR() {
 	jassert(abs(totalAfter - totalBefore) < 0.001);
 }
 
-bool VASTMSEGData::hasReleasePhase() {
+bool VASTMSEGData::hasReleasePhase() const {
 	bool hasRelease = true;
 	int sp = getSustainPoint();
 	if ((sp == -1) || (controlPoints.size() <= sp + 1))
@@ -629,7 +629,7 @@ void VASTMSEGData::setSynch(bool synch) {
     m_isDirty.store(true);
 }
 
-bool VASTMSEGData::getSynch() {
+bool VASTMSEGData::getSynch() const {
 	return m_bSynch.load();
 }
 
@@ -638,7 +638,7 @@ void VASTMSEGData::setTimeBeats(int timeBeats) {
     m_isDirty.store(true);
 }
 
-int VASTMSEGData::getTimeBeats() {
+int VASTMSEGData::getTimeBeats() const {
 	return m_uTimeBeats;
 }
 
@@ -646,29 +646,29 @@ int VASTMSEGData::getTimeBeats() {
 // design time interface
 //float getAttackLevel() { return 0.f; };
 
-double VASTMSEGData::getAttackTime() {
+double VASTMSEGData::getAttackTime() const {
 	return m_fAttackTime.load();
 }
 
 //ms
 
-double VASTMSEGData::getDecayTime() {
+double VASTMSEGData::getDecayTime() const {
 	return m_fDecayTime.load();
 }
 
 //ms
 
-double VASTMSEGData::getSustainLevel() {
+double VASTMSEGData::getSustainLevel() const {
 	return m_fSustainLevel.load();
 }
 
 /** < 0.0 to 1.0. */
 
-double VASTMSEGData::getReleaseTime() {
+double VASTMSEGData::getReleaseTime() const {
 	return m_fReleaseTime.load();
 }
 
-bool VASTMSEGData::hasAttackPhase() {
+bool VASTMSEGData::hasAttackPhase() const {
 	bool hasAttack = true;
 	int decayPoint = -1;
 	for (int i = 0; i < controlPoints.size(); i++) {
@@ -699,7 +699,7 @@ void VASTMSEGData::doADSR() {
 
 	if (susPoint == -1) {
 		//susPoint = controlPoints.size() - 2; // prelast point
-		susPoint = controlPoints.size() - 1; // last point
+		susPoint = int(controlPoints.size()) - 1; // last point
 	}
 
 	double attackPerc = 0.0f;
@@ -821,7 +821,7 @@ void VASTMSEGData::doADSR() {
 	}
 	int lastDecayPoint = getSustainPoint();
 	if (!releasePhase) 
-		lastDecayPoint = controlPoints.size() - 1;	
+		lastDecayPoint = int(controlPoints.size()) - 1;
 	for (int i = lastAttackPoint + 1; i <= lastDecayPoint; i++) {
 		if (controlPoints[lastDecayPoint].xVal - controlPoints[lastAttackPoint].xVal)
 			controlPoints[i].xVal = newAttackPerc + ((controlPoints[i].xVal - controlPoints[lastAttackPoint].xVal) / (controlPoints[lastDecayPoint].xVal - controlPoints[lastAttackPoint].xVal)) * newDecayPerc;
@@ -829,7 +829,7 @@ void VASTMSEGData::doADSR() {
 		if (controlPoints[i].xVal < 0.f) controlPoints[i].xVal = 0.f;
 	}
 	if (releasePhase) {
-		int lastReleasePoint = controlPoints.size() - 1;
+		int lastReleasePoint = int(controlPoints.size()) - 1;
 		for (int i = lastDecayPoint + 1; i <= lastReleasePoint; i++) {
 			if (controlPoints[lastReleasePoint].xVal != controlPoints[lastDecayPoint].xVal)
 				controlPoints[i].xVal = newAttackPerc + newDecayPerc + ((controlPoints[i].xVal - controlPoints[lastDecayPoint].xVal) / (controlPoints[lastReleasePoint].xVal - controlPoints[lastDecayPoint].xVal)) * newReleasePerc;
@@ -928,7 +928,7 @@ void VASTMSEGData::stepSeqChangeGlide(float glide) {
 
 void VASTMSEGData::stepSeqChangeSteps(int steps, float glide, float gate) {
 	//const ScopedWriteLock myScopedLock(mReadWriteLock);
-	int bsize = m_ss_bars.size();
+	int bsize = int(m_ss_bars.size());
 	if (steps < bsize) {
 		//for (int i=0; i< bsize - steps; i++)
 			//keep it
@@ -1223,7 +1223,7 @@ void VASTMSEGData::toggleSustainPoint(int pointno) {
 	calcADSR();
 }
 
-int VASTMSEGData::getSustainPoint() {
+int VASTMSEGData::getSustainPoint() const {
 	int point = -1;
 	for (int i = 0; i < controlPoints.size(); i++) {
 		if (controlPoints[i].isSustain == true)
@@ -1292,8 +1292,7 @@ void VASTMSEGData::getValueTreeState(ValueTree* tree, UndoManager* undoManager, 
 		//points
 		tree->setProperty("numControlPoints", int(controlPoints.size()), undoManager);
 		for (int i = 0; i < controlPoints.size(); i++) {
-			ScopedPointer<ValueTree> subtree;
-			subtree = new ValueTree(Identifier("msegPoint" + String(i)));
+            std::unique_ptr<ValueTree> subtree(new ValueTree(Identifier("msegPoint" + String(i))));
 			subtree->setProperty("isDecay", controlPoints[i].isDecay, undoManager);
 			subtree->setProperty("isSustain", controlPoints[i].isSustain, undoManager);
 			subtree->setProperty("isLoopStart", controlPoints[i].isLoopStart, undoManager);
@@ -1310,8 +1309,7 @@ void VASTMSEGData::getValueTreeState(ValueTree* tree, UndoManager* undoManager, 
 		tree->setProperty("invert", invert, undoManager);
 		tree->setProperty("numSteps", int(getStepSeqSteps()), undoManager);
 		for (int i = 0; i < getStepSeqSteps(); i++) {
-			ScopedPointer<ValueTree> subtree;
-			subtree = new ValueTree(Identifier("stepSeqStep" + String(i)));
+            std::unique_ptr<ValueTree> subtree(new ValueTree(Identifier("stepSeqStep" + String(i))));
 			subtree->setProperty("barHeight", m_ss_bars[i], undoManager);
 			tree->appendChild(*subtree.get(), undoManager);
 		}
@@ -1410,7 +1408,7 @@ void VASTMSEGData::setValueTreeState(ValueTree* tree, bool isMseg, CVASTSettings
 	}
 }
 
-bool VASTMSEGData::getInvert() {
+bool VASTMSEGData::getInvert() const {
 	return invert;
 }
 
@@ -1446,7 +1444,7 @@ void VASTMSEGData::setReleaseSteps(double releaseSteps, CVASTSettings* set) {
 	}
 }
 
-float VASTMSEGData::getAttackSteps() {
+float VASTMSEGData::getAttackSteps() const {
 	return m_fAttackSteps.load();
 }
 
@@ -1573,7 +1571,7 @@ void VASTMSEGData::setStepSeqTime(double stepSeqTime) {
     m_needsUIUpdate.store(true);
 }
 
-int VASTMSEGData::getNumSegments() { return controlPoints.size() - 1; }
+int VASTMSEGData::getNumSegments() const { return int(controlPoints.size()) - 1; }
 
 VASTMSEGData::ControlPoint* VASTMSEGData::getSegmentStart(int segment) {
 	vassert(segment < getNumSegments());
@@ -1587,10 +1585,10 @@ VASTMSEGData::ControlPoint* VASTMSEGData::getSegmentEnd(int segment) {
 	return &controlPoints[segment + 1];
 }
 
-float VASTMSEGData::getDecaySteps() {
+float VASTMSEGData::getDecaySteps() const {
 	return m_fDecaySteps.load();
 }
 
-float VASTMSEGData::getReleaseSteps() {
+float VASTMSEGData::getReleaseSteps() const {
 	return m_fReleaseSteps.load();
 }

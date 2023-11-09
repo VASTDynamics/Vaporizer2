@@ -81,7 +81,7 @@ public:
 	void copyWTFreqsFrom(const CVASTWaveTable& wavetable);
 	void addFromOtherWavetable(int newPos, sWaveTablePosition wtp);
 	void clear();
-	int getNumPositions();
+	int getNumPositions() const;
 	juce::String getWaveTableName();
 	void setWaveTableName(StringRef wtname);
 	
@@ -150,10 +150,10 @@ public:
 	std::vector<float>* getEmptySecondSamplesWorkarea();
 
 	void setSelectedWtPos(int wtPos);
-	int getSelectedWtPos();
-	bool isMultiSelected();
-	int getMultiSelectBegin();
-	int getMultiSelectEnd();
+	int getSelectedWtPos() const;
+	bool isMultiSelected() const;
+	int getMultiSelectBegin() const;
+	int getMultiSelectEnd() const;
 	void multiSelectAll();
 	void clearMultiSelect();
 	void setMultiSelect(int wtPos);
@@ -171,8 +171,8 @@ public:
 	int m_iMultiSelectEnd = 0;
 	int m_iSelectedPosition = 0;
 	int m_iWaveTableID = 0;
-	int getID();
-	int getChangeCounter();
+	int getID() const;
+	int getChangeCounter() const;
 	void copyUIFXUpdates();
 
 	//make private
@@ -191,16 +191,16 @@ private:
 	std::vector<dsp::Complex<float>> mc_newBuffer = std::vector<dsp::Complex<float>>(C_WAVE_TABLE_SIZE, 0.0f);
 
 	void copyFrom(const CVASTWaveTable &wavetable);
-	bool positionIsPrepared(int wtPos);
+	bool positionIsPrepared(int wtPos) const;
 	void createFreqsIfNeeded(int wtPos, bool preGenerate, int wtMode);  //created means that naive is there and freqs - but not necessarily samples - pregenerated m,eans with samples
-	bool getWaveTablePosition(int wtPos, sWaveTablePosition* &waveTablePosition);
-	bool getWaveTablePosition(int wtPos, sWaveTablePosition* &waveTablePosition, sWaveTablePosition* &waveTablePositionNextPos, bool &hasNextFrame);
+	bool getWaveTablePosition(int wtPos, sWaveTablePosition* &waveTablePosition); //not const
+	bool getWaveTablePosition(int wtPos, sWaveTablePosition* &waveTablePosition, sWaveTablePosition* &waveTablePositionNextPos, bool &hasNextFrame); //not const
 	void generateWaveTableFreqsFromTimeDomain(int wtPos, int tableLen, const std::vector<float> &waveSamples, bool preGenerate, int wtMode);
 	void makeWaveTableFreq(int wtPos, int len, float bottomFreq, float topFreq, int maxHarmonics, bool change, int tableindex, bool normalize, int wtMode, float wtFxVal, int wtFxType, float curFreq);
 	void addWaveTableFreq(int wtPos, int len, std::vector<float> &waveTableIn, float bottomFreq, float topFreq, int maxHarmonics, bool isInvalid, bool dirty, float wtFxVal, int wtFxType, bool buffer, std::vector<float> &naiveTableFXBufferCopy);
 	void changeWaveTableFreq(int wtPos, int tableindex, int len, std::vector<float> &waveTableIn, float bottomFreq, float topFreq, int maxHarmonics, bool invalid, bool dirty, float wtFxVal, int wtFxType);
 	void putWaveTableFreqToBuffer(sWaveTablePosition* wtp, int tableindex);
-	int getNumWaveTableFreqs(int wtPos);
+	int getNumWaveTableFreqs(int wtPos); //not const
 	bool getWavetableFreq(int wtPos, int freqindex, float* bottomFreq, float* topFreq);
 	sWaveTablePosition emptyPosition();	
 	bool fillInterpolateBuffersRange(const bool next, sWaveTablePosition* wtp, float* xo, float* y0, float* y1, CVASTWaveTableOscillator* mOscillator, const int osciCount, const int startSample, const int numSamples, AudioSampleBuffer* posBuffer, const bool bInverter, int wtMode, float wtFxVal, int wtFxType, int voiceNo, int bank, OwnedArray<CVASTOscillatorBank>* oscBank, bool updateUI, bool &updated);
@@ -214,26 +214,26 @@ private:
 	int m_lastWaveTableIdxNext = 0; //performance optimize
 	double m_lastPhaseInc = 0; //performance optimize
 
-	ScopedPointer<AudioSampleBuffer> m_x0_curPos;
-	ScopedPointer<AudioSampleBuffer> m_y0_curPos;
-	ScopedPointer<AudioSampleBuffer> m_y1_curPos;
-	ScopedPointer<AudioSampleBuffer> m_x0_nextPos;
-	ScopedPointer<AudioSampleBuffer> m_y0_nextPos;
-	ScopedPointer<AudioSampleBuffer> m_y1_nextPos;
-	ScopedPointer<AudioSampleBuffer> m_begin_curPosBuffer;
-	ScopedPointer<AudioSampleBuffer> m_begin_curPosBufferNextWtfxtype;
-	ScopedPointer<AudioSampleBuffer> m_begin_nextPosBuffer;
-	ScopedPointer<AudioSampleBuffer> m_begin_nextPosBufferNextWtfxtype;
-	ScopedPointer<AudioSampleBuffer> m_end_curPosBuffer;
-	ScopedPointer<AudioSampleBuffer> m_end_curPosBufferNextWtfxtype;
-	ScopedPointer<AudioSampleBuffer> m_end_nextPosBuffer;
-	ScopedPointer<AudioSampleBuffer> m_end_nextPosBufferNextWtfxtype;
-	ScopedPointer<AudioSampleBuffer> m_oscBuffer;
+    std::unique_ptr<AudioSampleBuffer> m_x0_curPos;
+    std::unique_ptr<AudioSampleBuffer> m_y0_curPos;
+    std::unique_ptr<AudioSampleBuffer> m_y1_curPos;
+    std::unique_ptr<AudioSampleBuffer> m_x0_nextPos;
+    std::unique_ptr<AudioSampleBuffer> m_y0_nextPos;
+    std::unique_ptr<AudioSampleBuffer> m_y1_nextPos;
+    std::unique_ptr<AudioSampleBuffer> m_begin_curPosBuffer;
+    std::unique_ptr<AudioSampleBuffer> m_begin_curPosBufferNextWtfxtype;
+    std::unique_ptr<AudioSampleBuffer> m_begin_nextPosBuffer;
+    std::unique_ptr<AudioSampleBuffer> m_begin_nextPosBufferNextWtfxtype;
+    std::unique_ptr<AudioSampleBuffer> m_end_curPosBuffer;
+    std::unique_ptr<AudioSampleBuffer> m_end_curPosBufferNextWtfxtype;
+    std::unique_ptr<AudioSampleBuffer> m_end_nextPosBuffer;
+    std::unique_ptr<AudioSampleBuffer> m_end_nextPosBufferNextWtfxtype;
+    std::unique_ptr<AudioSampleBuffer> m_oscBuffer;
 
-	ScopedPointer<AudioSampleBuffer> m_valBeginBuffer;
-	ScopedPointer<AudioSampleBuffer> m_valBeginBufferNext;
-	ScopedPointer<AudioSampleBuffer> m_valEndBuffer;
-	ScopedPointer<AudioSampleBuffer> m_valEndBufferNext;
+    std::unique_ptr<AudioSampleBuffer> m_valBeginBuffer;
+    std::unique_ptr<AudioSampleBuffer> m_valBeginBufferNext;
+    std::unique_ptr<AudioSampleBuffer> m_valEndBuffer;
+    std::unique_ptr<AudioSampleBuffer> m_valEndBufferNext;
 
 	float* m_x0_curPos_writePointer = nullptr;
 	float* m_y0_curPos_writePointer = nullptr;
@@ -244,7 +244,7 @@ private:
 	float* m_nextPosBuffer_writePointer = nullptr;
 	float* m_curPosBuffer_writePointer = nullptr;
 	
-	ScopedPointer<AudioSampleBuffer> m_fracPartBuffer;
+    std::unique_ptr<AudioSampleBuffer> m_fracPartBuffer;
 
 	JUCE_LEAK_DETECTOR(CVASTWaveTable)
 };

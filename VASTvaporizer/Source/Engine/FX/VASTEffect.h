@@ -99,6 +99,6 @@ private:
 
 	String m_effectName = "";
 	String m_onOffParamID = "";
-
+    
 	JUCE_LEAK_DETECTOR(CVASTEffect)
 };

@@ -30,12 +30,12 @@ void VASTPopupHandler::drawValueBubble(Component* slider) {
 
 		VASTAudioProcessorEditor* myEditor = (VASTAudioProcessorEditor*)_slider->getAudioProcessor()->getActiveEditor();
 		if (m_valueWindow == NULL) {
-			m_valueWindow = new BubbleMessageComponent();
+			m_valueWindow = std::make_unique<BubbleMessageComponent>();
 			m_valueWindow->setLookAndFeel(myEditor->getCurrentVASTLookAndFeel());
 			m_valueWindow->setRepaintsOnMouseActivity(false);
 			//m_valueWindow->setBounds(0, 0, 100 * myEditor->getProcessor()->getPluginScaleWidthFactor(), 10 * myEditor->getProcessor()->getPluginScaleHeightFactor());
 			//slider->getParentComponent()->addChildComponent(m_valueWindow);
-			myEditor->vaporizerComponent->addChildComponent(m_valueWindow);
+			myEditor->vaporizerComponent->addChildComponent(m_valueWindow.get());
 		}
 		juce::AttributedString sText(lCurValue);
 		sText.setJustification(Justification::centred);
@@ -54,10 +54,10 @@ void VASTPopupHandler::drawValueBubble(Component* slider) {
 
 			VASTAudioProcessorEditor* myEditor = (VASTAudioProcessorEditor*)_slider->getAudioProcessor()->getActiveEditor();
 			if (m_valueWindow == NULL) {
-				m_valueWindow = new BubbleMessageComponent();
+				m_valueWindow = std::make_unique<BubbleMessageComponent>();
 				m_valueWindow->setLookAndFeel(myEditor->getCurrentVASTLookAndFeel());
 				m_valueWindow->setRepaintsOnMouseActivity(false);
-				myEditor->vaporizerComponent->addChildComponent(m_valueWindow);
+				myEditor->vaporizerComponent->addChildComponent(m_valueWindow.get());
 			}
 			juce::AttributedString sText(lCurValue);
 			sText.setJustification(Justification::centred);
@@ -319,7 +319,7 @@ void VASTPopupHandler::mouseDown(const MouseEvent &e) {
 				l_veditor->setTextEnd(String(modEnd));
 				l_veditor->setPolarity(modPolarity);
 
-				juce::CallOutBox::launchAsynchronously(std::move(l_veditor), newBounds, myEditor->vaporizerComponent);
+				juce::CallOutBox::launchAsynchronously(std::move(l_veditor), newBounds, myEditor->vaporizerComponent.get());
 
 			}
 			else if (result == 21)
@@ -337,7 +337,7 @@ void VASTPopupHandler::mouseDown(const MouseEvent &e) {
 				l_veditor->setText(lCurValue);
 
 				//CallOutBox &cb =
-				juce::CallOutBox::launchAsynchronously(std::move(l_veditor), newBounds, myEditor->vaporizerComponent);
+				juce::CallOutBox::launchAsynchronously(std::move(l_veditor), newBounds, myEditor->vaporizerComponent.get());
 
 			}
 			else if (result == 22)

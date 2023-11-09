@@ -262,7 +262,7 @@ public:
 		SamplerBuffer->clear(0, numSamples);  //needs clearing
 	}
 
-	int getNumSamples() {
+	int getNumSamples() const {
 		return m_numSamples;
 	};
 
@@ -398,8 +398,6 @@ public:
 
     std::atomic<double> m_dPpqPosition = 0;
     std::atomic<double> m_dPpqBpm = 0;
-    std::atomic<double> m_dPpqLoopStart = 0;
-    std::atomic<double> m_dPpqLoopEnd = 0;
     std::atomic<bool> m_bPpqIsPlaying = false;
     std::atomic<bool> m_bPpqIsLooping = false;
     std::atomic<double> m_dPpqPositionOfLastBarStart = 0;

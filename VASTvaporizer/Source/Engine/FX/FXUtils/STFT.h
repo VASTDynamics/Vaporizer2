@@ -107,7 +107,7 @@ private:
     void updateFftSize (const int newFftSize)
     {
         fftSize = newFftSize;
-        fft = new dsp::FFT (log2 (fftSize));
+        fft = std::unique_ptr<dsp::FFT>(new dsp::FFT(log2(fftSize)));
 
         inputBufferLength = fftSize;
         inputBuffer.clear();
@@ -234,7 +234,7 @@ protected:
     int numSamples;
 
     int fftSize;
-    ScopedPointer<dsp::FFT> fft;
+    std::unique_ptr<dsp::FFT> fft;
 
     int inputBufferLength;
     AudioSampleBuffer inputBuffer;

@@ -17,7 +17,7 @@ CDelay::CDelay(void)
 	m_fDelayInSamples = 0.0;
 	m_nSampleRate = 0;
 
-	m_pBuffer = new AudioSampleBuffer(1, 44100 * 2); // inital value
+	m_pBuffer = std::make_unique<AudioSampleBuffer>(1, 44100 * 2); // inital value
 
 	resetDelay();
 }

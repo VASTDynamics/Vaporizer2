@@ -98,22 +98,22 @@ void CVASTDistortion::parameterChanged(const String& parameterID, float newValue
 			switchOff();
 	}
 	else if (parameterID.startsWith("m_fDistDryWet")) {
-		m_fDistDryWet_smoothed.setValue(newValue);
+		m_fDistDryWet_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fDistDrive")) {
-		m_fDistDrive_smoothed.setValue(newValue);
+		m_fDistDrive_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fDistFuzz")) {
-		m_fDistFuzz_smoothed.setValue(newValue);
+		m_fDistFuzz_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fDistLowcut")) {
-		m_fDistLowcut_smoothed.setValue(newValue);
+		m_fDistLowcut_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fDistGain")) {
-		m_fDistGain_smoothed.setValue(newValue);
+		m_fDistGain_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fDistPreGain")) {
-		m_fDistPreGain_smoothed.setValue(newValue);
+		m_fDistPreGain_smoothed.setTargetValue(newValue);
 	}
 }
 
@@ -212,7 +212,7 @@ void CVASTDistortion::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMe
 		
 		processAudioFrame(fIn, fOut, 2, 2, inputState);
 
-		m_fDistGain_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fDistGain, MODMATDEST::DistortionGain, &inputState));
+		m_fDistGain_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fDistGain, MODMATDEST::DistortionGain, &inputState));
 		float lDistGain = m_fDistGain_smoothed.getNextValue();
 
 		bufferWritePointerL[currentFrame] = fOut[0] * lDistGain * 0.01f;
@@ -245,23 +245,23 @@ bool CVASTDistortion::processAudioFrame(float* pInputBuffer, float* pOutputBuffe
 	//http://music.columbia.edu/cmc/music-dsp/FAQs/guitar_distortion_FAQ.html
 		
 	//DryWet Mod
-	m_fDistDryWet_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fDistDryWet, MODMATDEST::DistortionDryWet, &inputState));
+	m_fDistDryWet_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fDistDryWet, MODMATDEST::DistortionDryWet, &inputState));
 	float lDistortionWet = m_fDistDryWet_smoothed.getNextValue();
 
 	//Drive Mod
-	m_fDistDrive_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fDistDrive, MODMATDEST::DistortionDrive, &inputState));
+	m_fDistDrive_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fDistDrive, MODMATDEST::DistortionDrive, &inputState));
 	float lDistortionDrive = m_fDistDrive_smoothed.getNextValue();
 
 	//Fuzz Mod
-	m_fDistFuzz_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fDistFuzz, MODMATDEST::DistortionFuzz, &inputState));
+	m_fDistFuzz_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fDistFuzz, MODMATDEST::DistortionFuzz, &inputState));
 	float lDistortionFuzz = m_fDistFuzz_smoothed.getNextValue();
 
 	//Pregain Mod
-	m_fDistPreGain_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fDistPreGain, MODMATDEST::DistortionPreGain, &inputState));
+	m_fDistPreGain_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fDistPreGain, MODMATDEST::DistortionPreGain, &inputState));
 	float lDistortionPreGain = m_fDistPreGain_smoothed.getNextValue();
 
 	//Lowcut Mod
-	m_fDistLowcut_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fDistLowcut, MODMATDEST::DistortionLowCut, &inputState));
+	m_fDistLowcut_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fDistLowcut, MODMATDEST::DistortionLowCut, &inputState));
 	if (m_fDistLowcut_smoothed.isSmoothing()) {
 		float lDistortionLowcut = m_fDistLowcut_smoothed.getNextValue();
 		float fQ = sqrt2over2;
@@ -333,13 +333,13 @@ bool CVASTDistortion::processAudioFrame(float* pInputBuffer, float* pOutputBuffe
 
 void CVASTDistortion::getStateInformation(MemoryBlock& destData)
 {
-	//ScopedPointer<XmlElement> xml (parameters.valueTreeState.state.createXml());
+	//std::unique_ptr<XmlElement> xml (parameters.valueTreeState.state.createXml());
 	//copyXmlToBinary (*xml, destData);
 }
 
 void CVASTDistortion::setStateInformation(const void* data, int sizeInBytes)
 {
-	//ScopedPointer<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
+	//std::unique_ptr<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
 	//if (xmlState != nullptr)
 	//  if (xmlState->hasTagName (parameters.valueTreeState.state.getType()))
 	//    parameters.valueTreeState.state = ValueTree::fromXml (*xmlState);

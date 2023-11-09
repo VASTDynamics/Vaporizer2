@@ -23,8 +23,6 @@ CVASTReverb::CVASTReverb(VASTAudioProcessor* processor, int busnr){
 
 void CVASTReverb::initParameters() {
 	AudioProcessorValueTreeState& parameters = my_processor->getParameterTree();
-	int lDestination = 0;
-
 	createAndAddParameter(&m_bReverbOnOff, parameters, 1, "m_bReverbOnOff", "Reverb on / off", "On", 0,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
@@ -94,7 +92,6 @@ void CVASTReverb::initParameters() {
 void CVASTReverb::initCompatibilityParameters() {
 	// all new parameters go here
 	AudioProcessorValueTreeState& parameters = my_processor->getParameterTree();
-	int lDestination = 0;
 	createAndAddParameter(&m_fReverbHighcut, parameters, 1, "m_fReverbHighcut", "Reverb highcut frequency", "Highcut", 4,
 		MODMATDEST::ReverbHighcut,
 		NormalisableRange<float>(50.f, 18000.f, 0.001f, 0.3f, false), 18000.f,
@@ -116,25 +113,25 @@ void CVASTReverb::parameterChanged(const String& parameterID, float newValue) {
 		updateVariables();
 	}
 	else if (parameterID.startsWith("m_fReverbDamping")) {
-		m_fReverbDamping_smoothed.setValue(newValue);
+		m_fReverbDamping_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fReverbSize")) {
-		m_fReverbSize_smoothed.setValue(newValue);
+		m_fReverbSize_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fReverbPredelay")) {
-		m_fReverbPredelay_smoothed.setValue(newValue);
+		m_fReverbPredelay_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fReverbLowcut")) {
-		m_fReverbLowcut_smoothed.setValue(newValue);
+		m_fReverbLowcut_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fReverbHighcut")) {
-		m_fReverbHighcut_smoothed.setValue(newValue);
+		m_fReverbHighcut_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fReverbFeedback")) {
-		m_fReverbFeedback_smoothed.setValue(newValue);		
+		m_fReverbFeedback_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fReverbGain")) {
-		m_fReverbGain_smoothed.setValue(newValue);
+		m_fReverbGain_smoothed.setTargetValue(newValue);
 	}
 }
 
@@ -220,13 +217,13 @@ void CVASTReverb::prepareToPlay(double sampleRate, int samplesPerBlock) {
 	m_PreDelay.setSampleRate(m_iSampleRate);
 	m_PreDelay.init(2.0 * m_iSampleRate);
 
-	m_fReverbSize_smoothed.setValue(*m_fReverbSize);
+	m_fReverbSize_smoothed.setTargetValue(*m_fReverbSize);
 	m_fSizeMod = *m_fReverbSize;
-	m_fReverbPredelay_smoothed.setValue(*m_fReverbPredelay);	
+	m_fReverbPredelay_smoothed.setTargetValue(*m_fReverbPredelay);
 	m_fPredelayMod = *m_fReverbPredelay;
-	m_fReverbDamping_smoothed.setValue(*m_fReverbDamping);
+	m_fReverbDamping_smoothed.setTargetValue(*m_fReverbDamping);
 	m_fDampingMod = *m_fReverbDamping;
-	m_fReverbFeedback_smoothed.setValue(*m_fReverbFeedback);
+	m_fReverbFeedback_smoothed.setTargetValue(*m_fReverbFeedback);
 	m_fFeedbackMod = *m_fReverbFeedback;
 
 	// init up to 100 mSec
@@ -437,13 +434,13 @@ void CVASTReverb::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessag
 
 		inputState = ((VASTAudioProcessor*)my_processor)->m_pVASTXperience.m_Poly.getOldestNotePlayedInputState(currentFrameOSAdjusted); // make parameter oldest or newest
 
-		m_fReverbGain_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fReverbGain, MODMATDEST::ReverbGain, &inputState));
+		m_fReverbGain_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fReverbGain, MODMATDEST::ReverbGain, &inputState));
 		float lReverbGain = m_fReverbGain_smoothed.getNextValue();
 
-		m_fReverbDryWet_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fReverbDryWet, MODMATDEST::ReverbDryWet, &inputState));
+		m_fReverbDryWet_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fReverbDryWet, MODMATDEST::ReverbDryWet, &inputState));
 		float lReverbDryWet = m_fReverbDryWet_smoothed.getNextValue();
 
-		m_fReverbLowcut_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fReverbLowcut, MODMATDEST::ReverbLowcut, &inputState));
+		m_fReverbLowcut_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fReverbLowcut, MODMATDEST::ReverbLowcut, &inputState));
 		if (m_fReverbLowcut_smoothed.isSmoothing()) {
 			float lReverbLowcut = m_fReverbLowcut_smoothed.getNextValue();
 			float fQ = 0.707f;
@@ -452,7 +449,7 @@ void CVASTReverb::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessag
 			m_lowCutBiquad1.copySettingsFrom(&m_lowCutBiquadL);
 		}
 
-		m_fReverbHighcut_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fReverbHighcut, MODMATDEST::ReverbHighcut, &inputState));
+		m_fReverbHighcut_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fReverbHighcut, MODMATDEST::ReverbHighcut, &inputState));
 		if (m_fReverbHighcut_smoothed.isSmoothing()) {
 			float lReverbHighcut = m_fReverbHighcut_smoothed.getNextValue();
 			float fQ = 0.707f;
@@ -461,16 +458,16 @@ void CVASTReverb::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessag
 			m_highCutBiquad1.copySettingsFrom(&m_highCutBiquadL);
 		}
 
-		m_fReverbFeedback_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fReverbFeedback, MODMATDEST::ReverbFeedback, &inputState));
+		m_fReverbFeedback_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fReverbFeedback, MODMATDEST::ReverbFeedback, &inputState));
 		m_fFeedbackMod = m_fReverbFeedback_smoothed.getNextValue();
 
-		m_fReverbSize_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fReverbSize, MODMATDEST::ReverbSize, &inputState));
+		m_fReverbSize_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fReverbSize, MODMATDEST::ReverbSize, &inputState));
 		m_fSizeMod = m_fReverbSize_smoothed.getNextValue();
 
-		m_fReverbPredelay_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fReverbPredelay, MODMATDEST::ReverbPredelay, &inputState));
+		m_fReverbPredelay_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fReverbPredelay, MODMATDEST::ReverbPredelay, &inputState));
 		m_fPredelayMod = m_fReverbPredelay_smoothed.getNextValue();
 
-		m_fReverbDamping_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fReverbDamping, MODMATDEST::ReverbDamping, &inputState));
+		m_fReverbDamping_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fReverbDamping, MODMATDEST::ReverbDamping, &inputState));
 		m_fDampingMod = m_fReverbDamping_smoothed.getNextValue();
 
 		if (m_fReverbFeedback_smoothed.isSmoothing() || m_fReverbSize_smoothed.isSmoothing() || m_fReverbPredelay_smoothed.isSmoothing() || m_fReverbDamping_smoothed.isSmoothing())
@@ -622,13 +619,13 @@ bool CVASTReverb::processAudioFrame(float* pInputBuffer, float* pOutputBuffer, M
 
 void CVASTReverb::getStateInformation(MemoryBlock& destData)
 {
-	//ScopedPointer<XmlElement> xml (parameters.valueTreeState.state.createXml());
+	//std::unique_ptr<XmlElement> xml (parameters.valueTreeState.state.createXml());
 	//copyXmlToBinary (*xml, destData);
 }
 
 void CVASTReverb::setStateInformation(const void* data, int sizeInBytes)
 {
-	//ScopedPointer<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
+	//std::unique_ptr<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
 	//if (xmlState != nullptr)
 	//  if (xmlState->hasTagName (parameters.valueTreeState.state.getType()))
 	//    parameters.valueTreeState.state = ValueTree::fromXml (*xmlState);

@@ -24,30 +24,30 @@ CVASTWaveTable::CVASTWaveTable(CVASTSettings &set) : m_Set(&set) {
     //fft = nullptr; //initialize on demand
 
 	int initSize = 16;
-	m_x0_curPos = new AudioSampleBuffer(1, initSize);
-	m_y0_curPos = new AudioSampleBuffer(1, initSize);
-	m_y1_curPos = new AudioSampleBuffer(1, initSize);
-	m_x0_nextPos = new AudioSampleBuffer(1, initSize);
-	m_y0_nextPos = new AudioSampleBuffer(1, initSize);
-	m_y1_nextPos = new AudioSampleBuffer(1, initSize);
-	//m_interpolBuffer = new AudioSampleBuffer(1, initSize);
-	m_fracPartBuffer = new AudioSampleBuffer(1, initSize);
-	//m_fracPartQuad = new AudioSampleBuffer(1, initSize);
-	m_oscBuffer = new AudioSampleBuffer(1, initSize);
-	//m_oscBufferStereo = new AudioSampleBuffer(2, initSize);
-	m_begin_nextPosBuffer = new AudioSampleBuffer(2, initSize);
-	m_begin_nextPosBufferNextWtfxtype = new AudioSampleBuffer(2, initSize);
-	m_begin_curPosBuffer = new AudioSampleBuffer(2, initSize);
-	m_begin_curPosBufferNextWtfxtype = new AudioSampleBuffer(2, initSize);
-	m_end_nextPosBuffer = new AudioSampleBuffer(2, initSize);
-	m_end_nextPosBufferNextWtfxtype = new AudioSampleBuffer(2, initSize);
-	m_end_curPosBuffer = new AudioSampleBuffer(2, initSize);
-	m_end_curPosBufferNextWtfxtype = new AudioSampleBuffer(2, initSize);
+	m_x0_curPos = std::make_unique<AudioSampleBuffer>(1, initSize);
+	m_y0_curPos = std::make_unique<AudioSampleBuffer>(1, initSize);
+	m_y1_curPos = std::make_unique<AudioSampleBuffer>(1, initSize);
+	m_x0_nextPos = std::make_unique<AudioSampleBuffer>(1, initSize);
+	m_y0_nextPos = std::make_unique<AudioSampleBuffer>(1, initSize);
+	m_y1_nextPos = std::make_unique<AudioSampleBuffer>(1, initSize);
+	//m_interpolBuffer = std::make_unique<AudioSampleBuffer>(1, initSize);
+	m_fracPartBuffer = std::make_unique<AudioSampleBuffer>(1, initSize);
+	//m_fracPartQuad = std::make_unique<AudioSampleBuffer>(n1, initSize);
+	m_oscBuffer = std::make_unique<AudioSampleBuffer>(1, initSize);
+	//m_oscBufferStereo = std::make_unique<AudioSampleBuffer>(2, initSize);
+	m_begin_nextPosBuffer = std::make_unique<AudioSampleBuffer>(2, initSize);
+	m_begin_nextPosBufferNextWtfxtype = std::make_unique<AudioSampleBuffer>(2, initSize);
+	m_begin_curPosBuffer = std::make_unique<AudioSampleBuffer>(2, initSize);
+	m_begin_curPosBufferNextWtfxtype = std::make_unique<AudioSampleBuffer>(2, initSize);
+	m_end_nextPosBuffer = std::make_unique<AudioSampleBuffer>(2, initSize);
+	m_end_nextPosBufferNextWtfxtype = std::make_unique<AudioSampleBuffer>(2, initSize);
+	m_end_curPosBuffer = std::make_unique<AudioSampleBuffer>(2, initSize);
+	m_end_curPosBufferNextWtfxtype = std::make_unique<AudioSampleBuffer>(2, initSize);
 
-	m_valBeginBuffer = new AudioSampleBuffer(2, initSize);
-	m_valBeginBufferNext = new AudioSampleBuffer(2, initSize);
-	m_valEndBuffer = new AudioSampleBuffer(2, initSize);
-	m_valEndBufferNext = new AudioSampleBuffer(2, initSize);
+	m_valBeginBuffer = std::make_unique<AudioSampleBuffer>(2, initSize);
+	m_valBeginBufferNext = std::make_unique<AudioSampleBuffer>(2, initSize);
+	m_valEndBuffer = std::make_unique<AudioSampleBuffer>(2, initSize);
+	m_valEndBufferNext = std::make_unique<AudioSampleBuffer>(2, initSize);
 
 	m_iMultiSelectBegin = 0;
 	m_iMultiSelectEnd = 0;
@@ -174,10 +174,10 @@ void CVASTWaveTable::getValueTreeState(ValueTree* tree, UndoManager* undoManager
 	tree->setProperty("numPositions", wtheader.numPositions.load(), undoManager);
 	//positions
 	for (int i = 0; i < wtheader.numPositions.load(); i++) {
-		ScopedPointer<ValueTree> waveTablePositionTree = new ValueTree(Identifier("waveTablePosition" + String(i)));
+        std::unique_ptr<ValueTree> waveTablePositionTree(new ValueTree(Identifier("waveTablePosition" + String(i))));
 
 		/*
-		ScopedPointer<ValueTree> waveTablePositionNaiveTableTree = new ValueTree(Identifier("naiveTable"));
+         std::unique_ptr<ValueTree> waveTablePositionNaiveTableTree(new ValueTree(Identifier("naiveTable")));
 		for (int n = 0; n < C_WAVE_TABLE_SIZE; n++) {
 			waveTablePositionNaiveTableTree->setProperty("val" + String(n), wtheader.waveTablePositions[i].naiveTable[n], undoManager);
 		}
@@ -186,23 +186,49 @@ void CVASTWaveTable::getValueTreeState(ValueTree* tree, UndoManager* undoManager
 
 		waveTablePositionTree->setProperty("isInitial", wtheader.waveTablePositions[i].isInitial, undoManager);
 
+        /* old logic
+        {
+            std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+            if (wtheader.waveTablePositions[i].isInitial == false) {
+                String nTable = "";
+                //nTable.preallocateBytes(C_WAVE_TABLE_SIZE * 8);
+                nTable.preallocateBytes(C_WAVE_TABLE_SIZE * 32); //due to UTF-8!
+                auto* dest = (char*)nTable.getCharPointer().getAddress();
 
-		if (wtheader.waveTablePositions[i].isInitial == false) {
-			String nTable = "";
-			//nTable.preallocateBytes(C_WAVE_TABLE_SIZE * 8);
-			nTable.preallocateBytes(C_WAVE_TABLE_SIZE * 32); //due to UTF-8!
-			auto* dest = (char*)nTable.getCharPointer().getAddress();
+                for (int n = 0; n < C_WAVE_TABLE_SIZE; n++) {
+                    float sval = wtheader.waveTablePositions[i].naiveTable[n];
+                    unsigned int* sint = (unsigned int*)&sval;
+                    String s1 = String::toHexString(*sint);
+                    s1 += String::repeatedString("0", 8 - s1.length());
 
-			for (int n = 0; n < C_WAVE_TABLE_SIZE; n++) {
-				float sval = wtheader.waveTablePositions[i].naiveTable[n];
-				unsigned int* sint = (unsigned int*)&sval;
-				String s1 = String::toHexString(*sint);
-				s1 += String::repeatedString("0", 8 - s1.length());
+                    memcpy(dest + n * 8, s1.getCharPointer().getAddress(), 8);
+                }
+                waveTablePositionTree->setProperty("naiveTable", nTable, undoManager);
+            }
+            std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+            DBG("Duration: " << duration);
+        }
+        */
 
-				memcpy(dest + n * 8, s1.getCharPointer().getAddress(), 8);
-			}
-			waveTablePositionTree->setProperty("naiveTable", nTable, undoManager);
-		}
+        {
+            //std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+            if (wtheader.waveTablePositions[i].isInitial == false) {
+                String nTable = String::repeatedString("0", C_WAVE_TABLE_SIZE * 8); //fill with 0s
+                auto* dest = (char*)nTable.getCharPointer().getAddress();
+                for (int n = 0; n < C_WAVE_TABLE_SIZE; n++) {
+                    float sval = wtheader.waveTablePositions[i].naiveTable[n];
+                    unsigned int* sint = (unsigned int*)&sval;
+                    String s1 = String::toHexString(*sint);
+                    int s1Len = s1.length();
+                    memcpy(dest + n * 8 +(8-s1Len), s1.getCharPointer().getAddress(), s1Len); //memcpy is OK since chars are ASCII
+                }
+                waveTablePositionTree->setProperty("naiveTable", nTable, undoManager);
+            }
+            //std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
+            //auto duration = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+            //DBG("Duration: " << duration);
+        }
 
 		waveTablePositionTree->setProperty("maxHarmonics", wtheader.waveTablePositions[i].maxHarmonics, undoManager);
 		waveTablePositionTree->setProperty("numWaveTableFreqs", wtheader.waveTablePositions[i].numWaveTableFreqs, undoManager);
@@ -326,11 +352,11 @@ void CVASTWaveTable::setSelectedWtPos(int wtPos) {
 	clearMultiSelect();
 }
 
-int CVASTWaveTable::getSelectedWtPos() {
+int CVASTWaveTable::getSelectedWtPos() const {
 	return m_iSelectedPosition;
 }
 
-bool CVASTWaveTable::isMultiSelected() {
+bool CVASTWaveTable::isMultiSelected() const {
 #ifdef _DEBUG
 	if (m_multiSelect)
 		vassert((m_iSelectedPosition >= m_iMultiSelectBegin) && (m_iSelectedPosition <= m_iMultiSelectEnd));
@@ -338,13 +364,13 @@ bool CVASTWaveTable::isMultiSelected() {
 	return m_multiSelect;
 }
 
-int CVASTWaveTable::getMultiSelectBegin() {
+int CVASTWaveTable::getMultiSelectBegin() const {
 	if (!m_multiSelect)
 		return m_iSelectedPosition;
 	return m_iMultiSelectBegin;
 }
 
-int CVASTWaveTable::getMultiSelectEnd() {
+int CVASTWaveTable::getMultiSelectEnd() const {
 	if (!m_multiSelect)
 		return m_iSelectedPosition;
 	return m_iMultiSelectEnd;
@@ -436,7 +462,7 @@ void CVASTWaveTable::clear() {
 	m_lastPhaseInc = -1; //performance optimize
 }
 
-int CVASTWaveTable::getNumPositions() {
+int CVASTWaveTable::getNumPositions() const {
 	return wtheader.numPositions.load();
 }
 
@@ -545,7 +571,7 @@ void CVASTWaveTable::deletePosition(int numPos) {
 	}
 }
 
-bool CVASTWaveTable::positionIsPrepared(int wtPos) {
+bool CVASTWaveTable::positionIsPrepared(int wtPos) const {
 //	int wtsize = wtheader.waveTablePositions.size();
 //	if (wtPos < wtheader.numPositionsPrepared) {
 		//if (wtPos < wtsize) {
@@ -556,7 +582,7 @@ bool CVASTWaveTable::positionIsPrepared(int wtPos) {
 	return !wtheader.waveTablePositions[wtPos].dirty;
 }
 
-bool CVASTWaveTable::getWaveTablePosition(int wtPos, sWaveTablePosition* &waveTablePosition) {
+bool CVASTWaveTable::getWaveTablePosition(int wtPos, sWaveTablePosition* &waveTablePosition)  {
 	vassert(wtheader.waveTablePositions.size() + 1 > wtPos);
 	if (wtheader.waveTablePositions.size() < wtPos + 1) return false;
 	waveTablePosition = &wtheader.waveTablePositions[wtPos];
@@ -850,7 +876,7 @@ void CVASTWaveTable::setFreqDomainTables(int wtPos, std::vector<dsp::Complex<flo
 	ScopedLock sl(mWavetableChangeLock);
 
 	//only called from freq domain viewport!
-	int tableLen = (*domainBuffer).size();
+	int tableLen = int((*domainBuffer).size());
 
 	//----------------------
 	for (int i = 1; i < C_WAVE_TABLE_SIZE; i++) {
@@ -1002,7 +1028,7 @@ void CVASTWaveTable::generateWaveTableFreqsFromTimeDomain(int wtPos, int tableLe
 		return;
 	}
 
-	int wtsize = wtp->waveTableFreqs.size();
+	int wtsize = int(wtp->waveTableFreqs.size());
 	for (int i = 0; i < wtsize; i++) {
 		wtp->waveTableFreqs[i].invalid = true;
 	}
@@ -1422,11 +1448,11 @@ bool CVASTWaveTable::wtFreqCheckForChange(sWaveTableFreq &wtFreq, float wtFxVal,
 	return false;
 }
 
-int CVASTWaveTable::getID() {
+int CVASTWaveTable::getID() const {
 	return m_iWaveTableID;
 }
 
-int CVASTWaveTable::getChangeCounter() {
+int CVASTWaveTable::getChangeCounter() const {
 	return wtheader.changeCounter.load();
 }
 
@@ -1681,7 +1707,7 @@ void CVASTWaveTable::addWaveTableFreq(int wtPos, int len, std::vector<float> &wa
 
 	sWaveTableFreq wtf;
 	if (!buffer) {
-		int wtsize = wtp->waveTableFreqs.size();
+		int wtsize = int(wtp->waveTableFreqs.size());
 		int i = 0;
 		while ((i < wtsize) && (b_new)) {
 			if (wtp->waveTableFreqs[i].invalid == true) { // reassign first invalid
@@ -1960,24 +1986,19 @@ bool CVASTWaveTable::getWavetableInterpolateBuffer(CVASTWaveTableOscillator* mOs
 		}
 	}
 
-	//HACK
-	//if ((doPosFade) && (isNewCycle))
-		//mOscillator->syncAllPhasorsToMaster();
-	//HACK
-
 	bool doExit = false;
 
 	// =====================================================================================================================
 	// begin position	
 	m_begin_curPosBuffer->setSize(2, bufferNumSamples, false, false, !releaseMemory); //stereo!
 	m_begin_curPosBuffer->clear(startSample, numSamples);
-	bool ok = fillInterpolateBuffersRange(false, wtpbegin, m_x0_curPos_writePointer, m_y0_curPos_writePointer, m_y1_curPos_writePointer, mOscillator, osciCount, startSample, numSamples, m_begin_curPosBuffer, bInverter, wtMode, wtFxVal_begin, wtFxType_begin, voiceNo, bank, oscBank, !doPosFade && !hasNextWtfxtype && !wtPosint_begin_hasNextPos, updated);
+	bool ok = fillInterpolateBuffersRange(false, wtpbegin, m_x0_curPos_writePointer, m_y0_curPos_writePointer, m_y1_curPos_writePointer, mOscillator, osciCount, startSample, numSamples, m_begin_curPosBuffer.get(), bInverter, wtMode, wtFxVal_begin, wtFxType_begin, voiceNo, bank, oscBank, !doPosFade && !hasNextWtfxtype && !wtPosint_begin_hasNextPos, updated);
 	if (!ok) doExit = true;
 
 	if (hasNextWtfxtype) {
 		m_begin_curPosBufferNextWtfxtype->setSize(2, bufferNumSamples, false, false, !releaseMemory); //stereo!
 		m_begin_curPosBufferNextWtfxtype->clear(startSample, numSamples);
-		bool ok = fillInterpolateBuffersRange(false, wtpbegin, m_x0_curPos_writePointer, m_y0_curPos_writePointer, m_y1_curPos_writePointer, mOscillator, osciCount, startSample, numSamples, m_begin_curPosBufferNextWtfxtype, bInverter, wtMode, wtFxVal_end, wtFxType_end, voiceNo, bank, oscBank, !doPosFade && !wtPosint_begin_hasNextPos, updated);
+		bool ok = fillInterpolateBuffersRange(false, wtpbegin, m_x0_curPos_writePointer, m_y0_curPos_writePointer, m_y1_curPos_writePointer, mOscillator, osciCount, startSample, numSamples, m_begin_curPosBufferNextWtfxtype.get(), bInverter, wtMode, wtFxVal_end, wtFxType_end, voiceNo, bank, oscBank, !doPosFade && !wtPosint_begin_hasNextPos, updated);
 		if (!ok) doExit = true;
 	}
 
@@ -1986,13 +2007,13 @@ bool CVASTWaveTable::getWavetableInterpolateBuffer(CVASTWaveTableOscillator* mOs
 	if (wtPosint_begin_hasNextPos) { //table has positions
 		m_begin_nextPosBuffer->setSize(2, bufferNumSamples, false, false, !releaseMemory); //stereo!
 		m_begin_nextPosBuffer->clear(startSample, numSamples);
-		ok = fillInterpolateBuffersRange(true, wtpbeginnextpos, m_x0_nextPos_writePointer, m_y0_nextPos_writePointer, m_y1_nextPos_writePointer, mOscillator, osciCount, startSample, numSamples, m_begin_nextPosBuffer, bInverter, wtMode, wtFxVal_begin, wtFxType_begin, voiceNo, bank, oscBank, !doPosFade && !hasNextWtfxtype, updated);
+		ok = fillInterpolateBuffersRange(true, wtpbeginnextpos, m_x0_nextPos_writePointer, m_y0_nextPos_writePointer, m_y1_nextPos_writePointer, mOscillator, osciCount, startSample, numSamples, m_begin_nextPosBuffer.get(), bInverter, wtMode, wtFxVal_begin, wtFxType_begin, voiceNo, bank, oscBank, !doPosFade && !hasNextWtfxtype, updated);
 		if (!ok) doExit = true;
 
 		if (hasNextWtfxtype) {
 			m_begin_nextPosBufferNextWtfxtype->setSize(2, bufferNumSamples, false, false, !releaseMemory); //stereo!
 			m_begin_nextPosBufferNextWtfxtype->clear(startSample, numSamples);
-			ok = fillInterpolateBuffersRange(true, wtpbeginnextpos, m_x0_nextPos_writePointer, m_y0_nextPos_writePointer, m_y1_nextPos_writePointer, mOscillator, osciCount, startSample, numSamples, m_begin_nextPosBufferNextWtfxtype, bInverter, wtMode, wtFxVal_end, wtFxType_end, voiceNo, bank, oscBank, !doPosFade, updated);
+			ok = fillInterpolateBuffersRange(true, wtpbeginnextpos, m_x0_nextPos_writePointer, m_y0_nextPos_writePointer, m_y1_nextPos_writePointer, mOscillator, osciCount, startSample, numSamples, m_begin_nextPosBufferNextWtfxtype.get(), bInverter, wtMode, wtFxVal_end, wtFxType_end, voiceNo, bank, oscBank, !doPosFade, updated);
 			if (!ok) doExit = true;
 		}
 	}
@@ -2002,13 +2023,13 @@ bool CVASTWaveTable::getWavetableInterpolateBuffer(CVASTWaveTableOscillator* mOs
 		// end position
 		m_end_curPosBuffer->setSize(2, bufferNumSamples, false, false, !releaseMemory); //stereo!		
 		m_end_curPosBuffer->clear(startSample, numSamples);
-		bool ok = fillInterpolateBuffersRange(false, wtpend, m_x0_curPos_writePointer, m_y0_curPos_writePointer, m_y1_curPos_writePointer, mOscillator, osciCount, startSample, numSamples, m_end_curPosBuffer, bInverter, wtMode, wtFxVal_begin, wtFxType_begin, voiceNo, bank, oscBank, !hasNextWtfxtype && !wtPosint_end_hasNextPos, updated);
+		bool ok = fillInterpolateBuffersRange(false, wtpend, m_x0_curPos_writePointer, m_y0_curPos_writePointer, m_y1_curPos_writePointer, mOscillator, osciCount, startSample, numSamples, m_end_curPosBuffer.get(), bInverter, wtMode, wtFxVal_begin, wtFxType_begin, voiceNo, bank, oscBank, !hasNextWtfxtype && !wtPosint_end_hasNextPos, updated);
 		if (!ok) doExit = true;
 
 		if (hasNextWtfxtype) {
 			m_end_curPosBufferNextWtfxtype->setSize(2, bufferNumSamples, false, false, !releaseMemory); //stereo! 
 			m_end_curPosBufferNextWtfxtype->clear(startSample, numSamples);
-			bool ok = fillInterpolateBuffersRange(false, wtpend, m_x0_curPos_writePointer, m_y0_curPos_writePointer, m_y1_curPos_writePointer, mOscillator, osciCount, startSample, numSamples, m_end_curPosBufferNextWtfxtype, bInverter, wtMode, wtFxVal_end, wtFxType_end, voiceNo, bank, oscBank, !wtPosint_end_hasNextPos, updated);
+			bool ok = fillInterpolateBuffersRange(false, wtpend, m_x0_curPos_writePointer, m_y0_curPos_writePointer, m_y1_curPos_writePointer, mOscillator, osciCount, startSample, numSamples, m_end_curPosBufferNextWtfxtype.get(), bInverter, wtMode, wtFxVal_end, wtFxType_end, voiceNo, bank, oscBank, !wtPosint_end_hasNextPos, updated);
 			if (!ok) doExit = true;
 		}
 
@@ -2017,13 +2038,13 @@ bool CVASTWaveTable::getWavetableInterpolateBuffer(CVASTWaveTableOscillator* mOs
 		if (wtPosint_end_hasNextPos) { //table has positions
 			m_end_nextPosBuffer->setSize(2, bufferNumSamples, false, false, !releaseMemory); //stereo!
 			m_end_nextPosBuffer->clear(startSample, numSamples);
-			ok = fillInterpolateBuffersRange(true, wtpendnextpos, m_x0_nextPos_writePointer, m_y0_nextPos_writePointer, m_y1_nextPos_writePointer, mOscillator, osciCount, startSample, numSamples, m_end_nextPosBuffer, bInverter, wtMode, wtFxVal_begin, wtFxType_begin, voiceNo, bank, oscBank, !hasNextWtfxtype, updated);
+			ok = fillInterpolateBuffersRange(true, wtpendnextpos, m_x0_nextPos_writePointer, m_y0_nextPos_writePointer, m_y1_nextPos_writePointer, mOscillator, osciCount, startSample, numSamples, m_end_nextPosBuffer.get(), bInverter, wtMode, wtFxVal_begin, wtFxType_begin, voiceNo, bank, oscBank, !hasNextWtfxtype, updated);
 			if (!ok) doExit = true;
 
 			if (hasNextWtfxtype) {
 				m_end_nextPosBufferNextWtfxtype->setSize(2, bufferNumSamples, false, false, !releaseMemory); //stereo!
 				m_end_nextPosBufferNextWtfxtype->clear(startSample, numSamples);
-				ok = fillInterpolateBuffersRange(true, wtpendnextpos, m_x0_nextPos_writePointer, m_y0_nextPos_writePointer, m_y1_nextPos_writePointer, mOscillator, osciCount, startSample, numSamples, m_end_nextPosBufferNextWtfxtype, bInverter, wtMode, wtFxVal_end, wtFxType_end, voiceNo, bank, oscBank, true, updated);
+				ok = fillInterpolateBuffersRange(true, wtpendnextpos, m_x0_nextPos_writePointer, m_y0_nextPos_writePointer, m_y1_nextPos_writePointer, mOscillator, osciCount, startSample, numSamples, m_end_nextPosBufferNextWtfxtype.get(), bInverter, wtMode, wtFxVal_end, wtFxType_end, voiceNo, bank, oscBank, true, updated);
 				if (!ok) doExit = true;
 			}
 		}
@@ -2358,7 +2379,7 @@ bool CVASTWaveTable::fillInterpolateBuffersRange(const bool next, sWaveTablePosi
 
 			//look in buffer
 			bool foundInBuffer = false;
-			int windex = wtp->waveTableFreqsBuffer.size();
+			int windex = int(wtp->waveTableFreqsBuffer.size());
 			if ((wtFxType > 0) && (wtp->waveTableFreqs[waveTableIdx].wtFxType == wtFxType)) {
 				while (windex > 0) {
 					windex--;
@@ -2419,7 +2440,7 @@ bool CVASTWaveTable::fillInterpolateBuffersRange(const bool next, sWaveTablePosi
 		//phasedPhasorBuffer = mOscillator->m_phasedPhasorBuffer[osci].get();
 		const float* phasedPhasorBufferPointer = mOscillator->m_phasedPhasorBufferPointer[osci];
 		
-		//ScopedPointer<AudioSampleBuffer> l_phasorbuf;
+		//std::unique_ptr<AudioSampleBuffer> l_phasorbuf;
 		//l_phasorbuf = new AudioSampleBuffer(1, m_x0_curPos->getNumSamples());
 		//VASTFloatVectorOperations::multiply(l_phasorbuf->getWritePointer(0) + startSample, phasedPhasorBuffer->getReadPointer(0, startSample), float(C_WAVE_TABLE_SIZE), numSamples);
 		//VASTFloatVectorOperations::getFraction(x0 + startSample, l_phasorbuf->getWritePointer(0) + startSample, numSamples);
@@ -2428,8 +2449,8 @@ bool CVASTWaveTable::fillInterpolateBuffersRange(const bool next, sWaveTablePosi
 		for (int currentFrame = startSample; currentFrame < startSample + numSamples; currentFrame++) {
 
 			/* working but slightly slower?!
-			//ScopedPointer<AudioSampleBuffer> l_x0_curPos;
-			//ScopedPointer<AudioSampleBuffer> l_y0_curPos;
+			//std::unique_ptr<AudioSampleBuffer> l_x0_curPos;
+			//std::unique_ptr<AudioSampleBuffer> l_y0_curPos;
 			//l_x0_curPos = new AudioSampleBuffer(1, m_x0_curPos->getNumSamples());
 			//l_y0_curPos = new AudioSampleBuffer(1, m_y0_curPos->getNumSamples());
 			//float* l_x0_curPos_writePointer = l_x0_curPos->getWritePointer(0);

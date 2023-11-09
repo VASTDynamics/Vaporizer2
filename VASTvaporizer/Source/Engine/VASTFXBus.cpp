@@ -164,11 +164,11 @@ void CVASTFXBus::init(CVASTSettings &set) {
 	m_Oversampler3.init(*m_Set);
 	int initSize = 16;
 	
-	m_inBufferOversampled = new AudioSampleBuffer(2, initSize);
-	m_lowbandMono = new AudioSampleBuffer(1, initSize);
-	m_chainBuffer = new AudioSampleBuffer(2, initSize);
-	m_chainResult = new AudioSampleBuffer(2, initSize);
-	m_chainProc = new AudioSampleBuffer(2, initSize);
+	m_inBufferOversampled = std::make_unique<AudioSampleBuffer>(2, initSize);
+	m_lowbandMono = std::make_unique<AudioSampleBuffer>(1, initSize);
+	m_chainBuffer = std::make_unique<AudioSampleBuffer>(2, initSize);
+	m_chainResult = std::make_unique<AudioSampleBuffer>(2, initSize);
+	m_chainProc = std::make_unique<AudioSampleBuffer>(2, initSize);
 	mFXBusSequence.clear();
 	for (int i = 0; i < effectBus.size(); i++) {
 		effectBus[i]->effectPlugin->init(set);
@@ -236,7 +236,7 @@ void CVASTFXBus::swapSlots(int first, int second) {
 	mFXBusSequence.swap(first, second);
 }
 
-int CVASTFXBus::getSequence(int slot) {
+int CVASTFXBus::getSequence(int slot) const {
 	return mFXBusSequence[slot];
 }
 
@@ -563,9 +563,10 @@ void CVASTFXBus::processBuffers(sRoutingBuffers& routingBuffers, MidiBuffer& mid
 						lOversampler = &m_Oversampler2;
 					else if (useOversampler == 2)
 						lOversampler = &m_Oversampler3;
-					else
-						vassertfalse;
-
+                    else {
+                        lOversampler = &m_Oversampler;
+                        vassertfalse;
+                    }
 					lOversampler->downsampleAudioBuffer4(dsp::AudioBlock<float>(*m_inBufferOversampled), dsp::AudioBlock<float>(*inBuffer), m_inBufferOversampled->getNumSamples());
 					b_upsampled = false;
 					useOversampler++;
@@ -666,7 +667,7 @@ void CVASTFXBus::getValueTreeState(ValueTree* tree, UndoManager* undoManager) { 
 
 	tree->setProperty("numFX", int(mFXBusSequence.size()), undoManager);
 	for (int i = 0; i < mFXBusSequence.size(); i++) {
-		ScopedPointer<ValueTree> subtree = new ValueTree(Identifier("fxSequence" + String(i)));
+        std::unique_ptr<ValueTree> subtree(new ValueTree(Identifier("fxSequence" + String(i))));
 		subtree->setProperty("fxNo", mFXBusSequence[i], undoManager);
 		tree->appendChild(*subtree.get(), undoManager);
 	}

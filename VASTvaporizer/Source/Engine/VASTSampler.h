@@ -61,12 +61,10 @@ public:
 	This could return nullptr if there was a problem loading the data.
 	*/
 	AudioBuffer<float>* getAudioData() const noexcept; //liveData
-	AudioBuffer<float>* getAudioDataChanged();
+	AudioBuffer<float>* getAudioDataChanged() const;
 
-	//int getLength() { return getAudioData()->getNumSamples() - 4; }; //-4??? CHECK
-	//int getLengthChanged() { return getAudioDataChanged()->getNumSamples() - 4; }; //-4??? CHECK
-	int getLength();
-	int getLengthChanged();
+	int getLength() const;
+	int getLengthChanged() const;
 
 	//==============================================================================
 	bool appliesToNote(int midiNoteNumber) override;
@@ -77,13 +75,13 @@ public:
 	void getValueTreeState(ValueTree* tree, UndoManager* undoManager); //save
 	static VASTSamplerSound* getSoundFromTree(ValueTree* tree); //load
 	void setMidiRootNode(int rootNote);
-	int getMidiRootNote();
-	int getSourceSampleRate();
+	int getMidiRootNote() const;
+	int getSourceSampleRate() const;
 
 	bool softFadeExchangeSample();
 	bool hasLoop();
-	int getLoopStart();
-	int getLoopEnd();
+	int getLoopStart() const;
+	int getLoopEnd() const;
 	void setLoop(int loopstart, int loopend);
 
 	/*
@@ -92,21 +90,21 @@ public:
 		iLoopEnd = 0; 
 	}
 	*/
-	int getAttackSamples();
-	int getReleaseSamples();
+	int getAttackSamples() const;
+	int getReleaseSamples() const;
 
 	void setLoopChanged(int loopstart, int loopend);
 	void clearLoopChanged();
-	int getLoopStartChanged();
-	int getLoopEndChanged();
-	bool hasLoopChanged();		
+	int getLoopStartChanged() const;
+	int getLoopEndChanged() const;
+	bool hasLoopChanged() const;
 	void setChangedFlag();
 	void setAudioDataChangedFlag();
 
 	Array<int>* getZeroCrossings();	
 	void calcZeroCrossings();
 	void notifyPositionChanged();
-	bool getPositionChanged();
+	bool getPositionChanged() const;
 
 private:
 	//==============================================================================
@@ -131,7 +129,7 @@ private:
 	int iLoopEnd_changed = 0;
 
 	Array<int> m_zeroCrossings;
-	std::atomic<bool> m_PositionChanged = false;
+	mutable std::atomic<bool> m_PositionChanged = false;
 
 	JUCE_LEAK_DETECTOR(VASTSamplerSound)
 };

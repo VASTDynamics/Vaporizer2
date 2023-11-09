@@ -56,13 +56,13 @@ public:
 	void prepareForPlay();
 	void updateVariables();
 
-	MYUINT getChannel();
-	MYUINT getMIDINote();
+	MYUINT getChannel() const;
+	MYUINT getMIDINote() const;
 	bool noteOn(MYUINT uChannel, MYUINT uMIDINote, MYUINT uVelocity, bool legato); //returns success
-	void noteOff(float releaseVelocity);
-	bool isPlayingInRange(int startsample, int numsamples);
-	bool isPlayingAtSamplePosition(int sample);
-	bool isPlayingCalledFromUI();
+	void noteOff(float releaseVelocity) ;
+	bool isPlayingInRange(int startsample, int numsamples) const;
+	bool isPlayingAtSamplePosition(int sample) const;
+	bool isPlayingCalledFromUI() const;
 	void processBuffer(sRoutingBuffers& routingBuffers, int startSample, int numSamples);
 
 	void generate_normalized_irrationals(float *destination, int count);
@@ -70,7 +70,7 @@ public:
 	void setGlissandoStart(int midinote, bool reset);
 	void setPortamentoTime(float time); //in s
 	
-    int getNumOscsPlaying();
+    int getNumOscsPlaying() const;
 
 	//==============================================================================
 	//from SynthesiserVoice
@@ -96,7 +96,7 @@ public:
 	//==============================================================================
 	void samplerUpdatePitch(VASTSamplerSound* sound, bool force);
 	int m_samplerMidiNoteNumber = 0;
-	int getVoiceNo();
+	int getVoiceNo() const;
 	ULong64_t m_startPlayTimestamp = 0;
 
 	void setWTPosSmooth(int bank);
@@ -104,19 +104,19 @@ public:
 	void resetSmoothers();
 	
 	// public instances
-	ScopedPointer<CVASTVca> m_VCA;
+    std::unique_ptr<CVASTVca> m_VCA;
 	OwnedArray<CVASTVcf> m_VCF;
 
 	// instances
 	OwnedArray<CVASTWaveTableOscillator> m_Oscillator;
-	ScopedPointer<CVASTWaveTableOscillator> m_OscillatorNoise;	
+    std::unique_ptr<CVASTWaveTableOscillator> m_OscillatorNoise;
 	OwnedArray<CVASTWaveTableOscillator> m_LFO_Osc; // LFOs 1-5
 
 	MYUINT m_uChannel;
 	MYUINT m_uMIDINote;
 	MYUINT m_uVelocity;
 
-	bool m_bLastFilterOutputZero[3]; //filters
+    bool m_bLastFilterOutputZero[3] = {true, true, true}; //filters
 
 	float m_safePhaseFloat[4];
 	int m_iCurCycleSamples[4] = { 0, 0, 0, 0 };
@@ -159,8 +159,8 @@ private:
 
 	void syncOscToMaster(int bank, int i);
 	
-	ScopedPointer<AudioSampleBuffer> m_centerBuffer;
-	ScopedPointer<AudioSampleBuffer> m_velocityBuffer;
+    std::unique_ptr<AudioSampleBuffer> m_centerBuffer;
+    std::unique_ptr<AudioSampleBuffer> m_velocityBuffer;
 
 	float mSpread[4]; //per bank
 

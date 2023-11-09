@@ -71,7 +71,7 @@ private:
 	VASTAudioProcessorEditor *myEditor = nullptr;
 	VASTAudioProcessor *myProcessor = nullptr;
 	VASTWaveTableEditorComponent *myWtEditor = nullptr;
-	int getArrayIdx(float logicalX);
+	int getArrayIdx(float logicalX) const;
 
 	float m_screenWidthScale = 1.f;
 	float m_screenHeightScale = 1.f;

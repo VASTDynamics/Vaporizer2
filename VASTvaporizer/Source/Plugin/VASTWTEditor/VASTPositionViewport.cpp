@@ -132,7 +132,7 @@ void VASTPositionViewport::updateContent(bool force) {
 
 	juce::Rectangle<int> lVisibleArea = myWtEditor->getEditorView()->c_viewportPositions->getViewArea();
 	AffineTransform af;
-	lVisibleArea = lVisibleArea.transformed(af.scaled(m_screenWidthScale, m_screenHeightScale));
+	lVisibleArea = lVisibleArea.transformedBy(af.scaled(m_screenWidthScale, m_screenHeightScale));
 
 	waveformImage = Image(Image::RGB, jmax(1, lVisibleArea.getWidth()), jmax(1, lVisibleArea.getHeight()), false);
 	waveformImage.clear(waveformImage.getBounds(), myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeOff));
@@ -311,12 +311,12 @@ void VASTPositionViewport::mouseDoubleClick(const MouseEvent &e) {
 	
 }
 
-int VASTPositionViewport::getArrayIdx(float logicalX) {
+int VASTPositionViewport::getArrayIdx(float logicalX) const {
 	juce::Rectangle<int> lVisibleArea = myWtEditor->getEditorView()->c_viewportPositions->getViewArea();
 	float x = logicalX - lVisibleArea.getX();
 
 	AffineTransform af;
-	lVisibleArea = lVisibleArea.transformed(af.scaled(m_screenWidthScale, m_screenHeightScale));
+	lVisibleArea = lVisibleArea.transformedBy(af.scaled(m_screenWidthScale, m_screenHeightScale));
 	int visiStart = int(lVisibleArea.getBottomLeft().getX() / (m_ImageTotalWidth + m_Offset)) * (m_ImageTotalWidth + m_Offset);
 	int startPos = (visiStart) / (m_ImageTotalWidth + m_Offset);
 	int pos = startPos + (x * m_screenWidthScale) / (m_ImageTotalWidth + m_Offset);
@@ -327,7 +327,6 @@ void VASTPositionViewport::mouseMove(const MouseEvent &e) {
 	if (myWtEditor == nullptr) return;
 	std::shared_ptr<CVASTWaveTable> wavetable = myWtEditor->getBankWavetable();
 	int x = e.getMouseDownX();
-	int posY = e.getPosition().getY();
 	int arrayidx = getArrayIdx(x);
 	if (arrayidx > wavetable->getNumPositions()) arrayidx = wavetable->getNumPositions(); //+ sign
 	if (arrayidx < 0) arrayidx = 0;
@@ -518,13 +517,13 @@ void VASTPositionViewport::mouseDown(const MouseEvent &e) {
 					wtFile.deleteFile();
 					std::unique_ptr<FileOutputStream> outputStream(wtFile.createOutputStream());
 					StringPairArray sarray;
-					juce::ScopedPointer<AudioFormatWriter> writer = wavFormat.createWriterFor(outputStream.get(), 44100.0, 1, 32, sarray, 0); //check params 32 bit?, no metadata, quality options ignored, mono (1 channel)
+                    std::unique_ptr<AudioFormatWriter> writer(wavFormat.createWriterFor(outputStream.get(), 44100.0, 1, 32, sarray, 0)); //check params 32 bit?, no metadata, quality options ignored, mono (1 channel)
 					if (writer != nullptr)
 					{
 						outputStream.release();
 						int wtPos = arrayidx;
 
-						juce::ScopedPointer<AudioSampleBuffer> buffer = new AudioSampleBuffer(1, C_WAV_FORMAT_WT_SIZE);
+						std::unique_ptr<AudioSampleBuffer> buffer(new AudioSampleBuffer(1, C_WAV_FORMAT_WT_SIZE));
 						for (int i = 0; i < C_WAVE_TABLE_SIZE; i++) {
 							buffer->setSample(0, i, (*wavetable->getNaiveTable(wtPos))[i]);
 							//if C_WAVE_TABLE_SIZE != C_WAV_FORMAT_WT_SIZE scale here?

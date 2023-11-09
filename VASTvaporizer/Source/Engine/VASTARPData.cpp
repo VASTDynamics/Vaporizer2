@@ -157,8 +157,8 @@ void VASTARPData::copyDataFrom(const VASTARPData &copyData) {
 	m_isDirty.store(true);
 }
 
-int VASTARPData::getNumSteps() {
-	return arpStepNum; ;
+int VASTARPData::getNumSteps() const {
+	return arpStepNum;
 }
 
 void VASTARPData::setDirty() {
@@ -176,7 +176,7 @@ void VASTARPData::initDefaultPattern(int pattern) {
 		step.gate = VASTARPData::mARPPattern[pattern].gate[i]; // can be 0..4
 		addStep(step);
 	}
-	arpStepNum = arpSteps.size();
+	arpStepNum = int(arpSteps.size());
 }
 
 bool VASTARPData::getAndClearDirtyFlag() {
@@ -283,7 +283,7 @@ void VASTARPData::getValueTreeState(ValueTree* tree, UndoManager* undoManager) {
 	//steps
 	tree->setProperty("numSteps", int(getNumSteps()), undoManager);
 	for (int i = 0; i < arpSteps.size(); i++) {
-		ScopedPointer<ValueTree> subtree = new ValueTree(Identifier("arpStep"+String(i)));
+        std::unique_ptr<ValueTree> subtree(new ValueTree(Identifier("arpStep"+String(i))));
 		subtree->setProperty("octave", arpSteps[i].octave, undoManager);
 		subtree->setProperty("semitones", arpSteps[i].semitones, undoManager);
 		subtree->setProperty("gate", arpSteps[i].gate, undoManager);

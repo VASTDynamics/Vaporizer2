@@ -68,14 +68,6 @@ typedef signed int MYUINT; //CHECK FOR PORTABILITY
 #define OUTPUT_MIN_PLUS          1.175494351e-07         /* min positive output */
 #define OUTPUT_MIN_MINUS        -1.175494351e-07         /* min negative output */
 
-#ifndef itoa
-#define itoa(value,string,radix)  sprintf(string, "%d", value)
-#endif
-
-#ifndef ltoa
-#define ltoa(value,string,radix)  sprintf(string, "%u", value)
-#endif
-
 // a few more constants from student suggestions
 //#define  pi 3.1415926535897932384626433832795
 #define  sqrt2over2  0.707106781186547524401 // same as M_SQRT1_2

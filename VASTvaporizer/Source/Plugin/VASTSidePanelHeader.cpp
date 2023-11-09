@@ -14,7 +14,6 @@ VASTSidePanelHeader::VASTSidePanelHeader(VASTVaporizerComponent* o)
 	titleLabel.setText(owner->getSidePanel()->getTitleText(), NotificationType::dontSendNotification);
 	addAndMakeVisible(titleLabel);
 
-	auto& sidePanel = *owner->getSidePanel();
 	dismissButton.onClick = [this] { hidePanel(); };
 	addAndMakeVisible(dismissButton);
 

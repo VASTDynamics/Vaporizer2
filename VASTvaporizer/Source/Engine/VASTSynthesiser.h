@@ -251,7 +251,7 @@ public:
 	/** Returns true if this voice started playing its current note before the other voice did. */
 	bool wasStartedBefore(const VASTSynthesiserVoice& other) const noexcept;
 
-	int getVoiceNo() { return mVoiceNo; };
+	int getVoiceNo() const { return mVoiceNo; };
 
 	virtual void clearCurrentNote() = 0;
 
@@ -585,13 +585,13 @@ public:
 	void setMinimumRenderingSubdivisionSize(int numSamples, bool shouldBeStrict = false) noexcept;
 
 	//CHVAST
-	int getLastPlayedVoiceNo() { 
-		return m_newestPlaying; 
+	int getLastPlayedVoiceNo() const {
+		return m_newestPlaying;
 	};
-	int getOldestPlayedVoiceNo() { 
-		return m_oldestPlaying; 
+	int getOldestPlayedVoiceNo() const {
+		return m_oldestPlaying;
 	};
-	int getNumMidiNotesKeyDown() { 
+	int getNumMidiNotesKeyDown() const { 
 		return m_midiNotesNumKeyDown; 
 	};
 	

@@ -38,7 +38,7 @@ using namespace BinaryData;
 #define S_KEY_UITEXTS "sjkdfhskjdfhkjsdfkhsdfkjs4" //this is not the license encryption key
 
 //==============================================================================
-VASTAudioProcessor::VASTAudioProcessor() : m_undoManager(3000, 30), 
+VASTAudioProcessor::VASTAudioProcessor() :
 			m_parameterState(*this, &m_undoManager), 
 			m_pVASTXperience(this) {
                 
@@ -164,10 +164,10 @@ void VASTAudioProcessor::setErrorState(int state) {
 	iErrorState.store(state);
 }
 
-int VASTAudioProcessor::getErrorState() {
+int VASTAudioProcessor::getErrorState() const {
     return iErrorState.load(); }
 
-bool VASTAudioProcessor::wantsUIAlert() {
+bool VASTAudioProcessor::wantsUIAlert() const {
     return mUIAlert.load(); }
 
 void VASTAudioProcessor::clearUIAlertFlag() {
@@ -181,7 +181,7 @@ void VASTAudioProcessor::requestUIPresetUpdate() {
 	mUIPresetUpdate.store(true);
 }
 
-bool VASTAudioProcessor::needsUIPresetUpdate() {
+bool VASTAudioProcessor::needsUIPresetUpdate() const {
     return mUIPresetUpdate.load();
 }
 
@@ -194,13 +194,13 @@ void VASTAudioProcessor::requestUIPresetReloadUpdate() {
 	mUIPresetReloadUpdate.store(true);
 }
 
-bool VASTAudioProcessor::needsUIPresetReloadUpdate() { 
+bool VASTAudioProcessor::needsUIPresetReloadUpdate() const {
     return mUIPresetReloadUpdate.load(); }
 
 void VASTAudioProcessor::clearUIPresetReloadFlag() {
     mUIPresetReloadUpdate.store(false); }
 
-bool VASTAudioProcessor::needsUIInit() {
+bool VASTAudioProcessor::needsUIInit() const {
     return mUIInitFlag.load(); }
 
 void VASTAudioProcessor::clearUIInitFlag() {
@@ -210,22 +210,22 @@ void VASTAudioProcessor::requestUIInit() {
     mUIInitFlag.store(true);
     requestUIUpdate(true, true, true); }
 
-bool VASTAudioProcessor::needsUIUpdate() { 
+bool VASTAudioProcessor::needsUIUpdate() const {
     return mUIUpdateFlag.load(); }
 
-bool VASTAudioProcessor::needsUIUpdate_tabs() { 
+bool VASTAudioProcessor::needsUIUpdate_tabs() const {
     return mUIUpdateFlag_tabs.load(); }
 
-bool VASTAudioProcessor::needsUIUpdate_matrix() { 
+bool VASTAudioProcessor::needsUIUpdate_matrix() const {
     return mUIUpdateFlag_matrix.load(); }
 
-bool VASTAudioProcessor::needsUIUpdate_sliders() { 
+bool VASTAudioProcessor::needsUIUpdate_sliders() const {
     return mUIUpdateFlag_sliders.load(); }
 
-int VASTAudioProcessor::needsUIUpdate_slider1dest() { 
+int VASTAudioProcessor::needsUIUpdate_slider1dest() const {
     return mUIUpdateFlag_slider1dest.load(); }
 
-int VASTAudioProcessor::needsUIUpdate_slider2dest() { 
+int VASTAudioProcessor::needsUIUpdate_slider2dest() const {
     return mUIUpdateFlag_slider2dest.load(); }
 
 void VASTAudioProcessor::clearUIUpdateFlag() {
@@ -528,7 +528,7 @@ int VASTAudioProcessor::getCurrentProgram()
 	return l_prog;
 }
 
-int VASTAudioProcessor::getCurrentPresetProgram()
+int VASTAudioProcessor::getCurrentPresetProgram() const
 {
 	//int l_prog = m_curPatchData.presetarrayindex; // this is set lazy in thread 
 	int l_prog = m_curPatchDataLoadRequestedIndex;
@@ -671,7 +671,7 @@ void VASTAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mid
 							VASTAudioProcessorEditor* _editor = (VASTAudioProcessorEditor*)getActiveEditor();
 							if (_editor != nullptr) {							
 								for (int i = 0; i < m_mapParameterNameToControl.size(); i++) {
-									VASTSlider* lslider = dynamic_cast<VASTSlider*>(_editor->findChildComponetWithName(_editor->vaporizerComponent, uiComponentName));
+									VASTSlider* lslider = dynamic_cast<VASTSlider*>(_editor->findChildComponetWithName(_editor->vaporizerComponent.get(), uiComponentName));
 									if (lslider != nullptr) {
 										if (lslider->getComponentID().equalsIgnoreCase(uiComponentName)) {
 											_editor->registerComponentValueUpdate(lslider, lValue);
@@ -706,8 +706,7 @@ void VASTAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mid
 
 	//do synth
 	m_pVASTXperience.processAudioBuffer(buffer, midiMessages, getTotalNumOutputChannels(),
-		positionInfo.isPlaying, positionInfo.ppqPosition, positionInfo.isLooping,
-		positionInfo.ppqLoopStart, positionInfo.ppqLoopEnd, positionInfo.ppqPositionOfLastBarStart, positionInfo.bpm);
+		positionInfo.isPlaying, positionInfo.ppqPosition, positionInfo.isLooping, positionInfo.ppqPositionOfLastBarStart, positionInfo.bpm);
 
 	//VU meter
 	m_meterSource.measureBlock(buffer);
@@ -989,18 +988,18 @@ void VASTAudioProcessor::savePatchXML(File *selectedFile) {
 	root->deleteAllChildElements();
 }
 
-int VASTAudioProcessor::getNumFactoryPresets() {
+int VASTAudioProcessor::getNumFactoryPresets() const {
 	return 1;
 }
 
-int VASTAudioProcessor::getNumUserPresets() {
+int VASTAudioProcessor::getNumUserPresets() const {
 	return m_presetData.getNumPresets();
 }
 
 bool VASTAudioProcessor::loadUserPatchMetaData(File file, VASTPresetElement& lPreset) {
-	ScopedPointer<juce::XmlDocument> xml = new XmlDocument(file);
+    std::unique_ptr<juce::XmlDocument> xml(new XmlDocument(file));
 	const VASTPresetElement lElem = lPreset;
-	bool success = loadPatchXML(xml, true, &lElem, lPreset.presetarrayindex, lPreset); //names only
+	bool success = loadPatchXML(xml.get(), true, &lElem, lPreset.presetarrayindex, lPreset); //names only
 	return success;
 }
 
@@ -1033,10 +1032,10 @@ void VASTAudioProcessor::loadPreset(int index) {
 	}
 	else { // user preset
 		File jFile = File(m_presetData.getPreset(index)->internalid); //change to fullpathname
-		ScopedPointer<juce::XmlDocument> xmlDoc = new XmlDocument(jFile);
+        std::unique_ptr<juce::XmlDocument> xmlDoc(new XmlDocument(jFile));
 
 		VASTPresetElement lPatch = m_presetData.getCurPatchData();
-		bool success = loadPatchXML(xmlDoc, false, &m_presetData.getCurPatchData(), index, lPatch);
+		bool success = loadPatchXML(xmlDoc.get(), false, &m_presetData.getCurPatchData(), index, lPatch);
 		if (!success) {
 			m_presetData.reloadPresetArray();
 			setCurrentProgram(0); //revert to init
@@ -1082,7 +1081,7 @@ XmlElement VASTAudioProcessor::createPatchXML(bool externalRepresentation) { //f
 			//AudioProcessorParameterWithID* param = (AudioProcessorParameterWithID*)getParameters()[parameterIndex];
 			AudioProcessorParameterWithID* param = (AudioProcessorParameterWithID*)getParameters()[parameterIndex];
 
-			ScopedPointer<ValueTree> parameterChild = new ValueTree(Identifier("PARAM"));
+            std::unique_ptr<ValueTree> parameterChild(new ValueTree(Identifier("PARAM")));
 			if (parameterChild->isValid()) {
 				//add new text property
 				parameterChild->setProperty(
@@ -1419,8 +1418,6 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 				m_bank_wavetableToUpdate[bank]->pregenerateWithWTFX(wtFxType, wtFxVal, processor->getWTmode());
 				processor->m_pVASTXperience.m_Poly.m_OscBank[bank]->setWavetable(m_bank_wavetableToUpdate[bank]);
 			}
-
-			int i = 1;
 		}
 		else
 			processor->setErrorState(10);
@@ -1548,11 +1545,11 @@ void VASTAudioProcessor::setWTmode(int wtMode) {
 	}
 }
 
-int VASTAudioProcessor::getWTmode() {
+int VASTAudioProcessor::getWTmode() const {
 	return m_pVASTXperience.m_Set.m_WTmode;
 }
 
-int VASTAudioProcessor::getMPEmode() {
+int VASTAudioProcessor::getMPEmode() const {
 	return m_MPEmode;
 }
 
@@ -1564,7 +1561,7 @@ bool VASTAudioProcessor::isMPEenabled() {
 	return (m_MPEmode == 1) || ((m_MPEmode == 0) && (m_presetData.getCurPatchData().mpepreset));
 }
 
-int VASTAudioProcessor::getUIFontSize() {
+int VASTAudioProcessor::getUIFontSize() const {
 	return m_uiFontSize;
 }
 
@@ -1580,7 +1577,7 @@ void VASTAudioProcessor::setModWheelPermaLink(int permalink)
 	m_ModWheelPermaLink = permalink;
 }
 
-int VASTAudioProcessor::getModWheelPermaLink()
+int VASTAudioProcessor::getModWheelPermaLink() const
 {
 	return m_ModWheelPermaLink;
 }
@@ -1595,17 +1592,17 @@ void VASTAudioProcessor::setBendRange(int bendRange) {
 	requestUIUpdate(true, false, false);
 }
 
-int VASTAudioProcessor::getBendRange() {
+int VASTAudioProcessor::getBendRange() const {
 	return m_pVASTXperience.m_Set.m_iBendRange;
 }
 
-int VASTAudioProcessor::getDrawMode() { return m_iWTEditorDrawMode; }
+int VASTAudioProcessor::getDrawMode() const { return m_iWTEditorDrawMode; }
 
-int VASTAudioProcessor::getGridMode() { return m_iWTEditorGridMode; }
+int VASTAudioProcessor::getGridMode() const { return m_iWTEditorGridMode; }
 
-int VASTAudioProcessor::getBinMode() { return m_iWTEditorBinMode; }
+int VASTAudioProcessor::getBinMode() const { return m_iWTEditorBinMode; }
 
-int VASTAudioProcessor::getBinEditMode() { return m_iWTEditorBinEditMode; }
+int VASTAudioProcessor::getBinEditMode() const { return m_iWTEditorBinEditMode; }
 
 int VASTAudioProcessor::autoParamGetDestination(String parametername) {
 	std::unordered_map<String, int>::iterator it;
@@ -1639,7 +1636,7 @@ void VASTAudioProcessor::setParameterText(StringRef parName, StringRef textVal, 
 }
 
 AudioProcessorValueTreeState& VASTAudioProcessor::getParameterTree() {
-	return m_parameterState;
+    return m_parameterState;
 }
 
 VASTVUMeterSource* VASTAudioProcessor::getMeterSource() {
@@ -2017,7 +2014,7 @@ String VASTAudioProcessor::getLocalMachineID() {
 const String VASTAudioProcessor::shiftHexEncryptString(const String& str)
 {
     CharPointer_UTF8 cp = str.getCharPointer();
-    String enc = String::toHexString(cp, cp.length());
+    String enc = String::toHexString(cp, int(cp.length()));
     enc = enc.removeCharacters(" ");
     CharPointer_UTF8 encbytes = enc.getCharPointer();
     String result = "";
@@ -2072,7 +2069,8 @@ bool VASTAudioProcessor::isLicensed() {
 }
 
 // http://www.experts-exchange.com/Programming/Languages/CPP/Q_26823608.html
-
+JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE("-Wconversion")
+JUCE_BEGIN_IGNORE_WARNINGS_MSVC(4244 4267)
 std::string VASTAudioProcessor::XOREncrypt(std::string a_sValue, std::string a_sKey)
 {
 	std::string sRet;
@@ -2122,6 +2120,8 @@ std::string  VASTAudioProcessor::XORDecrypt(std::string a_sValue, std::string  a
 
 	return sRet;
 }
+JUCE_END_IGNORE_WARNINGS_MSVC
+JUCE_END_IGNORE_WARNINGS_GCC_LIKE
 
 void VASTAudioProcessor::convertASCIIhexToString(std::string & output, std::string & input) {
 	const char* const lut = "0123456789ABCDEF";
@@ -2294,50 +2294,50 @@ bool VASTAudioProcessor::writeSettingsToFile() {
 	XmlElement* mapping = root.createNewChildElement("MIDIMapping");
 	XmlElement* controller = mapping->createNewChildElement("ControllerCC");
 	for (int i = 0; i < 128; i++) {
-		ScopedPointer<String> ccStr = new String("CC" + String(i));
-		ScopedPointer<String> paramString;
+        std::unique_ptr<String> ccStr(new String("CC" + String(i)));
+        std::unique_ptr<String> paramString;
 		if (m_MidiMapping[i].paramID >= 0) {
 			if (m_MidiMapping[i].paramID == 9999) //UI only
-				paramString = new String(m_MidiMapping[i].componentVariableName);
+				paramString = std::make_unique<String>(m_MidiMapping[i].componentVariableName);
 			else {
 				AudioProcessorParameterWithID* param = (AudioProcessorParameterWithID*)getParameters()[m_MidiMapping[i].paramID];
-				paramString = new String(param->paramID);
+				paramString = std::make_unique<String>(param->paramID);
 			}
 		}
 		else
-			paramString = new String("---");
+			paramString = std::make_unique<String>("---");
 		controller->setAttribute(*ccStr.get(), *paramString);
 	}
 	XmlElement* bankA = mapping->createNewChildElement("ProgramChangeBankA");
 	StringArray pcd = m_presetData.getProgramChangeData(0);
 	for (int i = 0; i < pcd.size(); i++) {
-		ScopedPointer<String> ccStr = new String("Prog" + String(i));
-		ScopedPointer<String> paramString;
-		paramString = new String(pcd[i]);
+        std::unique_ptr<String> ccStr(new String("Prog" + String(i)));
+        std::unique_ptr<String> paramString;
+		paramString = std::make_unique<String>(pcd[i]);
 		bankA->setAttribute(*ccStr.get(), *paramString);
 	}
 	XmlElement* bankB = mapping->createNewChildElement("ProgramChangeBankB");
 	pcd = m_presetData.getProgramChangeData(1);
 	for (int i = 0; i < pcd.size(); i++) {
-		ScopedPointer<String> ccStr = new String("Prog" + String(i));
-		ScopedPointer<String> paramString;
-		paramString = new String(pcd[i]);
+        std::unique_ptr<String> ccStr(new String("Prog" + String(i)));
+        std::unique_ptr<String> paramString;
+		paramString = std::make_unique<String>(pcd[i]);
 		bankB->setAttribute(*ccStr.get(), *paramString);
 	}
 	XmlElement* bankC = mapping->createNewChildElement("ProgramChangeBankC");
 	pcd = m_presetData.getProgramChangeData(2);
 	for (int i = 0; i < pcd.size(); i++) {
-		ScopedPointer<String> ccStr = new String("Prog" + String(i));
-		ScopedPointer<String> paramString;
-		paramString = new String(pcd[i]);
+        std::unique_ptr<String> ccStr(new String("Prog" + String(i)));
+        std::unique_ptr<String> paramString;
+		paramString = std::make_unique<String>(pcd[i]);
 		bankC->setAttribute(*ccStr.get(), *paramString);
 	}
 	XmlElement* bankD = mapping->createNewChildElement("ProgramChangeBankD");
 	pcd = m_presetData.getProgramChangeData(3);
 	for (int i = 0; i < pcd.size(); i++) {
-		ScopedPointer<String> ccStr = new String("Prog" + String(i));
-		ScopedPointer<String> paramString;
-		paramString = new String(pcd[i]);
+        std::unique_ptr<String> ccStr(new String("Prog" + String(i)));
+        std::unique_ptr<String> paramString;
+		paramString = std::make_unique<String>(pcd[i]);
 		bankD->setAttribute(*ccStr.get(), *paramString);
 	}
 
@@ -2573,9 +2573,9 @@ bool VASTAudioProcessor::readSettingsFromFile() {
 							{
 								for (int i = 0; i < pMIDIMapping->getNumAttributes(); i++) {
 									int lCC = -1;
-									ScopedPointer<String> attName = new String(pMIDIMapping->getAttributeName(i));
+                                    std::unique_ptr<String> attName(new String(pMIDIMapping->getAttributeName(i)));
 									lCC = attName->fromLastOccurrenceOf("CC", false, false).getIntValue();
-									ScopedPointer<String> attValue = new String(pMIDIMapping->getAttributeValue(i));
+                                    std::unique_ptr<String> attValue(new String(pMIDIMapping->getAttributeValue(i)));
 									if (!(attValue->equalsIgnoreCase("---"))) {
 										auto param = m_parameterState.getParameter(StringRef(*attValue.get()));
 										if (param != nullptr) {
@@ -2595,9 +2595,8 @@ bool VASTAudioProcessor::readSettingsFromFile() {
 								for (int j = 0; j < 128; j++) {
 									bool found = false;
 									for (int i = 0; i < pMIDIMapping->getNumAttributes(); i++) {
-										ScopedPointer<String> attName = new String(pMIDIMapping->getAttributeName(i));
-										int posi = attName->fromLastOccurrenceOf("Prog", false, false).getIntValue();
-										if (i == j) {
+                                        std::unique_ptr<String> attName(new String(pMIDIMapping->getAttributeName(i)));
+                                        if (i == j) {
 											pcd.add(pMIDIMapping->getAttributeValue(i));
 											found = true;
 										}
@@ -2612,9 +2611,8 @@ bool VASTAudioProcessor::readSettingsFromFile() {
 								for (int j = 0; j < 128; j++) {
 									bool found = false;
 									for (int i = 0; i < pMIDIMapping->getNumAttributes(); i++) {
-										ScopedPointer<String> attName = new String(pMIDIMapping->getAttributeName(i));
-										int posi = attName->fromLastOccurrenceOf("Prog", false, false).getIntValue();
-										if (i == j) {
+                                        std::unique_ptr<String> attName(new String(pMIDIMapping->getAttributeName(i)));
+                                    	if (i == j) {
 											pcd.add(pMIDIMapping->getAttributeValue(i));
 											found = true;
 										}
@@ -2629,9 +2627,8 @@ bool VASTAudioProcessor::readSettingsFromFile() {
 								for (int j = 0; j < 128; j++) {
 									bool found = false;
 									for (int i = 0; i < pMIDIMapping->getNumAttributes(); i++) {
-										ScopedPointer<String> attName = new String(pMIDIMapping->getAttributeName(i));
-										int posi = attName->fromLastOccurrenceOf("Prog", false, false).getIntValue();
-										if (i == j) {
+                                        std::unique_ptr<String> attName(new String(pMIDIMapping->getAttributeName(i)));
+                                        if (i == j) {
 											pcd.add(pMIDIMapping->getAttributeValue(i));
 											found = true;
 										}
@@ -2646,9 +2643,8 @@ bool VASTAudioProcessor::readSettingsFromFile() {
 								for (int j = 0; j < 128; j++) {
 									bool found = false;
 									for (int i = 0; i < pMIDIMapping->getNumAttributes(); i++) {
-										ScopedPointer<String> attName = new String(pMIDIMapping->getAttributeName(i));
-										int posi = attName->fromLastOccurrenceOf("Prog", false, false).getIntValue();
-										if (i == j) {
+                                        std::unique_ptr<String> attName(new String(pMIDIMapping->getAttributeName(i)));
+                                        if (i == j) {
 											pcd.add(pMIDIMapping->getAttributeValue(i));
 											found = true;
 										}
@@ -2931,7 +2927,7 @@ void VASTAudioProcessor::loadDefaultMidiMapping() {
 	}
 	int lSize = sizeof(lMapping) / sizeof(lMapping[0]); //size of array
 	for (int i = 0; i < lSize; i++) {
-		ScopedPointer<String> variableName = new String(lMapping[i].variableName);
+        std::unique_ptr<String> variableName(new String(lMapping[i].variableName));
 		for (int i = 0; i < getParameters().size(); i++) {
 			AudioProcessorParameterWithID* param = (AudioProcessorParameterWithID*)getParameters()[i];			
 			if (param->paramID.equalsIgnoreCase(*variableName.get())) {
@@ -2953,11 +2949,11 @@ void VASTAudioProcessor::loadDefaultMidiMapping() {
 			assert(true);
 		}
 		for (int i = 0; i < lSize; i++) {
-			ScopedPointer<String> variableName = new String(lMapping[i].variableName);
+            std::unique_ptr<String> variableName(new String(lMapping[i].variableName));
 			for (int i = 0; i < getParameters().size(); i++) {
 				AudioProcessorParameterWithID* param = (AudioProcessorParameterWithID*)getParameters()[i];
 				if (param->paramID.equalsIgnoreCase(*variableName.get())) {
-					ScopedPointer<String> outLine = new String(String(lMapping[i].midiCC) + "," + param->paramID + "," + lMapping[i].variableName + "\n");
+                    std::unique_ptr<String> outLine(new String(String(lMapping[i].midiCC) + "," + param->paramID + "," + lMapping[i].variableName + "\n"));
 					out.writeText(*outLine.get(), false, false, "\n");
 				}
 			}
@@ -3514,14 +3510,22 @@ String VASTAudioProcessor::getVersionString() {
 #elif  _WIN32BIT //_WIN32 also defined for WIN64!!
 	lVersion.append("Win32", 5);
 #endif
-#if _SSE2_VERSION
-	lVersion.append(" SSE2", 5);
+#ifdef _SSE2_VERSION
+    #if JUCE_MAC
+        #ifdef JUCE_ARM
+            lVersion.append(" UBarm", 7);
+        #else
+            lVersion.append(" UBint", 7);
+        #endif
+    #else
+        lVersion.append(" SSE2", 5);
+    #endif
 #endif
-#if _DEBUG
+#ifdef _DEBUG
 	lVersion.append(" (Debug)", 8);
 #endif
-#if VASTBUILD || VASTCOMMERCIAL
-	lVersion.append("v", 1);
+#ifdef VASTBUILD || VASTCOMMERCIAL
+	lVersion.append(" v", 2);
 #endif
 	return lVersion;
 }

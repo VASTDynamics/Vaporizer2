@@ -8,7 +8,7 @@ VAST Dynamics Audio Software (TM)
 
 //Prefix Category AR Arpeggio AT Atmosphere BA Bass BR Brass BL Bell CH Chord DK Drum kit DR Drum DL Drum loop FX Effect GT Guitar IN Instrument KB Keyboard LD Lead MA Mallet OR Organ OC Orchestral PN Piano PL Plucked RD Reed ST String SY Synth SQ Sequence / Split TG Trancegate VC Vocal / Voice WW Woodwind
 
-int VASTPresetData::getNumPresets() {
+int VASTPresetData::getNumPresets() const {
 	return m_numUserPresets;
 }
 
@@ -305,7 +305,7 @@ void VASTPresetData::loadSearchData() {
 	}
 }
 
-int VASTPresetData::getIndexInSearchArray(String internalid) {
+int VASTPresetData::getIndexInSearchArray(String internalid) const {
 	for (int i = 0; i < m_SearchArray.size(); i++) {
 		if (m_SearchArray[i]->internalid.equalsIgnoreCase(internalid))
 			return i;
@@ -313,7 +313,7 @@ int VASTPresetData::getIndexInSearchArray(String internalid) {
 	return -1;
 }
 
-int VASTPresetData::getIndexInPresetArray(String internalid) {
+int VASTPresetData::getIndexInPresetArray(String internalid) const {
 	for (int i = 0; i < m_PresetArray.size(); i++) {
 		if (m_PresetArray[i]->internalid.equalsIgnoreCase(internalid))
 			return i;
@@ -330,7 +330,7 @@ void VASTPresetData::exchangeCurPatchData(VASTPresetElement& newPatchData) {
 	myProcessor->requestUIPresetUpdate();
 }
 
-bool VASTPresetData::needsTreeUpdate() {
+bool VASTPresetData::needsTreeUpdate() const {
 	return m_needsTreeUpdate;
 }
 
@@ -360,11 +360,11 @@ void VASTPresetData::setProgramChangeArray(int bank, StringArray progChangeArray
 	m_programChangeData[bank] = progChangeArray;
 }
 
-StringArray VASTPresetData::getProgramChangeData(int bank) {
+StringArray VASTPresetData::getProgramChangeData(int bank) const {
 	return m_programChangeData[bank];
 }
 
-StringArray VASTPresetData::getProgramChangeDisplayData(int bank) {
+StringArray VASTPresetData::getProgramChangeDisplayData(int bank) const {
 	StringArray pcdd;
 	for (int i = 0; i < m_programChangeData[bank].size(); i++) {
 		String sstr = m_programChangeData[bank][i];
@@ -441,12 +441,9 @@ int VASTPresetData::getStars(String internalid) {
 	it = m_stars.find(internalid);
 	if (it == m_stars.end()) return 0;
 	return it->second;
-	
-	//String s1 = m_stars[internalid];
-	//return s1.getIntValue();
 }
 
-bool VASTPresetData::getFavorite(String internalid, int favoriteNo) {	
+bool VASTPresetData::getFavorite(String internalid, int favoriteNo) const {
 	auto result = m_favorites.equal_range(internalid);
 	for (auto it = result.first; it != result.second; ++it) {
 		if (it->second == favoriteNo)

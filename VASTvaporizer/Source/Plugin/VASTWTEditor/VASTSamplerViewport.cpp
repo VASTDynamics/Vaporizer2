@@ -188,7 +188,7 @@ void VASTSamplerViewport::updateContent(bool force) {
 	setSelectionFromSound();
 
 	AffineTransform af;
-	lVisibleArea = lVisibleArea.transformed(af.scaled(m_screenWidthScale, m_screenHeightScale));
+	lVisibleArea = lVisibleArea.transformedBy(af.scaled(m_screenWidthScale, m_screenHeightScale));
 
 	double iViewPortwidth = getScreenBounds().getWidth() * scale;
 	double iImageBottom = lVisibleArea.getHeight();
@@ -465,8 +465,6 @@ void VASTSamplerViewport::notifySelectionChanged() {
 		while ((counter < numSamples - 1) && (lz < numlz)) {
 			counter++;
 			int sPos = m_selection.iWavSelectionStartSample + counter;
-			float val = samplerSound->getAudioDataChanged()->getSample(0, sPos);
-			float valp1 = samplerSound->getAudioDataChanged()->getSample(0, sPos + 1);
 			while ((lz < numlz) && (lZeroCrossings[lz] < sPos)) {
 				lz++;
 			}
@@ -521,7 +519,7 @@ void VASTSamplerViewport::handleBorderDisplay() {
 
 	juce::Rectangle<int> lVisibleArea = myWtEditor->getSamplerViewport()->getViewArea();
 	AffineTransform af;
-	lVisibleArea = lVisibleArea.transformed(af.scaled(m_screenWidthScale, m_screenHeightScale));
+	lVisibleArea = lVisibleArea.transformedBy(af.scaled(m_screenWidthScale, m_screenHeightScale));
 
 	float lDrawheight = lVisibleArea.getHeight();
 	if (m_bMouseover) {

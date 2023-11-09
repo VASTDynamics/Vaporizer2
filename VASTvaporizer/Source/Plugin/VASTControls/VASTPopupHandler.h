@@ -31,7 +31,7 @@ private:
 	Component* m_lastComponent = nullptr;
 	bool m_isBeingDragged = false;
 
-	ScopedPointer<BubbleMessageComponent> m_valueWindow;
+    std::unique_ptr<BubbleMessageComponent> m_valueWindow;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(VASTPopupHandler)
 };

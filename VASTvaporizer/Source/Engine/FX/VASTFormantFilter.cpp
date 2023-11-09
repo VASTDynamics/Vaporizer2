@@ -23,7 +23,6 @@ CVASTFormantFilter::CVASTFormantFilter(VASTAudioProcessor* processor, int busnr)
 
 void CVASTFormantFilter::initParameters() {
 	AudioProcessorValueTreeState& parameters = my_processor->getParameterTree();
-	int lDestination = 0;
 
 	createAndAddParameter(&m_bFormantOnOff, parameters, 1, "m_bFormantOnOff", "Formant filter on / off", "On", 0,
 		MODMATDEST::NoDestination,
@@ -127,13 +126,13 @@ void CVASTFormantFilter::parameterChanged(const String& parameterID, float newVa
 		return;
 	}
 	else if (parameterID.startsWith("m_fFormantVowelMix")) {
-		m_fFormantVowelMix_smoothed.setValue(newValue);
+		m_fFormantVowelMix_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fFormantDryWet")) {
-		m_fFormantDryWetMix_smoothed.setValue(newValue);
+		m_fFormantDryWetMix_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fFormantGain")) {
-		m_fFormantGain_smoothed.setValue(newValue);
+		m_fFormantGain_smoothed.setTargetValue(newValue);
 	}
 }
 
@@ -207,13 +206,13 @@ bool CVASTFormantFilter::processAudioFrame(float* pInputBuffer, float* pOutputBu
 	modMatrixInputState inputState;
 	inputState = ((VASTAudioProcessor*)my_processor)->m_pVASTXperience.m_Poly.getOldestNotePlayedInputState(currentFrameOSAdjusted); // make parameter oldest or newest
 
-	m_fFormantVowelMix_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fFormantVowelMix, MODMATDEST::FormantFilterMixVowels, &inputState));
+	m_fFormantVowelMix_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fFormantVowelMix, MODMATDEST::FormantFilterMixVowels, &inputState));
 	float lFormantVowelMix = m_fFormantVowelMix_smoothed.getNextValue() * 0.01f;
 	
-	m_fFormantDryWetMix_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fFormantDryWet, MODMATDEST::FormantFilterDryWet, &inputState));
+	m_fFormantDryWetMix_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fFormantDryWet, MODMATDEST::FormantFilterDryWet, &inputState));
 	float lFormantDryWet = m_fFormantDryWetMix_smoothed.getNextValue();
 
-	m_fFormantGain_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fFormantGain, MODMATDEST::FormantFilterGain, &inputState));
+	m_fFormantGain_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fFormantGain, MODMATDEST::FormantFilterGain, &inputState));
 	float lFormantGain = m_fFormantGain_smoothed.getNextValue();
 
 	float l_vowelOne = m_Set->getParameterValueWithMatrixModulation(m_fFormantVowelOne, MODMATDEST::FormantFilterFirstVowel, &inputState);
@@ -356,13 +355,13 @@ bool CVASTFormantFilter::processAudioFrame(float* pInputBuffer, float* pOutputBu
 
 void CVASTFormantFilter::getStateInformation(MemoryBlock& destData)
 {
-	//ScopedPointer<XmlElement> xml (parameters.valueTreeState.state.createXml());
+	//std::unique_ptr<XmlElement> xml (parameters.valueTreeState.state.createXml());
 	//copyXmlToBinary (*xml, destData);
 }
 
 void CVASTFormantFilter::setStateInformation(const void* data, int sizeInBytes)
 {
-	//ScopedPointer<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
+	//std::unique_ptr<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
 	//if (xmlState != nullptr)
 	//  if (xmlState->hasTagName (parameters.valueTreeState.state.getType()))
 	//    parameters.valueTreeState.state = ValueTree::fromXml (*xmlState);

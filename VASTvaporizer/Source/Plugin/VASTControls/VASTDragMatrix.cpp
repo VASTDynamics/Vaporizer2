@@ -39,21 +39,21 @@ VASTDragMatrix::VASTDragMatrix(VASTAudioProcessorEditor *editor, VASTAudioProces
 	m_uModMatSrce->setAudioProcessor(*my_processor);
 	m_uModMatSrce->bindParameter(paramID);
 	//m_uModMatSrce->addListener(this);
-	addAndMakeVisible(m_uModMatSrce);
+	addAndMakeVisible(m_uModMatSrce.get());
 
 	paramID = "m_uModMatPolarity" + String(my_slotno + 1);
 	m_uModMatPolarity.reset(new VASTParameterComboBox(paramID));
 	m_uModMatPolarity->setAudioProcessor(*my_processor);
 	m_uModMatPolarity->bindParameter(paramID);
 	//m_uModMatPolarity->addListener(this);
-	addAndMakeVisible(m_uModMatPolarity);
+	addAndMakeVisible(m_uModMatPolarity.get());
 
 	paramID = "m_uModMatDest" + String(my_slotno + 1);
 	m_uModMatDest.reset(new VASTParameterComboBox(paramID));
 	m_uModMatDest->setAudioProcessor(*my_processor);
 	m_uModMatDest->bindParameter(paramID);
 	//m_uModMatDest->addListener(this);
-	addAndMakeVisible(m_uModMatDest);
+	addAndMakeVisible(m_uModMatDest.get());
 		
 	paramID = "m_fModMatVal" + String(my_slotno + 1);
 	m_fModMatVal.reset(new VASTParameterSlider(paramID));
@@ -62,7 +62,7 @@ VASTDragMatrix::VASTDragMatrix(VASTAudioProcessorEditor *editor, VASTAudioProces
 	m_fModMatVal->setSliderStyle(Slider::RotaryVerticalDrag);
 	m_fModMatVal->setTextBoxStyle(Slider::NoTextBox, false, 40, 16);
 	//m_fModMatVal->addListener(this);
-	addAndMakeVisible(m_fModMatVal);
+	addAndMakeVisible(m_fModMatVal.get());
 
 	paramID = "m_fModMatCurve" + String(my_slotno + 1);
 	m_fModMatCurve.reset(new VASTParameterSlider(paramID));
@@ -71,14 +71,14 @@ VASTDragMatrix::VASTDragMatrix(VASTAudioProcessorEditor *editor, VASTAudioProces
 	m_fModMatCurve->setSliderStyle(Slider::RotaryVerticalDrag);
 	m_fModMatCurve->setTextBoxStyle(Slider::NoTextBox, false, 40, 16);
 	//m_fModMatCurve->addListener(this);
-	addAndMakeVisible(m_fModMatCurve);
+	addAndMakeVisible(m_fModMatCurve.get());
 
 	c_curveDisplay.reset(new VASTModMatCurveDisplay(my_slotno, my_editor, my_processor));
-	addAndMakeVisible(c_curveDisplay);
+	addAndMakeVisible(c_curveDisplay.get());
 
 	c_iconDelSlot.reset(new VASTDrawableButton("c_iconDelSlot", VASTMatrixComponent::delete_svg, VASTMatrixComponent::delete_svgSize, "Delete matrix modulation slot"));
 	c_iconDelSlot->addListener(this);
-	addAndMakeVisible(c_iconDelSlot);	
+	addAndMakeVisible(c_iconDelSlot.get());
 }
 
 void VASTDragMatrix::startAutoUpdate() {

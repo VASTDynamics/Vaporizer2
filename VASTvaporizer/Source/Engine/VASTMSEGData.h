@@ -47,24 +47,24 @@ public:
 
 	// design time interface
 	//float getAttackLevel() { return 0.f; };
-	double getAttackTime(); //ms
-	double getDecayTime(); //ms
-	double getSustainLevel(); /** < 0.0 to 1.0. */
-	double getReleaseTime(); //ms
-	bool hasAttackPhase();
-	bool hasReleasePhase();
+	double getAttackTime() const; //ms
+	double getDecayTime() const; //ms
+	double getSustainLevel() const; /** < 0.0 to 1.0. */
+	double getReleaseTime() const; //ms
+	bool hasAttackPhase() const;
+	bool hasReleasePhase() const;
 
 	void setSynch(bool synch);
-	bool getSynch();
+	bool getSynch() const;
 	void setTimeBeats(int timeBeats);
-	int getTimeBeats();
+	int getTimeBeats() const;
 
 	void setAttackSteps(double attackSteps, CVASTSettings* set);
 	void setDecaySteps(double decaySteps, CVASTSettings* set);
 	void setReleaseSteps(double releaseSteps, CVASTSettings* set);
-	float getAttackSteps();
-	float getDecaySteps();
-	float getReleaseSteps();
+	float getAttackSteps() const;
+	float getDecaySteps() const;
+	float getReleaseSteps() const;
 	float calcStepsFromTime(double time, CVASTSettings* set);
 
 	void setAttackTime(double attackTime);
@@ -84,13 +84,13 @@ public:
     std::atomic<int> loopStartPoint = -1;
     std::atomic<int> loopEndPoint = -1;
 
-	int getNumSegments();
-	ControlPoint* getSegmentStart(int segment);
-	ControlPoint* getSegmentEnd(int segment);
+	int getNumSegments() const;
+	ControlPoint* getSegmentStart(int segment); //not const
+	ControlPoint* getSegmentEnd(int segment); //not const
 
 	void calcSegmentCoefficients(int samplerate, ULong64_t startPlayTimestamp, int activeSegment, int samplesSinceSegmentStart, int segmentLengthInSamples, CVASTSettings* set, int voiceNo);
 
-	double getTotalDuration(); //this is per definition in this model!
+	double getTotalDuration(); //this is per definition in this model! // not const
 	
 	void setXYValues(int pointno, double newxval, double newyval);
 	void setCurveValues(int pointno, double newval);
@@ -101,12 +101,12 @@ public:
 	void toggleSustainPoint(int pointno);
 	void toggleMPELift(int pointno);
 	void clearLoopPoints();
-	int getSustainPoint();
-	int getDecayPoint();
+	int getSustainPoint() const;
+	int getDecayPoint() const;
 	bool validate();
-	void getValueTreeState(ValueTree* tree, UndoManager* undoManager, bool isMseg);
+	void getValueTreeState(ValueTree* tree, UndoManager* undoManager, bool isMseg); //not const
 	void setValueTreeState(ValueTree* tree, bool isMseg, CVASTSettings* set);
-	bool getInvert();
+	bool getInvert() const;
 	void setInvert(bool inv);
 	
 	void doStepSeq(float glide, float gate);
@@ -143,13 +143,13 @@ public:
 	//ReadWriteLock mReadWriteLock; //one lock per instance of class
 	void setDirty();
 	void clearDirtyFlag();
-	bool isMSEGDirty();
+	bool isMSEGDirty() const;
 
-	bool getADSRUpdated();
+	bool getADSRUpdated() const;
 	void resetADSRUpdated();
-	int getDispActiveSegment(int voiceNo);
-	int getDispSamplesSinceSegmentStart(int voiceNo);
-	int getDispSegmentLengthInSamples(int voiceNo);
+	int getDispActiveSegment(int voiceNo) const;
+	int getDispSamplesSinceSegmentStart(int voiceNo) const;
+	int getDispSegmentLengthInSamples(int voiceNo) const;
 	bool dispVoicePlaying(int voiceNo);
 
     std::atomic<double> m_fAttackSteps = 1.f;

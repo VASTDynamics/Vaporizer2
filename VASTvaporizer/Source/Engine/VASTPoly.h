@@ -41,10 +41,10 @@ public:
 	void updateLFO(int lfono);
 	void processAudioBuffer(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages);
 	void resynchLFO();
-	int numNotesPlaying();
-	int numOscsPlaying();
-	int getLastNotePlayed();
-	int getOldestNotePlayed();
+	int numNotesPlaying() const;
+	int numOscsPlaying() const;
+	int getLastNotePlayed() const;
+	int getOldestNotePlayed() const;
 	void stopAllNotes(bool allowTailOff);
 	bool voicesMSEGStillActive();
 	modMatrixInputState getLastNotePlayedInputState(int currentFrame);

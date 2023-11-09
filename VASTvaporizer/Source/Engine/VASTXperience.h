@@ -42,20 +42,19 @@ public:
 	//bool midiMessage(unsigned char cChannel, unsigned char cStatus, unsigned char cData1, unsigned char cData2);
 
 	bool processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& midiMessages, MYUINT uNumChannels, bool isPlaying,
-		double ppqPosition, bool isLooping, double ppqLoopStart, double ppqLoopEnd, double ppqPositionOfLastBarStart, double bpm);
+		double ppqPosition, bool isLooping, double ppqPositionOfLastBarStart, double bpm);
 
 	//VASTEffectInterface
-	void init(CVASTSettings &set) {};
-	void initCompatibilityParameters() {}; //implemented in state
+	void init(CVASTSettings &set) override {};
+	void initCompatibilityParameters() override {}; //implemented in state
 	void initCompatibilityParameters5() override {}; //new parameters go here
-	void prepareToPlay(double sampleRate, int samplesPerBlock) {};
-	void releaseResources() {};
-	void processBlock(AudioSampleBuffer&, MidiBuffer&, const int numSamples) {};
-	void getStateInformation(MemoryBlock& destData) {};
-	void setStateInformation(const void* data, int sizeInBytes) {};
-	void updateTiming() {};
-	
-	void parameterChanged(const String& parameterID, float newValue);
+	void prepareToPlay(double sampleRate, int samplesPerBlock) override {};
+	void releaseResources() override {};
+	void processBlock(AudioSampleBuffer&, MidiBuffer&, const int numSamples) override {};
+	void getStateInformation(MemoryBlock& destData) override {};
+	void setStateInformation(const void* data, int sizeInBytes) override {};
+	void updateTiming() override {};
+	void parameterChanged(const String& parameterID, float newValue) override;
 
 	CVASTSettings m_Set;
 	VASTAudioProcessor* myProcessor;
@@ -83,7 +82,7 @@ public:
 	bool getBlockProcessing();
 	bool nonThreadsafeIsBlockedProcessingInfo();
 
-	juce::ScopedPointer<AudioSampleBuffer> m_oversampledBuffer;
+    std::unique_ptr<AudioSampleBuffer> m_oversampledBuffer;
 
     std::atomic<bool> m_bLastChainBufferZero = false;
     std::atomic<int> m_bBufferZeroMilliSeconds = 0;

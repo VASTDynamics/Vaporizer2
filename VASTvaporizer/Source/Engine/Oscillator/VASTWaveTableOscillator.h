@@ -61,7 +61,7 @@ public:
 	bool updatePhase(int unisonOsci);
 	float drift_noise(float& lastval);
 
-	MYUINT getOscType();
+	MYUINT getOscType() const;
 	void noteOn(MYUINT uChannel, MYUINT uMIDINote, MYUINT uVelocity);
 	void noteOff();
 
@@ -89,9 +89,9 @@ public:
 
 	void resetSmoothers();
 
-	ScopedPointer<AudioSampleBuffer> m_phasedPhasorBuffer[C_MAX_PARALLEL_OSC];
+    std::unique_ptr<AudioSampleBuffer> m_phasedPhasorBuffer[C_MAX_PARALLEL_OSC];
 	float* m_phasedPhasorBufferPointer[C_MAX_PARALLEL_OSC];
-	ScopedPointer<AudioSampleBuffer> m_phaseIncBuffer[C_MAX_PARALLEL_OSC];
+    std::unique_ptr<AudioSampleBuffer> m_phaseIncBuffer[C_MAX_PARALLEL_OSC];
 	float* m_phaseIncBufferPointer[C_MAX_PARALLEL_OSC];
 	int m_unisonOscis = 1;
 	CVASTSettings *m_Set; 
@@ -140,7 +140,7 @@ private:
 
 	CVASTOscillatorBank* m_oscBank;
 
-	int m_seed = 0; // for random
+	long m_seed = 0; // for random
 	float m_fRsHoldValue = 0.0f; // sample & hold
 	float m_fRshCounter = -1.0f;
 	

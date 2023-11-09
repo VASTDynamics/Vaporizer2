@@ -46,24 +46,24 @@ void CVASTEffect::createAndAddParameter(std::atomic<float>** parameterVar, Audio
 #endif
 
     using Parameter = AudioProcessorValueTreeState::Parameter;
+
     AudioProcessorParameterWithID* p = stateTree.createAndAddParameter (std::make_unique<Parameter>
-        ( 
+        (
          
-			/* IMPORTANT */
+			// IMPORTANT
 			ParameterID { newId, versionHint }, //the version number is important: new parameters have to always get higher numbers
-		    /* IMPORTANT */
+		    // IMPORTANT
 
 			busId + paramName, labelText, r, defaultVal, valueToTextFunction, textToValueFunction, isMetaParameter,
 			isAutomatableParameter, isDiscreteParameter, AudioProcessorParameter::Category::genericParameter));
     
-	//my_parameters.add(p);
 	my_parameters.insert(std::make_pair(uiSequence, p));
 	
 	my_processor->m_mapModdestToParameterName.insert(std::make_pair(modMatrixDestination, newId));
 	my_processor->m_mapParameterNameToModdest.insert(std::make_pair(newId, modMatrixDestination));
 	my_processor->addModMatrixLookupTable(modMatrixDestination, r.start, r.end, r.skew, newId, p);
-	
-	std::atomic<float>* par = stateTree.getRawParameterValue(newId);
+    std::atomic<float>* par = stateTree.getRawParameterValue(newId);
+    
 	*parameterVar = par;
 	if (addListener)
 		stateTree.addParameterListener(newId, this);

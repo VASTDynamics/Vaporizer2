@@ -25,7 +25,6 @@ CVASTEq::CVASTEq(VASTAudioProcessor* processor, int busnr) {
 
 void CVASTEq::initParameters() {
 	AudioProcessorValueTreeState& parameters = my_processor->getParameterTree();
-	int lDestination = 0;
 
 	createAndAddParameter(&m_bEQOnOff, parameters, 1, "m_bEQOnOff", "EQ on / off", "On", 0,
 		MODMATDEST::NoDestination,
@@ -288,7 +287,7 @@ void CVASTEq::parameterChanged(const String& parameterID, float newValue) {
 	}
 
 	else if (parameterID.startsWith("m_fEQGain")) {
-		m_fEQGain_smoothed.setValue(newValue);
+		m_fEQGain_smoothed.setTargetValue(newValue);
 	}
 }
 
@@ -586,13 +585,13 @@ bool CVASTEq::processAudioFrame(float* pInputBuffer, float* pOutputBuffer, MYUIN
 
 void CVASTEq::getStateInformation(MemoryBlock& destData)
 {
-	//ScopedPointer<XmlElement> xml (parameters.valueTreeState.state.createXml());
+	//std::unique_ptr<XmlElement> xml (parameters.valueTreeState.state.createXml());
 	//copyXmlToBinary (*xml, destData);
 }
 
 void CVASTEq::setStateInformation(const void* data, int sizeInBytes)
 {
-	//ScopedPointer<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
+	//std::unique_ptr<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
 	//if (xmlState != nullptr)
 	//  if (xmlState->hasTagName (parameters.valueTreeState.state.getType()))
 	//    parameters.valueTreeState.state = ValueTree::fromXml (*xmlState);

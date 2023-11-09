@@ -38,7 +38,7 @@ public:
 	//dynamic
 	std::atomic<int> m_dispActiveStep = 0;
 
-	int getNumSteps();;
+	int getNumSteps() const; 
 
 	void setDirty();
 

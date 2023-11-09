@@ -29,8 +29,6 @@ CVASTMultibandCompressorSingleBand::CVASTMultibandCompressorSingleBand(VASTAudio
 
 void CVASTMultibandCompressorSingleBand::initParameters() {
 	AudioProcessorValueTreeState& parameters = my_processor->getParameterTree();
-	int lDestination = 0;
-
 	float initLowFreq = 0.f;
 	float initHighFreq = 0.f;
 	float initThreshold = 0.0f;
@@ -311,13 +309,13 @@ void CVASTMultibandCompressorSingleBand::compressorBand(AudioSampleBuffer &buffe
 
 void CVASTMultibandCompressorSingleBand::getStateInformation (MemoryBlock& destData)
 {
-    //ScopedPointer<XmlElement> xml (parameters.valueTreeState.state.createXml());
+    //std::unique_ptr<XmlElement> xml (parameters.valueTreeState.state.createXml());
     //copyXmlToBinary (*xml, destData);
 }
 
 void CVASTMultibandCompressorSingleBand::setStateInformation (const void* data, int sizeInBytes)
 {
-    //ScopedPointer<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
+    //std::unique_ptr<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
     //if (xmlState != nullptr)
       //  if (xmlState->hasTagName (parameters.valueTreeState.state.getType()))
         //    parameters.valueTreeState.state = ValueTree::fromXml (*xmlState);

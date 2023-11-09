@@ -85,22 +85,23 @@ private:
             
 			//resolutionXY = createUniform (openGLContext, shaderProgram, "resolutionXY");
             //audioSampleData     = createUniform (openGLContext, shaderProgram, "audioSampleData");
-			osciColour			= createUniform(openGLContext, shaderProgram, "osciColour");            
+            
+            osciColour = createUniform(openGLContext, shaderProgram, "osciColour");
         }
         
-        //ScopedPointer<OpenGLShaderProgram::Uniform> projectionMatrix, viewMatrix;
-        //ScopedPointer<OpenGLShaderProgram::Uniform> resolutionXY, osciColour;
-		ScopedPointer<OpenGLShaderProgram::Uniform> osciColour;
+        //std::unique_ptr<OpenGLShaderProgram::Uniform> projectionMatrix, viewMatrix;
+        //std::unique_ptr<OpenGLShaderProgram::Uniform> resolutionXY, osciColour;
+        std::unique_ptr<OpenGLShaderProgram::Uniform> osciColour;
         
     private:
-        static OpenGLShaderProgram::Uniform* createUniform (OpenGLContext& openGLContext,
+        static std::unique_ptr<OpenGLShaderProgram::Uniform> createUniform (OpenGLContext& openGLContext,
                                                             OpenGLShaderProgram& shaderProgram,
                                                             const char* uniformName)
         {
             if (openGLContext.extensions.glGetUniformLocation (shaderProgram.getProgramID(), uniformName) < 0)
                 return nullptr;
             
-            return new OpenGLShaderProgram::Uniform (shaderProgram, uniformName);
+            return std::make_unique<OpenGLShaderProgram::Uniform>(shaderProgram, uniformName);
         }
     };
         
@@ -108,10 +109,10 @@ private:
     OpenGLContext openGLContext;
     GLuint VBO, VAO, EBO;
     
-    ScopedPointer<OpenGLShaderProgram> shader;
-    ScopedPointer<Uniforms> uniforms;
+    std::unique_ptr<OpenGLShaderProgram> shader;
+    std::unique_ptr<Uniforms> uniforms;
     
-	ScopedPointer<OpenGLShaderProgram::Attribute> position_;
+    std::unique_ptr<OpenGLShaderProgram::Attribute> position_;
 
     const char* vertexShader;
     const char* fragmentShader;

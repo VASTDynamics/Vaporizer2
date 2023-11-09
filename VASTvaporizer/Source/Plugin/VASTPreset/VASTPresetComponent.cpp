@@ -33,7 +33,7 @@
 //[MiscUserDefs] You can add your own user definitions and misc code here...
 
 VASTValueTreeItem::VASTValueTreeItem(const ValueTree& v, VASTAudioProcessor* proc, VASTPresetComponent* presetCompopnent)
-	: tree(v), _processor(proc), _presetComponent(presetCompopnent)
+	: _processor(proc), _presetComponent(presetCompopnent), tree(v)
 {
 	tree.addListener(this);
 	lookAndFeelChanged();
@@ -339,8 +339,6 @@ bool VASTValueTreeItem::isInterestedInDragSource(const DragAndDropTarget::Source
 
 void VASTValueTreeItem::itemDropped(const DragAndDropTarget::SourceDetails &dragSourceDetails, int insertIndex)
 {
-	if (this == nullptr)
-		return;
 	if (this->getParentItem() == nullptr)
 		return;
 	if (dragSourceDetails.description.toString().startsWith("midimappreset")) {

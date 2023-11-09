@@ -124,7 +124,7 @@ void VASTFreqDomainViewport::updateContent(bool force) {
 
 	juce::Rectangle<int> lVisibleArea = myWtEditor->getFreqDomainViewport()->getViewArea();
 	AffineTransform af;
-	lVisibleArea = lVisibleArea.transformed(af.scaled(m_screenWidthScale, m_screenHeightScale));
+	lVisibleArea = lVisibleArea.transformedBy(af.scaled(m_screenWidthScale, m_screenHeightScale));
 
 	waveformImage = Image(Image::RGB, jmax(1, lVisibleArea.getWidth()), jmax(1, lVisibleArea.getHeight()), false);
 	waveformImage.clear(waveformImage.getBounds(), myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colFreqDomainBinBackground));
@@ -645,7 +645,7 @@ void VASTFreqDomainViewport::mouseDown(const MouseEvent &e) {
 				l_veditor->setTextPhase(String(lCurPhaseValue));
 
 				//CallOutBox &cb =
-				juce::CallOutBox::launchAsynchronously(std::move(l_veditor), newBounds, myEditor->vaporizerComponent);
+				juce::CallOutBox::launchAsynchronously(std::move(l_veditor), newBounds, myEditor->vaporizerComponent.get());
 			}
 			else if (result == 11) {
 				myWtEditor->setBinMode(BinMode::ClipBin);

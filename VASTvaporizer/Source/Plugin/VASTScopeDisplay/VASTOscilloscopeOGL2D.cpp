@@ -11,7 +11,7 @@ OpenGL Fragment-Shader based
 using namespace ::juce::gl;
 
 VASTOscilloscopeOGL2D::VASTOscilloscopeOGL2D(VASTAudioProcessorEditor *editor, std::unique_ptr<VASTRingBuffer<GLfloat>> * ringBuffer)
-: readBuffer (1, OGL2D_RING_BUFFER_SIZE), myEditor(editor)
+: myEditor(editor), readBuffer (1, OGL2D_RING_BUFFER_SIZE) 
 {
     openGLContext.setOpenGLVersionRequired (OpenGLContext::OpenGLVersion::defaultGLVersion);        
 	openGLContext.setComponentPaintingEnabled(false);
@@ -294,7 +294,7 @@ void VASTOscilloscopeOGL2D::createShaders()
 	"    gl_FragColor = osciColour;\n"
     "}\n";
         
-    ScopedPointer<OpenGLShaderProgram> newShader (new OpenGLShaderProgram (openGLContext));
+    std::unique_ptr<OpenGLShaderProgram> newShader (new OpenGLShaderProgram (openGLContext));
     String statusText;
         
     if (newShader->addVertexShader (OpenGLHelpers::translateVertexShaderToV3 (vertexShader))
@@ -303,10 +303,10 @@ void VASTOscilloscopeOGL2D::createShaders()
     {
         uniforms = nullptr;
             
-        shader = newShader;
+        shader = std::move(newShader);
         shader->use();
             
-        uniforms   = new Uniforms (openGLContext, *shader);
+        uniforms   = std::make_unique<Uniforms>(openGLContext, *shader);
             
         statusText = "GLSL: v" + String (OpenGLShaderProgram::getLanguageVersion(), 2);
     }
@@ -315,7 +315,7 @@ void VASTOscilloscopeOGL2D::createShaders()
         statusText = newShader->getLastError();
     }
       
-	position_ = new OpenGLShaderProgram::Attribute(*shader, "position");
+	position_ = std::make_unique<OpenGLShaderProgram::Attribute>(*shader, "position");
 
 	//TODO
     //statusLabel.setText (statusText, dontSendNotification);

@@ -33,7 +33,7 @@ public:
 	
 	//==============================================================================
 	VASTAudioProcessor* getProcessor();
-	juce::ScopedPointer<VASTVaporizerComponent> vaporizerComponent;
+    std::unique_ptr<VASTVaporizerComponent> vaporizerComponent;
 	
 	juce::Array<Component*> m_VASTComponentsAll;
 
@@ -78,7 +78,7 @@ private:
     VASTAudioProcessor& processor;
 
 	TooltipWindow tooltipWindow; //just add and leave here
-	ScopedPointer<juce::AlertWindow> m_alertWindow;
+    std::unique_ptr<juce::AlertWindow> m_alertWindow;
 
 	bool resizeCalledFromConstructor = false;
 	void showNewerVersionPopup();

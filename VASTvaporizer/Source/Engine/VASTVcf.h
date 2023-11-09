@@ -116,7 +116,7 @@ public:
 
 	CVASTVCFCombFilter m_combFilter;
 	CVASTOversampler m_Oversampler;
-	ScopedPointer<AudioSampleBuffer> inBufferUp;
+    std::unique_ptr<AudioSampleBuffer> inBufferUp;
 	dsp::LadderFilter<float> m_ladderFilter1;
 
 private:

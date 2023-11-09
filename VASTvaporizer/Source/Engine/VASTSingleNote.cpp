@@ -52,10 +52,10 @@ void CVASTSingleNote::init(CVASTSettings &set, CVASTPoly* poly, MYUINT voiceNo) 
 		m_Oscillator.add(new CVASTWaveTableOscillator());
 		m_Oscillator.getUnchecked(bank)->init(*m_Set, poly->m_OscBank.getUnchecked(bank));
 	}
-	m_OscillatorNoise = new CVASTWaveTableOscillator();
+	m_OscillatorNoise = std::make_unique<CVASTWaveTableOscillator>();
 	m_OscillatorNoise->init(*m_Set);
 
-	m_VCA = new CVASTVca();
+	m_VCA = std::make_unique<CVASTVca>();
 	m_VCA->init(*m_Set, mVoiceNo);
 	for (int filter = 0; filter < 3; filter++) {
 		m_VCF.add(new CVASTVcf());
@@ -106,8 +106,8 @@ void CVASTSingleNote::init(CVASTSettings &set, CVASTPoly* poly, MYUINT voiceNo) 
 		m_wtFXType[bank] = 0;
 		m_wtFXTypeChanged[bank] = false;
 	}	
-	m_centerBuffer = new AudioSampleBuffer(1, initSize);
-	m_velocityBuffer = new AudioSampleBuffer(1, initSize);
+	m_centerBuffer = std::make_unique<AudioSampleBuffer>(1, initSize);
+	m_velocityBuffer = std::make_unique<AudioSampleBuffer>(1, initSize);
 }
 
 void CVASTSingleNote::resetSmoothers() {
@@ -383,7 +383,7 @@ void CVASTSingleNote::pitchWheelMoved(int newPitchWheelValue, bool zone)
 	}
 }
 
-int CVASTSingleNote::getNumOscsPlaying() {
+int CVASTSingleNote::getNumOscsPlaying() const {
     return m_uLast_NumTotalPlaying.load();
 };
 
@@ -401,33 +401,33 @@ void CVASTSingleNote::controllerMoved(int controllerNumber, int newControllerVal
 				VASTParameterSlider* lslider = nullptr;
 				if (permalink == 1) {
 					if (Component_buffer_m_fCustomModulator1 == nullptr) {
-						lslider = dynamic_cast<VASTParameterSlider*>(_editor->findChildComponetWithName(_editor->vaporizerComponent, "m_fCustomModulator1"));
+						lslider = dynamic_cast<VASTParameterSlider*>(_editor->findChildComponetWithName(_editor->vaporizerComponent.get(), "m_fCustomModulator1"));
 						Component_buffer_m_fCustomModulator1 = lslider;
 					}
 					else lslider = Component_buffer_m_fCustomModulator1;
-					m_Poly->m_fCustomModulator1_smoothed.setValue(m_Set->m_uModWheel.load() / 127.f);
+					m_Poly->m_fCustomModulator1_smoothed.setTargetValue(m_Set->m_uModWheel.load() / 127.f);
 				} else if (permalink == 2) {
 					if (Component_buffer_m_fCustomModulator2 == nullptr) {
-						lslider = dynamic_cast<VASTParameterSlider*>(_editor->findChildComponetWithName(_editor->vaporizerComponent, "m_fCustomModulator2"));
+						lslider = dynamic_cast<VASTParameterSlider*>(_editor->findChildComponetWithName(_editor->vaporizerComponent.get(), "m_fCustomModulator2"));
 						Component_buffer_m_fCustomModulator2 = lslider;
 					}
 					else lslider = Component_buffer_m_fCustomModulator2;
-					m_Poly->m_fCustomModulator2_smoothed.setValue(m_Set->m_uModWheel.load() / 127.f);
+					m_Poly->m_fCustomModulator2_smoothed.setTargetValue(m_Set->m_uModWheel.load() / 127.f);
 				} else if (permalink == 3) {
 					if (Component_buffer_m_fCustomModulator3 == nullptr) {
-						lslider = dynamic_cast<VASTParameterSlider*>(_editor->findChildComponetWithName(_editor->vaporizerComponent, "m_fCustomModulator3"));
+						lslider = dynamic_cast<VASTParameterSlider*>(_editor->findChildComponetWithName(_editor->vaporizerComponent.get(), "m_fCustomModulator3"));
 						Component_buffer_m_fCustomModulator3 = lslider;
 					}
 					else lslider = Component_buffer_m_fCustomModulator3;
-					m_Poly->m_fCustomModulator3_smoothed.setValue(m_Set->m_uModWheel.load() / 127.f);
+					m_Poly->m_fCustomModulator3_smoothed.setTargetValue(m_Set->m_uModWheel.load() / 127.f);
 				}
 				else if (permalink == 4) {
 					if (Component_buffer_m_fCustomModulator4 == nullptr) {
-						lslider = dynamic_cast<VASTParameterSlider*>(_editor->findChildComponetWithName(_editor->vaporizerComponent, "m_fCustomModulator4"));
+						lslider = dynamic_cast<VASTParameterSlider*>(_editor->findChildComponetWithName(_editor->vaporizerComponent.get(), "m_fCustomModulator4"));
 						Component_buffer_m_fCustomModulator4 = lslider;
 					}
 					else lslider = Component_buffer_m_fCustomModulator4;
-					m_Poly->m_fCustomModulator4_smoothed.setValue(m_Set->m_uModWheel.load() / 127.f);
+					m_Poly->m_fCustomModulator4_smoothed.setTargetValue(m_Set->m_uModWheel.load() / 127.f);
 				}
 
 				if (lslider != nullptr) {
@@ -588,7 +588,7 @@ void CVASTSingleNote::samplerRenderNextBlock(AudioSampleBuffer* outputBuffer, in
 		}
 
 		//do the below per grain
-		int numGrains = m_grainTable.size();
+		int numGrains = int(m_grainTable.size());
 		float gain = 1.f;
 		int counter = -1;
 		int lnumSamples = numSamples;
@@ -861,9 +861,9 @@ void CVASTSingleNote::samplerUpdatePitch(VASTSamplerSound* sound, bool force) {
 			baseFreq = (m_samplerMidiNoteNumber - sound->getMidiRootNote()) / 12.0;
 
 			if (m_fSamplerBaseFreqPortamento_smoothed.isSmoothing())
-				m_fSamplerBaseFreqPortamento_smoothed.setValue(baseFreq, false);
-			else 
-				m_fSamplerBaseFreqPortamento_smoothed.setValue(baseFreq, true);
+				m_fSamplerBaseFreqPortamento_smoothed.setTargetValue(baseFreq);
+			else
+				m_fSamplerBaseFreqPortamento_smoothed.setCurrentAndTargetValue(baseFreq);
 		}
 		if (*m_Set->m_State->m_fPortamento > 0.f) {
 			baseFreq = m_fSamplerBaseFreqPortamento_smoothed.getNextValue();
@@ -880,7 +880,7 @@ void CVASTSingleNote::samplerUpdatePitch(VASTSamplerSound* sound, bool force) {
 	}
 }
 
-int CVASTSingleNote::getVoiceNo() {
+int CVASTSingleNote::getVoiceNo() const {
 	return mVoiceNo;
 }
 
@@ -1018,12 +1018,12 @@ void CVASTSingleNote::setGlissandoStart(int midinote, bool reset) {
 		float keepTarget = m_fSamplerBaseFreqPortamento_smoothed.getTargetValue();
 
 		if (!reset) {
-			m_fSamplerBaseFreqPortamento_smoothed.setValue(startFreq, true); //force take it!	
-			m_fSamplerBaseFreqPortamento_smoothed.setValue(keepTarget); //old target freq	
+			m_fSamplerBaseFreqPortamento_smoothed.setCurrentAndTargetValue(startFreq); //force take it!
+			m_fSamplerBaseFreqPortamento_smoothed.setTargetValue(keepTarget); //old target freq
 		}
 		else {
-			m_fSamplerBaseFreqPortamento_smoothed.setValue(keepTarget, true); //force take it!	
-		}		
+			m_fSamplerBaseFreqPortamento_smoothed.setCurrentAndTargetValue(keepTarget); //force take it!
+		}
 	}
 }
 
@@ -1053,13 +1053,13 @@ void CVASTSingleNote::generate_normalized_irrationals(float *destination, int co
 	}
 }
 
-bool CVASTSingleNote::isPlayingCalledFromUI() {
-	if (isVoiceActive()) 
+bool CVASTSingleNote::isPlayingCalledFromUI() const {
+	if (isVoiceActive())
 		return true;
 	return false;
 }
 
-bool CVASTSingleNote::isPlayingInRange(int startsample, int numsamples) {
+bool CVASTSingleNote::isPlayingInRange(int startsample, int numsamples) const {
 	//approximation range is true if start or end is used - in between not checken
 	if (m_Set->m_RoutingBuffers.MSEGActiveBuffer[0][mVoiceNo][startsample] || m_Set->m_RoutingBuffers.MSEGActiveBuffer[0][mVoiceNo][startsample + numsamples - 1])
 		return true;
@@ -1074,7 +1074,7 @@ bool CVASTSingleNote::isPlayingInRange(int startsample, int numsamples) {
 	return false;
 }
 
-bool CVASTSingleNote::isPlayingAtSamplePosition(int sample) {
+bool CVASTSingleNote::isPlayingAtSamplePosition(int sample) const {
 	if (m_Set->m_RoutingBuffers.MSEGActiveBuffer[0][mVoiceNo][sample])
 		return true;
 	if (m_Set->m_RoutingBuffers.MSEGActiveBuffer[1][mVoiceNo][sample])
@@ -1088,11 +1088,11 @@ bool CVASTSingleNote::isPlayingAtSamplePosition(int sample) {
 	return false;	
 }
 
-MYUINT CVASTSingleNote::getChannel() {
+MYUINT CVASTSingleNote::getChannel() const {
 	return m_uChannel;
 }
 
-MYUINT CVASTSingleNote::getMIDINote() {
+MYUINT CVASTSingleNote::getMIDINote() const {
 	return m_uMIDINote;
 }
 
@@ -1193,7 +1193,10 @@ void CVASTSingleNote::syncOscToMaster(int bank, int i) { //to align phases
 void CVASTSingleNote::setTargetWTPos(int bank, float targetWTPosPercentage, bool takeNext) {
 
 	jassert((targetWTPosPercentage >= 0.f) && (targetWTPosPercentage <= 1.f));
-	m_fOscWTPos_smoothed[bank].setValue(targetWTPosPercentage, takeNext); //0 to 1
+    if (takeNext)
+        m_fOscWTPos_smoothed[bank].setCurrentAndTargetValue(targetWTPosPercentage); //0 to 1
+    else
+        m_fOscWTPos_smoothed[bank].setTargetValue(targetWTPosPercentage); //0 to 1
 }
 
 void CVASTSingleNote::initWavetableProcessing(int bank, sRoutingBuffers& routingBuffers, modMatrixInputState& inputState) {
@@ -1219,7 +1222,10 @@ void CVASTSingleNote::initWavetableProcessing(int bank, sRoutingBuffers& routing
 		lMorph = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fOscMorph_OscD, MODMATDEST::OscDMorph, &inputState);
 		setWTPosSmooth(bank, lMorph);
 	}
-	m_fPhaseOffset_smoothed[bank].setValue(lPhaseOffset, m_bSmoothersTakeNextValue);  //to singlenote
+    if (m_bSmoothersTakeNextValue)
+        m_fPhaseOffset_smoothed[bank].setCurrentAndTargetValue(lPhaseOffset);  //to singlenote
+    else
+        m_fPhaseOffset_smoothed[bank].setTargetValue(lPhaseOffset);  //to singlenote
 }
 
 void CVASTSingleNote::doWavetableStep(const int bank, const int currentFrame, const int firstFrame) {
@@ -1308,13 +1314,13 @@ bool CVASTSingleNote::prepareFrequency(int bank, int skips, int startSample, boo
 	l_inputState.voiceNo = mVoiceNo;
 	l_inputState.currentFrame = startSample;
 	float fDetuneMod = 1.0;
-	const float c_pitchToleranceForSingleProcessing = 250.f;
 	bool bHasToBeDoneForEachSample = false;
 	bool isModulating = false;
 	float fPitchMod = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fPitchMod, MODMATDEST::Pitch, &l_inputState, &isModulating) * 0.01f;
 	if (!isModulating)
 		fPitchMod = 0.f;
-	m_fPitchMod_smoothed.setValue(fPitchMod, bTakeNextValue);
+    bTakeNextValue ? m_fPitchMod_smoothed.setCurrentAndTargetValue(fPitchMod) :
+        m_fPitchMod_smoothed.setTargetValue(fPitchMod);
 	bHasToBeDoneForEachSample = isModulating;
 
 	switch (bank) {
@@ -1323,7 +1329,8 @@ bool CVASTSingleNote::prepareFrequency(int bank, int skips, int startSample, boo
 		float l_OscACents = 0.f;
 		if (bIsStartOfCycle || m_Set->modMatrixDestinationSetFast(MODMATDEST::OscACents)) {
 			l_OscACents = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fOscCents_OscA, MODMATDEST::OscACents, &l_inputState, &bHasToBeDoneForEachSample);
-			m_fOscACents_smoothed.setValue(l_OscACents, bTakeNextValue);
+            bTakeNextValue ? m_fOscACents_smoothed.setCurrentAndTargetValue(l_OscACents) :
+                m_fOscACents_smoothed.setTargetValue(l_OscACents);
 		}
 		l_OscACents = m_fOscACents_smoothed.getNextValue();
 		m_fOscACents_smoothed.skip(skips - 1);
@@ -1340,7 +1347,8 @@ bool CVASTSingleNote::prepareFrequency(int bank, int skips, int startSample, boo
 		float l_OscBCents = 0.f;
 		if (bIsStartOfCycle || m_Set->modMatrixDestinationSetFast(MODMATDEST::OscBCents)) {
 			l_OscBCents = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fOscCents_OscB, MODMATDEST::OscBCents, &l_inputState, &bHasToBeDoneForEachSample);
-			m_fOscBCents_smoothed.setValue(l_OscBCents, bTakeNextValue);
+            bTakeNextValue ? m_fOscBCents_smoothed.setCurrentAndTargetValue(l_OscBCents) :
+                m_fOscBCents_smoothed.setTargetValue(l_OscBCents);
 		}
 		l_OscBCents = m_fOscBCents_smoothed.getNextValue();
 		m_fOscBCents_smoothed.skip(skips - 1);
@@ -1357,7 +1365,8 @@ bool CVASTSingleNote::prepareFrequency(int bank, int skips, int startSample, boo
 		float l_OscCCents = 0.f;
 		if (bIsStartOfCycle || m_Set->modMatrixDestinationSetFast(MODMATDEST::OscCCents)) {
 			l_OscCCents = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fOscCents_OscC, MODMATDEST::OscCCents, &l_inputState, &bHasToBeDoneForEachSample);
-			m_fOscCCents_smoothed.setValue(l_OscCCents, bTakeNextValue);
+            bTakeNextValue ? m_fOscCCents_smoothed.setCurrentAndTargetValue(l_OscCCents) :
+                m_fOscCCents_smoothed.setTargetValue(l_OscCCents);
 		}
 		l_OscCCents = m_fOscCCents_smoothed.getNextValue();
 		m_fOscCCents_smoothed.skip(skips - 1);
@@ -1374,7 +1383,8 @@ bool CVASTSingleNote::prepareFrequency(int bank, int skips, int startSample, boo
 		float l_OscDCents = 0.f;
 		if (bIsStartOfCycle || m_Set->modMatrixDestinationSetFast(MODMATDEST::OscDCents)) {
 			l_OscDCents = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fOscCents_OscD, MODMATDEST::OscDCents, &l_inputState, &bHasToBeDoneForEachSample);
-			m_fOscDCents_smoothed.setValue(l_OscDCents, bTakeNextValue);
+            bTakeNextValue ? m_fOscDCents_smoothed.setCurrentAndTargetValue(l_OscDCents) :
+                m_fOscDCents_smoothed.setTargetValue(l_OscDCents);
 		}
 		l_OscDCents = m_fOscDCents_smoothed.getNextValue();
 		m_fOscDCents_smoothed.skip(skips - 1);
@@ -1526,7 +1536,8 @@ bool CVASTSingleNote::prepareEachSample(int bank, int currentFrame, bool &freqsH
 	else if (bank == 3) {
 		l_phaseOffset = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fOscPhase_OscD, MODMATDEST::OscDPhase, &l_inputState);
 	}
-	m_fPhaseOffset_smoothed[bank].setValue(l_phaseOffset, bTakeNextValue);  //to singlenote
+    bTakeNextValue ? m_fPhaseOffset_smoothed[bank].setCurrentAndTargetValue(l_phaseOffset) :   //to singlenote
+    m_fPhaseOffset_smoothed[bank].setTargetValue(l_phaseOffset);
 	l_phaseOffset = m_fPhaseOffset_smoothed[bank].getNextValue() * 0.01f;
 	
     bool FM_flag = (((bank == 0) && (*m_Set->m_State->m_uWTFX_OscA == C_WTFXTYPE_FM)) ||
@@ -1718,12 +1729,12 @@ void CVASTSingleNote::doWavetableBufferGet(const int bank, CVASTWaveTableOscilla
 			if (m_bSoftFadeCycleStarted[bank] && !m_bSoftFadeCycleEnded[bank]) { //end softfade here
 				//vassert(m_localVoiceBankWavetableSoftfade[bank]->getID() == m_Poly->m_OscBank.getUnchecked(bank)->m_iSingleNoteSoftFadeID); //must not be changed in meantime //is changed by dynamic generation??
 				if (m_localVoiceBankWavetableSoftfade[bank] != nullptr) { //check why??				
-					ScopedPointer<AudioSampleBuffer> softFadeBuffer = new AudioSampleBuffer(2, lOscBuffer->getNumSamples());
+                    std::unique_ptr<AudioSampleBuffer> softFadeBuffer(new AudioSampleBuffer(2, lOscBuffer->getNumSamples()));
 					softFadeBuffer->clear();
 					bool lUpdated = false;
 					if (sectionlength > 0) {
 						//DBG("doWavetableBufferGet  getWavetableInterpolateBuffer m_localVoiceBankWavetableSoftfade voice " + String(mVoiceNo) + " startSample " + String(nextStart) + " numSamples " + String(sectionlength) + " wtPosPerc " + String(m_currentWTPosFloatPercentage[bank]));
-						m_localVoiceBankWavetableSoftfade[bank]->getWavetableInterpolateBuffer(mOscillator, osciCount, softFadeBuffer, nextStart, sectionlength, bInverter, m_Set->m_WTmode, mVoiceNo, bank, &m_Poly->m_OscBank, m_bIsFirstCycle[bank], m_bIsStartOfCycle[bank], m_currentWTPosFloatPercentage[bank], m_wtFXVal[bank], m_wtFXType[bank], m_iLastCycleSamples[bank], m_iCurCycleSamples[bank], m_localVoiceBankWavetable[bank].get(), lUpdated, m_Poly->m_OscBank.getUnchecked(bank)->getSoloMode());
+						m_localVoiceBankWavetableSoftfade[bank]->getWavetableInterpolateBuffer(mOscillator, osciCount, softFadeBuffer.get(), nextStart, sectionlength, bInverter, m_Set->m_WTmode, mVoiceNo, bank, &m_Poly->m_OscBank, m_bIsFirstCycle[bank], m_bIsStartOfCycle[bank], m_currentWTPosFloatPercentage[bank], m_wtFXVal[bank], m_wtFXType[bank], m_iLastCycleSamples[bank], m_iCurCycleSamples[bank], m_localVoiceBankWavetable[bank].get(), lUpdated, m_Poly->m_OscBank.getUnchecked(bank)->getSoloMode());
 						if (lUpdated)
 							m_Poly->m_OscBank.getUnchecked(bank)->setChangedFlagOsc();
 					}
@@ -1759,9 +1770,7 @@ void CVASTSingleNote::doWavetableBufferGet(const int bank, CVASTWaveTableOscilla
 					m_localVoiceBankWavetableSoftfade[bank] = m_Poly->m_OscBank.getUnchecked(bank)->getNewSharedSoftFadeWavetable();
 					if (m_localVoiceBankWavetableSoftfade[bank] != nullptr) { //fade to nullptr???
 						m_bSoftFadeCycleStarted[bank] = true; //other voice has started the cycle! pick up next zero loop
-						int numPos = m_localVoiceBankWavetableSoftfade[bank]->getNumPositions(); //for debug only
 						m_Poly->m_OscBank.getUnchecked(bank)->m_iSingleNoteSoftFadeID = m_localVoiceBankWavetableSoftfade[bank]->getID(); //needed?
-						//DBG("Starting softfade cycle - doWavetableBufferGet Voice " + String(mVoiceNo) + " SoftFadeWTID " + String(m_Poly->m_OscBank.getUnchecked(bank)->m_iSingleNoteSoftFadeID) + " numPos " + String(numPos) + " wtPosPerc " + String(m_currentWTPosFloatPercentage[bank]) + " bank " + String(bank));
 						m_Poly->m_OscBank.getUnchecked(bank)->addSingleNoteSoftFadeCycle(mVoiceNo); //one more cycling voice
 					}
 				}
@@ -1810,12 +1819,12 @@ void CVASTSingleNote::doWavetableBufferGet(const int bank, CVASTWaveTableOscilla
 	if (m_bSoftFadeCycleStarted[bank] && !m_bSoftFadeCycleEnded[bank]) {
 		//vassert(m_localVoiceBankWavetableSoftfade[bank]->getID() == m_Poly->m_OscBank.getUnchecked(bank)->m_iSingleNoteSoftFadeID); //must not be changed in meantime //is changed by dynamic generation??
 		if (m_localVoiceBankWavetableSoftfade[bank] != nullptr) { //check why??		
-			ScopedPointer<AudioSampleBuffer> softFadeBuffer = new AudioSampleBuffer(2, lOscBuffer->getNumSamples());
+            std::unique_ptr<AudioSampleBuffer> softFadeBuffer(new AudioSampleBuffer(2, lOscBuffer->getNumSamples()));
 			softFadeBuffer->clear();
 			bool lUpdated = false;
 			if (restlength > 0) {
 				//DBG("doWavetableBufferGet  getWavetableInterpolateBuffer m_localVoiceBankWavetableSoftfade restlength voice " + String(mVoiceNo) + " startSample " + String(nextStart) + " numSamples " + String(restlength) + " wtPosPerc " + String(m_currentWTPosFloatPercentage[bank]));
-				m_localVoiceBankWavetableSoftfade[bank]->getWavetableInterpolateBuffer(mOscillator, osciCount, softFadeBuffer, nextStart, restlength, bInverter, m_Set->m_WTmode, mVoiceNo, bank, &m_Poly->m_OscBank, m_bIsFirstCycle[bank], m_bIsStartOfCycle[bank], m_currentWTPosFloatPercentage[bank], m_wtFXVal[bank], m_wtFXType[bank], m_iLastCycleSamples[bank], m_iCurCycleSamples[bank], m_localVoiceBankWavetable[bank].get(), lUpdated, m_Poly->m_OscBank.getUnchecked(bank)->getSoloMode());
+				m_localVoiceBankWavetableSoftfade[bank]->getWavetableInterpolateBuffer(mOscillator, osciCount, softFadeBuffer.get(), nextStart, restlength, bInverter, m_Set->m_WTmode, mVoiceNo, bank, &m_Poly->m_OscBank, m_bIsFirstCycle[bank], m_bIsStartOfCycle[bank], m_currentWTPosFloatPercentage[bank], m_wtFXVal[bank], m_wtFXType[bank], m_iLastCycleSamples[bank], m_iCurCycleSamples[bank], m_localVoiceBankWavetable[bank].get(), lUpdated, m_Poly->m_OscBank.getUnchecked(bank)->getSoloMode());
 				if (lUpdated)
 					m_Poly->m_OscBank.getUnchecked(bank)->setChangedFlagOsc();
 			}
@@ -1839,18 +1848,18 @@ void CVASTSingleNote::doWavetableBufferGet(const int bank, CVASTWaveTableOscilla
 	for (int i = startSample; i < numSamples - 1; i++) {
 		//within buffer
 		if (abs(lOscBuffer->getSample(0, i) - lOscBuffer->getSample(0, i + 1)) > l_tolerance) {
-			const float* buffer = lOscBuffer->getReadPointer(0);
+			const float* buffer __unused = lOscBuffer->getReadPointer(0);
 			//DBG("Outliers!!!!!");
 		}
 		if (abs(lOscBuffer->getSample(1, i) - lOscBuffer->getSample(1, i + 1)) > l_tolerance) {
-			const float* buffer = lOscBuffer->getReadPointer(1);
+			const float* buffer __unused = lOscBuffer->getReadPointer(1);
 			//DBG("Outliers!!!!!");
 		}
 	}
 	//buffer wrap
 	if (m_fLastRenderedSample[bank] != 0.f) {
 		if (abs(lOscBuffer->getSample(1, startSample) - m_fLastRenderedSample[bank]) > l_tolerance) { //right only
-			const float* buffer = lOscBuffer->getReadPointer(1);
+			const float* buffer __unused = lOscBuffer->getReadPointer(1);
 			//DBG("Outlier at wrap!!!!!");
 		}
 	}
@@ -1886,7 +1895,8 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 
 		//Mod matrix pitch
 		float lSamplerPitch = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fPitchMod, MODMATDEST::SamplerPitch, &l_inputState) * 0.01f;
-		m_fPitchModSampler_smoothed.setValue(lSamplerPitch, m_bSmoothersTakeNextValue);
+        m_bSmoothersTakeNextValue ? m_fPitchModSampler_smoothed.setCurrentAndTargetValue(lSamplerPitch) :
+        m_fPitchModSampler_smoothed.setTargetValue(lSamplerPitch);
 
 		//who is really playing
 		MYUINT uNumOscAOscsPlaying = 0;
@@ -1994,7 +2004,7 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 					if (m_bSmoothersTakeNextValue)
 						m_wtFXVal_smoothed[bank].setCurrentAndTargetValue(fVal);
 					else
-						m_wtFXVal_smoothed[bank].setValue(fVal);
+						m_wtFXVal_smoothed[bank].setTargetValue(fVal);
 				}
 				else {
 					m_wtFXVal_smoothed[bank].setCurrentAndTargetValue(0.f);
@@ -2010,7 +2020,7 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 					if (m_bSmoothersTakeNextValue)
 						m_wtFXVal_smoothed[bank].setCurrentAndTargetValue(fVal);
 					else 
-						m_wtFXVal_smoothed[bank].setValue(fVal);
+						m_wtFXVal_smoothed[bank].setTargetValue(fVal);
 				}
 				else {
 					m_wtFXVal_smoothed[bank].setCurrentAndTargetValue(0.f);
@@ -2026,7 +2036,7 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 					if (m_bSmoothersTakeNextValue)
 						m_wtFXVal_smoothed[bank].setCurrentAndTargetValue(fVal);
 					else
-						m_wtFXVal_smoothed[bank].setValue(fVal);
+						m_wtFXVal_smoothed[bank].setTargetValue(fVal);
 				}
 				else {
 					m_wtFXVal_smoothed[bank].setCurrentAndTargetValue(0.f);
@@ -2042,7 +2052,7 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 					if (m_bSmoothersTakeNextValue)
 						m_wtFXVal_smoothed[bank].setCurrentAndTargetValue(fVal);
 					else
-						m_wtFXVal_smoothed[bank].setValue(fVal);
+						m_wtFXVal_smoothed[bank].setTargetValue(fVal);
 				}
 				else {
 					m_wtFXVal_smoothed[bank].setCurrentAndTargetValue(0.f);
@@ -2109,7 +2119,7 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 			for (int i = startSample; i < startSample + numSamples; i++) {
 				l_inputState.currentFrame = i;						
 				float fVoiceGain = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fVoiceGain, MODMATDEST::VoiceGain, &l_inputState);
-				m_fVoiceGain_smoothed.setValue(fVoiceGain * 0.01f, takeNext);
+                takeNext ? m_fVoiceGain_smoothed.setCurrentAndTargetValue(fVoiceGain * 0.01f) : m_fVoiceGain_smoothed.setTargetValue(fVoiceGain * 0.01f);
 				m_velocityBuffer->getWritePointer(0)[i] = m_fVoiceGain_smoothed.getNextValue();
 				takeNext = false;
 			}
@@ -2127,12 +2137,12 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 			routingBuffers.OscVoices[0][mVoiceNo]->addFrom(0, startSample, m_centerBuffer->getReadPointer(0, startSample), numSamples);
 			routingBuffers.OscVoices[0][mVoiceNo]->addFrom(1, startSample, m_centerBuffer->getReadPointer(0, startSample), numSamples);
 
-			m_fOscAPan_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fOscPan_OscA, MODMATDEST::OscAPan, &l_inputState) * 0.01f, m_bSmoothersTakeNextValue);
+            m_bSmoothersTakeNextValue ? m_fOscAPan_smoothed.setCurrentAndTargetValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fOscPan_OscA, MODMATDEST::OscAPan, &l_inputState) * 0.01f) : m_fOscAPan_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fOscPan_OscA, MODMATDEST::OscAPan, &l_inputState) * 0.01f);
 			float fPanBegin = (m_fOscAPan_smoothed.getNextValue() + 1.f) * M_PI / 4.0f; // equal power calculation
 			m_fOscAPan_smoothed.skip(numSamples - 2);
 			float fPanEnd = (m_fOscAPan_smoothed.getNextValue() + 1.f) * M_PI / 4.0f; // equal power calculation
 			
-			m_fOscAGain_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fOscGain_OscA, MODMATDEST::OscAGain, &l_inputState) * 0.01f, m_bSmoothersTakeNextValue);
+            m_bSmoothersTakeNextValue ? m_fOscAGain_smoothed.setCurrentAndTargetValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fOscGain_OscA, MODMATDEST::OscAGain, &l_inputState) * 0.01f) : m_fOscAGain_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fOscGain_OscA, MODMATDEST::OscAGain, &l_inputState) * 0.01f);
 			float fAttenuateBegin = m_fOscAGain_smoothed.getNextValue();
 			m_fOscAGain_smoothed.skip(numSamples - 2);
 			float fAttenuateEnd = m_fOscAGain_smoothed.getNextValue();
@@ -2158,12 +2168,12 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 			routingBuffers.OscVoices[1][mVoiceNo]->addFrom(0, startSample, m_centerBuffer->getReadPointer(0, startSample), numSamples);
 			routingBuffers.OscVoices[1][mVoiceNo]->addFrom(1, startSample, m_centerBuffer->getReadPointer(0, startSample), numSamples);
 
-			m_fOscBPan_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fOscPan_OscB, MODMATDEST::OscBPan, &l_inputState) * 0.01f, m_bSmoothersTakeNextValue);
+            m_bSmoothersTakeNextValue ? m_fOscBPan_smoothed.setCurrentAndTargetValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fOscPan_OscB, MODMATDEST::OscBPan, &l_inputState) * 0.01f) : m_fOscBPan_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fOscPan_OscB, MODMATDEST::OscBPan, &l_inputState) * 0.01f);
 			float fPanBegin = (m_fOscBPan_smoothed.getNextValue() + 1.f) * M_PI / 4.0f; // equal power calculation
 			m_fOscBPan_smoothed.skip(numSamples - 2);
 			float fPanEnd = (m_fOscBPan_smoothed.getNextValue() + 1.f) * M_PI / 4.0f; // equal power calculation
 
-			m_fOscBGain_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fOscGain_OscB, MODMATDEST::OscBGain, &l_inputState) * 0.01f, m_bSmoothersTakeNextValue);
+            m_bSmoothersTakeNextValue ? m_fOscBGain_smoothed.setCurrentAndTargetValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fOscGain_OscB, MODMATDEST::OscBGain, &l_inputState) * 0.01f) : m_fOscBGain_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fOscGain_OscB, MODMATDEST::OscBGain, &l_inputState) * 0.01f);
 			float fAttenuateBegin = m_fOscBGain_smoothed.getNextValue();
 			m_fOscBGain_smoothed.skip(numSamples - 2);
 			float fAttenuateEnd = m_fOscBGain_smoothed.getNextValue();
@@ -2189,12 +2199,12 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 			routingBuffers.OscVoices[2][mVoiceNo]->addFrom(0, startSample, m_centerBuffer->getReadPointer(0, startSample), numSamples);
 			routingBuffers.OscVoices[2][mVoiceNo]->addFrom(1, startSample, m_centerBuffer->getReadPointer(0, startSample), numSamples);
 
-			m_fOscCPan_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fOscPan_OscC, MODMATDEST::OscCPan, &l_inputState) * 0.01f, m_bSmoothersTakeNextValue);
+            m_bSmoothersTakeNextValue ? m_fOscCPan_smoothed.setCurrentAndTargetValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fOscPan_OscC, MODMATDEST::OscCPan, &l_inputState) * 0.01f) : m_fOscCPan_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fOscPan_OscC, MODMATDEST::OscCPan, &l_inputState) * 0.01f);
 			float fPanBegin = (m_fOscCPan_smoothed.getNextValue() + 1.f) * M_PI / 4.0f; // equal power calculation
 			m_fOscCPan_smoothed.skip(numSamples - 2);
 			float fPanEnd = (m_fOscCPan_smoothed.getNextValue() + 1.f) * M_PI / 4.0f; // equal power calculation
 
-			m_fOscCGain_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fOscGain_OscC, MODMATDEST::OscCGain, &l_inputState) * 0.01f, m_bSmoothersTakeNextValue);
+            m_bSmoothersTakeNextValue ? m_fOscCGain_smoothed.setCurrentAndTargetValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fOscGain_OscC, MODMATDEST::OscCGain, &l_inputState) * 0.01f) : m_fOscCGain_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fOscGain_OscC, MODMATDEST::OscCGain, &l_inputState) * 0.01f);
 			float fAttenuateBegin = m_fOscCGain_smoothed.getNextValue();
 			m_fOscCGain_smoothed.skip(numSamples - 2);
 			float fAttenuateEnd = m_fOscCGain_smoothed.getNextValue();
@@ -2219,12 +2229,12 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 			routingBuffers.OscVoices[3][mVoiceNo]->addFrom(0, startSample, m_centerBuffer->getReadPointer(0, startSample), numSamples);
 			routingBuffers.OscVoices[3][mVoiceNo]->addFrom(1, startSample, m_centerBuffer->getReadPointer(0, startSample), numSamples);
 
-			m_fOscDPan_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fOscPan_OscD, MODMATDEST::OscDPan, &l_inputState) * 0.01f, m_bSmoothersTakeNextValue);
+            m_bSmoothersTakeNextValue ? m_fOscDPan_smoothed.setCurrentAndTargetValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fOscPan_OscD, MODMATDEST::OscDPan, &l_inputState) * 0.01f) : m_fOscDPan_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fOscPan_OscD, MODMATDEST::OscDPan, &l_inputState) * 0.01f);
 			float fPanBegin = (m_fOscDPan_smoothed.getNextValue() + 1.f) * M_PI / 4.0f; // equal power calculation
 			m_fOscDPan_smoothed.skip(numSamples - 2);
 			float fPanEnd = (m_fOscDPan_smoothed.getNextValue() + 1.f) * M_PI / 4.0f; // equal power calculation
 
-			m_fOscDGain_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fOscGain_OscD, MODMATDEST::OscDGain, &l_inputState) * 0.01f, m_bSmoothersTakeNextValue);
+            m_bSmoothersTakeNextValue ? m_fOscDGain_smoothed.setCurrentAndTargetValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fOscGain_OscD, MODMATDEST::OscDGain, &l_inputState) * 0.01f) : m_fOscDGain_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fOscGain_OscD, MODMATDEST::OscDGain, &l_inputState) * 0.01f);
 			float fAttenuateBegin = m_fOscDGain_smoothed.getNextValue();
 			m_fOscDGain_smoothed.skip(numSamples - 2);
 			float fAttenuateEnd = m_fOscDGain_smoothed.getNextValue();
@@ -2242,12 +2252,12 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 		}
 
 		if (uNumOscNoisePlaying > 0) {
-			m_fNoisePan_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fNoisePan, MODMATDEST::NoisePan, &l_inputState) * 0.01f, m_bSmoothersTakeNextValue);
+            m_bSmoothersTakeNextValue ? m_fNoisePan_smoothed.setCurrentAndTargetValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fNoisePan, MODMATDEST::NoisePan, &l_inputState) * 0.01f) : m_fNoisePan_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fNoisePan, MODMATDEST::NoisePan, &l_inputState) * 0.01f);
 			float fPanBegin = (m_fNoisePan_smoothed.getNextValue() + 1.f) * M_PI / 4.0f; // equal power calculation
 			m_fNoisePan_smoothed.skip(numSamples - 2);
 			float fPanEnd = (m_fNoisePan_smoothed.getNextValue() + 1.f) * M_PI / 4.0f; // equal power calculation
 
-			m_fNoiseGain_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fNoiseGain, MODMATDEST::NoiseGain, &l_inputState) * 0.01f, m_bSmoothersTakeNextValue);
+            m_bSmoothersTakeNextValue ? m_fNoiseGain_smoothed.setCurrentAndTargetValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fNoiseGain, MODMATDEST::NoiseGain, &l_inputState) * 0.01f) :         m_fNoiseGain_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fNoiseGain, MODMATDEST::NoiseGain, &l_inputState) * 0.01f);
 			float fAttenuateBegin = m_fNoiseGain_smoothed.getNextValue();
 			m_fNoiseGain_smoothed.skip(numSamples - 2);
 			float fAttenuateEnd = m_fNoiseGain_smoothed.getNextValue();
@@ -2262,7 +2272,7 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 		//====================================================================================
 		//sampler
 		if (*m_Set->m_State->m_bSamplerOnOff == SWITCH::SWITCH_ON) {
-			m_fSamplerPan_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fSamplerPan, MODMATDEST::SamplerPan, &l_inputState) * 0.01f, m_bSmoothersTakeNextValue);
+            m_bSmoothersTakeNextValue ? m_fSamplerPan_smoothed.setCurrentAndTargetValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fSamplerPan, MODMATDEST::SamplerPan, &l_inputState) * 0.01f) : m_fSamplerPan_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fSamplerPan, MODMATDEST::SamplerPan, &l_inputState) * 0.01f);
 			float fPanBegin = (m_fSamplerPan_smoothed.getNextValue() + 1.f) * M_PI / 4.0f; // equal power calculation
 			m_fSamplerPan_smoothed.skip(numSamples - 2);
 			float fPanEnd = (m_fSamplerPan_smoothed.getNextValue() + 1.f) * M_PI / 4.0f; // equal power calculation
@@ -2271,10 +2281,10 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 			if (m_Set->modMatrixDestinationSetFast(MODMATDEST::Pitch)) {
 				lPitchMod = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fPitchMod, MODMATDEST::Pitch, &l_inputState) * 0.01f;
 			}
-			m_fPitchModSampler_smoothed.setValue(lPitchMod, m_bSmoothersTakeNextValue);
+            m_bSmoothersTakeNextValue ? m_fPitchModSampler_smoothed.setCurrentAndTargetValue(lPitchMod) : m_fPitchModSampler_smoothed.setTargetValue(lPitchMod);
 			
 			float lSamplerCents = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fSamplerCents, MODMATDEST::SamplerPitch, &l_inputState);
-			m_fSamplerCents_smoothed.setValue(lSamplerCents, m_bSmoothersTakeNextValue);
+            m_bSmoothersTakeNextValue ? m_fSamplerCents_smoothed.setCurrentAndTargetValue(lSamplerCents) : m_fSamplerCents_smoothed.setTargetValue(lSamplerCents);
 
 			samplerRenderNextBlock(routingBuffers.SamplerVoices[mVoiceNo], startSample, numSamples); // render sample
 #ifdef _DEBUG
@@ -2282,7 +2292,7 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 #endif
 
 			//has to be louder, why?
-			m_fSamplerGain_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fSamplerGain, MODMATDEST::SamplerGain, &l_inputState) * 0.01f * 4.f, m_bSmoothersTakeNextValue);
+            m_bSmoothersTakeNextValue ? m_fSamplerGain_smoothed.setCurrentAndTargetValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fSamplerGain, MODMATDEST::SamplerGain, &l_inputState) * 0.01f * 4.f) : m_fSamplerGain_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fSamplerGain, MODMATDEST::SamplerGain, &l_inputState) * 0.01f * 4.f);
 			float fAttenuateBegin = m_fSamplerGain_smoothed.getNextValue();
 			m_fSamplerGain_smoothed.skip(numSamples - 2);
 			float fAttenuateEnd = m_fSamplerGain_smoothed.getNextValue();

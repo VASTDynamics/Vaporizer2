@@ -55,7 +55,7 @@ VASTDragFX::VASTDragFX(VASTAudioProcessorEditor *editor, VASTAudioProcessor *pro
 	ddToggleButton->setAudioProcessor(*my_processor);
 	ddToggleButton->bindParameter(paramID);
 	ddToggleButton->addListener(this);
-	addAndMakeVisible(ddToggleButton);
+	addAndMakeVisible(ddToggleButton.get());
 }
 
 void VASTDragFX::resized() {

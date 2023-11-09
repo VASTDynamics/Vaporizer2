@@ -81,7 +81,7 @@ public:
 	const String getCustomMoudlatortext4() {
 		return customModulator4Text;
 	}
-	const int getRanking() {
+	const int getRanking() const {
 		return ranking;
 	}
 

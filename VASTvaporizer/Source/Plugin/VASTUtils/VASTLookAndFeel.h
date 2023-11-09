@@ -250,7 +250,7 @@ public:
 	BorderSize<int> getLabelBorderSize(Label& label) override;
 
 	Array<int> getWidthsForTextButtons(AlertWindow&, const Array<TextButton*>& buttons) override;
-	int getAlertWindowButtonHeight();
+	int getAlertWindowButtonHeight() override;
 
 	int getCallOutBoxBorderSize(const CallOutBox &) override;
 	float getCallOutBoxCornerSize(const CallOutBox &) override;
@@ -293,7 +293,7 @@ public:
 	Button* createSliderButton(Slider&, bool isIncrement) override;
 	Label* createSliderTextBox(Slider & slider) override;
 
-	void drawTableHeaderBackground(Graphics& g, TableHeaderComponent& header);
+	void drawTableHeaderBackground(Graphics& g, TableHeaderComponent& header) override;
 	void drawTableHeaderColumn(Graphics& g, TableHeaderComponent& header,
 		const String& columnName, int /*columnId*/,
 		int width, int height, bool isMouseOver, bool isMouseDown,
