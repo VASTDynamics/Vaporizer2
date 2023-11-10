@@ -178,7 +178,7 @@ public:
 
 	bool isActive = false;
 	bool m_wasShown = false;
-	void setLicenseText(StringRef text, bool bInErrorState, int iErrorState);
+	void setLicenseText(StringRef text, bool bInErrorState, VASTAudioProcessor::vastErrorState iErrorState);
 	void setVersionText(StringRef text);
 
 	TabbedComponent* getTabbedComponent();

@@ -668,7 +668,7 @@ void VASTPositionViewport::mouseDown(const MouseEvent &e) {
 	}
 }
 
-void VASTPositionViewport::filesDropped(const StringArray& files, int x, int y) {	
+void VASTPositionViewport::filesDropped(const StringArray& files, int x, int ) {	
 	int arrayidx = getArrayIdx(x);
 	int numPos = myWtEditor->getBankWavetable()->getNumPositions();
 	if (arrayidx > numPos) arrayidx = numPos;

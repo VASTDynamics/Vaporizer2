@@ -19,7 +19,6 @@ VASTDragSource::VASTDragSource(const juce::String &componentName, const juce::St
 
 	//setRepaintsOnMouseActivity(false); //performance
 	//setBufferedToImage(true); //performance
-
 	//setColour(GroupComponent::ColourIds::outlineColourId, Colour::fromRGBA(255, 255, 255, 1.0));
 
 	ddImageButton.reset(new VASTImageButton(componentName));
@@ -29,8 +28,7 @@ VASTDragSource::VASTDragSource(const juce::String &componentName, const juce::St
 		ImageCache::getFromMemory(VASTHeaderComponent::dragdrop_over_png, VASTHeaderComponent::dragdrop_over_pngSize), 1.000f, Colour(0x00000000),
 		ImageCache::getFromMemory(VASTHeaderComponent::dragdrop_png, VASTHeaderComponent::dragdrop_pngSize), 1.000f, Colour(0x00000000));
 	
-	ddLabel.reset(new Label("new label",
-		newtext));
+	ddLabel.reset(new Label("new label", newtext));
 	addAndMakeVisible(ddLabel.get());
 	//ddLabel->setFont(Font("Syntax", 11.00f, Font::plain));
 	ddLabel->setJustificationType(Justification::centred);
@@ -87,7 +85,6 @@ void VASTDragSource::paint(Graphics& g)
 			String ending = getComponentID().getLastCharacters(1);
 			ddLabel->setText("Custom" + ending, NotificationType::sendNotification);
 		}
-
 		if (!ddLabel->getText().containsIgnoreCase("Custom"))
 			ddLabel->setComponentID("CustomLabel");
 		else 
@@ -105,6 +102,7 @@ void VASTDragSource::setAudioProcessor(VASTAudioProcessor &processor) {
 	m_processor = &processor;
 	ddImageButton->setAudioProcessor(processor);
 }
+
 VASTAudioProcessor* VASTDragSource::getAudioProcessor() {
 	return m_processor;
 }
@@ -132,4 +130,10 @@ void VASTDragSource::labelTextChanged(Label* labelThatHasChanged) {
 	else if (getComponentID().endsWith("4"))
 		lElem.customModulator4Text = labelThatHasChanged->getText();
 	m_processor->m_presetData.exchangeCurPatchData(lElem);
-};
+}
+
+void VASTDragSource::setLabelDefaultText(String defaultText)
+{
+	ddLabel->setText(defaultText, NotificationType::sendNotificationSync);
+	ddLabel->showEditor();
+}

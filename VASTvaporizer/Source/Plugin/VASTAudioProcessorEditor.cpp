@@ -224,7 +224,7 @@ VASTAudioProcessor* VASTAudioProcessorEditor::getProcessor() {
 	return &processor;
 }
 
-void VASTAudioProcessorEditor::paint(Graphics& g) {
+void VASTAudioProcessorEditor::paint(Graphics& ) {
 	//do nothing, but needed for opaque
 }
 

@@ -59,7 +59,7 @@ bool VASTValueTreeItem::mightContainSubItems()
 	return tree.getNumChildren() > 0;
 }
 
-void VASTValueTreeItem::itemClicked(const MouseEvent &e) {
+void VASTValueTreeItem::itemClicked(const MouseEvent &) {
 	ModifierKeys modifiers = ModifierKeys::getCurrentModifiersRealtime();
 	if (modifiers.isPopupMenu() || modifiers.isCtrlDown()) {
 		if ((this->getID() == "favorites1") || (this->getID() == "favorites2") || (this->getID() == "favorites3") || (this->getID() == "favorites4") || (this->getID() == "favorites5")) {
@@ -188,7 +188,7 @@ void VASTValueTreeItem::itemClicked(const MouseEvent &e) {
 	}
 }
 
-void VASTValueTreeItem::itemDoubleClicked(const MouseEvent &e) {
+void VASTValueTreeItem::itemDoubleClicked(const MouseEvent &) {
 	this->setSelected(false, false, NotificationType::sendNotification);
 }
 
@@ -550,7 +550,7 @@ void VASTValueTreeItem::getSelectedTreeViewItems(TreeView& treeView, OwnedArray<
 			items.add(new ValueTree(vti->tree));
 }
 
-void VASTValueTreeItem::itemSelectionChanged(bool isNowSelected) {
+void VASTValueTreeItem::itemSelectionChanged(bool ) {
 	_presetComponent->setSearchVector();
 }
 
@@ -1278,7 +1278,7 @@ void VASTPresetComponent::PresetTableComponent::updateContent(bool clearFilterIf
 	table.updateContent();
 }
 
-Component* VASTPresetComponent::PresetTableComponent::refreshComponentForCell(int rowNumber, int columnId, bool isRowSelected, Component* existingComponentToUpdate) {
+Component* VASTPresetComponent::PresetTableComponent::refreshComponentForCell(int rowNumber, int columnId, bool , Component* existingComponentToUpdate) {
 	if (columnId != 8) return nullptr; //only for ranking
 	VASTPresetStars *star = static_cast<VASTPresetStars*>(existingComponentToUpdate);
 
@@ -1315,7 +1315,7 @@ void VASTPresetComponent::PresetTableComponent::selectedRowsChanged(int lastRowS
 	_box->setText(presetdisplay, juce::NotificationType::dontSendNotification);
 }
 
-void VASTPresetComponent::PresetTableComponent::cellClicked(int rowNumber, int columnId, const MouseEvent &e)  {
+void VASTPresetComponent::PresetTableComponent::cellClicked(int rowNumber, int , const MouseEvent &e)  {
 	ModifierKeys modifiers = e.mods; //ModifierKeys::getCurrentModifiersRealtime();
 	if (modifiers.isPopupMenu() || modifiers.isCtrlDown()) {
 		int sel = table.getSelectedRow(0);
@@ -1393,7 +1393,7 @@ void VASTPresetComponent::PresetTableComponent::cellClicked(int rowNumber, int c
 	}
 }
 
-void VASTPresetComponent::PresetTableComponent::cellDoubleClicked(int rowNumber, int columnId, const MouseEvent &)  {
+void VASTPresetComponent::PresetTableComponent::cellDoubleClicked(int , int , const MouseEvent &)  {
 	((VASTComboPreset*)_box)->removePopup();
 }
 

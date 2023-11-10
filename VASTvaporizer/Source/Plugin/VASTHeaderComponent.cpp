@@ -280,7 +280,7 @@ void VASTHeaderComponent::buttonClicked (juce::Button* buttonThatWasClicked)
 
         myChooser = std::make_unique<FileChooser>(TRANS("Please specify name and location of the preset file you want to save ..."), initialFile, "*.vvp");
         myChooser->launchAsync(FileBrowserComponent::saveMode
-            | FileBrowserComponent::canSelectFiles,
+            | FileBrowserComponent::canSelectFiles | FileBrowserComponent::warnAboutOverwriting,
             [this](const FileChooser& fileChooser)
         {
             File presetFile(fileChooser.getResult());
@@ -307,6 +307,9 @@ void VASTHeaderComponent::buttonClicked (juce::Button* buttonThatWasClicked)
                 myProcessor->loadPreset(intid);
             else {
                 //was saved outside of path
+                AlertWindow::showMessageBoxAsync(AlertWindow::InfoIcon,
+                    "",
+                    TRANS("The preset was saved outside of the preset path root folder in settings."), String(), this); 
             }
             myEditor->vaporizerComponent->updateAll();
         });		

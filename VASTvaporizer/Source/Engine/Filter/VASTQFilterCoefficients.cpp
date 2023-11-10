@@ -575,7 +575,7 @@ void VASTQFilterCoefficients::Coeff_COMB(float freq, float reso, int subtype)
    FromDirect(c);
 }
 
-void VASTQFilterCoefficients::Coeff_SNH(float freq, float reso, int subtype)
+void VASTQFilterCoefficients::Coeff_SNH(float freq, float reso, int)
 {
    float dtime = (1.f / dmasterTuneHz) * note_to_pitch(-freq) * dsamplerate_os;
    double v1 = 1.0 / dtime;

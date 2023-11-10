@@ -136,7 +136,7 @@ void CVASTFormantFilter::parameterChanged(const String& parameterID, float newVa
 	}
 }
 
-void CVASTFormantFilter::prepareToPlay(double sampleRate, int samplesPerBlock) {
+void CVASTFormantFilter::prepareToPlay(double , int samplesPerBlock) {
 	//m_iSampleRate is set in useroversampling;
 	m_iExpectedSamplesPerBlock = samplesPerBlock;
 
@@ -166,7 +166,7 @@ void CVASTFormantFilter::init(CVASTSettings &set) {
 	reset();
 }
 
-void CVASTFormantFilter::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages, const int numSamples) {
+void CVASTFormantFilter::processBlock(AudioSampleBuffer& buffer, MidiBuffer& , const int numSamples) {
 	if (isOffAndShallBeOff() == true) return;
 
 	float* bufferWritePointerL = buffer.getWritePointer(0);
@@ -201,7 +201,7 @@ void CVASTFormantFilter::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mid
 	}
 }
 
-bool CVASTFormantFilter::processAudioFrame(float* pInputBuffer, float* pOutputBuffer, MYUINT uNumInputChannels, MYUINT uNumOutputChannels, int currentFrameOSAdjusted) {
+bool CVASTFormantFilter::processAudioFrame(float* pInputBuffer, float* pOutputBuffer, MYUINT , MYUINT , int currentFrameOSAdjusted) {
 
 	modMatrixInputState inputState;
 	inputState = ((VASTAudioProcessor*)my_processor)->m_pVASTXperience.m_Poly.getOldestNotePlayedInputState(currentFrameOSAdjusted); // make parameter oldest or newest
@@ -353,13 +353,13 @@ bool CVASTFormantFilter::processAudioFrame(float* pInputBuffer, float* pOutputBu
 
 //==============================================================================
 
-void CVASTFormantFilter::getStateInformation(MemoryBlock& destData)
+void CVASTFormantFilter::getStateInformation(MemoryBlock& )
 {
 	//std::unique_ptr<XmlElement> xml (parameters.valueTreeState.state.createXml());
 	//copyXmlToBinary (*xml, destData);
 }
 
-void CVASTFormantFilter::setStateInformation(const void* data, int sizeInBytes)
+void CVASTFormantFilter::setStateInformation(const void* , int )
 {
 	//std::unique_ptr<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
 	//if (xmlState != nullptr)

@@ -210,7 +210,7 @@ void CVASTStereoDelay::reset()
 }
 
 // --- one time init
-void CVASTStereoDelay::prepareToPlay(double sampleRate, int samplesPerBlock) {
+void CVASTStereoDelay::prepareToPlay(double , int samplesPerBlock) {
 	m_iExpectedSamplesPerBlock = samplesPerBlock;
 	//m_iSampleRate is set in useOversampling
 
@@ -282,7 +282,7 @@ void CVASTStereoDelay::update() {
 	}
 }
 
-void CVASTStereoDelay::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages, const int numSamples) {
+void CVASTStereoDelay::processBlock(AudioSampleBuffer& buffer, MidiBuffer& , const int numSamples) {
 	if (isOffAndShallBeOff() == true) return;
 
 	modMatrixInputState inputState;
@@ -353,7 +353,7 @@ void CVASTStereoDelay::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiM
 	buffer.applyGain(lDelayGain * 0.01f);
 }
 
-bool CVASTStereoDelay::processAudioFrame(float* pInputBuffer, float* pInputBufferUnfiltered, float* pOutputBuffer, MYUINT uNumInputChannels, MYUINT uNumOutputChannels)
+bool CVASTStereoDelay::processAudioFrame(float* pInputBuffer, float* pInputBufferUnfiltered, float* pOutputBuffer, MYUINT , MYUINT )
 {	
 	// --- do the delays
 	//     common components:
@@ -412,13 +412,13 @@ bool CVASTStereoDelay::processAudioFrame(float* pInputBuffer, float* pInputBuffe
 
 //==============================================================================
 
-void CVASTStereoDelay::getStateInformation(MemoryBlock& destData)
+void CVASTStereoDelay::getStateInformation(MemoryBlock& )
 {
 	//std::unique_ptr<XmlElement> xml (parameters.valueTreeState.state.createXml());
 	//copyXmlToBinary (*xml, destData);
 }
 
-void CVASTStereoDelay::setStateInformation(const void* data, int sizeInBytes)
+void CVASTStereoDelay::setStateInformation(const void* , int )
 {
 	//std::unique_ptr<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
 	//if (xmlState != nullptr)

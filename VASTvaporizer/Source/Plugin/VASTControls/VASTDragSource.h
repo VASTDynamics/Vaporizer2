@@ -25,6 +25,7 @@ public:
 	void lookAndFeelChanged() override;
 	void editorShown(Label *, TextEditor &) override;
 	void labelTextChanged(Label* labelThatHasChanged) override;
+	void setLabelDefaultText(String defaultText);
 
 private:
     std::unique_ptr<VASTImageButton> ddImageButton;

@@ -57,13 +57,13 @@ void VASTPitchbendSlider::mouseDown(const MouseEvent &e) {
 	Slider::mouseDown(e);
 }
 
-void VASTPitchbendSlider::mouseExit(const MouseEvent &e) {
+void VASTPitchbendSlider::mouseExit(const MouseEvent &) {
 	if (hasDefaultValue) {
 		setValue(mDefaultVal, juce::NotificationType::sendNotificationAsync);
 	}
 }
 
-void VASTPitchbendSlider::mouseUp(const MouseEvent &e) {
+void VASTPitchbendSlider::mouseUp(const MouseEvent &) {
 	if (hasDefaultValue) {
 		setValue(mDefaultVal, juce::NotificationType::sendNotificationAsync);
 	}

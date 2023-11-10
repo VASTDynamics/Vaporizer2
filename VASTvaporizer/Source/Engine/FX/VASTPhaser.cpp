@@ -185,7 +185,7 @@ void CVASTPhaser::updateLFOFreq() {
 	}
 }
 
-void CVASTPhaser::prepareToPlay(double sampleRate, int samplesPerBlock) {
+void CVASTPhaser::prepareToPlay(double , int samplesPerBlock) {
 	m_iExpectedSamplesPerBlock = samplesPerBlock;
 	//m_iSampleRate is set in useOversampling
 	if (m_bOversampling)
@@ -235,7 +235,7 @@ void CVASTPhaser::updateTiming() {
 	updateLFOFreq();
 }
 
-void CVASTPhaser::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages, const int numSamples) {
+void CVASTPhaser::processBlock(AudioSampleBuffer& buffer, MidiBuffer& , const int numSamples) {
 
 	if (isOffAndShallBeOff() == true) return;
 
@@ -335,13 +335,13 @@ void CVASTPhaser::updateFilters(double centreFrequency) {
 
 //==============================================================================
 
-void CVASTPhaser::getStateInformation(MemoryBlock& destData)
+void CVASTPhaser::getStateInformation(MemoryBlock& )
 {
 	//std::unique_ptr<XmlElement> xml (parameters.valueTreeState.state.createXml());
 	//copyXmlToBinary (*xml, destData);
 }
 
-void CVASTPhaser::setStateInformation(const void* data, int sizeInBytes)
+void CVASTPhaser::setStateInformation(const void* , int )
 {
 	//std::unique_ptr<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
 	//if (xmlState != nullptr)

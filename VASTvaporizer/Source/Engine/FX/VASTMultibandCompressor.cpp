@@ -620,13 +620,13 @@ void CVASTMultibandCompressor::compressorHB(AudioSampleBuffer &buffer, int m, mo
 
 //==============================================================================
 
-void CVASTMultibandCompressor::getStateInformation (MemoryBlock& destData)
+void CVASTMultibandCompressor::getStateInformation (MemoryBlock& )
 {
     //std::unique_ptr<XmlElement> xml (parameters.valueTreeState.state.createXml());
     //copyXmlToBinary (*xml, destData);
 }
 
-void CVASTMultibandCompressor::setStateInformation (const void* data, int sizeInBytes)
+void CVASTMultibandCompressor::setStateInformation (const void* , int )
 {
     //std::unique_ptr<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
     //if (xmlState != nullptr)

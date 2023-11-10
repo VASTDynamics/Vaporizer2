@@ -1042,14 +1042,14 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 			}
 			bool hasNextFilter = false; //perf opt
 			if (filter == 0)
-				if ((*m_Set->m_State->m_uFilterRouting_Filter1 == FILTER1ROUTE::FILTER1ROUTE_Filter2) ||
-					(*m_Set->m_State->m_uFilterRouting2_Filter1 == FILTER1ROUTE::FILTER1ROUTE_Filter2) ||
-					(*m_Set->m_State->m_uFilterRouting_Filter1 == FILTER1ROUTE::FILTER1ROUTE_Filter3) ||
-					(*m_Set->m_State->m_uFilterRouting2_Filter1 == FILTER1ROUTE::FILTER1ROUTE_Filter3))
+				if ((*m_Set->m_State->m_uFilterRouting_Filter1 == static_cast<int>(FILTER1ROUTE::FILTER1ROUTE_Filter2)) ||
+					(*m_Set->m_State->m_uFilterRouting2_Filter1 == static_cast<int>(FILTER1ROUTE::FILTER1ROUTE_Filter2)) ||
+					(*m_Set->m_State->m_uFilterRouting_Filter1 == static_cast<int>(FILTER1ROUTE::FILTER1ROUTE_Filter3)) ||
+					(*m_Set->m_State->m_uFilterRouting2_Filter1 == static_cast<int>(FILTER1ROUTE::FILTER1ROUTE_Filter3)))
 					hasNextFilter = true;
 			if (filter == 1)
-				if ((*m_Set->m_State->m_uFilterRouting_Filter2 == FILTER1ROUTE::FILTER1ROUTE_Filter3) ||
-					(*m_Set->m_State->m_uFilterRouting2_Filter2 == FILTER1ROUTE::FILTER1ROUTE_Filter3))
+				if ((*m_Set->m_State->m_uFilterRouting_Filter2 == static_cast<int>(FILTER1ROUTE::FILTER1ROUTE_Filter3)) ||
+					(*m_Set->m_State->m_uFilterRouting2_Filter2 == static_cast<int>(FILTER1ROUTE::FILTER1ROUTE_Filter3)))
 					hasNextFilter = true;
 
 			for (auto* voice : voices) {
@@ -1067,11 +1067,11 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 					l_inputState.currentFrame = startSample;
 					float dryWet = 0.f;
 					if (filter == 0)
-						dryWet = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fFilterDryWet_Filter1, MODMATDEST::Filter1Mixin, &l_inputState) * 0.01f;
+						dryWet = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fFilterDryWet_Filter1, static_cast<int>(MODMATDEST::Filter1Mixin), &l_inputState) * 0.01f;
 					else if (filter == 1)
-						dryWet = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fFilterDryWet_Filter2, MODMATDEST::Filter2Mixin, &l_inputState) * 0.01f;
+						dryWet = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fFilterDryWet_Filter2, static_cast<int>(MODMATDEST::Filter2Mixin), &l_inputState) * 0.01f;
 					else if (filter == 2)
-						dryWet = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fFilterDryWet_Filter3, MODMATDEST::Filter3Mixin, &l_inputState) * 0.01f;
+						dryWet = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fFilterDryWet_Filter3, static_cast<int>(MODMATDEST::Filter3Mixin), &l_inputState) * 0.01f;
 
 					//if (bPlayiningInRange) {
 					if ((*m_Set->m_State->m_bOscOnOff_OscA == static_cast<int>(SWITCH::SWITCH_ON)) &&
@@ -1208,11 +1208,11 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 						float dryWet = 0.f;
 						l_inputState.currentFrame = startSample;
 						if (filter == 0)
-							dryWet = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fFilterDryWet_Filter1, MODMATDEST::Filter1Mixin, &l_inputState) * 0.01f;
+							dryWet = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fFilterDryWet_Filter1, static_cast<int>(MODMATDEST::Filter1Mixin), &l_inputState) * 0.01f;
 						else if (filter == 1)
-							dryWet = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fFilterDryWet_Filter2, MODMATDEST::Filter2Mixin, &l_inputState) * 0.01f;
+							dryWet = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fFilterDryWet_Filter2, static_cast<int>(MODMATDEST::Filter2Mixin), &l_inputState) * 0.01f;
 						else if (filter == 2)
-							dryWet = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fFilterDryWet_Filter3, MODMATDEST::Filter3Mixin, &l_inputState) * 0.01f;
+							dryWet = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fFilterDryWet_Filter3, static_cast<int>(MODMATDEST::Filter3Mixin), &l_inputState) * 0.01f;
 
 						Range<float> rangeL = routingBuffers.FilterVoices[filter][mVoiceNo]->findMinMax(0, startSample, numSamples);
 						Range<float> rangeR = routingBuffers.FilterVoices[filter][mVoiceNo]->findMinMax(1, startSample, numSamples);

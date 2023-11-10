@@ -113,7 +113,7 @@ void CVASTCombFilterEffect::parameterChanged(const String& parameterID, float ne
 	}
 }
 
-void CVASTCombFilterEffect::prepareToPlay(double sampleRate, int samplesPerBlock) {
+void CVASTCombFilterEffect::prepareToPlay(double , int samplesPerBlock) {
 	//m_iSampleRate is set in useOversampling
 	m_iExpectedSamplesPerBlock = samplesPerBlock;
 	mDelayLeft.resetDelay();

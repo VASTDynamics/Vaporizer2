@@ -178,7 +178,7 @@ bool CVASTXperience::prepareForPlay(double sampleRate, int expectedSamplesPerBlo
 	int samplesPerBlock = expectedSamplesPerBlock;
 	
 	if (expectedSamplesPerBlock > C_MAX_BUFFER_SIZE) {
-		myProcessor->setErrorState(25); //buffer size to large
+		myProcessor->setErrorState(myProcessor->vastErrorState::errorState25_maxBufferSizeExceeded); //buffer size to large
 		samplesPerBlock = C_MAX_BUFFER_SIZE;
 	}
 
@@ -259,7 +259,7 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
 	double ppqPosition, bool isLooping, double ppqPositionOfLastBarStart, double bpm) {
 
 	if (buffer.getNumSamples() > C_MAX_BUFFER_SIZE) {
-		myProcessor->setErrorState(25); //buffer size to large
+		myProcessor->setErrorState(myProcessor->vastErrorState::errorState25_maxBufferSizeExceeded); //buffer size to large
 		return false;
 	}
 

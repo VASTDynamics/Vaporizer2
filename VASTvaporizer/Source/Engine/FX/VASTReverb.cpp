@@ -190,7 +190,7 @@ void CVASTReverb::init(CVASTSettings &set) {
 }
 
 // --- one time init
-void CVASTReverb::prepareToPlay(double sampleRate, int samplesPerBlock) {
+void CVASTReverb::prepareToPlay(double , int samplesPerBlock) {
 	m_iExpectedSamplesPerBlock = samplesPerBlock;
 	//m_iSampleRate is set in useOversampling
 	// up to 2 seconds predelay
@@ -417,7 +417,7 @@ void CVASTReverb::updateVariables() {
 	m_plateReverb.setParameter(MVerb<float>::DECAY, ((m_fFeedbackMod / 5000.0f) * 0.76f));  // <0.86 otherwise endless feedback!
 }
 
-void CVASTReverb::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages, const int numSamples) {
+void CVASTReverb::processBlock(AudioSampleBuffer& buffer, MidiBuffer& , const int numSamples) {
 	
 	if (isOffAndShallBeOff() == true) return;
 
@@ -502,7 +502,7 @@ void CVASTReverb::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessag
 	}
 }
 
-bool CVASTReverb::processAudioFrame(float* pInputBuffer, float* pOutputBuffer, MYUINT uNumInputChannels, MYUINT uNumOutputChannels, int currentFrameOSAdjusted, float dryWet) {
+bool CVASTReverb::processAudioFrame(float* pInputBuffer, float* pOutputBuffer, MYUINT uNumInputChannels, MYUINT uNumOutputChannels, int , float dryWet) {
 	//
 	// Form our input = L + R (if there is a R)
 	//
@@ -617,13 +617,13 @@ bool CVASTReverb::processAudioFrame(float* pInputBuffer, float* pOutputBuffer, M
 
 //==============================================================================
 
-void CVASTReverb::getStateInformation(MemoryBlock& destData)
+void CVASTReverb::getStateInformation(MemoryBlock& )
 {
 	//std::unique_ptr<XmlElement> xml (parameters.valueTreeState.state.createXml());
 	//copyXmlToBinary (*xml, destData);
 }
 
-void CVASTReverb::setStateInformation(const void* data, int sizeInBytes)
+void CVASTReverb::setStateInformation(const void* , int )
 {
 	//std::unique_ptr<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
 	//if (xmlState != nullptr)

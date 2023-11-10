@@ -374,22 +374,9 @@ void VASTVaporizerComponent::timerCallback() {
 	*/
 }
 
-void VASTVaporizerComponent::setLicenseText(StringRef text, bool bInErrorState, int iErrorState) {
-	if (bInErrorState) {
-		headerComponent->getLabelLicense()->setColour(Label::backgroundColourId, Colours::darkred);
-		switch (iErrorState) {
-		case(25):
-			headerComponent->getLabelLicense()->setText(TRANS("Error state #") + String(iErrorState) + TRANS(" - maximum buffer size exceeded"), NotificationType::sendNotification);
-			break;
-		case(30): //invalid license
-			headerComponent->getLabelLicense()->setText(TRANS("Error state #") + String(iErrorState) + TRANS(" - license issue. Contact support@vast-dynamics.com"), NotificationType::sendNotification);
-			break;
-		case(31): //blocked license
-			headerComponent->getLabelLicense()->setText(TRANS("Error state #") + String(iErrorState) + TRANS(" - license issue. Contact support@vast-dynamics.com"), NotificationType::sendNotification);
-			break;
-		default:
-			headerComponent->getLabelLicense()->setText(TRANS("Error state #") + String(iErrorState) + TRANS(" - reload plugin"), NotificationType::sendNotification);
-		}
+void VASTVaporizerComponent::setLicenseText(StringRef text, bool bInErrorState, VASTAudioProcessor::vastErrorState iErrorState) {
+	if (bInErrorState) {		
+		headerComponent->getLabelLicense()->setText(TRANS("Error: ") + myProcessor->vastErrorStateToString(iErrorState), NotificationType::sendNotification);
 	}
 	else
 		headerComponent->getLabelLicense()->setText(text, NotificationType::sendNotification);

@@ -67,6 +67,57 @@ public:
 		//-------------------------------------------------------------------------------------------------------
 	};
 
+	enum vastErrorState { 
+		noError,
+		errorState1,
+		errorState2_invalidMSEGData,
+		errorState3_invalidStepSeqData,
+		errorState4_invalidArpData,
+		errorState5_couldNotLoadSavedPreset,
+		errorState6_loadPresetFromFileXMLParsingFailed,
+		errorState7_unknownPresetFormatVersion,
+		errorState8_loadPresetOscillatorTreeInvalid,
+		errorState9_loadPresetWavetableDataInvalid,
+		errorState10_loadPresetChunkDataInvalid,
+		errorState11_loadPresetUnsuccessful,
+		errorState12_writeSettingsToFileFailed,
+		errorState13_readSettingsFromFileFailed,
+		errorState14_loadDefaultMidiMappingFailed,
+		errorState20_loadPresetInvalidTree,
+		errorState24_invalidFXBusData,
+		errorState25_maxBufferSizeExceeded,
+		errorState30_invalidLicense,
+		errorState31_blockedLicense
+	};
+
+	const StringRef vastErrorStateToString(vastErrorState e) noexcept
+	{
+		switch (e)
+		{
+		case vastErrorState::noError: return (TRANS("No error."));
+		case vastErrorState::errorState1: return (TRANS("Unknown error."));
+		case vastErrorState::errorState2_invalidMSEGData: return (TRANS("The MSEG data is invalid. Internal error. Reload plugin."));
+		case vastErrorState::errorState3_invalidStepSeqData: return (TRANS("The Step Sequence data is invalid. Internal error. Reload plugin."));
+		case vastErrorState::errorState4_invalidArpData: return (TRANS("The ARP data is invalid. Internal error. Reload plugin."));
+		case vastErrorState::errorState5_couldNotLoadSavedPreset: return (TRANS("The just saved preset could not be reloaded. Please check access rights to folders."));
+		case vastErrorState::errorState6_loadPresetFromFileXMLParsingFailed: return (TRANS("The XML structure of the loaded preset is invalid."));
+		case vastErrorState::errorState7_unknownPresetFormatVersion: return (TRANS("The version of the preset format is unknown."));
+		case vastErrorState::errorState8_loadPresetOscillatorTreeInvalid: return (TRANS("The loaded preset data for oscillator banks is invalid."));
+		case vastErrorState::errorState9_loadPresetWavetableDataInvalid: return (TRANS("The loaded preset data for wavetables is invalid."));
+		case vastErrorState::errorState10_loadPresetChunkDataInvalid: return (TRANS("The loaded preset chunk data is invalid."));
+		case vastErrorState::errorState11_loadPresetUnsuccessful: return (TRANS("Loading the preset failed."));
+		case vastErrorState::errorState12_writeSettingsToFileFailed: return (TRANS("Writing the settings file failed. Please check access rights to folders."));
+		case vastErrorState::errorState13_readSettingsFromFileFailed: return (TRANS("Reading the settings file failed. Please check access rights to folders."));
+		case vastErrorState::errorState14_loadDefaultMidiMappingFailed: return (TRANS("Loading of default MIDI mapping failed."));
+		case vastErrorState::errorState20_loadPresetInvalidTree: return (TRANS("Loading the preset resulted in an invalid parameter tree. Please reload the plugin."));
+		case vastErrorState::errorState24_invalidFXBusData: return (TRANS("The FX bus data is invalid."));
+		case vastErrorState::errorState25_maxBufferSizeExceeded: return (TRANS("The maximum supported buffer size is exceeded."));
+		case vastErrorState::errorState30_invalidLicense: return (TRANS("Invalid license issue.Contact support@vast-dynamics.com."));
+		case vastErrorState::errorState31_blockedLicense: return (TRANS("License issue.Contact support@vast-dynamics.com."));		
+		default: return (TRANS("Error state - reload plugin"));
+		}
+	}
+
 	typedef struct {
 		float rangeStart;
 		float rangeEnd;
@@ -89,8 +140,8 @@ public:
 	bool isBusesLayoutSupported(const BusesLayout& layouts) const override;
 
 	bool isInErrorState() { return bIsInErrorState; };
-	void setErrorState(int state);
-	int getErrorState() const;
+	void setErrorState(vastErrorState state);
+	VASTAudioProcessor::vastErrorState getErrorState() const;
 	bool wantsUIAlert() const;
 	void clearUIAlertFlag();
 	void requestUIAlert();
@@ -353,7 +404,7 @@ private:
 
     std::atomic<bool> m_wasBypassed = false;
     std::atomic<bool> bIsInErrorState = false;
-    std::atomic<int> iErrorState = 0;
+    std::atomic<vastErrorState> iErrorState = vastErrorState::noError;
 
 	std::atomic<bool> mUIInitFlag;
     std::atomic<bool> mUIAlert;

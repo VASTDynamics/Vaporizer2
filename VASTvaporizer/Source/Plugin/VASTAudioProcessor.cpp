@@ -83,7 +83,7 @@ VASTAudioProcessor::VASTAudioProcessor() :
 	m_midiBank = 0;
 
 	bIsInErrorState.store(false);
-	iErrorState.store(0);
+	iErrorState.store(vastErrorState::noError);
 	m_iNumPassTreeThreads = 0;
 
 	initSettings();
@@ -159,12 +159,12 @@ bool VASTAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) cons
 	
 }
 
-void VASTAudioProcessor::setErrorState(int state) {
+void VASTAudioProcessor::setErrorState(vastErrorState state) {
 	bIsInErrorState.store(true);
 	iErrorState.store(state);
 }
 
-int VASTAudioProcessor::getErrorState() const {
+VASTAudioProcessor::vastErrorState VASTAudioProcessor::getErrorState() const {
     return iErrorState.load(); }
 
 bool VASTAudioProcessor::wantsUIAlert() const {
@@ -830,7 +830,7 @@ void VASTAudioProcessor::addChunkTreeState(ValueTree* treeState) { //for save
 		if (l_tree.isValid())
 			m_pVASTXperience.m_Set.m_MSEGData[i].getValueTreeState(&l_tree, nullptr /*&m_undoManager*/, true); //is mseg
 		else 
-			setErrorState(2);
+			setErrorState(vastErrorState::errorState2_invalidMSEGData);
 	}
 
 	//step seqs
@@ -842,7 +842,7 @@ void VASTAudioProcessor::addChunkTreeState(ValueTree* treeState) { //for save
 		if (l_tree.isValid())
 			m_pVASTXperience.m_Set.m_StepSeqData[i].getValueTreeState(&l_tree, nullptr /*&m_undoManager*/, false); //is stepseq
 		else
-			setErrorState(3);
+			setErrorState(vastErrorState::errorState3_invalidStepSeqData);
 	}	
 
 	//arp
@@ -854,7 +854,7 @@ void VASTAudioProcessor::addChunkTreeState(ValueTree* treeState) { //for save
 		if (l_tree.isValid())
 			m_pVASTXperience.m_Set.m_ARPData.getValueTreeState(&l_tree, nullptr /*&m_undoManager*/);
 		else
-			setErrorState(4);
+			setErrorState(vastErrorState::errorState4_invalidArpData);
 	}
 
 	//fx bus
@@ -866,7 +866,7 @@ void VASTAudioProcessor::addChunkTreeState(ValueTree* treeState) { //for save
 		if (l_tree.isValid())
 			m_pVASTXperience.m_fxBus1.getValueTreeState(&l_tree, nullptr /*&m_undoManager*/);
 		else
-			setErrorState(24);
+			setErrorState(vastErrorState::errorState24_invalidFXBusData);
 	}
 	{
 		childName = "fxBusData" + String(2);
@@ -876,7 +876,7 @@ void VASTAudioProcessor::addChunkTreeState(ValueTree* treeState) { //for save
 		if (l_tree.isValid())
 			m_pVASTXperience.m_fxBus2.getValueTreeState(&l_tree, nullptr /*&m_undoManager*/);
 		else
-			setErrorState(24);
+			setErrorState(vastErrorState::errorState24_invalidFXBusData);
 	}
 	{
 		childName = "fxBusData" + String(3);
@@ -886,7 +886,7 @@ void VASTAudioProcessor::addChunkTreeState(ValueTree* treeState) { //for save
 		if (l_tree.isValid())
 			m_pVASTXperience.m_fxBus3.getValueTreeState(&l_tree, nullptr /*&m_undoManager*/);
 		else
-			setErrorState(24);
+			setErrorState(vastErrorState::errorState24_invalidFXBusData);
 	}
 }
 
@@ -981,7 +981,7 @@ void VASTAudioProcessor::savePatchXML(File *selectedFile) {
 	FileOutputStream out(*selectedFile);
 	if (out.failedToOpen()) {
 		cerr << "open failure: " << strerror(errno) << '\n';
-		setErrorState(5);
+		setErrorState(vastErrorState::errorState5_couldNotLoadSavedPreset);
 		assert(true);
 	}
 	out.writeText(fileText, false, false, "\n"); //slash n new?
@@ -1058,7 +1058,7 @@ bool VASTAudioProcessor::loadPatchXML(XmlDocument* xmlDoc, bool bNameOnly, const
 	else {
 		String error = xmlDoc->getLastParseError();
 		jassert(false); // broken XML?
-		setErrorState(6);
+		setErrorState(vastErrorState::errorState6_loadPresetFromFileXMLParsingFailed);
 		return false;
 	}
 	return true;
@@ -1161,7 +1161,7 @@ void VASTAudioProcessor::xmlParseToPatch(XmlElement *pRoot, bool bNameOnly, cons
 		} 
 	}
 	else {
-		setErrorState(7);
+		setErrorState(vastErrorState::errorState7_unknownPresetFormatVersion);
 		jassert(false); // unknown patch format
 	}
 }
@@ -1171,7 +1171,7 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 
 	if (!initOnly)
 		if (!tree.isValid()) {
-			processor->setErrorState(20);
+			processor->setErrorState(vastErrorState::errorState20_loadPresetInvalidTree);
 			return;
 		}
 
@@ -1281,21 +1281,20 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 		//chunks - for daw state and file!
 		String childName = "chunkData";
 		ValueTree l_chunkTree = tree.getChildWithName(Identifier(childName));
-		if (l_chunkTree.isValid()) { //init patch does not have it
-
+		if (l_chunkTree.isValid()) { //init patch does not have it			
 		//Prepare OscBanks wavetables
-
+			ValueTree l_tree{};
 			for (int bank = 0; bank < 4; bank++) {
-				String childName = "oscBank" + String(bank);
-				ValueTree l_tree = l_chunkTree.getChildWithName(Identifier(childName));
+				childName = "oscBank" + String(bank);
+				l_tree = l_chunkTree.getChildWithName(Identifier(childName));
 				if (!l_tree.isValid()) {
-					processor->setErrorState(8);
+					processor->setErrorState(vastErrorState::errorState8_loadPresetOscillatorTreeInvalid);
 					processor->unregisterThread();
 					processor->m_pVASTXperience.audioProcessUnlock();
 					return; //error handling
 				}
 				if (!m_bank_wavetableToUpdate[bank]->setValueTreeState(&l_tree, processor->getWTmode())) {
-					processor->setErrorState(9);
+					processor->setErrorState(vastErrorState::errorState9_loadPresetWavetableDataInvalid);
 					processor->unregisterThread();
 					processor->m_pVASTXperience.audioProcessUnlock();
 					return; //error handling
@@ -1305,7 +1304,7 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 			//WAV
 			childName = "sampleData";
 			m_soundToUpdate = nullptr;
-			ValueTree l_tree = l_chunkTree.getChildWithName(Identifier(childName));
+			l_tree = l_chunkTree.getChildWithName(Identifier(childName));
 			if (l_tree.isValid()) { //might not exist which is OK		
 				m_soundToUpdate = VASTSamplerSound::getSoundFromTree(&l_tree); //check for memory leak here!!
 			}
@@ -1319,7 +1318,7 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 		}
 
 		if (l_chunkTree.isValid()) { //init patch does not have it
-
+			ValueTree l_tree{};
 			//---------------------------------------------------------------------------------------
 			//after this it has to be quick
 
@@ -1331,8 +1330,8 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 
 			//msegs
 			for (int mseg = 0; mseg < 5; mseg++) {
-				String childName = "msegData" + String(mseg);
-				ValueTree l_tree = l_chunkTree.getChildWithName(Identifier(childName));
+				childName = "msegData" + String(mseg);
+				l_tree = l_chunkTree.getChildWithName(Identifier(childName));
 				if (l_tree.isValid()) {
 					processor->m_pVASTXperience.m_Set.m_MSEGData_changed[mseg].setValueTreeState(&l_tree, true, &processor->m_pVASTXperience.m_Set); //is mseg
 					processor->m_pVASTXperience.m_Set.m_MSEGData[mseg].setValueTreeState(&l_tree, true, &processor->m_pVASTXperience.m_Set); //is mseg
@@ -1341,8 +1340,8 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 
 			//step seqs
 			for (int i = 0; i < 3; i++) {
-				String childName = "stepSeqData" + String(i);
-				ValueTree l_tree = l_chunkTree.getChildWithName(Identifier(childName));
+				childName = "stepSeqData" + String(i);
+				l_tree = l_chunkTree.getChildWithName(Identifier(childName));
 				if (l_tree.isValid()) {
 					processor->m_pVASTXperience.m_Set.m_StepSeqData_changed[i].setValueTreeState(&l_tree, false, &processor->m_pVASTXperience.m_Set); //is stepseq
 					processor->m_pVASTXperience.m_Set.m_StepSeqData[i].setValueTreeState(&l_tree, false, &processor->m_pVASTXperience.m_Set); //is stepseq
@@ -1351,8 +1350,8 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 
 			//arp
 			for (int i = 0; i < 1; i++) { //only one
-				String childName = "arpData" + String(i);
-				ValueTree l_tree = l_chunkTree.getChildWithName(Identifier(childName));
+				childName = "arpData" + String(i);
+				l_tree = l_chunkTree.getChildWithName(Identifier(childName));
 				if (l_tree.isValid()) {
 					processor->m_pVASTXperience.m_Set.m_ARPData_changed.setValueTreeState(&l_tree);
 					processor->m_pVASTXperience.m_Set.m_ARPData.setValueTreeState(&l_tree);
@@ -1361,22 +1360,22 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 
 			//fx bus
 			{
-				String childName = "fxBusData" + String(1);
-				ValueTree l_tree = l_chunkTree.getChildWithName(Identifier(childName));
+				childName = "fxBusData" + String(1);
+				l_tree = l_chunkTree.getChildWithName(Identifier(childName));
 				if (l_tree.isValid()) {
 					processor->m_pVASTXperience.m_fxBus1.setValueTreeState(&l_tree);
 				}
 			}
 			{
-				String childName = "fxBusData" + String(2);
-				ValueTree l_tree = l_chunkTree.getChildWithName(Identifier(childName));
+				childName = "fxBusData" + String(2);
+				l_tree = l_chunkTree.getChildWithName(Identifier(childName));
 				if (l_tree.isValid()) {
 					processor->m_pVASTXperience.m_fxBus2.setValueTreeState(&l_tree);
 				}
 			}
 			{
-				String childName = "fxBusData" + String(3);
-				ValueTree l_tree = l_chunkTree.getChildWithName(Identifier(childName));
+				childName = "fxBusData" + String(3);
+				l_tree = l_chunkTree.getChildWithName(Identifier(childName));
 				if (l_tree.isValid()) {
 					processor->m_pVASTXperience.m_fxBus3.setValueTreeState(&l_tree);
 				}
@@ -1421,7 +1420,7 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 			}
 		}
 		else
-			processor->setErrorState(10);
+			processor->setErrorState(vastErrorState::errorState10_loadPresetChunkDataInvalid);
 	}
 	else {
 		processor->initializeToDefaults();
@@ -1459,7 +1458,7 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 	processor->m_pVASTXperience.m_Poly.m_OscBank[3]->setChangedFlag();
 
 	if (b_success == false) {
-		processor->setErrorState(11);
+		processor->setErrorState(vastErrorState::errorState11_loadPresetUnsuccessful);
 		processor->requestUIAlert();
 		processor->requestUIInit();
 		//---------------------------------------------------------------------------------------
@@ -1631,9 +1630,9 @@ void VASTAudioProcessor::setParameterText(StringRef parName, StringRef textVal, 
 		else
 			param->setValueNotifyingHost(nvalue);
 	}
-	else {
+	//else {
 		//jassert(false); //ignore - unused param in preset xml file
-	}
+	//}
 }
 
 AudioProcessorValueTreeState& VASTAudioProcessor::getParameterTree() {
@@ -1804,13 +1803,13 @@ String VASTAudioProcessor::getVSTPathAlternative() {
 
 	for (int i = 0; i < defaultVSTPaths.getNumPaths(); i++) {
 		String filename = defaultVSTPaths[i].getFullPathName() + "\\" + CONST_DLL_NAME;
-		File file = File(filename);
+		file = File(filename);
 		if (file.existsAsFile())
 			return defaultVSTPaths[i].getFullPathName();
 	}
 	for (int i = 0; i < defaultVSTPaths.getNumPaths(); i++) {
 		String filename = defaultVSTPaths[i].getFullPathName() + "\\VASTvaporizer\\" + CONST_DLL_NAME;
-		File file = File(filename);
+		file = File(filename);
 		if (file.existsAsFile())
 			return defaultVSTPaths[i].getFullPathName() + "\\VASTvaporizer\\";
 	}
@@ -1869,7 +1868,6 @@ bool VASTAudioProcessor::readLicense() {
 		}
 		else { //to allow that keyfile can still be placed where the dll is even when install folder exists
 			filename = File(getVSTPathAlternative()).getChildFile("VASTvaporizer.key").getFullPathName();
-			ifstream licensefile;
 			const char* fname = filename.toRawUTF8();
 			licensefile.open(fname);
 			//ifstream licesefile(filename.toStdString()); //due to OSX 10.6 compatibility
@@ -1906,7 +1904,7 @@ bool VASTAudioProcessor::readLicense() {
 }
 
 
-void VASTAudioProcessor::threadedPingCheck(Component::SafePointer<Label> safePointerLabel, VASTAudioProcessor* processor) {
+void VASTAudioProcessor::threadedPingCheck(Component::SafePointer<Label> safePointerLabel, VASTAudioProcessor*) {
 	// removed in OS version
 }
 
@@ -2373,7 +2371,7 @@ bool VASTAudioProcessor::writeSettingsToFile() {
 	FileOutputStream out(file);
 	if (out.failedToOpen()) {
 		cerr << "open failure: " << strerror(errno) << '\n';
-		setErrorState(12);
+		setErrorState(vastErrorState::errorState12_writeSettingsToFileFailed);
 		assert(true);
 		return false;
 	}
@@ -2669,7 +2667,7 @@ bool VASTAudioProcessor::readSettingsFromFile() {
 	}
 	else {
 		String error = myDocument.getLastParseError();
-		setErrorState(13);
+		setErrorState(vastErrorState::errorState13_readSettingsFromFileFailed);
 		jassert(false); // broken XML?
 		return false;
 	}
@@ -2929,10 +2927,10 @@ void VASTAudioProcessor::loadDefaultMidiMapping() {
 	int lSize = sizeof(lMapping) / sizeof(lMapping[0]); //size of array
 	for (int i = 0; i < lSize; i++) {
         std::unique_ptr<String> variableName(new String(lMapping[i].variableName));
-		for (int i = 0; i < getParameters().size(); i++) {
-			AudioProcessorParameterWithID* param = (AudioProcessorParameterWithID*)getParameters()[i];			
+		for (int j = 0; j < getParameters().size(); j++) {
+			AudioProcessorParameterWithID* param = (AudioProcessorParameterWithID*)getParameters()[j];			
 			if (param->paramID.equalsIgnoreCase(*variableName.get())) {
-				m_MidiMapping[lMapping[i].midiCC].paramID = i;
+				m_MidiMapping[lMapping[i].midiCC].paramID = j;
 			}
 		}
 	}
@@ -2946,13 +2944,13 @@ void VASTAudioProcessor::loadDefaultMidiMapping() {
 		FileOutputStream out(file);
 		if (out.failedToOpen()) {
 			cerr << "open failure: " << strerror(errno) << '\n';
-			setErrorState(14);
+			setErrorState(vastErrorState::errorState14_loadDefaultMidiMappingFailed);
 			assert(true);
 		}
 		for (int i = 0; i < lSize; i++) {
             std::unique_ptr<String> variableName(new String(lMapping[i].variableName));
-			for (int i = 0; i < getParameters().size(); i++) {
-				AudioProcessorParameterWithID* param = (AudioProcessorParameterWithID*)getParameters()[i];
+			for (int j = 0; j < getParameters().size(); j++) {
+				AudioProcessorParameterWithID* param = (AudioProcessorParameterWithID*)getParameters()[j];
 				if (param->paramID.equalsIgnoreCase(*variableName.get())) {
                     std::unique_ptr<String> outLine(new String(String(lMapping[i].midiCC) + "," + param->paramID + "," + lMapping[i].variableName + "\n"));
 					out.writeText(*outLine.get(), false, false, "\n");

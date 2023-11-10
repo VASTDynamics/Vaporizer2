@@ -1039,7 +1039,7 @@ bool VASTOscilloscope::isInterestedInFileDrag(const StringArray& files) {
 	return l_interested;
 };
 
-void VASTOscilloscope::filesDropped(const StringArray& files, int x, int y) {
+void VASTOscilloscope::filesDropped(const StringArray& files, int , int ) {
 	if (myWtEditor == nullptr) return;
 	myWtEditor->loadWTFile(files[0]); //only one
 }
@@ -1050,7 +1050,7 @@ void VASTOscilloscope::fileDragExit(const StringArray& files) {
 }
 */
 
-void VASTOscilloscope::mouseUp(const MouseEvent &e) {
+void VASTOscilloscope::mouseUp(const MouseEvent &) {
 	m_rightDownY = -1;
 	if (myWtEditor == nullptr) return;
 	ModifierKeys modifiers = ModifierKeys::getCurrentModifiersRealtime();
@@ -1058,7 +1058,7 @@ void VASTOscilloscope::mouseUp(const MouseEvent &e) {
 		m_isBeingDragged = false;
 }
 
-void VASTOscilloscope::mouseWheelMove(const MouseEvent &event, const MouseWheelDetails &wheel) {
+void VASTOscilloscope::mouseWheelMove(const MouseEvent &, const MouseWheelDetails &wheel) {
 	if (myWtEditor == nullptr) return;
 	if (myProcessor->m_iWTEditorDrawMode != OscillatorEditMode::SelectMode) return;
 	bool lExtend = (wheel.deltaY > 0.f);
@@ -1240,7 +1240,7 @@ void VASTOscilloscope::handleBorderDisplay() {
 	//DBG("handleBorderDisplay " + l_oscbank + " " + String(editorSelectedOscBank == true ? "true" : "false") + " " + String(m_bMouseover == true ? "true" : "false"));
 }
 
-void VASTOscilloscope::mouseDown(const MouseEvent &e) {
+void VASTOscilloscope::mouseDown(const MouseEvent &) {
 	ModifierKeys modifiers = ModifierKeys::getCurrentModifiersRealtime();
 	if (myWtEditor == nullptr) {
 		//click on bank osci
@@ -1652,13 +1652,13 @@ void VASTOscilloscope::mouseDown(const MouseEvent &e) {
 	}
 }
 
-void VASTOscilloscope::mouseMove(const MouseEvent& event) {
+void VASTOscilloscope::mouseMove(const MouseEvent& ) {
 	m_bMouseover = true;	
 	handleBorderDisplay();
 	repaint();
 }
 
-void VASTOscilloscope::mouseExit(const MouseEvent& event) {
+void VASTOscilloscope::mouseExit(const MouseEvent& ) {
 	m_bMouseover = false;
 	handleBorderDisplay();
 	repaint();

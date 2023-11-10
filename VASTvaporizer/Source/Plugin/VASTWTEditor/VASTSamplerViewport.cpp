@@ -128,7 +128,7 @@ void VASTSamplerViewport::paint(Graphics& g)
 	//g.drawImageAt(waveformImageWithBorder, lVisibleArea.getBottomLeft().getX(), 0);
 }
 
-void VASTSamplerViewport::visibleAreaChanged(const juce::Rectangle<int>& newVisibleArea) {
+void VASTSamplerViewport::visibleAreaChanged(const juce::Rectangle<int>& ) {
 	if (this->isVisible()) { //skip on close
 		updateContentAsync();
 	}
@@ -490,7 +490,7 @@ void VASTSamplerViewport::notifySelectionChanged() {
 	}
 }
 
-void VASTSamplerViewport::mouseDoubleClick(const MouseEvent &e) {
+void VASTSamplerViewport::mouseDoubleClick(const MouseEvent &) {
 	VASTSamplerSound* samplerSound = myWtEditor->getCurSamplerSound();
 	if (samplerSound == nullptr) return;
 
@@ -502,7 +502,7 @@ void VASTSamplerViewport::mouseDoubleClick(const MouseEvent &e) {
 	updateContent(false);
 }
 
-void VASTSamplerViewport::mouseMove(const MouseEvent& event) {
+void VASTSamplerViewport::mouseMove(const MouseEvent& ) {
 	m_bMouseover = true;
 	handleBorderDisplay();
 	repaint();
@@ -621,7 +621,7 @@ void VASTSamplerViewport::mouseWheelMove(const MouseEvent& event, const MouseWhe
 	}	
 }
 
-void VASTSamplerViewport::mouseDown(const MouseEvent &e) {
+void VASTSamplerViewport::mouseDown(const MouseEvent &) {
 	ModifierKeys modifiers = ModifierKeys::getCurrentModifiersRealtime();
 	//int x = e.getMouseDownX();
 	//int y = e.getMouseDownY();
@@ -865,7 +865,7 @@ void VASTSamplerViewport::sampleDetermineFreq() {
 	}
 }
 
-void VASTSamplerViewport::filesDropped(const StringArray& files, int x, int y) {
+void VASTSamplerViewport::filesDropped(const StringArray& files, int x, int ) {
 	VASTSamplerSound* lVASTSamplerSound = myWtEditor->loadWavFile(files[0]); //only one
 	if (lVASTSamplerSound != nullptr) {
 		VASTSynthesiserSound* lSynthSound = (VASTSynthesiserSound*)(myProcessor->m_pVASTXperience.m_Poly.getSynthesizer()->getSound(0));

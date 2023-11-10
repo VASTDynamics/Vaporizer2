@@ -30,9 +30,11 @@ VASTAudioProcessor* VASTImageButton::getAudioProcessor() {
 }
 
 void VASTImageButton::mouseDrag(const MouseEvent &e) {
-	if (m_processor == nullptr) return; //not draggable
+	if (m_processor == nullptr) 
+		return; //not draggable
 	VASTAudioProcessorEditor* editor = (VASTAudioProcessorEditor*)m_processor->getActiveEditor();
-	if (editor == nullptr) return;
+	if (editor == nullptr) 
+		return;
 	Image img = this->getOverImage().rescaled(32, 32, juce::Graphics::ResamplingQuality::highResamplingQuality);
 	Image result = img.createCopy();	
 	Graphics g(result);
