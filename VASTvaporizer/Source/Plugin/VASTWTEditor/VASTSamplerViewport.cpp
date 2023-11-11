@@ -405,7 +405,6 @@ void VASTSamplerViewport::mouseDrag(const MouseEvent &e) { // show value
 			else
 				start = lZeroCrossings[lZeroCrossings.size() - 1] / step;
 			
-			i = 0;
 			for (i = 0; i < lZeroCrossings.size(); i++)
 				if (lZeroCrossings[i] > end * step)
 					break;

@@ -1827,14 +1827,8 @@ void VASTLookAndFeel::drawRotarySlider(Graphics& g, int x, int y, int width, int
 	if (radius30perc <= 1.f) radius30perc = 1;
 	float radius40perc = radius * 0.4f;
 	if (radius40perc <= 1.f) radius40perc = 1;
-	float radius50perc = radius * 0.5f;
-	if (radius50perc <= 1.f) radius50perc = 1;
-	//int radius60perc = radius * 0.6f;
-	//if (radius60perc == 0) radius60perc = 1;
 	int radius70perc = radius * 0.7f;
 	if (radius70perc <= 1.f) radius70perc = 1;
-	//int radius80perc = radius * 0.8f;
-	//if (radius80perc == 0) radius80perc = 1;
 
 	//g.setColour(Colour(90,90,90));
 	//g.fillEllipse(rx, ry, rw, rw);

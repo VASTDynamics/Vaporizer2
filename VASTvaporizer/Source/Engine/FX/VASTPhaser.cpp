@@ -205,8 +205,7 @@ void CVASTPhaser::prepareToPlay(double , int samplesPerBlock) {
 
 	filters.clear();
 	for (int i = 0; i < 2 * numFiltersPerChannel; ++i) {
-		Filter* filter;
-		filters.add(filter = new Filter());
+		filters.add(new Filter());
 	}
 
 	filteredOutputs.clear();

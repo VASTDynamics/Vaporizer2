@@ -1795,7 +1795,7 @@ inline float calcLogControl(float fVar)
 */
 inline float calcAntiLogControl(float fVar)
 {
-	return fVar = (pow((float)10.0, fVar) - 1.0) / 9.0;
+	return (pow((float)10.0, fVar) - 1.0) / 9.0;
 }
 // ----------------------------------------------------------------------------- //
 

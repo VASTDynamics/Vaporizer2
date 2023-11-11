@@ -1044,8 +1044,7 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 	}
 
 	if (0 == parameterID.compare("m_fSamplerCents")) {
-		VASTSamplerSound* sound = (VASTSamplerSound*)m_Poly.getSamplerSoundChanged();
-		sound = (VASTSamplerSound*)m_Poly.getSamplerSound();
+		VASTSamplerSound* sound = (VASTSamplerSound*)m_Poly.getSamplerSound();
 		if (sound != nullptr) {
 			for (int i = 0; i < m_Set.m_uMaxPoly; i++) {
 				m_Poly.m_singleNote[i]->samplerUpdatePitch(sound, true);

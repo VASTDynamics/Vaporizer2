@@ -591,7 +591,7 @@ void CVASTSingleNote::samplerRenderNextBlock(AudioSampleBuffer* outputBuffer, in
 		while (--lnumSamples >= 0)
 		{
 			counter++;
-			inputState.currentFrame = static_cast<uint64_t>(startSample) + counter;
+			inputState.currentFrame = startSample + counter;
 
 			float lValGrains = 0.f;
 			float rValGrains = 0.f;

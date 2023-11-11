@@ -90,7 +90,7 @@ public:
 
 	void calcSegmentCoefficients(int samplerate, ULong64_t startPlayTimestamp, int activeSegment, int samplesSinceSegmentStart, int segmentLengthInSamples, CVASTSettings* set, int voiceNo);
 
-	double getTotalDuration(); //this is per definition in this model! // not const
+	double calcTotalDuration(); //this is per definition in this model! // not const
 	
 	void setXYValues(int pointno, double newxval, double newyval);
 	void setCurveValues(int pointno, double newval);

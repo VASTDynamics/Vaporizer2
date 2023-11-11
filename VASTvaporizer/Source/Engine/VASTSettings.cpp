@@ -943,7 +943,7 @@ float CVASTSettings::getParameterValueWithMatrixModulation(std::atomic<float> *p
 	}
 	else {
 		if (modVal < 0.f)
-			multiplier = 1.f - multiplier;
+			multiplier0to1 = 1.f - multiplier0to1;
 	}
 
 	if (isModulating != nullptr)

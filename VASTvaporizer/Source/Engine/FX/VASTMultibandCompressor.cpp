@@ -488,11 +488,11 @@ void CVASTMultibandCompressor::processBlock (AudioSampleBuffer& buffer, MidiBuff
 
 // Low compressor function
 void CVASTMultibandCompressor::compressorLB(AudioSampleBuffer &buffer, int m, modMatrixInputState& inputState, const int numSamples) {
-	float thresholdLB = *m_fMBCompThresholdLB;
+    float thresholdLB {};
 	float tauAttackLB = *m_fMBCompAttackLB;
 	float tauReleaseLB = *m_fMBCompReleaseLB;
-	float ratioLB = *m_fMBCompRatioLB;
-	float makeUpGainLB = *m_fMBCompGainLB;
+    float ratioLB {};
+    float makeUpGainLB {};
 
 	float alphaAttackLB = exp(-1 / (0.001 * m_iSampleRate * tauAttackLB));
 	float alphaReleaseLB = exp(-1 / (0.001 * m_iSampleRate * tauReleaseLB));
@@ -532,11 +532,11 @@ void CVASTMultibandCompressor::compressorLB(AudioSampleBuffer &buffer, int m, mo
 
 // Mid compressor function
 void CVASTMultibandCompressor::compressorMB(AudioSampleBuffer &buffer, int m, modMatrixInputState& inputState, const int numSamples) {
-	float thresholdMB = *m_fMBCompThresholdMB;
+    float thresholdMB {};
 	float tauAttackMB = *m_fMBCompAttackMB;
 	float tauReleaseMB = *m_fMBCompReleaseMB;
-	float ratioMB = *m_fMBCompRatioMB;
-	float makeUpGainMB = *m_fMBCompGainMB;
+    float ratioMB {};
+    float makeUpGainMB {};
 
 	float alphaAttackMB = exp(-1 / (0.001 * m_iSampleRate * tauAttackMB));
 	float alphaReleaseMB = exp(-1 / (0.001 * m_iSampleRate * tauReleaseMB));
@@ -576,11 +576,11 @@ void CVASTMultibandCompressor::compressorMB(AudioSampleBuffer &buffer, int m, mo
 
 //High compressor function
 void CVASTMultibandCompressor::compressorHB(AudioSampleBuffer &buffer, int m, modMatrixInputState& inputState, const int numSamples) {
-	float thresholdHB = *m_fMBCompThresholdHB;
+    float thresholdHB {};
 	float tauAttackHB = *m_fMBCompAttackHB;
 	float tauReleaseHB = *m_fMBCompReleaseHB;
-	float ratioHB = *m_fMBCompRatioHB;
-	float makeUpGainHB = *m_fMBCompGainHB;
+    float ratioHB {};
+    float makeUpGainHB {};
 
 	float alphaAttackHB = exp(-1 / (0.001 * m_iSampleRate * tauAttackHB));
 	float alphaReleaseHB = exp(-1 / (0.001 * m_iSampleRate * tauReleaseHB));

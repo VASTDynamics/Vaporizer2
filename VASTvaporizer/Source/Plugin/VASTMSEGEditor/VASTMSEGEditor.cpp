@@ -173,7 +173,7 @@ void VASTMSEGEditor::updateContent(bool force)
 	if (myData->getSynch()) {
 		int beats = myData->getTimeBeats();
 
-		float displayPeriod = myData->getTotalDuration();
+		float displayPeriod = myData->calcTotalDuration();
 		float millisPerBeat = myProcessor->m_pVASTXperience.m_Set.getMillisecondsPerBeat();
 		float intRatio = myProcessor->m_pVASTXperience.m_Set.getIntervalRatio(beats);
 		float stepsPerDisplay = (displayPeriod / (millisPerBeat * intRatio));
@@ -346,7 +346,7 @@ void VASTMSEGEditor::updateContent(bool force)
 		int beats = myData->getTimeBeats();
 		Colour col1 = myProcessor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colLabelText);
 		g.setColour(col1.withAlpha(1.f));
-		g.drawText(TRANS("Total   ") + String(round(myData->getTotalDuration())) + String(" ms in ") + String(CVASTParamState::comboBoxValueToTextFunction_TIMEBEATS(beats) + " beats"), juce::Rectangle<int>(x1, waveformImage.getHeight() - fontHeight - 2.f, wi, fontHeight + 2.f), Justification::centred, false);
+		g.drawText(TRANS("Total   ") + String(round(myData->calcTotalDuration())) + String(" ms in ") + String(CVASTParamState::comboBoxValueToTextFunction_TIMEBEATS(beats) + " beats"), juce::Rectangle<int>(x1, waveformImage.getHeight() - fontHeight - 2.f, wi, fontHeight + 2.f), Justification::centred, false);
 		g.drawText(TRANS("Decay   ") + String(round(myData->getDecaySteps())), juce::Rectangle<int>(x3, waveformImage.getHeight() - fontHeight - 2.f, wi, fontHeight + 2.f), Justification::centred, false);
 		if (!myData->hasAttackPhase())
 			g.setColour(col1.withAlpha(0.3f));
@@ -361,7 +361,7 @@ void VASTMSEGEditor::updateContent(bool force)
 	} else {
 		Colour col1 = myProcessor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colLabelText);
 		g.setColour(col1.withAlpha(1.f));
-		g.drawText(TRANS("Total   ") + String(round(myData->getTotalDuration())) + String(" ms"), juce::Rectangle<int>(x1, waveformImage.getHeight() - fontHeight - 2.f, wi, fontHeight + 2.f), Justification::centred, false);
+		g.drawText(TRANS("Total   ") + String(round(myData->calcTotalDuration())) + String(" ms"), juce::Rectangle<int>(x1, waveformImage.getHeight() - fontHeight - 2.f, wi, fontHeight + 2.f), Justification::centred, false);
 		g.drawText(TRANS("Decay   ") + String(round(myData->getDecayTime())) + String(" ms"), juce::Rectangle<int>(x3, waveformImage.getHeight() - fontHeight - 2.f, wi, fontHeight + 2.f), Justification::centred, false);
 		if (!myData->hasAttackPhase())
 			g.setColour(col1.withAlpha(0.3f));

@@ -331,7 +331,7 @@ void VASTAudioProcessorEditor::showNewerVersionPopup() {
 			if (!worked)
 				DBG("Launch browser did not work.");
 #endif
-
+            worked = true;
 		}
 		m_alertWindow->setLookAndFeel(nullptr);
 		m_alertWindow = nullptr;

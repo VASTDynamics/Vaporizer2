@@ -2443,7 +2443,7 @@ void VASTWaveTableEditorComponent::loadWTFileThread(juce::File file, VASTWaveTab
     std::unique_ptr<AudioFormatReader> reader(formatManager->createReaderFor(file)); //use first hit
 	if (reader != nullptr)
 	{
-		int len = reader->lengthInSamples;
+		int len = static_cast<int>(reader->lengthInSamples);
 		int wTIndex = 0;
 		//serum format has always 2048 samples
 
@@ -2745,12 +2745,8 @@ void VASTWaveTableEditorComponent::replaceWithCutCopiedPositions() {
 	}
 
 	int origPos = 0;
-	int origPosEnd = 0;
-	bool wasMultiSelected = false;
 	if (wavetable->isMultiSelected()) {
-		wasMultiSelected = true;
 		origPos = wavetable->getMultiSelectBegin();
-		origPosEnd = wavetable->getMultiSelectEnd();
 	}
 	else {
 		origPos = wavetable->getSelectedWtPos();
@@ -2787,12 +2783,6 @@ void VASTWaveTableEditorComponent::replaceWithCutCopiedPositions() {
 	wavetable->setSelectedWtPos(origPos);
 	myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank]->setWavetableSoftFade(wavetable);
 	myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank]->removeSoftFadeEditor();
-	//m_positionviewport->setZoomFactor(c_waveTableEditorView->getHeader()->getWTEditorZoom()->getValue());
-
-	//setWtPos(origPos);
-	//if (wasMultiSelected) {
-		//setMultiSelect(origPosEnd);
-	//}
 }
 
 void VASTWaveTableEditorComponent::insertCutCopiedPositions(bool beforeSelection, bool deleteAllPosBefore) {

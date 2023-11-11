@@ -252,11 +252,13 @@ void VASTOscilloscope::updateContent(bool force) {
 		return;
 	}
 
-	bool editorSelectedOscBank = false;
+	/*
+    bool editorSelectedOscBank = false;
 	if ((myWtEditor == NULL) && (myEditor != nullptr) && (myEditor->vaporizerComponent != nullptr) && (myEditor->vaporizerComponent->getWaveTableEditorComponent() != nullptr) ) {
 		if (l_oscillatorBank == myEditor->vaporizerComponent->getWaveTableEditorComponent()->getOscBank())
 			editorSelectedOscBank = true;
 	}
+     */
 
 	int note = myProcessor->m_pVASTXperience.m_Poly.getLastNotePlayed();
 	if (note < 0) {
@@ -662,12 +664,6 @@ void VASTOscilloscope::updateContent(bool force) {
 		Path myCurrentWtposWave;
 		float lastyoffset = -99999999.f;
 		int lastwtposint = C_MAX_NUM_POSITIONS;
-
-		bool b_hasNext = false;
-		if (safeWtPosInt < (numWTPos - 1)) { //has next? //check numpos or numwtpos??
-			b_hasNext = true;
-		}
-
 		float interpol = m_safeWtPosFloat - safeWtPosInt;
 
 		if (waveformImagePerspectiveBuffer.isNull() || !m_hasWaveformImagePerspectiveBuffer) {
@@ -962,10 +958,6 @@ void VASTOscilloscope::mouseDrag(const MouseEvent &e) { // show value
 		edit_thread.detach();
 	}
 	else { //draw mode free
-		bool right = false;
-		if (modifiers.isPopupMenu()) {
-			right = true;
-		}
 		int start = e.getMouseDownX();
 		int starty = e.getMouseDownY();
 		int endy = starty + e.getDistanceFromDragStartY();
@@ -1217,13 +1209,16 @@ void VASTOscilloscope::handleBorderDisplay() {
 			editorSelectedOscBank = true;
 	}
 	if (editorSelectedOscBank) {
-		g.setColour(myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeSelection));
+        if (myEditor!=nullptr)
+            g.setColour(myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeSelection));
 	}
 	else if (m_bMouseover) {
-		g.setColour(myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeSelection).darker(0.6f));
+        if (myEditor!=nullptr)
+            g.setColour(myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeSelection).darker(0.6f));
 	}
 	else {
-		g.setColour(myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeSelection).darker(1.0f));
+        if (myEditor!=nullptr)
+            g.setColour(myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeSelection).darker(1.0f));
 	}
 	g.drawRect(0.f, 0.f, float(waveformImage.getWidth() - 1), float(waveformImage.getHeight() - 1), 1.f * scale);
 
@@ -1671,7 +1666,7 @@ void VASTOscilloscope::singleCycleFromMSEG(int msegNo) {
 
 	VASTMSEGData myData = VASTMSEGData(myProcessor->m_pVASTXperience.m_Set.m_MSEGData[msegNo]);
 	VASTMSEGData myDataLive = VASTMSEGData(myProcessor->m_pVASTXperience.m_Set.m_MSEGData_changed[msegNo]);
-	float totDur = myData.getTotalDuration(); //ms
+	float totDur = myData.calcTotalDuration(); //ms
 	for (int i = 0; i < myData.controlPoints.size(); i++) {
 		//myData.controlPoints[i].isDecay = false;
 		//myData.controlPoints[i].isSustain = false;

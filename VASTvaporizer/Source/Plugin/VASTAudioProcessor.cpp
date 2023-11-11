@@ -2441,7 +2441,7 @@ bool VASTAudioProcessor::readSettingsFromFile() {
 	if (xml != nullptr) {
 		if (xml->getTagName() == "VASTVaporizerSettingsV1.000") { 	//generic version 20.2.15
 			if (xml != NULL) {
-				for (auto* (pChild) : ((*xml).macroBasedForLoop(), (*xml).getChildIterator())) {
+				for (auto* (pChild) : ((*xml).getChildIterator())) {
 					if (pChild->hasTagName("Settings"))
 					{
 						for (int i = 0; i < pChild->getNumAttributes(); i++) {
@@ -2531,9 +2531,9 @@ bool VASTAudioProcessor::readSettingsFromFile() {
 					if (pChild->hasTagName("PresetData")) {
 						m_presetData.m_favorites.clear();
 						m_presetData.m_stars.clear();
-						for (auto* (pPresetData) : ((*pChild).macroBasedForLoop(), (*pChild).getChildIterator())) {
+						for (auto* (pPresetData) : ((*pChild).getChildIterator())) {
 							if (pPresetData->hasTagName("Favorites")) {
-								for (auto* (pPresetFavorites) : ((*pPresetData).macroBasedForLoop(), (*pPresetData).getChildIterator())) {
+								for (auto* (pPresetFavorites) : ((*pPresetData).getChildIterator())) {
 									String internalid = "";
 									String favoriteNo = "";
 									if (pPresetFavorites->getAttributeName(0) == "PresetID")
@@ -2549,7 +2549,7 @@ bool VASTAudioProcessor::readSettingsFromFile() {
 								}
 							}
 							if (pPresetData->hasTagName("Stars")) {
-								for (auto* (pPresetStars) : ((*pPresetData).macroBasedForLoop(), (*pPresetData).getChildIterator())) {
+								for (auto* (pPresetStars) : ((*pPresetData).getChildIterator())) {
 									String internalid = "";
 									String ranking = "";
 									if (pPresetStars->getAttributeName(0) == "PresetID")
@@ -2569,7 +2569,7 @@ bool VASTAudioProcessor::readSettingsFromFile() {
 					}				
 					if (pChild->hasTagName("MIDIMapping"))
 					{
-						for (auto* (pMIDIMapping) : ((*pChild).macroBasedForLoop(), (*pChild).getChildIterator())) {						
+						for (auto* (pMIDIMapping) : ((*pChild).getChildIterator())) {
 							if (pMIDIMapping->hasTagName("ControllerCC"))
 							{
 								for (int i = 0; i < pMIDIMapping->getNumAttributes(); i++) {

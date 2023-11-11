@@ -351,7 +351,7 @@ int VASTQFilter::processBlock(OwnedArray<VASTSynthesiserVoice>* voices, modMatri
 			}
 			if (doit) {
 				matrixInputState->voiceNo = voiceNo;
-				float lFilterEnvMod = paramFilterEnvMod;
+                float lFilterEnvMod{};
 				if (isUI) {
 					fVCFEnvelopeMod = 1.0f;
 				} 

@@ -280,7 +280,6 @@ void VASTValueTreeItem::paintItem(Graphics& g, int width, int height)
 	}
 	else if (tree["id"].toString() == "newest") {
 		g.setColour(Colours::darkcyan.darker(0.4f).withAlpha(0.7f));
-		numFavs = _presetComponent->myProcessor->m_presetData.getNumFavorites(4);
 	}
 	else if (tree["id"].toString() == "stars") {
 		textindent = 10 * wf;

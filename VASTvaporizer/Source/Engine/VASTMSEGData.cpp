@@ -340,7 +340,7 @@ void VASTMSEGData::initToAHDSR(int msegNo) {
 }
 
 
-void VASTMSEGData::calcSegmentCoefficients(int samplerate, ULong64_t startPlayTimestamp, int activeSegment, int samplesSinceSegmentStart, int segmentLengthInSamples, CVASTSettings* set, int voiceNo) {
+void VASTMSEGData::calcSegmentCoefficients(int samplerate, ULong64_t, int activeSegment, int samplesSinceSegmentStart, int segmentLengthInSamples, CVASTSettings*, int voiceNo) {
 	if (activeSegment >= getNumSegments()) {
 		activeSegment = 0;
 		m_isDirty.store(true);
@@ -360,7 +360,7 @@ void VASTMSEGData::calcSegmentCoefficients(int samplerate, ULong64_t startPlayTi
 
 		//float lMinSegmenDurationMs = 0.5f; //minimum segment 3ms? attack shall be 1ms filter 45ms?
 		//float lMinSegmenDurationSamples = m_iSampleRate * (lMinSegmenDurationMs / 1000.0f);
-		int totalDurationInSamples = int(getTotalDuration() / 1000.f * samplerate);
+        int totalDurationInSamples = int(calcTotalDuration() / 1000.f * samplerate);
 		endPoint->segmentLengthInSamples = int((endPoint->xVal - startPoint->xVal) * totalDurationInSamples);
 		//endPoint->segmentLengthInSamples = (endPoint->segmentLengthInSamples < lMinSegmenDurationSamples) ? lMinSegmenDurationSamples : endPoint->segmentLengthInSamples;
 
@@ -398,7 +398,7 @@ void VASTMSEGData::calcSegmentCoefficients(int samplerate, ULong64_t startPlayTi
 	m_needsUIUpdate.store(true);
 }
 
-double VASTMSEGData::getTotalDuration() {
+double VASTMSEGData::calcTotalDuration() {
 	double dur = m_fDecayTimeExternalSet.load();
 	if (hasAttackPhase()) dur += m_fAttackTimeExternalSet.load();
 	else {
@@ -548,7 +548,7 @@ void VASTMSEGData::calcADSR() {
 		for (int i = 0; i < controlPoints.size(); i++)
 			controlPoints[i].xVal /= lastx; //bring last point to 1.0;
 
-	double totalBefore = getTotalDuration();
+	double totalBefore = calcTotalDuration();
 
 	int susPoint = getSustainPoint();	
 	if (susPoint != -1) {
@@ -612,8 +612,12 @@ void VASTMSEGData::calcADSR() {
         m_bADSR_updated.store(true);
 	}
 
-	double totalAfter = getTotalDuration(); //needed
+#if JUCE_DEBUG
+	double totalAfter = calcTotalDuration(); //needed
 	jassert(abs(totalAfter - totalBefore) < 0.001);
+#else
+    calcTotalDuration(); 
+#endif
 }
 
 bool VASTMSEGData::hasReleasePhase() const {
@@ -729,14 +733,14 @@ void VASTMSEGData::doADSR() {
 	}
 	vassert((attackPerc + releasePerc + decayPerc - 1.f) < 0.1f);
 
-	if (getTotalDuration() == 0.f) return;
+	if (calcTotalDuration() == 0.f) return;
 
 	//double newAttackPerc = ((m_fAttackTimeExternalSet + 0.000001) / getTotalDuration());
 	//double newDecayPerc = ((m_fDecayTimeExternalSet + 0.000001) / getTotalDuration());
 	//double newReleasePerc = ((m_fReleaseTimeExternalSet + 0.000001) / getTotalDuration());
-	double newAttackPerc = ((m_fAttackTimeExternalSet.load() + 0.0000000001) / getTotalDuration());
-	double newDecayPerc = ((m_fDecayTimeExternalSet.load() + 0.0000000001) / getTotalDuration());
-	double newReleasePerc = ((m_fReleaseTimeExternalSet.load() + 0.0000000001) / getTotalDuration());
+	double newAttackPerc = ((m_fAttackTimeExternalSet.load() + 0.0000000001) / calcTotalDuration());
+	double newDecayPerc = ((m_fDecayTimeExternalSet.load() + 0.0000000001) / calcTotalDuration());
+	double newReleasePerc = ((m_fReleaseTimeExternalSet.load() + 0.0000000001) / calcTotalDuration());
 
 	m_fAttackTime.store(m_fAttackTimeExternalSet.load()); //CHECK
 	m_fDecayTime.store(m_fDecayTimeExternalSet.load());//CHECK
@@ -1172,7 +1176,7 @@ void VASTMSEGData::toggleDecayPoint(int pointno) {
 			controlPoints[i].isSustain = false;
 	}
 	//double totalDuration =
-    getTotalDuration(); //to set externals
+    calcTotalDuration(); //to set externals
 	calcADSR();
 }
 
@@ -1187,7 +1191,7 @@ void VASTMSEGData::toggleLoopStart(int pointno) {
 	controlPoints[pointno].isLoopStart = !oldVal;
 	checkLoop();
     //double totalDuration =
-    getTotalDuration(); //to set externals
+    calcTotalDuration(); //to set externals
 }
 
 void VASTMSEGData::toggleMPELift(int pointno) {
@@ -1201,7 +1205,7 @@ void VASTMSEGData::toggleMPELift(int pointno) {
 	controlPoints[pointno].isMPELift = !oldVal; //can have multiple
 	checkLoop();
 	//double totalDuration =
-	getTotalDuration(); //to set externals
+	calcTotalDuration(); //to set externals
 }
 
 void VASTMSEGData::toggleSustainPoint(int pointno) {
@@ -1219,7 +1223,7 @@ void VASTMSEGData::toggleSustainPoint(int pointno) {
 	}
 	checkLoop();
 	//double totalDuration =
-    getTotalDuration(); //to set externals
+    calcTotalDuration(); //to set externals
 	calcADSR();
 }
 

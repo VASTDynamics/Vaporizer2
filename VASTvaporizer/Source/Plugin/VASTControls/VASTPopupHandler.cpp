@@ -243,7 +243,6 @@ void VASTPopupHandler::mouseDown(const MouseEvent &e) {
 				String cid = _parameterslider->getComponentID();
 				int modmatdest = myProcessor->autoParamGetDestination(cid);
 				if (modmatdest > 0) { //-1 and 0 are not wanted
-					isDDTarget = true;
 					if (myProcessor->m_pVASTXperience.m_Set.modMatrixDestinationSetFast(modmatdest)) {
 						int slot = myProcessor->m_pVASTXperience.m_Set.modMatrixGetFirstSlotWithDestination(modmatdest);
 						float modVal = 0.f;

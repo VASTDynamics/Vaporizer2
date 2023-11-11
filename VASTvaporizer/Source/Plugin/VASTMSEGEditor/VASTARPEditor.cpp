@@ -79,7 +79,7 @@ void VASTARPEditor::updateContent(bool force)
 
 	int numSteps = myData->getNumSteps();	
 	float stepWidth = m_drawwidth / float(numSteps);
-	float octaveHeight = m_drawheight / 7.0; //seven octaves (including semitones up and down)
+	float octaveHeight = m_drawheight / 7.0f; //seven octaves (including semitones up and down)
 
 	float insetPixels = 2.0f  * myProcessor->getPluginScaleWidthFactor() * m_screenWidthScale;
 
@@ -135,18 +135,18 @@ void VASTARPEditor::updateContent(bool force)
 	}
 
 	// Text
-	float sync = *myProcessor->m_pVASTXperience.m_Set.m_State->m_bARPSynch;
-	float beats = *myProcessor->m_pVASTXperience.m_Set.m_State->m_uARPTimeBeats;
+	bool sync = static_cast<bool>(*myProcessor->m_pVASTXperience.m_Set.m_State->m_bARPSynch);
+	int beats = static_cast<int>(*myProcessor->m_pVASTXperience.m_Set.m_State->m_uARPTimeBeats);
 	float speed = *myProcessor->m_pVASTXperience.m_Set.m_State->m_fARPSpeed;
 	float lIntervalTime = speed / 1000.f;
 	float displayPeriod = myData->getNumSteps() * lIntervalTime;
 	if (sync) {
-		lIntervalTime = myProcessor->m_pVASTXperience.m_Set.getIntervalTimeFromDAWBeats(beats) / 1000.f;
-		displayPeriod = myData->getNumSteps() * myProcessor->m_pVASTXperience.m_Set.getIntervalRatio(beats) * lIntervalTime;
+		lIntervalTime = float(myProcessor->m_pVASTXperience.m_Set.getIntervalTimeFromDAWBeats(beats)) / 1000.f;
+		displayPeriod = myData->getNumSteps() * float(myProcessor->m_pVASTXperience.m_Set.getIntervalRatio(beats)) * lIntervalTime;
 	}
 	float beatsPerDisplay = displayPeriod / lIntervalTime;
 
-	int fontHeight = myFont.getHeightInPoints();
+	int fontHeight = static_cast<int>(myFont.getHeightInPoints());
 	g.setColour(myProcessor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colLabelText));
 	if (sync)
 		g.drawText(String(int(beatsPerDisplay + 0.5f)) + " beats", juce::Rectangle<int>(waveformImage.getWidth() * 0.8f, waveformImage.getHeight() - fontHeight - 2.f, waveformImage.getWidth() * 0.2f - m_xbounds, fontHeight + 2.f), Justification::centredRight, false);

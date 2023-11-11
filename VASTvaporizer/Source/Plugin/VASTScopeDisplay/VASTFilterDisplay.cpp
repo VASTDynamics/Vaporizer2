@@ -230,7 +230,6 @@ void VASTFilterDisplay::timerCallback() {
 
 void VASTFilterDisplay::updateThread(VASTFilterDisplay* display, bool force) {
 	if (display == nullptr) {
-		display->m_iThreadsRunning.store(display->m_iThreadsRunning.load() - 1);
 		return;
 	}
 	if (!force)

@@ -145,19 +145,20 @@ void VASTSynthesiser::renderNextBlock(sRoutingBuffers& routingBuffers,
 	int numSamples)
 {
 	//CHVAST
-	if (*m_Set->m_State->m_fPortamento > 0.0f) {
-		MidiMessage msg;
-		int ignore;
-		for (MidiBuffer::Iterator it(inputMidi); it.getNextEvent(msg, ignore);)
-		{
-			if (msg.isNoteOn()) {
-				m_bGlissandoUsed = true;
-				m_iGlissandoAssigned = 0;
-				m_newChordStack[msg.getNoteNumber()] = true;
-				m_iGlissandoCollectSamples = m_Set->m_nSampleRate * 0.01f; //TEST VALUE 1/100s
-                m_iGlissandoCollectSamples = 0;
-			}
-		}
+	if (*m_Set->m_State->m_fPortamento > 0.0f) {        
+        auto midiIterator = inputMidi.findNextSamplePosition (startSample);
+        std::for_each (midiIterator,
+                       inputMidi.cend(),
+                       [&] (const MidiMessageMetadata& metadata)
+            {
+                if (metadata.getMessage().isNoteOn()) {
+                    m_bGlissandoUsed = true;
+                    m_iGlissandoAssigned = 0;
+                    m_newChordStack[metadata.getMessage().getNoteNumber()] = true;
+                    m_iGlissandoCollectSamples = m_Set->m_nSampleRate * 0.01f; //TEST VALUE 1/100s
+                    m_iGlissandoCollectSamples = 0;
+                }
+            });
 	}
 	
 	//========================================================================================
@@ -292,18 +293,13 @@ void VASTSynthesiser::processNextBlock(sRoutingBuffers& routingBuffers,
 	jassert(sampleRate != 0);
 	const int targetChannels = 1; //HACK
 
-	//TODO: MidiBufferIterator midiIterator = midiData.findNextSamplePosition(startSample);
-	MidiBuffer::Iterator midiIterator(midiData);
-	midiIterator.setNextSamplePosition(startSample);
+    auto midiIterator = midiData.findNextSamplePosition (startSample);
 
 	bool firstEvent = true;
-	int midiEventPos;
-	MidiMessage m;
-
 	const ScopedLock sl(lock);
 
-	while (numSamples > 0)
-	{
+    for (; numSamples > 0; ++midiIterator)
+    {
 		//CHVAST
 		for (auto* voice : voices) {
 			CVASTSingleNote* singleNote = (CVASTSingleNote*)voice;			
@@ -311,29 +307,30 @@ void VASTSynthesiser::processNextBlock(sRoutingBuffers& routingBuffers,
 			FloatVectorOperations::fill(routingBuffers.VelocityBuffer[voice->mVoiceNo]->getWritePointer(0, startSample), singleNote->m_uVelocity, numSamples);
 		}
 		//CHVAST
+        
+        if (midiIterator == midiData.cend())
+               {
+                   if (targetChannels > 0)
+                       renderVoices (routingBuffers, startSample, numSamples);
 
-		if (!midiIterator.getNextEvent(m, midiEventPos))
-		{
-			if (targetChannels > 0)
-				renderVoices(routingBuffers, startSample, numSamples);
+                   return;
+               }
 
-			return;
-		}
-
-		const int samplesToNextMidiMessage = midiEventPos - startSample;
+        const auto metadata = *midiIterator;
+        const int samplesToNextMidiMessage = metadata.samplePosition - startSample;
 
 		if (samplesToNextMidiMessage >= numSamples)
 		{
 			if (targetChannels > 0)
 				renderVoices(routingBuffers, startSample, numSamples);
 
-			handleMidiEvent(m);
+			handleMidiEvent(metadata.getMessage());
 			break;
 		}
 
 		if (samplesToNextMidiMessage < ((firstEvent && !subBlockSubdivisionIsStrict) ? 1 : minimumSubBlockSize))
 		{
-			handleMidiEvent(m);
+			handleMidiEvent(metadata.getMessage());
 			continue;
 		}
 
@@ -342,13 +339,14 @@ void VASTSynthesiser::processNextBlock(sRoutingBuffers& routingBuffers,
 		if (targetChannels > 0)
 			renderVoices(routingBuffers, startSample, samplesToNextMidiMessage);
 
-		handleMidiEvent(m);
+		handleMidiEvent(metadata.getMessage());
 		startSample += samplesToNextMidiMessage;
 		numSamples -= samplesToNextMidiMessage;
 	}
 
-	while (midiIterator.getNextEvent(m, midiEventPos))
-		handleMidiEvent(m);
+    std::for_each (midiIterator,
+                   midiData.cend(),
+                   [&] (const MidiMessageMetadata& meta) { handleMidiEvent (meta.getMessage()); });
 }
 
 void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSample, int numSamples)
@@ -641,6 +639,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 		}
 
 		for (int mseg = 4; mseg >= 0; mseg--) {
+            /*
 			bool msegpervoice = false;
 			if ((mseg == 0) && (*m_Set->m_State->m_bMSEGPerVoice_MSEG1 == static_cast<int>(SWITCH::SWITCH_ON)))
 				msegpervoice = true;
@@ -652,7 +651,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 				msegpervoice = true;
 			if ((mseg == 4) && (*m_Set->m_State->m_bMSEGPerVoice_MSEG5 == static_cast<int>(SWITCH::SWITCH_ON)))
 				msegpervoice = true;
-
+            */
 
 			if (routingBuffers.msegUsed[mseg].load()) { //performance optimization
 				//if (((CVASTSingleNote*)voice)->m_VCA->m_MSEG_Envelope[mseg].isActive() == true) { //This is not valid here!! leads to many issues!!
@@ -939,85 +938,24 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 
 	bool anyFilterContent[3][C_MAX_POLY]{};
 	for (int filter = 0; filter < 3; filter++) {
-		float ftype = 0.f;
+		//float ftype = 0.f;
 		float onoff = 0.f;
 		switch (filter)
 		{
 		case 0:
-			ftype = *m_Set->m_State->m_uFilterType_Filter1;
+			//ftype = *m_Set->m_State->m_uFilterType_Filter1;
 			onoff = *m_Set->m_State->m_bOnOff_Filter1;
 			break;
 		case 1:
-			ftype = *m_Set->m_State->m_uFilterType_Filter2;
+			//ftype = *m_Set->m_State->m_uFilterType_Filter2;
 			onoff = *m_Set->m_State->m_bOnOff_Filter2;
 			break;
 		case 2:
-			ftype = *m_Set->m_State->m_uFilterType_Filter3;
+			//ftype = *m_Set->m_State->m_uFilterType_Filter3;
 			onoff = *m_Set->m_State->m_bOnOff_Filter3;
 			break;
 		}
-		/*
-				if ((ftype == FILTERTYPE::DQFLPF12) ||
-					(ftype == FILTERTYPE::DQFLPF24) ||
-					(ftype == FILTERTYPE::DQFBRF12) ||
-					(ftype == FILTERTYPE::DQFBPF12) ||
-					(ftype == FILTERTYPE::DQFHPF12) ||
-					(ftype == FILTERTYPE::DQFLDF12) ||
-					(ftype == FILTERTYPE::DQFCOMB) ||
-					(ftype == FILTERTYPE::DQFLPF12WSSINE) ||
-					(ftype == FILTERTYPE::DQFLPF24WSSINE) ||
-					(ftype == FILTERTYPE::DQFBRF12WSSINE) ||
-					(ftype == FILTERTYPE::DQFBPF12WSSINE) ||
-					(ftype == FILTERTYPE::DQFHPF12WSSINE) ||
-					(ftype == FILTERTYPE::DQFLDF12WSSINE) ||
-					(ftype == FILTERTYPE::DQFCOMBWSSINE) ||
-
-					(ftype == FILTERTYPE::BQFLPF6) ||  //BQF LPF 6
-					(ftype == FILTERTYPE::BQFHPF6) ||   //BQF HPF 6
-					(ftype == FILTERTYPE::BQFBPF6) ||  //BQF BPF 6
-					(ftype == FILTERTYPE::BQFALLPASS6) ||  //BQF ALLPASS 6
-					(ftype == FILTERTYPE::BQFLOWSHELF6) ||  //BQF LOWSHELF 6
-					(ftype == FILTERTYPE::BQFHIGHSHELF6) ||  //BQF HIGHSHELF 6
-					(ftype == FILTERTYPE::BQFNOTCH6) ||  //BQF NOTCH 6
-					(ftype == FILTERTYPE::BQFPEAK6) ||  //BQF PEAK 6
-					(ftype == FILTERTYPE::BQFLPF12) ||  //BQF LPF 12
-					(ftype == FILTERTYPE::BQFHPF12) || //BQF HPF 12
-					(ftype == FILTERTYPE::BQFBPF12) ||  //BQF BPF 12
-					(ftype == FILTERTYPE::BQFALLPASS12) ||  //BQF ALLPASS 12
-					(ftype == FILTERTYPE::BQFLOWSHELF12) ||  //BQF LOWSHELF 12
-					(ftype == FILTERTYPE::BQFHIGHSHELF12) ||  //BQF HIGHSHELF 12
-					(ftype == FILTERTYPE::BQFNOTCH12) ||  //BQF NOTCH 12
-					(ftype == FILTERTYPE::BQFPEAK12) ||  //BQF PEAK 12
-					(ftype == FILTERTYPE::BQFLPF18) ||  //BQF LPF 18
-					(ftype == FILTERTYPE::BQFHPF18) || //BQF HPF 18
-					(ftype == FILTERTYPE::BQFBPF18) ||  //BQF BPF 18
-					(ftype == FILTERTYPE::BQFALLPASS18) ||  //BQF ALLPASS 18
-					(ftype == FILTERTYPE::BQFLOWSHELF18) ||  //BQF LOWSHELF 18
-					(ftype == FILTERTYPE::BQFHIGHSHELF18) ||  //BQF HIGHSHELF 18
-					(ftype == FILTERTYPE::BQFNOTCH18) ||  //BQF NOTCH 18
-					(ftype == FILTERTYPE::BQFPEAK18) ||  //BQF PEAK 18
-
-					(ftype == FILTERTYPE::SVFLPF12) ||
-					(ftype == FILTERTYPE::SVFHPF12) ||
-					(ftype == FILTERTYPE::SVFBPF12) ||
-					(ftype == FILTERTYPE::SVFLPF24) ||
-					(ftype == FILTERTYPE::SVFHPF24) ||
-					(ftype == FILTERTYPE::SVFBPF24) ||
-					(ftype == FILTERTYPE::SVFLPF36) ||
-					(ftype == FILTERTYPE::SVFHPF36) ||
-					(ftype == FILTERTYPE::SVFBPF36) ||
-
-					(ftype == FILTERTYPE::LDFLPF12) ||
-					(ftype == FILTERTYPE::LDFHPF12) ||
-					(ftype == FILTERTYPE::LDFLPF24) ||
-					(ftype == FILTERTYPE::LDFHPF24) ||
-					(ftype == FILTERTYPE::LDFLPF36) ||
-					(ftype == FILTERTYPE::LDFHPF36) ||
-					(ftype == FILTERTYPE::LDFLPF48) ||
-					(ftype == FILTERTYPE::LDFHPF48))
-
-				{
-				*/
+	
 		int numPlaying = 0;
 		if (onoff == static_cast<int>(SWITCH::SWITCH_ON)) {
 			bool bAddedSomething = false;
