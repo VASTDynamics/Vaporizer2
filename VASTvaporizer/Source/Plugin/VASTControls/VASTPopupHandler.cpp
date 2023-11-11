@@ -248,7 +248,7 @@ void VASTPopupHandler::mouseDown(const MouseEvent &e) {
 						int slot = myProcessor->m_pVASTXperience.m_Set.modMatrixGetFirstSlotWithDestination(modmatdest);
 						float modVal = 0.f;
 						double curvy = 0.f;
-						float lastSrceVals[C_MAX_POLY] = { 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f };
+						float lastSrceVals[C_MAX_POLY] {};
 						int polarity = 0;
 						int source = 0;
 						int destination = 0;

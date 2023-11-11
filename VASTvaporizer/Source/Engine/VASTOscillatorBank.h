@@ -71,8 +71,7 @@ public:
 	void removeSingleNoteSoftFadeCycle(int voiceNo);
 	int isInSingleNoteSoftFadeCycle() const;
 	void clearSingleNoteSoftFadeCycle();
-	std::atomic<bool> m_iSingleNoteSoftFadeCycle[C_MAX_POLY] = { false, false, false, false, false, false, false, false,
-																 false, false, false, false, false, false, false, false };
+	std::atomic<bool> m_iSingleNoteSoftFadeCycle[C_MAX_POLY] {};
 
 	std::atomic<bool> m_bWavetableSoftfadeStillNeeded = false;
 	std::atomic<bool> m_bWavetableSoftfadePickedUp = false;

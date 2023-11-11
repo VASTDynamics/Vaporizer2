@@ -691,11 +691,18 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 			if (*m_Set.m_State->m_uPolyMode == static_cast<int>(POLYMODE::POLY4))
 				m_Set.m_uMaxPoly = 4;
 			else
-				m_Set.m_uMaxPoly = 16;
+				if (*m_Set.m_State->m_uPolyMode == static_cast<int>(POLYMODE::POLY16))
+					m_Set.m_uMaxPoly = 16;
+				else 
+				{
+					vassertfalse;
+					m_Set.m_uMaxPoly = 16;
+				}
 
-		for (int i = 0; i < C_MAX_POLY; i++)
+		for (int i = 0; i < m_Set.m_uMaxPoly; i++)
 			m_Poly.m_singleNote[i]->stopNote(0, false); //hard stop
-		return;
+		//m_Poly.init(); //CHECK
+		return;		
 	}
 
 	// master volume - can be online
@@ -708,7 +715,7 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 	}
 
 	if (0 == parameterID.compare("m_fPortamento")) {
-		for (int i = 0; i < C_MAX_POLY; i++) {
+		for (int i = 0; i < m_Set.m_uMaxPoly; i++) {
 			m_Poly.m_singleNote[i]->setPortamentoTime(*m_Set.m_State->m_fPortamento);
 		}
 		m_Poly.updateVariables();
@@ -974,22 +981,22 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 	}
 	
 	if (0 == parameterID.compare("m_fOscMorph_OscA")) {
-		for (int i=0; i < C_MAX_POLY; i++)
+		for (int i=0; i < m_Set.m_uMaxPoly; i++)
 			m_Poly.m_singleNote[i]->setWTPosSmooth(0); //bank 0
 		return;
 	}
 	if (0 == parameterID.compare("m_fOscMorph_OscB")) {
-		for (int i = 0; i < C_MAX_POLY; i++)
+		for (int i = 0; i < m_Set.m_uMaxPoly; i++)
 			m_Poly.m_singleNote[i]->setWTPosSmooth(1); //bank 1
 		return;
 	}
 	if (0 == parameterID.compare("m_fOscMorph_OscC")) {
-		for (int i = 0; i < C_MAX_POLY; i++)
+		for (int i = 0; i < m_Set.m_uMaxPoly; i++)
 			m_Poly.m_singleNote[i]->setWTPosSmooth(3); //bank 2
 		return;
 	}
 	if (0 == parameterID.compare("m_fOscMorph_OscD")) {
-		for (int i = 0; i < C_MAX_POLY; i++)
+		for (int i = 0; i < m_Set.m_uMaxPoly; i++)
 			m_Poly.m_singleNote[i]->setWTPosSmooth(4); //bank 3
 		return;
 	}
@@ -1029,7 +1036,7 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 		sound = (VASTSamplerSound*)m_Poly.getSamplerSound();
 		if (sound != nullptr) {
 			sound->setMidiRootNode(*m_Set.m_State->m_uSamplerRootKey);
-			for (int i = 0; i < C_MAX_POLY; i++) {
+			for (int i = 0; i < m_Set.m_uMaxPoly; i++) {
 				m_Poly.m_singleNote[i]->samplerUpdatePitch(sound, true);
 			}
 		}
@@ -1040,7 +1047,7 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 		VASTSamplerSound* sound = (VASTSamplerSound*)m_Poly.getSamplerSoundChanged();
 		sound = (VASTSamplerSound*)m_Poly.getSamplerSound();
 		if (sound != nullptr) {
-			for (int i = 0; i < C_MAX_POLY; i++) {
+			for (int i = 0; i < m_Set.m_uMaxPoly; i++) {
 				m_Poly.m_singleNote[i]->samplerUpdatePitch(sound, true);
 			}
 		}

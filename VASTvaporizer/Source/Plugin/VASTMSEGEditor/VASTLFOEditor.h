@@ -62,8 +62,8 @@ private:
 	
 	void fillBuffers();
 	void handleBorderDisplay();
-	bool m_dispReset[C_MAX_POLY] = { true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true };
-	float lastLFOVal[C_MAX_POLY] = { 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f };
+	bool m_dispReset[C_MAX_POLY]{}; 
+	float lastLFOVal[C_MAX_POLY] {};
 
 	VASTAudioProcessor* myProcessor;
 	std::vector<float> m_noise_buffer;

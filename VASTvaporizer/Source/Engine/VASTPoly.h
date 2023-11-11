@@ -36,6 +36,7 @@ public:
 		return myProcessor;
 	};
 	void init();
+	void releaseResources();
 	void prepareForPlay();
 	void updateVariables();
 	void updateLFO(int lfono);
@@ -46,7 +47,7 @@ public:
 	int getLastNotePlayed() const;
 	int getOldestNotePlayed() const;
 	void stopAllNotes(bool allowTailOff);
-	bool voicesMSEGStillActive();
+	bool voicesMSEGStillActive();	
 	modMatrixInputState getLastNotePlayedInputState(int currentFrame);
 	modMatrixInputState getOldestNotePlayedInputState(int currentFrame);
 

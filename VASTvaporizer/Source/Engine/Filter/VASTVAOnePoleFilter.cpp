@@ -9,6 +9,9 @@ VAST Dynamics Audio Software (TM)
 	#define _CRTDBG_MAP_ALLOC
 #endif
 
+JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE("-Wconversion")
+JUCE_BEGIN_IGNORE_WARNINGS_MSVC(4244 4267) //C4244 conversion from 'type1' to 'type2', possible loss of data //C4267 conversion
+
 CVAOnePoleFilter::CVAOnePoleFilter(void)
 {
 	m_dAlpha = 1.0;
@@ -64,7 +67,9 @@ float CVAOnePoleFilter::doFilter(float xn)
 
 	// default
 	return lpf;
-
 }
+
+JUCE_END_IGNORE_WARNINGS_GCC_LIKE
+JUCE_END_IGNORE_WARNINGS_MSVC
 
 

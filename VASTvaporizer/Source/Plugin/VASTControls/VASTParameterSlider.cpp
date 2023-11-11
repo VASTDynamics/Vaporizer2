@@ -166,7 +166,7 @@ void VASTParameterSlider::updateContent(bool ) {
 	float modVal = 0.f;
 	double curvy = 0.f;
 	int polarity = 0;
-	float lastSrceVals[C_MAX_POLY] = { 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f };
+	float lastSrceVals[C_MAX_POLY] {};
 	m_processor->m_pVASTXperience.m_Set.modMatrixSlotGetValues(slot, modVal, curvy, polarity, lastSrceVals);
 
 	bool bchanged = false;

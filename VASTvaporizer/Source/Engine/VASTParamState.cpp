@@ -271,7 +271,7 @@ bool CVASTParamState::initParameters(AudioProcessorValueTreeState& parameters, C
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false);
 
-	effect->createAndAddParameter(&m_uPolyMode, parameters, 1, "m_uPolyMode", "Poly mode: Mono mode - one note at a time, Poly4 mode - four notes at at timePoly16 mode - onemax. 16 notes at at time", "Mono mode - one note at at timePoly4 mode - four notes at at timePoly16 mode - onemax. 16 notes at at time", 0,
+	effect->createAndAddParameter(&m_uPolyMode, parameters, 1, "m_uPolyMode", "Poly mode: Mono mode - one note at a time, Poly4 mode - four notes at at time - Poly16 mode - max. 16 notes at at time", "Poly mode: Mono mode - one note at a time, Poly4 mode - four notes at at time - Poly16 mode - max. 16 notes at at time", 0,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 2, 1.0f), POLYMODE_Array.indexOf("Poly16"),
 		CVASTParamState::comboBoxValueToTextFunction_POLYMODE,

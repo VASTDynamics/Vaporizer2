@@ -296,8 +296,10 @@ public:
 } sRoutingBuffers;;
 
 typedef struct {
-	uint64_t voiceNo; //to avoid error C2338
-	uint64_t currentFrame; //to avoid error C2338
+//	uint64_t voiceNo; //to avoid error C2338
+//	uint64_t currentFrame; //to avoid error C2338
+	int voiceNo; //to avoid error C2338
+	int currentFrame; //to avoid error C2338
 } modMatrixInputState;
 
 typedef struct {

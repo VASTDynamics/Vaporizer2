@@ -58,11 +58,16 @@ void VASTSynthesiser::initValues() {
 
 	m_midiNotesNumKeyDown = 0;
 	m_bGlissandoUsed = false;
+	lastNoteOnCounter = 0;
+	m_newestPlaying = -1;
+	m_oldestPlaying = -1;
+	m_oldestPlayingKeyDown = -1;
+	m_iGlissandoAssigned = 0;
+	m_iGlissandoCollectSamples = 0;
 
 	const uint8 noLSBValueReceived = 0xff;
 	std::fill_n(lastPressureLowerBitReceivedOnChannel, 16, noLSBValueReceived);
 }
-
 
 //==============================================================================
 VASTSynthesiserVoice* VASTSynthesiser::getVoice(const int index) const
@@ -287,8 +292,8 @@ void VASTSynthesiser::processNextBlock(sRoutingBuffers& routingBuffers,
 	jassert(sampleRate != 0);
 	const int targetChannels = 1; //HACK
 
+	//TODO: MidiBufferIterator midiIterator = midiData.findNextSamplePosition(startSample);
 	MidiBuffer::Iterator midiIterator(midiData);
-
 	midiIterator.setNextSamplePosition(startSample);
 
 	bool firstEvent = true;
@@ -514,7 +519,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 			double l_curvy = 0.f;
 			int l_srce = 0;
 			int l_dest = 0;
-			float lastSrceVals[C_MAX_POLY] = { 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f };
+			float lastSrceVals[C_MAX_POLY] {};
 			int polarity = 0;
 			m_Set->modMatrixSlotGetValues(slot, l_value, l_curvy, l_srce, l_dest, polarity, lastSrceVals);
 			if ((l_srce == MODMATSRCE::LFO1) && ((l_dest >= MODMATDEST::MSEG1Attack) && (l_dest <= MODMATDEST::MSEG5Release))) {
@@ -850,7 +855,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 							((CVASTSingleNote*)voice)->m_LFO_Osc[3]->getOscillation(&lfoval);
 
 							float msegmult = 1.f;
-							if (*m_Set->m_State->m_uLFOMSEG_LFO4 != MSEGLFONONE) {
+							if (static_cast<int>(*m_Set->m_State->m_uLFOMSEG_LFO4) != MSEGLFONONE) {
 								msegmult = routingBuffers.MSEGBuffer[int(*m_Set->m_State->m_uLFOMSEG_LFO4) - 1][voice->mVoiceNo]->getSample(0, currentFrame);
 							}
 
@@ -932,8 +937,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 
 	modMatrixInputState l_inputState{ 0, startSample };
 
-	bool anyFilterContent[3][C_MAX_POLY];
-	memset(anyFilterContent, false, 3 * C_MAX_POLY * sizeof(bool));
+	bool anyFilterContent[3][C_MAX_POLY]{};
 	for (int filter = 0; filter < 3; filter++) {
 		float ftype = 0.f;
 		float onoff = 0.f;
@@ -1625,7 +1629,7 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 						}
 				}
 			}
-			else {	//POLY 16 MODE
+			else if (((m_Set->m_uMaxPoly) == 16) || (m_Set->m_uMaxPoly) == 32) {	//POLY 16 or POLY 32 MODES
 				int active = 0;
 				bool shallSteal = false;
 				for (auto* voice : voices) {
@@ -1633,7 +1637,7 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 						active++;
 					}
 				}
-				while (active > 15) {
+				while (active > m_Set->m_uMaxPoly - 1) { //no voice left
 					VASTSynthesiserVoice* stealVoice = findActiveVoiceToSteal(sound, midiChannel, midiNoteNumber);
 					((CVASTSingleNote*)stealVoice)->m_VCA->hardStop();
 					stealVoice->currentlyPlayingNote = -1; //not playing

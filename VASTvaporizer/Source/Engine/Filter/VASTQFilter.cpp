@@ -20,6 +20,9 @@ float sinctable alignas(16)[(FIRipol_M + 1) * FIRipol_N * 2];
 float sinctable1X alignas(16)[(FIRipol_M + 1) * FIRipol_N];
 short sinctableI16 alignas(16)[(FIRipol_M + 1) * FIRipolI16_N];
 
+JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE("-Wconversion")
+JUCE_BEGIN_IGNORE_WARNINGS_MSVC(4244 4267) //C4244 conversion from 'type1' to 'type2', possible loss of data //C4267 conversion
+
 double VASTQFilter::shafted_tanh(double x)
 {
 	return (exp(x) - exp(-x * 1.2)) / (exp(x) + exp(-x));
@@ -246,7 +249,7 @@ int VASTQFilter::processBlock(OwnedArray<VASTSynthesiserVoice>* voices, modMatri
 
 	switch (filter) {
 	case(0):
-		paramType = *m_Set->m_State->m_uFilterType_Filter1;
+		paramType = static_cast<int>(*m_Set->m_State->m_uFilterType_Filter1);
 		paramDrive.store(*m_Set->m_State->m_fFilterDrive_Filter1);
 		paramIDDrive = MODMATDEST::Filter1Drive;
 		paramFilterEnv = *m_Set->m_State->m_uVCFEnv_Filter1;
@@ -262,7 +265,7 @@ int VASTQFilter::processBlock(OwnedArray<VASTSynthesiserVoice>* voices, modMatri
 		paramIDGain = MODMATDEST::Filter1Gain;
 		break;
 	case(1):
-		paramType = *m_Set->m_State->m_uFilterType_Filter2;
+		paramType = static_cast<int>(*m_Set->m_State->m_uFilterType_Filter2);
 		paramDrive.store(*m_Set->m_State->m_fFilterDrive_Filter2);
 		paramIDDrive = MODMATDEST::Filter2Drive;
 		paramFilterEnv = *m_Set->m_State->m_uVCFEnv_Filter2;
@@ -278,7 +281,7 @@ int VASTQFilter::processBlock(OwnedArray<VASTSynthesiserVoice>* voices, modMatri
 		paramIDGain = MODMATDEST::Filter2Gain;
 		break;
 	case(2):
-		paramType = *m_Set->m_State->m_uFilterType_Filter3;
+		paramType = static_cast<int>(*m_Set->m_State->m_uFilterType_Filter3);
 		paramDrive.store(*m_Set->m_State->m_fFilterDrive_Filter3);
 		paramIDDrive = MODMATDEST::Filter3Drive;
 		paramFilterEnv = *m_Set->m_State->m_uVCFEnv_Filter3;
@@ -343,7 +346,7 @@ int VASTQFilter::processBlock(OwnedArray<VASTSynthesiserVoice>* voices, modMatri
 				vcf = ((CVASTSingleNote*)voice)->m_VCF[filter];
 				bool bPlayiningInRange = ((CVASTSingleNote*)voice)->isPlayingInRange(startSample, numSamples); //requires that mseg is processed before!
 				doit = (bPlayiningInRange || (((CVASTSingleNote*)voice)->m_bLastFilterOutputZero[filter] == false));
-				if (voiceNo == C_MAX_POLY - 1)
+				if (voiceNo == m_Set->m_uMaxPoly - 1)
 					complete = true;
 			}
 			if (doit) {
@@ -1402,8 +1405,8 @@ int VASTQFilter::processQFilter(dsp::AudioBlock<float> filterBlock, sRoutingBuff
 				voice = (*voices)[voiceNo];
 				vcf = ((CVASTSingleNote*)voice)->m_VCF[filter];
 				bool bPlayiningInRange = ((CVASTSingleNote*)voice)->isPlayingInRange(startSample, numSamples); //requires that mseg is processed before!
-				doit = (bPlayiningInRange || (((CVASTSingleNote*)voice)->m_bLastFilterOutputZero[filter] == false));
-				if (voiceNo == C_MAX_POLY - 1)
+				doit = (bPlayiningInRange || (((CVASTSingleNote*)voice)->m_bLastFilterOutputZero[filter] == false));				
+				if (voiceNo == ((CVASTSingleNote*)voice)->m_Set->m_uMaxPoly - 1)
 					complete = true;
 			}
 			if (doit) {
@@ -1588,7 +1591,7 @@ void VASTQFilter::ProcessLegacy(dsp::AudioBlock<float> filterBlock, sRoutingBuff
 			vcf = ((CVASTSingleNote*)voice)->m_VCF[filter];
 			bool bPlayiningInRange = ((CVASTSingleNote*)voice)->isPlayingInRange(startSample, numSamples); //requires that mseg is processed before!
 			doit = (bPlayiningInRange || (((CVASTSingleNote*)voice)->m_bLastFilterOutputZero[filter] == false));
-			if (voiceNo == C_MAX_POLY - 1)
+			if (voiceNo == ((CVASTSingleNote*)voice)->m_Set->m_uMaxPoly - 1)
 				complete = true;
 		}
 		
@@ -2948,3 +2951,5 @@ void VASTQFilter::InitQFilterProcessStateToZero(VASTQFilterProcessState *Q)
 	Q->dOut2R = _mm_setzero_ps();
 }
 
+JUCE_END_IGNORE_WARNINGS_GCC_LIKE
+JUCE_END_IGNORE_WARNINGS_MSVC

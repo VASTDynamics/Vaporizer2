@@ -217,7 +217,6 @@ void CVASTMSEGEnvelope::resynchNoteOn() {
 	noteOn(static_cast<ULong64_t>(tp.tv_sec) * 1000 + tp.tv_usec / 1000, false);
 }
 
-
 void CVASTMSEGEnvelope::getEnvelopeRange(float* msegWritePointer, int currentFrame, int numFrames, bool noSustain) { //called during processAudio
 	m_iBufferSamples += numFrames;
 	for (int frame = 0; frame < numFrames; frame++) {

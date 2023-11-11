@@ -11,26 +11,21 @@ VAST Dynamics Audio Software (TM)
 CModDelayModule::CModDelayModule()
 {
 	// Finish initializations here
-	m_fMinDelay_mSec = 0.0;
-	m_fMaxDelay_mSec = 0.0;
-	m_fChorusOffset = 0.0;
-
+	m_fMinDelay_mSec = 0.0f;
+	m_fMaxDelay_mSec = 0.0f;
+	m_fChorusOffset = 0.0f;
 	m_DDL.m_bUseExternalFeedback = false;
-	m_DDL.m_fDelay_ms = 0;	
-
-	m_fDDLOutput = 0;
-
+	m_DDL.m_fDelay_ms = 0.f;
+	m_fDDLOutput = 0.f;
 	m_fModFrequency_Hz = 1.0f; //CHECK for start
 }
 
 void CModDelayModule::init(CVASTSettings &set) {
 	m_Set = &set;
 	m_DDL.init(set);
-
-	m_LFO.init(*m_Set);
-	
+	m_LFO.init(*m_Set);	
 	m_LFO.m_uPolarity = 0; //unipolar
-	m_LFO.updateMainVariables(m_iSampleRate, WAVE::tri, 1, 1.0, 0, 0); //TODO CHECK
+	m_LFO.updateMainVariables(m_iSampleRate, WAVE::tri, 1, 1.0f, 0, 0.f); //TODO CHECK
 	m_LFO.startLFOFrequency(m_fModFrequency_Hz, -1);
 }
 
@@ -38,22 +33,6 @@ CModDelayModule::~CModDelayModule(void)
 {
 }
 
-/* prepareForPlay()
-	Called by the client after Play() is initiated but before audio streams
-
-	You can perform buffer flushes and per-run intializations.
-	You can check the following variables and use them if needed:
-
-	m_nNumWAVEChannels;
-	m_nSampleRate;
-	m_nBitDepth;
-
-	NOTE: the above values are only valid during prepareForPlay() and
-		  processAudioFrame() because the user might change to another wave file,
-		  or use the sound card, oscillators, or impulse response mechanisms
-
-    NOTE: if you allocte memory in this function, destroy it in ::destroy() above
-*/
 bool CModDelayModule::prepareForPlay(int sampleRate)
 {
 	m_iSampleRate = sampleRate;
@@ -95,7 +74,7 @@ void CModDelayModule::updateDDL()
 	if(m_uModType != Vibrato)
 		m_DDL.m_fFeedback_pct = m_fFeedback_pct;
 
-	m_DDL.m_fWetLevel = m_fWetLevel/100.0;
+	m_DDL.m_fWetLevel = m_fWetLevel/100.0f;
 	
 	// cook it
 	m_DDL.cookVariables();
@@ -115,12 +94,12 @@ void CModDelayModule::cookModType()
 		case Flanger:
 		{
 			if(m_uTZF == ON)
-				m_fMinDelay_mSec = 0.0;
+				m_fMinDelay_mSec = 0.0f;
 			else
-				m_fMinDelay_mSec = 0.1;
+				m_fMinDelay_mSec = 0.1f;
 
-			m_fMaxDelay_mSec = 7;
-			m_DDL.m_fWetLevel_pct = 50.0;
+			m_fMaxDelay_mSec = 7.f;
+			m_DDL.m_fWetLevel_pct = 50.0f;
 			m_DDL.m_fFeedback_pct = m_fFeedback_pct;
 			
 			break;
@@ -128,18 +107,18 @@ void CModDelayModule::cookModType()
 
 		case Vibrato:
 		{
-			m_fMinDelay_mSec = 0.0;
-			m_fMaxDelay_mSec = 7;
-			m_DDL.m_fWetLevel_pct = 100.0;
-			m_DDL.m_fFeedback_pct = 0.0; // NOTE! no FB for vibrato
+			m_fMinDelay_mSec = 0.0f;
+			m_fMaxDelay_mSec = 7.f;
+			m_DDL.m_fWetLevel_pct = 100.0f;
+			m_DDL.m_fFeedback_pct = 0.0f; // NOTE! no FB for vibrato
 			break;
 		}
 
 		case Chorus:
 		{
-			m_fMinDelay_mSec = 5;
-			m_fMaxDelay_mSec = 30;
-			m_DDL.m_fWetLevel_pct = 50.0;
+			m_fMinDelay_mSec = 5.f;
+			m_fMaxDelay_mSec = 30.f;
+			m_DDL.m_fWetLevel_pct = 50.0f;
 			m_DDL.m_fFeedback_pct = m_fFeedback_pct;
 			break;
 		}
@@ -147,12 +126,12 @@ void CModDelayModule::cookModType()
 		default: // is Flanger
 		{
 			if(m_uTZF == ON)
-				m_fMinDelay_mSec = 0.0;
+				m_fMinDelay_mSec = 0.0f;
 			else
-				m_fMinDelay_mSec = 0.1;
+				m_fMinDelay_mSec = 0.1f;
 
 			m_fMaxDelay_mSec = 7;
-			m_DDL.m_fWetLevel_pct = 50.0;
+			m_DDL.m_fWetLevel_pct = 50.0f;
 			m_DDL.m_fFeedback_pct = m_fFeedback_pct;
 			break;
 		}
@@ -180,14 +159,14 @@ float CModDelayModule::calculateDelayOffset(float fLFOSample)
 		//if(f < 0)
 		//	this->sendStatusWndText("delay less than 0!!!");
 
-		return (m_fModDepth_pct/100.0)*(fLFOSample*(m_fMaxDelay_mSec - m_fMinDelay_mSec)) + m_fMinDelay_mSec;
+		return (m_fModDepth_pct/100.0f)*(fLFOSample*(m_fMaxDelay_mSec - m_fMinDelay_mSec)) + m_fMinDelay_mSec;
 	}
 	else if(m_uModType == Chorus)
 	{
 		// chorus adds starting offset to move delay range
 		float fStart = m_fMinDelay_mSec + m_fChorusOffset;
 
-		return (m_fModDepth_pct/100.0)*(fLFOSample*(m_fMaxDelay_mSec - m_fMinDelay_mSec)) + fStart;
+		return (m_fModDepth_pct/100.0f)*(fLFOSample*(m_fMaxDelay_mSec - m_fMinDelay_mSec)) + fStart;
 	}
 
 	return 0;

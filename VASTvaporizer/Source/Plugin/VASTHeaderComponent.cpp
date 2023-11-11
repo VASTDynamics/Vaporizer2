@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 6.0.1
+  Created with Projucer version: 7.0.7
 
   ------------------------------------------------------------------------------
 
@@ -284,35 +284,36 @@ void VASTHeaderComponent::buttonClicked (juce::Button* buttonThatWasClicked)
             [this](const FileChooser& fileChooser)
         {
             File presetFile(fileChooser.getResult());
-
-            String lPresetFileName = presetFile.getFileNameWithoutExtension().fromFirstOccurrenceOf(" ", false, true);
-            String lPresetCategory = presetFile.getFileNameWithoutExtension().dropLastCharacters(presetFile.getFileNameWithoutExtension().length() - 2); //TODO
-            if (!lPresetFileName.equalsIgnoreCase("")) {
-                VASTPresetElement lElem = myProcessor->m_presetData.getCurPatchData();
-                lElem.presetname = lPresetFileName;
-                myProcessor->m_presetData.exchangeCurPatchData(lElem);
-            }
-
-            myProcessor->savePatchXML(&presetFile);
-            myProcessor->m_presetData.reloadPresetArray();
-            int intid = -1;
-            for (int i = 0; i < myProcessor->getNumPrograms(); i++) {
-                String fname = myProcessor->m_presetData.getPreset(i)->internalid;
-                if (fname == presetFile.getFullPathName()) {
-                    intid = i;
-                    break;
+            if (presetFile.getFileName() != "") {
+                String lPresetFileName = presetFile.getFileNameWithoutExtension().fromFirstOccurrenceOf(" ", false, true);
+                String lPresetCategory = presetFile.getFileNameWithoutExtension().dropLastCharacters(presetFile.getFileNameWithoutExtension().length() - 2); //TODO
+                if (!lPresetFileName.equalsIgnoreCase("")) {
+                    VASTPresetElement lElem = myProcessor->m_presetData.getCurPatchData();
+                    lElem.presetname = lPresetFileName;
+                    myProcessor->m_presetData.exchangeCurPatchData(lElem);
                 }
+
+                myProcessor->savePatchXML(&presetFile);
+                myProcessor->m_presetData.reloadPresetArray();
+                int intid = -1;
+                for (int i = 0; i < myProcessor->getNumPrograms(); i++) {
+                    String fname = myProcessor->m_presetData.getPreset(i)->internalid;
+                    if (fname == presetFile.getFullPathName()) {
+                        intid = i;
+                        break;
+                    }
+                }
+                if (intid >= 0)
+                    myProcessor->loadPreset(intid);
+                else {
+                    //was saved outside of path
+                    AlertWindow::showMessageBoxAsync(AlertWindow::InfoIcon,
+                        "",
+                        TRANS("The preset was saved outside of the preset path root folder in settings."), String(), this);
+                }
+                myEditor->vaporizerComponent->updateAll();
             }
-            if (intid >= 0)
-                myProcessor->loadPreset(intid);
-            else {
-                //was saved outside of path
-                AlertWindow::showMessageBoxAsync(AlertWindow::InfoIcon,
-                    "",
-                    TRANS("The preset was saved outside of the preset path root folder in settings."), String(), this); 
-            }
-            myEditor->vaporizerComponent->updateAll();
-        });		
+        });
         //[/UserButtonCode_c_SavePreset]
     }
     else if (buttonThatWasClicked == c_PresetUp.get())
@@ -324,13 +325,14 @@ void VASTHeaderComponent::buttonClicked (juce::Button* buttonThatWasClicked)
 		int ll = myProcessor->m_presetData.getIndexInSearchArray(lcurPatchData->internalid);
 		if (ll != -1)
 		{
-			if (ll < myProcessor->m_presetData.getSearchArray().size() - 1) {
-				ll++;
-				String intid = myProcessor->m_presetData.getSearchArray()[ll]->internalid;
-				idx = myProcessor->m_presetData.getIndexInPresetArray(intid);
-				vassert(idx >= 0);
-				myProcessor->setCurrentProgram(idx);
-			}
+            if (ll < myProcessor->m_presetData.getSearchArray().size() - 1)
+                ll++;
+            else
+                ll = 0;
+			String intid = myProcessor->m_presetData.getSearchArray()[ll]->internalid;
+			idx = myProcessor->m_presetData.getIndexInPresetArray(intid);
+			vassert(idx >= 0);
+			myProcessor->setCurrentProgram(idx);
 		}
 		else {
 			idx = myProcessor->m_presetData.getCurPatchData().presetarrayindex;
@@ -350,13 +352,14 @@ void VASTHeaderComponent::buttonClicked (juce::Button* buttonThatWasClicked)
 		int ll = myProcessor->m_presetData.getIndexInSearchArray(lcurPatchData->internalid);
 		if (ll != -1)
 		{
-			if (ll > 0) {
-				ll--;
-				String intid = myProcessor->m_presetData.getSearchArray()[ll]->internalid;
-				idx = myProcessor->m_presetData.getIndexInPresetArray(intid);
-				vassert(idx >= 0);
-				myProcessor->setCurrentProgram(idx);
-			}
+            if (ll > 0)
+                ll--;
+            else
+                ll = myProcessor->m_presetData.getSearchArray().size() - 1;
+			String intid = myProcessor->m_presetData.getSearchArray()[ll]->internalid;
+			idx = myProcessor->m_presetData.getIndexInPresetArray(intid);
+			vassert(idx >= 0);
+			myProcessor->setCurrentProgram(idx);
 		}
 		else {
 			idx = myProcessor->m_presetData.getCurPatchData().presetarrayindex;

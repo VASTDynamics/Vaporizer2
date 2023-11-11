@@ -73,7 +73,7 @@ public:
 		errorState2_invalidMSEGData,
 		errorState3_invalidStepSeqData,
 		errorState4_invalidArpData,
-		errorState5_couldNotLoadSavedPreset,
+		errorState5_couldNotOpenFileForWritingPreset,
 		errorState6_loadPresetFromFileXMLParsingFailed,
 		errorState7_unknownPresetFormatVersion,
 		errorState8_loadPresetOscillatorTreeInvalid,
@@ -99,7 +99,7 @@ public:
 		case vastErrorState::errorState2_invalidMSEGData: return (TRANS("The MSEG data is invalid. Internal error. Reload plugin."));
 		case vastErrorState::errorState3_invalidStepSeqData: return (TRANS("The Step Sequence data is invalid. Internal error. Reload plugin."));
 		case vastErrorState::errorState4_invalidArpData: return (TRANS("The ARP data is invalid. Internal error. Reload plugin."));
-		case vastErrorState::errorState5_couldNotLoadSavedPreset: return (TRANS("The just saved preset could not be reloaded. Please check access rights to folders."));
+		case vastErrorState::errorState5_couldNotOpenFileForWritingPreset: return (TRANS("Could not open file for writing preset. Please check access rights to folders."));
 		case vastErrorState::errorState6_loadPresetFromFileXMLParsingFailed: return (TRANS("The XML structure of the loaded preset is invalid."));
 		case vastErrorState::errorState7_unknownPresetFormatVersion: return (TRANS("The version of the preset format is unknown."));
 		case vastErrorState::errorState8_loadPresetOscillatorTreeInvalid: return (TRANS("The loaded preset data for oscillator banks is invalid."));

@@ -380,7 +380,7 @@ void CVASTEq::processBlock(AudioSampleBuffer& buffer, MidiBuffer&, const int num
 
 	modMatrixInputState inputState = ((VASTAudioProcessor*)my_processor)->m_pVASTXperience.m_Poly.getOldestNotePlayedInputState(0); // make parameter oldest or newest
 	//Gain Mod
-	m_fEQGain_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fEQGain, MODMATDEST::EQGain, &inputState));
+	m_fEQGain_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fEQGain, MODMATDEST::EQGain, &inputState));
 	float lEQGain = m_fEQGain_smoothed.getNextValue();
 	m_fEQGain_smoothed.skip(numSamples - 1);
 

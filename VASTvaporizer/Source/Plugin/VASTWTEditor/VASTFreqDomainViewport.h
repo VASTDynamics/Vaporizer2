@@ -73,7 +73,7 @@ private:
 	float maxReDisp = 0.f;
 	float maxIm = 0.f;
 	float m_Offset = 1.0f;
-	int m_numSliders = (C_WAVE_TABLE_SIZE - 1) * 0.5f; //skip first
+	int m_numSliders = static_cast<int>((C_WAVE_TABLE_SIZE - 1) * 0.5f); //skip first
 	int m_arrayidxWhenDragStart = 0;
 	std::vector<sFreqDomainBuffer> m_domainBufferWhenDragStart;
 

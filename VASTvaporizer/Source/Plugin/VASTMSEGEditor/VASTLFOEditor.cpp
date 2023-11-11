@@ -20,6 +20,7 @@ VASTLFOEditor::VASTLFOEditor(AudioProcessor* processor, String suffix)
 	//myFont.setDefaultMinimumHorizontalScaleFactor(1.0);
 	//myFont.setSizeAndStyle(14.f, Font::bold, 1.0f, 0.0f); // no squashing, no kerning
 
+	std::fill(m_dispReset, m_dispReset + C_MAX_POLY, true);
 	fillBuffers();
 
 	setOpaque(true); //avoid repaints of parents
@@ -157,10 +158,6 @@ void VASTLFOEditor::handleBorderDisplay() {
 	g.drawImageAt(waveformImage, 0, 0);
 
 	for (int voiceNo = 0; voiceNo < C_MAX_POLY; voiceNo++) {
-		//if (!myDrawState.pervoice)
-			//voiceNo = myProcessor->m_pVASTXperience.m_Set.m_oldestPlaying;
-		//if (voiceNo < 0)
-			//break;
 		if (!m_dispReset[voiceNo]) {
 			float markerPos = 1.f - (lastLFOVal[voiceNo] + 1.f) * 0.5f; //0..1
 

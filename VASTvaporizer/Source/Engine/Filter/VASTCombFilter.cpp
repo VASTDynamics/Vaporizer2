@@ -6,22 +6,20 @@ VAST Dynamics Audio Software (TM)
 
 CCombFilter::CCombFilter(void):CDelay()
 {
-	m_fComb_g = 0;
+	m_fComb_g = 0.f;
 }
 
 CCombFilter::~CCombFilter(void)
 {
-}
-	
+}	
 
 // set gain using RT60 time
-
 void CCombFilter::setComb_g_with_RTSixty(float fRT)
 {
-	float fExponent = -3.0 * m_fDelayInSamples * (1.0 / m_nSampleRate);
-	fRT /= 1000.0; // RT is in mSec!
+	float fExponent = -3.0f * m_fDelayInSamples * (1.0f / m_nSampleRate);
+	fRT /= 1000.0f; // RT is in mSec!
 
-	m_fComb_g = pow((float)10.0, fExponent / fRT);
+	m_fComb_g = pow(10.0f, fExponent / fRT);
 }
 
 bool CCombFilter::processAudio(float* pInput, float* pOutput)
@@ -30,7 +28,7 @@ bool CCombFilter::processAudio(float* pInput, float* pOutput)
 	float yn = this->readDelay();
 
 	if(m_nReadIndex == m_nWriteIndex)
-		yn = 0;
+		yn = 0.f;
 
 	
 	// form fb = x(n) + m_fComb_gy(n)
@@ -42,8 +40,8 @@ bool CCombFilter::processAudio(float* pInput, float* pOutput)
 
 
 	// underflow check
-	if(fb > 0.0 && fb < FLT_MIN_PLUS) fb = 0;
-	if(fb < 0.0 && fb > FLT_MIN_MINUS) fb = 0;
+	if(fb > 0.f && fb < FLT_MIN_PLUS) fb = 0.f;
+	if(fb < 0.f && fb > FLT_MIN_MINUS) fb = 0.f;
 
 	// write delay line
 	this->writeDelayAndInc(fb);

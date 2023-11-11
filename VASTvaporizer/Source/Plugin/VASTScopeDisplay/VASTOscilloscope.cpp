@@ -727,7 +727,7 @@ void VASTOscilloscope::updateContent(bool force) {
 			//}
 		}
 		
-		int voice = C_MAX_POLY - 1;
+		int voice = myProcessor->m_pVASTXperience.m_Set.m_uMaxPoly - 1;
 		bool drawn = false;
 		while (voice >= -1) { //voice >= -1??
 			float lwtPos = m_safeWtPosFloat - wtposto; //wtposto for solomode
@@ -775,7 +775,7 @@ void VASTOscilloscope::updateContent(bool force) {
 					if (voice == -1)
 						g.setColour(myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeLine));
 					else 
-						g.setColour(myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeLine).contrasting(voice / float(C_MAX_POLY)).darker(voice / float(C_MAX_POLY)));
+						g.setColour(myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeLine).contrasting(voice / float(myProcessor->m_pVASTXperience.m_Set.m_uMaxPoly)).darker(voice / float(myProcessor->m_pVASTXperience.m_Set.m_uMaxPoly)));
 				else {
 					g.setColour(myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeLineSolo));
 				}

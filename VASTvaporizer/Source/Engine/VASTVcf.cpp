@@ -512,6 +512,9 @@ bool CVASTVcf::KorgThreeFiveHPFmkIIprepareForPlay()
 	return true;
 }
 
+JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE("-Wconversion")
+JUCE_BEGIN_IGNORE_WARNINGS_MSVC(4244 4267)
+
 void CVASTVcf::KorgThreeFiveHPFmkIIupdateFilters()
 {
 	//CHTS check if necessary
@@ -613,6 +616,8 @@ void CVASTVcf::KorgThreeFiveHPFmkIIdoFilter(double* pInputBuffer, double* pOutpu
 }
 //--HPF
 
+JUCE_END_IGNORE_WARNINGS_GCC_LIKE
+JUCE_END_IGNORE_WARNINGS_MSVC
 
 /*
 //Diode Ladder Filter

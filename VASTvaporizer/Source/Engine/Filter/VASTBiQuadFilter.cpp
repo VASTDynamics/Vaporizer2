@@ -16,8 +16,10 @@ CBiQuad::~CBiQuad(void)
 {
 }
 
-// flush Delays
+JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE("-Wconversion")
+JUCE_BEGIN_IGNORE_WARNINGS_MSVC(4244 4267)
 
+// flush Delays
 void CBiQuad::flushDelays()
 {
 	m_d_Xz_1 = 0;
@@ -181,3 +183,6 @@ void CVASTBiQuad::copySettingsFrom(CVASTBiQuad *source) {
 	m_d_b1 = source->m_d_b1;
 	m_d_b2 = source->m_d_b2;
 }
+
+JUCE_END_IGNORE_WARNINGS_GCC_LIKE
+JUCE_END_IGNORE_WARNINGS_MSVC

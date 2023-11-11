@@ -8,6 +8,9 @@ All modulators tested: OK
 #include "../VASTEngineHeader.h"
 #include "../VASTSettings.h"
 
+JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE("-Wconversion")
+JUCE_BEGIN_IGNORE_WARNINGS_MSVC(4244 4267) //C4244 conversion from 'type1' to 'type2', possible loss of data //C4267 conversion
+
 CVASTVCFCombFilter::CVASTVCFCombFilter() {
 }
 
@@ -174,3 +177,6 @@ void CVASTVCFCombFilter::setStateInformation(const void* data, int sizeInBytes)
 	//  if (xmlState->hasTagName (parameters.valueTreeState.state.getType()))
 	//    parameters.valueTreeState.state = ValueTree::fromXml (*xmlState);
 }
+
+JUCE_END_IGNORE_WARNINGS_GCC_LIKE
+JUCE_END_IGNORE_WARNINGS_MSVC

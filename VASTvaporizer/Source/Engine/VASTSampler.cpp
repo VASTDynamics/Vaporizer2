@@ -29,7 +29,7 @@ VASTSamplerSound::VASTSamplerSound(const juce::String& soundName,
 
 	if ((sourceSampleRate > 0) && (source.lengthInSamples > 0))
 	{
-		int length = source.lengthInSamples;
+		int length = int(source.lengthInSamples);
 
 		//data.reset(new AudioBuffer<float>(jmin(2, (int)source.numChannels), length + 4)); //no idea what the +4 is for
 		//data_changed.reset(new AudioBuffer<float>(jmin(2, (int)source.numChannels), length + 4)); //no idea what the +4 is for
@@ -123,22 +123,25 @@ VASTSamplerSound::VASTSamplerSound(VASTSamplerSound* sound) { //copy constructor
 	iLoopEnd_changed = sound->iLoopEnd_changed;
 }
 
-VASTSamplerSound::~VASTSamplerSound()
-{
+VASTSamplerSound::~VASTSamplerSound() {
 	data = nullptr;
 }
 
 void VASTSamplerSound::clearAllData() {
-
+	//nothing implemented
 }
 
 void VASTSamplerSound::setMidiRootNode(int rootNote) {
 	midiRootNote = rootNote;
 }
 
-int VASTSamplerSound::getMidiRootNote() const { return midiRootNote; }
+int VASTSamplerSound::getMidiRootNote() const { 
+	return midiRootNote; 
+}
 
-int VASTSamplerSound::getSourceSampleRate() const { return sourceSampleRate; }
+int VASTSamplerSound::getSourceSampleRate() const { 
+	return static_cast<int>(sourceSampleRate); 
+}
 
 bool VASTSamplerSound::softFadeExchangeSample() {
 	if (m_bChangedFlag) {
@@ -370,7 +373,7 @@ VASTSamplerSound* VASTSamplerSound::getSoundFromTree(ValueTree* tree) { //load /
 		bool l_hasLoop = tree->getProperty("hasLoop");
 		int l_loopStart = tree->getProperty("loopStart");
 		int l_loopEnd = tree->getProperty("loopEnd");
-		VASTSamplerSound* sound = new VASTSamplerSound(l_name, audioBuffer, l_length, l_sourceSampleRate, allNotes, l_midiRootNote);
+		VASTSamplerSound* sound = new VASTSamplerSound(l_name, audioBuffer, l_length, static_cast<int>(l_sourceSampleRate), allNotes, l_midiRootNote);
 		if (l_hasLoop) {
 			sound->setLoop(l_loopStart, l_loopEnd);
 			sound->setLoopChanged(l_loopStart, l_loopEnd);

@@ -262,7 +262,7 @@ void VASTManualDualValueEditor::setTextEnd(String text) {
 }
 
 void VASTManualDualValueEditor::setPolarity(int polarity) {
-    c_unipolar->setToggleState(polarity == POLARITY::Unipolar, true);
+    c_unipolar->setToggleState(polarity == POLARITY::Unipolar, NotificationType::sendNotification);
 }
 
 //[/MiscUserCode]

@@ -16,7 +16,7 @@
 VASTAudioProcessorEditor::VASTAudioProcessorEditor(VASTAudioProcessor& p)
 	: AudioProcessorEditor(&p), processor(p) {
 
-	juce::Rectangle<int> r = Desktop::getInstance().getDisplays().getMainDisplay().userArea;
+	juce::Rectangle<int> r = Desktop::getInstance().getDisplays().getPrimaryDisplay()->userArea;
 	int screenW = r.getWidth();
 	int screenH = r.getHeight();
 	if (m_iMaxWidth > screenW) m_iMaxWidth = screenW;

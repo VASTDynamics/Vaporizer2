@@ -321,7 +321,7 @@ Font VASTLookAndFeel::getTextButtonFont(TextButton& textButton, int buttonHeight
 		newheight = textButton.getHeight() * 0.75f;
 	newheight *= mFontSize;
 	newFont.setSizeAndStyle(newheight, newFont.getStyleFlags(), 1.0f, 0.0f);
-	vassert(newFont.getTypeface() != nullptr);
+	vassert(newFont.getTypefacePtr() != nullptr);
 	return newFont;
 };
 
@@ -1729,7 +1729,7 @@ void VASTLookAndFeel::drawRotarySlider(Graphics& g, int x, int y, int width, int
 	double modEndPercentageUI = 0.0;
 	double valStartPercentage = 0.0;
 	double valEndPercentage = 0.0;
-	float lastSrceVals[C_MAX_POLY] = { 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f };
+	float lastSrceVals[C_MAX_POLY] {};
 
 	if (slider.getValue() != slider.getDoubleClickReturnValue()) {
 		//not the default value

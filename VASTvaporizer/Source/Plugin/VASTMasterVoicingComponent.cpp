@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 6.1.2
+  Created with Projucer version: 7.0.7
 
   ------------------------------------------------------------------------------
 
@@ -314,11 +314,6 @@ VASTMasterVoicingComponent::~VASTMasterVoicingComponent()
     //[/Destructor]
 }
 
-void VASTMasterVoicingComponent::initAll()
-{
-    m_initDone = true;
-}
-
 //==============================================================================
 void VASTMasterVoicingComponent::paint (juce::Graphics& g)
 {
@@ -501,6 +496,11 @@ Label* VASTMasterVoicingComponent::getComponentCUnderruns() {
 
 Label* VASTMasterVoicingComponent::getComponentCVoices() {
 	return c_voices.get();
+}
+
+void VASTMasterVoicingComponent::initAll()
+{
+    m_initDone = true;
 }
 //[/MiscUserCode]
 

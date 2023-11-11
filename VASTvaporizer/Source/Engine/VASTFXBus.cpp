@@ -294,11 +294,11 @@ void CVASTFXBus::processBuffers(sRoutingBuffers& routingBuffers, MidiBuffer& mid
 			routingBuffers.FxBusBuffer[0]->addFrom(0, 0, routingBuffers.FilterBuffer[0]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[0]->addFrom(1, 0, routingBuffers.FilterBuffer[0]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if (*m_Set->m_State->m_uFilterRouting_Filter2 == FILTER2ROUTE::FILTER2ROUTE_FXBus1) {
+		if (*m_Set->m_State->m_uFilterRouting_Filter2 == static_cast<int>(FILTER2ROUTE::FILTER2ROUTE_FXBus1)) {
 			routingBuffers.FxBusBuffer[0]->addFrom(0, 0, routingBuffers.FilterBuffer[1]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[0]->addFrom(1, 0, routingBuffers.FilterBuffer[1]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if (*m_Set->m_State->m_uFilterRouting2_Filter2 == FILTER2ROUTE::FILTER2ROUTE_FXBus1) {
+		if (*m_Set->m_State->m_uFilterRouting2_Filter2 == static_cast<int>(FILTER2ROUTE::FILTER2ROUTE_FXBus1)) {
 			routingBuffers.FxBusBuffer[0]->addFrom(0, 0, routingBuffers.FilterBuffer[1]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[0]->addFrom(1, 0, routingBuffers.FilterBuffer[1]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}

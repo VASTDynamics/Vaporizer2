@@ -299,7 +299,7 @@ void CVASTSingleNote::startNote(int midiNoteNumber, float velocity, SynthesiserS
 
 		if (sSound != nullptr) {
 			if (*m_Set->m_State->m_bSamplerPoly == static_cast<int>(SWITCH::SWITCH_OFF)) {
-				for (int i = 0; i < C_MAX_POLY; i++) {
+				for (int i = 0; i < m_Set->m_uMaxPoly; i++) {
 					//clear all vother voices // all grains
 					for (int grain = 0; grain < m_Poly->m_singleNote[i]->m_grainTable.size(); grain++) {
 						m_Poly->m_singleNote[i]->m_grainTable[grain].sampler_isInAttack = false;

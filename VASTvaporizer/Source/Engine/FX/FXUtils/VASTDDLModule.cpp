@@ -28,6 +28,9 @@ CDDLModule::CDDLModule() {
 
 }
 
+JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE("-Wconversion")
+JUCE_BEGIN_IGNORE_WARNINGS_MSVC(4244 4267)
+
 void CDDLModule::init(CVASTSettings &set) {
 	m_Set = &set;
 
@@ -69,6 +72,8 @@ void CDDLModule::setUsesExternalFeedback(bool) {
 CDDLModule::~CDDLModule(void)
 {
 }
+
+
 
 void CDDLModule::cookVariables()
 {
@@ -218,3 +223,6 @@ bool CDDLModule::processAudioFrame(float* pInputBuffer, float* pOutputBuffer, MY
 
 	return true;
 }
+
+JUCE_END_IGNORE_WARNINGS_GCC_LIKE
+JUCE_END_IGNORE_WARNINGS_MSVC

@@ -122,10 +122,12 @@ void CVASTOscillatorBank::beginSoftFade() { //to be called at start of buffer pr
 				m_bWavetableSoftfadePickedUp = false;
 
 				if (m_bIsRecording) {
-					DBG("beginSoftFade is recording - adding position from WT " << m_wavetable->getID() << " to WT " << m_wavetable_soft_fade->getID());
-					int numPos = m_wavetable_soft_fade->getNumPositions();
-					if (numPos < C_MAX_NUM_POSITIONS) {
-						m_wavetable_soft_fade->copyPositionToOtherWavetable(m_iRecordingPos, numPos, m_wavetable_soft_fade.get()); //locks wt
+					//DBG("beginSoftFade is recording - adding position from WT " << m_wavetable->getID() << " to WT " << m_wavetable_soft_fade->getID());
+					if (m_wavetable_soft_fade != nullptr) {
+						int numPos = m_wavetable_soft_fade->getNumPositions();
+						if (numPos < C_MAX_NUM_POSITIONS) {
+							m_wavetable_soft_fade->copyPositionToOtherWavetable(m_iRecordingPos, numPos, m_wavetable_soft_fade.get()); //locks wt
+						}
 					}
 				}
 			}
@@ -360,6 +362,7 @@ void CVASTOscillatorBank::clearSingleNoteSoftFadeCycle() {
 }
 
 void CVASTOscillatorBank::startRecording(int wtPos) {
+	std::shared_ptr<CVASTWaveTable> l_wavetable = getSoftOrCopyWavetable();
 	m_bIsRecording = true;
 	m_iRecordingPos = wtPos;
 }

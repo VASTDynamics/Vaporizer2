@@ -314,7 +314,7 @@ bool CVASTWaveTableOscillator::getOsci(float* pOutput) {
 					else {
 						//samples per second: m_iSampleRate
 						//seconds for ramp: ramp * dawbeattime
-						float secondsPerBeat = m_Set->getMillisecondsPerBeat() * .001;
+						float secondsPerBeat = float(m_Set->getMillisecondsPerBeat() * .001);
 						float rampseconds = *m_Set->m_State->m_fLFORamp_LFO1 * secondsPerBeat;
 						float rampsamples = rampseconds * m_iSampleRate;
 						m_LFORamp += 1.0f / rampsamples;
@@ -327,7 +327,7 @@ bool CVASTWaveTableOscillator::getOsci(float* pOutput) {
 					else {
 						//samples per second: m_iSampleRate
 						//seconds for ramp: ramp * dawbeattime
-						float secondsPerBeat = m_Set->getMillisecondsPerBeat() * .001;
+						float secondsPerBeat = float(m_Set->getMillisecondsPerBeat() * .001);
 						float rampseconds = *m_Set->m_State->m_fLFORamp_LFO2 * secondsPerBeat;
 						float rampsamples = rampseconds * m_iSampleRate;
 						m_LFORamp += 1.0f / rampsamples;
@@ -340,7 +340,7 @@ bool CVASTWaveTableOscillator::getOsci(float* pOutput) {
 					else {
 						//samples per second: m_iSampleRate
 						//seconds for ramp: ramp * dawbeattime
-						float secondsPerBeat = m_Set->getMillisecondsPerBeat() * .001;
+						float secondsPerBeat = float(m_Set->getMillisecondsPerBeat() * .001);
 						float rampseconds = *m_Set->m_State->m_fLFORamp_LFO3 * secondsPerBeat;
 						float rampsamples = rampseconds * m_iSampleRate;
 						m_LFORamp += 1.0f / rampsamples;
@@ -353,7 +353,7 @@ bool CVASTWaveTableOscillator::getOsci(float* pOutput) {
 					else {
 						//samples per second: m_iSampleRate
 						//seconds for ramp: ramp * dawbeattime
-						float secondsPerBeat = m_Set->getMillisecondsPerBeat() * .001;
+						float secondsPerBeat = float(m_Set->getMillisecondsPerBeat() * .001);
 						float rampseconds = *m_Set->m_State->m_fLFORamp_LFO4 * secondsPerBeat;
 						float rampsamples = rampseconds * m_iSampleRate;
 						m_LFORamp += 1.0f / rampsamples;
@@ -366,7 +366,7 @@ bool CVASTWaveTableOscillator::getOsci(float* pOutput) {
 					else {
 						//samples per second: m_iSampleRate
 						//seconds for ramp: ramp * dawbeattime
-						float secondsPerBeat = m_Set->getMillisecondsPerBeat() * .001;
+						float secondsPerBeat = float(m_Set->getMillisecondsPerBeat() * .001);
 						float rampseconds = *m_Set->m_State->m_fLFORamp_LFO5 * secondsPerBeat;
 						float rampsamples = rampseconds * m_iSampleRate;
 						m_LFORamp += 1.0f / rampsamples;
@@ -381,7 +381,7 @@ bool CVASTWaveTableOscillator::getOsci(float* pOutput) {
 				switch (m_uOscType)
 				{
 				case WAVE::sine:
-					fOutSample = sinf(2.0f * M_PI * phasor[0]);
+					fOutSample = sinf(float(2.0f * M_PI * phasor[0]));
 					break;
 
 				case WAVE::saw:
@@ -409,7 +409,7 @@ bool CVASTWaveTableOscillator::getOsci(float* pOutput) {
 
 				case WAVE::sawsine:
 
-					fOutSample = (phasor[0] <= 0.5f) ? (phasor[0] * 2.0f) : sinf(2.0f * M_PI * phasor[0]);
+					fOutSample = (phasor[0] <= 0.5f) ? (phasor[0] * 2.0f) : sinf(float(2.0f * M_PI * phasor[0]));
 					break;
 				}
 				fOutSample *= m_LFORamp;
@@ -440,8 +440,8 @@ bool CVASTWaveTableOscillator::getOsci(float* pOutput) {
 				m_buf4 = 0.55000f * m_buf4 + 0.5329522f * white;
 				m_buf5 = -0.7616f * m_buf5 - 0.0168980f * white;
 				fOutSample = amplitude *
-					(m_buf0 + m_buf1 + m_buf2 + m_buf3 + m_buf4 + m_buf5 + m_buf6 + white * 0.5362);
-				m_buf6 = white * 0.115926;
+					(m_buf0 + m_buf1 + m_buf2 + m_buf3 + m_buf4 + m_buf5 + m_buf6 + white * 0.5362f);
+				m_buf6 = white * 0.115926f;
 				break;
 			}
 
@@ -450,17 +450,17 @@ bool CVASTWaveTableOscillator::getOsci(float* pOutput) {
 				//double scaling = 0.05; // experimental value at 44.1kHz
 				// min and max protect against instability at extreme sample rates.
 			{
-				float leakage = ((m_iSampleRate - 144.0) / m_iSampleRate < 0.9999)
-					? (m_iSampleRate - 144.0) / m_iSampleRate
+				float leakage = ((m_iSampleRate - 144.f) / m_iSampleRate < 0.9999f)
+					? (m_iSampleRate - 144.0f) / m_iSampleRate
 					: 0.9999f;
 
-				float scaling = (9.0 / sqrt(m_iSampleRate) > 0.01)
-					? 9.0 / sqrt(m_iSampleRate)
+				float scaling = (9.0f / float(sqrt(m_iSampleRate)) > 0.01f)
+					? 9.0f / float(sqrt(m_iSampleRate))
 					: 0.01f;
 
 				float white = doWhiteNoiseFast();
 				m_z = leakage * m_y + white * scaling;
-				m_y = fabs(m_z) > 1.0
+				m_y = fabs(m_z) > 1.0f
 					? leakage * m_y - white * scaling
 					: m_z;
 				fOutSample = m_y;
@@ -496,13 +496,13 @@ bool CVASTWaveTableOscillator::getOsci(float* pOutput) {
 	// invert?
 	if (m_bInvert)
 	{
-		fOutSample *= -1.0;
+		fOutSample *= -1.0f;
 	}
 
 	if (m_uPolarity == 0) //unipolar
 	{
-		fOutSample /= 2.0;
-		fOutSample += 0.5;
+		fOutSample /= 2.0f;
+		fOutSample += 0.5f;
 	}
 
 	//fade resynch
@@ -541,7 +541,7 @@ void CVASTWaveTableOscillator::updateMainVariables(int samplerate, MYUINT OscTyp
 {
 	m_iSampleRate = samplerate;
 	if ((m_uOscType == OscType) && (m_fOscMasterTune == OscMasterTune) && (m_fOscCents == OscCents) && (m_iOscOctave == OscOctave) &&
-		(m_iPolyMode == *m_Set->m_State->m_uPolyMode) &&
+		(m_iPolyMode == static_cast<int>(*m_Set->m_State->m_uPolyMode)) &&
 		(m_fPortamento == *m_Set->m_State->m_fPortamento) && 		
 		(m_unisonOscis == unisonOscis)
 		) { // unchanged?
@@ -555,12 +555,12 @@ void CVASTWaveTableOscillator::updateMainVariables(int samplerate, MYUINT OscTyp
 	m_fOscMasterTune = OscMasterTune;
 	m_fOscCents = OscCents;
 	m_iOscOctave = OscOctave;
-	m_iPolyMode = *m_Set->m_State->m_uPolyMode;
+	m_iPolyMode = static_cast<int>(*m_Set->m_State->m_uPolyMode);
 	m_fPortamento = *m_Set->m_State->m_fPortamento;
 
 	signed int key = m_uMIDINote;
 
-	float divi = (key - 45.0 - (24)) / 12.0; //todo there are two places for this formula!
+	float divi = (key - 45.0f - (24.f)) / 12.0f; //todo there are two places for this formula!
 	m_fBaseFrequency_Hz = powf(2.0, divi) * m_fOscMasterTune;
 
 	for (int i=0; i< C_MAX_PARALLEL_OSC; i++)
@@ -600,7 +600,7 @@ inline void CVASTWaveTableOscillator::syncAllPhasorsToMaster() {
 }
 
 void CVASTWaveTableOscillator::random_retrig(int unisonOsci) {
-	phasor[unisonOsci] = ((double)rand() / RAND_MAX); // top of buffer	
+	phasor[unisonOsci] = float((double)rand() / RAND_MAX); // top of buffer	
 }
 
 void CVASTWaveTableOscillator::reset(int unisonOsci) {
@@ -698,7 +698,7 @@ float CVASTWaveTableOscillator::doWhiteNoiseFast()
 	fNoise = (float)rand31_next();
 
 	// normalize and make bipolar
-	fNoise = 2.0*(fNoise / 2147483647.0) - 1.0;
+	fNoise = 2.0f * (fNoise / 2147483647.0f) - 1.0f;
 #else
 	// fNoise is 0 -> ARC4RANDOMMAX
 	fNoise = (float)arc4random();

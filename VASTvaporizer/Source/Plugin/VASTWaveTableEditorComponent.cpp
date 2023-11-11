@@ -470,18 +470,6 @@ void VASTWaveTableEditorComponent::buttonClicked(Button* buttonThatWasClicked)
 					[this, initialFile](const FileChooser& fileChooser) {
 					File wtFile(fileChooser.getResult());
 
-					//find out index
-					DirectoryIterator iter(initialFile, true, "*.wav;*.aiff");
-					int dirindex = -1;
-					while (iter.next())
-					{
-						dirindex++;
-						File theFileItFound(iter.getFile());
-						if (theFileItFound.getFullPathName() == wtFile.getFullPathName())
-							break;
-					}
-					jassert(dirindex >= 0);
-
 					loadWTFileThreaded(wtFile.getFullPathName());
 					mFileChoserIsOpen = false;
 				});
@@ -511,27 +499,21 @@ void VASTWaveTableEditorComponent::buttonClicked(Button* buttonThatWasClicked)
 				String m_UserWTTablesFolder = myProcessor->m_UserWavetableRootFolder;
 				File initialFile = File(m_UserWTTablesFolder);
 				//find out index
-				DirectoryIterator iter(initialFile, true, "*.wav;*.aiff");
-				int dirindex = -1;
+				Array<File> foundFiles = initialFile.findChildFiles(File::TypesOfFileToFind::findFiles, true, "*.wav;*.aiff"); 
+				if (foundFiles.size() == 0)
+					return;
+				int dirindex = 0;
 				bool lFound = false;
-				while (iter.next())
-				{
-					dirindex++;
-					File theFileItFound(iter.getFile());
-					if (theFileItFound.getFileName().equalsIgnoreCase(wavetable->getWaveTableName())) {
-						iter.next();
-						File fileNext(iter.getFile());
+				for (int i=0; i< foundFiles.size(); i++) {
+					if (foundFiles[i].getFileName().equalsIgnoreCase(wavetable->getWaveTableName())) {
 						lFound = true;
-						loadWTFileThreaded(fileNext.getFullPathName());
+						dirindex = i + 1;
 						break;
 					}
 				}
-				if (!lFound) {
-					DirectoryIterator iter(initialFile, true, "*.wav;*.aiff");
-					iter.next();
-					File fileNext(iter.getFile());
-					loadWTFileThreaded(fileNext.getFullPathName());
-				}
+				if (!lFound) 
+					dirindex ++;				
+				loadWTFileThreaded(foundFiles[dirindex % foundFiles.size()].getFullPathName());
 			}
 			else if (buttonThatWasClicked == c_waveTableEditorView->getHeader()->c_WTablePrevious.get()) {
 				stopWTRecording();
@@ -539,28 +521,23 @@ void VASTWaveTableEditorComponent::buttonClicked(Button* buttonThatWasClicked)
 				String m_UserWTTablesFolder = myProcessor->m_UserWavetableRootFolder;
 				File initialFile = File(m_UserWTTablesFolder);
 				//find out index
-				DirectoryIterator iter(initialFile, true, "*.wav;*.aiff");
-				int dirindex = -1;
+				Array<File> foundFiles = initialFile.findChildFiles(File::TypesOfFileToFind::findFiles, true, "*.wav;*.aiff");
+				if (foundFiles.size() == 0)
+					return;
+				int dirindex = foundFiles.size();
 				bool lFound = false;
-				String lastPathName = "";
-				while (iter.next())
-				{
-					dirindex++;
-					File theFileItFound(iter.getFile());
-					if (theFileItFound.getFileName().equalsIgnoreCase(wavetable->getWaveTableName())) {
-						if (lastPathName != "")
-							loadWTFileThreaded(lastPathName);
+				for (int i = 1; i < foundFiles.size(); i++) {
+					if (foundFiles[i].getFileName().equalsIgnoreCase(wavetable->getWaveTableName())) {
 						lFound = true;
+						dirindex = i - 1;
 						break;
 					}
-					lastPathName = theFileItFound.getFullPathName();
 				}
 				if (!lFound) {
-					DirectoryIterator iter(initialFile, true, "*.wav;*.aiff");
-					iter.next();
-					File fileNext(iter.getFile());
-					loadWTFileThreaded(fileNext.getFullPathName());
+					if (dirindex > 0)
+						dirindex--;
 				}
+				loadWTFileThreaded(foundFiles[dirindex].getFullPathName());
 			}
 			else if (buttonThatWasClicked == c_waveTableEditorView->getHeader()->c_iconSelectAll.get()) {
 				c_waveTableEditorView->getEditorOscilloscope()->selectAll(false); //UI update later

@@ -561,7 +561,7 @@ void VASTAudioProcessor::prepareToPlay(double sampleRate, int expectedSamplesPer
 	}
 
 	//if (!b_wasLocked) 
-		m_pVASTXperience.audioProcessLock();
+	m_pVASTXperience.audioProcessLock();
 	m_pVASTXperience.prepareForPlay(sampleRate, expectedSamplesPerBlock);
 	//if (!b_wasLocked) 
 	m_pVASTXperience.audioProcessUnlock();
@@ -574,6 +574,11 @@ void VASTAudioProcessor::releaseResources()
 {
 	// When playback stops, you can use this as an opportunity to free up any
 	DBG("VASTAudioProcessor:Releaseresources()");
+	m_pVASTXperience.audioProcessLock();
+	if (m_pVASTXperience.nonThreadsafeIsBlockedProcessingInfo()) {
+		m_pVASTXperience.m_Poly.releaseResources();
+		m_pVASTXperience.audioProcessUnlock();
+	}
 	//m_pVASTXperience.m_Set.m_RoutingBuffers.resize(0, false); //free memory! -> no, heap corruption!
 	//Check this
 }
@@ -980,8 +985,7 @@ void VASTAudioProcessor::savePatchXML(File *selectedFile) {
 	selectedFile->deleteFile();
 	FileOutputStream out(*selectedFile);
 	if (out.failedToOpen()) {
-		cerr << "open failure: " << strerror(errno) << '\n';
-		setErrorState(vastErrorState::errorState5_couldNotLoadSavedPreset);
+		setErrorState(vastErrorState::errorState5_couldNotOpenFileForWritingPreset);
 		assert(true);
 	}
 	out.writeText(fileText, false, false, "\n"); //slash n new?
@@ -2437,8 +2441,7 @@ bool VASTAudioProcessor::readSettingsFromFile() {
 	if (xml != nullptr) {
 		if (xml->getTagName() == "VASTVaporizerSettingsV1.000") { 	//generic version 20.2.15
 			if (xml != NULL) {
-				forEachXmlChildElement((*xml), pChild)
-				{
+				for (auto* (pChild) : ((*xml).macroBasedForLoop(), (*xml).getChildIterator())) {
 					if (pChild->hasTagName("Settings"))
 					{
 						for (int i = 0; i < pChild->getNumAttributes(); i++) {
@@ -2528,9 +2531,9 @@ bool VASTAudioProcessor::readSettingsFromFile() {
 					if (pChild->hasTagName("PresetData")) {
 						m_presetData.m_favorites.clear();
 						m_presetData.m_stars.clear();
-						forEachXmlChildElement((*pChild), pPresetData) {
+						for (auto* (pPresetData) : ((*pChild).macroBasedForLoop(), (*pChild).getChildIterator())) {
 							if (pPresetData->hasTagName("Favorites")) {
-								forEachXmlChildElement((*pPresetData), pPresetFavorites) {
+								for (auto* (pPresetFavorites) : ((*pPresetData).macroBasedForLoop(), (*pPresetData).getChildIterator())) {
 									String internalid = "";
 									String favoriteNo = "";
 									if (pPresetFavorites->getAttributeName(0) == "PresetID")
@@ -2546,7 +2549,7 @@ bool VASTAudioProcessor::readSettingsFromFile() {
 								}
 							}
 							if (pPresetData->hasTagName("Stars")) {
-								forEachXmlChildElement((*pPresetData), pPresetStars) {
+								for (auto* (pPresetStars) : ((*pPresetData).macroBasedForLoop(), (*pPresetData).getChildIterator())) {
 									String internalid = "";
 									String ranking = "";
 									if (pPresetStars->getAttributeName(0) == "PresetID")
@@ -2566,8 +2569,7 @@ bool VASTAudioProcessor::readSettingsFromFile() {
 					}				
 					if (pChild->hasTagName("MIDIMapping"))
 					{
-						forEachXmlChildElement((*pChild), pMIDIMapping)
-						{
+						for (auto* (pMIDIMapping) : ((*pChild).macroBasedForLoop(), (*pChild).getChildIterator())) {						
 							if (pMIDIMapping->hasTagName("ControllerCC"))
 							{
 								for (int i = 0; i < pMIDIMapping->getNumAttributes(); i++) {
@@ -3506,7 +3508,8 @@ String VASTAudioProcessor::getVersionString() {
 	lVersion.append("OSX64", 5);
 #elif  _WIN64BIT
 	lVersion.append("Win64", 5);
-#elif  _WIN32BIT //_WIN32 also defined for WIN64!!
+	//_WIN32 also defined for WIN64!!
+#elif  _WIN32BIT 
 	lVersion.append("Win32", 5);
 #endif
 #ifdef _SSE2_VERSION
@@ -3523,7 +3526,7 @@ String VASTAudioProcessor::getVersionString() {
 #ifdef _DEBUG
 	lVersion.append(" (Debug)", 8);
 #endif
-#ifdef VASTBUILD || VASTCOMMERCIAL
+#if defined(VASTBUILD) || defined(VASTCOMMERCIAL)
 	lVersion.append(" v", 2);
 #endif
 	return lVersion;

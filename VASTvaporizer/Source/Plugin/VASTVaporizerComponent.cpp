@@ -237,8 +237,8 @@ void VASTVaporizerComponent::paint (juce::Graphics& g)
 		return;
 	}
 
-	Displays::Display dsp1 = Desktop::getInstance().getDisplays().findDisplayForPoint(getScreenBounds().getTopLeft());
-	Displays::Display dsp2 = Desktop::getInstance().getDisplays().findDisplayForPoint(getScreenBounds().getBottomRight());
+	const Displays::Display dsp1 = *Desktop::getInstance().getDisplays().getDisplayForPoint(getScreenBounds().getTopLeft(), false);
+	const Displays::Display dsp2 = *Desktop::getInstance().getDisplays().getDisplayForPoint(getScreenBounds().getBottomRight(), false);
 	if (dsp1.topLeftPhysical == dsp2.topLeftPhysical) {
 		if (m_lastDisplayTopLeftPoint == Point<int>(-1, -1))
 			m_lastDisplayTopLeftPoint = dsp1.topLeftPhysical;

@@ -291,7 +291,7 @@ void CVASTSettings::modMatrixCalcBuffers() {
 		int slotDestination = 0;
 		float slotValue = 0;
 		double slotCurvy = 0;
-		float lastSrceVals[C_MAX_POLY] = { 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f };
+		float lastSrceVals[C_MAX_POLY] {};
 		int slotPolarity = 0;
 		modMatrixSlotGetValues(slot, slotValue, slotCurvy, slotSource, slotDestination, slotPolarity, lastSrceVals);
 		if ((slotSource != MODMATSRCE::NoSource) && (slotDestination != MODMATDEST::NoDestination)) //val can be 0? Check
@@ -323,13 +323,13 @@ void CVASTSettings::modMatrixSwapSlots(int slot1, int slot2) {
 	int slot1Source = 0;
 	int slot1Destination = 0;
 	int slot1Polarity = 0;
-	float slot1LasSrceVals[C_MAX_POLY] = { 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f };
+	float slot1LasSrceVals[C_MAX_POLY] {};
 	float slot2Value = 0;
 	double slot2Curvy = 0;
 	int slot2Source = 0;
 	int slot2Destination = 0;
 	int slot2Polarity = 0;
-	float slot2LasSrceVals[C_MAX_POLY] = { 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f };
+	float slot2LasSrceVals[C_MAX_POLY] {};
 	modMatrixSlotGetValues(slot1, slot1Value, slot1Curvy, slot1Source, slot1Destination, slot1Polarity, slot1LasSrceVals);
 	modMatrixSlotGetValues(slot2, slot2Value, slot2Curvy, slot2Source, slot2Destination, slot2Polarity, slot2LasSrceVals);
 
@@ -353,7 +353,7 @@ bool CVASTSettings::modMatrixIsSet(MYUINT source, MYUINT destination) {
 			int slotDestination = 0;
 			float slotValue = 0;
 			double slotCurvy = 0;
-			float lastSrceVals[C_MAX_POLY] = { 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f };
+			float lastSrceVals[C_MAX_POLY] {};
 			int slotPolarity = 0;
 			modMatrixSlotGetValues(slot, slotValue, slotCurvy, slotSource, slotDestination, slotPolarity, lastSrceVals);
 			if ((slotSource == source) && (slotDestination == destination))
@@ -370,7 +370,7 @@ int CVASTSettings::modMatrixGetFirstSlotWithDestination(MYUINT destination) { //
 			int slotDestination = 0;
 			float slotValue = 0;
 			double slotCurvy = 0;
-			float lastSrceVals[C_MAX_POLY] = { 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f };
+			float lastSrceVals[C_MAX_POLY] {};
 			int slotPolarity = 0;
 			modMatrixSlotGetValues(slot, slotValue, slotCurvy, slotSource, slotDestination, slotPolarity, lastSrceVals);
 			if (slotDestination == destination)
@@ -633,7 +633,7 @@ void CVASTSettings::getMatrixModulationSlotMultiplier(int slot, float& modVal, f
 	int slotDestination = 0;
 	float slotVal = 0.f;
 	double curvy = 0.0; //-100 .. 100
-	float lastSrceVals[C_MAX_POLY] = { 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f };
+	float lastSrceVals[C_MAX_POLY] {};
 	modMatrixSlotGetValues(slot, slotVal, curvy, slotSource, slotDestination, slotPolarity, lastSrceVals); //this includes modmatval modulations!
 	if (destination != slotDestination) {
 		modVal = 0.f;  return;

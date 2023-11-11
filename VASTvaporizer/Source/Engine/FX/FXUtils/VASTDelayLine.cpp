@@ -26,6 +26,9 @@ CDelayLine::~CDelayLine(void)
 {
 }
 
+JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE("-Wconversion")
+JUCE_BEGIN_IGNORE_WARNINGS_MSVC(4244 4267)
+
 void CDelayLine::init(int nDelayLength)
 {
 	m_pBuffer->setSize(1, nDelayLength, false, false, true);
@@ -229,3 +232,5 @@ bool CDelayLine::processAudio(double* pInput, double* pOutput)
 	return true; // all OK
 }
 
+JUCE_END_IGNORE_WARNINGS_GCC_LIKE
+JUCE_END_IGNORE_WARNINGS_MSVC

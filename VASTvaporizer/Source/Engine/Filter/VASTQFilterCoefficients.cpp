@@ -12,6 +12,9 @@
 #include <math.h>
 using namespace std;
 
+JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE("-Wconversion")
+JUCE_BEGIN_IGNORE_WARNINGS_MSVC(4244 4267) //C4244 conversion from 'type1' to 'type2', possible loss of data //C4267 conversion
+
 void VASTQFilterCoefficients::note_to_omega(float x, float& sinu, float& cosi)
 {
 	x += 256;
@@ -689,3 +692,6 @@ void VASTQFilterCoefficients::Reset()
    memset(dC, 0, sizeof(float) * n_cm_coeffs);
    memset(tC, 0, sizeof(float) * n_cm_coeffs);
 }
+
+JUCE_END_IGNORE_WARNINGS_GCC_LIKE
+JUCE_END_IGNORE_WARNINGS_MSVC
