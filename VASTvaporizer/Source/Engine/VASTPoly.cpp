@@ -146,17 +146,19 @@ void CVASTPoly::initArpInternal(MidiBuffer& midiMessages) {
 	for (int note = 0; note < m_ARP_currentARPNoteValues.size(); note++) {
 		if (m_ARP_currentARPNoteValues[note] > 0)
 		{
-			MidiMessage msg;
 			int samplePos = 0;
 			//will it be started in that buffer - then no note off! also at first init
 			bool willBeStarted = false;
-			for (MidiBuffer::Iterator it(midiMessages); it.getNextEvent(msg, samplePos);)
-			{
-				if ((msg.isNoteOn() && (msg.getNoteNumber() == m_ARP_currentARPNoteValues[note]))) {
-					willBeStarted = true;
-					break;
-				}			
-			}
+            
+            auto midiIterator = midiMessages.findNextSamplePosition (samplePos);
+            std::for_each (midiIterator,
+                           midiMessages.cend(),
+                           [&] (const MidiMessageMetadata& metadata) {
+				if ((metadata.getMessage().isNoteOn() && (metadata.getMessage().getNoteNumber() == m_ARP_currentARPNoteValues[note]))) {
+                        willBeStarted = true;
+                        //break;
+                }
+            });
 			if (!willBeStarted) midiMessages.addEvent(MidiMessage::noteOff(1, m_ARP_currentARPNoteValues[note]), 0);
 		}
 	}
@@ -614,29 +616,30 @@ void CVASTPoly::doArp(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages)
 	if (getSynthesizer()->m_MPEMasterChannel == lChannelForARP)
 		lChannelForARP++;
 
-	MidiMessage msg;
-	int samplePos;
-
+	int samplePos = 0;
 	MidiBuffer mb;
 	mb.clear();
 
 	Array<int> l_noteOffNotes;
-	for (MidiBuffer::Iterator it(midiMessages); it.getNextEvent(msg, samplePos);)
-	{
-		if (msg.isNoteOn()) {
-			m_ARP_midiInNotes.add(msg.getNoteNumber());
-		}
-		else if (msg.isNoteOff()) {
-			if (!m_ARP_midiInNotes.contains(msg.getNoteNumber())) //some leftovers
-				mb.addEvent(msg, 0);
-			
-			m_ARP_midiInNotes.removeValue(msg.getNoteNumber()); 
-			l_noteOffNotes.add(msg.getNoteNumber());
-		}
-        else {
-            mb.addEvent(msg, samplePos);
+    
+    auto midiIterator = midiMessages.findNextSamplePosition (samplePos);
+    std::for_each (midiIterator,
+                   midiMessages.cend(),
+                   [&] (const MidiMessageMetadata& metadata) {
+        if (metadata.getMessage().isNoteOn()) {
+            m_ARP_midiInNotes.add(metadata.getMessage().getNoteNumber());
         }
-	}
+        else if (metadata.getMessage().isNoteOff()) {
+            if (!m_ARP_midiInNotes.contains(metadata.getMessage().getNoteNumber())) //some leftovers
+                mb.addEvent(metadata.getMessage(), 0);
+            
+            m_ARP_midiInNotes.removeValue(metadata.getMessage().getNoteNumber());
+            l_noteOffNotes.add(metadata.getMessage().getNoteNumber());
+        }
+        else {
+            mb.addEvent(metadata.getMessage(), samplePos);
+        }
+    });
 
 	midiMessages.clear();
 	midiMessages.addEvents(mb, 0, numSamples, 0);
@@ -874,14 +877,15 @@ void CVASTPoly::processAudioBuffer(sRoutingBuffers& routingBuffers, MidiBuffer& 
 	}
 	else {
 		m_Set->m_ARPData.setDispActiveStep(-1);
-		MidiMessage msg;
-		int samplePos;
-		for (MidiBuffer::Iterator it(midiMessages); it.getNextEvent(msg, samplePos);)
-		{
-			if (msg.isNoteOn()) {
-				m_ARP_currentARPNoteValues.add(msg.getNoteNumber());
-			}
-		}
+		int samplePos = 0;
+        auto midiIterator = midiMessages.findNextSamplePosition (samplePos);
+        std::for_each (midiIterator,
+                       midiMessages.cend(),
+                       [&] (const MidiMessageMetadata& metadata) {
+            if (metadata.getMessage().isNoteOn()) {
+                m_ARP_currentARPNoteValues.add(metadata.getMessage().getNoteNumber());
+            }
+        });
 	}
 
 	//===========================================================================================

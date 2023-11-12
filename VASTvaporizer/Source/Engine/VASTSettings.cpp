@@ -44,6 +44,11 @@ CVASTSettings::CVASTSettings(VASTAudioProcessor* processor) : my_processor(proce
 		iMPETimbre[i] = -1;
 		iMPETimbreMidiNote[i] = -1;
 	}
+    
+    //buffer white noise
+    for (int i = 0; i < C_MAX_SAMPLE_RATE * 3; i++) {
+        m_whiteNoiseBuffer[i] = CVASTWaveTableOscillator::doWhiteNoiseFast();
+    }
 
 	//fill frequency lut
 	for (int i = 0; i < M_CENTS_LUT_SIZE; i++)

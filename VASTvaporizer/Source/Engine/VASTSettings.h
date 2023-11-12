@@ -447,6 +447,8 @@ public:
 
 	void setTuning(String tuningFile);
 	TUN::CSingleScale m_scale;
+    
+    float m_whiteNoiseBuffer[C_MAX_SAMPLE_RATE * 3]; //3 seconds at highest rate
 	
 	private:	
 		bool modMatrixDestinationSet(MYUINT destination); //use fast instead

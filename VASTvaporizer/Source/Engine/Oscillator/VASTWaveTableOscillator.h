@@ -69,7 +69,7 @@ public:
 	//void retriggerLFO();
 
 	void updatePitchMod(float pitchMod);
-	void updateNoiseBiquad();
+	void updateNoiseBiquad(int skips);
 
 	bool isPlaying();
 	float m_fLastValue = 0.0f;
@@ -97,7 +97,8 @@ public:
 	CVASTSettings *m_Set; 
 	
 	void syncAllPhasorsToMaster();
-
+    static float doWhiteNoiseFast();
+    
 protected:
 	// this should be protected
 	float phasor[C_MAX_PARALLEL_OSC];       // phase accumulator
@@ -107,7 +108,6 @@ private:
 	void random_retrig(int unisonOsci);
     
 	long unsigned int rand31_next();
-	float doWhiteNoiseFast();
 	
 	bool getOsci(float* pOutput); //int inFramesToProcess required to detect small variable buffersizes (FLStudio)
 	
@@ -118,6 +118,8 @@ private:
 	float m_fDriftLfo[C_MAX_PARALLEL_OSC];
 	float m_fDriftLfo2[C_MAX_PARALLEL_OSC];
 
+    int m_whiteNoisePhasor = 0;
+    
 	//global parameters
 	bool m_bIsPlaying;
 	bool m_bNoteOnNextZero;
@@ -140,6 +142,7 @@ private:
 
 	CVASTOscillatorBank* m_oscBank;
 
+    int m_noise_skips = 0;
 	long m_seed = 0; // for random
 	float m_fRsHoldValue = 0.0f; // sample & hold
 	float m_fRshCounter = -1.0f;
