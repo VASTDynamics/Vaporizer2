@@ -417,7 +417,7 @@ void VASTOscilloscope::updateContent(bool force) {
 			}
 			else {
 				if (l_oscillatorBank == 1) {
-					if ((myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_iNumOscs_OscB > 0) && (*myProcessor->m_pVASTXperience.m_Set.m_State->m_bOscOnOff_OscB == static_cast<int>(SWITCH::SWITCH_ON))) {
+					if ((*myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_iNumOscs_OscB > 0) && (*myProcessor->m_pVASTXperience.m_Set.m_State->m_bOscOnOff_OscB == static_cast<int>(SWITCH::SWITCH_ON))) {
 						l_display = true;
 					}
 					else {
