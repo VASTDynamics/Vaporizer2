@@ -435,7 +435,7 @@ float CVASTMSEGEnvelope::getEnvelopeStepSeq(int bufferSample) { //called during 
 		beats = *m_Set->m_State->m_uStepSeqTimeBeats_STEPSEQ3;
 	};
 
-	if ((synch == static_cast<int>(SWITCH::SWITCH_ON)) && (m_Set->m_bPpqIsPlaying)) {
+	if ((synch == static_cast<bool>(SWITCH::SWITCH_ON)) && (m_Set->m_bPpqIsPlaying)) {
 		if (!m_Set->m_bPpqIsPlaying) return 0.f;
 		float l_fIntervalTime = m_Set->getIntervalTimeFromDAWBeats(beats);
 		float stepDuration = static_cast<int> (std::ceil(m_Set->m_nSampleRate * (l_fIntervalTime / 1000.f)));  //interval time is in milliseconds, stepduration in samples
@@ -563,7 +563,7 @@ float CVASTMSEGEnvelope::getEnvelopeStepSeq(int bufferSample) { //called during 
 				return 0.f;
 			}
 
-			m_iSamplesSinceSegmentStart -= 1;
+			m_iSamplesSinceSegmentStart.store(-1);
 			if (myData->getSegmentEnd(m_activeSegment.load())->yVal >= myData->getSegmentStart(m_activeSegment.load())->yVal) { //rising
 				m_dSegment.store(0.0f); //0 to 1 or 1 to 0 per segment
 				m_bRisingSegment.store(true);

@@ -118,7 +118,6 @@ public:
 
     bool m_bLastFilterOutputZero[3] = {true, true, true}; //filters
 
-	float m_safePhaseFloat[4]{ 0.f,0.f,0.f,0.f };
 	int m_iCurCycleSamples[4] = { 0, 0, 0, 0 };
 	int m_iLastCycleSamples[4] = { 0, 0, 0, 0 };
 
@@ -127,6 +126,7 @@ public:
 	int m_wtFXType[4]{ 0, 0, 0, 0 };
 	bool m_wtFXTypeChanged[4]{ false, false, false, false };
 	std::atomic<float> m_currentWTPosFloatPercentage[4] { 0.f,0.f,0.f,0.f }; //bank
+	std::atomic<float> m_safePhaseFloat[4]{ 0.f,0.f,0.f,0.f }; //bank
 
 private:
 	void nextNote(bool legato);

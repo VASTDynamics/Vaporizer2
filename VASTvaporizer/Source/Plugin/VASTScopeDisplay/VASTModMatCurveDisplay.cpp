@@ -192,7 +192,7 @@ void VASTModMatCurveDisplay::updateContent(bool force) {
 		g.strokePath(pline, PathStrokeType(1.5f * myProcessor->getPluginScaleWidthFactor()));
 
 		for (int voice = 0; voice < C_MAX_POLY; voice++) {
-			if (myProcessor->m_pVASTXperience.m_Poly.m_singleNote[voice]->isPlayingCalledFromUI()) {
+			if (myProcessor->m_pVASTXperience.m_Poly.isVoicePlaying(voice)) {
 				float distance = pline.getLength() * (lastSrceVals[voice] + 1.f) * 0.5f;
 				juce::Point pH = pline.getPointAlongPath(distance);
 				float xP = pH.getX() - 2.f * myProcessor->getPluginScaleWidthFactor();
@@ -202,7 +202,6 @@ void VASTModMatCurveDisplay::updateContent(bool force) {
 				g.fillRect(xP, yP, 3.5f * myProcessor->getPluginScaleWidthFactor(), 3.5f * myProcessor->getPluginScaleHeightFactor());
 			}
 		}
-
 	}
 	lastCurvy = curvy;
 	lastModVal = modval;

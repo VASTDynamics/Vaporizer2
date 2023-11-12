@@ -1862,7 +1862,7 @@ void VASTLookAndFeel::drawRotarySlider(Graphics& g, int x, int y, int width, int
 			//actual indicator
 			if (!myProcessor->m_disableOpenGLGFX) {				
 				for (int voice = 0; voice < C_MAX_POLY; voice++) {
-					if (myProcessor->m_pVASTXperience.m_Poly.m_singleNote[voice]->isPlayingCalledFromUI()) {
+					if (myProcessor->m_pVASTXperience.m_Poly.isVoicePlaying(voice)) {
 						float lastSrceValPercentage = modStartPercentage + ((lastSrceVals[voice] + 1.f) * 0.5f)  * (modEndPercentage - modStartPercentage);
 						float lastSrceValPercentageUI = std::pow(lastSrceValPercentage, _parameterslider->getSkewFactor());
 						//store for animation

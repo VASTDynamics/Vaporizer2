@@ -685,23 +685,38 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 	// normal post procs
 
 	if (0 == parameterID.compare("m_uPolyMode")) {
-		if (*m_Set.m_State->m_uPolyMode == static_cast<int>(POLYMODE::MONO))
-			m_Set.m_uMaxPoly = 1;
-		else
-			if (*m_Set.m_State->m_uPolyMode == static_cast<int>(POLYMODE::POLY4))
-				m_Set.m_uMaxPoly = 4;
-			else
-				if (*m_Set.m_State->m_uPolyMode == static_cast<int>(POLYMODE::POLY16))
-					m_Set.m_uMaxPoly = 16;
-				else 
-				{
-					vassertfalse;
-					m_Set.m_uMaxPoly = 16;
-				}
-
 		for (int i = 0; i < m_Set.m_uMaxPoly; i++)
 			m_Poly.m_singleNote[i]->stopNote(0, false); //hard stop
-		//m_Poly.init(); //CHECK
+
+		audioProcessLock();
+		bool done = false;
+		int counter = 0;
+		while (!done) {
+			if ((counter<30) && (myProcessor->m_bAudioThreadRunning && (!getBlockProcessingIsBlockedSuccessfully()))) {
+				DBG("PolyMode - sleep");
+				Thread::sleep(100);
+				counter++;
+				continue;
+			}
+
+			if (*m_Set.m_State->m_uPolyMode == static_cast<int>(POLYMODE::MONO))
+				m_Set.m_uMaxPoly = 1;
+			else
+				if (*m_Set.m_State->m_uPolyMode == static_cast<int>(POLYMODE::POLY4))
+					m_Set.m_uMaxPoly = 4;
+				else
+					if (*m_Set.m_State->m_uPolyMode == static_cast<int>(POLYMODE::POLY16))
+						m_Set.m_uMaxPoly = 16;
+					else
+					{
+						vassertfalse;
+						m_Set.m_uMaxPoly = 16;
+					}
+
+			m_Poly.releaseResources();
+			audioProcessUnlock();
+			done = true;
+		}
 		return;		
 	}
 

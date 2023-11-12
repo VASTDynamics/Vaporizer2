@@ -74,7 +74,6 @@ VASTWaveTableEditorView::VASTWaveTableEditorView (AudioProcessorEditor *editor, 
 	c_editorOscilloscope->setProcessor(myProcessor);
 	c_editorOscilloscope->setEditor(myEditor);
 	c_editorOscilloscope->setWTEditor(myWTEditor);
-	c_editorOscilloscope->startAutoUpdate(true);
 
 	//CHECK
 	myWTEditor->m_freqviewport = (VASTFreqDomainViewport*)c_viewportFreqDomain->getViewedComponent();

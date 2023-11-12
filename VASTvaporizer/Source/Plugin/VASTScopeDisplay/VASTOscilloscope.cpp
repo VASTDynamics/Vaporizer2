@@ -264,20 +264,23 @@ void VASTOscilloscope::updateContent(bool force) {
 	if (note < 0) {
 		note = 0;
 	}
+
+	/*
 	CVASTSingleNote *m_myNote = myProcessor->m_pVASTXperience.m_Poly.m_singleNote[note];	
 	if (m_myNote == nullptr) {
 		jassertfalse; //should never be nullptr
 		return;  //CHECK
 	}
 	vassert((m_myNote->m_safePhaseFloat[l_oscillatorBank] >= 0.f) && (m_myNote->m_safePhaseFloat[l_oscillatorBank] <= 1.f)); //safetycheck
+	*/
 
 	l_display = false;
 
 	bool l_soloMode = false;
 	if (l_oscbank != "WTEditorView") {
-		if (m_soloMode != m_myNote->m_Poly->m_OscBank[l_oscillatorBank]->getSoloMode())
+		if (m_soloMode != myProcessor->m_pVASTXperience.m_Poly.m_OscBank[l_oscillatorBank]->getSoloMode())
 			m_hasWaveformImagePerspectiveBuffer = false;
-		l_soloMode = m_myNote->m_Poly->m_OscBank[l_oscillatorBank]->getSoloMode();
+		l_soloMode = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[l_oscillatorBank]->getSoloMode();
 		m_soloMode = l_soloMode;
 	}
 
@@ -315,46 +318,44 @@ void VASTOscilloscope::updateContent(bool force) {
 	
 		l_display = true;
 
-		if (
-			(m_myNote->m_Poly->m_OscBank[l_oscillatorBank]->getAndClearSoftChangedFlagOscEditor() == false)) {
+		if (myProcessor->m_pVASTXperience.m_Poly.m_OscBank[l_oscillatorBank]->getAndClearSoftChangedFlagOscEditor() == false) {
 			if (!(force || m_dirty.load()))
 				return;
 		}
 	}
 	else {
-		wavetable = m_myNote->m_Poly->m_OscBank[l_oscillatorBank]->getWavetablePointer();
+		wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[l_oscillatorBank]->getWavetablePointer();
 
 		if (wavetable->m_isBeingUpdated.load() == true) //safety
 			return;
 
 		if (wavetable->getNumPositions() > 0) {
 			if (l_oscillatorBank == 0) {
-				phase = *m_myNote->m_Set->m_State->m_fOscPhase_OscA * 0.01f;
-				wtPerc = *m_myNote->m_Set->m_State->m_fOscWTPos_OscA * 0.01f;
-				wtfxType = *m_myNote->m_Set->m_State->m_uWTFX_OscA;
-				wtfxVal = *m_myNote->m_Set->m_State->m_fWTFXVal_OscA;
+				phase = *myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_fOscPhase_OscA * 0.01f;
+				wtPerc = *myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_fOscWTPos_OscA * 0.01f;
+				wtfxType = *myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_uWTFX_OscA;
+				wtfxVal = *myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_fWTFXVal_OscA;
 			}
 			else {
 				if (l_oscillatorBank == 1) {
-					phase = *m_myNote->m_Set->m_State->m_fOscPhase_OscB * 0.01f;
-					wtPerc = *m_myNote->m_Set->m_State->m_fOscWTPos_OscB * 0.01f;
-					wtfxType = *m_myNote->m_Set->m_State->m_uWTFX_OscB;
-					wtfxVal = *m_myNote->m_Set->m_State->m_fWTFXVal_OscB;
+					phase = *myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_fOscPhase_OscB * 0.01f;
+					wtPerc = *myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_fOscWTPos_OscB * 0.01f;
+					wtfxType = *myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_uWTFX_OscB;
+					wtfxVal = *myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_fWTFXVal_OscB;
 				}
 				else {
 					if (l_oscillatorBank == 2) {
-						phase = *m_myNote->m_Set->m_State->m_fOscPhase_OscC * 0.01f;
-						wtPerc = *m_myNote->m_Set->m_State->m_fOscWTPos_OscC * 0.01f;
-						wtfxType = *m_myNote->m_Set->m_State->m_uWTFX_OscC;
-						wtfxVal = *m_myNote->m_Set->m_State->m_fWTFXVal_OscC;
+						phase = *myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_fOscPhase_OscC * 0.01f;
+						wtPerc = *myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_fOscWTPos_OscC * 0.01f;
+						wtfxType = *myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_uWTFX_OscC;
+						wtfxVal = *myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_fWTFXVal_OscC;
 					}
 					else {
 						if (l_oscillatorBank == 3) {
-							//morph = *m_myNote->m_Set->m_State->m_fOscMorph_OscD * 0.01f;
-							phase = *m_myNote->m_Set->m_State->m_fOscPhase_OscD * 0.01f;
-							wtPerc = *m_myNote->m_Set->m_State->m_fOscWTPos_OscD * 0.01f;
-							wtfxType = *m_myNote->m_Set->m_State->m_uWTFX_OscD;
-							wtfxVal = *m_myNote->m_Set->m_State->m_fWTFXVal_OscD;
+							phase = *myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_fOscPhase_OscD * 0.01f;
+							wtPerc = *myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_fOscWTPos_OscD * 0.01f;
+							wtfxType = *myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_uWTFX_OscD;
+							wtfxVal = *myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_fWTFXVal_OscD;
 						}
 					}
 				}
@@ -362,12 +363,12 @@ void VASTOscilloscope::updateContent(bool force) {
 		}
 
 		//knobs tweaked but not playing?
-		if (m_myNote->isPlayingCalledFromUI()) {
+		if (myProcessor->m_pVASTXperience.m_Poly.isVoicePlaying(note)) {
 			//played again after reset
 			if (!m_bLast_update_was_with_voice_playing)
 				m_dirty.store(true);
 
-			if (m_safeWtPosFloat.load() != m_myNote->m_currentWTPosFloatPercentage[l_oscillatorBank].load() * (wavetable->getNumPositions() - 1))
+			if (m_safeWtPosFloat.load() != myProcessor->m_pVASTXperience.m_Poly.m_currentWTPosFloatPercentage[l_oscillatorBank][note].load() * (wavetable->getNumPositions() - 1))
                 m_dirty.store(true);
 		}
 		else {
@@ -391,11 +392,11 @@ void VASTOscilloscope::updateContent(bool force) {
 		m_safeWTFXVal = wtfxVal;
 
 		//check for buffer refresh
-		if (m_myNote->m_Poly->m_OscBank[l_oscillatorBank]->getAndClearSoftChangedFlagStructure())
+		if (myProcessor->m_pVASTXperience.m_Poly.m_OscBank[l_oscillatorBank]->getAndClearSoftChangedFlagStructure())
 			m_hasWaveformImagePerspectiveBuffer = false;
 
 		//check if dirty
-		if ((m_myNote->m_Poly->m_OscBank[l_oscillatorBank]->getAndClearSoftChangedFlagOsc() == false)) {
+		if ((myProcessor->m_pVASTXperience.m_Poly.m_OscBank[l_oscillatorBank]->getAndClearSoftChangedFlagOsc() == false)) {
 			if (!(force || m_dirty.load())) {
 				return;
 			}
@@ -405,7 +406,7 @@ void VASTOscilloscope::updateContent(bool force) {
 			m_screenWidthScale = float(getScreenBounds().getWidth()) / float(getWidth());
 			float scale = Desktop::getInstance().getGlobalScaleFactor() * m_screenWidthScale;
 			if (l_oscillatorBank == 0) {
-				if ((*m_myNote->m_Set->m_State->m_iNumOscs_OscA > 0) && (*myProcessor->m_pVASTXperience.m_Set.m_State->m_bOscOnOff_OscA == static_cast<int>(SWITCH::SWITCH_ON))) {
+				if ((*myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_iNumOscs_OscA > 0) && (*myProcessor->m_pVASTXperience.m_Set.m_State->m_bOscOnOff_OscA == static_cast<int>(SWITCH::SWITCH_ON))) {
 					l_display = true;
 				}
 				else {
@@ -416,7 +417,7 @@ void VASTOscilloscope::updateContent(bool force) {
 			}
 			else {
 				if (l_oscillatorBank == 1) {
-					if ((*m_myNote->m_Set->m_State->m_iNumOscs_OscB > 0) && (*myProcessor->m_pVASTXperience.m_Set.m_State->m_bOscOnOff_OscB == static_cast<int>(SWITCH::SWITCH_ON))) {
+					if ((myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_iNumOscs_OscB > 0) && (*myProcessor->m_pVASTXperience.m_Set.m_State->m_bOscOnOff_OscB == static_cast<int>(SWITCH::SWITCH_ON))) {
 						l_display = true;
 					}
 					else {
@@ -427,7 +428,7 @@ void VASTOscilloscope::updateContent(bool force) {
 				}
 				else {
 					if (l_oscillatorBank == 2) {
-						if ((*m_myNote->m_Set->m_State->m_iNumOscs_OscC > 0) && (*myProcessor->m_pVASTXperience.m_Set.m_State->m_bOscOnOff_OscC == static_cast<int>(SWITCH::SWITCH_ON))) {
+						if ((*myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_iNumOscs_OscC > 0) && (*myProcessor->m_pVASTXperience.m_Set.m_State->m_bOscOnOff_OscC == static_cast<int>(SWITCH::SWITCH_ON))) {
 							l_display = true;
 						}
 						else {
@@ -438,7 +439,7 @@ void VASTOscilloscope::updateContent(bool force) {
 					}
 					else {
 						if (l_oscillatorBank == 3) {
-							if ((*m_myNote->m_Set->m_State->m_iNumOscs_OscD > 0) && (*myProcessor->m_pVASTXperience.m_Set.m_State->m_bOscOnOff_OscD == static_cast<int>(SWITCH::SWITCH_ON))) {
+							if ((*myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_iNumOscs_OscD > 0) && (*myProcessor->m_pVASTXperience.m_Set.m_State->m_bOscOnOff_OscD == static_cast<int>(SWITCH::SWITCH_ON))) {
 								l_display = true;
 							}
 							else {
@@ -450,8 +451,8 @@ void VASTOscilloscope::updateContent(bool force) {
 					}
 				}
 			}
-			if (m_myNote->isPlayingCalledFromUI()) {
-				m_last_active_voice = m_myNote->getVoiceNo();
+			if (myProcessor->m_pVASTXperience.m_Poly.isVoicePlaying(note)) {
+				m_last_active_voice = note;
 				m_last_active_counter = C_MAX_UI_STEPS_AFTER_NOTEOFF;
 			}
 			else {
@@ -465,12 +466,12 @@ void VASTOscilloscope::updateContent(bool force) {
 			//if (m_last_active_voice != -1) {
 			if (m_last_active_counter == C_MAX_UI_STEPS_AFTER_NOTEOFF) {
 				if (!l_soloMode)
-					m_safeWtPosFloat = m_myNote->m_currentWTPosFloatPercentage[l_oscillatorBank].load() * (wavetable->getNumPositions() - 1);
+					m_safeWtPosFloat = myProcessor->m_pVASTXperience.m_Poly.m_currentWTPosFloatPercentage[l_oscillatorBank][note].load() * (wavetable->getNumPositions() - 1);
 				else
-					m_safeWtPosFloat = wavetable->getMultiSelectBegin() + m_myNote->m_currentWTPosFloatPercentage[l_oscillatorBank].load() * (wavetable->getMultiSelectEnd() - wavetable->getMultiSelectBegin());
-				m_last_active_voice = m_myNote->getVoiceNo();
+					m_safeWtPosFloat = wavetable->getMultiSelectBegin() + myProcessor->m_pVASTXperience.m_Poly.m_currentWTPosFloatPercentage[l_oscillatorBank][note].load() * (wavetable->getMultiSelectEnd() - wavetable->getMultiSelectBegin());
+				m_last_active_voice = note;
 				m_bLast_update_was_with_voice_playing = true;
-				m_safePhaseFloat = m_myNote->m_safePhaseFloat[l_oscillatorBank];
+				m_safePhaseFloat = myProcessor->m_pVASTXperience.m_Poly.m_safePhaseFloat[l_oscillatorBank][note].load();
 				vassert((m_safePhaseFloat >= 0.f) && (m_safePhaseFloat <= 1.f));
 			}
 			else {				
@@ -631,7 +632,7 @@ void VASTOscilloscope::updateContent(bool force) {
 	}
 	else { //perspective display		
 		//**lock
-		m_myNote->m_Poly->m_OscBank[l_oscillatorBank]->mSharedPtrSoftFadeLock.enter();
+		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[l_oscillatorBank]->mSharedPtrSoftFadeLock.enter();
 		int numWTPos = wavetable->getNumPositions();
 		std::vector<float> wtcopy[C_MAX_NUM_POSITIONS];
 		for (int pos = 0; pos < numWTPos; pos++)
@@ -645,7 +646,7 @@ void VASTOscilloscope::updateContent(bool force) {
 			wtposto = wavetable->getMultiSelectBegin();
 			numPos = wtposfrom - wtposto + 1;
 		}
-		m_myNote->m_Poly->m_OscBank[l_oscillatorBank]->mSharedPtrSoftFadeLock.exit();
+		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[l_oscillatorBank]->mSharedPtrSoftFadeLock.exit();
 		//**lock
 
 		float xoffset = 0.f;
@@ -728,11 +729,9 @@ void VASTOscilloscope::updateContent(bool force) {
 		while (voice >= -1) { //voice >= -1??
 			float lwtPos = m_safeWtPosFloat - wtposto; //wtposto for solomode
             if (voice >= 0) {
-                CVASTSingleNote *m_myNote = myProcessor->m_pVASTXperience.m_Poly.m_singleNote[voice];
-                //lwtPos = m_myNote->m_currentWTPosFloatPercentage[l_oscillatorBank].load() * (numWTPos - 1);
-                lwtPos = m_myNote->m_currentWTPosFloatPercentage[l_oscillatorBank].load() * (numPos - 1);
+                lwtPos = myProcessor->m_pVASTXperience.m_Poly.m_currentWTPosFloatPercentage[l_oscillatorBank][voice].load() * (numPos - 1);
             }
-			if ((voice == -1) || (myProcessor->m_pVASTXperience.m_Poly.m_singleNote[voice]->isPlayingCalledFromUI())) { //-1 is always drawn
+			if ((voice == -1) || (myProcessor->m_pVASTXperience.m_Poly.isVoicePlaying(voice))) { //-1 is always drawn
 				if (voice > -1)
 					drawn = true;
 				else

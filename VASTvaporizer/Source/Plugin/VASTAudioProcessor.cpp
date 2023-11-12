@@ -575,9 +575,19 @@ void VASTAudioProcessor::releaseResources()
 	// When playback stops, you can use this as an opportunity to free up any
 	DBG("VASTAudioProcessor:Releaseresources()");
 	m_pVASTXperience.audioProcessLock();
-	if (m_pVASTXperience.nonThreadsafeIsBlockedProcessingInfo()) {
-		m_pVASTXperience.m_Poly.releaseResources();
-		m_pVASTXperience.audioProcessUnlock();
+	bool done = false;
+	int counter = 0;
+	while (!done) {
+		if ((counter<30) && (m_bAudioThreadRunning && (!m_pVASTXperience.getBlockProcessingIsBlockedSuccessfully()))) {
+			DBG("VASTAudioProcessor:Releaseresources() - sleep");
+			Thread::sleep(100);
+			counter++;
+			continue;
+		}
+		if (counter<30)
+			m_pVASTXperience.m_Poly.releaseResources();
+		m_pVASTXperience.audioProcessUnlock();			
+		done = true;
 	}
 	//m_pVASTXperience.m_Set.m_RoutingBuffers.resize(0, false); //free memory! -> no, heap corruption!
 	//Check this
@@ -1470,8 +1480,21 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 	else {
 		if (isSeparateThread) {
 			if ((processor->m_bAudioThreadRunning) && (!processor->m_wasBypassed)) {
-				if (!processor->m_pVASTXperience.getBlockProcessingIsBlockedSuccessfully()) {
-					vassertfalse;
+				if (!processor->m_pVASTXperience.nonThreadsafeIsBlockedProcessingInfo()) {
+					processor->m_pVASTXperience.audioProcessLock();
+					if (!processor->m_pVASTXperience.getBlockProcessingIsBlockedSuccessfully()) {			
+						bool done = false;
+						int counter = 30;
+						while (!done) {
+							if ((counter<30) && ((processor->m_bAudioThreadRunning) && (!(processor->m_pVASTXperience.getBlockProcessingIsBlockedSuccessfully())))) {
+								DBG("PassTree - sleep");
+								Thread::sleep(100);
+								counter++;
+								continue;
+							}
+							done = true;
+						}
+					}
 				}
 			}
 		}

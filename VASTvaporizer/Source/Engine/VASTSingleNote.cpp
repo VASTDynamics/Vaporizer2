@@ -579,12 +579,20 @@ void CVASTSingleNote::samplerRenderNextBlock(AudioSampleBuffer* outputBuffer, in
 		}
 		else {
 			for (int grain = 1; grain < m_grainTable.size(); grain++) {
-				m_grainTable[grain].sampler_isInRelease = true;
+				m_grainTable[grain].sampler_isInRelease = true;			
 			}
 		}
 
-		//do the below per grain
 		int numGrains = int(m_grainTable.size());
+
+		//For UI only
+		for (int grain = 0; grain < numGrains; grain++) {
+			m_Poly->m_samplerViewportPosMarker[m_Poly->m_samplerViewportPosMarkerCount] = m_grainTable[grain].realPos;
+			m_Poly->m_samplerViewportPosMarkerCount++;
+			m_Poly->m_samplerViewportPosMarkerCount = m_Poly->m_samplerViewportPosMarkerCount % C_MAX_SAMPLER_VIEWPORT_MARKERS;
+		}
+
+		//do the below per grain
 		float gain = 1.f;
 		int counter = -1;
 		int lnumSamples = numSamples;

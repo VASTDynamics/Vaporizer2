@@ -336,9 +336,10 @@ bool VASTLFOEditor::checkForPositionChanges() {
 	bool valChanged = false;
 	if (myDrawState.pervoice)
 		for (int i = 0; i < C_MAX_POLY; i++) {
-			if (myProcessor->m_pVASTXperience.m_Poly.m_singleNote[i]->isPlayingCalledFromUI()) {
-				if (lastLFOVal[i] != myProcessor->m_pVASTXperience.m_Poly.m_singleNote[i]->m_LFO_Osc[myDrawState.lfonr]->m_fLastValue) {
-					lastLFOVal[i] = myProcessor->m_pVASTXperience.m_Poly.m_singleNote[i]->m_LFO_Osc[myDrawState.lfonr]->m_fLastValue;
+			if (myProcessor->m_pVASTXperience.m_Poly.isVoicePlaying(i)) {				
+
+				if (lastLFOVal[i] != myProcessor->m_pVASTXperience.m_Poly.m_fLastLFOOscValue[myDrawState.lfonr][i].load()) {
+					lastLFOVal[i] = myProcessor->m_pVASTXperience.m_Poly.m_fLastLFOOscValue[myDrawState.lfonr][i].load();
 					m_dispReset[i] = false;
 					valChanged = true;
 				}
@@ -351,11 +352,11 @@ bool VASTLFOEditor::checkForPositionChanges() {
 		}
 	else {
 		bool lastdispReset0 = m_dispReset[0];
-		if (lastLFOVal[0] != myProcessor->m_pVASTXperience.m_Poly.m_global_LFO_Osc[myDrawState.lfonr].m_fLastValue) {
+		if (lastLFOVal[0] != myProcessor->m_pVASTXperience.m_Poly.m_fLastGlobalLFOOscValue[myDrawState.lfonr].load()) {
 			for (int i = 0; i < C_MAX_POLY; i++) {
 				m_dispReset[i] = true;
-				lastLFOVal[i] = myProcessor->m_pVASTXperience.m_Poly.m_global_LFO_Osc[myDrawState.lfonr].m_fLastValue;
-				if (myProcessor->m_pVASTXperience.m_Poly.m_singleNote[i]->isPlayingCalledFromUI()) {
+				lastLFOVal[i] = myProcessor->m_pVASTXperience.m_Poly.m_fLastGlobalLFOOscValue[myDrawState.lfonr].load();
+				if (myProcessor->m_pVASTXperience.m_Poly.isVoicePlaying(i)) {
 					lastLFOVal[0] = lastLFOVal[i];
 					m_dispReset[0] = false;
 					m_dispReset[i] = false;

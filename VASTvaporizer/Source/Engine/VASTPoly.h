@@ -17,8 +17,11 @@ Has LFO
 #include "Filter/VASTQFilter.h"
 #include <vector>
 
-class CVASTPoly
+class CVASTPoly	
 {
+	friend class CVASTXperience;
+	friend class CVASTSingleNote;
+
 public:
 	CVASTPoly(CVASTSettings &set, VASTAudioProcessor* processor) :
 		m_Set(&set), myProcessor(processor)
@@ -42,6 +45,7 @@ public:
 	void updateLFO(int lfono);
 	void processAudioBuffer(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages);
 	void resynchLFO();
+	bool isVoicePlaying(int voiceNo) const;
 	int numNotesPlaying() const;
 	int numOscsPlaying() const;
 	int getLastNotePlayed() const;
@@ -50,8 +54,6 @@ public:
 	bool voicesMSEGStillActive();	
 	modMatrixInputState getLastNotePlayedInputState(int currentFrame);
 	modMatrixInputState getOldestNotePlayedInputState(int currentFrame);
-
-	CVASTSingleNote* m_singleNote[C_MAX_POLY]; //pointer since it will be stored as voices in synthesiers ownned array
 
 	CVASTMSEGEnvelope m_StepSeq_Envelope[3]; //not per voice
 
@@ -71,6 +73,13 @@ public:
 	bool getLastSingleNoteCycleWasActive();
 	int m_iLastSingleNoteCycleCalls = 0;
 
+	std::atomic<double> m_samplerViewportPosMarker[C_MAX_SAMPLER_VIEWPORT_MARKERS]{}; //max markers that are displayed
+	std::atomic<int> m_samplerViewportPosMarkerCount = 0;
+	std::atomic<float>m_currentWTPosFloatPercentage[4][C_MAX_POLY]{}; //for oscilloscope, per bank
+	std::atomic<float>m_safePhaseFloat[4][C_MAX_POLY]{}; //for oscilloscope, per bank
+	std::atomic<float>m_fLastLFOOscValue[5][C_MAX_POLY]; //for LFO editor, per LFO1-5
+	std::atomic<float>m_fLastGlobalLFOOscValue[5]; //for LFO editor, per LFO1-5
+
 	LinearSmoothedValue<float> m_fCustomModulator1_smoothed;
 	LinearSmoothedValue<float> m_fCustomModulator2_smoothed;
 	LinearSmoothedValue<float> m_fCustomModulator3_smoothed;
@@ -85,6 +94,8 @@ public:
 
 private:
 	VASTAudioProcessor* myProcessor;
+
+	CVASTSingleNote* m_singleNote[C_MAX_POLY]; //pointer since it will be stored as voices in synthesiers ownned array // must not be accessed directly from the UI, not thread safe
 
 	/** This is used to control access to the rendering callback and the note trigger methods. */
 	CriticalSection lock;

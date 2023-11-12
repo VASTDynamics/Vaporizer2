@@ -101,37 +101,31 @@ void VASTStepSeqEditor::handleBorderDisplay() {
 		return;
 
 	//current pos marker
-	int voiceNo = 0;
-	while ((voiceNo < C_MAX_POLY) && (!myProcessor->m_pVASTXperience.m_Poly.m_singleNote[voiceNo]->isPlayingCalledFromUI()))
-		voiceNo++;
-	if (!(voiceNo < C_MAX_POLY))
-		return;
-	if (myProcessor->m_pVASTXperience.m_Poly.m_singleNote[voiceNo]->isPlayingCalledFromUI()) {
-		if ((myData->controlPoints.size() - 1) > myData->getDispActiveSegment(voiceNo)) {
-			float markerPos = 0.f;
-			//array access with myData!
-			if (myDataLive->getDispSegmentLengthInSamples(voiceNo) <= 0)
-				markerPos = (myData->controlPoints[myData->getDispActiveSegment(voiceNo)].xVal + (myData->controlPoints[myData->getDispActiveSegment(voiceNo) + 1].xVal - myData->controlPoints[myData->getDispActiveSegment(voiceNo)].xVal)) * m_drawwidth;
-			else
-				markerPos = (myData->controlPoints[myData->getDispActiveSegment(voiceNo)].xVal + (myData->controlPoints[myData->getDispActiveSegment(voiceNo) + 1].xVal - myData->controlPoints[myData->getDispActiveSegment(voiceNo)].xVal) * (float(myDataLive->getDispSamplesSinceSegmentStart(voiceNo)) / float(myDataLive->getDispSegmentLengthInSamples(voiceNo)))) * m_drawwidth;
-			if (markerPos == markerPos) { //why can it be NaN?? 
-				g.setColour(myProcessor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colMSEGEditorPosMarker).darker(0.5f).withAlpha(0.4f));
-				g.drawLine(markerPos + m_xbounds, m_ybounds, markerPos + m_xbounds, m_drawheight + m_ybounds, 1.0f * m_screenWidthScale * myProcessor->getPluginScaleWidthFactor());
-			}
-
-			Line<float> lline = Line<float>(markerPos + m_xbounds, m_ybounds, markerPos + m_xbounds, m_drawheight + m_ybounds);
-
-			float pointSize = 8.f * myProcessor->getPluginScaleWidthFactor() * m_screenWidthScale;
-			PathFlatteningIterator i(m_lastLinePath, AffineTransform(), Path::defaultToleranceForTesting);
-			Point<float> intersection;
-			while (i.next())
-				if (lline.intersects(Line<float>(i.x1, i.y1, i.x2, i.y2), intersection)) {
-					g.setColour(myProcessor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colMSEGEditorPosMarker).withAlpha(0.7f));
-					g.fillEllipse(intersection.getX() - pointSize * 0.5f, intersection.getY() - pointSize * 0.5f, pointSize, pointSize);
-					break;
-				}
+	int voiceNo = 0; //stepSeq Enveloped is dtored as voice 0 
+	if ((myData->controlPoints.size() - 1) > myData->getDispActiveSegment(voiceNo)) {
+		float markerPos = 0.f;
+		//array access with myData!
+		if (myDataLive->getDispSegmentLengthInSamples(voiceNo) <= 0)
+			markerPos = (myData->controlPoints[myData->getDispActiveSegment(voiceNo)].xVal + (myData->controlPoints[myData->getDispActiveSegment(voiceNo) + 1].xVal - myData->controlPoints[myData->getDispActiveSegment(voiceNo)].xVal)) * m_drawwidth;
+		else
+			markerPos = (myData->controlPoints[myData->getDispActiveSegment(voiceNo)].xVal + (myData->controlPoints[myData->getDispActiveSegment(voiceNo) + 1].xVal - myData->controlPoints[myData->getDispActiveSegment(voiceNo)].xVal) * (float(myDataLive->getDispSamplesSinceSegmentStart(voiceNo)) / float(myDataLive->getDispSegmentLengthInSamples(voiceNo)))) * m_drawwidth;
+		if (markerPos == markerPos) { //why can it be NaN?? 
+			g.setColour(myProcessor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colMSEGEditorPosMarker).darker(0.5f).withAlpha(0.4f));
+			g.drawLine(markerPos + m_xbounds, m_ybounds, markerPos + m_xbounds, m_drawheight + m_ybounds, 1.0f * m_screenWidthScale * myProcessor->getPluginScaleWidthFactor());
 		}
-	}
+
+		Line<float> lline = Line<float>(markerPos + m_xbounds, m_ybounds, markerPos + m_xbounds, m_drawheight + m_ybounds);
+
+		float pointSize = 8.f * myProcessor->getPluginScaleWidthFactor() * m_screenWidthScale;
+		PathFlatteningIterator i(m_lastLinePath, AffineTransform(), Path::defaultToleranceForTesting);
+		Point<float> intersection;
+		while (i.next())
+			if (lline.intersects(Line<float>(i.x1, i.y1, i.x2, i.y2), intersection)) {
+				g.setColour(myProcessor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colMSEGEditorPosMarker).withAlpha(0.7f));
+				g.fillEllipse(intersection.getX() - pointSize * 0.5f, intersection.getY() - pointSize * 0.5f, pointSize, pointSize);
+				break;
+			}
+	}	
 }
 
 inline VASTMSEGData& VASTStepSeqEditor::getData() { return *myData; }

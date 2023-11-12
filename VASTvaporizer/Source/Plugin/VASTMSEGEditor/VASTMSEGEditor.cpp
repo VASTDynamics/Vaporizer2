@@ -100,7 +100,7 @@ void VASTMSEGEditor::handleBorderDisplay() {
 	if (m_drawwidth <= 0) return;
 
 	//current pos marker	
-	for (int voiceNo = 0; voiceNo < C_MAX_POLY; voiceNo++) {
+	for (int voiceNo = 0; voiceNo < myProcessor->m_pVASTXperience.m_Set.m_uMaxPoly; voiceNo++) {
 		if (myData->dispVoicePlaying(voiceNo)) {
 			if ((myData->controlPoints.size() - 1) > myData->getDispActiveSegment(voiceNo)) {
 					float markerPos = 0.f;

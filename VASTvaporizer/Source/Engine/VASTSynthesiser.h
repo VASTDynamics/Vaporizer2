@@ -334,6 +334,8 @@ public:
 	void init(CVASTSettings* set, CVASTPoly* poly) {
 		m_Poly = poly;
 		m_Set = set;
+		clearVoices();
+		clearSounds();
 		initValues();
 	}
 
@@ -596,6 +598,10 @@ public:
 		return m_midiNotesNumKeyDown; 
 	};
 	
+	atomic<int> m_numVoicesPlaying = 0;
+	atomic<int> m_numOscsPlaying = 0;
+	atomic<bool> m_voicePlaying[C_MAX_POLY];
+
 	int m_MPEMasterChannel = 1; //TODO MPE config messages
 
 protected:

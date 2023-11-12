@@ -541,19 +541,14 @@ void VASTSamplerViewport::handleBorderDisplay() {
 
 		//current pos marker
 		g.setColour(myProcessor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colMSEGEditorPosMarker));
-		for (int voice = 0; voice < C_MAX_POLY; voice++) {
-			CVASTSingleNote* note = myProcessor->m_pVASTXperience.m_Poly.m_singleNote[voice];
-			if (note->isPlayingCalledFromUI()) {
-				for (int grain = 0; grain < note->m_grainTable.size(); grain++) {
-					sGrainTable sgrain = note->m_grainTable[grain];
-					double posx = sgrain.realPos / step;
-					if ((posx - visiStart > 0) && (posx - visiStart < lVisibleArea.getWidth()))
-						g.drawLine(posx - visiStart, 0.f, posx - visiStart, float(lDrawheight - 1.0 * scale), 1.f * scale);
-					m_lastPostMarker = posx - visiStart;
-				}
-			}
-		}
 
+		for (int i = 0; i < sizeof(myProcessor->m_pVASTXperience.m_Poly.m_samplerViewportPosMarker) / sizeof(double); i++) {
+			double posx = myProcessor->m_pVASTXperience.m_Poly.m_samplerViewportPosMarker [i] / step;
+			if ((posx - visiStart > 0) && (posx - visiStart < lVisibleArea.getWidth()))
+				g.drawLine(posx - visiStart, 0.f, posx - visiStart, float(lDrawheight - 1.0 * scale), 1.f * scale);
+			m_lastPostMarker = posx - visiStart;
+		}
+			
 		//selection
 		if (m_selection.iWavSelectionStartSample >= 0) {
 			g.setColour(juce::Colour::fromFloatRGBA(1.f, 1.0f, 1.0f, 1.0f));

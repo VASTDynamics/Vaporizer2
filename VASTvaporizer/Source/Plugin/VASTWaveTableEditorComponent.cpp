@@ -3996,7 +3996,7 @@ void VASTWaveTableEditorComponent::startAutoUpdate() {
 	if (isShowing()) grabKeyboardFocus();
 	m_freqviewport->startAutoUpdate();
 	m_positionviewport->startAutoUpdate();
-	c_waveTableEditorView->getEditorOscilloscope()->startAutoUpdate(true);
+	c_waveTableEditorView->getEditorOscilloscope()->startAutoUpdate(true);	
 }
 
 void VASTWaveTableEditorComponent::stopAutoUpdate() {

@@ -85,7 +85,6 @@ void CVASTPoly::init() {
 	//Oscillator voices
 	m_OscillatorSynthesizer.setNoteStealingEnabled(true);	
 	m_OscillatorSynthesizer.setMinimumRenderingSubdivisionSize(32, false); //not strict
-	m_OscillatorSynthesizer.clearVoices();
 	for (int i = 0; i < m_Set->m_uMaxPoly; i++) {
 		m_OscillatorSynthesizer.addVoice((VASTSynthesiserVoice*)m_singleNote[i]);
 	}
@@ -179,26 +178,16 @@ void CVASTPoly::updateVariables() {
 	}	
 }
 
-int CVASTPoly::numNotesPlaying() const { //UI only
-	//const ScopedReadLock myScopedLock(m_Set->m_RoutingBuffers.mReadWriteLock); //CHECK THIS!!!
+bool CVASTPoly::isVoicePlaying(int voiceNo) const { //UI only
+	return m_OscillatorSynthesizer.m_voicePlaying[voiceNo].load();
+}
 
-	int num = 0;
-	for (int i = 0; i < m_Set->m_uMaxPoly; i++) {
-		if (m_singleNote[i]->isPlayingCalledFromUI() == true) num++;  //TODO is 0 OK here - not accurate!!!
-	}
-	return num;
+int CVASTPoly::numNotesPlaying() const { //UI only
+	return m_OscillatorSynthesizer.m_numVoicesPlaying.load();
 }
 
 int CVASTPoly::numOscsPlaying() const { //UI only
-	//const ScopedReadLock myScopedLock(m_Set->m_RoutingBuffers.mReadWriteLock); //CHECK THIS!!!
-
-	int num = 0;
-	for (int i = 0; i < m_Set->m_uMaxPoly; i++) {
-		if (m_singleNote[i]->isPlayingCalledFromUI() == true) { //TODO is 0 OK here - not accurate!!!
-			num += m_singleNote[i]->getNumOscsPlaying();
-		}
-	}
-	return num;
+	return m_OscillatorSynthesizer.m_numOscsPlaying.load();
 }
 
 int CVASTPoly::getLastNotePlayed() const { //-1 if none playing
@@ -237,17 +226,24 @@ VASTSynthesiserSound* CVASTPoly::getSynthSound() {
 
 VASTSamplerSound* CVASTPoly::getSamplerSound() { //live Data
 	VASTSynthesiserSound* sound = (VASTSynthesiserSound*)getSynthesizer()->getSound(0);
-	return sound->getSamplerSound();
+	if (sound != nullptr)
+		return sound->getSamplerSound();
+	else 
+		return nullptr;
 }
 
 VASTSamplerSound* CVASTPoly::getSamplerSoundChanged() {
 	VASTSynthesiserSound* sound = (VASTSynthesiserSound*)getSynthesizer()->getSound(0);
-	return sound->getSamplerSoundChanged();
+	if (sound != nullptr)
+		return sound->getSamplerSoundChanged();
+	else
+		return nullptr;
 }
 
 void CVASTPoly::clearSamplerSoundChanged() {
 	VASTSynthesiserSound* sound = (VASTSynthesiserSound*)getSynthesizer()->getSound(0);
-	sound->clearSamplerSoundChanged();
+	if (sound != nullptr)
+		sound->clearSamplerSoundChanged();
 }
 
 void CVASTPoly::softFadeExchangeSample() {
@@ -791,6 +787,16 @@ void CVASTPoly::doArp(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages)
 void CVASTPoly::processAudioBuffer(sRoutingBuffers& routingBuffers, MidiBuffer& midiMessages) {
 	
 	m_iLastSingleNoteCycleCalls = 0; //for single not softfade cycle 
+
+	//Clear UI atomics
+	m_samplerViewportPosMarkerCount = 0;
+	std::fill_n(&m_samplerViewportPosMarker[0], sizeof(m_samplerViewportPosMarker) / sizeof(m_samplerViewportPosMarker[0]), 0.0);
+	std::fill_n(&m_currentWTPosFloatPercentage[0][0], sizeof(m_currentWTPosFloatPercentage) / sizeof(m_currentWTPosFloatPercentage[0][0]), 0.f);
+	std::fill_n(&m_safePhaseFloat[0][0], sizeof(m_safePhaseFloat) / sizeof(m_safePhaseFloat[0][0]), 0.f);
+	std::fill_n(&m_fLastLFOOscValue[0][0], sizeof(m_fLastLFOOscValue) / sizeof(m_fLastLFOOscValue[0][0]), 0.f);
+	std::fill_n(&m_fLastGlobalLFOOscValue[0], sizeof(m_fLastGlobalLFOOscValue) / sizeof(m_fLastGlobalLFOOscValue[0]), 0.f);
+	//Clear UI atomics
+
 	//===========================================================================================
 	//Check for StepSeq restart
 	if (m_ppq_playing != m_Set->m_bPpqIsPlaying) {	//status changed

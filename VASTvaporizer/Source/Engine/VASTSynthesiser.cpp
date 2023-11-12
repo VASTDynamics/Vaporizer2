@@ -144,7 +144,10 @@ void VASTSynthesiser::renderNextBlock(sRoutingBuffers& routingBuffers,
 	int startSample,
 	int numSamples)
 {
-	//CHVAST
+	//Clear UI atomics
+	std::fill_n(m_voicePlaying, C_MAX_POLY, false);
+	//Clear UI atomics
+
 	if (*m_Set->m_State->m_fPortamento > 0.0f) {        
         auto midiIterator = inputMidi.findNextSamplePosition (startSample);
         std::for_each (midiIterator,
@@ -360,6 +363,9 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 	float* custModBuffer1 = routingBuffers.CustomModulatorBuffer[1]->getWritePointer(0);
 	float* custModBuffer2 = routingBuffers.CustomModulatorBuffer[2]->getWritePointer(0);
 	float* custModBuffer3 = routingBuffers.CustomModulatorBuffer[3]->getWritePointer(0);
+	m_numVoicesPlaying = 0;
+	m_numOscsPlaying = 0;
+
 	for (int i = startSample; i < startSample + numSamples; i++) {
 		//custom modulators - first depends on nothing
 		if (m_Set->modMatrixSourceSetFast(MODMATSRCE::CustomModulator1)) {
@@ -504,6 +510,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 	bool bMSEG5AttackSteps = m_Set->modMatrixDestinationSetFast(MODMATDEST::MSEG5AttackSteps);
 	bool bMSEG5DecaySteps = m_Set->modMatrixDestinationSetFast(MODMATDEST::MSEG5DecaySteps);
 	bool bMSEG5ReleaseSteps = m_Set->modMatrixDestinationSetFast(MODMATDEST::MSEG5ReleaseSteps);
+
 
 	m_oldestPlayingKeyDown = -1;
 	for (auto* voice : voices) {
@@ -755,6 +762,10 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 		bool bPlayiningInRange = ((CVASTSingleNote*)voice)->isPlayingInRange(startSample, numSamples); //requires that mseg is processed before!
 
 		if (bPlayiningInRange) { //perf opt, check with phase and frequency hat is not updated?			
+			m_voicePlaying[((CVASTSingleNote*)voice)->getVoiceNo()].store(true);
+			m_numVoicesPlaying++;
+
+			m_numOscsPlaying+=((CVASTSingleNote*)voice)->getNumOscsPlaying();
 			if (routingBuffers.lfoUsed[0].load()) {
 				if (blfoprocessed[0] == false) {
 					if (m_Set->modMatrixDestinationSetFast(MODMATDEST::LFO1Frequency) == true) {
@@ -920,7 +931,21 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 			if (newestVoice != nullptr)
 				m_newestPlaying.store(newestVoice->mVoiceNo);
 		}
+
+		//UI atomics
+		for (int bank = 0; bank < 4; bank++) {
+			m_Poly->m_currentWTPosFloatPercentage[bank][((CVASTSingleNote*)voice)->getVoiceNo()].store(((CVASTSingleNote*)voice)->m_currentWTPosFloatPercentage[bank].load());
+			m_Poly->m_safePhaseFloat[bank][((CVASTSingleNote*)voice)->getVoiceNo()].store(((CVASTSingleNote*)voice)->m_safePhaseFloat[bank].load());
+		}
+		for (int lfo = 0; lfo < 5; lfo++) {
+			m_Poly->m_fLastLFOOscValue[lfo][((CVASTSingleNote*)voice)->getVoiceNo()].store(((CVASTSingleNote*)voice)->m_LFO_Osc[lfo]->m_fLastValue);
+		}
 	} //voices
+
+	//UI atomics global
+	for (int lfo = 0; lfo < 5; lfo++) {
+		m_Poly->m_fLastGlobalLFOOscValue[lfo].store(m_Poly->m_global_LFO_Osc[lfo].m_fLastValue);
+	}
 
 	m_Set->m_oldestPlaying = m_oldestPlaying;
 	m_Set->m_oldestPlayingKeyDown = m_oldestPlayingKeyDown;
@@ -1480,6 +1505,10 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 							if (myvoice->isVoiceActive() && !((CVASTSingleNote*)myvoice)->m_VCA->isHardStop())
 								myvoice->stopNote(0, false); //hard stop it
 					}
+
+					//CHECK
+					if (voice == nullptr) //steal it
+						voice = voices[0];
 
 					shallSteal = true;
 					startVoice(voice, sound, midiChannel, midiNoteNumber, velocity);
