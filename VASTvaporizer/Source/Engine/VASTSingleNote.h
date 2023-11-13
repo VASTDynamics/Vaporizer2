@@ -192,7 +192,7 @@ private:
 
 	void updateDetune(int bank, float detuneValue, bool updateFrequency);
 	bool prepareNextPhaseCycle(int bank, int skips, int startSample, bool bTakeNextValue, bool wtfxFXTypeChanged);
-	bool prepareEachSample(int bank, int currentFrame, bool &freqsHaveToBeDoneForEachSample, bool bTakeNextValue);
+	bool prepareEachSample(int bank, int currentFrame, bool &freqsHaveToBeDoneForEachSample, bool bTakeNextValue, CVASTWaveTableOscillator* l_Oscillator[]);
 	bool prepareFrequency(int bank, int skips, int startSample, bool bTakeNextValue, bool bIsStartOfCycle);
 	void initWavetableProcessing(int bank, sRoutingBuffers& routingBuffers, modMatrixInputState& inputState);
 	void setTargetWTPos(int bank, float targetWTPosPercentage, bool takeNext);

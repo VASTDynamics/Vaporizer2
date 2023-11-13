@@ -33,6 +33,7 @@ private:
 	bool m_noLabel = false;
 
 	VASTAudioProcessor *m_processor;
+    Colour m_bufferc1{};
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(VASTDragSource)
 };
 #endif

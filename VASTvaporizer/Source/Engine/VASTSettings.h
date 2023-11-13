@@ -419,10 +419,10 @@ public:
 	
 	std::atomic<modMatrixInputState> bufferInputState;
 
-	std::atomic<bool> modMatrixDestSet[M_MODMATRIX_MAX_DESTINATIONS];
-    std::atomic<bool> modMatrixSrceSet[M_MODMATRIX_MAX_SOURCES];
-    std::atomic<bool> modMatrixSlotUsed[M_MODMATRIX_MAX_SLOTS];
-    std::atomic<int> modMatrixSlotDest[M_MODMATRIX_MAX_SLOTS];
+	bool modMatrixDestSet[M_MODMATRIX_MAX_DESTINATIONS];
+    bool modMatrixSrceSet[M_MODMATRIX_MAX_SOURCES];
+    bool modMatrixSlotUsed[M_MODMATRIX_MAX_SLOTS];
+    int modMatrixSlotDest[M_MODMATRIX_MAX_SLOTS];
 	float lastModMatrixSourceVal[M_MODMATRIX_MAX_SLOTS][M_MODMATRIX_MAX_SOURCES][C_MAX_POLY];
 	modMatrixValueLookup modMatrixValueLookupTable[M_MODMATRIX_MAX_SLOTS];
 

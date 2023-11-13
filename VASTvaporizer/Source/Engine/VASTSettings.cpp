@@ -300,17 +300,17 @@ void CVASTSettings::modMatrixCalcBuffers() {
 		int slotPolarity = 0;
 		modMatrixSlotGetValues(slot, slotValue, slotCurvy, slotSource, slotDestination, slotPolarity, lastSrceVals);
 		if ((slotSource != MODMATSRCE::NoSource) && (slotDestination != MODMATDEST::NoDestination)) //val can be 0? Check
-			modMatrixSlotUsed[slot].store(true);
+			modMatrixSlotUsed[slot] = true;
 		else
-            modMatrixSlotUsed[slot].store(false);
+            modMatrixSlotUsed[slot] = false;
 		modMatrixSlotDest[slot] = slotDestination; //onl for UI update
 	}
 
 	for (int j = 0; j < M_MODMATRIX_MAX_DESTINATIONS; j++) {
-		modMatrixDestSet[j].store(modMatrixDestinationSet(j));
+		modMatrixDestSet[j] = modMatrixDestinationSet(j);
 	}
 	for (int j = 0; j < M_MODMATRIX_MAX_SOURCES; j++) {
-		modMatrixSrceSet[j].store(modMatrixSourceSet(j));
+		modMatrixSrceSet[j] = modMatrixSourceSet(j);
 	}
 }
 

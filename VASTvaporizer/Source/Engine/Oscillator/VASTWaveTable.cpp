@@ -1460,10 +1460,10 @@ void CVASTWaveTable::copyUIFXUpdates() {
 	//ScopedLock sl(mWavetableChangeLock); //CHECK if really needed
 	for (int i = 0; i < getNumPositions(); i++) {
 		if (wtheader.waveTablePositions[i].naiveTableFXDirty) {
-			m_isBeingUpdated.store(true);
+			m_isBeingUpdated = true;
 			wtheader.waveTablePositions[i].naiveTableFXDisplayCopy = wtheader.waveTablePositions[i].naiveTableFX;
 			wtheader.waveTablePositions[i].naiveTableFXDirty = false;
-			m_isBeingUpdated.store(false);
+			m_isBeingUpdated = false;
 		}
 	}
 }

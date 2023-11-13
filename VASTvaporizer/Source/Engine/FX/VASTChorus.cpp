@@ -218,9 +218,9 @@ void CVASTChorus::updateModules()
 void CVASTChorus::prepareToPlay(double, int samplesPerBlock) {	
 	//m_iSampleRate is set in use oversampling
 	m_iExpectedSamplesPerBlock = samplesPerBlock;
-	m_ModDelayLeft.prepareForPlay(m_iSampleRate);
-	m_ModDelayCenter.prepareForPlay(m_iSampleRate);
-	m_ModDelayRight.prepareForPlay(m_iSampleRate);
+	m_ModDelayLeft.prepareForPlay(m_iSampleRate, m_bOversampling);
+	m_ModDelayCenter.prepareForPlay(m_iSampleRate, m_bOversampling);
+	m_ModDelayRight.prepareForPlay(m_iSampleRate, m_bOversampling);
 
 	const double smoothTime = 0.02;  
 	m_fChorusRate_hz_smoothed.reset(m_iSampleRate, smoothTime);	
@@ -235,9 +235,9 @@ void CVASTChorus::prepareToPlay(double, int samplesPerBlock) {
 }
 
 void CVASTChorus::reset() {
-	m_ModDelayLeft.prepareForPlay(m_iSampleRate);
-	m_ModDelayCenter.prepareForPlay(m_iSampleRate);
-	m_ModDelayRight.prepareForPlay(m_iSampleRate);
+	m_ModDelayLeft.prepareForPlay(m_iSampleRate, m_bOversampling);
+	m_ModDelayCenter.prepareForPlay(m_iSampleRate, m_bOversampling);
+	m_ModDelayRight.prepareForPlay(m_iSampleRate, m_bOversampling);
 
 	m_fFrequency = 1.0f;
 	m_fDepth = 1.0f;

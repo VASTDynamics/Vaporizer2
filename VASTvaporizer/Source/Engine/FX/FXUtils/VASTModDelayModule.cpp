@@ -33,11 +33,12 @@ CModDelayModule::~CModDelayModule(void)
 {
 }
 
-bool CModDelayModule::prepareForPlay(int sampleRate)
+bool CModDelayModule::prepareForPlay(int sampleRate, bool bOversampling)
 {
 	m_iSampleRate = sampleRate;
 	// Add your code here:
-	m_DDL.prepareForPlay();
+    m_bOversampling = bOversampling;
+	m_DDL.prepareForPlay(m_iSampleRate, m_bOversampling);
 
 	m_LFO.reset(0);		  // reset it
 

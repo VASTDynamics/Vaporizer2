@@ -17,7 +17,7 @@ public:
 	virtual ~CDDLModule(void);
 
 	// 3. The Prepare For Play Function is called just before audio streams
-	bool prepareForPlay();
+	bool prepareForPlay(int iSampleRate, bool bOversampling);
 
 	// 4. processAudioFrame() processes an audio input to create an audio output
 	bool processAudioFrame(float* pInputBuffer, float* pOutputBuffer, MYUINT uNumInputChannels, MYUINT uNumOutputChannels);
@@ -54,4 +54,6 @@ public:
 	float m_fFeedback_pct;
 	float m_fWetLevel_pct;
 	CVASTSettings *m_Set;
+    bool m_bOversampling = false;
+    int m_iSampleRate = 44100;
 };

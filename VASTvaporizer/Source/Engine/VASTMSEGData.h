@@ -80,7 +80,7 @@ public:
 	void setStepSeqTime(double stepSeqTime);
 	
 	//dynamic
-    std::atomic<bool> hasLoop = false;
+    bool hasLoop = false;
     std::atomic<int> loopStartPoint = -1;
     std::atomic<int> loopEndPoint = -1;
 
@@ -165,11 +165,11 @@ private:
 	void insertPoint(int newpos, VASTMSEGData::ControlPoint point); //internal - needs to be locked
 	void removePoint(int delpos); //internal - needs to be locked
 
-	std::atomic<bool> m_isDirty = true;
-    std::atomic<bool> m_needsUIUpdate = true;
-    std::atomic<bool> m_needsPositionUpdate = true;
+    bool m_isDirty = true;
+    bool m_needsUIUpdate = true;
+    bool m_needsPositionUpdate = true;
 	
-    std::atomic<bool> m_bSynch = false;
+    bool m_bSynch = false;
     std::atomic<int> m_uTimeBeats = 1;
 
 	int m_iSampleRate = 0;
@@ -189,8 +189,8 @@ private:
 	int m_ss_bars_num = 0;
 	float m_fOrigStepSeqTime = 0.f;
 
-    std::atomic<bool> m_bADSR_updated = true;
-    std::atomic<bool> m_bStepSeq_updated = true;
+    bool m_bADSR_updated = true;
+    bool m_bStepSeq_updated = true;
 
     std::atomic<int> m_dispActiveSegment[C_MAX_POLY] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     std::atomic<int> m_dispSamplesSinceSegmentStart[C_MAX_POLY] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };

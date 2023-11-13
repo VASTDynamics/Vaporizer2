@@ -636,12 +636,15 @@ void VASTAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mid
 	int samplePosition = 0;
 
 	//Check for MIDI learn
-	for (MidiBuffer::Iterator it(midiMessages); it.getNextEvent(msg, samplePosition);)
-	{
-		if (msg.isPitchWheel()) {
+    auto midiIterator = midiMessages.findNextSamplePosition (samplePosition);
+    std::for_each (midiIterator,
+                   midiMessages.cend(),
+                   [&] (const MidiMessageMetadata& metadata)
+        {
+		if (metadata.getMessage().isPitchWheel()) {
 			VASTAudioProcessorEditor* editor = (VASTAudioProcessorEditor*)getActiveEditor();
 			if (editor != nullptr) {
-				int wheelPos = msg.getPitchWheelValue() - 8192.f;
+				int wheelPos = metadata.getMessage().getPitchWheelValue() - 8192.f;
 				wheelPos = limit_range(wheelPos, -8192.f, 8192.f);
 				if (editor->vaporizerComponent->getKeyboardComponent() != nullptr) {
 					if (!isMPEenabled())
@@ -653,13 +656,13 @@ void VASTAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mid
 				}
 			}
 		}
-		else if (msg.isController()) {
+		else if (metadata.getMessage().isController()) {
 			//check for midiLearn
 			if (msg.getControllerNumber() == 0) { //CC00 bank change
-				DBG("Bank Change " << msg.getControllerValue());
+				DBG("Bank Change " << metadata.getMessage().getControllerValue());
 				m_midiBank = msg.getControllerValue();
 			}
-			else if (msg.getControllerNumber() == 1) { //CC01 mod wheel
+			else if (metadata.getMessage().getControllerNumber() == 1) { //CC01 mod wheel
 				VASTAudioProcessorEditor* editor = (VASTAudioProcessorEditor*)getActiveEditor();
 				if (editor != nullptr) {
 					int wheelPos = msg.getControllerValue();
@@ -711,22 +714,24 @@ void VASTAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mid
 				DBG("Program Change " << presetindex);
 			}
 		}
-	}
+    });
 
 	// send MIDI clock
-	AudioPlayHead* _head = getPlayHead();
-	AudioPlayHead::CurrentPositionInfo positionInfo;
-	if (_head != nullptr) _head->getCurrentPosition(positionInfo); 
-    else positionInfo.resetToDefault();
-
+    AudioPlayHead::PositionInfo positionDefault{};
+    Optional<AudioPlayHead::PositionInfo> positionInfo = *getPlayHead()->getPosition();
+    
 	//do synth
 	m_pVASTXperience.processAudioBuffer(buffer, midiMessages, getTotalNumOutputChannels(),
-		positionInfo.isPlaying, positionInfo.ppqPosition, positionInfo.isLooping, positionInfo.ppqPositionOfLastBarStart, positionInfo.bpm);
+        positionInfo.orFallback(positionDefault).getIsPlaying(),
+        positionInfo.orFallback(positionDefault).getPpqPosition().orFallback(0.0),
+        positionInfo.orFallback(positionDefault).getIsLooping(),
+        positionInfo.orFallback(positionDefault).getPpqPositionOfLastBarStart().orFallback(0.0),
+        positionInfo.orFallback(positionDefault).getBpm().orFallback(0.0));
 
 	//VU meter
 	m_meterSource.measureBlock(buffer);
 
-	//TEST OGL Oscilloscope
+	//OpenGL Oscilloscope
 	m_pVASTXperience.oscilloscopeRingBuffer->writeSamples(buffer, 0, buffer.getNumSamples());
 
 	//check for click 	
@@ -751,6 +756,8 @@ void VASTAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mid
 		}
 	}
 #endif
+    
+    m_bAudioThreadRunning.store(false); //CHECK
 }
 
 //==============================================================================

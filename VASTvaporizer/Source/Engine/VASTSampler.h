@@ -129,7 +129,7 @@ private:
 	int iLoopEnd_changed = 0;
 
 	Array<int> m_zeroCrossings;
-	mutable std::atomic<bool> m_PositionChanged = false;
+	mutable atomic<bool> m_PositionChanged = false;
 
 	JUCE_LEAK_DETECTOR(VASTSamplerSound)
 };
