@@ -46,8 +46,9 @@ CVASTSettings::CVASTSettings(VASTAudioProcessor* processor) : my_processor(proce
 	}
     
     //buffer white noise
+	CVASTWaveTableOscillator wtosc;
     for (int i = 0; i < C_MAX_SAMPLE_RATE * 3; i++) {
-        m_whiteNoiseBuffer[i] = CVASTWaveTableOscillator::doWhiteNoiseFast();
+        m_whiteNoiseBuffer[i] = wtosc.doWhiteNoiseFast();
     }
 
 	//fill frequency lut

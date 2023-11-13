@@ -97,7 +97,7 @@ public:
 	CVASTSettings *m_Set; 
 	
 	void syncAllPhasorsToMaster();
-    static float doWhiteNoiseFast();
+    float doWhiteNoiseFast();
     
 protected:
 	// this should be protected
