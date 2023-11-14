@@ -42,15 +42,14 @@ VASTAudioProcessor::VASTAudioProcessor() :
 			m_parameterState(*this, &m_undoManager), 
 			m_pVASTXperience(this) {
                 
-#if defined(_DEBUG)
-#if defined JUCE_WINDOWS
-	#define _CRTDBG_MAP_ALLOC
-	#include <crtdbg.h>	
-	int tmpFlag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
-	tmpFlag |= _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF;  // Check heap alloc and dump mem leaks at exit
-	//_CrtSetBreakAlloc(764217);
+#if defined(_DEBUG) && defined JUCE_WINDOWS
+	//#define _CRTDBG_MAP_ALLOC
+	//#include <crtdbg.h>	
+	//int tmpFlag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
+	//tmpFlag |= _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF;  // Check heap alloc and dump mem leaks at exit
+	// 
+	//_CrtSetBreakAlloc(858105);
 	//_crtBreakAlloc = 693499; // Set to break on allocation number in case you get a leak without a line number
-#endif	
 #endif
 
 	m_initCompleted.store(false);
@@ -2713,10 +2712,10 @@ bool VASTAudioProcessor::readSettingsFromFile() {
 }
 
 void VASTAudioProcessor::initLookAndFeels() {
-	vastLookAndFeels.add(new VASTLookAndFeelThemeDefault());
-	vastLookAndFeels.add(new VASTLookAndFeelThemeIce());
-	vastLookAndFeels.add(new VASTLookAndFeelThemeTech());
-	vastLookAndFeels.add(new VASTLookAndFeelThemeDark());
+	vastLookAndFeels.add(new VASTLookAndFeelThemeDefault(m_pVASTXperience.m_Set, this));
+	vastLookAndFeels.add(new VASTLookAndFeelThemeIce(m_pVASTXperience.m_Set, this));
+	vastLookAndFeels.add(new VASTLookAndFeelThemeTech(m_pVASTXperience.m_Set, this));
+	vastLookAndFeels.add(new VASTLookAndFeelThemeDark(m_pVASTXperience.m_Set, this));
 }
 
 VASTLookAndFeel* VASTAudioProcessor::getCurrentVASTLookAndFeel() {

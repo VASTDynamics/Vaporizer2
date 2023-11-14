@@ -16,6 +16,15 @@ VAST Dynamics Audio Software (TM)
 #include <iostream>
 #include <fstream>
 #include <string>
+CVASTPoly::CVASTPoly(CVASTSettings& set, VASTAudioProcessor* processor) :
+	m_Set(&set), myProcessor(processor)
+{
+	for (int i = 0; i < 4; i++) {
+		CVASTOscillatorBank* bank = new CVASTOscillatorBank(m_Set, myProcessor, i);
+		//m_OscBank.push_back(std::make_shared<CVASTOscillatorBank>(bank));
+		m_OscBank.add(bank);
+	}
+}
 /* destructor()
 Destroy variables allocated in the contructor()
 */

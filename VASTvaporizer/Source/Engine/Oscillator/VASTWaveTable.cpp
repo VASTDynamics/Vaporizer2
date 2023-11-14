@@ -1008,7 +1008,7 @@ std::vector<dsp::Complex<float>>* CVASTWaveTable::getFreqDomainBuffer(int wtPos)
 	*/
 
 	if (wtheader.waveTablePositions.size() <= wtPos) {
-		//vassertfalse; //should not happen!
+		vassertfalse; //should not happen!
 		return &wtheader.waveTablePositions[0].frequencyDomainBuffer;  //CHECK
 	}
 	else
@@ -1498,9 +1498,8 @@ std::vector<float>* CVASTWaveTable::getNaiveTable(int wtPos) {
 	return wtheader.waveTablePositions[wtPos].naiveTable;
 	*/
 	if (wtPos >= wtheader.waveTablePositions.size()) {
-		//vassertfalse; //should not happen!
+		vassertfalse; //should not happen!
 		return &wtheader.waveTablePositions[0].naiveTable; //CHECK
-														   //return &std::vector<float>(C_WAVE_TABLE_SIZE);
 	}
 	else
 		return &wtheader.waveTablePositions[wtPos].naiveTable;

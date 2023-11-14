@@ -7,13 +7,16 @@ VAST Dynamics Software
 
 #include <assert.h>
 #include <math.h>
-//#include <stdlib.h> // for memory leak detection
 #ifndef _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
 #define _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
 #endif
 #ifndef _SILENCE_ALL_CXX20_DEPRECATION_WARNINGS
 #define _SILENCE_ALL_CXX20_DEPRECATION_WARNINGS
 #endif
+#ifndef _SILENCE_CXX20_OLD_SHARED_PTR_ATOMIC_SUPPORT_DEPRECATION_WARNING
+#define _SILENCE_CXX20_OLD_SHARED_PTR_ATOMIC_SUPPORT_DEPRECATION_WARNING
+#endif
+
 // For WIN vs MacOS
 // XCode requires these be defined for compatibility
 #if defined _WINDOWS || defined _WINDLL

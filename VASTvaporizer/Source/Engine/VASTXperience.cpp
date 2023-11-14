@@ -698,7 +698,7 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 				counter++;
 				continue;
 			}
-
+			int olduMaxPoly = m_Set.m_uMaxPoly;
 			if (*m_Set.m_State->m_uPolyMode == static_cast<int>(POLYMODE::MONO))
 				m_Set.m_uMaxPoly = 1;
 			else
@@ -713,7 +713,8 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 						m_Set.m_uMaxPoly = 16;
 					}
 
-			m_Poly.releaseResources();
+			if (olduMaxPoly != m_Set.m_uMaxPoly)
+				m_Poly.releaseResources();
 			audioProcessUnlock();
 			done = true;
 		}

@@ -450,6 +450,11 @@ public:
     
     float m_whiteNoiseBuffer[C_MAX_SAMPLE_RATE * 3]; //3 seconds at highest rate
 	
+	enum class customFonts{ OpenSans, OpenSansBold, AlteHaasGrotesk, AlteHaasGroteskBold, SFUIDisplayRegular, SFUIDisplayBold, TradeGothicLT, TradeGothicLTBold };
+	Font customFontBuffer[8];
+	void loadCustomFonts();
+	Font getCustomFont(CVASTSettings::customFonts customFont);
+
 	private:	
 		bool modMatrixDestinationSet(MYUINT destination); //use fast instead
 		bool modMatrixSourceSet(MYUINT source); //use fast instead
