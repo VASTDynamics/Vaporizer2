@@ -1702,7 +1702,7 @@ String VASTAudioProcessor::getVSTPath() {
 	return "";
 
 #elif JUCE_LINUX
-	return "/usr/share";
+	return "/usr/share/Vaporizer2";
 
 #elif JUCE_WINDOWS	
 	String Vaporizer2InstallPath = "";
@@ -1803,7 +1803,7 @@ String VASTAudioProcessor::getVSTPathAlternative() {
 	return "";
 
 #elif JUCE_LINUX
-	return "/usr/share";
+	return "/usr/share/Vaporizer2";
 
 #elif JUCE_WINDOWS	
 	const String currentDll(File::getSpecialLocation(File::currentApplicationFile).getFullPathName());
