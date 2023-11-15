@@ -126,7 +126,9 @@ void VASTPositionViewport::updateContent(bool force) {
 	myWtEditor->updateHeaderSelectionLabel(); //right place here?
 
 	std::shared_ptr<CVASTWaveTable> wavetable = myWtEditor->getBankWavetable();
-
+    if (wavetable->m_isBeingUpdated.load() == true) //safety
+        return;
+    
 	//int newWidth = (m_ImageTotalWidth + m_Offset) * (wavetable->getNumPositions() + 1);
 	//setSize(newWidth, getHeight());
 

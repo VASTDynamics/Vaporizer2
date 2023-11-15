@@ -191,7 +191,7 @@ String CVASTParamState::comboBoxValueToTextFunction_FILTERTYPE(float value) { //
 	return FILTERTYPE_Array[floor(value + 0.5f)];
 }
 
-float CVASTParamState::comboBoxTextToValueFunction_FILTERTYPE(const String& text) { //static	
+float CVASTParamState::comboBoxTextToValueFunction_FILTERTYPE(const String& text) { //static
 	return FILTERTYPE_Array.indexOf(StringRef(text), true);
 }
 
@@ -419,7 +419,7 @@ bool CVASTParamState::initParameters(AudioProcessorValueTreeState& parameters, C
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false);
 
-	effect->createAndAddParameter(&m_bExciterOnOff_OscA, parameters, 1, "m_bExciterOnOff_OscA", "OSC A Exciter adds random detune by may +- 0.25hz per oscillator and played note", "Exciter adds random detune by may +- 0.25hz per oscillator and played note", 0,
+	effect->createAndAddParameter(&m_bExciterOnOff_OscA, parameters, 1, "m_bExciterOnOff_OscA", "OSC A Exciter adds random detune by max +- 0.25hz per oscillator and played note", "Exciter adds random detune by max +- 0.25hz per oscillator and played note", 0,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		CVASTParamState::toggleButtonValueToTextFunction,
@@ -545,7 +545,7 @@ bool CVASTParamState::initParameters(AudioProcessorValueTreeState& parameters, C
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false);
 
-	effect->createAndAddParameter(&m_bExciterOnOff_OscB, parameters, 1, "m_bExciterOnOff_OscB", "OSC B Exciter adds random detune by may +- 0.25hz per oscillator and played note", "Exciter adds random detune by may +- 0.25hz per oscillator and played note", 0,
+	effect->createAndAddParameter(&m_bExciterOnOff_OscB, parameters, 1, "m_bExciterOnOff_OscB", "OSC B Exciter adds random detune by max +- 0.25hz per oscillator and played note", "Exciter adds random detune by max +- 0.25hz per oscillator and played note", 0,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		CVASTParamState::toggleButtonValueToTextFunction,
@@ -671,7 +671,7 @@ bool CVASTParamState::initParameters(AudioProcessorValueTreeState& parameters, C
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false);
 
-	effect->createAndAddParameter(&m_bExciterOnOff_OscC, parameters, 1, "m_bExciterOnOff_OscC", "OSC C Exciter adds random detune by may +- 0.25hz per oscillator and played note", "Exciter adds random detune by may +- 0.25hz per oscillator and played note", 0,
+	effect->createAndAddParameter(&m_bExciterOnOff_OscC, parameters, 1, "m_bExciterOnOff_OscC", "OSC C Exciter adds random detune by max +- 0.25hz per oscillator and played note", "Exciter adds random detune by max +- 0.25hz per oscillator and played note", 0,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		CVASTParamState::toggleButtonValueToTextFunction,
@@ -797,7 +797,7 @@ bool CVASTParamState::initParameters(AudioProcessorValueTreeState& parameters, C
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false);
 
-	effect->createAndAddParameter(&m_bExciterOnOff_OscD, parameters, 1, "m_bExciterOnOff_OscD", "OSC D Exciter adds random detune by may +- 0.25hz per oscillator and played note", "Exciter adds random detune by may +- 0.25hz per oscillator and played note", 0,
+	effect->createAndAddParameter(&m_bExciterOnOff_OscD, parameters, 1, "m_bExciterOnOff_OscD", "OSC D Exciter adds random detune by max +- 0.25hz per oscillator and played note", "Exciter adds random detune by max +- 0.25hz per oscillator and played note", 0,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		CVASTParamState::toggleButtonValueToTextFunction,
@@ -2421,7 +2421,7 @@ bool CVASTParamState::initParameters(AudioProcessorValueTreeState& parameters, C
 		false, true, false, false,
 		true);
 
-	effect->createAndAddParameter(&m_fModMatCurve10, parameters, 1, "m_fModMatCurve10", "ModMatrix Curve 11", "ModMatrix Curve 11", 0,
+	effect->createAndAddParameter(&m_fModMatCurve10, parameters, 1, "m_fModMatCurve10", "ModMatrix Curve 10", "ModMatrix Curve 10", 0,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(-100, 100), 0,
 		CVASTParamState::floatSliderValueToTextFunction,

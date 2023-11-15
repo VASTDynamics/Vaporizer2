@@ -32,7 +32,7 @@ void CVASTEffect::createAndAddParameter(std::atomic<float>** parameterVar, Audio
 	AudioProcessorParameterWithID* p = stateTree.createAndAddParameter( newId, busId + paramName, labelText, r, defaultVal, valueToTextFunction, textToValueFunction, isMetaParameter, isAutomatableParameter, isDiscreteParameter, AudioProcessorParameter::Category::genericParameter); //deprecated
      */
 	
-	jassert(newId.length() <= 31); //AAX max parameter length
+	jassert(newId.length() <= 31); //AAX max parameter ID length
 
 #ifdef _DEBUG
 	int lFirstParamVers = 0;
@@ -45,16 +45,18 @@ void CVASTEffect::createAndAddParameter(std::atomic<float>** parameterVar, Audio
 	jassert(lFirstParamVers<755); //755 parameters before VersionHint was introduced --> 1. All new parameters need to get higher VersionHints.
 #endif
 
+    String newParamName = busId + paramName;
+    newParamName = newParamName.dropLastCharacters(newParamName.length()-31); //keep only 31 in name // hack, check for compatibility, better define new short names for each parameter
+    
     using Parameter = AudioProcessorValueTreeState::Parameter;
 
     AudioProcessorParameterWithID* p = stateTree.createAndAddParameter (std::make_unique<Parameter>
         (
-         
 			// IMPORTANT
 			ParameterID { newId, versionHint }, //the version number is important: new parameters have to always get higher numbers
 		    // IMPORTANT
 
-			busId + paramName, labelText, r, defaultVal, valueToTextFunction, textToValueFunction, isMetaParameter,
+            newParamName, labelText, r, defaultVal, valueToTextFunction, textToValueFunction, isMetaParameter,
 			isAutomatableParameter, isDiscreteParameter, AudioProcessorParameter::Category::genericParameter));
     
 	my_parameters.insert(std::make_pair(uiSequence, p));

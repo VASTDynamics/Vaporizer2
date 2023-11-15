@@ -241,6 +241,7 @@ void CVASTWaveTable::getValueTreeState(ValueTree* tree, UndoManager* undoManager
 
 bool CVASTWaveTable::setValueTreeState(ValueTree* tree, int wtMode) { //load
 	ScopedLock sl(mWavetableChangeLock);
+    m_isBeingUpdated.store(true);
 	clear();
 	wtheader.waveTableName = tree->getProperty("waveTableName");
 	wtheader.numPositions.store(tree->getProperty("numPositions"));
@@ -315,6 +316,7 @@ bool CVASTWaveTable::setValueTreeState(ValueTree* tree, int wtMode) { //load
         setNaiveTableFast(wtheader.waveTablePositions[i].wtPos, false, wtMode); //dont pregenerate here
 	}
 
+    m_isBeingUpdated.store(false);
 	if (!validate()) return false;
 
 	return true;
@@ -1460,10 +1462,10 @@ void CVASTWaveTable::copyUIFXUpdates() {
 	//ScopedLock sl(mWavetableChangeLock); //CHECK if really needed
 	for (int i = 0; i < getNumPositions(); i++) {
 		if (wtheader.waveTablePositions[i].naiveTableFXDirty) {
-			m_isBeingUpdated = true;
+			m_isBeingUpdated.store(true);
 			wtheader.waveTablePositions[i].naiveTableFXDisplayCopy = wtheader.waveTablePositions[i].naiveTableFX;
 			wtheader.waveTablePositions[i].naiveTableFXDirty = false;
-			m_isBeingUpdated = false;
+			m_isBeingUpdated.store(false);
 		}
 	}
 }

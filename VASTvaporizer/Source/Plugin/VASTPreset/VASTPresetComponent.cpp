@@ -1386,10 +1386,10 @@ void VASTPresetComponent::PresetTableComponent::cellClicked(int rowNumber, int ,
 			}
 		}));
 	}
-	else {
-		if (rowNumber == table.getSelectedRow())
-			selectedRowsChanged(rowNumber);
-	}
+	//else {
+	//	if (rowNumber == table.getSelectedRow())
+	//		selectedRowsChanged(rowNumber);
+	//}
 }
 
 void VASTPresetComponent::PresetTableComponent::cellDoubleClicked(int , int , const MouseEvent &)  {

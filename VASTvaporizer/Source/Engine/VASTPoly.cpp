@@ -211,13 +211,15 @@ int CVASTPoly::getOldestNotePlayed() const { //-1 if none playing
 
 void CVASTPoly::stopAllNotes(bool allowTailOff) {
 	for (int i = 0; i < m_Set->m_uMaxPoly; i++) {
-		m_singleNote[i]->stopNote(0, allowTailOff);
+        if (m_singleNote[i]!=nullptr) //can happen when thread is updating
+            m_singleNote[i]->stopNote(0, allowTailOff);
 	}
 }
 
 bool CVASTPoly::voicesMSEGStillActive() {
 	for (int i = 0; i < m_Set->m_uMaxPoly; i++) {
-		if (m_singleNote[i]->m_VCA->isActive()) return true;
+        if (m_singleNote[i]!=nullptr) //can happen when thread is updating
+            if (m_singleNote[i]->m_VCA->isActive()) return true;
 	}
 	return false;
 }

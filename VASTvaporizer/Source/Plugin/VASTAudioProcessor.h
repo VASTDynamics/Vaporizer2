@@ -218,9 +218,8 @@ public:
 	static String getVSTPath();
 	static String getVSTPathAlternative();
 	static String getSettingsFilePath(bool read, bool& migrate_legacy);
-	void loadPreset(int index);	
-	bool loadUserPatchMetaData(File file, VASTPresetElement& lPreset);	
-	void randomizePatch();
+    bool loadUserPatchMetaData(File file, VASTPresetElement& lPreset);
+	void randomizePatch(); //not yet implemented
 
 	String getVersionString();
 
@@ -367,7 +366,11 @@ private:
     //==============================================================================
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(VASTAudioProcessor)
 
-	//bool writeLicense(const String &name, const String &email, const String &cuno, const String &purdat);	
+    void loadPreset(int index);
+    void registerLoadPreset(int index);
+    int m_presetToLoad = -1;
+    
+	//bool writeLicense(const String &name, const String &email, const String &cuno, const String &purdat);
 	juce::uint32 m_tSetChunkCalled = 0;
 
 	std::string  XOREncrypt(std::string  a_sValue, std::string  a_sKey);

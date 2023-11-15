@@ -117,7 +117,9 @@ void VASTFreqDomainViewport::updateContent(bool force) {
 	}
 
 	std::shared_ptr<CVASTWaveTable> wavetable = myWtEditor->getBankWavetable();
-	if (wavetable->getNumPositions() == 0) 
+    if (wavetable->m_isBeingUpdated.load() == true) //safety
+        return;
+    if (wavetable->getNumPositions() == 0)
 		return;
 
 	//DBG("VASTFreqDomainViewport::updateContent");

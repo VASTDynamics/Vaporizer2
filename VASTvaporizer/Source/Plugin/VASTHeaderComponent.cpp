@@ -245,6 +245,23 @@ void VASTHeaderComponent::buttonClicked (juce::Button* buttonThatWasClicked)
     {
         //[UserButtonCode_c_ReloadPresets] -- add your button handler code here..
 		myProcessor->m_pVASTXperience.audioProcessLock(); //CHECKTS
+        
+        bool done = false;
+        int counter = 0;
+        while (!done) {
+            if ((counter<30) && (myProcessor->m_bAudioThreadRunning.load() && (!myProcessor->m_pVASTXperience.getBlockProcessingIsBlockedSuccessfully()))) {
+                DBG("VASTHeaderComponent::buttonClicked - sleep");
+                Thread::sleep(100);
+                counter++;
+                continue;
+            }
+            vassert(counter<30);
+            if (counter==30) {
+                return; //dont unlock what is not locked
+            }
+            done = true;
+        }
+        
 		myEditor->vaporizerComponent->getWaveTableEditorComponent()->stopWTRecording();
 
 		String lid = myProcessor->m_presetData.getCurPatchData().internalid;
@@ -254,7 +271,7 @@ void VASTHeaderComponent::buttonClicked (juce::Button* buttonThatWasClicked)
 
 		int lindnex = myProcessor->m_presetData.getIndexInPresetArray(lid);
 		if (lindnex >= 0)
-			myProcessor->loadPreset(lindnex);
+			myProcessor->setCurrentProgram(lindnex);
 
 		myEditor->vaporizerComponent->updateAll();
 		myProcessor->requestUIPresetReloadUpdate();
@@ -304,7 +321,7 @@ void VASTHeaderComponent::buttonClicked (juce::Button* buttonThatWasClicked)
                     }
                 }
                 if (intid >= 0)
-                    myProcessor->loadPreset(intid);
+                    myProcessor->setCurrentProgram(intid);
                 else {
                     //was saved outside of path
                     AlertWindow::showMessageBoxAsync(AlertWindow::InfoIcon,

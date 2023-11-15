@@ -502,6 +502,7 @@ void VASTWaveTableEditorComponent::buttonClicked(Button* buttonThatWasClicked)
 				Array<File> foundFiles = initialFile.findChildFiles(File::TypesOfFileToFind::findFiles, true, "*.wav;*.aiff"); 
 				if (foundFiles.size() == 0)
 					return;
+                foundFiles.sort();
 				int dirindex = 0;
 				bool lFound = false;
 				for (int i=0; i< foundFiles.size(); i++) {
@@ -524,6 +525,7 @@ void VASTWaveTableEditorComponent::buttonClicked(Button* buttonThatWasClicked)
 				Array<File> foundFiles = initialFile.findChildFiles(File::TypesOfFileToFind::findFiles, true, "*.wav;*.aiff");
 				if (foundFiles.size() == 0)
 					return;
+                foundFiles.sort();
 				int dirindex = foundFiles.size();
 				bool lFound = false;
 				for (int i = 1; i < foundFiles.size(); i++) {

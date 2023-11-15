@@ -351,6 +351,7 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
 	if (m_BlockProcessing == true) {
 		const ScopedLock sl(myProcessor->getCallbackLock());
 		m_BlockProcessingIsBlockedSuccessfully = true;
+        DBG("BlockProcessingIsBlockedSuccessfully is true!");
 		buffer.clear();
 		m_iFadeOutSamples = 0;
 		m_iFadeInSamples = 0;
@@ -698,6 +699,9 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 				counter++;
 				continue;
 			}
+            vassert(counter<30);
+            if (counter==30)
+                return; //dont unlock what is not locked
 			int olduMaxPoly = m_Set.m_uMaxPoly;
 			if (*m_Set.m_State->m_uPolyMode == static_cast<int>(POLYMODE::MONO))
 				m_Set.m_uMaxPoly = 1;

@@ -490,8 +490,15 @@ void VASTAudioProcessor::setCurrentProgram(int index)
 		return;
 
 	m_pVASTXperience.m_nSampleRate = getSampleRate();
+    
+    if (m_bAudioThreadRunning)
+        registerLoadPreset(index);
+    else
+        loadPreset(index);  // index maps to array sequence
+}
 
-	loadPreset(index);  // index maps to array sequence
+void VASTAudioProcessor::registerLoadPreset(int index) {
+    m_presetToLoad = index;
 }
 
 const String VASTAudioProcessor::getProgramName(int index)
@@ -583,9 +590,13 @@ void VASTAudioProcessor::releaseResources()
 			counter++;
 			continue;
 		}
-		if (counter<30)
+        vassert(counter<30);
+        if (counter==30)
+            return; //dont unlock what is not locked
+        if (counter<30) {
 			m_pVASTXperience.m_Poly.releaseResources();
-		m_pVASTXperience.audioProcessUnlock();			
+            m_pVASTXperience.audioProcessUnlock();
+        }
 		done = true;
 	}
 	//m_pVASTXperience.m_Set.m_RoutingBuffers.resize(0, false); //free memory! -> no, heap corruption!
@@ -599,10 +610,16 @@ void VASTAudioProcessor::processBlockBypassed(AudioBuffer<float>& buffer,
 		m_pVASTXperience.m_Poly.stopAllNotes(false);
 	m_wasBypassed = true;
 
+    if (m_presetToLoad >= 0)
+        loadPreset(m_presetToLoad);
+    
 	for (int bank = 0; bank < 4; bank++)
 		m_pVASTXperience.m_Poly.m_OscBank[bank]->m_bWavetableSoftfadeStillNeeded = false;
 	m_pVASTXperience.beginSoftFade(); //CHECKTS
 	m_pVASTXperience.endSoftFade(); //CHECKTS
+    
+    if (m_presetToLoad >= 0)
+        loadPreset(m_presetToLoad);
 }
 
 void VASTAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
@@ -612,7 +629,10 @@ void VASTAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mid
 		prepareToPlay(getSampleRate(), getBlockSize()); //this takes long and does somthing with cubase
 		m_wasBypassed = false;
 	}
-
+    
+    if (m_presetToLoad >= 0)
+        loadPreset(m_presetToLoad);
+    
 	// In case we have more outputs than inputs, this code clears any output
 	// channels that didn't contain input data, (because these aren't
 	// guaranteed to be empty - they may contain garbage).
@@ -1033,7 +1053,7 @@ void VASTAudioProcessor::loadPreset(int index) {
 	//CriticalSection::ScopedLockType lock(m_pVASTXperience.m_Set.audioProcessBlockRunning);
 	//SpinLock::ScopedLockType lock(m_pVASTXperience.m_Set.audioProcessBlockRunning);
 	//const ScopedLock sl(getCallbackLock());
-
+    
 	//XML files are defined in BinaryData.h
 	if (index > 9000) return; // safety
 
@@ -1063,6 +1083,7 @@ void VASTAudioProcessor::loadPreset(int index) {
 		}
 	}
 	requestUIInit();
+    m_presetToLoad = -1;
 }
 
 //load from file - not called when loading from state
@@ -1233,11 +1254,20 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 		}
 	}
 	
-	std::shared_ptr<CVASTWaveTable> m_bank_wavetableToUpdate[4] = { processor->m_pVASTXperience.m_Poly.m_OscBank[0]->getSoftOrCopyWavetable(),
-																	processor->m_pVASTXperience.m_Poly.m_OscBank[1]->getSoftOrCopyWavetable(),
-																	processor->m_pVASTXperience.m_Poly.m_OscBank[2]->getSoftOrCopyWavetable(),
-																	processor->m_pVASTXperience.m_Poly.m_OscBank[3]->getSoftOrCopyWavetable() };
-	
+    /*
+	std::shared_ptr<CVASTWaveTable> m_bank_wavetableToUpdate[4] = { processor->m_pVASTXperience.m_Poly.m_OscBank[0]->getSoftOrCopyWavetable(false),
+        processor->m_pVASTXperience.m_Poly.m_OscBank[1]->getSoftOrCopyWavetable(false),
+        processor->m_pVASTXperience.m_Poly.m_OscBank[2]->getSoftOrCopyWavetable(false),
+        processor->m_pVASTXperience.m_Poly.m_OscBank[3]->getSoftOrCopyWavetable(false) };
+     */
+    
+    std::shared_ptr<CVASTWaveTable> m_bank_wavetableToUpdate[4] = { 
+        std::make_shared<CVASTWaveTable>(processor->m_pVASTXperience.m_Set),
+        std::make_shared<CVASTWaveTable>(processor->m_pVASTXperience.m_Set),
+        std::make_shared<CVASTWaveTable>(processor->m_pVASTXperience.m_Set),
+        std::make_shared<CVASTWaveTable>(processor->m_pVASTXperience.m_Set)
+    };
+
 	//adapt to formerly too long parameter lengthes for compatibility
 	for (int i = 0; i < tree.getNumChildren(); i++) {
 		ValueTree loadedTreeChild = tree.getChild(i);
@@ -1498,6 +1528,11 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 								counter++;
 								continue;
 							}
+                            vassert(counter<30); //process lock failed
+                            if (counter==30) {
+                                processor->unregisterThread();
+                                return; //dont unlock what is not locked
+                            }
 							done = true;
 						}
 					}

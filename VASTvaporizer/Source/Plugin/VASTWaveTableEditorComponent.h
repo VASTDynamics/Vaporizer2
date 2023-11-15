@@ -130,6 +130,8 @@ public:
 		//return m_wtPos;
 	};
 	void setWtPos(int wtpos) { //normally use setSelectedWtPos on Wavetable!!
+        if (getBankWavetable()->m_isBeingUpdated)
+            return;
 		getBankWavetable()->setSelectedWtPos(wtpos);
 		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank]->setChangedFlag();
 		//m_wtPos = wtpos;

@@ -226,7 +226,7 @@ public:
 	Font getLabelFont(Label&) override;
 	Font getTextButtonFont(TextButton& textButton, int buttonHeight) override;
 	Font getPopupMenuFont() override;
-	Font getTabButtonFont(TabBarButton &, float height);
+	Font getTabButtonFont(TabBarButton &, float height) override;
 	Font getTextEditorFont(TextEditor& textEditor);
 	Font getDefaultFont();
 	Font getDefaultFontBold();

@@ -501,6 +501,9 @@ void VASTOscilloscope::updateContent(bool force) {
 		return;
 	}
 
+    if (wavetable->m_isBeingUpdated.load() == true) //safety
+        return;
+    
     if (!bPerspectiveDisplay) {
 		if (l_waveBuffer != nullptr) {
 			if (l_waveBuffer->empty()) {
