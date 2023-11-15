@@ -11,8 +11,11 @@ VAST Dynamics
 
 #include <sstream>
 
-VASTLookAndFeelThemeTech::VASTLookAndFeelThemeTech()
+VASTLookAndFeelThemeTech::VASTLookAndFeelThemeTech(CVASTSettings& set, VASTAudioProcessor* processor)
 {
+	m_Set = &set;
+	myProcessor = processor;
+	
 	setColour(Label::textColourId, findVASTColour(colLabelText));
 
 	setColour(FileSearchPathListComponent::backgroundColourId, findVASTColour(colFileSearchPathListComponentBackground));
@@ -21,38 +24,13 @@ VASTLookAndFeelThemeTech::VASTLookAndFeelThemeTech()
 	setColour(TextEditor::backgroundColourId, findVASTColour(colBoxTextBackground));
 	setColour(TextEditor::textColourId, findVASTColour(colBoxText));
 
-	//myDefaultFontRegular.setTypefaceName("Syntax"); //bold 2-3
-	//myDefaultFontRegular.setTypefaceName("Montserrat");	//bold 3-4
-	//myDefaultFontRegular.setTypefaceName("Alte Haas Grotesk"); //bold 1-2 plain 2-3
-	//myDefaultFontRegular.setTypefaceName("Code Pro Demo"); //bold 3-4
-	//myDefaultFontRegular.setTypefaceName("SF UI Display"); //bold 1-2
-	//myDefaultFontRegular.setTypefaceName("neo latina");
-	//myDefaultFontRegular.setTypefaceName("Open Sans"); //bold 1-2, regular 2
-
-//	myDefaultFontRegular = Font(Typeface::createSystemTypefaceFor(BinaryData::OpenSansBold_ttf,
-//		BinaryData::OpenSansBold_ttfSize)); //get from binary data
-	//OpenSansSemibold_ttf
-	//OpenSansRegular_ttf
-
-	//myDefaultFontRegular = Font(m_tf_regular); //get from binary data
-
 	mFontSizeFactor = 0.9f;
 	setUIFontSize(0);
-	myDefaultFontRegular.setTypefaceName("SF UI Display Regular");
-	//myDefaultFontRegular.setTypefaceName("Meta-Caps");
-	//myDefaultFontRegular.setTypefaceName("Bebas Neue Book");
-	//myDefaultFontRegular.setTypefaceName("Roboto Regular");
-	//myDefaultFontRegular.setTypefaceName("Stylus ITC TT");
-	myDefaultFontRegular = Font(getTypefaceForFont(myDefaultFontRegular));
+	myDefaultFontRegular = m_Set->getCustomFont(CVASTSettings::customFonts::SFUIDisplayRegular);
 	myDefaultFontRegular.setDefaultMinimumHorizontalScaleFactor(1.0);
 	myDefaultFontRegular.setSizeAndStyle(12.f, myDefaultFontBold.getStyleFlags(), 1.0f, 0.0f); // no squashing, no kerning
 
-	myDefaultFontBold.setTypefaceName("SF UI Display Bold");
-	//myDefaultFontBold.setTypefaceName("Meta-BoldCaps");
-	//myDefaultFontBold.setTypefaceName("Bebas Neue Bold");
-	//myDefaultFontBold.setTypefaceName("Roboto Bold");
-	//myDefaultFontBold.setTypefaceName("Stylus ITC TT Bold");
-	myDefaultFontBold = Font(getTypefaceForFont(myDefaultFontBold));
+	myDefaultFontBold = m_Set->getCustomFont(CVASTSettings::customFonts::SFUIDisplayBold);
 	myDefaultFontBold.setDefaultMinimumHorizontalScaleFactor(1.0);
 	myDefaultFontBold.setSizeAndStyle(12.f, myDefaultFontBold.getStyleFlags(), 1.0f, 0.0f); // no squashing, no kerning	
 	

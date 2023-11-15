@@ -71,10 +71,10 @@ public:
 	void removeSingleNoteSoftFadeCycle(int voiceNo);
 	int isInSingleNoteSoftFadeCycle() const;
 	void clearSingleNoteSoftFadeCycle();
-	std::atomic<bool> m_iSingleNoteSoftFadeCycle[C_MAX_POLY] {};
+    atomic<bool> m_iSingleNoteSoftFadeCycle[C_MAX_POLY] {};
 
-	std::atomic<bool> m_bWavetableSoftfadeStillNeeded = false;
-	std::atomic<bool> m_bWavetableSoftfadePickedUp = false;
+    atomic<bool> m_bWavetableSoftfadeStillNeeded = false;
+    atomic<bool> m_bWavetableSoftfadePickedUp = false;
 
 	int m_iSingleNoteSoftFadeID = 0;
 	void startRecording(int wtPos);
@@ -91,16 +91,16 @@ private:
 	CVASTSettings* m_Set; 
 	int m_bankno = 0;
 
-	std::atomic<bool> m_bWtSoftChangedFdv = true;
-	std::atomic<bool> m_bWtSoftChangedOsc = true;
-	std::atomic<bool> m_bWtSoftChangedOscEditor = true;
-	std::atomic<bool> m_bWtSoftChangedStructure = true;
-	std::atomic<bool> m_bWtSoftChangedPos = true;
-	std::atomic<bool> m_bIsRecording = false;
-	std::atomic<int> m_iRecordingPos = -1;
+    atomic<bool> m_bWtSoftChangedFdv = true;
+    atomic<bool> m_bWtSoftChangedOsc = true;
+    atomic<bool> m_bWtSoftChangedOscEditor = true;
+    atomic<bool> m_bWtSoftChangedStructure = true;
+    atomic<bool> m_bWtSoftChangedPos = true;
+    atomic<bool> m_bIsRecording = false;
+    std::atomic<int> m_iRecordingPos = -1;
 
-	std::atomic<bool> m_soloMode = false;
-	std::atomic<bool> m_bSoftFadeSinceLastUndoCheck = true;
+    atomic<bool> m_soloMode = false;
+    atomic<bool> m_bSoftFadeSinceLastUndoCheck = true;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CVASTOscillatorBank)
 };

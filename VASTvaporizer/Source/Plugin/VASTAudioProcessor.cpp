@@ -42,15 +42,14 @@ VASTAudioProcessor::VASTAudioProcessor() :
 			m_parameterState(*this, &m_undoManager), 
 			m_pVASTXperience(this) {
                 
-#if defined(_DEBUG)
-#if defined JUCE_WINDOWS
-	#define _CRTDBG_MAP_ALLOC
-	#include <crtdbg.h>	
-	int tmpFlag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
-	tmpFlag |= _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF;  // Check heap alloc and dump mem leaks at exit
-	//_CrtSetBreakAlloc(764217);
+#if defined(_DEBUG) && defined JUCE_WINDOWS
+	//#define _CRTDBG_MAP_ALLOC
+	//#include <crtdbg.h>	
+	//int tmpFlag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
+	//tmpFlag |= _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF;  // Check heap alloc and dump mem leaks at exit
+	// 
+	//_CrtSetBreakAlloc(858105);
 	//_crtBreakAlloc = 693499; // Set to break on allocation number in case you get a leak without a line number
-#endif	
 #endif
 
 	m_initCompleted.store(false);
@@ -636,12 +635,15 @@ void VASTAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mid
 	int samplePosition = 0;
 
 	//Check for MIDI learn
-	for (MidiBuffer::Iterator it(midiMessages); it.getNextEvent(msg, samplePosition);)
-	{
-		if (msg.isPitchWheel()) {
+    auto midiIterator = midiMessages.findNextSamplePosition (samplePosition);
+    std::for_each (midiIterator,
+                   midiMessages.cend(),
+                   [&] (const MidiMessageMetadata& metadata)
+        {
+		if (metadata.getMessage().isPitchWheel()) {
 			VASTAudioProcessorEditor* editor = (VASTAudioProcessorEditor*)getActiveEditor();
 			if (editor != nullptr) {
-				int wheelPos = msg.getPitchWheelValue() - 8192.f;
+				int wheelPos = metadata.getMessage().getPitchWheelValue() - 8192.f;
 				wheelPos = limit_range(wheelPos, -8192.f, 8192.f);
 				if (editor->vaporizerComponent->getKeyboardComponent() != nullptr) {
 					if (!isMPEenabled())
@@ -653,13 +655,13 @@ void VASTAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mid
 				}
 			}
 		}
-		else if (msg.isController()) {
+		else if (metadata.getMessage().isController()) {
 			//check for midiLearn
 			if (msg.getControllerNumber() == 0) { //CC00 bank change
-				DBG("Bank Change " << msg.getControllerValue());
+				DBG("Bank Change " << metadata.getMessage().getControllerValue());
 				m_midiBank = msg.getControllerValue();
 			}
-			else if (msg.getControllerNumber() == 1) { //CC01 mod wheel
+			else if (metadata.getMessage().getControllerNumber() == 1) { //CC01 mod wheel
 				VASTAudioProcessorEditor* editor = (VASTAudioProcessorEditor*)getActiveEditor();
 				if (editor != nullptr) {
 					int wheelPos = msg.getControllerValue();
@@ -711,22 +713,24 @@ void VASTAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mid
 				DBG("Program Change " << presetindex);
 			}
 		}
-	}
+    });
 
 	// send MIDI clock
-	AudioPlayHead* _head = getPlayHead();
-	AudioPlayHead::CurrentPositionInfo positionInfo;
-	if (_head != nullptr) _head->getCurrentPosition(positionInfo); 
-    else positionInfo.resetToDefault();
-
+    AudioPlayHead::PositionInfo positionDefault{};
+    Optional<AudioPlayHead::PositionInfo> positionInfo = *getPlayHead()->getPosition();
+    
 	//do synth
 	m_pVASTXperience.processAudioBuffer(buffer, midiMessages, getTotalNumOutputChannels(),
-		positionInfo.isPlaying, positionInfo.ppqPosition, positionInfo.isLooping, positionInfo.ppqPositionOfLastBarStart, positionInfo.bpm);
+        positionInfo.orFallback(positionDefault).getIsPlaying(),
+        positionInfo.orFallback(positionDefault).getPpqPosition().orFallback(0.0),
+        positionInfo.orFallback(positionDefault).getIsLooping(),
+        positionInfo.orFallback(positionDefault).getPpqPositionOfLastBarStart().orFallback(0.0),
+        positionInfo.orFallback(positionDefault).getBpm().orFallback(0.0));
 
 	//VU meter
 	m_meterSource.measureBlock(buffer);
 
-	//TEST OGL Oscilloscope
+	//OpenGL Oscilloscope
 	m_pVASTXperience.oscilloscopeRingBuffer->writeSamples(buffer, 0, buffer.getNumSamples());
 
 	//check for click 	
@@ -751,6 +755,8 @@ void VASTAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mid
 		}
 	}
 #endif
+    
+    m_bAudioThreadRunning.store(false); //CHECK
 }
 
 //==============================================================================
@@ -2706,10 +2712,10 @@ bool VASTAudioProcessor::readSettingsFromFile() {
 }
 
 void VASTAudioProcessor::initLookAndFeels() {
-	vastLookAndFeels.add(new VASTLookAndFeelThemeDefault());
-	vastLookAndFeels.add(new VASTLookAndFeelThemeIce());
-	vastLookAndFeels.add(new VASTLookAndFeelThemeTech());
-	vastLookAndFeels.add(new VASTLookAndFeelThemeDark());
+	vastLookAndFeels.add(new VASTLookAndFeelThemeDefault(m_pVASTXperience.m_Set, this));
+	vastLookAndFeels.add(new VASTLookAndFeelThemeIce(m_pVASTXperience.m_Set, this));
+	vastLookAndFeels.add(new VASTLookAndFeelThemeTech(m_pVASTXperience.m_Set, this));
+	vastLookAndFeels.add(new VASTLookAndFeelThemeDark(m_pVASTXperience.m_Set, this));
 }
 
 VASTLookAndFeel* VASTAudioProcessor::getCurrentVASTLookAndFeel() {

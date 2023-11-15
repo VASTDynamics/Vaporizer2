@@ -265,7 +265,9 @@ void CVASTMSEGEnvelope::getEnvelopeRange(float* msegWritePointer, int currentFra
 		}
 
 		myData->calcSegmentCoefficients(m_Set->m_nSampleRate, m_startPlayTimestamp, m_activeSegment.load(), m_iSamplesSinceSegmentStart.load(), m_endPoint->segmentLengthInSamples, m_Set, m_voiceNo.load());
-
+        myData->setUIDisplay(m_activeSegment.load(), m_iSamplesSinceSegmentStart.load(), m_endPoint->segmentLengthInSamples, m_voiceNo.load(), true);
+        myDataLive->setUIDisplay(m_activeSegment.load(), m_iSamplesSinceSegmentStart.load(), m_endPoint->segmentLengthInSamples, m_voiceNo.load(), true);
+        
 		float startYVal = m_startPoint->yVal;
 		float endyVal = m_endPoint->yVal;
 		if (m_bRelease.load() && (m_startPoint->isSustain)) {
@@ -290,8 +292,9 @@ void CVASTMSEGEnvelope::getEnvelopeRange(float* msegWritePointer, int currentFra
 				m_iSamplesSinceSegmentStart+=1;
 			}
 
-			myData->setUIDisplay(m_activeSegment.load(), m_iSamplesSinceSegmentStart.load(), m_endPoint->segmentLengthInSamples, m_voiceNo.load(), true);
-			myDataLive->setUIDisplay(m_activeSegment.load(), m_iSamplesSinceSegmentStart.load(), m_endPoint->segmentLengthInSamples, m_voiceNo.load(), true);
+            //Dont do that per sample!
+			//myData->setUIDisplay(m_activeSegment.load(), m_iSamplesSinceSegmentStart.load(), m_endPoint->segmentLengthInSamples, m_voiceNo.load(), true);
+			//myDataLive->setUIDisplay(m_activeSegment.load(), m_iSamplesSinceSegmentStart.load(), m_endPoint->segmentLengthInSamples, m_voiceNo.load(), true);
 
 			m_dSegment.store(m_endPoint->offset + m_dSegment * m_endPoint->coeff); //0 to 1 or 1 to 0 per segment
 			if (isnan(m_dSegment.load()) || (m_endPoint->segmentLengthInSamples < 0)) { //safety for online step increase
@@ -494,9 +497,10 @@ float CVASTMSEGEnvelope::getEnvelopeStepSeq(int bufferSample) { //called during 
 	else {
 
 		myData->calcSegmentCoefficients(m_Set->m_nSampleRate.load(), m_startPlayTimestamp, m_activeSegment.load(), m_iSamplesSinceSegmentStart.load(), m_endPoint->segmentLengthInSamples, m_Set, m_voiceNo.load());
-		myData->setUIDisplay(m_activeSegment.load(), m_iSamplesSinceSegmentStart.load(), m_endPoint->segmentLengthInSamples, m_voiceNo.load(), true); //CHECK
-		myDataLive->setUIDisplay(m_activeSegment.load(), m_iSamplesSinceSegmentStart.load(), m_endPoint->segmentLengthInSamples, m_voiceNo.load(), true); //CHECK
-
+        if (bufferSample==0) { //only once in the buffer
+            myData->setUIDisplay(m_activeSegment.load(), m_iSamplesSinceSegmentStart.load(), m_endPoint->segmentLengthInSamples, m_voiceNo.load(), true); //duplicate
+            myDataLive->setUIDisplay(m_activeSegment.load(), m_iSamplesSinceSegmentStart.load(), m_endPoint->segmentLengthInSamples, m_voiceNo.load(), true); //CHECK
+        }
 		m_dSegment.store(m_endPoint->offset + m_dSegment.load() * m_endPoint->coeff); //0 to 1 or 1 to 0 per segment
 		if (isnan(m_dSegment.load()) || (m_endPoint->segmentLengthInSamples < 0)) { //safety for online step increase
 			resynchNoteOn();

@@ -1008,7 +1008,7 @@ std::vector<dsp::Complex<float>>* CVASTWaveTable::getFreqDomainBuffer(int wtPos)
 	*/
 
 	if (wtheader.waveTablePositions.size() <= wtPos) {
-		//vassertfalse; //should not happen!
+		vassertfalse; //should not happen!
 		return &wtheader.waveTablePositions[0].frequencyDomainBuffer;  //CHECK
 	}
 	else
@@ -1460,10 +1460,10 @@ void CVASTWaveTable::copyUIFXUpdates() {
 	//ScopedLock sl(mWavetableChangeLock); //CHECK if really needed
 	for (int i = 0; i < getNumPositions(); i++) {
 		if (wtheader.waveTablePositions[i].naiveTableFXDirty) {
-			m_isBeingUpdated.store(true);
+			m_isBeingUpdated = true;
 			wtheader.waveTablePositions[i].naiveTableFXDisplayCopy = wtheader.waveTablePositions[i].naiveTableFX;
 			wtheader.waveTablePositions[i].naiveTableFXDirty = false;
-			m_isBeingUpdated.store(false);
+			m_isBeingUpdated = false;
 		}
 	}
 }
@@ -1498,9 +1498,8 @@ std::vector<float>* CVASTWaveTable::getNaiveTable(int wtPos) {
 	return wtheader.waveTablePositions[wtPos].naiveTable;
 	*/
 	if (wtPos >= wtheader.waveTablePositions.size()) {
-		//vassertfalse; //should not happen!
+		vassertfalse; //should not happen!
 		return &wtheader.waveTablePositions[0].naiveTable; //CHECK
-														   //return &std::vector<float>(C_WAVE_TABLE_SIZE);
 	}
 	else
 		return &wtheader.waveTablePositions[wtPos].naiveTable;

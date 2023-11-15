@@ -28,7 +28,7 @@ CVASTSettings::CVASTSettings(VASTAudioProcessor* processor) : my_processor(proce
 	m_bShallDump = false;
 	m_fPitchBend = 1.0f; //middle
 
-	//std::shared_ptr<CVASTParamState> m_State(std::make_shared<CVASTParamState>());
+	CVASTSettings::loadCustomFonts();
 	
 	modMatrixInputState l_inputState{ 0,0 };
 	bufferInputState.store(l_inputState);
@@ -46,8 +46,9 @@ CVASTSettings::CVASTSettings(VASTAudioProcessor* processor) : my_processor(proce
 	}
     
     //buffer white noise
+	CVASTWaveTableOscillator wtosc;
     for (int i = 0; i < C_MAX_SAMPLE_RATE * 3; i++) {
-        m_whiteNoiseBuffer[i] = CVASTWaveTableOscillator::doWhiteNoiseFast();
+        m_whiteNoiseBuffer[i] = wtosc.doWhiteNoiseFast();
     }
 
 	//fill frequency lut
@@ -300,17 +301,17 @@ void CVASTSettings::modMatrixCalcBuffers() {
 		int slotPolarity = 0;
 		modMatrixSlotGetValues(slot, slotValue, slotCurvy, slotSource, slotDestination, slotPolarity, lastSrceVals);
 		if ((slotSource != MODMATSRCE::NoSource) && (slotDestination != MODMATDEST::NoDestination)) //val can be 0? Check
-			modMatrixSlotUsed[slot].store(true);
+			modMatrixSlotUsed[slot] = true;
 		else
-            modMatrixSlotUsed[slot].store(false);
+            modMatrixSlotUsed[slot] = false;
 		modMatrixSlotDest[slot] = slotDestination; //onl for UI update
 	}
 
 	for (int j = 0; j < M_MODMATRIX_MAX_DESTINATIONS; j++) {
-		modMatrixDestSet[j].store(modMatrixDestinationSet(j));
+		modMatrixDestSet[j] = modMatrixDestinationSet(j);
 	}
 	for (int j = 0; j < M_MODMATRIX_MAX_SOURCES; j++) {
-		modMatrixSrceSet[j].store(modMatrixSourceSet(j));
+		modMatrixSrceSet[j] = modMatrixSourceSet(j);
 	}
 }
 
@@ -998,6 +999,22 @@ float CVASTSettings::driftNoiseFast(int slot)
 		newVal = m_fDriftLfoFast[slot] * (1.f - c_randdriftfilter_fast) - rand11 * c_randdriftfilter_fast;
 	m_fDriftLfoFast[slot] = newVal;
 	return m_fDriftLfoFast[slot] * c_randdriftm_fast;
+}
+
+//enum class customFonts { OpenSans, OpenSansBold, AlteHaasGrotesk, AlteHaasGroteskBold, SFUIDisplayRegular, SFUIDisplayBold, TradeGothicLT, TradeGothicLTBold };
+void CVASTSettings::loadCustomFonts() {
+	customFontBuffer[0] = Font(Typeface::createSystemTypefaceFor(BinaryData::OpenSansRegular_ttf, BinaryData::OpenSansRegular_ttfSize));
+	customFontBuffer[1] = Font(Typeface::createSystemTypefaceFor(BinaryData::OpenSansBold_ttf, BinaryData::OpenSansBold_ttfSize));
+	customFontBuffer[2] = Font(Typeface::createSystemTypefaceFor(BinaryData::AlteHaasGroteskRegular_ttf, BinaryData::AlteHaasGroteskRegular_ttfSize));
+	customFontBuffer[3] = Font(Typeface::createSystemTypefaceFor(BinaryData::AlteHaasGroteskBold_ttf, BinaryData::AlteHaasGroteskBold_ttfSize));
+	customFontBuffer[4] = Font(Typeface::createSystemTypefaceFor(BinaryData::SFUIDisplayRegular_ttf, BinaryData::SFUIDisplayRegular_ttfSize));
+	customFontBuffer[5] = Font(Typeface::createSystemTypefaceFor(BinaryData::SFUIDisplayBold_ttf, BinaryData::SFUIDisplayBold_ttfSize));
+	customFontBuffer[6] = Font(Typeface::createSystemTypefaceFor(BinaryData::Trade_Gothic_LT_ttf, BinaryData::Trade_Gothic_LT_ttfSize));
+	customFontBuffer[7] = Font(Typeface::createSystemTypefaceFor(BinaryData::Trade_Gothic_LT_Bold_ttf, BinaryData::Trade_Gothic_LT_Bold_ttfSize));
+}
+
+Font CVASTSettings::getCustomFont(CVASTSettings::customFonts customFont) {
+	return customFontBuffer[static_cast<int>(customFont)];
 }
 
 JUCE_END_IGNORE_WARNINGS_GCC_LIKE

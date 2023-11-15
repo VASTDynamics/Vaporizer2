@@ -419,10 +419,10 @@ public:
 	
 	std::atomic<modMatrixInputState> bufferInputState;
 
-	std::atomic<bool> modMatrixDestSet[M_MODMATRIX_MAX_DESTINATIONS];
-    std::atomic<bool> modMatrixSrceSet[M_MODMATRIX_MAX_SOURCES];
-    std::atomic<bool> modMatrixSlotUsed[M_MODMATRIX_MAX_SLOTS];
-    std::atomic<int> modMatrixSlotDest[M_MODMATRIX_MAX_SLOTS];
+	bool modMatrixDestSet[M_MODMATRIX_MAX_DESTINATIONS];
+    bool modMatrixSrceSet[M_MODMATRIX_MAX_SOURCES];
+    bool modMatrixSlotUsed[M_MODMATRIX_MAX_SLOTS];
+    int modMatrixSlotDest[M_MODMATRIX_MAX_SLOTS];
 	float lastModMatrixSourceVal[M_MODMATRIX_MAX_SLOTS][M_MODMATRIX_MAX_SOURCES][C_MAX_POLY];
 	modMatrixValueLookup modMatrixValueLookupTable[M_MODMATRIX_MAX_SLOTS];
 
@@ -450,6 +450,11 @@ public:
     
     float m_whiteNoiseBuffer[C_MAX_SAMPLE_RATE * 3]; //3 seconds at highest rate
 	
+	enum class customFonts{ OpenSans, OpenSansBold, AlteHaasGrotesk, AlteHaasGroteskBold, SFUIDisplayRegular, SFUIDisplayBold, TradeGothicLT, TradeGothicLTBold };
+	Font customFontBuffer[8];
+	void loadCustomFonts();
+	Font getCustomFont(CVASTSettings::customFonts customFont);
+
 	private:	
 		bool modMatrixDestinationSet(MYUINT destination); //use fast instead
 		bool modMatrixSourceSet(MYUINT source); //use fast instead

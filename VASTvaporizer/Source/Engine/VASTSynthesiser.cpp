@@ -740,8 +740,11 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 								if (bMSEG5DecaySteps) m_Set->m_MSEGData[4].setDecaySteps(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fDecaySteps_MSEG5, MODMATDEST::MSEG5DecaySteps, &inputState), m_Set);
 								if (bMSEG5ReleaseSteps) m_Set->m_MSEGData[4].setReleaseSteps(m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fReleaseSteps_MSEG5, MODMATDEST::MSEG5ReleaseSteps, &inputState), m_Set);
 							}
-						}						
+						}				
+                        
+                        //* expensive */ //per voice per MSEG
 						((CVASTSingleNote*)voice)->m_VCA->m_MSEG_Envelope[mseg].getEnvelopeRange(msegWritePointer, currentFrame, numFrames);
+                        //* expensive */
 					}
 				} 
 				//rest
@@ -752,7 +755,10 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 						jassert(currentFrame + numFrames - 1 < routingBuffers.getNumSamples());
 						std::fill(msegActivePointer + currentFrame, msegActivePointer + currentFrame + numFrames, bIsActive);
 						inputState.currentFrame = currentFrame;
+                        
+                        //* expensive */
 						((CVASTSingleNote*)voice)->m_VCA->m_MSEG_Envelope[mseg].getEnvelopeRange(msegWritePointer, currentFrame, numFrames);
+                        //* expensive */
 					}
 				}
 			}
@@ -762,7 +768,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 		bool bPlayiningInRange = ((CVASTSingleNote*)voice)->isPlayingInRange(startSample, numSamples); //requires that mseg is processed before!
 
 		if (bPlayiningInRange) { //perf opt, check with phase and frequency hat is not updated?			
-			m_voicePlaying[((CVASTSingleNote*)voice)->getVoiceNo()].store(true);
+			m_voicePlaying[((CVASTSingleNote*)voice)->getVoiceNo()] = true;
 			m_numVoicesPlaying++;
 
 			m_numOscsPlaying+=((CVASTSingleNote*)voice)->getNumOscsPlaying();

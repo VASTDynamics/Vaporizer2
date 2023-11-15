@@ -23,15 +23,7 @@ class CVASTPoly
 	friend class CVASTSingleNote;
 
 public:
-	CVASTPoly(CVASTSettings &set, VASTAudioProcessor* processor) :
-		m_Set(&set), myProcessor(processor)
-	{
-		for (int i = 0; i < 4; i++) {
-			CVASTOscillatorBank* bank = new CVASTOscillatorBank(m_Set, myProcessor, i);
-			//m_OscBank.push_back(std::make_shared<CVASTOscillatorBank>(bank));
-			m_OscBank.add(bank);
-		}
-	};
+	CVASTPoly(CVASTSettings& set, VASTAudioProcessor* processor);
 
 	virtual ~CVASTPoly(void);
 

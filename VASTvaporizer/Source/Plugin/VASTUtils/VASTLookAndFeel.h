@@ -188,14 +188,14 @@ enum VASTColours {
 
 class VASTAudioProcessor; // forward declaration
 class VASTAudioProcessorEditor; // forward declaration
+class CVASTSettings; // forward declaration
 class VASTLookAndFeel : public LookAndFeel_V4
 {
 public:
 	//Virtuals -------------------------------------------------
 
-	VASTLookAndFeel();
-
-	~VASTLookAndFeel();
+	CVASTSettings *m_Set;
+	VASTAudioProcessor * myProcessor;
 
 	void initAll();
 
@@ -214,7 +214,7 @@ public:
 		bool isMouseOverButton,
 		bool isButtonDown) noexcept;
 
-	Typeface::Ptr getTypefaceForFont(const Font &font) override;
+	//Typeface::Ptr getTypefaceForFont(const Font &font) override;
 
 	Array<Image> m_knobBufferArray;
 	Array<Image> m_knobBufferArrayMouseOver;
@@ -226,7 +226,7 @@ public:
 	Font getLabelFont(Label&) override;
 	Font getTextButtonFont(TextButton& textButton, int buttonHeight) override;
 	Font getPopupMenuFont() override;
-	Font getTabButtonFont(TabBarButton &, float height) override;
+	Font getTabButtonFont(TabBarButton &, float height);
 	Font getTextEditorFont(TextEditor& textEditor);
 	Font getDefaultFont();
 	Font getDefaultFontBold();

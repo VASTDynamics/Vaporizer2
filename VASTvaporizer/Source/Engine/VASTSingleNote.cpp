@@ -1415,6 +1415,7 @@ bool CVASTSingleNote::prepareFrequency(int bank, int skips, int startSample, boo
 
 bool CVASTSingleNote::prepareNextPhaseCycle(int bank, int skips, int startSample, bool bTakeNextValue, bool wtfxFXTypeChanged) {
 	modMatrixInputState l_inputState{ mVoiceNo, startSample };
+    
 	float l_WTPosOscA = 0.f;
 	float l_WTPosOscB = 0.f;
 	float l_WTPosOscC = 0.f;
@@ -1466,10 +1467,11 @@ bool CVASTSingleNote::prepareNextPhaseCycle(int bank, int skips, int startSample
 	return bHasToBeDoneForEachSample;
 }
 
-bool CVASTSingleNote::prepareEachSample(int bank, int currentFrame, bool &freqsHaveToBeDoneForEachSample, bool bTakeNextValue) {
+bool CVASTSingleNote::prepareEachSample(int bank, int currentFrame, bool &freqsHaveToBeDoneForEachSample, bool bTakeNextValue, CVASTWaveTableOscillator*  l_Oscillator[]) {
 	modMatrixInputState l_inputState{ mVoiceNo,currentFrame };
+
 	bool wrap = false;
-	int skips = m_Oscillator.getUnchecked(bank)->m_unisonOscis * 10 - 9; //1 - 11 - 21 ...
+	int skips = l_Oscillator[bank]->m_unisonOscis * 10 - 9; //1 - 11 - 21 ...
 
 	bool bUpdateNow = false;
 	m_iLastFreqUpdate[bank]++;
@@ -1477,7 +1479,7 @@ bool CVASTSingleNote::prepareEachSample(int bank, int currentFrame, bool &freqsH
 		m_iLastFreqUpdate[bank] = 0;
 		bUpdateNow = true;
 
-		m_Oscillator.getUnchecked(bank)->doPortamentoIfRequired(skips);
+        l_Oscillator[bank]->doPortamentoIfRequired(skips);
 	}
 	
 	if (bUpdateNow) {
@@ -1514,7 +1516,6 @@ bool CVASTSingleNote::prepareEachSample(int bank, int currentFrame, bool &freqsH
 
 	//---------------------------------------------------------------------------------
     //most expensive loop
-	CVASTWaveTableOscillator* l_Oscillator[4]{ m_Oscillator[0],m_Oscillator[1], m_Oscillator[2], m_Oscillator[3] };    
 	float l_phaseOffset = 0.f;
 	if (bank == 0) {
 		l_phaseOffset = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fOscPhase_OscA, MODMATDEST::OscAPhase, &l_inputState);
@@ -1573,8 +1574,8 @@ bool CVASTSingleNote::prepareEachSample(int bank, int currentFrame, bool &freqsH
 	//but not for each single sample - skip some!
 		if (bUpdateNow) {
 			prepareFrequency(bank, skips, currentFrame, bTakeNextValue, false);
-			for (int osci = 0; osci < m_Oscillator.getUnchecked(bank)->m_unisonOscis; osci++) {
-				m_Oscillator.getUnchecked(bank)->setFrequency(osci, false);
+			for (int osci = 0; osci < l_Oscillator[bank]->m_unisonOscis; osci++) {
+                l_Oscillator[bank]->setFrequency(osci, false);
 			}
 			m_iLastFreqUpdate[bank] = 0;
 		}
@@ -1689,9 +1690,10 @@ void CVASTSingleNote::doWavetableBufferGet(const int bank, CVASTWaveTableOscilla
 	int currentFrame = startSample;
 	int nextStart = startSample;
 	int sectionlength = 0;
+    CVASTWaveTableOscillator* l_Oscillator[4]{ m_Oscillator.getUnchecked(0),m_Oscillator.getUnchecked(1), m_Oscillator.getUnchecked(2), m_Oscillator.getUnchecked(3) }; //performance improvement
 	while (currentFrame < startSample + numSamples) {
 
-		bool wrap = prepareEachSample(bank, currentFrame, m_bFreqsHaveToBeDoneForEachSample[bank], bTakeNextValue); //can change bFreqsHaveToBeDoneForEachSample on startcycle
+		bool wrap = prepareEachSample(bank, currentFrame, m_bFreqsHaveToBeDoneForEachSample[bank], bTakeNextValue, l_Oscillator); //can change bFreqsHaveToBeDoneForEachSample on startcycle
 		
 		m_iCurCycleSamples[bank]++;
 		if (wrap) { //start next section - section should be from start of osci 0 wrap until all oscis have wrapped and ended the cycle!											

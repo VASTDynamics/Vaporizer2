@@ -55,11 +55,14 @@ void VASTDragSource::resized() {
 
 void VASTDragSource::lookAndFeelChanged() {
 	if (m_processor == nullptr) return;
-	Colour c1 = m_processor->getCurrentVASTLookAndFeel()->findVASTColour(colRotarySliderOuterArcModulationIndicatorInner).darker(.3f); //CHECK
+    Colour c1 = m_processor->getCurrentVASTLookAndFeel()->findVASTColour(colRotarySliderOuterArcModulationIndicatorInner).darker(.3f);
+    if (c1 == m_bufferc1)
+        return;
 	ddImageButton->setImages(false, true, true,
 		ImageCache::getFromMemory(VASTHeaderComponent::dragdrop_png, VASTHeaderComponent::dragdrop_pngSize), 1.000f, c1,
 		ImageCache::getFromMemory(VASTHeaderComponent::dragdrop_over_png, VASTHeaderComponent::dragdrop_over_pngSize), 1.000f, c1.contrasting(0.3f),
 		ImageCache::getFromMemory(VASTHeaderComponent::dragdrop_png, VASTHeaderComponent::dragdrop_pngSize), 1.000f, c1.contrasting(0.5f));
+    m_bufferc1 = c1;
 }
 
 void VASTDragSource::paint(Graphics& g)

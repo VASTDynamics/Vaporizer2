@@ -10,11 +10,12 @@ VAST Dynamics
 
 class VASTAudioProcessor; // forward declaration
 class VASTAudioProcessorEditor; // forward declaration
+class CVASTSettings; // forward declaration
 class VASTLookAndFeelThemeTech : public VASTLookAndFeel
 {
 public:
-    VASTLookAndFeelThemeTech();
-    
+	VASTLookAndFeelThemeTech(CVASTSettings& set, VASTAudioProcessor* processor);
+	    
     ~VASTLookAndFeelThemeTech();
   
 	Colour findVASTColour(int colourID);

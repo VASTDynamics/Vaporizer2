@@ -129,7 +129,7 @@ public:
 	void addPositions(int numPos);
 	void insertEmptyPosition(int wtPos);
 	
-	std::atomic<bool> m_isBeingUpdated = false;
+	atomic<bool> m_isBeingUpdated = false;
 
 	void setNaiveTableFast(int wtPos, bool preGenerate, int wtMode);
 	void setNaiveTable(int wtPos, std::vector<float> vWave, bool preGenerate, int wtMode);
