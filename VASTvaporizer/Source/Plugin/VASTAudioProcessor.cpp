@@ -651,8 +651,7 @@ void VASTAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mid
 	if (editor != nullptr) {
 		editor->vaporizerComponent->processMidiBuffer(midiMessages, buffer.getNumSamples());
 	}
-
-	MidiMessage msg;
+	
 	int samplePosition = 0;
 
 	//Check for MIDI learn
@@ -661,70 +660,71 @@ void VASTAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mid
                    midiMessages.cend(),
                    [&] (const MidiMessageMetadata& metadata)
         {
-		if (metadata.getMessage().isPitchWheel()) {
-			VASTAudioProcessorEditor* editor = (VASTAudioProcessorEditor*)getActiveEditor();
-			if (editor != nullptr) {
-				int wheelPos = metadata.getMessage().getPitchWheelValue() - 8192.f;
-				wheelPos = limit_range(wheelPos, -8192.f, 8192.f);
-				if (editor->vaporizerComponent->getKeyboardComponent() != nullptr) {
-					if (!isMPEenabled())
-						editor->vaporizerComponent->getKeyboardComponent()->updatePitchbend(wheelPos);
-					else {
-						if (msg.getChannel() == m_pVASTXperience.m_Poly.getSynthesizer()->m_MPEMasterChannel)
+			if (metadata.getMessage().isPitchWheel()) {
+				VASTAudioProcessorEditor* editor = (VASTAudioProcessorEditor*)getActiveEditor();
+				if (editor != nullptr) {
+					int wheelPos = metadata.getMessage().getPitchWheelValue() - 8192.f;
+					wheelPos = limit_range(wheelPos, -8192.f, 8192.f);
+					if (editor->vaporizerComponent->getKeyboardComponent() != nullptr) {
+						if (!isMPEenabled())
 							editor->vaporizerComponent->getKeyboardComponent()->updatePitchbend(wheelPos);
+						else {
+							if (metadata.getMessage().getChannel() == m_pVASTXperience.m_Poly.getSynthesizer()->m_MPEMasterChannel)
+								editor->vaporizerComponent->getKeyboardComponent()->updatePitchbend(wheelPos);
+						}
 					}
 				}
 			}
-		}
-		else if (metadata.getMessage().isController()) {
-			//check for midiLearn
-			if (msg.getControllerNumber() == 0) { //CC00 bank change
-				DBG("Bank Change " << metadata.getMessage().getControllerValue());
-				m_midiBank = msg.getControllerValue();
-			}
-			else if (metadata.getMessage().getControllerNumber() == 1) { //CC01 mod wheel
-				VASTAudioProcessorEditor* editor = (VASTAudioProcessorEditor*)getActiveEditor();
-				if (editor != nullptr) {
-					int wheelPos = msg.getControllerValue();
-					wheelPos = limit_range(wheelPos, 0.f, 127.f);
-					if (editor->vaporizerComponent->getKeyboardComponent() != nullptr)
-						editor->vaporizerComponent->getKeyboardComponent()->updateModwheel(wheelPos);
-				}				
-			}
-			//midi CC 1 (MSB) and midi CC 2
-			//CC02 mod wheel high precision?
-			else 
-				if (m_iNowLearningMidiParameter >= 0) {
-					midiParameterLearned(msg.getControllerNumber());
-					requestUIUpdate();
+			else if (metadata.getMessage().isController()) {
+				//check for midiLearn
+				if (metadata.getMessage().getControllerNumber() == 0) { //CC00 bank change
+					DBG("Bank Change " << metadata.getMessage().getControllerValue());
+					m_midiBank = metadata.getMessage().getControllerValue();
 				}
-				else {
-					//check for mapped parameters
-					int lParamInternal = 0;
-					lParamInternal = midiMappingGetParameterIndex(msg.getControllerNumber());
-					if (lParamInternal >= 0) {
-						float lValue = msg.getControllerValue() / 127.0f;
-						if (lParamInternal == 9999) { //UI 
-							String uiComponentName = midiMappingComponentVariableName(msg.getControllerNumber());
-							VASTAudioProcessorEditor* _editor = (VASTAudioProcessorEditor*)getActiveEditor();
-							if (_editor != nullptr) {							
-								for (int i = 0; i < m_mapParameterNameToControl.size(); i++) {
-									VASTSlider* lslider = dynamic_cast<VASTSlider*>(_editor->findChildComponetWithName(_editor->vaporizerComponent.get(), uiComponentName));
-									if (lslider != nullptr) {
-										if (lslider->getComponentID().equalsIgnoreCase(uiComponentName)) {
-											_editor->registerComponentValueUpdate(lslider, lValue);
+				else if (metadata.getMessage().getControllerNumber() == 1) { //CC01 mod wheel
+					VASTAudioProcessorEditor* editor = (VASTAudioProcessorEditor*)getActiveEditor();
+					if (editor != nullptr) {
+						int wheelPos = metadata.getMessage().getControllerValue();
+						wheelPos = limit_range(wheelPos, 0.f, 127.f);
+						if (editor->vaporizerComponent->getKeyboardComponent() != nullptr)
+							editor->vaporizerComponent->getKeyboardComponent()->updateModwheel(wheelPos);
+					}
+				}
+				//midi CC 1 (MSB) and midi CC 2
+				//CC02 mod wheel high precision?
+				else
+					if (m_iNowLearningMidiParameter >= 0) {
+						midiParameterLearned(metadata.getMessage().getControllerNumber());
+						requestUIUpdate();
+					}
+					else {
+						//check for mapped parameters
+						int lParamInternal = 0;
+						lParamInternal = midiMappingGetParameterIndex(metadata.getMessage().getControllerNumber());
+						if (lParamInternal >= 0) {
+							float lValue = metadata.getMessage().getControllerValue() / 127.0f;
+							if (lParamInternal == 9999) { //UI 
+								String uiComponentName = midiMappingComponentVariableName(metadata.getMessage().getControllerNumber());
+								VASTAudioProcessorEditor* _editor = (VASTAudioProcessorEditor*)getActiveEditor();
+								if (_editor != nullptr) {
+									for (int i = 0; i < m_mapParameterNameToControl.size(); i++) {
+										VASTSlider* lslider = dynamic_cast<VASTSlider*>(_editor->findChildComponetWithName(_editor->vaporizerComponent.get(), uiComponentName));
+										if (lslider != nullptr) {
+											if (lslider->getComponentID().equalsIgnoreCase(uiComponentName)) {
+												_editor->registerComponentValueUpdate(lslider, lValue);
+											}
 										}
 									}
 								}
 							}
-						} else if (lParamInternal < getParameters().size()) {
-							getParameters()[lParamInternal]->setValueNotifyingHost(lValue);
+							else if (lParamInternal < getParameters().size()) {
+								getParameters()[lParamInternal]->setValueNotifyingHost(lValue);
+							}
 						}
 					}
-				}
-		} 
-		else if (msg.isProgramChange()) {
-			int presetindex = m_presetData.bankProgramGetPresetIndex(m_midiBank, msg.getProgramChangeNumber());
+			}
+			else if (metadata.getMessage().isProgramChange()) {
+			int presetindex = m_presetData.bankProgramGetPresetIndex(m_midiBank, metadata.getMessage().getProgramChangeNumber());
 
 			//int maxPrograms = getNumPrograms();
 			//int newProg = 128 * m_midiBank + msg.getProgramChangeNumber();
