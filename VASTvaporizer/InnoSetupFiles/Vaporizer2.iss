@@ -73,14 +73,12 @@ Name: "compatibility"; Description: "Install old plugin names for compatibility 
 ;Name: "{app}"; Permissions: everyone-full                     
 Name: "{app}"; Permissions: users-readexec
 Name: "{commoncf}\Avid\Audio\Plug-Ins\VASTvaporizer2_64.aaxplugin"; Check: Is64BitInstallMode; Components:aax_win64; Attribs: system;
-//;for settings file:
-//Name: "{commonappdata}\Vaporizer2"; Permissions: everyone-full
 //;user presets
-//Name: "{code:GetPluginDir|6}"; Permissions: everyone-full 
+Name: "{code:GetPluginDir|4}"; Permissions: everyone-full 
 //;user tables
-//Name: "{code:GetPluginDir|7}"; Permissions: everyone-full 
+Name: "{code:GetPluginDir|5}"; Permissions: everyone-full 
 //;user noises
-//Name: "{code:GetPluginDir|8}"; Permissions: everyone-full 
+Name: "{code:GetPluginDir|6}"; Permissions: everyone-full 
 
 [InstallDelete]
 Type: files; Name: "{group}\uninstall Vaporizer2*"

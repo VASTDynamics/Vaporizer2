@@ -83,6 +83,9 @@ public:
 		errorState12_writeSettingsToFileFailed,
 		errorState13_readSettingsFromFileFailed,
 		errorState14_loadDefaultMidiMappingFailed,
+		errorState15_couldNotCreateSymlink,
+		errorState16_loadPresetLockUnsuccessful,
+		errorState17_internalWavetableEngineError,
 		errorState20_loadPresetInvalidTree,
 		errorState24_invalidFXBusData,
 		errorState25_maxBufferSizeExceeded,
@@ -90,7 +93,7 @@ public:
 		errorState31_blockedLicense
 	};
 
-	const StringRef vastErrorStateToString(vastErrorState e) noexcept
+	const String vastErrorStateToString(vastErrorState e) noexcept
 	{
 		switch (e)
 		{
@@ -109,6 +112,9 @@ public:
 		case vastErrorState::errorState12_writeSettingsToFileFailed: return (TRANS("Writing the settings file failed. Please check access rights to folders."));
 		case vastErrorState::errorState13_readSettingsFromFileFailed: return (TRANS("Reading the settings file failed. Please check access rights to folders."));
 		case vastErrorState::errorState14_loadDefaultMidiMappingFailed: return (TRANS("Loading of default MIDI mapping failed."));
+		case vastErrorState::errorState15_couldNotCreateSymlink: return (TRANS("Could not create symlink in the selected folder. Check writea access rights."));
+		case vastErrorState::errorState16_loadPresetLockUnsuccessful: return(TRANS("Loading the preset failed. Process lock failed."));
+		case vastErrorState::errorState17_internalWavetableEngineError: return(TRANS("An internal wavetable engine error occured. Please reload the plugin."));
 		case vastErrorState::errorState20_loadPresetInvalidTree: return (TRANS("Loading the preset resulted in an invalid parameter tree. Please reload the plugin."));
 		case vastErrorState::errorState24_invalidFXBusData: return (TRANS("The FX bus data is invalid."));
 		case vastErrorState::errorState25_maxBufferSizeExceeded: return (TRANS("The maximum supported buffer size is exceeded."));

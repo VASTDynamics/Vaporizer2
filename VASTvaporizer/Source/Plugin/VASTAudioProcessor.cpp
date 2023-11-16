@@ -293,7 +293,7 @@ void VASTAudioProcessor::initializeToDefaults() {
 	for (int bank = 0; bank < 4; bank++) {
 		//m_pVASTXperience.m_Poly.m_OscBank[i]->init();
 		m_pVASTXperience.m_Poly.m_OscBank[bank]->recalcWavetable();
-		std::shared_ptr<CVASTWaveTable> wavetable(new CVASTWaveTable(m_pVASTXperience.m_Set));
+		std::shared_ptr<CVASTWaveTable> wavetable = std::make_shared<CVASTWaveTable>(m_pVASTXperience.m_Set);
 		wavetable->addPosition();
 		if (bank == 0) {
 			//init bank A to saw
@@ -486,8 +486,9 @@ void VASTAudioProcessor::setCurrentProgram(int index)
 	if (index != 0) //initpatch shall always be used
 		if (m_presetData.getCurPatchData().presetarrayindex == index) return;
 
-	if ((Time::getMillisecondCounter() - m_tSetChunkCalled)<400)  // see http://www.juce.com/forum/topic/problems-recalling-plugin-state-versus-current-preset
+	if ((Time::getMillisecondCounter() - m_tSetChunkCalled) < 400) {  // see http://www.juce.com/forum/topic/problems-recalling-plugin-state-versus-current-preset
 		return;
+	}
 
 	m_pVASTXperience.m_nSampleRate = getSampleRate();
     
@@ -986,9 +987,6 @@ void VASTAudioProcessor::setStateInformation(const void* data, int sizeInBytes) 
 
 	// load many presets - bank
 
-	if (isLicensed() == false) {
-		return;
-	}
 	m_tSetChunkCalled = Time::getMillisecondCounter();
 	
 	//https://docs.juce.com/master/tutorial_audio_processor_value_tree_state.html
@@ -1221,6 +1219,7 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 		processor->registerThread();
 		if (processor->getTreeThreadLock() == true) {
 			processor->unregisterThread();
+			//This is not an error state. The current load thread is just not executed. Another load will return. 
 			return;
 		}
 	}	
@@ -1236,6 +1235,7 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 				if (waitstate > 25000) {
 					//processor->m_pVASTXperience.audioProcessUnlock(); //must not unlock here
 					processor->unregisterThread();
+					processor->setErrorState(vastErrorState::errorState16_loadPresetLockUnsuccessful);
 					DBG("ERROR! getBlockProcessingIsBlockedSuccessfully() is false - terminating load process!");
 					return; //end after 25s waiting time
 				}
@@ -1249,6 +1249,7 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 				vassertfalse;
 				processor->unregisterThread();
 				processor->m_pVASTXperience.audioProcessUnlock();
+				processor->setErrorState(vastErrorState::errorState16_loadPresetLockUnsuccessful);
 				return;
 			}
 		}
@@ -1466,7 +1467,8 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 				}
 
 				m_bank_wavetableToUpdate[bank]->pregenerateWithWTFX(wtFxType, wtFxVal, processor->getWTmode());
-				processor->m_pVASTXperience.m_Poly.m_OscBank[bank]->setWavetable(m_bank_wavetableToUpdate[bank]);
+				//processor->m_pVASTXperience.m_Poly.m_OscBank[bank]->setWavetable(m_bank_wavetableToUpdate[bank]);
+				processor->m_pVASTXperience.m_Poly.m_OscBank[bank]->setWavetableSoftFade(m_bank_wavetableToUpdate[bank]);
 			}
 		}
 		else
@@ -1518,21 +1520,22 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 			if ((processor->m_bAudioThreadRunning) && (!processor->m_wasBypassed)) {
 				if (!processor->m_pVASTXperience.nonThreadsafeIsBlockedProcessingInfo()) {
 					processor->m_pVASTXperience.audioProcessLock();
-					if (!processor->m_pVASTXperience.getBlockProcessingIsBlockedSuccessfully()) {			
+					if ((processor->m_bAudioThreadRunning) && (!(processor->m_pVASTXperience.getBlockProcessingIsBlockedSuccessfully()))) {
 						bool done = false;
-						int counter = 30;
+						int counter = 30;						
 						while (!done) {
-							if ((counter<30) && ((processor->m_bAudioThreadRunning) && (!(processor->m_pVASTXperience.getBlockProcessingIsBlockedSuccessfully())))) {
+							if ((counter < 30) && ((processor->m_bAudioThreadRunning) && (!(processor->m_pVASTXperience.getBlockProcessingIsBlockedSuccessfully())))) {
 								DBG("PassTree - sleep");
 								Thread::sleep(100);
 								counter++;
 								continue;
 							}
-                            vassert(counter<30); //process lock failed
-                            if (counter==30) {
-                                processor->unregisterThread();
-                                return; //dont unlock what is not locked
-                            }
+							vassert(counter < 30); //process lock failed
+							if (counter == 30) {
+								processor->setErrorState(vastErrorState::errorState16_loadPresetLockUnsuccessful);
+								processor->unregisterThread();
+								return; //dont unlock what is not locked
+							}
 							done = true;
 						}
 					}
@@ -2278,8 +2281,8 @@ void VASTAudioProcessor::initSettings() {
 //store values passed from installer in settings
 #ifdef JUCE_WINDOWS
         if (!(WindowsRegistry::getValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\VAST Dynamics\\Vaporizer2\\Settings\\UserPresetFolder", m_UserPresetRootFolder).equalsIgnoreCase("")))
-            m_UserPresetRootFolder = WindowsRegistry::getValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\VAST Dynamics\\Vaporizer2\\Settings\\UserTableFolder", m_UserWavetableRootFolder);
-        if (!(WindowsRegistry::getValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\VAST Dynamics\\Vaporizer2\\Settings\\UserPresetFolder", m_UserPresetRootFolder).equalsIgnoreCase("")))
+            m_UserPresetRootFolder = WindowsRegistry::getValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\VAST Dynamics\\Vaporizer2\\Settings\\UserPresetFolder", m_UserPresetRootFolder);
+        if (!(WindowsRegistry::getValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\VAST Dynamics\\Vaporizer2\\Settings\\UserPresetFolder", m_UserWavetableRootFolder).equalsIgnoreCase("")))
             m_UserWavetableRootFolder = WindowsRegistry::getValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\VAST Dynamics\\Vaporizer2\\Settings\\UserTableFolder", m_UserWavetableRootFolder);
         if (!(WindowsRegistry::getValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\VAST Dynamics\\Vaporizer2\\Settings\\UserNoisesFolder", m_UserWavRootFolder).equalsIgnoreCase("")))
             m_UserWavRootFolder = WindowsRegistry::getValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\VAST Dynamics\\Vaporizer2\\Settings\\UserNoisesFolder", m_UserWavRootFolder);
@@ -2417,19 +2420,22 @@ bool VASTAudioProcessor::writeSettingsToFile() {
 	if (!File(m_UserPresetRootFolder).getChildFile("Factory").isSymbolicLink())
 		if (!File(getVSTPath()).getChildFile("Presets").getFullPathName().equalsIgnoreCase(m_UserPresetRootFolder) &&
 		    File(getVSTPath()).getChildFile("Presets").exists())
-			File(getVSTPath()).getChildFile("Presets").createSymbolicLink(File(m_UserPresetRootFolder).getChildFile("Factory"), true); //add symlink to Factory
+			if (!File(getVSTPath()).getChildFile("Presets").createSymbolicLink(File(m_UserPresetRootFolder).getChildFile("Factory"), true)) //add symlink to Factory
+				setErrorState(vastErrorState::errorState15_couldNotCreateSymlink);
 	if (!File(m_UserWavetableRootFolder).exists())
 		(File(m_UserWavetableRootFolder).createDirectory()); //recursively create also directories
 	if (!File(m_UserWavetableRootFolder).getChildFile("Factory").isSymbolicLink())
 		if (!File(getVSTPath()).getChildFile("Tables").getFullPathName().equalsIgnoreCase(m_UserWavetableRootFolder) &&
 			File(getVSTPath()).getChildFile("Tables").exists())
-			File(getVSTPath()).getChildFile("Tables").createSymbolicLink(File(m_UserWavetableRootFolder).getChildFile("Factory"), true); //add symlink to Factory
+			if (!File(getVSTPath()).getChildFile("Tables").createSymbolicLink(File(m_UserWavetableRootFolder).getChildFile("Factory"), true)) //add symlink to Factory
+				setErrorState(vastErrorState::errorState15_couldNotCreateSymlink);
 	if (!File(m_UserWavRootFolder).exists())
 		(File(m_UserWavRootFolder).createDirectory()); //recursively create also directories
 	if (!File(m_UserWavRootFolder).getChildFile("Factory").isSymbolicLink())
 		if (!File(getVSTPath()).getChildFile("Noises").getFullPathName().equalsIgnoreCase(m_UserWavRootFolder) &&
 			File(getVSTPath()).getChildFile("Noises").exists())
-			File(getVSTPath()).getChildFile("Noises").createSymbolicLink(File(m_UserWavRootFolder).getChildFile("Factory"), true); //add symlink to Factory		
+			if (!File(getVSTPath()).getChildFile("Noises").createSymbolicLink(File(m_UserWavRootFolder).getChildFile("Factory"), true)) //add symlink to Factory		
+				setErrorState(vastErrorState::errorState15_couldNotCreateSymlink);
 
 	bool migrate_legacy = false;
 	String filename = getSettingsFilePath(false, migrate_legacy); //write always new path

@@ -146,7 +146,7 @@ void CVASTOscillatorBank::beginSoftFade() { //to be called at start of buffer pr
 }
 
 bool CVASTOscillatorBank::endSoftFade() { //to be called at start of buffer processing
-	bool lResult = false;
+	bool lResult = true;
 	
 	if (m_wavetable_soft_fade.get() != nullptr) { //avoid atomic lock
 		if ((std::atomic_load(&m_wavetable_soft_fade) != nullptr)) { //atomic check for nullptr https://stackoverflow.com/questions/30117975/is-thread-safe-to-assign-a-shared-ptr-nullptr
@@ -395,6 +395,12 @@ std::shared_ptr<CVASTWaveTable> CVASTOscillatorBank::getSoftOrCopyWavetable(bool
 		setWavetableSoftFade(wtshared);
 	}
 	vassert(wtshared != nullptr);
+	if (wtshared == nullptr) {
+		//safety hack
+		std::shared_ptr<CVASTWaveTable> wavetable = std::make_shared<CVASTWaveTable>(*m_Set);
+		std::atomic_store(&wtshared, wavetable); //create fresh one
+	}
+
 	return wtshared;
 }
 
