@@ -64,13 +64,25 @@ void VASTOscilloscope::setToStandardRender() {
 	//mOpenGLContext.detach();
 }
 
-void VASTOscilloscope::setEditor(VASTAudioProcessorEditor* editor) { myEditor = editor; }
+void VASTOscilloscope::setEditor(VASTAudioProcessorEditor* editor) { 
+	myEditor = editor; 
+}
 
 void VASTOscilloscope::setProcessor(VASTAudioProcessor* processor) {
 	myProcessor = processor;
 }
 
-void VASTOscilloscope::setWTEditor(VASTWaveTableEditorComponent* wtEditor) { myWtEditor = wtEditor; }
+void VASTOscilloscope::setWTEditor(VASTWaveTableEditorComponent* wtEditor) { 
+	myWtEditor = wtEditor;
+}
+
+String VASTOscilloscope::getTooltip()
+{
+	if (myWtEditor == nullptr)
+		return TRANS("Use right mouse click to toggle single cycle versus perspective wavetable display.");
+	else
+		return "";
+}
 
 void VASTOscilloscope::setToOpenGLRender() {
 	/*

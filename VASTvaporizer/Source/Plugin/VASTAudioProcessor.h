@@ -313,8 +313,6 @@ public:
 	int autoParamGetDestination(String parametername);
 	String autoDestinationGetParam(int modmatdest);
 	
-	static void threadedPingCheck(Component::SafePointer<Label> safePointerLabel, VASTAudioProcessor* processor);
-
 	static void passTreeToAudioThread(ValueTree tree, bool externalRepresentation, VASTPresetElement preset, int index, VASTAudioProcessor* processor, bool isSeparateThread, bool initOnly);
 	std::atomic<bool> m_bAudioThreadRunning = false;
 	std::atomic<bool> m_bCreateCachedVASTEditorDelayed = false;

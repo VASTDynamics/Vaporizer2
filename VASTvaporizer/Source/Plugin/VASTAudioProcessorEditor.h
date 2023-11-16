@@ -77,7 +77,7 @@ private:
     // access the processor object that created it.
     VASTAudioProcessor& processor;
 
-	TooltipWindow tooltipWindow; //just add and leave here
+	TooltipWindow tooltipWindow{ this, 200 }; //just add and leave here
     std::unique_ptr<juce::AlertWindow> m_alertWindow;
 
 	bool resizeCalledFromConstructor = false;

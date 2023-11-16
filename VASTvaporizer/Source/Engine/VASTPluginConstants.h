@@ -32,7 +32,7 @@ typedef signed int MYUINT; //CHECK FOR PORTABILITY
 
 #define C_MAX_EDITOR_THREADS 1 //parallel threads maximum
 
-#define C_MAX_POLY 16
+#define C_MAX_POLY 32
 #define C_MAX_NUM_KEYS 128
 
 #define C_MAX_SAMPLER_VIEWPORT_MARKERS 50

@@ -713,6 +713,9 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 					if (*m_Set.m_State->m_uPolyMode == static_cast<int>(POLYMODE::POLY16))
 						m_Set.m_uMaxPoly = 16;
 					else
+						if (*m_Set.m_State->m_uPolyMode == static_cast<int>(POLYMODE::POLY32))
+							m_Set.m_uMaxPoly = 32;
+					else
 					{
 						vassertfalse;
 						m_Set.m_uMaxPoly = 16;

@@ -20,7 +20,7 @@ typedef struct sSelection {
 	int iWTSelectionEnd = C_WAVE_TABLE_SIZE;
 } sSelection;
 
-class VASTOscilloscope : public Component, public Timer, public FileDragAndDropTarget /*, public juce::OpenGLRenderer*/
+class VASTOscilloscope : public Component, public Timer, public FileDragAndDropTarget, public TooltipClient /*, public juce::OpenGLRenderer*/
 {
 public:
 	VASTOscilloscope();
@@ -40,10 +40,12 @@ public:
 
 	void setToOpenGLRender();
 	void setToStandardRender();
-
+	
 	void setEditor(VASTAudioProcessorEditor* editor);
 	void setProcessor(VASTAudioProcessor* processor);
 	void setWTEditor(VASTWaveTableEditorComponent* wtEditor);
+
+	String getTooltip() override;
 
 	void selectAll(bool noUIUpdate);
 

@@ -302,7 +302,10 @@ void VASTAudioProcessor::initializeToDefaults() {
 			wavetable->setWaveTableName(TRANS("Basic Saw"));
 			wavetable->setNaiveTableFast(0, true, getWTmode());
 		}
-		m_pVASTXperience.m_Poly.m_OscBank[bank]->setWavetableSoftFade(wavetable);		
+		if (m_bAudioThreadRunning)
+			m_pVASTXperience.m_Poly.m_OscBank[bank]->setWavetableSoftFade(wavetable);		
+		else 
+			m_pVASTXperience.m_Poly.m_OscBank[bank]->setWavetable(wavetable);
 	}
 	
 	//WAV File
@@ -1437,14 +1440,6 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 
 			//wavetables	
 			for (int bank = 0; bank < 4; bank++) {
-				/*
-				if (processor->m_bAudioThreadRunning) {
-					//processor->m_pVASTXperience.m_Poly.m_OscBank[bank]->setWavetableSoftFade(m_bank_wavetableToUpdate[bank]);
-					processor->m_pVASTXperience.m_Poly.m_OscBank[bank]->setWavetable(m_bank_wavetableToUpdate[bank]);
-				}
-				else
-				*/
-
 				int wtFxType = 0; 
 				float wtFxVal = 0.f; 
 				switch (bank) {
@@ -1467,8 +1462,11 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 				}
 
 				m_bank_wavetableToUpdate[bank]->pregenerateWithWTFX(wtFxType, wtFxVal, processor->getWTmode());
-				//processor->m_pVASTXperience.m_Poly.m_OscBank[bank]->setWavetable(m_bank_wavetableToUpdate[bank]);
-				processor->m_pVASTXperience.m_Poly.m_OscBank[bank]->setWavetableSoftFade(m_bank_wavetableToUpdate[bank]);
+
+				if (processor->m_bAudioThreadRunning) 
+					processor->m_pVASTXperience.m_Poly.m_OscBank[bank]->setWavetableSoftFade(m_bank_wavetableToUpdate[bank]);
+				else
+					processor->m_pVASTXperience.m_Poly.m_OscBank[bank]->setWavetable(m_bank_wavetableToUpdate[bank]); //save from state, audio process not running				
 			}
 		}
 		else
@@ -1955,28 +1953,10 @@ bool VASTAudioProcessor::readLicense() {
 		m_sLicenseInformation.m_bIsLicensed = mLicense.validateLicenseFile(file_enc, &m_sLicenseString, m_sLicenseInformation.mProduct_id, m_sLicenseInformation.mReg_name, m_sLicenseInformation.mEmail, m_sLicenseInformation.mPurchase_id, m_sLicenseInformation.mPurchase_date, m_sLicenseInformation.mLegacyLicenseString);
 #endif
 	}
-
-	//ping thread	
-    Component::SafePointer<Label> spl(&safePointerLabel);
-    VASTAudioProcessor* processor_ = this;
-	Timer::callAfterDelay(5000 + 5000 * juce::Random().nextFloat(), [spl, processor_, this] { //random to distribute for multiple loaded vapos
-		// Test the weak pointer.
-		if (spl != nullptr) {
-			std::thread threadedPingCheck(&VASTAudioProcessor::threadedPingCheck, spl, processor_);
-			threadedPingCheck.detach();
-		}
-		else
-			DBG("threadedPingCheck nullptr VASTAudioProcessor handled!");
-	});
-
+	
 	if (m_sLicenseInformation.m_bIsLicensed)
 		m_sLicenseInformation.m_bExpired = false;
 	return m_sLicenseInformation.m_bIsLicensed;
-}
-
-
-void VASTAudioProcessor::threadedPingCheck(Component::SafePointer<Label> safePointerLabel, VASTAudioProcessor*) {
-	// removed in OS version
 }
 
 void VASTAudioProcessor::checkForNewerVersion(String resultString) {
@@ -2121,12 +2101,7 @@ char VASTAudioProcessor::getPlatformPrefix()
 }
 
 String VASTAudioProcessor::getLicenseText() {
-	if (m_sLicenseInformation.m_bExpired == false)
 		return m_sLicenseString;
-
-	else
-		// removed in OS version / return XORDecrypt
-		return ("DEMO VERSION");
 }
 
 bool VASTAudioProcessor::isUserPatch() { return !m_presetData.getCurPatchData().isFactory; }
