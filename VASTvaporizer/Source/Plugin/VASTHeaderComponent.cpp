@@ -91,7 +91,7 @@ VASTHeaderComponent::VASTHeaderComponent (AudioProcessorEditor *editor, AudioPro
     c_Redo->addListener (this);
 
     c_LabelLicense.reset (new juce::Label ("c_LabelLicense",
-                                           TRANS("DEMO VERSION - click to license")));
+                                           TRANS("Free version")));
     addAndMakeVisible (c_LabelLicense.get());
     c_LabelLicense->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain));
     c_LabelLicense->setJustificationType (juce::Justification::centred);
@@ -507,7 +507,7 @@ BEGIN_JUCER_METADATA
               buttonText="Redo" connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <LABEL name="c_LabelLicense" id="a925086450924204" memberName="c_LabelLicense"
          virtualName="" explicitFocusOrder="0" pos="0.923% 15.789% 98.154% 11.842%"
-         textCol="ff838d95" edTextCol="ff000000" edBkgCol="0" labelText="DEMO VERSION - click to license"
+         textCol="ff838d95" edTextCol="ff000000" edBkgCol="0" labelText="Free version"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Syntax" fontsize="11.0" kerning="0.0" bold="0" italic="0"
          justification="36"/>

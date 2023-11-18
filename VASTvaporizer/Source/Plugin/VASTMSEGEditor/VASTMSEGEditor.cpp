@@ -483,7 +483,8 @@ void VASTMSEGEditor::mouseDown(const MouseEvent & e)
 		mainMenu.addItem(30, TRANS("Copy MSEG"));
 		mainMenu.addItem(31, TRANS("Paste MSEG"));
 
-		mainMenu.showMenuAsync(PopupMenu::Options(), juce::ModalCallbackFunction::create([this, numPoints, mouseX, mouseY, numIsClicked](int result) {
+		mainMenu.showMenuAsync(PopupMenu::Options().withTargetComponent(this).withTargetScreenArea(juce::Rectangle<int>{}.withPosition(Desktop::getMousePosition())),
+			juce::ModalCallbackFunction::create([this, numPoints, mouseX, mouseY, numIsClicked](int result) {
 			if (result == 1) {
 				int i = 0;
 				while ((i < numPoints) && (valToScreenX(myData->controlPoints[i].xVal) < mouseX)) {

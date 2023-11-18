@@ -12,76 +12,27 @@ VAST Dynamics Audio Software (TM)
 //class VASTSamplerSound; //forward declaration
 class VASTSynthesiserSound : public juce::SynthesiserSound {
 public:
-	VASTSynthesiserSound() {
-		m_samplerSound.clear();
-		m_samplerSound_changed.clear();
-	};
+	VASTSynthesiserSound();
 
-	bool appliesToNote(int) {
-		return true;
-	};
-	bool appliesToChannel(int) {
-		return true;
-	};
+	bool appliesToNote(int);
+	bool appliesToChannel(int);
 
-	bool hasSamplerSound() { 
-		return m_samplerSound.size() > 0; 
-	};
-	VASTSamplerSound* getSamplerSound() { 
-		if (hasSamplerSound()) return m_samplerSound[0];
-		else return nullptr; 
-	};
+	bool hasSamplerSound();
+	VASTSamplerSound* getSamplerSound();
 
-	void addSamplerSound(VASTSamplerSound* samplerSound) { //only for load preset
-		VASTSamplerSound* newSound = new VASTSamplerSound(samplerSound);
-		m_samplerSound.clear();
-		m_samplerSound.add(samplerSound);
-		addSamplerSoundChanged(newSound); //add a copy to the changed
-		m_changedFlag = true;
-	};
-	void clearSamplerSound() { 
-		m_samplerSound.clear();
-	};
+	void addSamplerSound(VASTSamplerSound* samplerSound);
+
+	void clearSamplerSound();
 	
-	void softFadeExchangeSample() {
-		VASTSamplerSound* sound = getSamplerSoundChanged();
-		if (sound != nullptr)
-			m_changedFlag = sound->softFadeExchangeSample();
-		
-		//copy change to live here!!
-		if (m_changedFlag) {
-			VASTSamplerSound* oldSound = getSamplerSoundChanged();
-			if (oldSound != nullptr) {
-				VASTSamplerSound* newSound = new VASTSamplerSound(getSamplerSoundChanged()); //do safety here
-				m_samplerSound.clear();
-				m_samplerSound.add(newSound);
-			}
-			else {
-				m_samplerSound.clear();
-			}
-			m_changedFlag = false;
-		}
-	}
+	void softFadeExchangeSample();
 
-	bool hasSamplerSoundChanged() {
-		return m_samplerSound_changed.size() > 0;
-	};
-	VASTSamplerSound* getSamplerSoundChanged() {
-		if (hasSamplerSoundChanged()) return m_samplerSound_changed[0];
-		else return nullptr;
-	};
-	void clearSamplerSoundChanged() {
-		m_samplerSound_changed.clear();
-		m_changedFlag = true;
-	};
-	void addSamplerSoundChanged(VASTSamplerSound* samplerSound) {
-		m_samplerSound_changed.clear();
-		m_samplerSound_changed.add(samplerSound);
-		m_changedFlag = true;
-	};
+	bool hasSamplerSoundChanged();
+	VASTSamplerSound* getSamplerSoundChanged();
+	void clearSamplerSoundChanged();
+	void addSamplerSoundChanged(VASTSamplerSound* samplerSound);
 
-	OwnedArray<VASTSamplerSound> m_samplerSound;
-	OwnedArray<VASTSamplerSound> m_samplerSound_changed;
+	OwnedArray<VASTSamplerSound> m_samplerSound{};
+	OwnedArray<VASTSamplerSound> m_samplerSound_changed{};
 	bool m_changedFlag = true;
 };
 

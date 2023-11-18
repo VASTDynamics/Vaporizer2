@@ -630,7 +630,8 @@ void VASTFreqDomainViewport::mouseDown(const MouseEvent &e) {
 		subMenuFilter.addItem(21, TRANS("Clear on right (low pass filter)"), true, false);		
 		mainMenu.addSubMenu(TRANS("Filter types"), subMenuFilter, true);
 		
-		mainMenu.showMenuAsync(PopupMenu::Options(), juce::ModalCallbackFunction::create([this, arrayidx, lPartialNo, lCurMagnitudeValue, lCurPhaseValue, y](int result) {
+		mainMenu.showMenuAsync(PopupMenu::Options().withTargetComponent(this).withTargetScreenArea(juce::Rectangle<int>{}.withPosition(Desktop::getMousePosition())),
+			juce::ModalCallbackFunction::create([this, arrayidx, lPartialNo, lCurMagnitudeValue, lCurPhaseValue, y](int result) {
 			if (result == 0) {
 				// user dismissed the menu without picking anything
 			}

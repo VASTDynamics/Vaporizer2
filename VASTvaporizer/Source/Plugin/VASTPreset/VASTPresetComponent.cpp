@@ -59,7 +59,7 @@ bool VASTValueTreeItem::mightContainSubItems()
 	return tree.getNumChildren() > 0;
 }
 
-void VASTValueTreeItem::itemClicked(const MouseEvent &) {
+void VASTValueTreeItem::itemClicked(const MouseEvent &e) {
 	ModifierKeys modifiers = ModifierKeys::getCurrentModifiersRealtime();
 	if (modifiers.isPopupMenu() || modifiers.isCtrlDown()) {
 		if ((this->getID() == "favorites1") || (this->getID() == "favorites2") || (this->getID() == "favorites3") || (this->getID() == "favorites4") || (this->getID() == "favorites5")) {
@@ -67,7 +67,8 @@ void VASTValueTreeItem::itemClicked(const MouseEvent &) {
 			mainMenu.setLookAndFeel(_processor->getCurrentVASTLookAndFeel());
 			mainMenu.addItem(1, "Remove all favorites", true);
 			mainMenu.addSeparator();
-			mainMenu.showMenuAsync(PopupMenu::Options(), juce::ModalCallbackFunction::create([this](int result) {
+			mainMenu.showMenuAsync(PopupMenu::Options().withTargetComponent(e.eventComponent).withTargetScreenArea(juce::Rectangle<int>{}.withPosition(Desktop::getMousePosition())),
+				juce::ModalCallbackFunction::create([this](int result) {
 				if (result == 0) {
 				}
 				else if (result == 1) {
@@ -94,7 +95,8 @@ void VASTValueTreeItem::itemClicked(const MouseEvent &) {
 			mainMenu.addItem(1, "Delete MIDI program change mapping", true);
 			mainMenu.addSeparator();
 
-			mainMenu.showMenuAsync(PopupMenu::Options(), juce::ModalCallbackFunction::create([this](int result) {
+			mainMenu.showMenuAsync(PopupMenu::Options().withTargetComponent(e.eventComponent).withTargetScreenArea(juce::Rectangle<int>{}.withPosition(Desktop::getMousePosition())),
+				juce::ModalCallbackFunction::create([this](int result) {
 
 				if (result == 0) {
 				}
@@ -165,7 +167,8 @@ void VASTValueTreeItem::itemClicked(const MouseEvent &) {
 			mainMenu.setLookAndFeel(_processor->getCurrentVASTLookAndFeel());
 			mainMenu.addItem(1, "Manage preset files and folders", true);
 			mainMenu.addSeparator();
-			mainMenu.showMenuAsync(PopupMenu::Options(), juce::ModalCallbackFunction::create([this](int result) {
+			mainMenu.showMenuAsync(PopupMenu::Options().withTargetComponent(e.eventComponent).withTargetScreenArea(juce::Rectangle<int>{}.withPosition(Desktop::getMousePosition())),
+				juce::ModalCallbackFunction::create([this](int result) {
 				if (result == 0) {
 				}
 				else if (result == 1) {
@@ -1332,7 +1335,8 @@ void VASTPresetComponent::PresetTableComponent::cellClicked(int rowNumber, int ,
 		mainMenu.addItem(13, "Add to favorites 4", true);
 		mainMenu.addItem(14, "Add to favorites 5", true);
 		mainMenu.addItem(15, "Remove from favorites", true);
-		mainMenu.showMenuAsync(PopupMenu::Options(), juce::ModalCallbackFunction::create([this, internalid](int result) {
+		mainMenu.showMenuAsync(PopupMenu::Options().withTargetComponent(this).withTargetScreenArea(juce::Rectangle<int>{}.withPosition(Desktop::getMousePosition())),
+			juce::ModalCallbackFunction::create([this, internalid](int result) {
 			if (result == 0) {
 			}
 			else if (result == 1) {

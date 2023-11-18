@@ -659,7 +659,8 @@ void VASTSamplerViewport::mouseDown(const MouseEvent &) {
 		subMenuResamplePatch.addItem(23, TRANS("Create stereo wavetable patch from sample selection (with freerunning LFO)"), true);
 		mainMenu.addSubMenu(TRANS("Create patch types"), subMenuResamplePatch, true);
 
-		mainMenu.showMenuAsync(PopupMenu::Options(), juce::ModalCallbackFunction::create([this](int result) {
+		mainMenu.showMenuAsync(PopupMenu::Options().withTargetComponent(this).withTargetScreenArea(juce::Rectangle<int>{}.withPosition(Desktop::getMousePosition())),
+			juce::ModalCallbackFunction::create([this](int result) {
 
 			if (result == 0) {
 				// user dismissed the menu without picking anything

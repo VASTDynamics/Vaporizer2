@@ -740,7 +740,8 @@ void VASTVaporizerComponent::selectSizeMenu() {
 	mainMenu.addSeparator();
 	mainMenu.addItem(20, "100% (default)");
 
-	mainMenu.showMenuAsync(PopupMenu::Options(), juce::ModalCallbackFunction::create([this](int result) {
+	mainMenu.showMenuAsync(PopupMenu::Options().withTargetComponent(this).withTargetScreenArea(juce::Rectangle<int>{}.withPosition(Desktop::getMousePosition())), 
+		juce::ModalCallbackFunction::create([this](int result) {
 		if (result == 0)
 		{
 			// user dismissed the menu without picking anything

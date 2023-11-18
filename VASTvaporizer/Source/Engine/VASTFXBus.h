@@ -34,7 +34,7 @@ public:
 		//bool isOn = false;
 		bool isChain = false;
 		bool needsOversampling = false;
-		CVASTEffect* effectPlugin;
+		CVASTEffect* effectPlugin = nullptr;
 	};
 
 	void init(CVASTSettings &set);
@@ -54,9 +54,9 @@ public:
 	void setValueTreeState(ValueTree* tree);
 
 private:
-	VASTAudioProcessor* myProcessor;
+	VASTAudioProcessor* myProcessor = nullptr;
 	int myBusnr = 0;
-	CVASTSettings* m_Set;
+	CVASTSettings* m_Set = nullptr;
 	int m_chainEffects = 0;
 
 	Array<int> mFXBusSequence;

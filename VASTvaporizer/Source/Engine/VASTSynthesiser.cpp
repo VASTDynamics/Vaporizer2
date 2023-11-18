@@ -2137,3 +2137,77 @@ VASTSynthesiserVoice* VASTSynthesiser::findActiveVoiceToSteal(juce::SynthesiserS
 
 	return low;
 }
+
+VASTSynthesiserSound::VASTSynthesiserSound() {
+	m_samplerSound.clear();
+	m_samplerSound_changed.clear();
+}
+
+bool VASTSynthesiserSound::appliesToNote(int) {
+	return true;
+}
+
+bool VASTSynthesiserSound::appliesToChannel(int) {
+	return true;
+}
+
+bool VASTSynthesiserSound::hasSamplerSound() {
+	return m_samplerSound.size() > 0;
+}
+
+VASTSamplerSound* VASTSynthesiserSound::getSamplerSound() {
+	if (hasSamplerSound()) return m_samplerSound[0];
+	else return nullptr;
+}
+
+void VASTSynthesiserSound::addSamplerSound(VASTSamplerSound* samplerSound) { //only for load preset
+	VASTSamplerSound* newSound = new VASTSamplerSound(samplerSound);
+	m_samplerSound.clear();
+	m_samplerSound.add(samplerSound);
+	addSamplerSoundChanged(newSound); //add a copy to the changed
+	m_changedFlag = true;
+}
+
+void VASTSynthesiserSound::clearSamplerSound() {
+	m_samplerSound.clear();
+}
+
+void VASTSynthesiserSound::softFadeExchangeSample() {
+	VASTSamplerSound* sound = getSamplerSoundChanged();
+	if (sound != nullptr)
+		m_changedFlag = sound->softFadeExchangeSample();
+
+	//copy change to live here!!
+	if (m_changedFlag) {
+		VASTSamplerSound* oldSound = getSamplerSoundChanged();
+		if (oldSound != nullptr) {
+			VASTSamplerSound* newSound = new VASTSamplerSound(getSamplerSoundChanged()); //do safety here
+			m_samplerSound.clear();
+			m_samplerSound.add(newSound);
+		}
+		else {
+			m_samplerSound.clear();
+		}
+		m_changedFlag = false;
+	}
+}
+
+bool VASTSynthesiserSound::hasSamplerSoundChanged() {
+	return m_samplerSound_changed.size() > 0;
+}
+
+VASTSamplerSound* VASTSynthesiserSound::getSamplerSoundChanged() {
+	if (hasSamplerSoundChanged()) return m_samplerSound_changed[0];
+	else return nullptr;
+}
+
+void VASTSynthesiserSound::clearSamplerSoundChanged() {
+	m_samplerSound_changed.clear();
+	m_changedFlag = true;
+}
+
+void VASTSynthesiserSound::addSamplerSoundChanged(VASTSamplerSound* samplerSound) {
+	m_samplerSound_changed.clear();
+	m_samplerSound_changed.add(samplerSound);
+	m_changedFlag = true;
+}

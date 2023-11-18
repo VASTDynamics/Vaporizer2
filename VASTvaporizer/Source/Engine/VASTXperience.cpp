@@ -107,8 +107,8 @@ bool CVASTXperience::initializeEngine()
 
 	m_Set.initModMatrix(); //when all parameters are in
 
-	m_BlockProcessing = false;
-	m_BlockProcessingIsBlockedSuccessfully = false;
+	m_BlockProcessing.store(false);
+	m_BlockProcessingIsBlockedSuccessfully.store(false);
 
 	///updateVariables(); // this is not really required here
 	m_iFadeOutSamples = 0;
@@ -130,8 +130,8 @@ void CVASTXperience::audioProcessLock()
 	const ScopedLock sl(myProcessor->getCallbackLock()); //this is required here but why
 	for (int bank = 0; bank < 4; bank ++)
 		m_Poly.m_OscBank[bank]->m_bWavetableSoftfadeStillNeeded = false;
-	m_BlockProcessing = true; 
-	m_BlockProcessingIsBlockedSuccessfully = false;
+	m_BlockProcessing.store(true); 
+	m_BlockProcessingIsBlockedSuccessfully.store(false);
 }
 
 void CVASTXperience::audioProcessUnlock()
@@ -139,23 +139,23 @@ void CVASTXperience::audioProcessUnlock()
 	//myProcessor->suspendProcessing(false);
 
 	const ScopedLock sl(myProcessor->getCallbackLock()); //this is required here but why
-	m_BlockProcessing = false;
-	m_BlockProcessingIsBlockedSuccessfully = false;
+	m_BlockProcessing.store(false);
+	m_BlockProcessingIsBlockedSuccessfully.store(false);
 	DBG("Audio process no longer suspended / unlocked!");
 }
 
 bool CVASTXperience::getBlockProcessingIsBlockedSuccessfully() {
 	const ScopedLock sl(myProcessor->getCallbackLock()); //this is required here but why
-	return m_BlockProcessingIsBlockedSuccessfully;
+	return m_BlockProcessingIsBlockedSuccessfully.load();
 }
 
 bool CVASTXperience::nonThreadsafeIsBlockedProcessingInfo() {
-	return m_BlockProcessing;
+	return m_BlockProcessing.load();
 }
 
 bool CVASTXperience::getBlockProcessing() {
 	const ScopedLock sl(myProcessor->getCallbackLock()); //this is required here but why
-	return m_BlockProcessing;
+	return m_BlockProcessing.load();
 }
 
 /* prepareForPlay()
@@ -678,19 +678,17 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 		//only when changed - example: if (*m_Set.m_State->m_iLFOSteps_LFO1 != *m_Set.m_State->m_iLFOSteps_LFO1) {
 
 	//-------------------------------------------------------------------------------------
-	// here copy over
-
-	//std::shared_ptr<CVASTParamState> copiedState(std::make_shared<CVASTParamState>(*m_Set.m_State));  //this will lose the referecne after scope
-	//std::atomic_store(&m_Set.m_State, copiedState);
-
-	//-------------------------------------------------------------------------------------
 	// normal post procs
+
+	bool l_isBlocked = nonThreadsafeIsBlockedProcessingInfo();
 
 	if (0 == parameterID.compare("m_uPolyMode")) {
 		for (int i = 0; i < m_Set.m_uMaxPoly; i++)
 			m_Poly.m_singleNote[i]->stopNote(0, false); //hard stop
 
-		audioProcessLock();
+		bool bWasLocked = nonThreadsafeIsBlockedProcessingInfo();
+		if (!bWasLocked) 
+			audioProcessLock();
 		bool done = false;
 		int counter = 0;
 		while (!done) {
@@ -701,8 +699,10 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 				continue;
 			}
             vassert(counter<30);
-            if (counter==30)
-                return; //dont unlock what is not locked
+			if (counter == 30) {
+				myProcessor->setErrorState(myProcessor->vastErrorState::errorState26_maxPolyNotSet); 
+				return; //dont unlock what is not locked
+			}
 			int olduMaxPoly = m_Set.m_uMaxPoly;
 			if (*m_Set.m_State->m_uPolyMode == static_cast<int>(POLYMODE::MONO))
 				m_Set.m_uMaxPoly = 1;
@@ -723,7 +723,8 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 
 			if (olduMaxPoly != m_Set.m_uMaxPoly)
 				m_Poly.releaseResources();
-			audioProcessUnlock();
+			if (!bWasLocked)
+				audioProcessUnlock();
 			done = true;
 		}
 		return;		
@@ -742,176 +743,211 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 		for (int i = 0; i < m_Set.m_uMaxPoly; i++) {
 			m_Poly.m_singleNote[i]->setPortamentoTime(*m_Set.m_State->m_fPortamento);
 		}
-		m_Poly.updateVariables();
+		if (!l_isBlocked) 
+			m_Poly.updateVariables();
 		return;
 	}
 
 	if (0 == parameterID.compare("m_fMasterTune")) {
-		m_Poly.updateVariables();
+		if (!l_isBlocked)
+			m_Poly.updateVariables();
 		return;
 	}
 
 	//LFO 
 	if (0 == parameterID.compare("m_uLFOTimeBeats_LFO1")) {
-		m_Poly.updateLFO(0);
+		if (!l_isBlocked)
+			m_Poly.updateLFO(0);
 		return;
 	}
 
 	if (0 == parameterID.compare("m_uLFOTimeBeats_LFO2")) {
-		m_Poly.updateLFO(1);
+		if (!l_isBlocked)
+			m_Poly.updateLFO(1);
 		return;
 	}
 
 	if (0 == parameterID.compare("m_uLFOTimeBeats_LFO3")) {
-		m_Poly.updateLFO(2);
+		if (!l_isBlocked)
+			m_Poly.updateLFO(2);
 		return;
 	}
 
 	if (0 == parameterID.compare("m_uLFOTimeBeats_LFO4")) {
-		m_Poly.updateLFO(3);
+		if (!l_isBlocked)
+			m_Poly.updateLFO(3);
 		return;
 	}
 
 	if (0 == parameterID.compare("m_uLFOTimeBeats_LFO5")) {
-		m_Poly.updateLFO(4);
+		if (!l_isBlocked)
+			m_Poly.updateLFO(4);
 		return;
 	}
 
 	if (0 == parameterID.compare("m_bLFOPerVoice_LFO1")) {
-		m_Poly.updateLFO(0);
+		if (!l_isBlocked)
+			m_Poly.updateLFO(0);
 		return;
 	}
 
 	if (0 == parameterID.compare("m_bLFOPerVoice_LFO2")) {
-		m_Poly.updateLFO(1);
+		if (!l_isBlocked)
+			m_Poly.updateLFO(1);
 		return;
 	}
 
 	if (0 == parameterID.compare("m_bLFOPerVoice_LFO3")) {
-		m_Poly.updateLFO(2);
+		if (!l_isBlocked)
+			m_Poly.updateLFO(2);
 		return;
 	}
 
 	if (0 == parameterID.compare("m_bLFOPerVoice_LFO4")) {
-		m_Poly.updateLFO(3);
+		if (!l_isBlocked)
+			m_Poly.updateLFO(3);
 		return;
 	}
 
 	if (0 == parameterID.compare("m_bLFOPerVoice_LFO5")) {
-		m_Poly.updateLFO(4);
+		if (!l_isBlocked)
+			m_Poly.updateLFO(4);
 		return;
 	}
 	if (0 == parameterID.compare("m_fLFOFreq_LFO1")) {
-		m_Poly.updateLFO(0);
+		if (!l_isBlocked)
+			m_Poly.updateLFO(0);
 		return;
 	}
 
 	if (0 == parameterID.compare("m_fLFOFreq_LFO2")) {
-		m_Poly.updateLFO(1);
+		if (!l_isBlocked)
+			m_Poly.updateLFO(1);
 		return;
 	}
 	
 	if (0 == parameterID.compare("m_fLFOFreq_LFO3")) {
-		m_Poly.updateLFO(2);
+		if (!l_isBlocked)
+			m_Poly.updateLFO(2);
 		return;
 	}
 
 	if (0 == parameterID.compare("m_fLFOFreq_LFO4")) {
-		m_Poly.updateLFO(3);
+		if (!l_isBlocked)
+			m_Poly.updateLFO(3);
 		return;
 	}
 
 	if (0 == parameterID.compare("m_fLFOFreq_LFO5")) {
-		m_Poly.updateLFO(4);
+		if (!l_isBlocked)
+			m_Poly.updateLFO(4);
 		return;
 	}
 
 	if (0 == parameterID.compare("m_uLFOWave_LFO1")) {
-		m_Poly.updateLFO(0);
+		if (!l_isBlocked)
+			m_Poly.updateLFO(0);
 		return;
 	}
 	
 	if (0 == parameterID.compare("m_uLFOWave_LFO2")) {
-		m_Poly.updateLFO(1);
+		if (!l_isBlocked)
+			m_Poly.updateLFO(1);
 		return;
 	}
 	
 	if (0 == parameterID.compare("m_uLFOWave_LFO3")) {		
-		m_Poly.updateLFO(2);
+		if (!l_isBlocked)
+			m_Poly.updateLFO(2);
 		return;
 	}
 
 	if (0 == parameterID.compare("m_uLFOWave_LFO4")) {
-		m_Poly.updateLFO(3);
+		if (!l_isBlocked)
+			m_Poly.updateLFO(3);
 		return;
 	}
 	
 	if (0 == parameterID.compare("m_uLFOWave_LFO5")) {
-		m_Poly.updateLFO(4);
+		if (!l_isBlocked)
+			m_Poly.updateLFO(4);
 		return;
 	}
 
 	if (0 == parameterID.compare("m_bLFOSynch_LFO1")) {
-		m_Poly.updateLFO(0);
+		if (!l_isBlocked)
+			m_Poly.updateLFO(0);
 		return;
 	}
 	
 	if (0 == parameterID.compare("m_bLFOSynch_LFO2")) {
-		m_Poly.updateLFO(1);
+		if (!l_isBlocked)
+			m_Poly.updateLFO(1);
 		return;
 	}
 	
 	if (0 == parameterID.compare("m_bLFOSynch_LFO3")) {
-		m_Poly.updateLFO(2);
+		if (!l_isBlocked)
+			m_Poly.updateLFO(2);
 		return;
 	}
 
 	if (0 == parameterID.compare("m_bLFOSynch_LFO4")) {
-		m_Poly.updateLFO(3);
+		if (!l_isBlocked)
+			m_Poly.updateLFO(3);
 		return;
 	}
 
 	if (0 == parameterID.compare("m_bLFOSynch_LFO5")) {
-		m_Poly.updateLFO(4);
+		if (!l_isBlocked)
+			m_Poly.updateLFO(4);
 		return;
 	}
 	if (0 == parameterID.compare("m_uOscWave_OscA")) {
-		m_Poly.updateVariables();
+		if (!l_isBlocked)
+			m_Poly.updateVariables();
 		return;
 	}
 	
 	if (0 == parameterID.compare("m_uOscWave_OscB")) {
-		m_Poly.updateVariables();
+		if (!l_isBlocked)
+			m_Poly.updateVariables();
 		return;
 	}
 	
 	if (0 == parameterID.compare("m_uOscWave_OscC")) {
-		m_Poly.updateVariables();
+		if (!l_isBlocked)
+			m_Poly.updateVariables();
 		return;
 	}
 	
 	if (0 == parameterID.compare("m_uOscWave_OscD")) {
-		m_Poly.updateVariables();
+		if (!l_isBlocked)
+			m_Poly.updateVariables();
 		return;
 	}
 	
 	if ((0 == parameterID.compare("m_iNumOscs_OscA"))) {
-		m_Poly.updateVariables();
+		if (!l_isBlocked)
+			m_Poly.updateVariables();
 		return;
 	}
 	
 	if ((0 == parameterID.compare("m_iNumOscs_OscB"))) {
-		m_Poly.updateVariables();
+		if (!l_isBlocked)
+			m_Poly.updateVariables();
 		return;
 	}
 	
 	if ((0 == parameterID.compare("m_iNumOscs_OscC"))) {
-		m_Poly.updateVariables();
+		if (!l_isBlocked)
+			m_Poly.updateVariables();
 		return;
 	}
 
 	if ((0 == parameterID.compare("m_iNumOscs_OscD"))) {
-		m_Poly.updateVariables();
+		if (!l_isBlocked)
+			m_Poly.updateVariables();
 		return;
 	}
 	
@@ -937,70 +973,83 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 
 	if ((0 == parameterID.compare("m_bOscOnOff_OscA"))) {
 		m_Poly.m_OscBank[0]->setChangedFlag();
-		m_Poly.updateVariables();
+		if (!l_isBlocked)
+			m_Poly.updateVariables();
 		return;
 	}
 	
 	if ((0 == parameterID.compare("m_bOscOnOff_OscB"))) {
 		m_Poly.m_OscBank[1]->setChangedFlag();
-		m_Poly.updateVariables();
+		if (!l_isBlocked)
+			m_Poly.updateVariables();
 		return;
 	}
 	
 	if ((0 == parameterID.compare("m_bOscOnOff_OscC"))) {
 		m_Poly.m_OscBank[2]->setChangedFlag();
-		m_Poly.updateVariables();
+		if (!l_isBlocked)
+			m_Poly.updateVariables();
 		return;
 	}
 	
 	if ((0 == parameterID.compare("m_bOscOnOff_OscD"))) {
 		m_Poly.m_OscBank[3]->setChangedFlag();
-		m_Poly.updateVariables();
+		if (!l_isBlocked)
+			m_Poly.updateVariables();
 		return;
 	}
 	
 	if ((0 == parameterID.compare("m_bNoiseOnOff"))) {
-		m_Poly.updateVariables();
+		if (!l_isBlocked)
+			m_Poly.updateVariables();
 		return;
 	}
 
 	if (0 == parameterID.compare("m_iOscOct_OscA")) {
-		m_Poly.updateVariables();
+		if (!l_isBlocked)
+			m_Poly.updateVariables();
 		return;
 	}
 	
 	if (0 == parameterID.compare("m_iOscOct_OscB")) {
-		m_Poly.updateVariables();
+		if (!l_isBlocked)
+			m_Poly.updateVariables();
 		return;
 	}
 	
 	if (0 == parameterID.compare("m_iOscOct_OscC")) {
-		m_Poly.updateVariables();
+		if (!l_isBlocked)
+			m_Poly.updateVariables();
 		return;
 	}
 	
 	if (0 == parameterID.compare("m_iOscOct_OscD")) {
-		m_Poly.updateVariables();
+		if (!l_isBlocked)
+			m_Poly.updateVariables();
 		return;
 	}
 	
 	if (0 == parameterID.compare("m_fOscDetune_OscA")) {
-		m_Poly.updateVariables();
+		if (!l_isBlocked)
+			m_Poly.updateVariables();
 		return;
 	}
 	
 	if (0 == parameterID.compare("m_fOscDetune_OscB")) {
-		m_Poly.updateVariables();
+		if (!l_isBlocked)
+			m_Poly.updateVariables();
 		return;
 	}
 	
 	if (0 == parameterID.compare("m_fOscDetune_OscC")) {
-		m_Poly.updateVariables();
+		if (!l_isBlocked)
+			m_Poly.updateVariables();
 		return;
 	}
 	
 	if (0 == parameterID.compare("m_fOscDetune_OscD")) {
-		m_Poly.updateVariables();
+		if (!l_isBlocked)
+			m_Poly.updateVariables();
 		return;
 	}
 	
@@ -1026,12 +1075,14 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 	}
 	
 	if (0 == parameterID.compare("m_uVCAEnvMode")) {
-		m_Poly.updateVariables();
+		if (!l_isBlocked)
+			m_Poly.updateVariables();
 		return;
 	}
 	
 	if (0 == parameterID.compare("m_uVCFEnvMode")) {
-		m_Poly.updateVariables();
+		if (!l_isBlocked)
+			m_Poly.updateVariables();
 		return;
 	}
 	//FX

@@ -62,39 +62,16 @@ VASTAudioProcessorEditor::VASTAudioProcessorEditor(VASTAudioProcessor& p)
 	setSize(processor.m_iUserTargetPluginHeight * processor.m_dPluginRatio, processor.m_iUserTargetPluginHeight);
 	//vaporizerComponent->setBounds(Rectangle<int>(0, 0, processor.m_iUserTargetPluginWidth, processor.m_iUserTargetPluginHeight));
 	vaporizerComponent->setVersionText(processor.getVersionString());
-
-	//VST3 HACK CHECKTS
-	/*
-	if (processor.wrapperType == AudioProcessor::wrapperType_VST3) {
-		Component::SafePointer<VASTAudioProcessorEditor> editor(this);
-		Timer::callAfterDelay(50, [editor, this] {
-			if (editor != nullptr) {
-				setSize(editor.getComponent()->getProcessor()->m_iUserTargetPluginWidth + 1, editor.getComponent()->getProcessor()->m_iUserTargetPluginHeight + 1);
-				setScaleFactor(1.f); //HACK TEST
-			}
-		});
-		Timer::callAfterDelay(100, [editor, this] {
-			if (editor != nullptr) {
-				setSize(editor.getComponent()->getProcessor()->m_iUserTargetPluginWidth, editor.getComponent()->getProcessor()->m_iUserTargetPluginHeight);
-				setScaleFactor(1.f); //HACK TEST
-			}
-		});
-	}
-	*/
-
 	setOpaque(true);
 	startTimer(0, 100); //ui update
 	startTimer(1, 10); //param update
 }
 
 VASTAudioProcessorEditor::~VASTAudioProcessorEditor() {
-	if (vaporizerComponent->m_wasShown) { //otherwise its an unused cached editor
-		VASTAudioProcessor* _processor = getProcessor();
-		_processor->createCachedVASTEditorDelayed();
-	}
+	this->removeAllChildren();
 	m_alertWindow = nullptr;
 	stopTimer(0);
-	stopTimer(1); //param update
+	stopTimer(1); //param update	
 	this->setLookAndFeel(nullptr);
 	vaporizerComponent = nullptr;
 }

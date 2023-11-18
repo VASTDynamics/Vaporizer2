@@ -79,10 +79,12 @@ void VASTQFilter::initQuadFilter(CVASTSettings* m_Set) {
 	FBQ[2] =
 		(VASTQFilterProcessState*)_aligned_malloc((C_MAX_POLY >> 2) * sizeof(VASTQFilterProcessState), 16); //not portable
 #endif
+	/*
 	memset(FBQ[0], 0, sizeof(&FBQ[0]));
 	memset(FBQ[1], 0, sizeof(&FBQ[1]));
 	memset(FBQ[2], 0, sizeof(&FBQ[2]));
-	
+	*/
+
 	for (int i = 0; i < (C_MAX_POLY >> 2); ++i)
 	{
 		InitQFilterProcessStateToZero(&(FBQ[0][i]));

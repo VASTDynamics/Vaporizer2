@@ -68,15 +68,5 @@ VAST Dynamics Software
 #endif
 
 #include "JuceHeader.h"
-	#ifdef _DEBUG   
-		#ifdef _WINDOWS
-			#ifndef DBG_NEW      
-				#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )      
-				#define new DBG_NEW  
-			#endif  // _DEBUG
 
-			#define _CRTDBG_MAP_ALLOC
-			#include <crtdbg.h>
-		#endif
-	#endif  // _DEBUG
 #endif  // VASTENGINEHEADER_H_INCLUDED

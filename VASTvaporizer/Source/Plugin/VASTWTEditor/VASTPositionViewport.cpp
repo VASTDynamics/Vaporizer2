@@ -426,7 +426,8 @@ void VASTPositionViewport::mouseDown(const MouseEvent &e) {
 		subMenuNormalize.addItem(41, TRANS("Normalize inidividually"), true);
 		mainMenu.addSubMenu(TRANS("Normalize selected cycles"), subMenuNormalize, true);
 
-		mainMenu.showMenuAsync(PopupMenu::Options(), juce::ModalCallbackFunction::create([this, wavetable, arrayidx](int result) {
+		mainMenu.showMenuAsync(PopupMenu::Options().withTargetComponent(this).withTargetScreenArea(juce::Rectangle<int>{}.withPosition(Desktop::getMousePosition())),
+			juce::ModalCallbackFunction::create([this, wavetable, arrayidx](int result) {
 			if (result == 0) {
 				// user dismissed the menu without picking anything
 			}

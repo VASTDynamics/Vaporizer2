@@ -1368,7 +1368,8 @@ void VASTOscilloscope::mouseDown(const MouseEvent &) {
 		subMenuUseMSEG.addItem(44, TRANS("Use MSEG5 as single cycle waveform"), true);
 		mainMenu.addSubMenu(TRANS("Use MSEG as single cycle waveform"), subMenuUseMSEG, true);
 
-		mainMenu.showMenuAsync(PopupMenu::Options(), juce::ModalCallbackFunction::create([this, wavetable](int result) {
+		mainMenu.showMenuAsync(PopupMenu::Options().withTargetComponent(this).withTargetScreenArea(juce::Rectangle<int>{}.withPosition(Desktop::getMousePosition())),
+			juce::ModalCallbackFunction::create([this, wavetable](int result) {
 
 			if (result == 0) {
 				// user dismissed the menu without picking anything

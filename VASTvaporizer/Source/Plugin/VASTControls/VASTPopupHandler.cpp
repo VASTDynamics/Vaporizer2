@@ -297,7 +297,8 @@ void VASTPopupHandler::mouseDown(const MouseEvent &e) {
 		mainMenu.addItem(28, "Reset all MIDI mappings to not-mapped");
 		
 		//const int result = mainMenu.showAt(_comp);
-		mainMenu.showMenuAsync(PopupMenu::Options(), juce::ModalCallbackFunction::create([this, param, myProcessor, myEditor, _comp, modStart, modEnd, modPolarity, lCurValue, e, mainMenu](int result) {
+		mainMenu.showMenuAsync(PopupMenu::Options().withTargetComponent(_comp).withTargetScreenArea(juce::Rectangle<int>{}.withPosition(Desktop::getMousePosition())),
+			juce::ModalCallbackFunction::create([this, param, myProcessor, myEditor, _comp, modStart, modEnd, modPolarity, lCurValue, e, mainMenu](int result) {
 			if (result == 0)
 			{
 				// user dismissed the menu without picking anything

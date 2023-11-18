@@ -399,7 +399,8 @@ void VASTStepSeqEditor::mouseDown(const MouseEvent & e)
 		mainMenu.setLookAndFeel(&this->getLookAndFeel());
 		mainMenu.addItem(1, TRANS("Type in y value"));
 
-		mainMenu.showMenuAsync(PopupMenu::Options(), juce::ModalCallbackFunction::create([this, numIsClicked, mouseX, mouseY](int result) {
+		mainMenu.showMenuAsync(PopupMenu::Options().withTargetComponent(this).withTargetScreenArea(juce::Rectangle<int>{}.withPosition(Desktop::getMousePosition())),
+			juce::ModalCallbackFunction::create([this, numIsClicked, mouseX, mouseY](int result) {
 			if (result == 1) {
 				//y value
 				float yval = myData->getStepSeqBar(numIsClicked);
