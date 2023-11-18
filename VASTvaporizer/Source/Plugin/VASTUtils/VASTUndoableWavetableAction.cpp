@@ -12,7 +12,7 @@ VASTUndoableWavetableAction::VASTUndoableWavetableAction(CVASTOscillatorBank* ba
 }
 
 bool VASTUndoableWavetableAction::perform() {
-	//DBG("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Perform action");
+	//VDBG("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Perform action");
 	return true;
 };
 
@@ -20,7 +20,7 @@ bool VASTUndoableWavetableAction::undo() {
 
 	if (m_bank->needsUndo()) {
 		m_bank->undoLastWTChange();
-		//DBG("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Undo action");
+		//VDBG("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Undo action");
 		return true;
 	}
 	return false;

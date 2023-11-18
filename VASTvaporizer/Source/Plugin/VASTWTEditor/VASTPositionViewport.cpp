@@ -119,7 +119,7 @@ void VASTPositionViewport::updateContent(bool force) {
 			return;
 	m_dirty = false;
 	
-	//DBG("VASTPositionViewport::updateContent");
+	//VDBG("VASTPositionViewport::updateContent");
 	if (!approximatelyEqual(m_screenWidthScale, float(myWtEditor->getEditorView()->c_viewportPositions->getScreenBounds().getWidth()) / float(myWtEditor->getEditorView()->c_viewportPositions->getWidth())))
 		setZoomFactor(m_scaling);
 

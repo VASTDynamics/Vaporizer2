@@ -1441,7 +1441,7 @@ int VASTQFilter::processQFilter(dsp::AudioBlock<float> filterBlock, sRoutingBuff
 				//vString += " " + String(mVoiceNo);
 			}
 		}
-		//DBG("Filter: " + String(filter) + " Filtervoices " + vString);
+		//VDBG("Filter: " + String(filter) + " Filtervoices " + vString);
 
 		//all voices	
 		//numFilterVoices = highestVoicePlaying + 1;
@@ -1531,7 +1531,7 @@ int VASTQFilter::processQFilter(dsp::AudioBlock<float> filterBlock, sRoutingBuff
 				//halfband filter if needed
 				if (osFactor == 2) {
 					//if (startSample % 4 != 0) 
-						//DBG("Not %4 StartSample!");
+						//VDBG("Not %4 StartSample!");
 					m_Decimator[filter].decimateSamples2(outl, outr, numSamples * osFactor, filterBlock.getChannelPointer(0), filterBlock.getChannelPointer(1)); //expects it to be dividable by 2 but no longer memory aligned to 16 bit!
 				}
 				else

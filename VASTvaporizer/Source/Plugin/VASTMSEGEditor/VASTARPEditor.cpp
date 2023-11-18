@@ -319,7 +319,7 @@ void VASTARPEditor::filesDropped(const StringArray& files, int, int) {
 						int octaves = semitones / 12;
 						semitones = semitones % 12;
 						int velocity = m.getVelocity();
-						DBG("Track " << track << " Midinote: " << m.getNoteNumber() << " Duration: " << duration << " Velocity: " << m.getVelocity());
+						VDBG("Track " << track << " Midinote: " << m.getNoteNumber() << " Duration: " << duration << " Velocity: " << m.getVelocity());
 						//} else if (m.isNoteOn()) {
 		//					//l_lastNoteOn = m.getTempoSecondsPerQuarterNote();
 

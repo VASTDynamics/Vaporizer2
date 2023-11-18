@@ -124,7 +124,7 @@ bool CVASTXperience::initializeEngine()
 
 void CVASTXperience::audioProcessLock()
 {
-	DBG("Audio process suspended / locked!");
+	VDBG("Audio process suspended / locked!");
 	//myProcessor->suspendProcessing(true);
 
 	const ScopedLock sl(myProcessor->getCallbackLock()); //this is required here but why
@@ -141,7 +141,7 @@ void CVASTXperience::audioProcessUnlock()
 	const ScopedLock sl(myProcessor->getCallbackLock()); //this is required here but why
 	m_BlockProcessing.store(false);
 	m_BlockProcessingIsBlockedSuccessfully.store(false);
-	DBG("Audio process no longer suspended / unlocked!");
+	VDBG("Audio process no longer suspended / unlocked!");
 }
 
 bool CVASTXperience::getBlockProcessingIsBlockedSuccessfully() {
@@ -162,14 +162,14 @@ bool CVASTXperience::getBlockProcessing() {
 Called by the client after Play() is initiated but before audio streams
 */
 bool CVASTXperience::prepareForPlay(double sampleRate, int expectedSamplesPerBlock) {
-	DBG("Prepare for play called!");
+	VDBG("Prepare for play called!");
 
 	int waitstate = 0;
 	while (m_isPreparingForPlay.load() == true) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(50));
 		waitstate += 50;
 		if (waitstate > 5000) {
-			DBG("ERROR! prepareForPlay() -  terminating load process!");
+			VDBG("ERROR! prepareForPlay() -  terminating load process!");
 			return false; //end after 5s waiting time
 		}
 	} //check sleep thread
@@ -276,7 +276,7 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
 	m_Set.m_bPpqIsLooping = isLooping;
 	m_Set.m_dPpqPositionOfLastBarStart = ppqPositionOfLastBarStart;
 	if (m_Set.m_dPpqBpm != bpm) {
-		DBG("BPM changed! Now: " << bpm);
+		VDBG("BPM changed! Now: " << bpm);
 		m_Set.m_dPpqBpm = bpm;
 		if (*m_Set.m_State->m_bLFOSynch_LFO1 == static_cast<int>(SWITCH::SWITCH_ON)) {
 			m_Poly.updateLFO(0);
@@ -352,7 +352,7 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
 	if (m_BlockProcessing == true) {
 		const ScopedLock sl(myProcessor->getCallbackLock());
 		m_BlockProcessingIsBlockedSuccessfully = true;
-        DBG("BlockProcessingIsBlockedSuccessfully is true!");
+        VDBG("BlockProcessingIsBlockedSuccessfully is true!");
 		buffer.clear();
 		m_iFadeOutSamples = 0;
 		m_iFadeInSamples = 0;
@@ -652,7 +652,7 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
 			if ((abs(clickBuffer[i] - clickBuffer[i + 1]) > l_clickTolerance) &&
 				(clickBuffer[i] * clickBuffer[i + 1] > 0.f)) { //above tolerance and not + to -
 				m_Set.m_bShallDump = true;
-				DBG("!!!Click detected at samplepos: " << i << "! Dumping Log!");
+				VDBG("!!!Click detected at samplepos: " << i << "! Dumping Log!");
 			}
 		}
 	}
@@ -693,7 +693,7 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 		int counter = 0;
 		while (!done) {
 			if ((counter<30) && (myProcessor->m_bAudioThreadRunning && (!getBlockProcessingIsBlockedSuccessfully()))) {
-				DBG("PolyMode - sleep");
+				VDBG("PolyMode - sleep");
 				Thread::sleep(100);
 				counter++;
 				continue;

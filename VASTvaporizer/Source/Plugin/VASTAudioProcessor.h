@@ -43,7 +43,7 @@ class VASTParameterSlider; //forward declaration
 //==============================================================================
 /**
 */
-class VASTAudioProcessor  : public AudioProcessor
+class VASTAudioProcessor  : public AudioProcessor, public Logger
 {
 public:
     //==============================================================================
@@ -170,7 +170,17 @@ public:
 	void clearUIUpdateFlag();
 	void requestUIUpdate(bool tabs = true, bool matrix = true, bool sliders = true, int slider1dest = -1, int slider2dest = -1);
 	void requestUILoadAlert();
+	
+	//logger
+	void logMessage(const String& message) override;
+#ifdef VASTLOG
+	String m_last_message{};
+	static void* sendlogMessage(void* userData);
+	CodeDocument logCodeDocument{};	
+	std::chrono::high_resolution_clock::time_point m_processorStartTime = std::chrono::high_resolution_clock::now();
+#endif
 
+	// 
     //==============================================================================
     const String getName() const override;
   

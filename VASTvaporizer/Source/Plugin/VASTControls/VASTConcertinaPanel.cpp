@@ -716,8 +716,8 @@ void VASTConcertinaPanel::maximizePanel(int panel)
 
 void VASTConcertinaPanel::panelHeaderDoubleClicked(Component* component)
 {
-	if (holders[0]->component->isShowing()) DBG("1 is showing"); else DBG("1 is NOT showing");
-	if (holders[1]->component->isShowing()) DBG("2 is showing"); else DBG("2 is NOT showing");
+	if (holders[0]->component->isShowing()) VDBG("1 is showing"); else VDBG("1 is NOT showing");
+	if (holders[1]->component->isShowing()) VDBG("2 is showing"); else VDBG("2 is NOT showing");
 	//holders[0]->component->setVisible(true);
 	//holders[1]->component->setVisible(true);
 	

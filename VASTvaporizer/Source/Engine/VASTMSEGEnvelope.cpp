@@ -57,7 +57,7 @@ void CVASTMSEGEnvelope::copyStateFrom(CVASTMSEGEnvelope &copyEnvelope) {
 }
 
 void CVASTMSEGEnvelope::reset() {
-	DBG("Voice " << m_voiceNo.load() << " MSEG " << m_mseg.load() << " reset");
+	VDBG("Voice " << m_voiceNo.load() << " MSEG " << m_mseg.load() << " reset");
 	m_iSamplesSinceNoteOn.store(-1);
 	m_iSamplesSinceSegmentStart.store(-1);
 	m_activeSegment.store(0);
@@ -83,9 +83,9 @@ void CVASTMSEGEnvelope::reset() {
 
 void CVASTMSEGEnvelope::noteOn(ULong64_t startPlayTimestamp, bool legatoStartSustain) {
 #ifdef _DEBUG
-	DBG("Voice " << m_voiceNo.load() << " MSEG " << m_mseg.load() << " noteOn called");
+	VDBG("Voice " << m_voiceNo.load() << " MSEG " << m_mseg.load() << " noteOn called");
 	if (m_bRelease.load()) {
-		DBG("ERROR! Voice " << m_voiceNo.load() << " MSEG " << m_mseg.load() << " noteOn but still in Release mode!!!");
+		VDBG("ERROR! Voice " << m_voiceNo.load() << " MSEG " << m_mseg.load() << " noteOn but still in Release mode!!!");
 	}
 #endif 
 
@@ -137,7 +137,7 @@ void CVASTMSEGEnvelope::noteOff(float releaseVelocity) {
 
 	if (m_bHardStop.load()) {
         m_bHardStopNoteOff.store(true);
-		DBG("Voice " << m_voiceNo.load() << " MSEG " << m_mseg.load() << " Hardstop noteoff");
+		VDBG("Voice " << m_voiceNo.load() << " MSEG " << m_mseg.load() << " Hardstop noteoff");
 		return;
 	}
 	m_bIsNoteOff.store(true);
@@ -233,7 +233,7 @@ void CVASTMSEGEnvelope::getEnvelopeRange(float* msegWritePointer, int currentFra
 			}
 			else {
 				m_dEnvelope = 0.00f;
-				DBG(m_voiceNo.load() << " hardstop mode completed " << m_dEnvelope.load() << " MSEG " << m_mseg.load());
+				VDBG(m_voiceNo.load() << " hardstop mode completed " << m_dEnvelope.load() << " MSEG " << m_mseg.load());
 				reset();
 			}
 			if (m_dEnvelope < 0.f) m_dEnvelope = 0.f;
@@ -261,7 +261,7 @@ void CVASTMSEGEnvelope::getEnvelopeRange(float* msegWritePointer, int currentFra
 			vassert(m_endPoint != nullptr);
 			m_lastActiveSegment.store(m_activeSegment.load());
 			m_numSegments = myData->getNumSegments();
-			//DBG("MSEG: " + String(m_mseg.load()) + " Segment: " + String(m_activeSegment.load()) + " length in Samples: " + String(m_endPoint->segmentLengthInSamples) + " since noteOn: " + String(m_iSamplesSinceNoteOn) + "  ppqPos: " + String(m_Set->m_dPpqPosition) + " bufferSamples: "+ String(m_iBufferSamples));
+			//VDBG("MSEG: " + String(m_mseg.load()) + " Segment: " + String(m_activeSegment.load()) + " length in Samples: " + String(m_endPoint->segmentLengthInSamples) + " since noteOn: " + String(m_iSamplesSinceNoteOn) + "  ppqPos: " + String(m_Set->m_dPpqPosition) + " bufferSamples: "+ String(m_iBufferSamples));
 		}
 
 		myData->calcSegmentCoefficients(m_Set->m_nSampleRate, m_startPlayTimestamp, m_activeSegment.load(), m_iSamplesSinceSegmentStart.load(), m_endPoint->segmentLengthInSamples, m_Set, m_voiceNo.load());
@@ -299,7 +299,7 @@ void CVASTMSEGEnvelope::getEnvelopeRange(float* msegWritePointer, int currentFra
 			m_dSegment.store(m_endPoint->offset + m_dSegment * m_endPoint->coeff); //0 to 1 or 1 to 0 per segment
 			if (isnan(m_dSegment.load()) || (m_endPoint->segmentLengthInSamples < 0)) { //safety for online step increase
 				//vassertfalse;
-				DBG("MSEG error.");
+				VDBG("MSEG error.");
 				resynchNoteOn();				
 				msegWritePointer[currentFrame + frame] = 0.0f;
 				bfirst = false;
@@ -338,7 +338,7 @@ void CVASTMSEGEnvelope::getEnvelopeRange(float* msegWritePointer, int currentFra
 				}
 				else
 					if ((!m_bIsNoteOff.load()) && (myData->hasLoop)) {
-						//DBG("MSEG: " + String(m_mseg.load()) + " Segment: " + String(m_activeSegment) + " length in Samples: " + String(m_endPoint->segmentLengthInSamples) + " since noteOn: " + String(m_iSamplesSinceNoteOn) + "  ppqPos: " + String(m_Set->m_dPpqPosition) + " bufferSamples: " + String(m_iBufferSamples));
+						//VDBG("MSEG: " + String(m_mseg.load()) + " Segment: " + String(m_activeSegment) + " length in Samples: " + String(m_endPoint->segmentLengthInSamples) + " since noteOn: " + String(m_iSamplesSinceNoteOn) + "  ppqPos: " + String(m_Set->m_dPpqPosition) + " bufferSamples: " + String(m_iBufferSamples));
 						resynchNoteOn();
 						msegWritePointer[currentFrame + frame] = 0.0f;
 						continue;
@@ -348,7 +348,7 @@ void CVASTMSEGEnvelope::getEnvelopeRange(float* msegWritePointer, int currentFra
 			}
 			else {
 				if ((!m_bIsNoteOff.load()) && (myData->hasLoop) && (m_activeSegment == (myData->loopEndPoint - 1))) { //loop end?
-					//DBG("MSEG: " + String(m_mseg.load()) + " Segment: " + String(m_activeSegment) + " length in Samples: " + String(m_endPoint->segmentLengthInSamples) + " since noteOn: " + String(m_iSamplesSinceNoteOn) + "  ppqPos: " + String(m_Set->m_dPpqPosition) + " bufferSamples: " + String(m_iBufferSamples));
+					//VDBG("MSEG: " + String(m_mseg.load()) + " Segment: " + String(m_activeSegment) + " length in Samples: " + String(m_endPoint->segmentLengthInSamples) + " since noteOn: " + String(m_iSamplesSinceNoteOn) + "  ppqPos: " + String(m_Set->m_dPpqPosition) + " bufferSamples: " + String(m_iBufferSamples));
 					m_activeSegment.store(myData->loopStartPoint);
 				}
 				else if ((!noSustain) && ((!m_bIsNoteOff.load()) && (m_endPoint->isSustain))) { //is sustain?
@@ -389,7 +389,7 @@ float CVASTMSEGEnvelope::getEnvelopeStepSeq(int bufferSample) { //called during 
 	if (m_bHardStop.load()) {
 		if (m_dEnvelope > 0.00) {
 			m_dEnvelope.store(m_dEnvelope.load() - float(1.0 / (m_Set->m_nSampleRate.load() * 0.02f))); // 20 ms
-			DBG(m_voiceNo.load() << " in hardstop mode returning " << m_dEnvelope.load() << " STEPSEQ " << m_stepSeq.load());
+			VDBG(m_voiceNo.load() << " in hardstop mode returning " << m_dEnvelope.load() << " STEPSEQ " << m_stepSeq.load());
 		}
 		else {
 			m_dEnvelope = 0.00f;

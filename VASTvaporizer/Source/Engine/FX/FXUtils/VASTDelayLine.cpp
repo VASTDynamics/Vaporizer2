@@ -102,7 +102,7 @@ double CDelayLine::readDelay()
 	double yn = m_pBuffer->getReadPointer(0)[m_nReadIndex];
 	//vassert((yn > -10.0f) && (yn <= 10.0));
 	if (!((yn > -10.0f) && (yn <= 10.0))) {
-		DBG("CDelayLine::readDelay() overflow > 10.f");
+		VDBG("CDelayLine::readDelay() overflow > 10.f");
 		yn = 0.0;
 		resetDelay(); // try auto correct! BUT THIS IS NOT A SOLUTION!
 	}
@@ -117,7 +117,7 @@ double CDelayLine::readDelay()
 	double yn_1 = m_pBuffer->getReadPointer(0)[nReadIndex_1];
 	//vassert((yn_1 > -10.0f) && (yn_1 <= 10.0));
 	if (!((yn_1 > -10.0f) && (yn_1 <= 10.0))) {
-		DBG("CDelayLine::readDelay() overflow > 10.f");
+		VDBG("CDelayLine::readDelay() overflow > 10.f");
 		yn_1 = 0.0;
 		resetDelay(); // try auto correct! BUT THIS IS NOT A SOLUTION!
 	}

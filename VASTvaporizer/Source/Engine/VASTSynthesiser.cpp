@@ -191,7 +191,7 @@ void VASTSynthesiser::renderNextBlock(sRoutingBuffers& routingBuffers,
 					}
 				}
 #ifdef _DEBUG
-				DBG(outstr);
+				VDBG(outstr);
 
 				outstr = "New ChordStack: ";
 				for (int i = 0; i < numElementsInArray(m_newChordStack); ++i) {
@@ -199,7 +199,7 @@ void VASTSynthesiser::renderNextBlock(sRoutingBuffers& routingBuffers,
 						outstr += String(i) + " , ";						
 					}
 				}
-				DBG(outstr);
+				VDBG(outstr);
 #endif			
 				for (auto* voice : voices) {
                     if (voice->getCurrentlyPlayingNote()<0)
@@ -208,7 +208,7 @@ void VASTSynthesiser::renderNextBlock(sRoutingBuffers& routingBuffers,
 
 						//TODO check if voice is not hard stopping / tailing off!!
 						if (!voice->isVoiceActive() || voice->isPlayingButReleased()) {
-							DBG("--------> Inactive or Playing but released!!!");
+							VDBG("--------> Inactive or Playing but released!!!");
 							continue;
 						}
 
@@ -240,7 +240,7 @@ void VASTSynthesiser::renderNextBlock(sRoutingBuffers& routingBuffers,
 									if (oldStackMidiNote != -1) {
 										if (oldStackMidiNote == voice->getCurrentlyPlayingNote()) {
 											//bool rel = voice->isPlayingButReleased();
-											DBG("-------> sameNote transition");
+											VDBG("-------> sameNote transition");
 										} else 
 										if (samePosOldStackMidiNote == -1)
 											samePosOldStackMidiNote = oldStackMidiNote;
@@ -249,7 +249,7 @@ void VASTSynthesiser::renderNextBlock(sRoutingBuffers& routingBuffers,
                                 if (oldStackMidiNote != -1) {
                                     if (oldStackMidiNote == voice->getCurrentlyPlayingNote()) {
                                         //bool rel = voice->isPlayingButReleased();
-                                        DBG("-------> sameNote transition");
+                                        VDBG("-------> sameNote transition");
                                     } else
                                     if (samePosOldStackMidiNote == -1)
                                         samePosOldStackMidiNote = oldStackMidiNote;
@@ -263,7 +263,7 @@ void VASTSynthesiser::renderNextBlock(sRoutingBuffers& routingBuffers,
 							((CVASTSingleNote*)voice)->setGlissandoStart(handledNote, false);
 #ifdef _DEBUG
 							outstr = "Transition for voice# " + String(voice->mVoiceNo) + " from " + String(samePosOldStackMidiNote) + " to " + String(voice->getCurrentlyPlayingNote());
-							DBG(outstr);
+							VDBG(outstr);
 #endif
 						}
 						else {
@@ -272,7 +272,7 @@ void VASTSynthesiser::renderNextBlock(sRoutingBuffers& routingBuffers,
 							((CVASTSingleNote*)voice)->setGlissandoStart(handledNote, true);
 #ifdef _DEBUG
 							outstr = "Reset for voice# " + String(voice->mVoiceNo) + " to " + String(voice->getCurrentlyPlayingNote());
-							DBG(outstr);
+							VDBG(outstr);
 #endif
 						}
 					
@@ -1112,7 +1112,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 
 			if ((bAddedSomething == false) && (bAllVoicesLastOutputZero == true)) {
 				//do nothing
-				//DBG("((bAddedSomething == false) && (bAllVoicesLastOutputZero == true)) skip filter processing");
+				//VDBG("((bAddedSomething == false) && (bAllVoicesLastOutputZero == true)) skip filter processing");
 			}
 			else {
 
@@ -1153,7 +1153,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 					if (bPlayiningInRange || (((CVASTSingleNote*)voice)->m_bLastFilterOutputZero[filter] == false)) { //perf opt, check with phase and frequency hat is not updated?
 
 						//String filts = String(numVoices) + " m_bLastFilterOutputZero " + (((CVASTSingleNote*)voice)->m_bLastFilterOutputZero[filter] == true ? "true" : "false");
-						//DBG("voice " + String(mVoiceNo) + "filter " + String(filter) + "num playing " + String(numPlaying) + " numVoices " + filts);
+						//VDBG("voice " + String(mVoiceNo) + "filter " + String(filter) + "num playing " + String(numPlaying) + " numVoices " + filts);
 
 						float fR = 0.f;
 						float frFilter1 = 0.f;
@@ -1198,7 +1198,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 							anyFilterContent[filter][mVoiceNo] = true;
 						}
 						else 
-							DBG("No filter content anymore!");
+							VDBG("No filter content anymore!");
 
 						//post drywet
 						if (dryWet != 1.f) {
@@ -1317,7 +1317,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 
 void VASTSynthesiser::handleMidiEvent(const MidiMessage& m)
 {
-	DBG("handleMidiEvent: " << m.getDescription());
+	VDBG("handleMidiEvent: " << m.getDescription());
 	const int channel = m.getChannel();
 	
 	if (m.isNoteOn())
@@ -1326,7 +1326,7 @@ void VASTSynthesiser::handleMidiEvent(const MidiMessage& m)
 			//dont do note on on master channnel
 		}
 		else {
-			DBG("NoteOn midinote: " << m.getNoteNumber());
+			VDBG("NoteOn midinote: " << m.getNoteNumber());
 			noteOn(channel, m.getNoteNumber(), m.getFloatVelocity());
 
 			//set initial values for note: timbre
@@ -1431,7 +1431,7 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 				//	voice->clearCurrentNote();
 
 				if (voice->getCurrentlyPlayingNote() == midiNoteNumber && voice->isPlayingChannel(midiChannel)) {				
-					DBG("Start same midi note");
+					VDBG("Start same midi note");
 					((CVASTSingleNote*)voice)->m_VCA->hardStop();
 					//stopVoice(voice, 1.0f, true); //can be immediate here
 				}
@@ -1456,7 +1456,7 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 					startVoice(voice, sound, midiChannel, midiNoteNumber, velocity);
 				}
 				else {
-					//DBG("Synthesizer noteOn Legato #notes down: " + String(m_midiNotesNumKeyDown));
+					//VDBG("Synthesizer noteOn Legato #notes down: " + String(m_midiNotesNumKeyDown));
 					//if (m_midiNotesNumKeyDown == 1) { //
 
 					//TEST
@@ -1548,7 +1548,7 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 							if (voice != nullptr) {
 								((CVASTSingleNote*)voice)->setGlissandoStart(newest, false);
 								m_iGlissandoAssigned++;
-								DBG("voice: " << voice->getVoiceNo() << " glissandoStart for newest note in old chord stack " << newest);
+								VDBG("voice: " << voice->getVoiceNo() << " glissandoStart for newest note in old chord stack " << newest);
 								break; //lowest old note
 							}
 						}
@@ -1560,7 +1560,7 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 									if (voice != nullptr) {
 										((CVASTSingleNote*)voice)->setGlissandoStart(i, false);
 										m_iGlissandoAssigned++;
-										DBG("voice: " + String(voice->getVoiceNo()) + " glissandoStart for note  " + String(i));
+										VDBG("voice: " + String(voice->getVoiceNo()) + " glissandoStart for note  " + String(i));
 										break; //lowest old note
 									}
 								}
@@ -1595,7 +1595,7 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 								if (voice != nullptr) {
 									((CVASTSingleNote*)voice)->setGlissandoStart(i, true);
 									m_iGlissandoAssigned++;
-									DBG("voice: " << voice->getVoiceNo() << " glissandoStart for note  " << i);
+									VDBG("voice: " << voice->getVoiceNo() << " glissandoStart for note  " << i);
 									break; //lowest old note
 								}
 							}
@@ -1629,7 +1629,7 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 								if (voice != nullptr) {
 									((CVASTSingleNote*)voice)->setGlissandoStart(i, true);
 									m_iGlissandoAssigned++;
-									DBG("voice: " << voice->getVoiceNo() << " glissandoStart for note  " << i);
+									VDBG("voice: " << voice->getVoiceNo() << " glissandoStart for note  " << i);
 									break; //lowest old note
 								}
 							}
@@ -1656,14 +1656,14 @@ void VASTSynthesiser::startVoice(VASTSynthesiserVoice* const voice,
 			if (midiNoteNumber != voice->currentlyPlayingNote) {
 				if (m_midiNotesNumKeyDown > m_Set->m_uMaxPoly) {
 					bLegato = true;
-					DBG("StartVoice Legato start (sustain) voice: " << voice->mVoiceNo);
+					VDBG("StartVoice Legato start (sustain) voice: " << voice->mVoiceNo);
 				}
 				else {
-					DBG("StartVoice start new voice: " << voice->mVoiceNo);
+					VDBG("StartVoice start new voice: " << voice->mVoiceNo);
 				}
 			}
 			else {
-				DBG("StartVoice start new voice: " << voice->mVoiceNo);
+				VDBG("StartVoice start new voice: " << voice->mVoiceNo);
 			}
 		}
 				   		 	  
@@ -1698,14 +1698,14 @@ void VASTSynthesiser::startVoice(VASTSynthesiserVoice* const voice,
 				msegpervoice = true;
 			if (!msegpervoice) {
 				if ((m_oldestPlayingKeyDown >= 0) && voices[m_oldestPlayingKeyDown]->isKeyDown()) { 
-					DBG("Single MSEG Copy m_oldestPlayingKeyDown: " << m_oldestPlayingKeyDown << " -> " << voice->mVoiceNo << " keyDown: " << (voices[m_oldestPlayingKeyDown]->isKeyDown() ? "true" : "false"));
+					VDBG("Single MSEG Copy m_oldestPlayingKeyDown: " << m_oldestPlayingKeyDown << " -> " << voice->mVoiceNo << " keyDown: " << (voices[m_oldestPlayingKeyDown]->isKeyDown() ? "true" : "false"));
 					((CVASTSingleNote*)voice)->m_VCA->m_MSEG_Envelope[mseg].copyStateFrom(((CVASTSingleNote*)voices[m_oldestPlayingKeyDown])->m_VCA->m_MSEG_Envelope[mseg]);
 				}
 			}
 		}
 	}
 	else {
-		DBG("No voice and sound here");
+		VDBG("No voice and sound here");
 		vassertfalse;
 	}
 }
@@ -1714,7 +1714,7 @@ void VASTSynthesiser::stopVoice(VASTSynthesiserVoice* voice, float velocity, con
 {
 	jassert(voice != nullptr);
 
-	DBG("StopVoice " << voice->mVoiceNo);
+	VDBG("StopVoice " << voice->mVoiceNo);
 
 	//int iLegatoNote = 0;
 	if ((*m_Set->m_State->m_bLegatoMode == static_cast<int>(SWITCH::SWITCH_ON)) && m_Set->m_uMaxPoly == 1) { //mono legato
@@ -1758,7 +1758,7 @@ void VASTSynthesiser::noteOff(const int midiChannel,
 	}
 #ifdef _DEBUG
 	else {
-		DBG("Duplicate noteOff send from DAW!");
+		VDBG("Duplicate noteOff send from DAW!");
 	}
 #endif
 
@@ -1797,7 +1797,7 @@ void VASTSynthesiser::noteOff(const int midiChannel,
 		if (active != 0) {
 			for (auto* voice : voices) {
 				if ((!voice->isVoiceActive()) && (voice->isKeyDown()) && (voice != stoppedVoice)) {
-					DBG("Mono legato restart voice " + String(voice->mVoiceNo));
+					VDBG("Mono legato restart voice " + String(voice->mVoiceNo));
 					startVoice(voice, sounds[0], 1, ((CVASTSingleNote*)voice)->getMIDINote(), ((CVASTSingleNote*)voice)->m_uVelocity); //CHECK sounds[0]
 					break;
 				}

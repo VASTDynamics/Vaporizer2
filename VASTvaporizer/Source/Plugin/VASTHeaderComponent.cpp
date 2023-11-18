@@ -250,7 +250,7 @@ void VASTHeaderComponent::buttonClicked (juce::Button* buttonThatWasClicked)
         int counter = 0;
         while (!done) {
             if ((counter<30) && (myProcessor->m_bAudioThreadRunning.load() && (!myProcessor->m_pVASTXperience.getBlockProcessingIsBlockedSuccessfully()))) {
-                DBG("VASTHeaderComponent::buttonClicked - sleep");
+                VDBG("VASTHeaderComponent::buttonClicked - sleep");
                 Thread::sleep(100);
                 counter++;
                 continue;

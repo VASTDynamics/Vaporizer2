@@ -344,11 +344,11 @@ void VASTValueTreeItem::itemDropped(const DragAndDropTarget::SourceDetails &drag
 	if (this->getParentItem() == nullptr)
 		return;
 	if (dragSourceDetails.description.toString().startsWith("midimappreset")) {
-		DBG(dragSourceDetails.description.toString());
+		VDBG(dragSourceDetails.description.toString());
 		int pos = dragSourceDetails.description.toString().substring(14).getIntValue();
 		int idx = -1;
 		for (int i = 0; i < this->getParentItem()->getNumSubItems(); i++) {
-			DBG(((VASTValueTreeItem*)this->getParentItem())->getID());
+			VDBG(((VASTValueTreeItem*)this->getParentItem())->getID());
 			if (((VASTValueTreeItem*)this->getParentItem())->getID() == "midimapping") //"MIDI Prog. Mapping" item
 				break;
 			if (this->getParentItem()->getSubItem(i) == this) {
@@ -418,7 +418,7 @@ void VASTValueTreeItem::itemDropped(const DragAndDropTarget::SourceDetails &drag
 		return;
 	}
 
-	DBG(this->getID());
+	VDBG(this->getID());
 
 	String internalid = dragSourceDetails.description.toString().substring(6);
 

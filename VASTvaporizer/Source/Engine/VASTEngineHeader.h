@@ -67,6 +67,21 @@ VAST Dynamics Software
     #define MAXUINT 0xFFFFFFFF
 #endif
 
+//own debug log logic
+#ifdef _DEBUG
+	#ifdef VASTLOG
+		#define VDBG(textToWrite)              JUCE_BLOCK_WITH_FORCED_SEMICOLON (juce::String tempDbgBuf; tempDbgBuf << textToWrite; juce::Logger::writeToLog(tempDbgBuf);)
+	#else
+		#define VDBG(textToWrite)              DBG(textToWrite)
+	#endif
+#else 
+	#ifdef VASTLOG
+		#define VDBG(textToWrite)              JUCE_BLOCK_WITH_FORCED_SEMICOLON (juce::String tempDbgBuf; tempDbgBuf << textToWrite; juce::Logger::writeToLog(tempDbgBuf);)
+	#else 
+		#define VDBG(textToWrite) 
+	#endif
+#endif
+
 #include "JuceHeader.h"
 
 #endif  // VASTENGINEHEADER_H_INCLUDED

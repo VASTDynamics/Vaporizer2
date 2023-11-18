@@ -35,27 +35,28 @@
     Describe your class and how it works here!
                                                                     //[/Comments]
 */
-class VASTPresetEditorComponent  : public Component,
-                                   public TextEditor::Listener,
-                                   public juce::Button::Listener,
-                                   public juce::ComboBox::Listener,
-                                   public juce::Slider::Listener
+class VASTPresetEditorComponent : public Component,
+    public TextEditor::Listener,
+    public juce::Button::Listener,
+    public juce::ComboBox::Listener,
+    public juce::Slider::Listener
 {
 public:
     //==============================================================================
-    VASTPresetEditorComponent (AudioProcessorEditor *editor, AudioProcessor* processor);
+    VASTPresetEditorComponent(AudioProcessorEditor* editor, AudioProcessor* processor);
     ~VASTPresetEditorComponent() override;
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
 
-	void textEditorTextChanged(TextEditor &) override;
-	void updateAll();
-	void lookAndFeelChanged() override;
-	void startAutoUpdate() {
+    void textEditorTextChanged(TextEditor&) override;
+    void updateAll();
+    void lookAndFeelChanged() override;
+    void startAutoUpdate() {
         if (isShowing()) grabKeyboardFocus();
     };
-	void stopAutoUpdate() {};
+    void stopAutoUpdate() {};
+
     //[/UserMethods]
 
     void paint (juce::Graphics& g) override;
@@ -70,11 +71,13 @@ public:
     static const char* arrow_right_corner_svg;
     static const int arrow_right_corner_svgSize;
 
-
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
 	VASTAudioProcessorEditor * myEditor = nullptr;
 	VASTAudioProcessor* myProcessor = nullptr;
+#ifdef VASTLOG    
+    std::unique_ptr<CodeEditorComponent> logEditorComponent;
+#endif
 
     std::unique_ptr<FileChooser> myChooser;
 

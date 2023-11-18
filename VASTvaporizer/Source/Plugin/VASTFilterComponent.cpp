@@ -712,7 +712,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
 VASTFilterComponent::~VASTFilterComponent()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
-    DBG("Destructing VASTFilterComponent");
+    VDBG("Destructing VASTFilterComponent");
 	this->setLookAndFeel(nullptr);
     //[/Destructor_pre]
 

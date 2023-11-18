@@ -93,7 +93,7 @@ void VASTPopupHandler::mouseDrag(const MouseEvent &e) { // show value
 	e.eventComponent->mouseDrag(e);   // do the usual thing .... drag the slider
 	
 	//if ((e.eventTime.toMilliseconds() - m_lastEventTime.toMilliseconds()) >= 100) { //every x ms repainted
-	//	DBG("MouseDrag Paint");
+	//	VDBG("MouseDrag Paint");
 	//	drawValueBubble(e, modifiers);
 	//}
 }

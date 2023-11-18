@@ -122,7 +122,7 @@ void VASTFreqDomainViewport::updateContent(bool force) {
     if (wavetable->getNumPositions() == 0)
 		return;
 
-	//DBG("VASTFreqDomainViewport::updateContent");
+	//VDBG("VASTFreqDomainViewport::updateContent");
 
 	juce::Rectangle<int> lVisibleArea = myWtEditor->getFreqDomainViewport()->getViewArea();
 	AffineTransform af;

@@ -118,7 +118,7 @@ VASTLFOMsegComponent::VASTLFOMsegComponent (AudioProcessorEditor *editor, AudioP
 VASTLFOMsegComponent::~VASTLFOMsegComponent()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
-    DBG("Destructing VASTLFOMsegComponent");
+    VDBG("Destructing VASTLFOMsegComponent");
 	this->setLookAndFeel(nullptr);
     //[/Destructor_pre]
 

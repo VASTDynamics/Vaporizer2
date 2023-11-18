@@ -109,7 +109,7 @@ VASTMatrixComponent::VASTMatrixComponent (AudioProcessorEditor *editor, AudioPro
 VASTMatrixComponent::~VASTMatrixComponent()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
-    DBG("Destructing VASTMatrixComponent");
+    VDBG("Destructing VASTMatrixComponent");
 	this->setLookAndFeel(nullptr);
     //[/Destructor_pre]
 

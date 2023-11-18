@@ -214,7 +214,7 @@ void VASTAudioProcessorEditor::paint(Graphics& ) {
 void VASTAudioProcessorEditor::resized() {
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
-	DBG("AudioProcessorEditor resized to w: " + String(this->getWidth()) + " h: " + String(this->getHeight()));
+	VDBG("AudioProcessorEditor resized to w: " + String(this->getWidth()) + " h: " + String(this->getHeight()));
 	/*
 	Component::SafePointer<VASTAudioProcessorEditor> editor(this);
 	if (this->getWidth() < (m_iMinWidth + 10)) {
@@ -309,7 +309,7 @@ void VASTAudioProcessorEditor::showNewerVersionPopup() {
 			bool worked = websiteurl.launchInDefaultBrowser();
 #ifdef _DEBUG
 			if (!worked)
-				DBG("Launch browser did not work.");
+				VDBG("Launch browser did not work.");
 #endif
             worked = true;
 		}

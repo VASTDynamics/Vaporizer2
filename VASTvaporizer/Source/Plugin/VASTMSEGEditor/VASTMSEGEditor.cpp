@@ -710,7 +710,7 @@ void VASTMSEGEditor::timerCallback() {
 		/*
 		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - t1).count();
 		t1 = std::chrono::high_resolution_clock::now();
-		DBG("Last update ms " + String(duration));
+		VDBG("Last update ms " + String(duration));
 		*/
 
 	}

@@ -131,7 +131,7 @@ VASTWaveTableEditorComponent::VASTWaveTableEditorComponent (AudioProcessorEditor
 VASTWaveTableEditorComponent::~VASTWaveTableEditorComponent()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
-    DBG("Destructing VASTWaveTableEditorComponent");
+    VDBG("Destructing VASTWaveTableEditorComponent");
     m_cur_wavetable.reset();
     m_copypaste_wavetable.reset();
     newWTToUpdate.reset();
@@ -149,7 +149,7 @@ VASTWaveTableEditorComponent::~VASTWaveTableEditorComponent()
 
 
     //[Destructor]. You can add your own custom destruction code here..
-     DBG("Destructing VASTWaveTableEditorComponent");
+     VDBG("Destructing VASTWaveTableEditorComponent");
     //[/Destructor]
 }
 
@@ -956,7 +956,7 @@ void VASTWaveTableEditorComponent::threadedFreehandDraw(/*int msbeg, int msend,*
 	editor->myProcessor->m_pVASTXperience.m_Poly.m_OscBank[editor->m_bank]->addSoftFadeEditor();
 
 	std::shared_ptr<CVASTWaveTable> wavetable = editor->myProcessor->m_pVASTXperience.m_Poly.m_OscBank[editor->m_bank]->getSoftOrCopyWavetable();
-	DBG("threadedFreehandDraw on wavetable: " << wavetable->getID());
+	VDBG("threadedFreehandDraw on wavetable: " << wavetable->getID());
 
 	//do stuff
 	int msbeg = wavetable->getMultiSelectBegin();
@@ -1023,7 +1023,7 @@ void VASTWaveTableEditorComponent::threadedFreehandDraw(/*int msbeg, int msend,*
 	//do stuff
 
 	if (lIndexAtStart != editor->myProcessor->m_loadedPresetIndexCount) //changed preset in between
-		DBG("Not merged! Preset changed in meantime!");
+		VDBG("Not merged! Preset changed in meantime!");
 	else {
 		editor->myProcessor->m_pVASTXperience.m_Poly.m_OscBank[editor->m_bank]->setWavetableSoftFade(wavetable);
 	}
@@ -1045,7 +1045,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 	int lBank = editor->m_bank;
 
 #ifdef _DEBUG
-	//DBG("m_editorThreadsRunning " + String(getEditorThreadsRunning()));
+	//VDBG("m_editorThreadsRunning " + String(getEditorThreadsRunning()));
 	std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
 #endif
 
@@ -1072,7 +1072,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 		msend = wavetable->getMultiSelectEnd();
 	}
 
-	DBG("editorFunction on wavetable ID: " << wavetable->getID());
+	VDBG("editorFunction on wavetable ID: " << wavetable->getID());
 
 #ifdef _DEBUG
 	std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
@@ -2388,7 +2388,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 
 	if (transactionWavetable == nullptr) {
 		if (lIndexAtStart != editor->myProcessor->m_loadedPresetIndexCount) //changed preset in between
-			DBG("Not merged! Preset changed in meantime!");
+			VDBG("Not merged! Preset changed in meantime!");
 		else {
 			wavetable->deleteGeneratedContent(); //all buffers are invalid now
 			editor->myProcessor->m_pVASTXperience.m_Poly.m_OscBank[lBank]->setWavetableSoftFade(wavetable);
@@ -2401,7 +2401,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 	auto duration1 = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count() * 0.001;
 	auto duration2 = std::chrono::duration_cast<std::chrono::microseconds>(t3 - t2).count() * 0.001;
 	auto duration3 = std::chrono::duration_cast<std::chrono::microseconds>(t4 - t3).count() * 0.001;
-	DBG("Thread runtime (milliseconds): " << duration1 << " " << duration2 << " " << duration3);
+	VDBG("Thread runtime (milliseconds): " << duration1 << " " << duration2 << " " << duration3);
 #endif
  	getEditorThreadsRunning()--;
 }
@@ -3735,8 +3735,8 @@ VASTSamplerSound* VASTWaveTableEditorComponent::loadWavFile(String filename) {
 		if (duration < 600) { //max seconds
 			StringArray metadataValues = reader->metadataValues.getAllValues();
 			StringArray metadataKeys = reader->metadataValues.getAllKeys();
-			DBG(metadataKeys.joinIntoString(";"));
-			DBG(metadataValues.joinIntoString(";"));
+			VDBG(metadataKeys.joinIntoString(";"));
+			VDBG(metadataValues.joinIntoString(";"));
 
 			/*
 			https://forum.juce.com/t/how-to-read-extensible-non-catalogue-metadata-properties-from-a-wav-file/24250
@@ -3796,7 +3796,7 @@ VASTSamplerSound* VASTWaveTableEditorComponent::loadWavFile(String filename) {
 				String valType = metadataValues[metadataKeys.indexOf("Loop0Type")];
 				if (valStart.getIntValue() > 0) {
 					if (valEnd.getIntValue() > 0) {
-						DBG("LoopFound: " << valStart << " " << valEnd << " " << valType);
+						VDBG("LoopFound: " << valStart << " " << valEnd << " " << valType);
 						lVASTSamplerSound->setLoopChanged(valStart.getIntValue(), valEnd.getIntValue());
 					}
 				}
@@ -3852,7 +3852,7 @@ void VASTWaveTableEditorComponent::updateAll(bool force) {
 	struct timeval tp;
 	myProcessor->m_pVASTXperience.m_Set._gettimeofday(&tp);
 	ULong64_t l_lastUIUpdate = tp.tv_sec * 1000 + tp.tv_usec / 1000;
-	DBG("Time: " + String(l_lastUIUpdate - m_lastUIUpdate));
+	VDBG("Time: " + String(l_lastUIUpdate - m_lastUIUpdate));
 	if (!force) {
 		if (l_lastUIUpdate - m_lastUIUpdate < 1000) //1 millisecond
 			return;
@@ -3860,8 +3860,8 @@ void VASTWaveTableEditorComponent::updateAll(bool force) {
 	m_lastUIUpdate = l_lastUIUpdate;
 	*/
 
-	DBG("VASTWaveTableEditorComponent::updateAll");
-	//DBG((force == true ? "true" : "false"));
+	VDBG("VASTWaveTableEditorComponent::updateAll");
+	//VDBG((force == true ? "true" : "false"));
 	if ((c_waveTableEditorView == nullptr) || (c_samplerEditorComponent == nullptr)) return;
 	if (c_waveTableEditorView != nullptr)
 		if (c_waveTableEditorView->getHeader() != nullptr) {

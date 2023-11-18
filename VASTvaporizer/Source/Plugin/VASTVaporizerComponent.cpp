@@ -186,11 +186,11 @@ VASTVaporizerComponent::~VASTVaporizerComponent()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
 	//stopTimer();
-    DBG("Destructing VASTVaporizerComponent");
+    VDBG("Destructing VASTVaporizerComponent");
 	isActive = false;
 	this->setLookAndFeel(nullptr);
 	c_sidePanel->setLookAndFeel(nullptr);
-    DBG("End Pre1 Destructing VASTVaporizerComponent");
+    VDBG("End Pre1 Destructing VASTVaporizerComponent");
 	sidePanelComponent->setLookAndFeel(nullptr);
 
     c_generatorsComponent->setLookAndFeel(nullptr);
@@ -210,7 +210,7 @@ VASTVaporizerComponent::~VASTVaporizerComponent()
     c_concertinaCenter->setLookAndFeel(nullptr);
     c_concertinaCenter = nullptr;
 
-        DBG("End Pre Destructing VASTVaporizerComponent");
+        VDBG("End Pre Destructing VASTVaporizerComponent");
     //[/Destructor_pre]
 
     masterVoicingComponent = nullptr;
@@ -221,7 +221,7 @@ VASTVaporizerComponent::~VASTVaporizerComponent()
 
 
     //[Destructor]. You can add your own custom destruction code here..
-    DBG("End Destructing VASTVaporizerComponent");
+    VDBG("End Destructing VASTVaporizerComponent");
     //[/Destructor]
 }
 
@@ -231,7 +231,7 @@ void VASTVaporizerComponent::paint (juce::Graphics& g)
     //[UserPrePaint] Add your own custom painting code here..
 	if (m_paintToImage) {
 		//m_SnapShotImage = Image(Image::RGB, getWidth(), getHeight(), true);
-		//DBG(getWidth());
+		//VDBG(getWidth());
 		//m_SnapShotImage.clear(juce::Rectangle<int>(0, 0, getWidth(), getHeight()), Colours::darkcyan);
 		g.drawImageAt(m_SnapShotImage, 0, 0);
 		return;
@@ -301,7 +301,7 @@ void VASTVaporizerComponent::resized()
 	}
 	*/
 
-	DBG("Vaporizer component resized to w: " << this->getWidth() << " h: " << this->getHeight());
+	VDBG("Vaporizer component resized to w: " << this->getWidth() << " h: " << this->getHeight());
     //[/UserResized]
 }
 
@@ -466,14 +466,14 @@ void VASTVaporizerComponent::updateAll() {
 bool VASTVaporizerComponent::keyStateChanged(bool isKeyDown, Component* originatingComponent) {
 	Component* focusComp = getCurrentlyFocusedComponent();
 	if (auto* textEditor = dynamic_cast<TextEditor*> (focusComp)) {
-		//DBG("TextEditor");
+		//VDBG("TextEditor");
 	} else
 		c_keyboardComponent->getMidiKeyboard()->keyStateChanged(isKeyDown); //route all input through to midikeyboard
     return true;
 }
 
 bool VASTVaporizerComponent::keyPressed(const KeyPress& key, Component* originatingComponent) { //return true for the ableton bug
-	DBG(key.getTextDescription() << "   " << key.getKeyCode());
+	VDBG(key.getTextDescription() << "   " << key.getKeyCode());
 	ModifierKeys mod = key.getModifiers();
 
 	VASTWaveTableEditorComponent* myWtEditor = ((VASTWaveTableEditorComponent*)c_tabbedComponent->getTabContentComponent(0));
@@ -670,7 +670,7 @@ bool VASTVaporizerComponent::keyPressed(const KeyPress& key, Component* originat
 	}
 
 	if (key.isKeyCode(KeyPress::tabKey)) {
-		DBG(juce::Component::getCurrentlyFocusedComponent()->getName());
+		VDBG(juce::Component::getCurrentlyFocusedComponent()->getName());
 		Component* comp = nullptr;
 		if (!mod.isShiftDown())
 			comp = juce::Component::getCurrentlyFocusedComponent()->createKeyboardFocusTraverser()->getNextComponent(juce::Component::getCurrentlyFocusedComponent());
@@ -831,7 +831,7 @@ void VASTVaporizerComponent::endPaintingToImage() {
 }
 
 void VASTVaporizerComponent::parentSizeChanged() {
-	DBG("VASTVaporizerComponent::parentSizeChanged");
+	VDBG("VASTVaporizerComponent::parentSizeChanged");
 }
 //[/MiscUserCode]
 

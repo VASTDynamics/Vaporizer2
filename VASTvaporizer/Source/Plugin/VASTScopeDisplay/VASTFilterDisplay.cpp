@@ -222,7 +222,7 @@ void VASTFilterDisplay::timerCallback() {
 	}
 
 	if (m_bRestart) {
-		DBG("VASTFilterDisplay Display Restart!");
+		VDBG("VASTFilterDisplay Display Restart!");
 		m_bRestart = false;
 		doUpdates(false);
 	}

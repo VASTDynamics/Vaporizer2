@@ -532,25 +532,18 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
 
     c_presetBendRange->setIncDecButtonsMode(Slider::incDecButtonsDraggable_Vertical);
     c_presetBendRange->setAudioProcessor(*myProcessor);
-
-	//CHTS TEMP Feature Toggle
-    /*
-	String cName = SystemStats::getComputerName();
-
-	if (!
-        (cName.equalsIgnoreCase("blackmagic") || cName.equalsIgnoreCase("C02VF40KHTD8"))
-        ) {
-		c_uiThemeCombo->clear(true);
-		c_uiThemeCombo->addItemList({ "Default" }, 1);
-	}
-	*/
-	//CHTS TEMP
-
 	c_iconMaximizeEditor->addListener(this);
 
 	c_uiThemeCombo->setSelectedItemIndex(myProcessor->m_activeLookAndFeel, NotificationType::dontSendNotification); //dont send
 	c_WTmode->setSelectedItemIndex(myProcessor->getWTmode(), NotificationType::dontSendNotification); //dont send
 	c_uiFontSize->setSelectedItemIndex(myProcessor->m_uiFontSize, NotificationType::dontSendNotification); //dont send
+
+#ifdef VASTLOG
+    logEditorComponent = std::make_unique<CodeEditorComponent>(myProcessor->logCodeDocument, nullptr);
+    addAndMakeVisible(*logEditorComponent, -1);
+    logEditorComponent->setAlwaysOnTop(true);
+    logEditorComponent->setOpaque(true);
+#endif
 
     //[/UserPreSize]
 
@@ -564,7 +557,7 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
 VASTPresetEditorComponent::~VASTPresetEditorComponent()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
-    DBG("Destructing VASTPresetEditorComponent");
+    VDBG("Destructing VASTPresetEditorComponent");
 	this->setLookAndFeel(nullptr);
     //[/Destructor_pre]
 
@@ -655,6 +648,9 @@ void VASTPresetEditorComponent::paint (juce::Graphics& g)
 void VASTPresetEditorComponent::resized()
 {
     //[UserPreResize] Add your own custom resize code here..
+#ifdef VASTLOG
+    logEditorComponent->setBounds(proportionOfWidth(0.0f), proportionOfHeight(0.0f), proportionOfWidth(1.0f), proportionOfHeight(1.0f));
+#endif
     //[/UserPreResize]
 
     groupComponent2->setBounds (proportionOfWidth (0.0100f), proportionOfHeight (0.3791f), proportionOfWidth (0.9800f), proportionOfHeight (0.6087f));

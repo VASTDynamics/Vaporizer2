@@ -224,7 +224,7 @@ void CVASTSingleNote::prepareForPlay() {
 void CVASTSingleNote::clearCurrentNote()
 {
 	if (currentlyPlayingNote != -1) {
-		DBG("Note is cleared - voice is not playing / active anymore: " << getVoiceNo());
+		VDBG("Note is cleared - voice is not playing / active anymore: " << getVoiceNo());
 		currentlyPlayingNote = -1;
 		currentlyPlayingSound = nullptr;
 		currentPlayingMidiChannel = 0;
@@ -310,9 +310,9 @@ void CVASTSingleNote::startNote(int midiNoteNumber, float velocity, SynthesiserS
 
 			if (legato) {
 #ifdef _DEBUG
-				DBG("SingleNote Sampler startNote legato! voice: " << getVoiceNo());
+				VDBG("SingleNote Sampler startNote legato! voice: " << getVoiceNo());
 				//if (m_sampler_isInAttack || m_sampler_isInRelease) 
-					//DBG("!!!! SingleNote Sampler is attack or release voice: " + String(getVoiceNo()));
+					//VDBG("!!!! SingleNote Sampler is attack or release voice: " + String(getVoiceNo()));
 #endif 
 				
 				for (int grain = 0; grain < m_grainTable.size(); grain++) {
@@ -435,13 +435,13 @@ void CVASTSingleNote::controllerMoved(int controllerNumber, int newControllerVal
 		}
 	}
 	else if (controllerNumber == 74) { // MPE Controller Sound Brightness // handleTimbreMSB 
-		DBG("Brightness MSB voice " << mVoiceNo << " " << newControllerValue);
+		VDBG("Brightness MSB voice " << mVoiceNo << " " << newControllerValue);
 		m_Set->iMPETimbreMidiNote[getVoiceNo()] = getCurrentlyPlayingNote();
 		m_Set->iMPETimbre[getVoiceNo()] = newControllerValue;
 		m_Set->iMPETimbre[getVoiceNo()] = jlimit( 0, 127, m_Set->iMPETimbre[getVoiceNo()]);
 	}
 	else if (controllerNumber == 106) { // MPE Controller Sound Brightness // handleTimbreLSB    
-		DBG("Brightness LSB voice " << mVoiceNo << newControllerValue);
+		VDBG("Brightness LSB voice " << mVoiceNo << newControllerValue);
 	}
 }
 
@@ -1104,14 +1104,14 @@ bool CVASTSingleNote::noteOn(MYUINT uChannel, MYUINT uMIDINote, MYUINT uVelocity
 	bool hardStop = m_VCA->isHardStop();
 	bool noteOff = m_VCA->isNoteOff();
 	if (hardStop && !noteOff) { //wait for hardstop tailoff
-		DBG("voice " << getVoiceNo() << " noteOn but m_VCA->isHardStop() and running!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		VDBG("voice " << getVoiceNo() << " noteOn but m_VCA->isHardStop() and running!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		if (m_Set->m_uMaxPoly == 1)
 			legato = false;
 			//return false;
 	}
 #ifdef _DEBUG
 	if (hardStop)
-		DBG("voice " << getVoiceNo() << " m_VCA->isHardStop() and new noteOn");
+		VDBG("voice " << getVoiceNo() << " m_VCA->isHardStop() and new noteOn");
 #endif
 
 	m_uChannelNext = uChannel;
@@ -1153,9 +1153,9 @@ void CVASTSingleNote::nextNote(bool legato) {
 			
 			m_Oscillator.getUnchecked(bank)->noteOn(m_uChannel, m_uMIDINote, m_uVelocity);
 			for (int i = 0; i < C_MAX_PARALLEL_OSC; i++) {
-				//DBG("resynch voice: "+ String(mVoiceNo));
+				//VDBG("resynch voice: "+ String(mVoiceNo));
 				m_Oscillator.getUnchecked(bank)->resynch(i, false); //re-synch - immendiately
-													  //DBG("resynch");
+													  //VDBG("resynch");
 			}
 
 			//CHECK
@@ -1591,7 +1591,7 @@ bool CVASTSingleNote::prepareEachSample(int bank, int currentFrame, bool &freqsH
 		if ((m_iLastCycleSamples[bank] > 0) && (m_iLastCycleSamples[bank] - m_iCurCycleSamples[bank] > 3)) {
 			wrap = false; //otherwise click in pitch modulation			
 			prepareFrequency(bank, skips, currentFrame, bTakeNextValue, true);
-			//DBG("wrap skipped due to unfinished crossfade m_iCurCycleSamples " + String(m_iCurCycleSamples[bank]) + " m_iLastCycleSamples " + String(m_iLastCycleSamples[bank]));
+			//VDBG("wrap skipped due to unfinished crossfade m_iCurCycleSamples " + String(m_iCurCycleSamples[bank]) + " m_iLastCycleSamples " + String(m_iLastCycleSamples[bank]));
 		}
 	}
 
@@ -1599,7 +1599,7 @@ bool CVASTSingleNote::prepareEachSample(int bank, int currentFrame, bool &freqsH
 }
 
 void CVASTSingleNote::doWavetableBufferGet(const int bank, CVASTWaveTableOscillator* mOscillator, const int osciCount, AudioSampleBuffer* lOscBuffer, const int startSample, const int numSamples) {
-	//DBG("doWavetableBufferGet voice " + String(mVoiceNo) + " startSample " + String(startSample) + " numSamples " + String(numSamples));
+	//VDBG("doWavetableBufferGet voice " + String(mVoiceNo) + " startSample " + String(startSample) + " numSamples " + String(numSamples));
 	vassert(m_Poly->m_OscBank.getUnchecked(bank) != nullptr); //otherwise must not be called
 	if (osciCount == 0) return;
 	m_Poly->m_iLastSingleNoteCycleCalls++;
@@ -1632,7 +1632,7 @@ void CVASTSingleNote::doWavetableBufferGet(const int bank, CVASTWaveTableOscilla
 	if (m_bSoftFadeCycleStarted[bank] && !m_bSoftFadeCycleEnded[bank])
 		vassert(m_localVoiceBankWavetableSoftfade[bank] != nullptr);
 	vassert(m_localVoiceBankWavetable[bank] != nullptr);
-	//DBG("doWavetableBufferGet with WT ID " + String(m_localVoiceBankWavetable[bank]->getID()));
+	//VDBG("doWavetableBufferGet with WT ID " + String(m_localVoiceBankWavetable[bank]->getID()));
 #endif
 		
 	bool bInverter = false;
@@ -1698,17 +1698,17 @@ void CVASTSingleNote::doWavetableBufferGet(const int bank, CVASTWaveTableOscilla
 		m_iCurCycleSamples[bank]++;
 		if (wrap) { //start next section - section should be from start of osci 0 wrap until all oscis have wrapped and ended the cycle!											
 			//this is the start of a phase 0 - but we are processing what is left until then //next should get new wtfxvalue 
-			//DBG("Wrap at sample " + String(currentFrame) + " m_iCurCycleSamples " + String(m_iCurCycleSamples[bank]) + " m_iLastCycleSamples " + String(m_iLastCycleSamples[bank]));
+			//VDBG("Wrap at sample " + String(currentFrame) + " m_iCurCycleSamples " + String(m_iCurCycleSamples[bank]) + " m_iLastCycleSamples " + String(m_iLastCycleSamples[bank]));
 
 			bool lUpdated = false;
 			if (sectionlength > 0) {
-				//DBG("doWavetableBufferGet  getWavetableInterpolateBuffer m_localVoiceBankWavetable voice " + String(mVoiceNo) + " startSample " + String(nextStart) + " numSamples " + String(sectionlength) + " wtPosPerc " + String(m_currentWTPosFloatPercentage[bank]));
+				//VDBG("doWavetableBufferGet  getWavetableInterpolateBuffer m_localVoiceBankWavetable voice " + String(mVoiceNo) + " startSample " + String(nextStart) + " numSamples " + String(sectionlength) + " wtPosPerc " + String(m_currentWTPosFloatPercentage[bank]));
 				m_localVoiceBankWavetable[bank]->getWavetableInterpolateBuffer(mOscillator, osciCount, lOscBuffer, nextStart, sectionlength, bInverter, m_Set->m_WTmode, mVoiceNo, bank, &m_Poly->m_OscBank, m_bIsFirstCycle[bank], m_bIsStartOfCycle[bank], m_currentWTPosFloatPercentage[bank], m_wtFXVal[bank], m_wtFXType[bank], m_iLastCycleSamples[bank], m_iCurCycleSamples[bank], nullptr, lUpdated, m_Poly->m_OscBank.getUnchecked(bank)->getSoloMode());
 				//=====================================================================
 				//next interpolate buffer call will be start of new cycle -> set values for next phasec cycle
 #ifdef _DEBUG
 				if ((m_bLastRenderedWTID[bank] != -1) && (m_bLastRenderedWTID[bank] != m_localVoiceBankWavetable[bank]->getID()))
-					DBG("WT RENDER CHAIN NOT CONTINOUS!");
+					VDBG("WT RENDER CHAIN NOT CONTINOUS!");
 				m_bLastRenderedWTID[bank] = m_localVoiceBankWavetable[bank]->getID();
 #endif
 				if (lUpdated)
@@ -1727,7 +1727,7 @@ void CVASTSingleNote::doWavetableBufferGet(const int bank, CVASTWaveTableOscilla
 					softFadeBuffer->clear();
 					bool lUpdated = false;
 					if (sectionlength > 0) {
-						//DBG("doWavetableBufferGet  getWavetableInterpolateBuffer m_localVoiceBankWavetableSoftfade voice " + String(mVoiceNo) + " startSample " + String(nextStart) + " numSamples " + String(sectionlength) + " wtPosPerc " + String(m_currentWTPosFloatPercentage[bank]));
+						//VDBG("doWavetableBufferGet  getWavetableInterpolateBuffer m_localVoiceBankWavetableSoftfade voice " + String(mVoiceNo) + " startSample " + String(nextStart) + " numSamples " + String(sectionlength) + " wtPosPerc " + String(m_currentWTPosFloatPercentage[bank]));
 						m_localVoiceBankWavetableSoftfade[bank]->getWavetableInterpolateBuffer(mOscillator, osciCount, softFadeBuffer.get(), nextStart, sectionlength, bInverter, m_Set->m_WTmode, mVoiceNo, bank, &m_Poly->m_OscBank, m_bIsFirstCycle[bank], m_bIsStartOfCycle[bank], m_currentWTPosFloatPercentage[bank], m_wtFXVal[bank], m_wtFXType[bank], m_iLastCycleSamples[bank], m_iCurCycleSamples[bank], m_localVoiceBankWavetable[bank].get(), lUpdated, m_Poly->m_OscBank.getUnchecked(bank)->getSoloMode());
 						if (lUpdated)
 							m_Poly->m_OscBank.getUnchecked(bank)->setChangedFlagOsc();
@@ -1746,7 +1746,7 @@ void CVASTSingleNote::doWavetableBufferGet(const int bank, CVASTWaveTableOscilla
 				}
 
 #ifdef _DEBUG
-				//DBG("Ending softfade cycle - doWavetableBufferGet Voice " + String(mVoiceNo) + " SoftFadeWTID " + String(m_Poly->m_OscBank.getUnchecked(bank)->m_iSingleNoteSoftFadeID) + " wtPosPerc " + String(m_currentWTPosFloatPercentage[bank]) + " bank " + String(bank));
+				//VDBG("Ending softfade cycle - doWavetableBufferGet Voice " + String(mVoiceNo) + " SoftFadeWTID " + String(m_Poly->m_OscBank.getUnchecked(bank)->m_iSingleNoteSoftFadeID) + " wtPosPerc " + String(m_currentWTPosFloatPercentage[bank]) + " bank " + String(bank));
 				m_bLastRenderedWTID[bank] = m_localVoiceBankWavetableSoftfade[bank]->getID();
 #endif
 				m_localVoiceBankWavetable[bank] = m_Poly->m_OscBank.getUnchecked(bank)->getNewSharedSoftFadeWavetable(); //continue with soft fade wavetable
@@ -1760,7 +1760,7 @@ void CVASTSingleNote::doWavetableBufferGet(const int bank, CVASTWaveTableOscilla
 			else if (!m_bSoftFadeCycleStarted[bank] && !m_bSoftFadeCycleEnded[bank]) { //reset ended when all has ended! todo
 				if (m_Poly->m_OscBank.getUnchecked(bank)->m_bWavetableSoftfadeStillNeeded) { //cycling but not started
 					m_Poly->m_OscBank.getUnchecked(bank)->m_bWavetableSoftfadePickedUp.store(true);
-					//DBG("m_bWavetableSoftfadePickedUp true");
+					//VDBG("m_bWavetableSoftfadePickedUp true");
 					m_localVoiceBankWavetableSoftfade[bank] = m_Poly->m_OscBank.getUnchecked(bank)->getNewSharedSoftFadeWavetable();
 					if (m_localVoiceBankWavetableSoftfade[bank] != nullptr) { //fade to nullptr???
 						m_bSoftFadeCycleStarted[bank] = true; //other voice has started the cycle! pick up next zero loop
@@ -1792,7 +1792,7 @@ void CVASTSingleNote::doWavetableBufferGet(const int bank, CVASTWaveTableOscilla
 	int restlength = numSamples - (nextStart - startSample);
 	bool lUpdated = false;
 	if (restlength > 0) {		
-		//DBG("doWavetableBufferGet  getWavetableInterpolateBuffer m_localVoiceBankWavetable restlength voice " + String(mVoiceNo) + " startSample " + String(nextStart) + " numSamples " + String(restlength) + " wtPosPerc " + String(m_currentWTPosFloatPercentage[bank]));
+		//VDBG("doWavetableBufferGet  getWavetableInterpolateBuffer m_localVoiceBankWavetable restlength voice " + String(mVoiceNo) + " startSample " + String(nextStart) + " numSamples " + String(restlength) + " wtPosPerc " + String(m_currentWTPosFloatPercentage[bank]));
 
 		if (m_bIsFirstCycle[bank]) { //align wtpos at note on to make it stable
 			m_currentWTPosFloatPercentage[bank] = m_fOscWTPos_atNoteOn[bank];
@@ -1803,7 +1803,7 @@ void CVASTSingleNote::doWavetableBufferGet(const int bank, CVASTWaveTableOscilla
 		m_bIsStartOfCycle[bank] = false; //for next
 #ifdef _DEBUG
 		if ((m_bLastRenderedWTID[bank] != -1) && (m_bLastRenderedWTID[bank] != m_localVoiceBankWavetable[bank]->getID()))
-			DBG("WT RENDER CHAIN NOT CONTINOUS!");
+			VDBG("WT RENDER CHAIN NOT CONTINOUS!");
 		m_bLastRenderedWTID[bank] = m_localVoiceBankWavetable[bank]->getID();
 #endif
 		if (lUpdated)
@@ -1817,7 +1817,7 @@ void CVASTSingleNote::doWavetableBufferGet(const int bank, CVASTWaveTableOscilla
 			softFadeBuffer->clear();
 			bool lUpdated = false;
 			if (restlength > 0) {
-				//DBG("doWavetableBufferGet  getWavetableInterpolateBuffer m_localVoiceBankWavetableSoftfade restlength voice " + String(mVoiceNo) + " startSample " + String(nextStart) + " numSamples " + String(restlength) + " wtPosPerc " + String(m_currentWTPosFloatPercentage[bank]));
+				//VDBG("doWavetableBufferGet  getWavetableInterpolateBuffer m_localVoiceBankWavetableSoftfade restlength voice " + String(mVoiceNo) + " startSample " + String(nextStart) + " numSamples " + String(restlength) + " wtPosPerc " + String(m_currentWTPosFloatPercentage[bank]));
 				m_localVoiceBankWavetableSoftfade[bank]->getWavetableInterpolateBuffer(mOscillator, osciCount, softFadeBuffer.get(), nextStart, restlength, bInverter, m_Set->m_WTmode, mVoiceNo, bank, &m_Poly->m_OscBank, m_bIsFirstCycle[bank], m_bIsStartOfCycle[bank], m_currentWTPosFloatPercentage[bank], m_wtFXVal[bank], m_wtFXType[bank], m_iLastCycleSamples[bank], m_iCurCycleSamples[bank], m_localVoiceBankWavetable[bank].get(), lUpdated, m_Poly->m_OscBank.getUnchecked(bank)->getSoloMode());
 				if (lUpdated)
 					m_Poly->m_OscBank.getUnchecked(bank)->setChangedFlagOsc();
@@ -1843,18 +1843,18 @@ void CVASTSingleNote::doWavetableBufferGet(const int bank, CVASTWaveTableOscilla
 		//within buffer
 		if (abs(lOscBuffer->getSample(0, i) - lOscBuffer->getSample(0, i + 1)) > l_tolerance) {
 			const float* UNUSED(buffer) = lOscBuffer->getReadPointer(0);
-			//DBG("Outliers!!!!!");
+			//VDBG("Outliers!!!!!");
 		}
 		if (abs(lOscBuffer->getSample(1, i) - lOscBuffer->getSample(1, i + 1)) > l_tolerance) {
 			const float* UNUSED(buffer) = lOscBuffer->getReadPointer(1);
-			//DBG("Outliers!!!!!");
+			//VDBG("Outliers!!!!!");
 		}
 	}
 	//buffer wrap
 	if (m_fLastRenderedSample[bank] != 0.f) {
 		if (abs(lOscBuffer->getSample(1, startSample) - m_fLastRenderedSample[bank]) > l_tolerance) { //right only
 			const float* UNUSED(buffer) = lOscBuffer->getReadPointer(1);
-			//DBG("Outlier at wrap!!!!!");
+			//VDBG("Outlier at wrap!!!!!");
 		}
 	}
 	m_fLastRenderedSample[bank] = lOscBuffer->getSample(1, numSamples - 1);
@@ -1879,7 +1879,7 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 	else { 
 #ifdef _DEBUG
 		if (startSample > 0) 
-			DBG("StartSample > 0: " << startSample << " numSamples: " << numSamples << " bufferSamples: " << routingBuffers.getNumSamples());
+			VDBG("StartSample > 0: " << startSample << " numSamples: " << numSamples << " bufferSamples: " << routingBuffers.getNumSamples());
 #endif			
 		m_Set->bufferInputState.store(l_inputState);
 

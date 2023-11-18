@@ -111,7 +111,7 @@ VASTArpComponent::VASTArpComponent (AudioProcessorEditor *editor, AudioProcessor
 VASTArpComponent::~VASTArpComponent()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
-    DBG("Destructing VASTArpComponent");
+    VDBG("Destructing VASTArpComponent");
 	this->setLookAndFeel(nullptr);
     //[/Destructor_pre]
 

@@ -64,7 +64,7 @@ CVASTWaveTable::CVASTWaveTable(const CVASTWaveTable &wavetable) : CVASTWaveTable
 }
 
 CVASTWaveTable::~CVASTWaveTable(void) {	
-	DBG("Wavetable deleted ID: " << getID());
+	VDBG("Wavetable deleted ID: " << getID());
 }
 
 void CVASTWaveTable::copyFrom(const CVASTWaveTable &wavetable) { //copies only the data, does not clone the shared instance
@@ -207,7 +207,7 @@ void CVASTWaveTable::getValueTreeState(ValueTree* tree, UndoManager* undoManager
             }
             std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
-            DBG("Duration: " << duration);
+            VDBG("Duration: " << duration);
         }
         */
 
@@ -227,7 +227,7 @@ void CVASTWaveTable::getValueTreeState(ValueTree* tree, UndoManager* undoManager
             }
             //std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
             //auto duration = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
-            //DBG("Duration: " << duration);
+            //VDBG("Duration: " << duration);
         }
 
 		waveTablePositionTree->setProperty("maxHarmonics", wtheader.waveTablePositions[i].maxHarmonics, undoManager);
@@ -335,7 +335,7 @@ void CVASTWaveTable::markAllWTFreqsDirty() { //to recaclculate wavetable
 
 void CVASTWaveTable::pregenerateWithWTFX(int wtFxType, float wtFxVal, int wtMode) {
 	for (int wtPos = 0; wtPos < wtheader.numPositions.load(); wtPos++) {
-		DBG("Pregenerating WTPos: " << wtPos << " with wtfxtype - val: " << wtFxType << " " << wtFxVal);
+		VDBG("Pregenerating WTPos: " << wtPos << " with wtfxtype - val: " << wtFxType << " " << wtFxVal);
 		for (int wtFreq = 0; wtFreq < wtheader.waveTablePositions[wtPos].waveTableFreqs.size(); wtFreq++) {
 			makeWaveTableFreq(	wtPos, 
 								wtheader.waveTablePositions[wtPos].waveTableFreqs[wtFreq].waveTableLen, 
@@ -629,9 +629,9 @@ bool CVASTWaveTable::getWaveTablePosition(int wtPos, sWaveTablePosition* &waveTa
 
 void CVASTWaveTable::createFreqsIfNeeded(int wtPos, bool preGenerate, int wtMode)  { //prepared means that naive is there and freqs - but not necessarily samples
 	ScopedLock sl(mWavetableChangeLock);
-	DBG("createFreqsIfNeeded wtPos " << wtPos);
+	VDBG("createFreqsIfNeeded wtPos " << wtPos);
 	if (!positionIsPrepared(wtPos)) {
-		DBG("createFreqsIfNeeded - generate - wtPos " << wtPos);
+		VDBG("createFreqsIfNeeded - generate - wtPos " << wtPos);
 		vassert(wtheader.waveTablePositions.size() >= (wtPos + 1));		
 		generateWaveTableFreqsFromTimeDomain(wtPos, C_WAVE_TABLE_SIZE, *getNaiveTable(wtPos),  preGenerate, wtMode);
 
@@ -681,16 +681,16 @@ void CVASTWaveTable::setNaiveTable(int wtPos, std::vector<float> vWave, bool pre
 
 bool CVASTWaveTable::validate() {
 	if (!(wtheader.waveTablePositions.size() > 0)) {
-		DBG("CVASTWaveTable::validate() failed: waveTablePositions <= 0");
+		VDBG("CVASTWaveTable::validate() failed: waveTablePositions <= 0");
 		return false;
 	}
 	if (!(wtheader.waveTablePositions.size() == wtheader.numPositions.load())) {
-		DBG("CVASTWaveTable::validate() failed: waveTablePositions.size() != wtheader.numPositions");
+		VDBG("CVASTWaveTable::validate() failed: waveTablePositions.size() != wtheader.numPositions");
 		return false;
 	}
 	for (int wtPos = 0; wtPos  < wtheader.numPositions.load(); wtPos++) {
 		if (wtPos != wtheader.waveTablePositions[wtPos].wtPos) {
-			DBG("CVASTWaveTable::validate() failed: wtPos != wtheader.waveTablePositions[wtPos].wtPos");
+			VDBG("CVASTWaveTable::validate() failed: wtPos != wtheader.waveTablePositions[wtPos].wtPos");
 			return false;
 		}
 		int validfreqs = 0;
@@ -700,12 +700,12 @@ bool CVASTWaveTable::validate() {
 		}
 		for (int wtFreq = 0; wtFreq < wtheader.waveTablePositions[wtPos].waveTableFreqsBuffer.size(); wtFreq++) {
 			if (wtheader.waveTablePositions[wtPos].waveTableFreqsBuffer[wtFreq].waveTableSamples.size() != C_WAVE_TABLE_SIZE) {
-				DBG("waveTableSamples empty wtPos " << wtPos << " wtFreq " << wtFreq);
+				VDBG("waveTableSamples empty wtPos " << wtPos << " wtFreq " << wtFreq);
 				return false;
 			}
 		}
 		if (wtheader.waveTablePositions[wtPos].numWaveTableFreqsBuffer != wtheader.waveTablePositions[wtPos].waveTableFreqsBuffer.size()) {
-			DBG("numWaveTableFreqsBuffer != waveTableFreqsBuffer size for wtPos " << wtPos);
+			VDBG("numWaveTableFreqsBuffer != waveTableFreqsBuffer size for wtPos " << wtPos);
 			return false;
 		}
 		//vassert(validfreqs == wtheader.waveTablePositions[wtPos].numWaveTableFreqs);
@@ -959,7 +959,7 @@ void CVASTWaveTable::frequencyDomainBufferFromNaive(int tableLen, const std::vec
 	{
 		ScopedLock sl(m_Set->fftSingletonFactory.FFTLock);
 		mufft_execute_plan_1d(m_Set->fftSingletonFactory.muplanInverse2048, &*frequencyDomainBuffer.begin(), &*timeBuffer.begin());
-		///DBG("mufft execute frequencyDomainBufferFromNaive");
+		///VDBG("mufft execute frequencyDomainBufferFromNaive");
 	}
 
 	/*
@@ -1045,7 +1045,7 @@ void CVASTWaveTable::generateWaveTableFreqsFromTimeDomain(int wtPos, int tableLe
 	int maxHarmonic = tableLen >> 1;
 	const float minVal = 0.000001; // -120 dB	
 	while ((fabs(wtp->frequencyDomainBuffer[maxHarmonic].real()) + fabs(wtp->frequencyDomainBuffer[maxHarmonic].imag()) < minVal) && maxHarmonic) {
-		//DBG(String(maxHarmonic) + " : " + String(fabs(wtp->frequencyDomainBuffer[maxHarmonic].real()) + fabs(wtp->frequencyDomainBuffer[maxHarmonic].imag())));
+		//VDBG(String(maxHarmonic) + " : " + String(fabs(wtp->frequencyDomainBuffer[maxHarmonic].real()) + fabs(wtp->frequencyDomainBuffer[maxHarmonic].imag())));
 		--maxHarmonic;
 	}
 	wtp->maxHarmonics = maxHarmonic;
@@ -1587,7 +1587,7 @@ void CVASTWaveTable::makeWaveTableFreq(int wtPos, int len, float bottomFreq, flo
 				amount = 1.0f / (1.f + powf(float(newidx) / breakH, 2));
 				//amount = 1.0f / (1.f + (float(newidx) / breakH));
 			}
-			//DBG("lmaxharmonics " + String(lmaxHarmonics) + " idx " + String(idx) + " amount " + String(amount));
+			//VDBG("lmaxharmonics " + String(lmaxHarmonics) + " idx " + String(idx) + " amount " + String(amount));
 			timeBuffer[idx].real((*fdBuffer)[idx].real() * amount);
 			timeBuffer[idx].imag((*fdBuffer)[idx].imag() * amount);
 			timeBuffer[len - idx].real((*fdBuffer)[len - idx].real() * amount);
@@ -1597,7 +1597,7 @@ void CVASTWaveTable::makeWaveTableFreq(int wtPos, int len, float bottomFreq, flo
 	else if (wtMode == 2) { //dull - linear
 		for (int idx = 1; idx <= lmaxHarmonics; idx++) {
 			float amount = 1.0f - float(idx - 1) / float(lmaxHarmonics);
-			//DBG("lmaxharmonics " + String(lmaxHarmonics) + " idx " + String(idx) + " amount " + String(amount));
+			//VDBG("lmaxharmonics " + String(lmaxHarmonics) + " idx " + String(idx) + " amount " + String(amount));
 			timeBuffer[idx].real((*fdBuffer)[idx].real() * amount);
 			timeBuffer[idx].imag((*fdBuffer)[idx].imag() * amount);
 			timeBuffer[len - idx].real((*fdBuffer)[len - idx].real() * amount);
@@ -1614,10 +1614,10 @@ void CVASTWaveTable::makeWaveTableFreq(int wtPos, int len, float bottomFreq, flo
 		mufft_execute_plan_1d(m_Set->fftSingletonFactory.muplanForward2048, &*outBuffer.begin(), &*timeBuffer.begin());
 #ifdef _DEBUG
 		if (abs(outBuffer[0].real()) > 2.f)
-			DBG("Check mufft output - seams to be broken!");
+			VDBG("Check mufft output - seams to be broken!");
 #endif
 	}
-	//DBG("mufft execute makeWaveTableFreq");
+	//VDBG("mufft execute makeWaveTableFreq");
 
 /*
 	//------------------------------------------------------------------------------------
@@ -1682,7 +1682,7 @@ void CVASTWaveTable::makeWaveTableFreq(int wtPos, int len, float bottomFreq, flo
 		//bug catcher
 		float max = *max_element(wtp->waveTableFreqs[tableindex].waveTableSamples.begin(), wtp->waveTableFreqs[tableindex].waveTableSamples.end());
 		if (max > 5.f)
-			DBG("Overflow!!!!");
+			VDBG("Overflow!!!!");
 	#endif
 	*/
 }
@@ -1756,7 +1756,7 @@ void CVASTWaveTable::addWaveTableFreq(int wtPos, int len, std::vector<float> &wa
 			++wtp->numWaveTableFreqsBuffer;
 #ifdef _DEBUG
 			if (wtp->waveTableFreqsBuffer.capacity() < wtp->waveTableFreqsBuffer.size() + 1)
-				DBG("wtp->waveTableFreqsBuffer.capacity() < wtp->waveTableFreqsBuffer.size() + 1 resizing");
+				VDBG("wtp->waveTableFreqsBuffer.capacity() < wtp->waveTableFreqsBuffer.size() + 1 resizing");
 #endif
 			wtp->waveTableFreqsBuffer.push_back(wtf);
 		}
@@ -1832,11 +1832,11 @@ void CVASTWaveTable::prepareForPlay(int expectedSamplesPerBlock) {
 
 void CVASTWaveTable::putWaveTableFreqToBuffer(sWaveTablePosition* wtp, int tableindex) {
 	vassert(wtp->waveTableFreqs[tableindex].waveTableSamples.size() == C_WAVE_TABLE_SIZE);
-	DBG("putWaveTableFreqToBuffer wtPos " << wtp->wtPos << " wtFreq " << tableindex << " current #freqbuffer " << wtp->waveTableFreqsBuffer.size());
+	VDBG("putWaveTableFreqToBuffer wtPos " << wtp->wtPos << " wtFreq " << tableindex << " current #freqbuffer " << wtp->waveTableFreqsBuffer.size());
 	if (wtp->numWaveTableFreqsBuffer >= C_MAX_NUM_FREQS) {
 		//delete old stuff
 		ScopedLock sl(mWavetableChangeLock);		
-		DBG("putWaveTableFreqToBuffer delete old stuff");
+		VDBG("putWaveTableFreqToBuffer delete old stuff");
 		wtp->waveTableFreqsBuffer.clear(); 
 		wtp->numWaveTableFreqsBuffer = 0;
 	}
@@ -1869,7 +1869,7 @@ bool CVASTWaveTable::getWavetableInterpolateBuffer(CVASTWaveTableOscillator* mOs
 			wtPos_end = masterWTForSync->m_fLastWTPosPerc_end[voiceNo] * (getNumPositions() - 1);
 			lWtPosPerc_end = masterWTForSync->m_fLastWTPosPerc_end[voiceNo];
 			//if (getNumPositions() != masterWTForSync->wtheader.numPositions.load())
-				//DBG("Softfade with different wtpos!");
+				//VDBG("Softfade with different wtpos!");
 		}
 		else {
 			wtFxVal_end = wtFxVal;
@@ -1912,10 +1912,10 @@ bool CVASTWaveTable::getWavetableInterpolateBuffer(CVASTWaveTableOscillator* mOs
 		m_iLastWtFXType_end[voiceNo] = wtFxType_end;
 		m_fLastWTPosPerc_end[voiceNo] = lWtPosPerc_end;
 
-		//DBG("StartOfCycle curCycleSamples: " + String(curCycleSamples) + " startSample: " + String(startSample) + " numSamples: " + String(numSamples) + " using wtPos_begin: " + String(wtPos_begin) + " wtPos_end: " + String(wtPos_end));
+		//VDBG("StartOfCycle curCycleSamples: " + String(curCycleSamples) + " startSample: " + String(startSample) + " numSamples: " + String(numSamples) + " using wtPos_begin: " + String(wtPos_begin) + " wtPos_end: " + String(wtPos_end));
 	}
 	//else {
-		//DBG("curCycleSamples: " + String(curCycleSamples) + " startSample: " + String(startSample) + " numSamples: " + String(numSamples) + " using wtPos_begin: " + String(wtPos_begin) + " wtPos_end: " + String(wtPos_end));
+		//VDBG("curCycleSamples: " + String(curCycleSamples) + " startSample: " + String(startSample) + " numSamples: " + String(numSamples) + " using wtPos_begin: " + String(wtPos_begin) + " wtPos_end: " + String(wtPos_end));
 	//}
 
 	sWaveTablePosition* wtpbegin = nullptr;
@@ -1948,7 +1948,7 @@ bool CVASTWaveTable::getWavetableInterpolateBuffer(CVASTWaveTableOscillator* mOs
 	m_fracPartBuffer->setSize(1, bufferNumSamples, false, false, !releaseMemory);
 	//m_fracPartQuad->setSize(1, bufferNumSamples, false, false, !releaseMemory);
 
-	//DBG("getWavetableInterpolateBuffer ID: " + String(getID()) + " bank " + String(bank) + " voiceNo " + String(voiceNo) + " startSample " + String(startSample) + " numSamples " + String(numSamples) + " first Phasor " + String(mOscillator->m_phasedPhasorBufferPointer[0][startSample]) + " wtPosStart " + String(wtPos_begin) + " wtPosEnd " + String(wtPos_end) + " lastCycleSamples " + String(lastCycleSamples) + " curCycleSamples " + String(curCycleSamples) + " wtFxVal_begin " + String(wtFxVal_begin) + " wtFxType_begin " + String(wtFxType_begin) + " wtFxVal_end " + String(wtFxVal_end) + " wtFxType_end " + String(wtFxType_end));
+	//VDBG("getWavetableInterpolateBuffer ID: " + String(getID()) + " bank " + String(bank) + " voiceNo " + String(voiceNo) + " startSample " + String(startSample) + " numSamples " + String(numSamples) + " first Phasor " + String(mOscillator->m_phasedPhasorBufferPointer[0][startSample]) + " wtPosStart " + String(wtPos_begin) + " wtPosEnd " + String(wtPos_end) + " lastCycleSamples " + String(lastCycleSamples) + " curCycleSamples " + String(curCycleSamples) + " wtFxVal_begin " + String(wtFxVal_begin) + " wtFxType_begin " + String(wtFxType_begin) + " wtFxVal_end " + String(wtFxVal_end) + " wtFxType_end " + String(wtFxType_end));
 
 	bool hasNextWtfxtype = (wtFxVal_begin != wtFxVal_end) || (wtFxType_begin != wtFxType_end);
 	bool wtPosint_begin_hasNextPos = false;
@@ -2150,7 +2150,7 @@ bool CVASTWaveTable::getWavetableInterpolateBuffer(CVASTWaveTableOscillator* mOs
 		}
 	}
 	else {
-		//DBG("No next pos");
+		//VDBG("No next pos");
 		buffer->addFrom(0, startSample, m_begin_curPosBuffer->getReadPointer(0, startSample), numSamples); //stereo spread
 		buffer->addFrom(1, startSample, m_begin_curPosBuffer->getReadPointer(1, startSample), numSamples); //stereo spread
 	}
@@ -2164,8 +2164,8 @@ bool CVASTWaveTable::getWavetableInterpolateBuffer(CVASTWaveTableOscillator* mOs
 		for (int i = startSample; i < (startSample + numSamples); i++) {
 			float frac = float(iFxSamples - numSamples + count) / float(iLastFxSamples);				
 			
-			//if (i == startSample) DBG("Frac_beg " + String(frac));
-			//if (i == startSample + numSamples - 1) DBG("Frac_end " + String(frac));
+			//if (i == startSample) VDBG("Frac_beg " + String(frac));
+			//if (i == startSample + numSamples - 1) VDBG("Frac_end " + String(frac));
 
 			if (iFxSamples > iLastFxSamples) //CHECK HACK!!!
 				frac = 1.f;
@@ -2232,7 +2232,7 @@ bool CVASTWaveTable::getWavetableInterpolateBuffer(CVASTWaveTableOscillator* mOs
 		}	
 	}
 	else {
-		//DBG("No next pos");
+		//VDBG("No next pos");
 		buffer->addFrom(0, startSample, m_begin_curPosBuffer->getReadPointer(0, startSample), numSamples); //stereo spread
 		buffer->addFrom(1, startSample, m_begin_curPosBuffer->getReadPointer(1, startSample), numSamples); //stereo spread
 	}
@@ -2245,7 +2245,7 @@ bool CVASTWaveTable::getWavetableInterpolateBuffer(CVASTWaveTableOscillator* mOs
 		m_fracPartBuffer->setSize(1, m_oscBufferStereo->getNumSamples(), false, false, !releaseMemory); //keep symmetry
 
 		if (bWTPos_allSameValues) { //best case!
-			//DBG("bWTPos_allSameValues");
+			//VDBG("bWTPos_allSameValues");
 			float fracPart = wtPosBuffer->getSample(0, startSample) - int(wtPosBuffer->getSample(0, startSample)); //0..1																												 
 			m_oscBufferStereo->copyFrom(0, startSample, m_curPosBuffer->getReadPointer(0, startSample), numSamples, (1 - fracPart));   //buffer = (1- fracpart) * curposBuffer + fracpart * nextposBuffer
 			m_oscBufferStereo->copyFrom(1, startSample, m_curPosBuffer->getReadPointer(1, startSample), numSamples, (1 - fracPart));   //buffer = (1- fracpart) * curposBuffer + fracpart * nextposBuffer
@@ -2253,7 +2253,7 @@ bool CVASTWaveTable::getWavetableInterpolateBuffer(CVASTWaveTableOscillator* mOs
 			FloatVectorOperations::addWithMultiply(m_oscBufferStereo->getWritePointer(1, startSample), m_nextPosBuffer->getReadPointer(1, startSample), fracPart, numSamples);  // buffer = (curPosBuffer – fractPart * curPosBuffer) + (fractPart * nextPos)
 		}
 		else {
-			//DBG("!bWTPos_allSameValues");
+			//VDBG("!bWTPos_allSameValues");
 			VASTFloatVectorOperations::getFraction(m_fracPartBuffer->getWritePointer(0, startSample), wtPosBuffer->getReadPointer(0, startSample), numSamples); //dest is new buffer, source is wtPosBuffer // float fracPart = wtPosBuffer->getSample(0, currentFrame) - int(wtPosBuffer->getSample(0, currentFrame)); //0..1		
 			m_oscBufferStereo->copyFrom(0, startSample, m_curPosBuffer->getReadPointer(0, startSample), numSamples);
 			m_oscBufferStereo->copyFrom(1, startSample, m_curPosBuffer->getReadPointer(1, startSample), numSamples);
@@ -2267,7 +2267,7 @@ bool CVASTWaveTable::getWavetableInterpolateBuffer(CVASTWaveTableOscillator* mOs
 		buffer->addFrom(1, startSample, m_oscBufferStereo->getReadPointer(1, startSample), numSamples); //stereo spread
 	}
 	else {
-		//DBG("No next pos");
+		//VDBG("No next pos");
 		buffer->addFrom(0, startSample, m_curPosBuffer->getReadPointer(0, startSample), numSamples); //stereo spread
 		buffer->addFrom(1, startSample, m_curPosBuffer->getReadPointer(1, startSample), numSamples); //stereo spread
 	}
@@ -2280,7 +2280,7 @@ bool CVASTWaveTable::fillInterpolateBuffersRange(const bool next, sWaveTablePosi
 	/*
 	String test = "fillInterpolateBuffersRange: " + (next == true) ? " next " : " cur ";
 	test += " start: " + String(startSample) + " end: " + String(startSample + numSamples - 1) +  " num: " + String(numSamples) + " wtPos: " + String(wtp->wtPos);
-	DBG(test);
+	VDBG(test);
 	*/
 
 	const sWaveTableFreq* curPosWTFreq = nullptr;
@@ -2320,7 +2320,7 @@ bool CVASTWaveTable::fillInterpolateBuffersRange(const bool next, sWaveTablePosi
 				--waveTableIdx;
 	}
 	if (!((phaseIncBuffer->getSample(0, currentFrame) > wtp->waveTableFreqs[waveTableIdx].bottomFreq) && (phaseIncBuffer->getSample(0, currentFrame) <= wtp->waveTableFreqs[waveTableIdx].topFreq))) {
-		//DBG("CVASTWaveTable::fillInterpolateBuffers - out of range - using highest buffer: " + String(phaseIncBuffer->getSample(0, currentFrame)));
+		//VDBG("CVASTWaveTable::fillInterpolateBuffers - out of range - using highest buffer: " + String(phaseIncBuffer->getSample(0, currentFrame)));
 		//cannot be played - out of frequency range
 		//check: use highest freq that is not invalid!
 		waveTableIdx = wtp->numWaveTableFreqs - 1;
@@ -2336,8 +2336,8 @@ bool CVASTWaveTable::fillInterpolateBuffersRange(const bool next, sWaveTablePosi
 		(wtp->numWaveTableFreqs <= waveTableIdx)) {
 
 		//dynamic wavetable generation
-		DBG("CVASTWaveTable::fillInterpolateBuffers - dynamic wavetable freq generation! WtPos: " << wtp->wtPos << " WtFreq: " << waveTableIdx);
-		//DBG("dynamic wavetable generation phasedPhasorBufferPointer[startSample]: " + String(mOscillator->m_phasedPhasorBufferPointer[0][startSample]));
+		VDBG("CVASTWaveTable::fillInterpolateBuffers - dynamic wavetable freq generation! WtPos: " << wtp->wtPos << " WtFreq: " << waveTableIdx);
+		//VDBG("dynamic wavetable generation phasedPhasorBufferPointer[startSample]: " + String(mOscillator->m_phasedPhasorBufferPointer[0][startSample]));
 		makeWaveTableFreq(wtp->wtPos, wtp->waveTableFreqs[waveTableIdx].waveTableLen,
 			wtp->waveTableFreqs[waveTableIdx].bottomFreq, wtp->waveTableFreqs[waveTableIdx].topFreq, wtp->waveTableFreqs[waveTableIdx].maxHarmonics,
 			true, waveTableIdx, true, wtMode, wtFxVal, wtFxType, phaseIncBuffer->getSample(0, currentFrame)); //change true update idx
@@ -2354,7 +2354,7 @@ bool CVASTWaveTable::fillInterpolateBuffersRange(const bool next, sWaveTablePosi
 				//bug catcher
 				float max = *max_element(wtp->waveTableFreqs[waveTableIdx].waveTableSamples.begin(), wtp->waveTableFreqs[waveTableIdx].waveTableSamples.end());
 				if (max > 5.f)
-					DBG("Overflow!!!!");
+					VDBG("Overflow!!!!");
 		#endif
 		*/
 	}
@@ -2368,7 +2368,7 @@ bool CVASTWaveTable::fillInterpolateBuffersRange(const bool next, sWaveTablePosi
 			if (wtp->waveTableFreqs[waveTableIdx].wtFxType != wtFxType) { //reset it
 				ScopedLock sl(mWavetableChangeLock);
 				wtp->hasFXTable = false;
-				DBG("fillInterpolateBuffersRange delete old stuff");
+				VDBG("fillInterpolateBuffersRange delete old stuff");
 				wtp->numWaveTableFreqsBuffer = 0;
 				wtp->waveTableFreqsBuffer.clear();
 				for (int i = 0; i < wtp->waveTableFreqs.size(); i++) {
@@ -2389,7 +2389,7 @@ bool CVASTWaveTable::fillInterpolateBuffersRange(const bool next, sWaveTablePosi
 						//((wtp->waveTableFreqsBuffer[windex].wtFxType == wtFxType) && (abs(wtp->waveTableFreqsBuffer[windex].wtFxVal - wtFxVal) < 0.001f))) {
 						((wtp->waveTableFreqsBuffer[windex].wtFxType == wtFxType) && (abs(wtp->waveTableFreqsBuffer[windex].wtFxVal - wtFxVal) < 0.05f))) { //check this parameter
 						foundInBuffer = true;
-						DBG("Found in Buffer!!: " << wtFxVal);
+						VDBG("Found in Buffer!!: " << wtFxVal);
 						break;
 					}
 				}
@@ -2415,12 +2415,12 @@ bool CVASTWaveTable::fillInterpolateBuffersRange(const bool next, sWaveTablePosi
 					wtp->waveTableFreqs[waveTableIdx].bottomFreq, wtp->waveTableFreqs[waveTableIdx].topFreq, wtp->waveTableFreqs[waveTableIdx].maxHarmonics,
 					true, waveTableIdx, true, wtMode, wtFxVal, wtFxType, phaseIncBuffer->getSample(0, currentFrame));
 
-				DBG("makeWaveTableFreq phasedPhasorBufferPointer, startSample: " << startSample << " wtPos "  << wtp->wtPos << " phasor: " << mOscillator->m_phasedPhasorBufferPointer[0][startSample] << " wtFxVal: " << wtFxVal << " index: " << waveTableIdx);
+				VDBG("makeWaveTableFreq phasedPhasorBufferPointer, startSample: " << startSample << " wtPos "  << wtp->wtPos << " phasor: " << mOscillator->m_phasedPhasorBufferPointer[0][startSample] << " wtFxVal: " << wtFxVal << " index: " << waveTableIdx);
 			}
 			if ((wtFxType == 0) || (wtFxType == C_WTFXTYPE_FM)) { //reset it
 				ScopedLock sl(mWavetableChangeLock);
 				wtp->hasFXTable = false;
-				DBG("fillInterpolateBuffersRange delete old stuff");
+				VDBG("fillInterpolateBuffersRange delete old stuff");
 				wtp->numWaveTableFreqsBuffer = 0;
 				wtp->waveTableFreqsBuffer.clear();
 			}
@@ -2532,7 +2532,7 @@ test: clearing an existing wavetable vector is ten times faster than creating a 
 	}
 	std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
 	auto duration = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
-	DBG("Duration: " << duration);
+	VDBG("Duration: " << duration);
 }
 
 {
@@ -2543,6 +2543,6 @@ test: clearing an existing wavetable vector is ten times faster than creating a 
 	}
 	std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
 	auto duration = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
-	DBG("Duration: " << duration);
+	VDBG("Duration: " << duration);
 }	
 */

@@ -96,7 +96,7 @@ VASTFXComponent::VASTFXComponent (AudioProcessorEditor *editor, AudioProcessor* 
 VASTFXComponent::~VASTFXComponent()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
-    DBG("Destructing VASTFXComponent");
+    VDBG("Destructing VASTFXComponent");
 	this->setLookAndFeel(nullptr);
     //[/Destructor_pre]
 

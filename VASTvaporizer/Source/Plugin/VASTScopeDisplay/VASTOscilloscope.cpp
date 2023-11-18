@@ -531,7 +531,7 @@ void VASTOscilloscope::updateContent(bool force) {
 		return;
 	}
 
-	//DBG("VASTOscilloscope::updateContent - " + l_oscbank);
+	//VDBG("VASTOscilloscope::updateContent - " + l_oscbank);
 
 	m_screenWidthScale = float(getScreenBounds().getWidth()) / float(getWidth());
 	m_screenHeightScale = float(getScreenBounds().getHeight()) / float(getHeight());
@@ -929,7 +929,7 @@ void VASTOscilloscope::mouseDrag(const MouseEvent &e) { // show value
 			if (myProcessor->m_iWTEditorGridMode != OscillatorGridMode::NoGrid) {
 				m_wtselstart = int(float(m_wtselstart) / stepx + 0.5f)  * stepx;
 				m_wtselend = int(float(m_wtselend) / stepx + 0.5f)  * stepx;
-				//DBG("start: " + String(m_wtselstart) + " end: " + String(m_wtselend) + " " + String(ScreenSelectionStart) + " " + String(ScreenSelectionEnd));
+				//VDBG("start: " + String(m_wtselstart) + " end: " + String(m_wtselend) + " " + String(ScreenSelectionStart) + " " + String(ScreenSelectionEnd));
 				if (m_wtselend == m_wtselstart) {
 					std::shared_ptr<CVASTWaveTable> wavetable = myWtEditor->getCurWavetable();
 					if (start < end) {
@@ -1041,7 +1041,7 @@ bool VASTOscilloscope::isInterestedInFileDrag(const StringArray& files) {
 			l_interested = true;
 	}
 	//if (l_interested)
-		//DBG("Interested in drag and drop");
+		//VDBG("Interested in drag and drop");
 	return l_interested;
 };
 
@@ -1246,7 +1246,7 @@ void VASTOscilloscope::handleBorderDisplay() {
 	}
 
 	m_newImageForRepaint = true;
-	//DBG("handleBorderDisplay " + l_oscbank + " " + String(editorSelectedOscBank == true ? "true" : "false") + " " + String(m_bMouseover == true ? "true" : "false"));
+	//VDBG("handleBorderDisplay " + l_oscbank + " " + String(editorSelectedOscBank == true ? "true" : "false") + " " + String(m_bMouseover == true ? "true" : "false"));
 }
 
 void VASTOscilloscope::mouseDown(const MouseEvent &) {

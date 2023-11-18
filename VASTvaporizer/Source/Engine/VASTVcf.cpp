@@ -779,7 +779,7 @@ void CVASTVcf::VADiodeLadderFilterDoFilter(double* pInputBuffer, double* pOutput
 /*
 //--------------------------------------------------------------------------------------------
 void CVASTVcf::processBlock(dsp::AudioBlock<float> filterBlock, modMatrixInputState* matrixInputState, sRoutingBuffers& routingBuffers, int startSample, int numSamples, bool isUI) {
-	//DBG("VCF do filter voice " + String(matrixInputState->voiceNo) + " " + String(startSample)  +" "  + String(numSamples));
+	//VDBG("VCF do filter voice " + String(matrixInputState->voiceNo) + " " + String(startSample)  +" "  + String(numSamples));
 	float fVCFEnvelopeMod = 0.f; //CHECK
 	int paramType = 0;
 	int paramFilterEnv = 0;	

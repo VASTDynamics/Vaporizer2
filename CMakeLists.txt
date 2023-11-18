@@ -354,7 +354,7 @@ if(VASTBUILD)
     "VASTvaporizer/Source/Plugin/VASTCommercial/VASTLicense.cpp"
     "VASTvaporizer/Source/Plugin/VASTCommercial/VASTLicenseEditor.cpp"
   )
-  target_compile_definitions(${PROJECT_NAME} PRIVATE VASTBUILD)
+  target_compile_definitions(${PROJECT_NAME} PRIVATE VASTBUILD VASTLOG)
 endif(VASTBUILD)
 
 juce_add_binary_data(VASTvaporizer2_BinaryData

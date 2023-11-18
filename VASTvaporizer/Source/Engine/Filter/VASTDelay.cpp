@@ -96,7 +96,7 @@ float CDelay::readDelay()
 	/*
 	vassert((yn > -10.0f) && (yn<= 10.0));
 	if (!((yn > -10.0f) && (yn <= 10.0))) {
-		DBG("CDelay::readDelay() overflow > 10.f");
+		VDBG("CDelay::readDelay() overflow > 10.f");
 		yn = 0.0;
 		resetDelay(); // try auto correct! BUT THIS IS NOT A SOLUTION!
 	}
@@ -114,7 +114,7 @@ float CDelay::readDelay()
 	/*
 	vassert((yn_1 > -10.0f) && (yn_1 <= 10.0));
 	if (!((yn_1 > -10.0f) && (yn_1 <= 10.0))) {
-		DBG("CDelay::readDelay() overflow > 10.f");
+		VDBG("CDelay::readDelay() overflow > 10.f");
 		yn_1 = 0.0;
 		resetDelay(); // try auto correct! BUT THIS IS NOT A SOLUTION!
 	}

@@ -52,6 +52,12 @@ VASTAudioProcessor::VASTAudioProcessor() :
 	//_crtBreakAlloc = 693499; // Set to break on allocation number in case you get a leak without a line number
 #endif
 */
+
+//set logger if needed
+#ifdef VASTLOG
+	juce::Logger::setCurrentLogger(this);
+#endif
+	DBG("Start AudioProcesor.");
 	m_initCompleted.store(false);
     m_bAudioThreadRunning.store(false);
     m_wasBypassed.store(false);
@@ -116,7 +122,12 @@ VASTAudioProcessor::~VASTAudioProcessor()
 		MessageManager::getInstance()->callFunctionOnMessageThread(
 			deleteComponent, editor);
 	}
-	/*
+
+#ifdef VASTLOG
+	Logger::setCurrentLogger(nullptr);
+#endif
+
+/*
 #if defined(_DEBUG) && defined JUCE_WINDOWS
 	_CrtDumpMemoryLeaks();
 #endif
@@ -159,12 +170,12 @@ bool VASTAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) cons
 	int inSize = layouts.getMainInputChannelSet().size();
 	int outSize = layouts.getMainOutputChannelSet().size();
 
-	DBG("layouts.getMainInputChannelSet().size():" << layouts.getMainInputChannelSet().size());
-	DBG("layouts.getMainOutputChannelSet().size():" << layouts.getMainOutputChannelSet().size());
-	DBG("layouts.getMainInputChannelSet().isDiscreteLayout():" << (layouts.getMainInputChannelSet().isDiscreteLayout() ? "X" : ""));
-	DBG("layouts.getMainOutputChannelSet().isDiscreteLayout():" << (layouts.getMainOutputChannelSet().isDiscreteLayout() ? "X" : ""));
-	DBG("layouts.getMainInputChannelSet().getSpeakerArrangementAsString():" << (layouts.getMainInputChannelSet().getSpeakerArrangementAsString()));
-	DBG("layouts.getMainOutputChannelSet().getSpeakerArrangementAsString():" << (layouts.getMainOutputChannelSet().getSpeakerArrangementAsString()));
+	VDBG("layouts.getMainInputChannelSet().size():" << layouts.getMainInputChannelSet().size());
+	VDBG("layouts.getMainOutputChannelSet().size():" << layouts.getMainOutputChannelSet().size());
+	VDBG("layouts.getMainInputChannelSet().isDiscreteLayout():" << (layouts.getMainInputChannelSet().isDiscreteLayout() ? "X" : ""));
+	VDBG("layouts.getMainOutputChannelSet().isDiscreteLayout():" << (layouts.getMainOutputChannelSet().isDiscreteLayout() ? "X" : ""));
+	VDBG("layouts.getMainInputChannelSet().getSpeakerArrangementAsString():" << (layouts.getMainInputChannelSet().getSpeakerArrangementAsString()));
+	VDBG("layouts.getMainOutputChannelSet().getSpeakerArrangementAsString():" << (layouts.getMainOutputChannelSet().getSpeakerArrangementAsString()));
 	
 	if (layouts.getMainInputChannelSet().isDisabled()) 
 		return true;
@@ -261,7 +272,24 @@ void VASTAudioProcessor::requestUIUpdate(bool tabs, bool matrix, bool sliders, i
 }
 
 void VASTAudioProcessor::requestUILoadAlert() { 
-    mUIAlert.store(true); }
+    mUIAlert.store(true); 
+}
+
+void* VASTAudioProcessor::sendlogMessage(void* userData)
+{
+	VASTAudioProcessor* processor = static_cast<VASTAudioProcessor*>(userData);
+	std::chrono::high_resolution_clock::time_point l_now  = std::chrono::high_resolution_clock::now();
+	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(l_now - processor->m_processorStartTime).count();
+	processor->logCodeDocument.insertText(0, String(duration) + ": " + processor->m_last_message + "\n");
+	return 0;
+}
+
+void VASTAudioProcessor::logMessage(const String& message)
+{
+	m_last_message = message;
+	MessageManager::getInstance()->callFunctionOnMessageThread(
+		sendlogMessage, this);
+}
 
 bool VASTAudioProcessor::acceptsMidi() const
 {
@@ -292,7 +320,7 @@ double VASTAudioProcessor::getTailLengthSeconds() const
 }
 
 void VASTAudioProcessor::initializeToDefaults() {
-	DBG("Init to defaults");
+	VDBG("Init to defaults");
 	m_pVASTXperience.m_Set.m_bBeforeV22CompatibilityMode = false;
 
 	//int numparam = getNumParameters(); //deprecated
@@ -565,7 +593,7 @@ void VASTAudioProcessor::prepareToPlay(double sampleRate, int expectedSamplesPer
 {
 	if ((sampleRate == 0) || (expectedSamplesPerBlock == 0)) return;
 
-	DBG("Audio processor Prepare to play called!");
+	VDBG("Audio processor Prepare to play called!");
 	m_pVASTXperience.m_iFadeInSamples.store(m_pVASTXperience.m_iMaxFadeSamples);
 
 	//bool b_wasLocked = m_pVASTXperience.getBlockProcessing();
@@ -598,13 +626,13 @@ void VASTAudioProcessor::releaseResources()
 		return;
 	
 	// When playback stops, you can use this as an opportunity to free up any
-	DBG("VASTAudioProcessor:Releaseresources()");
+	VDBG("VASTAudioProcessor:Releaseresources()");
 	m_pVASTXperience.audioProcessLock();
 	bool done = false;
 	int counter = 0;
 	while (!done) {
 		if ((counter<30) && (m_bAudioThreadRunning && (!m_pVASTXperience.getBlockProcessingIsBlockedSuccessfully()))) {		
-			DBG("VASTAudioProcessor:Releaseresources() - sleep");
+			VDBG("VASTAudioProcessor:Releaseresources() - sleep");
 			Thread::sleep(100);
 			counter++;
 			continue;
@@ -700,7 +728,7 @@ void VASTAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mid
 			else if (metadata.getMessage().isController()) {
 				//check for midiLearn
 				if (metadata.getMessage().getControllerNumber() == 0) { //CC00 bank change
-					DBG("Bank Change " << metadata.getMessage().getControllerValue());
+					VDBG("Bank Change " << metadata.getMessage().getControllerValue());
 					m_midiBank = metadata.getMessage().getControllerValue();
 				}
 				else if (metadata.getMessage().getControllerNumber() == 1) { //CC01 mod wheel
@@ -753,7 +781,7 @@ void VASTAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mid
 			//if (newProg < maxPrograms) {
 			if (presetindex >= 0) {
 				setCurrentProgram(presetindex);
-				DBG("Program Change " << presetindex);
+				VDBG("Program Change " << presetindex);
 			}
 		}
     });
@@ -820,7 +848,7 @@ AudioProcessorEditor* VASTAudioProcessor::createEditor()
 //from plugin model to tree
 void VASTAudioProcessor::addChunkTreeState(ValueTree* treeState) { //for save
 																   //OscBanks
-	DBG("Appending chunk data for stateInformation");
+	VDBG("Appending chunk data for stateInformation");
 	String childName = "chunkData";
 	ValueTree l_chunkTree = ValueTree(Identifier(childName));
 	ValueTree l_tree{};
@@ -955,7 +983,7 @@ void VASTAudioProcessor::getStateInformation(MemoryBlock& destData)
 
 	// save many presets / bank 
 
-	DBG("VASTAudioProcessor::getStateInformation called from Thread " << (Thread::getCurrentThread()==nullptr ? "Main UI Thread" : Thread::getCurrentThread()->getThreadName()));
+	VDBG("VASTAudioProcessor::getStateInformation called from Thread " << (Thread::getCurrentThread()==nullptr ? "Main UI Thread" : Thread::getCurrentThread()->getThreadName()));
 
 	const ScopedLock sl(getCallbackLock());
 	//suspendProcessing(true);
@@ -1035,7 +1063,7 @@ bool VASTAudioProcessor::loadUserPatchMetaData(File file, VASTPresetElement& lPr
 //array of xml, xmlsize ...
 //define factory bank
 void VASTAudioProcessor::loadPreset(int index) {
-	DBG("Load preset " << index);
+	VDBG("Load preset " << index);
 	//after this it has to be quick
 	//CriticalSection::ScopedLockType lock(m_pVASTXperience.m_Set.audioProcessBlockRunning);
 	//SpinLock::ScopedLockType lock(m_pVASTXperience.m_Set.audioProcessBlockRunning);
@@ -1218,14 +1246,14 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 	if (isSeparateThread) {
 		if ((processor->m_bAudioThreadStarted) && (!processor->m_wasBypassed)) {
 			while (processor->m_pVASTXperience.getBlockProcessingIsBlockedSuccessfully() == false) {
-				DBG("getBlockProcessingIsBlockedSuccessfully() is false - suspending load process!");
+				VDBG("getBlockProcessingIsBlockedSuccessfully() is false - suspending load process!");
 				std::this_thread::sleep_for(std::chrono::milliseconds(250));
 				waitstate += 50;
 				if (waitstate > 25000) {
 					//processor->m_pVASTXperience.audioProcessUnlock(); //must not unlock here
 					processor->unregisterThread();
 					processor->setErrorState(vastErrorState::errorState16_loadPresetLockUnsuccessful);
-					DBG("ERROR! getBlockProcessingIsBlockedSuccessfully() is false - terminating load process!");
+					VDBG("ERROR! getBlockProcessingIsBlockedSuccessfully() is false - terminating load process!");
 					return; //end after 25s waiting time
 				}
 			}
@@ -1263,7 +1291,7 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 		ValueTree loadedTreeChild = tree.getChild(i);
 		String ids = loadedTreeChild.getPropertyAsValue("id", nullptr, false).toString();
 		if (ids.contains("MultibandCompressor")) {
-			DBG("Replaced old value: " << ids);
+			VDBG("Replaced old value: " << ids);
 			loadedTreeChild.setProperty("id", ids.replaceFirstOccurrenceOf("MultibandCompressor", "MBComp", false), nullptr);
 		}
 	}
@@ -1287,7 +1315,7 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 						ValueTree parameterChild = processor->m_parameterState.state.getChildWithProperty("id", loadedChildProperty);
 						if (!parameterChild.isValid()) {
 							//delete the crap
-							DBG("TreeValue removed: " << loadedTreeChild.getPropertyAsValue("id", nullptr, false).toString() << " " << loadedTreeChild.getPropertyAsValue("text", nullptr, false).toString());
+							VDBG("TreeValue removed: " << loadedTreeChild.getPropertyAsValue("id", nullptr, false).toString() << " " << loadedTreeChild.getPropertyAsValue("text", nullptr, false).toString());
 							tree.removeChild(tree.indexOf(loadedTreeChild), nullptr);
 							jassertfalse; //error state or tempered preset?
 						}
@@ -1516,7 +1544,7 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 						int counter = 30;						
 						while (!done) {
 							if ((counter < 30) && ((processor->m_bAudioThreadRunning) && (!(processor->m_pVASTXperience.getBlockProcessingIsBlockedSuccessfully())))) {
-								DBG("PassTree - sleep");
+								VDBG("PassTree - sleep");
 								Thread::sleep(100);
 								counter++;
 								continue;
@@ -1550,14 +1578,14 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 void VASTAudioProcessor::registerThread() {
 	const ScopedLock sl(getCallbackLock());
 	m_iNumPassTreeThreads++;
-	DBG("Register Num Threads registered: " << m_iNumPassTreeThreads);
+	VDBG("Register Num Threads registered: " << m_iNumPassTreeThreads);
 }
 
 void VASTAudioProcessor::unregisterThread() {
 	const ScopedLock sl(getCallbackLock());
 	m_iNumPassTreeThreads--;
 	if (m_iNumPassTreeThreads < 0) m_iNumPassTreeThreads = 0;
-	DBG("Unregister Num Threads registered: " << m_iNumPassTreeThreads);
+	VDBG("Unregister Num Threads registered: " << m_iNumPassTreeThreads);
 }
 
 bool VASTAudioProcessor::getTreeThreadLock() {
@@ -1971,7 +1999,7 @@ void VASTAudioProcessor::checkForNewerVersion(String resultString) {
 					if (versionToken.size() == 3) {
 						int versionCount = versionToken[0].getIntValue() * 10000 + versionToken[1].getIntValue() * 100 + versionToken[2].getIntValue(); //all two digits
 						if (versionCount < newestVersionCount) {
-							DBG("There is a newer version out!");
+							VDBG("There is a newer version out!");
 							m_showNewerVersionPopup = true;
 							m_newerVersionThatIsAvailble = newestversion;
 						}
@@ -2066,7 +2094,7 @@ const String VASTAudioProcessor::shiftHexEncryptString(const String& str)
         wc += 3;
         result += String(&wc, 1);
     }
-    //DBG(result);
+    //VDBG(result);
     return result;
 }
 
@@ -3283,7 +3311,7 @@ void VASTAudioProcessor::dumpBuffers() {
 		}
 		else {
 			Result r = m_DumpOutStream->getStatus();
-			DBG("ERROR: " << r.getErrorMessage());
+			VDBG("ERROR: " << r.getErrorMessage());
 			vassertfalse;
 		}
 		m_bDumpFileCreated = true;
@@ -3566,6 +3594,9 @@ String VASTAudioProcessor::getVersionString() {
 #endif
 #if defined(VASTBUILD) || defined(VASTCOMMERCIAL)
 	lVersion.append(" v", 2);
+#endif
+#if defined(VASTLOG) 
+	lVersion.append(" log", 4);
 #endif
 	return lVersion;
 }

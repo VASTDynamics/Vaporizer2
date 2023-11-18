@@ -164,7 +164,7 @@ void VASTSamplerViewport::updateContent(bool force) {
 		waveformImageBufferOff.clear(waveformImageBufferOff.getBounds(), myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeOff));
 	}
 
-	//DBG("VASTSamplerViewport::updateContent");
+	//VDBG("VASTSamplerViewport::updateContent");
 
 	m_needsUpdate = false;
 

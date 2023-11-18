@@ -69,7 +69,7 @@ void CVASTOscillatorBank::setWavetable(std::shared_ptr<CVASTWaveTable> wavetable
 
 void CVASTOscillatorBank::setWavetableSoftFade(std::shared_ptr<CVASTWaveTable> wavetable) {
 	//first block all other processing //https://timur.audio/using-locks-in-real-time-audio-processing-safely
-	DBG("setWavetableSoftFade ID:" << wavetable->getID());
+	VDBG("setWavetableSoftFade ID:" << wavetable->getID());
 	const ScopedLock sl(mSharedPtrSoftFadeLock);
 	
 	//m_wavetable_soft_fade_next = wavetable;
@@ -84,7 +84,7 @@ void CVASTOscillatorBank::setWavetableSoftFade(std::shared_ptr<CVASTWaveTable> w
 }
 
 void CVASTOscillatorBank::beginSoftFade() { //to be called at start of buffer processing
-	//DBG("beginSoftFade()");
+	//VDBG("beginSoftFade()");
 
 	if (m_bWavetableSoftfadeStillNeeded) {
 		if (m_bWavetableSoftfadePickedUp && (isInSingleNoteSoftFadeCycle() <= 0)) {
@@ -101,7 +101,7 @@ void CVASTOscillatorBank::beginSoftFade() { //to be called at start of buffer pr
 	if ((m_wavetable_soft_fade_next.get() != nullptr) || (m_wavetable_soft_fade.get() != nullptr)) {  //avoid atomic lock
 		if ((std::atomic_load(&m_wavetable_soft_fade_next) != nullptr) || (std::atomic_load(&m_wavetable_soft_fade) != nullptr)) { //atomic check for nullptr https://stackoverflow.com/questions/30117975/is-thread-safe-to-assign-a-shared-ptr-nullptr
 			if (!mSharedPtrSoftFadeLock.tryEnter()) { //this is not blocking the audio thread - it is not waiting for anything
-				DBG("beginSoftFade LOCKED by setWavetableSoftFade!!!!!!");
+				VDBG("beginSoftFade LOCKED by setWavetableSoftFade!!!!!!");
 				return;
 			}
 
@@ -109,9 +109,9 @@ void CVASTOscillatorBank::beginSoftFade() { //to be called at start of buffer pr
 
 #ifdef _DEBUG
 				if (std::atomic_load(&m_wavetable_soft_fade_next) == nullptr) //atomic check for nullptr https://stackoverflow.com/questions/30117975/is-thread-safe-to-assign-a-shared-ptr-nullptr
-					DBG("beginSoftFade to NULLPTR");
+					VDBG("beginSoftFade to NULLPTR");
 				else
-					DBG("beginSoftFade NOW editing threads#: " << m_numEditingSoftFadeNext);
+					VDBG("beginSoftFade NOW editing threads#: " << m_numEditingSoftFadeNext);
 #endif
 				//m_wavetable_soft_fade = m_wavetable_soft_fade_next;
 				std::atomic_store(&m_wavetable_soft_fade, m_wavetable_soft_fade_next); //assigning a new instance to a shared pointer make thread safe: https://www.modernescpp.com/index.php/atomic-smart-pointers
@@ -122,7 +122,7 @@ void CVASTOscillatorBank::beginSoftFade() { //to be called at start of buffer pr
 				m_bWavetableSoftfadePickedUp = false;
 
 				if (m_bIsRecording) {
-					//DBG("beginSoftFade is recording - adding position from WT " << m_wavetable->getID() << " to WT " << m_wavetable_soft_fade->getID());
+					//VDBG("beginSoftFade is recording - adding position from WT " << m_wavetable->getID() << " to WT " << m_wavetable_soft_fade->getID());
 					if (m_wavetable_soft_fade != nullptr) {
 						int numPos = m_wavetable_soft_fade->getNumPositions();
 						if (numPos < C_MAX_NUM_POSITIONS) {
@@ -135,9 +135,9 @@ void CVASTOscillatorBank::beginSoftFade() { //to be called at start of buffer pr
 #ifdef _DEBUG
 			else {
 				if (m_numEditingSoftFadeNext != 0)
-					DBG("beginSoftFade not done due to editing threads#: " << m_numEditingSoftFadeNext);
+					VDBG("beginSoftFade not done due to editing threads#: " << m_numEditingSoftFadeNext);
 				else
-					DBG("beginSoftFade not done due to SoftFadeStillNeeded ID: " << m_iSingleNoteSoftFadeID);
+					VDBG("beginSoftFade not done due to SoftFadeStillNeeded ID: " << m_iSingleNoteSoftFadeID);
 			}
 #endif
 			mSharedPtrSoftFadeLock.exit();
@@ -152,7 +152,7 @@ bool CVASTOscillatorBank::endSoftFade() { //to be called at start of buffer proc
 		if ((std::atomic_load(&m_wavetable_soft_fade) != nullptr)) { //atomic check for nullptr https://stackoverflow.com/questions/30117975/is-thread-safe-to-assign-a-shared-ptr-nullptr
 			//only need to lock if there is something
 			if (!mSharedPtrSoftFadeLock.tryEnter()) { //this is not blocking the audio thread - it is not waiting for anything
-				DBG("endSoftFade LOCKED by setWavetableSoftFade!!!!!!");
+				VDBG("endSoftFade LOCKED by setWavetableSoftFade!!!!!!");
 				return false;
 			}
 
@@ -164,13 +164,13 @@ bool CVASTOscillatorBank::endSoftFade() { //to be called at start of buffer proc
 				if (m_bWavetableSoftfadePickedUp && (isInSingleNoteSoftFadeCycle() <= 0)) {
 					m_bWavetableSoftfadeStillNeeded.store(false);
 					m_iSingleNoteSoftFadeID = -1;
-					DBG("endSoftFade Resetting m_bWavetableSoftfadeStillNeeded!");
+					VDBG("endSoftFade Resetting m_bWavetableSoftfadeStillNeeded!");
 				}
 			}
 			else clearSingleNoteSoftFadeCycle();
 
 			if (!m_bWavetableSoftfadeStillNeeded) {
-				DBG("endSoftFade merged - editing threads#: " << m_numEditingSoftFadeNext << " replacing WT " << m_wavetable->getID() << " with new WT " << m_wavetable_soft_fade->getID());
+				VDBG("endSoftFade merged - editing threads#: " << m_numEditingSoftFadeNext << " replacing WT " << m_wavetable->getID() << " with new WT " << m_wavetable_soft_fade->getID());
 				//m_wavetable = m_wavetable_soft_fade;
 				std::atomic_store(&m_wavetable, m_wavetable_soft_fade); //assigning a new instance to a shared pointer make thread safe: https://www.modernescpp.com/index.php/atomic-smart-pointers
 				//m_wavetable_soft_fade = nullptr;
@@ -188,7 +188,7 @@ bool CVASTOscillatorBank::endSoftFade() { //to be called at start of buffer proc
 				lResult = true;
 			}
 			else
-				DBG("m_wavetable_soft_fade still used ID: " << m_wavetable_soft_fade->getID());
+				VDBG("m_wavetable_soft_fade still used ID: " << m_wavetable_soft_fade->getID());
 			mSharedPtrSoftFadeLock.exit();
 		}
 	}
@@ -342,12 +342,12 @@ void CVASTOscillatorBank::undoLastWTChange() {
 
 void CVASTOscillatorBank::addSingleNoteSoftFadeCycle(int voiceNo) {
 	m_iSingleNoteSoftFadeCycle[voiceNo].store(true);
-	//DBG("addSingleNoteSoftFadeCycle SingleNoteSoftFadeCycle now " + String((isInSingleNoteSoftFadeCycle())));
+	//VDBG("addSingleNoteSoftFadeCycle SingleNoteSoftFadeCycle now " + String((isInSingleNoteSoftFadeCycle())));
 }
 
 void CVASTOscillatorBank::removeSingleNoteSoftFadeCycle(int voiceNo) {
 	m_iSingleNoteSoftFadeCycle[voiceNo].store(false);
-	//DBG("removeSingleNoteSoftFadeCycle SingleNoteSoftFadeCycle now " + String((isInSingleNoteSoftFadeCycle())));
+	//VDBG("removeSingleNoteSoftFadeCycle SingleNoteSoftFadeCycle now " + String((isInSingleNoteSoftFadeCycle())));
 }
 
 int CVASTOscillatorBank::isInSingleNoteSoftFadeCycle() const {

@@ -84,7 +84,7 @@ void CVASTSettings::sendStatusMessage(StringRef pText) {
 		juce::String writable;
 		writable = pText;		
 		writable += '\0'; // don't forget the terminating 0
-		//DBG(writable);
+		//VDBG(writable);
 		
 		if (m_bWriteDebug == true) {
 			std::string filename = "C:\\Users\\d026198\\Desktop\\debuginfo.txt";
@@ -849,11 +849,11 @@ void CVASTSettings::getMatrixModulationSlotMultiplier(int slot, float& modVal, f
 	multiplier = sourceVal;
 
 	if (multiplier < -1.f) {
-		DBG("had to clip mod mat multiplier!");
+		VDBG("had to clip mod mat multiplier!");
 		multiplier = -1.f;
 	}
 	if (multiplier > 1.f) {
-		DBG("had to clip mod mat multiplier!");
+		VDBG("had to clip mod mat multiplier!");
 		multiplier = 1.f;
 	}
 
