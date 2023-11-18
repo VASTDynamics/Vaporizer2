@@ -57,7 +57,7 @@ VASTAudioProcessor::VASTAudioProcessor() :
 #ifdef VASTLOG
 	juce::Logger::setCurrentLogger(this);
 #endif
-	DBG("Start AudioProcesor.");
+	VDBG("Start AudioProcesor constructor.");
 	m_initCompleted.store(false);
     m_bAudioThreadRunning.store(false);
     m_wasBypassed.store(false);
@@ -104,6 +104,7 @@ VASTAudioProcessor::VASTAudioProcessor() :
 
 	m_presetData.exchangeCurPatchData(*m_presetData.getPreset(0));
 	initializeToDefaults();
+	VDBG("End AudioProcesor constructor.");
 }
 
 void* VASTAudioProcessor::deleteComponent(void* userData)
@@ -275,6 +276,7 @@ void VASTAudioProcessor::requestUILoadAlert() {
     mUIAlert.store(true); 
 }
 
+#ifdef VASTLOG
 void* VASTAudioProcessor::sendlogMessage(void* userData)
 {
 	VASTAudioProcessor* processor = static_cast<VASTAudioProcessor*>(userData);
@@ -290,6 +292,7 @@ void VASTAudioProcessor::logMessage(const String& message)
 	MessageManager::getInstance()->callFunctionOnMessageThread(
 		sendlogMessage, this);
 }
+#endif 
 
 bool VASTAudioProcessor::acceptsMidi() const
 {
@@ -838,6 +841,7 @@ bool VASTAudioProcessor::hasEditor() const
 
 AudioProcessorEditor* VASTAudioProcessor::createEditor()
 {
+	VDBG("Create VASTAudioProcessorEditor");
 	readSettingsFromFile(); //to sync changed plugin sizes
 	VASTAudioProcessorEditor* editor = new VASTAudioProcessorEditor(*this);
 
@@ -1223,6 +1227,7 @@ void VASTAudioProcessor::xmlParseToPatch(XmlElement *pRoot, bool bNameOnly, cons
 }
 
 void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepresentation, VASTPresetElement preset, int index, VASTAudioProcessor* processor, bool isSeparateThread, bool initOnly) {
+	VDBG("passTreeToAudioThread started.");
 	if (processor == nullptr) return;
 
 	if (!initOnly)
@@ -1450,7 +1455,9 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 			}
 
 			tree.removeChild(l_chunkTree, nullptr);
+			VDBG("passTreeToAudioThread repalce tree start.");
 			processor->m_parameterState.replaceState(tree);
+			VDBG("passTreeToAudioThread repalce tree end.");
 
 			processor->m_pVASTXperience.m_Poly.updateVariables();
 			processor->m_pVASTXperience.m_Poly.updateLFO(0);
@@ -1573,6 +1580,7 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 	processor->unregisterThread();
 	processor->m_pVASTXperience.audioProcessUnlock(); 
 	processor->m_loadedPresetIndexCount++;
+	VDBG("passTreeToAudioThread ended.");
 }
 
 void VASTAudioProcessor::registerThread() {
@@ -2410,28 +2418,36 @@ bool VASTAudioProcessor::writeSettingsToFile() {
 	//String myXmlDoc = root.createDocument(String()); //empty is deprecated
 	String myXmlDoc = root.toString();
 
+	/*
 	//check if user folders have to be created
 	if (!File(m_UserPresetRootFolder).exists())
 		(File(m_UserPresetRootFolder).createDirectory()); //recursively create also directories			
 	if (!File(m_UserPresetRootFolder).getChildFile("Factory").isSymbolicLink())
 		if (!File(getVSTPath()).getChildFile("Presets").getFullPathName().equalsIgnoreCase(m_UserPresetRootFolder) &&
-		    File(getVSTPath()).getChildFile("Presets").exists())
+			File(getVSTPath()).getChildFile("Presets").exists()) {
+			VDBG("Create Symlink to " + m_UserPresetRootFolder);
 			if (!File(getVSTPath()).getChildFile("Presets").createSymbolicLink(File(m_UserPresetRootFolder).getChildFile("Factory"), true)) //add symlink to Factory
 				setErrorState(vastErrorState::errorState15_couldNotCreateSymlink);
+		}
 	if (!File(m_UserWavetableRootFolder).exists())
 		(File(m_UserWavetableRootFolder).createDirectory()); //recursively create also directories
 	if (!File(m_UserWavetableRootFolder).getChildFile("Factory").isSymbolicLink())
 		if (!File(getVSTPath()).getChildFile("Tables").getFullPathName().equalsIgnoreCase(m_UserWavetableRootFolder) &&
-			File(getVSTPath()).getChildFile("Tables").exists())
+			File(getVSTPath()).getChildFile("Tables").exists()) {
+			VDBG("Create Symlink to " + m_UserWavetableRootFolder);
 			if (!File(getVSTPath()).getChildFile("Tables").createSymbolicLink(File(m_UserWavetableRootFolder).getChildFile("Factory"), true)) //add symlink to Factory
 				setErrorState(vastErrorState::errorState15_couldNotCreateSymlink);
+		}
 	if (!File(m_UserWavRootFolder).exists())
 		(File(m_UserWavRootFolder).createDirectory()); //recursively create also directories
 	if (!File(m_UserWavRootFolder).getChildFile("Factory").isSymbolicLink())
 		if (!File(getVSTPath()).getChildFile("Noises").getFullPathName().equalsIgnoreCase(m_UserWavRootFolder) &&
-			File(getVSTPath()).getChildFile("Noises").exists())
+			File(getVSTPath()).getChildFile("Noises").exists()) {
+			VDBG("Create Symlink to " + m_UserWavRootFolder);
 			if (!File(getVSTPath()).getChildFile("Noises").createSymbolicLink(File(m_UserWavRootFolder).getChildFile("Factory"), true)) //add symlink to Factory		
 				setErrorState(vastErrorState::errorState15_couldNotCreateSymlink);
+		}
+		*/
 
 	bool migrate_legacy = false;
 	String filename = getSettingsFilePath(false, migrate_legacy); //write always new path
@@ -2448,6 +2464,7 @@ bool VASTAudioProcessor::writeSettingsToFile() {
 	out.writeText(myXmlDoc, false, false, "\n");  //slash n new?
 	out.flush();
 	root.deleteAllChildElements();
+	VDBG("Wrote settings to file.");
 	return true;
 }
 
@@ -2745,6 +2762,7 @@ bool VASTAudioProcessor::readSettingsFromFile() {
 	if (migrate_legacy)
 		writeSettingsToFileAsync();
 
+	VDBG("Loaded settings from file.");
 	return true;
 }
 

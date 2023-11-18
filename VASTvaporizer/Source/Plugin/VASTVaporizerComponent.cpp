@@ -377,6 +377,7 @@ void VASTVaporizerComponent::timerCallback() {
 void VASTVaporizerComponent::setLicenseText(StringRef text, bool bInErrorState, VASTAudioProcessor::vastErrorState iErrorState) {
 	if (bInErrorState) {		
 		String outStr = "Error: " + myProcessor->vastErrorStateToString(iErrorState);
+		VDBG("ERRORSTATE: " + outStr);
 		headerComponent->getLabelLicense()->setText(outStr, NotificationType::sendNotification);
 	}
 	else

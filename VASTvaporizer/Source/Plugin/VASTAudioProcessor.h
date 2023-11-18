@@ -43,7 +43,10 @@ class VASTParameterSlider; //forward declaration
 //==============================================================================
 /**
 */
-class VASTAudioProcessor  : public AudioProcessor, public Logger
+class VASTAudioProcessor  : public AudioProcessor
+#ifdef VASTLOG
+	, public Logger
+#endif
 {
 public:
     //==============================================================================
@@ -108,7 +111,7 @@ public:
 		case vastErrorState::errorState12_writeSettingsToFileFailed: return (TRANS("Writing the settings file failed. Please check access rights to folders."));
 		case vastErrorState::errorState13_readSettingsFromFileFailed: return (TRANS("Reading the settings file failed. Please check access rights to folders."));
 		case vastErrorState::errorState14_loadDefaultMidiMappingFailed: return (TRANS("Loading of default MIDI mapping failed."));
-		case vastErrorState::errorState15_couldNotCreateSymlink: return (TRANS("Could not create symlink in the selected folder. Check writea access rights."));
+		case vastErrorState::errorState15_couldNotCreateSymlink: return (TRANS("Could not create symlink in the selected folder. Check write access rights."));
 		case vastErrorState::errorState16_loadPresetLockUnsuccessful: return(TRANS("Loading the preset failed. Process lock failed."));
 		case vastErrorState::errorState17_internalWavetableEngineError: return(TRANS("An internal wavetable engine error occured. Please reload the plugin."));
 		case vastErrorState::errorState18_prepareToPlayFailed: return(TRANS("The audio thread could not be prepared to play. Please reload the plugin."));
@@ -171,9 +174,9 @@ public:
 	void requestUIUpdate(bool tabs = true, bool matrix = true, bool sliders = true, int slider1dest = -1, int slider2dest = -1);
 	void requestUILoadAlert();
 	
+#ifdef VASTLOG
 	//logger
 	void logMessage(const String& message) override;
-#ifdef VASTLOG
 	String m_last_message{};
 	static void* sendlogMessage(void* userData);
 	CodeDocument logCodeDocument{};	

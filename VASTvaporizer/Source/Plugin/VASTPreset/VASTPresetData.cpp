@@ -42,7 +42,7 @@ void VASTPresetData::loadFromSettings() {
 }
 
 void VASTPresetData::reloadPresetArray() {
-	
+	VDBG("Start reloadPresetArray");
 	m_PresetArray.clear();
 	m_usedAuthors.clear();
 	m_usedTags.clear();
@@ -99,11 +99,13 @@ void VASTPresetData::reloadPresetArray() {
 				if (tags[j].trim() != "")
 					m_usedTags.addIfNotAlreadyThere(tags[j].trim(), true);
 		}
+		VDBG("Added to PresetArray: " + presetFiles[i].getFullPathName());
 	}
 	loadFromSettings();
 	doSearchWithVector();
 	myProcessor->requestUIPresetUpdate();
 	m_needsTreeUpdate = true;
+	VDBG("End reloadPresetArray");
 }
 
 void VASTPresetData::doSearchWithVector() {

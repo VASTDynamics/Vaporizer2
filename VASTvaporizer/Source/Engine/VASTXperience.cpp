@@ -57,6 +57,7 @@ CVASTXperience::~CVASTXperience(void)
 
 bool CVASTXperience::initializeEngine()
 {	
+	VDBG("Start InitializeEngine");
 	m_Set.m_nSampleRate.store(m_nSampleRate.load());
 
 	std::shared_ptr<CVASTParamState> state = std::make_shared<CVASTParamState>();
@@ -118,7 +119,7 @@ bool CVASTXperience::initializeEngine()
 	m_Set.m_RoutingBuffers.init();
 
 	oscilloscopeRingBuffer.reset(new VASTRingBuffer<GLfloat>(1, 64 * 10)); //just init size
-
+	VDBG("End InitializeEngine");
 	return true;
 }
 
@@ -720,7 +721,7 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 						vassertfalse;
 						m_Set.m_uMaxPoly = 16;
 					}
-
+			VDBG("Polymode changed to " + String(m_Set.m_uMaxPoly));
 			if (olduMaxPoly != m_Set.m_uMaxPoly)
 				m_Poly.releaseResources();
 			if (!bWasLocked)
