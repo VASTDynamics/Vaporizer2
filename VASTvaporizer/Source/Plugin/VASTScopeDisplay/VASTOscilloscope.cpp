@@ -81,7 +81,7 @@ String VASTOscilloscope::getTooltip()
 	if (myWtEditor == nullptr)
 		return TRANS("Use right mouse click to toggle single cycle versus perspective wavetable display.");
 	else
-		return "";
+		return TRANS("Click and drag to change selected area / draw. Doubleclick toggles selection. Rightclick for menu.");
 }
 
 void VASTOscilloscope::setToOpenGLRender() {

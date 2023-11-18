@@ -869,3 +869,8 @@ void VASTSamplerViewport::filesDropped(const StringArray& files, int x, int ) {
 	selectAll();
 	myWtEditor->updateAll(false);
 }
+
+String VASTSamplerViewport::getTooltip()
+{
+	return TRANS("Click and drag to change selected area. Rightclick for menu.");
+}

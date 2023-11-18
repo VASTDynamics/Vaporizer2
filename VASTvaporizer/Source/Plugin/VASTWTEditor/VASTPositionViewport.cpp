@@ -678,3 +678,8 @@ void VASTPositionViewport::filesDropped(const StringArray& files, int x, int ) {
 	if (arrayidx < 0) arrayidx = 0;
 	myWtEditor->importFilesAsCycles(files, arrayidx);
 }
+
+String VASTPositionViewport::getTooltip()
+{
+	return TRANS("Hold shift key to multiselect. Click and drag to rearrange sequence. Click and drag plus symbol to add cycles. Rightclick for menu.");
+}

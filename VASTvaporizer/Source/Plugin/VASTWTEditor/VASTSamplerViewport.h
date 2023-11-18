@@ -22,7 +22,7 @@ typedef struct sSelectionWav {
 	int estimatedCycleLengthinSamples = 0;
 } sSelectionWav;
 
-class VASTSamplerViewport : public Component, public FileDragAndDropTarget, public Timer
+class VASTSamplerViewport : public Component, public FileDragAndDropTarget, public Timer, public TooltipClient
 {
 public:
 	VASTSamplerViewport();
@@ -63,6 +63,8 @@ public:
 	bool m_needsPositionUpdate = false;
 	bool m_needsRescale = false;
 	void updateContentAsync();
+	
+	String getTooltip() override;
 
 private:
 	//==============================================================================

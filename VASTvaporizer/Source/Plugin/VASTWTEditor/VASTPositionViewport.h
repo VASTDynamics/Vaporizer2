@@ -11,9 +11,9 @@ class VASTAudioProcessorEditor; //forward declaration
 class VASTAudioProcessor; //forward declaration
 class VASTWaveTableEditorComponent; //forward declaration
 
-class VASTPositionViewport : public Component,
+class VASTPositionViewport : public Component, 
+	public TooltipClient,
 	public Timer,
-	//public KeyListener,
 	public FileDragAndDropTarget
 {
 public:
@@ -57,6 +57,8 @@ public:
 	float getScreenWidthScale() {
 		return m_screenWidthScale;
 	}
+
+	String getTooltip() override;
 
 private:
 	//==============================================================================
