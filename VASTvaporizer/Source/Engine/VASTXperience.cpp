@@ -9,7 +9,6 @@ VAST Dynamics Audio Software (TM)
 #include "Utils/VASTSynthfunctions.h"
 #include "../Plugin/VASTAudioProcessor.h"
 #include "../Plugin/VASTAudioProcessorEditor.h"
-#include "../Plugin/VASTScopeDisplay/VASTOscilloscopeOGL2D.h"
 #include <string>
 #include <sstream>
 #include <chrono>
@@ -363,15 +362,14 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
 	beginSoftFade();
 
 	if (myProcessor->getActiveEditor() != nullptr) {
-		VASTAudioProcessorEditor* editor = (VASTAudioProcessorEditor*)myProcessor->getActiveEditor();
-		if (editor->isShowing()) {
+		//VASTAudioProcessorEditor* editor = (VASTAudioProcessorEditor*)myProcessor->getActiveEditor();
+		//if (editor->isShowing()) {
 			for (int bank = 0; bank < 4; bank++) {
 				std::shared_ptr<CVASTWaveTable> l_wavetable = m_Poly.m_OscBank[bank]->getNewSharedSoftFadeWavetable();
-				if (l_wavetable == nullptr)
-					l_wavetable = m_Poly.m_OscBank[bank]->getNewSharedWavetable();
-				l_wavetable->copyUIFXUpdates();
+				if (l_wavetable != nullptr)
+                    l_wavetable->copyUIFXUpdates();
 			}
-		}
+		//}
 	}
 
 	//Hardcore check
