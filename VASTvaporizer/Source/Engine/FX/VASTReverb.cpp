@@ -283,15 +283,15 @@ void CVASTReverb::prepareToPlay(double , int samplesPerBlock) {
 	reset(); //CHECK NEW
 	m_plateReverb.setSampleRate(m_iSampleRate);
 
-	m_plateReverb.setParameter(MVerb<float>::BANDWIDTHFREQ, 1.0);
-	m_plateReverb.setParameter(MVerb<float>::DAMPINGFREQ, 0.9);
-//	m_plateReverb.setParameter(MVerb<float>::DECAY, 0.8);
-//	m_plateReverb.setParameter(MVerb<float>::MIX, 0.7);
-	m_plateReverb.setParameter(MVerb<float>::EARLYMIX, 1.0);
-	m_plateReverb.setParameter(MVerb<float>::GAIN, 1.0);
-//	m_plateReverb.setParameter(MVerb<float>::SIZE, 1.0);
-	m_plateReverb.setParameter(MVerb<float>::DENSITY, 1.0);
-	m_plateReverb.setParameter(MVerb<float>::PREDELAY, 0.1);  
+	m_plateReverb.setParameter(MVerb<float>::BANDWIDTHFREQ, 1.0f);
+	m_plateReverb.setParameter(MVerb<float>::DAMPINGFREQ, 0.9f);
+//	m_plateReverb.setParameter(MVerb<float>::DECAY, 0.8f);
+//	m_plateReverb.setParameter(MVerb<float>::MIX, 0.7f);
+	m_plateReverb.setParameter(MVerb<float>::EARLYMIX, 1.0f);
+	m_plateReverb.setParameter(MVerb<float>::GAIN, 1.0f);
+//	m_plateReverb.setParameter(MVerb<float>::SIZE, 1.0f);
+	m_plateReverb.setParameter(MVerb<float>::DENSITY, 1.0f);
+	m_plateReverb.setParameter(MVerb<float>::PREDELAY, 0.1f);  
 	
 	// --- do the flush
 	updateVariables();
@@ -323,7 +323,7 @@ void CVASTReverb::reset() { //called when switch toggled
 
 //Plate
 	m_plateReverb.reset();
-	m_plateReverb.setParameter(MVerb<float>::SIZE, 1.0);
+	m_plateReverb.setParameter(MVerb<float>::SIZE, 1.0f);
 
 	m_lowCutBiquad1.flushDelays();
 	m_lowCutBiquadL.flushDelays();
@@ -344,28 +344,28 @@ void CVASTReverb::updateVariables() {
 
 	//set defaults (no gui yet)
 	//m_fPreDelay_mSec = 40.000000;
-	m_fPreDelayAtten_dB = 0.00;
-	m_fInputLPF_g = 0.50000;
-	m_fAPF_1_Delay_mSec = 13.280000;
-	m_fAPF_1_g = 0.700000;
-	m_fAPF_2_Delay_mSec = 28.129999;
-	m_fAPF_2_g = - 0.700000;
-	m_fPComb_1_Delay_mSec = 31.709999;
-	m_fPComb_2_Delay_mSec = 37.110001;
-	m_fPComb_3_Delay_mSec = 40.230000;
-	m_fPComb_4_Delay_mSec = 44.139999;
+	m_fPreDelayAtten_dB = 0.00f;
+	m_fInputLPF_g = 0.50000f;
+	m_fAPF_1_Delay_mSec = 13.28f;
+	m_fAPF_1_g = 0.700000f;
+	m_fAPF_2_Delay_mSec = 28.129999f;
+	m_fAPF_2_g = - 0.700000f;
+	m_fPComb_1_Delay_mSec = 31.709999f;
+	m_fPComb_2_Delay_mSec = 37.110001f;
+	m_fPComb_3_Delay_mSec = 40.230000f;
+	m_fPComb_4_Delay_mSec = 44.139999f;
 	
 	//m_fLPF2_g2 = 0.10000; //for both
 	m_fLPF2_g2 = m_fDampingMod * 0.01f;
 	
-	m_fAPF_3_Delay_mSec = 9.380000;
-	m_fAPF_3_g = -0.600000;
-	m_fPComb_5_Delay_mSec = 30.469999;
-	m_fPComb_6_Delay_mSec = 33.980000;
-	m_fPComb_7_Delay_mSec = 41.410000;
-	m_fPComb_8_Delay_mSec = 42.580002;
-	m_fAPF_4_Delay_mSec = 11.000000;
-	m_fAPF_4_g = 0.600000;
+	m_fAPF_3_Delay_mSec = 9.380000f;
+	m_fAPF_3_g = -0.600000f;
+	m_fPComb_5_Delay_mSec = 30.469999f;
+	m_fPComb_6_Delay_mSec = 33.980000f;
+	m_fPComb_7_Delay_mSec = 41.410000f;
+	m_fPComb_8_Delay_mSec = 42.580002f;
+	m_fAPF_4_Delay_mSec = 11.000000f;
+	m_fAPF_4_g = 0.600000f;
 
 	// Pre-Delay
 	m_PreDelay.setDelay_mSec(m_fPredelayMod); //in ms

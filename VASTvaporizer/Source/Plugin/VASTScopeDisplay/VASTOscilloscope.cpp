@@ -719,9 +719,9 @@ void VASTOscilloscope::updateContent(bool force) {
 					lastwtposint = wtpos;
 
 					if (!l_soloMode)
-						g.setColour(myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeArea).withMultipliedAlpha(0.3));
+						g.setColour(myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeArea).withMultipliedAlpha(0.3f));
 					else
-						g.setColour(myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeAreaSolo).withMultipliedAlpha(0.3));
+						g.setColour(myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeAreaSolo).withMultipliedAlpha(0.3f));
 
 					g.strokePath(myWave, PathStrokeType(1.8f * scale)); //was 1.3f
 				}

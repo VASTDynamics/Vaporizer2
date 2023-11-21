@@ -906,7 +906,7 @@ void CVASTWaveTable::setFreqDomainTables(int wtPos, std::vector<dsp::Complex<flo
 
 	// determine maxHarmonic, the highest non-zero harmonic in the wave
 	int maxHarmonic = tableLen >> 1;
-	const float minVal = 0.000001; // -120 dB
+	const float minVal = 0.000001f; // -120 dB
 		
 	while ((fabs(wtp->frequencyDomainBuffer[maxHarmonic].real()) + fabs(wtp->frequencyDomainBuffer[maxHarmonic].imag()) < minVal) && maxHarmonic) {
 		--maxHarmonic;
@@ -1043,7 +1043,7 @@ void CVASTWaveTable::generateWaveTableFreqsFromTimeDomain(int wtPos, int tableLe
 
 	// determine maxHarmonic, the highest non-zero harmonic in the wave
 	int maxHarmonic = tableLen >> 1;
-	const float minVal = 0.000001; // -120 dB	
+	const float minVal = 0.000001f; // -120 dB	
 	while ((fabs(wtp->frequencyDomainBuffer[maxHarmonic].real()) + fabs(wtp->frequencyDomainBuffer[maxHarmonic].imag()) < minVal) && maxHarmonic) {
 		//VDBG(String(maxHarmonic) + " : " + String(fabs(wtp->frequencyDomainBuffer[maxHarmonic].real()) + fabs(wtp->frequencyDomainBuffer[maxHarmonic].imag())));
 		--maxHarmonic;

@@ -8,8 +8,7 @@ VAST Dynamics Audio Software (TM)
 #include "VASTSettings.h"
 #include "VASTSampler.h"
 
-
-//class VASTSamplerSound; //forward declaration
+class VASTAudioProcessor; //forward declaration
 class VASTSynthesiserSound : public juce::SynthesiserSound {
 public:
 	VASTSynthesiserSound();
@@ -276,7 +275,7 @@ public:
 	/** Creates a new synthesiser.
 	You'll need to add some sounds and voices before it'll make any sound.
 	*/
-	VASTSynthesiser();
+	VASTSynthesiser(VASTAudioProcessor* processor);
 
 	/** Destructor. */
 	virtual ~VASTSynthesiser();
@@ -554,6 +553,8 @@ public:
 	atomic<bool> m_voicePlaying[C_MAX_POLY];
 
 	int m_MPEMasterChannel = 1; //TODO MPE config messages
+		/** The last pitch-wheel values for each midi channel. */
+	atomic<int> lastPitchWheelValues[16];
 
 protected:
 	//==============================================================================
@@ -562,9 +563,6 @@ protected:
 
 	OwnedArray<VASTSynthesiserVoice> voices;
 	ReferenceCountedArray<juce::SynthesiserSound> sounds;
-
-	/** The last pitch-wheel values for each midi channel. */
-	int lastPitchWheelValues[16];
 
 	/** Renders the voices for the given range.
 	By default this just calls renderNextBlock() on each voice, but you may need
@@ -651,8 +649,9 @@ private:
 	int m_iGlissandoCollectSamples = 0; 
 	CVASTSettings* m_Set = nullptr;
 	CVASTPoly* m_Poly = nullptr;
+	VASTAudioProcessor* myProcessor = nullptr;
 	uint8 lastPressureLowerBitReceivedOnChannel[16];
-	MPEValue lastTimbreReceivedOnChannel[16];
+	MPEValue lastTimbreReceivedOnChannel[16];	
 
 #if JUCE_CATCH_DEPRECATED_CODE_MISUSE
 	// Note the new parameters for these methods.

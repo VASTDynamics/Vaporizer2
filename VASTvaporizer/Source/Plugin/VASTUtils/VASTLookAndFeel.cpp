@@ -1389,13 +1389,13 @@ void VASTLookAndFeel::drawRotarySlider(Graphics& g, int x, int y, int width, int
 	// outer arc	
 	if ((isParameterSlider) && (isDDTarget)) {
 		Path pArc;
-		pArc.addCentredArc(centreX, centreY, radius*1.3f, radius*1.3f, 0.0f, 1.2f * M_PI, 2.8f  * M_PI, true);
+		pArc.addCentredArc(centreX, centreY, radius*1.3f, radius*1.3f, 0.0f, 1.2f * float(M_PI), 2.8f  * float(M_PI), true);
 		g.setColour(findVASTColour(VASTColours::colRotarySliderOuterArcBackground));
 		g.strokePath(pArc, PathStrokeType(radius30perc));
 
 		if (hasModMatrixSource == false) {
 			Path pArc2;
-			pArc2.addCentredArc(centreX, centreY, radius*1.3f, radius*1.3f, 0.0f, (1.2f * M_PI) + valStartPercentage * (2.8f - 1.2f) * M_PI, (1.2f * M_PI) + valEndPercentage *  (2.8f - 1.2f) * M_PI, true);
+			pArc2.addCentredArc(centreX, centreY, radius*1.3f, radius*1.3f, 0.0f, (1.2f * float(M_PI)) + valStartPercentage * (2.8f - 1.2f) * float(M_PI), (1.2f * float(M_PI)) + valEndPercentage *  (2.8f - 1.2f) * float(M_PI), true);
 			g.setColour(findVASTColour(VASTColours::colRotarySliderOuterArcValueIndicator));
 			g.strokePath(pArc2, PathStrokeType(radius40perc));
 			g.setColour(findVASTColour(VASTColours::colRotarySliderOuterArcValueIndicatorInner));

@@ -163,7 +163,7 @@ void CVASTCompressorExpander::prepareToPlay (double , int samplesPerBlock) {
 	ylPrev[1] = 0.0f;
 
     inverseSampleRate = 1.0f / (float)m_iSampleRate;
-    inverseE = 1.0f / M_E;
+    inverseE = 1.0f / float(M_E);
 }
 
 void CVASTCompressorExpander::releaseResources()

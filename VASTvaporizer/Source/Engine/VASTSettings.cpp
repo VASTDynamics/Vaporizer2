@@ -967,8 +967,8 @@ void CVASTSettings::processEnvelope(int inFramesToProcess) {
 	/** Sets the times for the vaious stages of the envelope.
 	1 is an instant attack/release, 0 will never change the value.
 	*/
-	float envAttack = 0.9;	//coefficient param
-	float envRelease = 0.1; //coefficient param
+	float envAttack = 0.9f;	//coefficient param
+	float envRelease = 0.1f; //coefficient param
 
 	for (int i = 0; i < inFramesToProcess; i++) {
 		float envIn = fabsf(m_RoutingBuffers.fAudioInputBuffer->getReadPointer(0)[i]);

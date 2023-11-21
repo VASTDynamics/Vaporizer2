@@ -17,8 +17,6 @@ Has:
 #include "Utils/VASTSynthfunctions.h"
 #include "Utils/VASTSSEHelper.h"
 #include "../Plugin/VASTAudioProcessor.h"
-#include "../Plugin/VASTControls/VASTParameterSlider.h"
-#include "../Plugin/VASTAudioProcessorEditor.h"
 #ifdef _WINDOWS
 #include <time.h>
 #else
@@ -388,51 +386,7 @@ int CVASTSingleNote::getNumOscsPlaying() const {
 void CVASTSingleNote::controllerMoved(int controllerNumber, int newControllerValue)
 {
 	if (controllerNumber == 1) { // MIDI CC 1 Modulation, e.g. VSTHost
-		m_Set->m_uModWheel = newControllerValue; //0..127
-		m_Set->m_uModWheel.store(jlimit(0, 127, m_Set->m_uModWheel.load()));
-
-		//chek for permalink
-		int permalink = m_Poly->getProcessor()->getModWheelPermaLink();
-		if (permalink != 0) {
-			VASTAudioProcessorEditor* _editor = (VASTAudioProcessorEditor*)m_Poly->getProcessor()->getActiveEditor();
-			if (_editor != nullptr) {
-				VASTParameterSlider* lslider = nullptr;
-				if (permalink == 1) {
-					if (Component_buffer_m_fCustomModulator1 == nullptr) {
-						lslider = dynamic_cast<VASTParameterSlider*>(_editor->findChildComponetWithName(_editor->vaporizerComponent.get(), "m_fCustomModulator1"));
-						Component_buffer_m_fCustomModulator1 = lslider;
-					}
-					else lslider = Component_buffer_m_fCustomModulator1;
-					m_Poly->m_fCustomModulator1_smoothed.setTargetValue(m_Set->m_uModWheel.load() / 127.f);
-				} else if (permalink == 2) {
-					if (Component_buffer_m_fCustomModulator2 == nullptr) {
-						lslider = dynamic_cast<VASTParameterSlider*>(_editor->findChildComponetWithName(_editor->vaporizerComponent.get(), "m_fCustomModulator2"));
-						Component_buffer_m_fCustomModulator2 = lslider;
-					}
-					else lslider = Component_buffer_m_fCustomModulator2;
-					m_Poly->m_fCustomModulator2_smoothed.setTargetValue(m_Set->m_uModWheel.load() / 127.f);
-				} else if (permalink == 3) {
-					if (Component_buffer_m_fCustomModulator3 == nullptr) {
-						lslider = dynamic_cast<VASTParameterSlider*>(_editor->findChildComponetWithName(_editor->vaporizerComponent.get(), "m_fCustomModulator3"));
-						Component_buffer_m_fCustomModulator3 = lslider;
-					}
-					else lslider = Component_buffer_m_fCustomModulator3;
-					m_Poly->m_fCustomModulator3_smoothed.setTargetValue(m_Set->m_uModWheel.load() / 127.f);
-				}
-				else if (permalink == 4) {
-					if (Component_buffer_m_fCustomModulator4 == nullptr) {
-						lslider = dynamic_cast<VASTParameterSlider*>(_editor->findChildComponetWithName(_editor->vaporizerComponent.get(), "m_fCustomModulator4"));
-						Component_buffer_m_fCustomModulator4 = lslider;
-					}
-					else lslider = Component_buffer_m_fCustomModulator4;
-					m_Poly->m_fCustomModulator4_smoothed.setTargetValue(m_Set->m_uModWheel.load() / 127.f);
-				}
-
-				if (lslider != nullptr) {
-					_editor->registerComponentValueUpdate(lslider, m_Set->m_uModWheel.load() / 127.f);
-				}
-			}
-		}
+		m_Set->m_uModWheel.store(jlimit(0, 127, newControllerValue)); //0..127	
 	}
 	else if (controllerNumber == 74) { // MPE Controller Sound Brightness // handleTimbreMSB 
 		VDBG("Brightness MSB voice " << mVoiceNo << " " << newControllerValue);

@@ -51,7 +51,6 @@ public:
 	void setActiveLookAndFeel(int no);
 	VASTLookAndFeel* getCurrentVASTLookAndFeel();
 	Component* findChildComponetWithName(Component* parent, String compName);
-	void registerComponentValueUpdate(Component* comp, float lValue);
 
 	class VASTComponentBoundsConstrainer : public ComponentBoundsConstrainer {
 	public:
@@ -82,10 +81,6 @@ private:
 
 	bool resizeCalledFromConstructor = false;
 	void showNewerVersionPopup();
-
-	bool bShallComponentValueUpdate = false;
-	Component* shallComponentUpdate = nullptr;
-	float shallComponentUpdateValue = 0.f;
 
 #if !defined JUCE_LINUX
 	VASTComponentBoundsConstrainer m_componentBoundsConstrainer = { this };

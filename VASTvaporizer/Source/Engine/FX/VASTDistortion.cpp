@@ -264,7 +264,7 @@ bool CVASTDistortion::processAudioFrame(float* pInputBuffer, float* pOutputBuffe
 	m_fDistLowcut_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fDistLowcut, MODMATDEST::DistortionLowCut, &inputState));
 	if (m_fDistLowcut_smoothed.isSmoothing()) {
 		float lDistortionLowcut = m_fDistLowcut_smoothed.getNextValue();
-		float fQ = sqrt2over2;
+		float fQ = float(sqrt2over2);
 		m_lowCutBiquadL.calcBiquad(CVASTBiQuad::HIGHPASS, lDistortionLowcut, m_iSampleRate, fQ, -18.0f);
 		m_lowCutBiquadR.copySettingsFrom(&m_lowCutBiquadL);
 	}
@@ -305,12 +305,12 @@ bool CVASTDistortion::processAudioFrame(float* pInputBuffer, float* pOutputBuffe
 	float fFuzzL = 0.f;
 	float fFuzzR = 0.f;
 	if (fDriveL == 0.0f) fFuzzL = 0.0f;
-	else fFuzzL = (fDriveL / abs(fDriveL))*(1 - powf(M_E, fAlpha * powf(fDriveL, 2.0f) / abs(fDriveL))) * 0.06f; //attenuate fuzz
+	else fFuzzL = (fDriveL / abs(fDriveL))*(1.f - powf(float(M_E), fAlpha * powf(fDriveL, 2.0f) / abs(fDriveL))) * 0.06f; //attenuate fuzz
 	if (fFuzzL > 1.0f) fFuzzL = 1.0f;
 	if (fFuzzL < -1.0f) fFuzzL = -1.0f;
 	if (isnan(fFuzzL)) fFuzzL = 0.0f; //NaN check
 	if (fDriveR == 0.0f) fFuzzR = 0.0f;
-	else fFuzzR = (fDriveR / abs(fDriveR))*(1 - powf(M_E, fAlpha * powf(fDriveR, 2.0f) / abs(fDriveR))) * 0.06f; //attenuate fuzz
+	else fFuzzR = (fDriveR / abs(fDriveR))*(1.f - powf(float(M_E), fAlpha * powf(fDriveR, 2.0f) / abs(fDriveR))) * 0.06f; //attenuate fuzz
 	if (fFuzzR > 1.0f) fFuzzR = 1.0f;
 	if (fFuzzR < -1.0f) fFuzzR = -1.0f;
 	if (isnan(fFuzzR)) fFuzzR = 0.0f; //NaN check

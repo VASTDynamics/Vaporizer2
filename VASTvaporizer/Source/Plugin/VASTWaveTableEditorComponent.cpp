@@ -2136,7 +2136,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 		std::vector<myFloat> samples = std::vector<myFloat>(C_WAVE_TABLE_SIZE);
 		for (int wtPos = msbeg; wtPos <= msend; wtPos++) {
 			samples = (*editor->getCurWavetable()->getNaiveTable(wtPos));
-			float e = 2 * M_PI;
+			float e = 2 * float(M_PI);
 			int j = 0;
 			int end = wtselend - wtselstart + 1;
 			for (int i = wtselstart; i <= wtselend; i++) {
@@ -2225,7 +2225,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 		std::vector<myFloat> samples = std::vector<myFloat>(C_WAVE_TABLE_SIZE);
 		for (int wtPos = msbeg; wtPos <= msend; wtPos++) {
 			samples = (*editor->getCurWavetable()->getNaiveTable(wtPos));
-			float e = 2 * M_PI;
+			float e = 2 * float(M_PI);
 			int j = 0;
 			int end = wtselend - wtselstart + 1;
 			for (int i = wtselstart; i <= wtselend; i++) {
@@ -2350,7 +2350,7 @@ void VASTWaveTableEditorComponent::threadedEditorFunction(int editorFunction, do
 			int j = 0;
 			float val1 = (*editor->getCurWavetable()->getNaiveTable(wtPos))[wtselstart];
 			float val2 = (*editor->getCurWavetable()->getNaiveTable(wtPos))[wtselend];
-			float e = 2 * M_PI;
+			float e = 2 * float(M_PI);
 			int end = wtselend - wtselstart;
 			for (int i = wtselstart; i <= wtselend; i++) {
 				samples[i] = val1 + (val2 - val1) * float(j) / float(end) *  sinf(0.25f * e * float(j) / float(end));

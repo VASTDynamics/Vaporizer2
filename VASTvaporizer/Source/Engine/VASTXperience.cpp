@@ -8,7 +8,7 @@ VAST Dynamics Audio Software (TM)
 #include "VASTSampler.h"
 #include "Utils/VASTSynthfunctions.h"
 #include "../Plugin/VASTAudioProcessor.h"
-#include "../Plugin/VASTAudioProcessorEditor.h"
+#include "../Plugin/VASTScopeDisplay/VASTOscilloscopeOGL2D.h"
 #include <string>
 #include <sstream>
 #include <chrono>
@@ -34,6 +34,7 @@ CVASTXperience::CVASTXperience(VASTAudioProcessor* processor) :
 	m_isPreparingForPlay.store(false);
 	my_processor = processor; //in CVASTEffect
 	setEffectName(JucePlugin_Name);
+	m_midiBank = 0;
 }
 
 /* destructor()
@@ -361,17 +362,6 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
 
 	beginSoftFade();
 
-	if (myProcessor->getActiveEditor() != nullptr) {
-		//VASTAudioProcessorEditor* editor = (VASTAudioProcessorEditor*)myProcessor->getActiveEditor();
-		//if (editor->isShowing()) {
-			for (int bank = 0; bank < 4; bank++) {
-				std::shared_ptr<CVASTWaveTable> l_wavetable = m_Poly.m_OscBank[bank]->getNewSharedSoftFadeWavetable();
-				if (l_wavetable != nullptr)
-                    l_wavetable->copyUIFXUpdates();
-			}
-		//}
-	}
-
 	//Hardcore check
 	if ((m_bLastChainBufferZero) && (m_iFadeOutSamples == 0) && (m_iFadeInSamples == 0) &&
 		(midiMessages.isEmpty() && (m_Poly.getSynthesizer()->getNumMidiNotesKeyDown() == 0) && (!m_Poly.voicesMSEGStillActive()) &&
@@ -390,6 +380,90 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
 		}
 	}
 
+	if (myProcessor->getActiveEditor() != nullptr) {
+		if (myProcessor->isEditorCurrentlyProbablyVisible()) {
+			for (int bank = 0; bank < 4; bank++) {
+				std::shared_ptr<CVASTWaveTable> l_wavetable;
+				l_wavetable = m_Poly.m_OscBank[bank]->getNewSharedSoftFadeWavetable();
+				if (l_wavetable == nullptr) {
+					l_wavetable = m_Poly.m_OscBank[bank]->getWavetablePointer();
+				}
+				if (l_wavetable != nullptr)
+					l_wavetable->copyUIFXUpdates();
+			}
+		}
+	}
+
+	//===========================================================================================
+	//MIDI processing
+	int samplePosition = 0;
+
+	auto midiIterator = midiMessages.findNextSamplePosition(samplePosition);
+	std::for_each(midiIterator,
+		midiMessages.cend(),
+		[&](const MidiMessageMetadata& metadata)
+		{
+			if (metadata.getMessage().isPitchWheel()) {
+				if (!myProcessor->isMPEenabled() || (metadata.getMessage().getChannel() == m_Poly.getSynthesizer()->m_MPEMasterChannel)) {
+					float wheelPos = (limit_range(metadata.getMessage().getPitchWheelValue(), 0.f, 16384.f));
+					VASTSynthesiser* synth = m_Poly.getSynthesizer();
+					if (synth != nullptr) {
+						for (int i = 0; i < 16; i++) //all midichannels?
+							synth->handlePitchWheel(i, wheelPos);
+					}
+				}						
+			}
+			else if (metadata.getMessage().isController()) {
+				//Check for MIDI learn
+				if (metadata.getMessage().getControllerNumber() == 0) { //CC00 bank change
+					VDBG("Bank Change " << metadata.getMessage().getControllerValue());
+					m_midiBank = metadata.getMessage().getControllerValue();
+				}
+				else if (metadata.getMessage().getControllerNumber() == 1) { //CC01 mod wheel
+					int wheelPos = metadata.getMessage().getControllerValue();
+					wheelPos = limit_range(wheelPos, 0.f, 127.f);
+
+					VASTSynthesiser* synth = m_Poly.getSynthesizer();
+					if (synth != nullptr) {
+						for (int i = 0; i < 16; i++) //all midichannels?
+							synth->handleController(i, 1, wheelPos); //controlle# 1 is modwheel
+					}
+				}
+			
+				//midi CC 1 (MSB) and midi CC 2
+				//CC02 mod wheel high precision?
+				else
+					if (myProcessor->m_iNowLearningMidiParameter >= 0) {
+						myProcessor->midiParameterLearned(metadata.getMessage().getControllerNumber());
+						myProcessor->requestUIUpdate();
+					}
+					else {
+						//check for mapped parameters
+						int lParamInternal = 0;
+						lParamInternal = myProcessor->midiMappingGetParameterIndex(metadata.getMessage().getControllerNumber());
+						if (lParamInternal >= 0) {
+							float lValue = metadata.getMessage().getControllerValue() / 127.0f;
+							if (lParamInternal == 9999) { //UI 
+								String uiComponentName = myProcessor->midiMappingComponentVariableName(metadata.getMessage().getControllerNumber());
+								myProcessor->registerComponentValueUpdate(uiComponentName, lValue); //UI only parameter that is not in parameter state, e.g. WT functions
+							}
+							else if (lParamInternal < getParameters().size()) {
+								getParameters()[lParamInternal]->setValueNotifyingHost(lValue);
+							}
+						}
+					}
+			}
+			else if (metadata.getMessage().isProgramChange()) {
+				int presetindex = myProcessor->m_presetData.bankProgramGetPresetIndex(m_midiBank, metadata.getMessage().getProgramChangeNumber());	
+				if (presetindex >= 0) {
+					myProcessor->setCurrentProgram(presetindex); //will set block process
+					VDBG("Program Change " << presetindex);
+				}
+			}
+		});
+	
+	//===========================================================================================
+	
 	//check buffer
 	//if (buffer.getNumChannels() != 2) return true; //stereo only - and VST3 sends 0 channels
 

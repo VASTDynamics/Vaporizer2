@@ -144,7 +144,9 @@ Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_artefacts\Release\Standalone\V
 ;new logic - always in appfolder
 Source: "..\Presets\*"; DestDir: "{app}\Presets"; Components: factorypresets; Flags: recursesubdirs
 Source: "..\Tables\*"; DestDir: "{app}\Tables"; Components: wavetables; Flags: recursesubdirs
+Source: "..\Tables\*"; DestDir: "{code:GetPluginDir|5}\Factory"; Components: wavetables; Flags: recursesubdirs
 Source: "..\Noises\*"; DestDir: "{app}\Noises"; Components: noises; Flags: recursesubdirs
+Source: "..\Noises\*"; DestDir: "{code:GetPluginDir|6}\Factory"; Components: noises; Flags: recursesubdirs
 Source: "VaporizerUserManual.url"; DestDir: "{app}"; Components: documentation
 Source: "license.txt"; DestDir: "{app}"; Components: license
 

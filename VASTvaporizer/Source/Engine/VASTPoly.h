@@ -104,7 +104,7 @@ private:
 	int m_ARP_currentNote, m_ARP_currentStep, m_ARP_direction = 0;
 	double m_ARP_time = 0;
 	
-	VASTSynthesiser m_OscillatorSynthesizer;
+	VASTSynthesiser m_OscillatorSynthesizer{ myProcessor };
 
 	JUCE_LEAK_DETECTOR(CVASTPoly)
 };

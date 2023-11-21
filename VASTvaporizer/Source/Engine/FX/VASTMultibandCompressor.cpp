@@ -57,14 +57,14 @@ void CVASTMultibandCompressor::initParameters() {
 	//low band
 	createAndAddParameter(&m_fMBCompThresholdLB, parameters, 1, "m_fMBCompThresholdLB", "Compressor threshold low band (dB)", "Thres", 3,
 		MODMATDEST::CompressorThresholdLowBand,
-		NormalisableRange<float>(-60.0f, -0.0001), -40.0f,
+		NormalisableRange<float>(-60.0f, -0.0001f), -40.0f,
 		[](float value) {return String(value) + " dB" ; },
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
 	createAndAddParameter(&m_fMBCompRatioLB, parameters, 1, "m_fMBCompRatioLB", "Compressor ratio low band (:1)", "Ratio", 4,
 		MODMATDEST::CompressorRatioLowBand,
-		NormalisableRange<float>(1.f, 100, 0.000001f, 0.3f, false), 40.0f,
+		NormalisableRange<float>(1.f, 100.f, 0.000001f, 0.3f, false), 40.0f,
 		[](float value) {return String(value) + " :1"; },
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
@@ -72,13 +72,13 @@ void CVASTMultibandCompressor::initParameters() {
 
 	createAndAddParameter(&m_fMBCompAttackLB, parameters, 1, "m_fMBCompAttackLB", "Attack low band (ms)", "Atk", 5,
 		MODMATDEST::NoDestination,
-		NormalisableRange<float>(0.1f, 80.0), 4.0f,
+		NormalisableRange<float>(0.1f, 80.0f), 4.0f,
 		[](float value) {return String(value) + " ms"; },
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false);
 	createAndAddParameter(&m_fMBCompReleaseLB, parameters, 1, "m_fMBCompReleaseLB", "Release low band (ms)", "Rel", 6,
 		MODMATDEST::NoDestination,
-		NormalisableRange<float>(0.1f, 1000.0), 4.0f,
+		NormalisableRange<float>(0.1f, 1000.0f), 4.0f,
 		[](float value) {return String(value) + " ms"; },
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false);
@@ -94,14 +94,14 @@ void CVASTMultibandCompressor::initParameters() {
 	//mid band
 	createAndAddParameter(&m_fMBCompThresholdMB, parameters, 1, "m_fMBCompThresholdMB", "Compressor threshold mid band (dB)", "Thres", 8,
 		MODMATDEST::CompressorThresholdMidBand,
-		NormalisableRange<float>(-60.0f, -0.0001), -10.0f,
+		NormalisableRange<float>(-60.0f, -0.0001f), -10.0f,
 		[](float value) {return String(value) + " dB"; },
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
 	createAndAddParameter(&m_fMBCompRatioMB, parameters, 1, "m_fMBCompRatioMB", "Compressor ratio mid band (:1)", "Ratio", 9,
 		MODMATDEST::CompressorRatioMidBand,
-		NormalisableRange<float>(1.f, 100, 0.000001f, 0.3f, false), 25.0f,
+		NormalisableRange<float>(1.f, 100.f, 0.000001f, 0.3f, false), 25.0f,
 		[](float value) {return String(value) + " :1"; },
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
@@ -114,7 +114,7 @@ void CVASTMultibandCompressor::initParameters() {
 		false, true, false, false);
 	createAndAddParameter(&m_fMBCompReleaseMB, parameters, 1, "m_fMBCompReleaseMB", "Release mid band (ms)", "Rel", 11,
 		MODMATDEST::NoDestination,
-		NormalisableRange<float>(0.1f, 1000.0), 4.0f,
+		NormalisableRange<float>(0.1f, 1000.0f), 4.0f,
 		[](float value) {return String(value) + " ms"; },
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false);
@@ -130,14 +130,14 @@ void CVASTMultibandCompressor::initParameters() {
 	//high band	
 	createAndAddParameter(&m_fMBCompThresholdHB, parameters, 1, "m_fMBCompThresholdHB", "Compressor threshold high band (dB)", "Thres", 13,
 		MODMATDEST::CompressorThresholdHighBand,
-		NormalisableRange<float>(-60.0f, -0.0001), -40.0f,
+		NormalisableRange<float>(-60.0f, -0.0001f), -40.0f,
 		[](float value) {return String(value) + " dB"; },
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
 	createAndAddParameter(&m_fMBCompRatioHB, parameters, 1, "m_fMBCompRatioHB", "Compressor ratio high band (:1)", "Ratio", 14,
 		MODMATDEST::CompressorRatioHighBand,
-		NormalisableRange<float>(1.f, 100, 0.000001f, 0.3f, false), 55.0f,
+		NormalisableRange<float>(1.f, 100.f, 0.000001f, 0.3f, false), 55.0f,
 		[](float value) {return String(value) + " :1"; },
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
@@ -151,7 +151,7 @@ void CVASTMultibandCompressor::initParameters() {
 		false, true, false, false);
 	createAndAddParameter(&m_fMBCompReleaseHB, parameters, 1, "m_fMBCompReleaseHB", "Release high band (ms)", "Rel", 16,
 		MODMATDEST::NoDestination,
-		NormalisableRange<float>(0.1f, 1000.0), 4.0f,
+		NormalisableRange<float>(0.1f, 1000.0f), 4.0f,
 		[](float value) {return String(value) + " ms"; },
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false);

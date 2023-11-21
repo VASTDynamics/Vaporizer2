@@ -376,6 +376,17 @@ public:
 
 	static void* deleteComponent(void* userData);
 
+	MidiKeyboardState m_midiKeyboardState{};
+	void midiParameterLearned(int iCC);
+
+	bool isEditorCurrentlyProbablyVisible();
+	atomic<bool> m_editorIsProbablyVisible = false;
+	void registerComponentValueUpdate(String uiComponentName, float lValue);
+
+	atomic<bool> m_bShallComponentValueUpdate = false;
+	String m_shallComponentUpdate = "";
+	atomic<float> m_shallComponentUpdateValue = 0.f;
+
 #if defined(VASTCOMMERCIAL) || defined(VASTBUILD)
 	VASTLicense mLicense;
 #endif
@@ -418,8 +429,6 @@ private:
     std::atomic<bool> mUIPresetUpdate = false;
     std::atomic<bool> mUIPresetReloadUpdate = false;
 
-	int m_midiBank = 0;
-
 	int m_MPEmode = 0; // settings
 	int m_ModWheelPermaLink = 0;
 
@@ -429,7 +438,7 @@ private:
 
 	std::atomic<bool> mUIInitFlag;
     std::atomic<bool> mUIAlert;
-	//bool mUIPresetUpdateFlag;
+	//bool mUIPresetUpdateFlag;	
 
 	int mIntPpq = 0;
 	String m_sLicenseString = " n/a ";
@@ -445,7 +454,6 @@ private:
 		String componentVariableName;
 	} sMidiMap;
 	sMidiMap m_MidiMapping[128]; // there are only 128 MIDI CCs
-	void midiParameterLearned(int iCC);
 	//void writeMappingForDocumentation();
 	
 	int m_iDumpFileSampleCount = 0;
@@ -466,7 +474,7 @@ private:
 	bool getTreeThreadLock();	
 
     Label safePointerLabel; //for safePointerOnly
-    
+
 	//std::unique_ptr<VASTAudioProcessorEditor> cachedVASTEditor = nullptr;
 };
 

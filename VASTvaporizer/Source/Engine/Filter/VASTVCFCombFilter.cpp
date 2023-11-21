@@ -124,8 +124,8 @@ bool CVASTVCFCombFilter::processAudioFrame(float* pInputBuffer, float* pOutputBu
 
 	float lCombDryWet = m_fCombDryWet_smoothed.getNextValue();
 
-	float fbL = pInputBuffer[0] + powf(0.001, (1.0 - (lCombLevel / 101.0f))) * ynL;
-	float fbR = pInputBuffer[1] + powf(0.001, (1.0 - (lCombLevel / 101.0f))) * ynR;
+	float fbL = pInputBuffer[0] + powf(0.001f, (1.0f - (lCombLevel / 101.0f))) * ynL;
+	float fbR = pInputBuffer[1] + powf(0.001f, (1.0f - (lCombLevel / 101.0f))) * ynR;
 
 	// write delay line
 	mDelayLeft.writeDelayAndInc(fbL);

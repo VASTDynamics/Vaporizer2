@@ -202,13 +202,13 @@ double VASTQFilterCoefficients::Map2PoleResonance(double reso, double freq, int 
    {
    case st_Medium:
       reso *= max(0.0, 1.0 - max(0.0, (freq - 58) * 0.05));
-      return (0.99 - 1.0 * limit_range((double)(1 - (1 - reso) * (1 - reso)), 0.0, 1.0));
+      return (0.99 - 1.0 * limit_range((float)(1 - (1 - reso) * (1 - reso)), 0.0f, 1.0f));
    case st_Rough:
       reso *= max(0.0, 1.0 - max(0.0, (freq - 58) * 0.05));
-      return (1.0 - 1.05 * limit_range((double)(1 - (1 - reso) * (1 - reso)), 0.001, 1.0));
+      return (1.0 - 1.05 * limit_range((float)(1 - (1 - reso) * (1 - reso)), 0.001f, 1.0f));
    default:
    case st_Smooth:
-      return (2.5 - 2.45 * limit_range((double)(1 - (1 - reso) * (1 - reso)), 0.0, 1.0));
+      return (2.5 - 2.45 * limit_range((float)(1 - (1 - reso) * (1 - reso)), 0.0f, 1.0f));
    }
    return 0;
 }
@@ -226,14 +226,14 @@ double VASTQFilterCoefficients::Map4PoleResonance(double reso, double freq, int 
    switch (subtype)
    {
    case st_Medium:
-      reso *= max(0.0, 1.0 - max(0.0, (freq - 58) * 0.05));
-      return 0.99 - 0.9949 * limit_range((double)reso, 0.0, 1.0); // sqrt(1.01) = 1.004987562
+      reso *= max(0.0f, 1.0f - max(0.0f, (float(freq) - 58.f) * 0.05f));
+      return 0.99f - 0.9949f * limit_range((double)reso, 0.0f, 1.0f); // sqrt(1.01) = 1.004987562
    case st_Rough:
-      reso *= max(0.0, 1.0 - max(0.0, (freq - 58) * 0.05));
-      return (1.0 - 1.05 * limit_range((double)reso, 0.001, 1.0));
+      reso *= max(0.0f, 1.0f - max(0.0f, (float(freq) - 58.f) * 0.05f));
+      return (1.0f - 1.05f * limit_range((double)reso, 0.001f, 1.0f));
    default:
    case st_Smooth:
-      return (2.5 - 2.3 * limit_range((double)reso, 0.0, 1.0));
+      return (2.5f - 2.3f * limit_range((double)reso, 0.0f, 1.0f));
    }
 }
 
@@ -242,11 +242,11 @@ double VASTQFilterCoefficients::resoscale(double reso, int subtype)
    switch (subtype)
    {
    case st_Medium:
-      return (1.0 - 0.75 * reso * reso);
+      return (1.0f - 0.75f * reso * reso);
    case st_Rough:
-      return (1.0 - 0.5 * reso * reso);
+      return (1.0f - 0.5f * reso * reso);
    case st_Smooth:
-      return (1.0 - 0.25 * reso * reso);
+      return (1.0f - 0.25f * reso * reso);
    }
 
    return 1.0;
@@ -548,7 +548,7 @@ void VASTQFilterCoefficients::Coeff_BR12(float freq, float reso, int subtype)
 void VASTQFilterCoefficients::Coeff_LP4L(float freq, float reso, int subtype)
 {
    double gg =
-       limit_range(((double)dmasterTuneHz * note_to_pitch(freq) * dsamplerate_os_inv), 0.0, 0.187); // gg
+       limit_range(((double)dmasterTuneHz * note_to_pitch(freq) * dsamplerate_os_inv), 0.0f, 0.187f); // gg
 
    float t_b1 = 1.f - exp(-2 * M_PI * gg);
    float q = min(2.15f * limit_range(reso, 0.f, 1.f), 0.5f / (t_b1 * t_b1 * t_b1 * t_b1));

@@ -120,11 +120,9 @@ public:
     Describe your class and how it works here!
                                                                     //[/Comments]
 */
-class VASTVaporizerComponent  : public Component,
-                                public Timer,
+class VASTVaporizerComponent  : public Component,                                
                                 public DragAndDropContainer,
-                                public KeyListener,
-                                public MidiKeyboardStateListener
+                                public KeyListener
 {
 public:
     //==============================================================================
@@ -167,11 +165,6 @@ public:
 	VASTGeneratorsComponent* getGeneratorsComponent() {
 		return c_generatorsComponent.get();
 	}
-
-	void handleNoteOn(MidiKeyboardState* source, int midiChannel, int midiNoteNumber, float velocity) override;
-	void handleNoteOff(MidiKeyboardState* source, int midiChannel, int midiNoteNumber, float velocity) override;
-	void processMidiBuffer(MidiBuffer& midiMessages, int numSamples);
-	void timerCallback() override;
 
 	bool keyPressed(const KeyPress& key, Component* originatingComponent) override; //return true for the ableton bug
     bool keyStateChanged(bool isKeyDown, Component* originatingComponent) override;

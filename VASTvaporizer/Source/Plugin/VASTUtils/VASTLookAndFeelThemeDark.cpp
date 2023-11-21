@@ -191,7 +191,7 @@ Colour VASTLookAndFeelThemeDark::findVASTColour(int colourID) {
 		return Colour::fromFloatRGBA(0.5f, 0.5f, 0.5f, 1.0f); //transparent
 		break;
 	case colToggleButtonOuter:
-		return Colour::fromFloatRGBA(0.15f, 0.15, 0.15f, 1.0f); //transparent
+		return Colour::fromFloatRGBA(0.15f, 0.15f, 0.15f, 1.0f); //transparent
 		break;
 	case colToggleButtonShadeOn:
 		return Colour::fromFloatRGBA(0.7f, 0.9f, 1.0f, 0.35f);

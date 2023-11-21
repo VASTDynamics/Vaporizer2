@@ -68,7 +68,7 @@ void VASTPresetData::reloadPresetArray() {
 	}
 
 	FileSearchPath sPath = FileSearchPath(myProcessor->m_UserPresetRootFolder);
-	//sPath.addIfNotAlreadyThere(File(myProcessor->getVSTPath()).getChildFile("Presets").getFullPathName()); //add serach path for factory presets in app folder (not configurable) //not needed with symlink solution
+	sPath.addIfNotAlreadyThere(File(myProcessor->getVSTPath()).getChildFile("Presets").getFullPathName()); //add search path for factory presets in app folder (not configurable) //not needed with symlink solution
 
 	Array<File> presetFiles;
 	sPath.findChildFiles(presetFiles, File::findFiles, true, "*.vvp");

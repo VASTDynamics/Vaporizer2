@@ -42,7 +42,7 @@ VASTFreqDomainViewport::VASTFreqDomainViewport()
 	//maxRe = sqrtf(C_WAVE_TABLE_SIZE / 2.0f); //normalize with n/2
 	maxRe = 0.707f;
 	maxReDisp = 0.6f;
-	maxIm = M_PI; 
+	maxIm = float(M_PI); 
 }
 
 VASTFreqDomainViewport::~VASTFreqDomainViewport() {
@@ -367,17 +367,17 @@ dsp::Complex<float> VASTFreqDomainViewport::setDomainBufferSlotRealPercentage(do
 	if (percentage > 1.0) percentage = 1.0;
 	if (percentage < 0.0) percentage = 0.0;
 
-	double logarithmicRe = powf(percentage, 1.0 / 3.0);
-	double magnitudeDB = jmap(logarithmicRe, 0.0, 1.0, c_freqbin_mindb, c_freqbin_maxdb); //chek 0 to 1?
+	double logarithmicRe = double(powf(percentage, 1.0f / 3.0f));
+	double magnitudeDB = jmap(logarithmicRe, 0.0, 1.0, c_freqbin_mindb, c_freqbin_maxdb); //check 0 to 1?
 
-	double magnitude = abs(exp(magnitudeDB / 20.0)); //clean
+	double magnitude = abs(exp(magnitudeDB / 20.0f)); //clean
 	if (magnitudeDB == c_freqbin_mindb)
 		magnitude = 0.f;
 	
 	//https://www.researchgate.net/post/How_do_I_convert_a_magnitude_and_phase_into_a_complex_number
 
 	float phase = arg(currentSlotVal);
-	if (oldPerc < 0.001f) phase = M_PI;
+	if (oldPerc < 0.001f) phase = float(M_PI);
 	return std::polar(float(magnitude), phase);
 }
 

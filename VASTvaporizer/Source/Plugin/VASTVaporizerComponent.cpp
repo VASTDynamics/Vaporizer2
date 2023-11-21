@@ -147,9 +147,6 @@ VASTVaporizerComponent::VASTVaporizerComponent (AudioProcessorEditor *editor, Au
 	c_keyboardComponent.reset(new VASTKeyboardComponent(myEditor, myProcessor));
 	c_keyboardComponent->setLookAndFeel(myProcessor->getCurrentVASTLookAndFeel());
 
-	c_keyboardComponent->getMidiKeyboardState()->addListener(this);
-	c_keyboardComponent->getMidiKeyboardState()->reset();
-
 	c_generatorsComponent.reset(new VASTGeneratorsComponent(myEditor, myProcessor));
 	c_generatorsComponent->setOpaque(true);
 	c_concertinaCenter->addVASTPanels(c_generatorsComponent.get(), c_tabbedComponent.get(), 20000, 20000, 0.37465f, true, false, false); //can collapse generators but not the tabstrip
@@ -185,7 +182,6 @@ VASTVaporizerComponent::VASTVaporizerComponent (AudioProcessorEditor *editor, Au
 VASTVaporizerComponent::~VASTVaporizerComponent()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
-	//stopTimer();
     VDBG("Destructing VASTVaporizerComponent");
 	isActive = false;
 	this->setLookAndFeel(nullptr);
@@ -338,40 +334,6 @@ void VASTVaporizerComponent::processBlock(AudioSampleBuffer& buffer) {
 		//audioOscilloscopeR->processBlock(samplesR, numSamples);
 	//}
 	//this only copys data to buffer - painting is done by timercallback
-}
-
-void VASTVaporizerComponent::processMidiBuffer(MidiBuffer& midiMessages, int numSamples) {
-	c_keyboardComponent->getMidiKeyboardState()->processNextMidiBuffer(midiMessages, 0, numSamples, true);
-}
-
-
-void VASTVaporizerComponent::handleNoteOn(MidiKeyboardState* source, int midiChannel, int midiNoteNumber, float velocity) {
-	if (midiChannel == 2) { //keyboards own
-		//float newVelocity = velocity * 127.0; //is float .. 1.0 internally here
-		//myProcessor->midiNoteOn(1, midiNoteNumber, newVelocity); // map to channel 1
-	}
-}
-
-void VASTVaporizerComponent::handleNoteOff(MidiKeyboardState* source, int midiChannel, int midiNoteNumber, float velocity) {
-	if (midiChannel == 2) { //keyboards own
-		//myProcessor->midiNoteOff(1, midiNoteNumber, 0, false); // map to channel 1
-	}
-}
-
-
-void VASTVaporizerComponent::timerCallback() {
-	if (!isActive) return;
-
-	//TODO
-	/*
-	VASTAudioProcessorEditor* myEditor = (VASTAudioProcessorEditor*)getParentComponent();
-	VASTAudioProcessor* myProcessor = myEditor->getProcessor();
-
-	UINT green = 255 - UINT(((myProcessor->getLFOValue()) + 1.0f) * 127.0f);
-	lfoLED->setColour(Label::backgroundColourId, Colour::fromRGB(0,green,UINT(green/2.f)));
-	green = 255 - UINT(((myProcessor->getLFO2Value()) + 1.0f) * 127.0f);
-	lfo2LED->setColour(Label::backgroundColourId, Colour::fromRGB(0, green, UINT(green / 2.f)));
-	*/
 }
 
 void VASTVaporizerComponent::setLicenseText(StringRef text, bool bInErrorState, VASTAudioProcessor::vastErrorState iErrorState) {

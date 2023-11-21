@@ -222,13 +222,13 @@ void CVASTStereoDelay::prepareToPlay(double , int samplesPerBlock) {
 	m_LeftDelay.init(5.0 * m_iSampleRate);
 	m_RightDelay.init(5.0 * m_iSampleRate);
 
-	m_LeftDelay.setAPF_g(0.1);
-	m_RightDelay.setAPF_g(0.1);
+	m_LeftDelay.setAPF_g(0.1f);
+	m_RightDelay.setAPF_g(0.1f);
 
 	// --- do the flush
 	reset();
 	
-	float fQ = sqrt2over2;
+	float fQ = float(sqrt2over2);
 	m_lowCutBiquadL.calcBiquad(CVASTBiQuad::HIGHPASS, *m_fDelayLowcut, m_iSampleRate, fQ, -18.0f);
 	m_lowCutBiquadR.copySettingsFrom(&m_lowCutBiquadL);
 	m_highCutBiquadL.calcBiquad(CVASTBiQuad::LOWPASS, *m_fDelayHighcut, m_iSampleRate, fQ, -18.0f);
@@ -316,7 +316,7 @@ void CVASTStereoDelay::processBlock(AudioSampleBuffer& buffer, MidiBuffer& , con
 		m_fDelayLowcut_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fDelayLowcut, MODMATDEST::DelayLowCut, &inputState));
 		if (m_fDelayLowcut_smoothed.isSmoothing()) {
 			float lDelayLowcut = m_fDelayLowcut_smoothed.getNextValue();
-			float fQ = sqrt2over2;
+			float fQ = float(sqrt2over2);
 			m_lowCutBiquadL.calcBiquad(CVASTBiQuad::HIGHPASS, lDelayLowcut, m_iSampleRate, fQ, -18.0f);
 			m_lowCutBiquadR.copySettingsFrom(&m_lowCutBiquadL);
 		}
@@ -325,7 +325,7 @@ void CVASTStereoDelay::processBlock(AudioSampleBuffer& buffer, MidiBuffer& , con
 		m_fDelayHighcut_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fDelayHighcut, MODMATDEST::DelayHighCut, &inputState));
 		if (m_fDelayHighcut_smoothed.isSmoothing()) {
 			float lDelayHighcut = m_fDelayHighcut_smoothed.getNextValue();
-			float fQ = sqrt2over2;
+			float fQ = float(sqrt2over2);
 			m_highCutBiquadL.calcBiquad(CVASTBiQuad::LOWPASS, lDelayHighcut, m_iSampleRate, fQ, -18.0f);
 			m_highCutBiquadR.copySettingsFrom(&m_highCutBiquadL);
 		}

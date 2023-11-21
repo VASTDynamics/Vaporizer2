@@ -76,12 +76,6 @@ VASTAudioProcessorEditor::~VASTAudioProcessorEditor() {
 	vaporizerComponent = nullptr;
 }
 
-void VASTAudioProcessorEditor::registerComponentValueUpdate(Component* comp, float lValue) {
-	bShallComponentValueUpdate = true;
-	shallComponentUpdate = comp;
-	shallComponentUpdateValue = lValue;
-}
-
 Component* VASTAudioProcessorEditor::findChildComponetWithName(Component* parent, String compName)
 {
 	Component* retComp = nullptr;
@@ -102,29 +96,31 @@ Component* VASTAudioProcessorEditor::findChildComponetWithName(Component* parent
 
 //should be optimal now
 void VASTAudioProcessorEditor::timerCallback(int timerID) {
+	if (!isVisible()) {
+		processor.m_editorIsProbablyVisible.store(false);
+		return;
+	}
+	else 
+		processor.m_editorIsProbablyVisible.store(true);
+
 	if (vaporizerComponent->isActive == false) return; //not yet ready?
 
-	if (timerID == 1) { //component uzdate
-		if (bShallComponentValueUpdate) {
-			if (shallComponentUpdate != nullptr) {
-				VASTSlider* lslider = dynamic_cast<VASTSlider*>(shallComponentUpdate);
+	VASTAudioProcessor* _processor = getProcessor();
+	if (timerID == 1) { //component update
+		if (_processor->m_bShallComponentValueUpdate.load()) {
+			if (_processor->m_shallComponentUpdate != "") {
+				VASTSlider* lslider = dynamic_cast<VASTSlider*>(findChildComponetWithName(vaporizerComponent.get(), _processor->m_shallComponentUpdate));
 				if (lslider != nullptr) {
-					float sVal = lslider->getRange().getStart() + (lslider->getRange().getEnd() - lslider->getRange().getStart()) * jlimit<float>(0.f, 1.f, shallComponentUpdateValue);
-					lslider->setValue(sVal, NotificationType::sendNotificationAsync);
-				}
-				else {
-					VASTParameterSlider* lslider = dynamic_cast<VASTParameterSlider*>(shallComponentUpdate);
-					if (lslider != nullptr) {
-						float sVal = lslider->getRange().getStart() + (lslider->getRange().getEnd() - lslider->getRange().getStart()) * jlimit<float>(0.f, 1.f, shallComponentUpdateValue);
+					if (lslider->getComponentID().equalsIgnoreCase(_processor->m_shallComponentUpdate)) {
+						float sVal = lslider->getRange().getStart() + (lslider->getRange().getEnd() - lslider->getRange().getStart()) * jlimit<float>(0.f, 1.f, _processor->m_shallComponentUpdateValue);
 						lslider->setValue(sVal, NotificationType::sendNotificationAsync);
 					}
 				}
 			}
-			bShallComponentValueUpdate = false;
+			_processor->m_bShallComponentValueUpdate.store(false);
 		}
 	}
 	else { //ui update
-		VASTAudioProcessor* _processor = getProcessor();
 		vaporizerComponent->setLicenseText(_processor->getLicenseText(), _processor->isInErrorState(), _processor->getErrorState());
 
 		if (_processor->m_showNewerVersionPopup) {

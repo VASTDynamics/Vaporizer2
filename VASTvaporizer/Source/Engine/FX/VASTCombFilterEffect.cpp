@@ -220,8 +220,8 @@ bool CVASTCombFilterEffect::processAudioFrame(float* pInputBuffer, float* pOutpu
 	m_fCombDryWet_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fCombDryWet, MODMATDEST::CombDryWet, inputState));
 	float lCombDryWet = m_fCombDryWet_smoothed.getNextValue();
 
-	float fbL = pInputBuffer[0] + powf(0.001, (1.0 - (lCombLevel / 101.0f))) * ynL;
-	float fbR = pInputBuffer[1] + powf(0.001, (1.0 - (lCombLevel / 101.0f))) * ynR;
+	float fbL = pInputBuffer[0] + powf(0.001f, (1.0f - (lCombLevel / 101.0f))) * ynL;
+	float fbR = pInputBuffer[1] + powf(0.001f, (1.0f - (lCombLevel / 101.0f))) * ynR;
 
 	// write delay line
 	mDelayLeft.writeDelayAndInc(fbL);
@@ -235,8 +235,8 @@ bool CVASTCombFilterEffect::processAudioFrame(float* pInputBuffer, float* pOutpu
 	
 	//mix filter in 
 	float fMixinComb = (lCombDryWet / 100.f) * (float(m_iSoftFade) / float(C_MAX_SOFTFADE));
-	pOutputBuffer[0] = (pInputBuffer[0] * (1 - fMixinComb) + ynL * fMixinComb); //otherwise to loud
-	pOutputBuffer[1] = (pInputBuffer[1] * (1 - fMixinComb) + ynR * fMixinComb); //otherwise to loud
+	pOutputBuffer[0] = (pInputBuffer[0] * (1.f - fMixinComb) + ynL * fMixinComb); //otherwise to loud
+	pOutputBuffer[1] = (pInputBuffer[1] * (1.f - fMixinComb) + ynR * fMixinComb); //otherwise to loud
 
 	vassert((pOutputBuffer[0] > -10.0f) && (pOutputBuffer[0] <= 10.0));
 	vassert((pOutputBuffer[1] > -10.0f) && (pOutputBuffer[1] <= 10.0));

@@ -87,7 +87,7 @@ void CVASTMultibandCompressorSingleBand::initParameters() {
 		true);
 	createAndAddParameter(&m_fMBCompThreshold, parameters, 1, "m_fMBCompThreshold" + suffix, "Single-band compressor threshold low band (dB)", "Threshold", 3,
 		MODMATDEST::NoDestination,
-		NormalisableRange<float>(-60.0f, -0.0001), initThreshold,
+		NormalisableRange<float>(-60.0f, -0.0001f), initThreshold,
 		[](float value) {return String(value) + " dB" ; },
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false);
@@ -150,13 +150,13 @@ void CVASTMultibandCompressorSingleBand::init(CVASTSettings &set) {
 }
 
 void CVASTMultibandCompressorSingleBand::reset() { 
-	m_yL_prev = 0;
+	m_yL_prev = 0.f;
 
 	for (int i = 0; i < m_iExpectedSamplesPerBlock; ++i)
 	{
-		m_x_g[i] = 0; m_y_g[i] = 0;
-		m_x_l[i] = 0; m_y_l[i] = 0;
-		m_c[i] = 0;
+		m_x_g[i] = 0.f; m_y_g[i] = 0.f;
+		m_x_l[i] = 0.f; m_y_l[i] = 0.f;
+		m_c[i] = 0.f;
 	}
 
 	if ((m_bIsOff == false) && (m_bShallBeOff == false)) {

@@ -48,7 +48,7 @@ void CVASTEffect::createAndAddParameter(std::atomic<float>** parameterVar, Audio
     String newParamName = busId + paramName;
     newParamName = newParamName.dropLastCharacters(newParamName.length()-31); //keep only 31 in name // hack, check for compatibility, better define new short names for each parameter
     
-    using Parameter = AudioProcessorValueTreeState::Parameter;
+    using Parameter = AudioProcessorValueTreeState::Parameter; //in future change to: https://docs.juce.com/master/tutorial_audio_processor_value_tree_state.html
 
     AudioProcessorParameterWithID* p = stateTree.createAndAddParameter (std::make_unique<Parameter>
         (

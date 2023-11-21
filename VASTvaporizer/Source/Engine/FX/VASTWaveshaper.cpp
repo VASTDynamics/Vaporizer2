@@ -295,7 +295,7 @@ bool CVASTWaveshaper::processAudioFrame(float* pInputBuffer, float* pOutputBuffe
 	m_fWaveshaperLowcut_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fWaveshaperLowcut, MODMATDEST::WaveshaperLowCut, &inputState));
 	if (m_fWaveshaperLowcut_smoothed.isSmoothing()) {
 		float lWaveshaperLowcut = m_fWaveshaperLowcut_smoothed.getNextValue();
-		float fQ = sqrt2over2;
+		float fQ = float(sqrt2over2);
 		m_lowCutBiquadL.calcBiquad(CVASTBiQuad::HIGHPASS, lWaveshaperLowcut, m_iSampleRate, fQ, -18.0f);
 		m_lowCutBiquadR.copySettingsFrom(&m_lowCutBiquadL);
 	}
@@ -304,7 +304,7 @@ bool CVASTWaveshaper::processAudioFrame(float* pInputBuffer, float* pOutputBuffe
 	m_fWaveshaperHighcut_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fWaveshaperHighcut, MODMATDEST::WaveshaperHighCut, &inputState));
 	if (m_fWaveshaperHighcut_smoothed.isSmoothing()) {
 		float lWaveshaperHighcut = m_fWaveshaperHighcut_smoothed.getNextValue();
-		float fQ = sqrt2over2;
+		float fQ = float(sqrt2over2);
 		m_highCutBiquadL.calcBiquad(CVASTBiQuad::LOWPASS, lWaveshaperHighcut, m_iSampleRate, fQ, -18.0f);
 		m_highCutBiquadR.copySettingsFrom(&m_highCutBiquadL);
 	}

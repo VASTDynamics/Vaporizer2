@@ -36,7 +36,7 @@ bool VASTSynthesiserVoice::wasStartedBefore(const VASTSynthesiserVoice& other) c
 
 
 //==============================================================================
-VASTSynthesiser::VASTSynthesiser()
+VASTSynthesiser::VASTSynthesiser(VASTAudioProcessor* processor) : myProcessor(processor)
 {
 	initValues();
 }
@@ -1322,7 +1322,7 @@ void VASTSynthesiser::handleMidiEvent(const MidiMessage& m)
 	
 	if (m.isNoteOn())
 	{
-		if ((m_Poly->getProcessor()->isMPEenabled()) && (channel == m_MPEMasterChannel)) {
+		if ((myProcessor->isMPEenabled()) && (channel == m_MPEMasterChannel)) {
 			//dont do note on on master channnel
 		}
 		else {
@@ -1330,7 +1330,7 @@ void VASTSynthesiser::handleMidiEvent(const MidiMessage& m)
 			noteOn(channel, m.getNoteNumber(), m.getFloatVelocity());
 
 			//set initial values for note: timbre
-			if (m_Poly->getProcessor()->isMPEenabled()) {
+			if (myProcessor->isMPEenabled()) {
 				for (auto* voice : voices)
 					if (voice->isPlayingChannel(channel))
 						voice->controllerMoved(74 /*timbre MSB*/, lastTimbreReceivedOnChannel[channel-1].as7BitInt()); //7bit??
@@ -1339,7 +1339,7 @@ void VASTSynthesiser::handleMidiEvent(const MidiMessage& m)
 	}
 	else if (m.isNoteOff())
 	{
-		if ((m_Poly->getProcessor()->isMPEenabled()) && (channel == m_MPEMasterChannel)) {
+		if ((myProcessor->isMPEenabled()) && (channel == m_MPEMasterChannel)) {
 			//dont do note on on master channnel
 		}
 		else
@@ -1352,7 +1352,7 @@ void VASTSynthesiser::handleMidiEvent(const MidiMessage& m)
 	else if (m.isPitchWheel())
 	{
 		const int wheelPos = m.getPitchWheelValue();
-		if ((m_Poly->getProcessor()->isMPEenabled()) && (channel == m_MPEMasterChannel)) {
+		if ((myProcessor->isMPEenabled()) && (channel == m_MPEMasterChannel)) {
 			handlePitchWheel(channel, wheelPos);
 		}
 		else
@@ -1360,7 +1360,7 @@ void VASTSynthesiser::handleMidiEvent(const MidiMessage& m)
 	}
 	else if (m.isAftertouch())
 	{
-		if ((m_Poly->getProcessor()->isMPEenabled()) && (channel == m_MPEMasterChannel)) {
+		if ((myProcessor->isMPEenabled()) && (channel == m_MPEMasterChannel)) {
 			//dont do on master channnel
 		}
 		else
@@ -1368,7 +1368,7 @@ void VASTSynthesiser::handleMidiEvent(const MidiMessage& m)
 	}
 	else if (m.isChannelPressure())
 	{
-		if ((m_Poly->getProcessor()->isMPEenabled()) && (channel == m_MPEMasterChannel)) {
+		if ((myProcessor->isMPEenabled()) && (channel == m_MPEMasterChannel)) {
 			//dont do on master channnel
 		}
 		else
@@ -1376,7 +1376,7 @@ void VASTSynthesiser::handleMidiEvent(const MidiMessage& m)
 	}
 	else if (m.isController())
 	{
-		if ((m_Poly->getProcessor()->isMPEenabled()) && (channel == m_MPEMasterChannel)) {
+		if ((myProcessor->isMPEenabled()) && (channel == m_MPEMasterChannel)) {
 			//dont do on master channnel
 		}
 		else
@@ -1384,7 +1384,7 @@ void VASTSynthesiser::handleMidiEvent(const MidiMessage& m)
 	}
 	else if (m.isProgramChange())
 	{
-		if ((m_Poly->getProcessor()->isMPEenabled()) && (channel == m_MPEMasterChannel)) {
+		if ((myProcessor->isMPEenabled()) && (channel == m_MPEMasterChannel)) {
 			//dont do on master channnel
 		} 
 		else
@@ -1676,7 +1676,7 @@ void VASTSynthesiser::startVoice(VASTSynthesiserVoice* const voice,
 		voice->setSustainPedalDown(sustainPedalsDown[midiChannel]);
 
 		float lastpwval = 0.f;
-		if (m_Poly->getProcessor()->isMPEenabled())
+		if (myProcessor->isMPEenabled())
 			lastpwval = lastPitchWheelValues[m_MPEMasterChannel];
 		else 
 			lastpwval = lastPitchWheelValues[midiChannel];
@@ -1819,14 +1819,14 @@ void VASTSynthesiser::allNotesOff(const int midiChannel, const bool allowTailOff
 	sustainPedalsDown.clear();
 }
 
-void VASTSynthesiser::handlePitchWheel(const int midiChannel, const int wheelValue)
+void VASTSynthesiser::handlePitchWheel(const int midiChannel, const int wheelValue) ////0..16384
 {
 	const ScopedLock sl(lock);
 	
-	lastPitchWheelValues[midiChannel] = wheelValue;
+	lastPitchWheelValues[midiChannel].store(wheelValue);
 	for (auto* voice : voices) {
 		//if (midiChannel <= 0 || voice->isPlayingChannel(midiChannel))		
-		if (((CVASTSingleNote*)voice)->m_Poly->getProcessor()->isMPEenabled()) {
+		if (myProcessor->isMPEenabled()) {
 			if (midiChannel == m_MPEMasterChannel)
 				voice->pitchWheelMoved(wheelValue, true); //zone
 			else if (voice->isPlayingChannel(midiChannel))
@@ -1857,11 +1857,38 @@ void VASTSynthesiser::handleController(const int midiChannel,
 	default:    break;
 	}
 
+	if (controllerNumber == 1) { // MIDI CC 1 Modulation, e.g. VSTHost
+	//check for permalink
+		int permalink = myProcessor->getModWheelPermaLink();
+		if (permalink != 0) {
+			Array<AudioProcessorParameter*> params = myProcessor->getParameters();
+			float wheelPos = controllerValue;
+			for (int i = 0; i < params.size(); i++) {
+				if ((permalink == 1) && (params[i]->getName(18).equalsIgnoreCase("Custom modulator 1"))) {
+					params[i]->setValueNotifyingHost(wheelPos / 127.f);
+					break;
+				}
+				if ((permalink == 2) && (params[i]->getName(18).equalsIgnoreCase("Custom modulator 2"))) {
+					params[i]->setValueNotifyingHost(wheelPos / 127.f);
+					break;
+				}
+				if ((permalink == 3) && (params[i]->getName(18).equalsIgnoreCase("Custom modulator 3"))) {
+					params[i]->setValueNotifyingHost(wheelPos / 127.f);
+					break;
+				}
+				if ((permalink == 4) && (params[i]->getName(18).equalsIgnoreCase("Custom modulator 4"))) {
+					params[i]->setValueNotifyingHost(wheelPos / 127.f);
+					break;
+				}
+			}
+		}
+	}
+
 	const ScopedLock sl(lock);
 
 	for (auto* voice : voices)
 		//if (midiChannel <= 0 || voice->isPlayingChannel(midiChannel))		
-		if (((CVASTSingleNote*)voice)->m_Poly->getProcessor()->isMPEenabled()) {
+		if (myProcessor->isMPEenabled()) {
 			if (voice->isPlayingChannel(midiChannel))
 				voice->controllerMoved(controllerNumber, controllerValue);
 		} else 
@@ -1873,7 +1900,7 @@ void VASTSynthesiser::handleAftertouch(int midiChannel, int midiNoteNumber, int 
 	const ScopedLock sl(lock);
 
 	for (auto* voice : voices) //polyphonic
-		if (((CVASTSingleNote*)voice)->m_Poly->getProcessor()->isMPEenabled()) {
+		if (myProcessor->isMPEenabled()) {
 			if (voice->isPlayingChannel(midiChannel))
 				voice->aftertouchChanged(aftertouchValue);
 		}
@@ -1890,7 +1917,7 @@ void VASTSynthesiser::handleChannelPressure(int midiChannel, int channelPressure
 	for (auto* voice : voices)
 		//if (midiChannel <= 0 || voice->isPlayingChannel(midiChannel))
 
-		if (((CVASTSingleNote*)voice)->m_Poly->getProcessor()->isMPEenabled()) {
+		if (myProcessor->isMPEenabled()) {
 			if (voice->isPlayingChannel(midiChannel))
 				voice->channelPressureChanged(channelPressureValue);
 		} else 

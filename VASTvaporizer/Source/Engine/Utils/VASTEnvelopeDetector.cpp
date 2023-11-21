@@ -6,17 +6,17 @@ VAST Dynamics Audio Software (TM)
 #include "../VASTPluginConstants.h"
 #include "VASTEnvelopeDetector.h"
 
-const float DIGITAL_TC = -2.0; // log(1%)
-const float ANALOG_TC = -0.43533393574791066201247090699309; // (log(36.7%)
+const float DIGITAL_TC = -2.0f; // log(1%)
+const float ANALOG_TC = -0.43533393574791066201247090699309f; // (log(36.7%)
 
 VASTEnvelopeDetector::VASTEnvelopeDetector(void)
 {
-	m_fAttackTime_mSec = 0.0;
-	m_fReleaseTime_mSec = 0.0;
-	m_fAttackTime = 0.0;
-	m_fReleaseTime = 0.0;
-	m_fSampleRate = 44100;
-	m_fEnvelope = 0.0;
+	m_fAttackTime_mSec = 0.0f;
+	m_fReleaseTime_mSec = 0.0f;
+	m_fAttackTime = 0.0f;
+	m_fReleaseTime = 0.0f;
+	m_fSampleRate = 44100.f;
+	m_fEnvelope = 0.0f;
 	m_uDetectMode = 0;
 	m_nSample = 0;
 	m_bAnalogTC = false;
@@ -29,13 +29,13 @@ VASTEnvelopeDetector::~VASTEnvelopeDetector(void)
 
 void VASTEnvelopeDetector::prepareForPlay()
 {
-	m_fEnvelope = 0.0;
+	m_fEnvelope = 0.0f;
 	m_nSample = 0;
 }
 
 void VASTEnvelopeDetector::init(float samplerate, float attack_in_ms, float release_in_ms, bool bAnalogTC, MYUINT uDetect, bool bLogDetector)
 {
-	m_fEnvelope = 0.0;
+	m_fEnvelope = 0.0f;
 	m_fSampleRate = samplerate;
 	m_bAnalogTC = bAnalogTC;
 	m_fAttackTime_mSec = attack_in_ms;

@@ -80,12 +80,11 @@ VASTAudioProcessor::VASTAudioProcessor() :
 	mIntPpq = 0;
 	m_sLicenseInformation.m_bExpired = false;
 	m_fTrialSeconds = 0.0;
+	m_bShallComponentValueUpdate = false,
 
 	mUIAlert.store(false);
     mUIUpdateFlag.store(false);
     mUIInitFlag.store(false);
-
-	m_midiBank = 0;
 
 	bIsInErrorState.store(false);
 	iErrorState.store(vastErrorState::noError);
@@ -686,109 +685,14 @@ void VASTAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mid
     
     if (m_presetToLoad >= 0)
         loadPreset(m_presetToLoad);
-    
-	// In case we have more outputs than inputs, this code clears any output
-	// channels that didn't contain input data, (because these aren't
-	// guaranteed to be empty - they may contain garbage).
-	// I've added this to avoid people getting screaming feedback
-	// when they first compile the plugin, but obviously you don't need to
-	// this code if your algorithm already fills all the output channels.
 
 	//if (buffer.getNumChannels() != 2) return;
 
 	for (int i = getTotalNumInputChannels(); i < getTotalNumOutputChannels(); ++i)
 		buffer.clear(i, 0, buffer.getNumSamples());
 
-	//Update GUI only when active
-	VASTAudioProcessorEditor* editor = (VASTAudioProcessorEditor*)getActiveEditor();
-	if (editor != nullptr) {
-		editor->vaporizerComponent->processMidiBuffer(midiMessages, buffer.getNumSamples());
-	}
+	m_midiKeyboardState.processNextMidiBuffer(midiMessages, 0, buffer.getNumSamples(), true);
 	
-	int samplePosition = 0;
-
-	//Check for MIDI learn
-    auto midiIterator = midiMessages.findNextSamplePosition (samplePosition);
-    std::for_each (midiIterator,
-                   midiMessages.cend(),
-                   [&] (const MidiMessageMetadata& metadata)
-        {
-			if (metadata.getMessage().isPitchWheel()) {
-				VASTAudioProcessorEditor* editor = (VASTAudioProcessorEditor*)getActiveEditor();
-				if (editor != nullptr) {
-					int wheelPos = metadata.getMessage().getPitchWheelValue() - 8192.f;
-					wheelPos = limit_range(wheelPos, -8192.f, 8192.f);
-					if (editor->vaporizerComponent->getKeyboardComponent() != nullptr) {
-						if (!isMPEenabled())
-							editor->vaporizerComponent->getKeyboardComponent()->updatePitchbend(wheelPos);
-						else {
-							if (metadata.getMessage().getChannel() == m_pVASTXperience.m_Poly.getSynthesizer()->m_MPEMasterChannel)
-								editor->vaporizerComponent->getKeyboardComponent()->updatePitchbend(wheelPos);
-						}
-					}
-				}
-			}
-			else if (metadata.getMessage().isController()) {
-				//check for midiLearn
-				if (metadata.getMessage().getControllerNumber() == 0) { //CC00 bank change
-					VDBG("Bank Change " << metadata.getMessage().getControllerValue());
-					m_midiBank = metadata.getMessage().getControllerValue();
-				}
-				else if (metadata.getMessage().getControllerNumber() == 1) { //CC01 mod wheel
-					VASTAudioProcessorEditor* editor = (VASTAudioProcessorEditor*)getActiveEditor();
-					if (editor != nullptr) {
-						int wheelPos = metadata.getMessage().getControllerValue();
-						wheelPos = limit_range(wheelPos, 0.f, 127.f);
-						if (editor->vaporizerComponent->getKeyboardComponent() != nullptr)
-							editor->vaporizerComponent->getKeyboardComponent()->updateModwheel(wheelPos);
-					}
-				}
-				//midi CC 1 (MSB) and midi CC 2
-				//CC02 mod wheel high precision?
-				else
-					if (m_iNowLearningMidiParameter >= 0) {
-						midiParameterLearned(metadata.getMessage().getControllerNumber());
-						requestUIUpdate();
-					}
-					else {
-						//check for mapped parameters
-						int lParamInternal = 0;
-						lParamInternal = midiMappingGetParameterIndex(metadata.getMessage().getControllerNumber());
-						if (lParamInternal >= 0) {
-							float lValue = metadata.getMessage().getControllerValue() / 127.0f;
-							if (lParamInternal == 9999) { //UI 
-								String uiComponentName = midiMappingComponentVariableName(metadata.getMessage().getControllerNumber());
-								VASTAudioProcessorEditor* _editor = (VASTAudioProcessorEditor*)getActiveEditor();
-								if (_editor != nullptr) {
-									for (int i = 0; i < m_mapParameterNameToControl.size(); i++) {
-										VASTSlider* lslider = dynamic_cast<VASTSlider*>(_editor->findChildComponetWithName(_editor->vaporizerComponent.get(), uiComponentName));
-										if (lslider != nullptr) {
-											if (lslider->getComponentID().equalsIgnoreCase(uiComponentName)) {
-												_editor->registerComponentValueUpdate(lslider, lValue);
-											}
-										}
-									}
-								}
-							}
-							else if (lParamInternal < getParameters().size()) {
-								getParameters()[lParamInternal]->setValueNotifyingHost(lValue);
-							}
-						}
-					}
-			}
-			else if (metadata.getMessage().isProgramChange()) {
-			int presetindex = m_presetData.bankProgramGetPresetIndex(m_midiBank, metadata.getMessage().getProgramChangeNumber());
-
-			//int maxPrograms = getNumPrograms();
-			//int newProg = 128 * m_midiBank + msg.getProgramChangeNumber();
-			//if (newProg < maxPrograms) {
-			if (presetindex >= 0) {
-				setCurrentProgram(presetindex);
-				VDBG("Program Change " << presetindex);
-			}
-		}
-    });
-
 	// send MIDI clock
     AudioPlayHead::PositionInfo positionDefault{};
     Optional<AudioPlayHead::PositionInfo> positionInfo = *getPlayHead()->getPosition();
@@ -2418,10 +2322,10 @@ bool VASTAudioProcessor::writeSettingsToFile() {
 	//String myXmlDoc = root.createDocument(String()); //empty is deprecated
 	String myXmlDoc = root.toString();
 
-	/*
 	//check if user folders have to be created
 	if (!File(m_UserPresetRootFolder).exists())
 		(File(m_UserPresetRootFolder).createDirectory()); //recursively create also directories			
+/*
 	if (!File(m_UserPresetRootFolder).getChildFile("Factory").isSymbolicLink())
 		if (!File(getVSTPath()).getChildFile("Presets").getFullPathName().equalsIgnoreCase(m_UserPresetRootFolder) &&
 			File(getVSTPath()).getChildFile("Presets").exists()) {
@@ -2429,8 +2333,10 @@ bool VASTAudioProcessor::writeSettingsToFile() {
 			if (!File(getVSTPath()).getChildFile("Presets").createSymbolicLink(File(m_UserPresetRootFolder).getChildFile("Factory"), true)) //add symlink to Factory
 				setErrorState(vastErrorState::errorState15_couldNotCreateSymlink);
 		}
+		*/
 	if (!File(m_UserWavetableRootFolder).exists())
 		(File(m_UserWavetableRootFolder).createDirectory()); //recursively create also directories
+/*
 	if (!File(m_UserWavetableRootFolder).getChildFile("Factory").isSymbolicLink())
 		if (!File(getVSTPath()).getChildFile("Tables").getFullPathName().equalsIgnoreCase(m_UserWavetableRootFolder) &&
 			File(getVSTPath()).getChildFile("Tables").exists()) {
@@ -2438,8 +2344,10 @@ bool VASTAudioProcessor::writeSettingsToFile() {
 			if (!File(getVSTPath()).getChildFile("Tables").createSymbolicLink(File(m_UserWavetableRootFolder).getChildFile("Factory"), true)) //add symlink to Factory
 				setErrorState(vastErrorState::errorState15_couldNotCreateSymlink);
 		}
+		*/
 	if (!File(m_UserWavRootFolder).exists())
 		(File(m_UserWavRootFolder).createDirectory()); //recursively create also directories
+/*
 	if (!File(m_UserWavRootFolder).getChildFile("Factory").isSymbolicLink())
 		if (!File(getVSTPath()).getChildFile("Noises").getFullPathName().equalsIgnoreCase(m_UserWavRootFolder) &&
 			File(getVSTPath()).getChildFile("Noises").exists()) {
@@ -2448,7 +2356,6 @@ bool VASTAudioProcessor::writeSettingsToFile() {
 				setErrorState(vastErrorState::errorState15_couldNotCreateSymlink);
 		}
 		*/
-
 	bool migrate_legacy = false;
 	String filename = getSettingsFilePath(false, migrate_legacy); //write always new path
 
@@ -3080,6 +2987,18 @@ void VASTAudioProcessor::midiParameterLearned(int iCC) {
 	m_iNowLearningMidiParameterVariableName = String(); //remains to update slider display in editor
 	requestUIUpdate();
 	writeSettingsToFileAsync();
+}
+
+bool VASTAudioProcessor::isEditorCurrentlyProbablyVisible()
+{
+	return m_editorIsProbablyVisible.load();
+}
+
+void VASTAudioProcessor::registerComponentValueUpdate(String uiComponentName, float lValue)
+{
+	m_bShallComponentValueUpdate.store(true);
+	m_shallComponentUpdate = uiComponentName;
+	m_shallComponentUpdateValue.store(lValue);
 }
 
 void VASTAudioProcessor::crashHandler(void*) {

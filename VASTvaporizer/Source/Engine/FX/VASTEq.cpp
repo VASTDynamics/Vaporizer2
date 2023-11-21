@@ -182,7 +182,7 @@ void CVASTEq::prepareToPlay(double, int samplesPerBlock) {
 }
 
 void CVASTEq::parameterChanged(const String& parameterID, float newValue) {
-	float fQ = sqrt2over2; //was 1.0f
+	float fQ = float(sqrt2over2); //was 1.0f
 		
 	if (parameterID.startsWith("m_bEQOnOff")) {
 		if (newValue == static_cast<int>(SWITCH::SWITCH_ON))
@@ -296,7 +296,7 @@ void CVASTEq::updateVariables() {
 	// Biquad type PEAK (with BOOST & CUT)
 	// see: http://www.musicdsp.org/files/biquad.c
 
-	float fQ = sqrt2over2; //was 1.0f
+	float fQ = float(sqrt2over2); //was 1.0f
 
 	m_biQuad1L.calcBiquad(CVASTBiQuad::LOWSHELF, 50.0f, m_iSampleRate, fQ, *m_fEQ1);
 	m_biQuad1R.copySettingsFrom(&m_biQuad1L);

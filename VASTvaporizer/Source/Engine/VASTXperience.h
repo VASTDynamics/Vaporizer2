@@ -16,8 +16,6 @@ VAST Dynamics Audio Software (TM)
 #include "../Plugin//VASTScopeDisplay/VASTRingBuffer.h"
 
 class VASTAudioProcessor; //forward declaration
-						  //class CUIControlList; //forward declaration
-						  //class CUICtrl; //forward declaration
 
 class CVASTXperience : public CVASTEffect
 {
@@ -111,6 +109,10 @@ public:
 
 	// Audio & GL Audio Buffer
 	std::unique_ptr<VASTRingBuffer<GLfloat>> oscilloscopeRingBuffer;
+
+private:
+	int m_midiBank = 0;
+
 
 	JUCE_HEAVYWEIGHT_LEAK_DETECTOR(CVASTXperience)
 	//JUCE_LEAK_DETECTOR(CVASTXperience)
