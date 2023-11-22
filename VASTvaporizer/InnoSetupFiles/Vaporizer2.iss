@@ -324,11 +324,11 @@ begin
 
   //new logic: factory presets are always stored in app folder, user folder can be selected
   PluginDirPage.Add('User Presets Folder');
-  PluginDirPage.Values[4] := GetPreviousData('Vaporizer2PresetFolder', ExpandConstant('{code:GetOriginalUserDocumentsPath}\Vaporizer2\User Presets')); //second is default value
+  PluginDirPage.Values[4] := GetPreviousData('Vaporizer2PresetFolder', ExpandConstant('{code:GetOriginalUserDocumentsPath}\Vaporizer2\Presets')); //second is default value
   PluginDirPage.Add('User Wavetables');                                                       
-  PluginDirPage.Values[5] := GetPreviousData('Vaporizer2TablesFolder', ExpandConstant('{code:GetOriginalUserDocumentsPath}\Vaporizer2\User Tables')); //second is default value 
+  PluginDirPage.Values[5] := GetPreviousData('Vaporizer2TablesFolder', ExpandConstant('{code:GetOriginalUserDocumentsPath}\Vaporizer2\Tables')); //second is default value 
   PluginDirPage.Add('User Noises');
-  PluginDirPage.Values[6] := GetPreviousData('Vaporizer2NoisesFolder', ExpandConstant('{code:GetOriginalUserDocumentsPath}\Vaporizer2\User Noises')); //second is default value;
+  PluginDirPage.Values[6] := GetPreviousData('Vaporizer2NoisesFolder', ExpandConstant('{code:GetOriginalUserDocumentsPath}\Vaporizer2\Noises')); //second is default value;
 
   //ReducePromptSpacing(PluginDirPage, 9, ScaleY(20));
 
