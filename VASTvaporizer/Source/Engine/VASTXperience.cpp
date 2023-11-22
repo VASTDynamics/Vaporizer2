@@ -257,7 +257,7 @@ void CVASTXperience::endSoftFade() {
 
 //==========================================================================================================================
 
-bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& midiMessages, MYUINT uNumChannels, bool isPlaying,
+bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& midiMessages, MYUINT uNumOutChannels, bool isPlaying,
 	double ppqPosition, bool isLooping, double ppqPositionOfLastBarStart, double bpm) {
 
 	if (buffer.getNumSamples() > C_MAX_BUFFER_SIZE) {
@@ -289,10 +289,10 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
 			m_Poly.updateLFO(2);
 		}
 		if (*m_Set.m_State->m_bLFOSynch_LFO4 == static_cast<int>(SWITCH::SWITCH_ON)) {
-			m_Poly.updateLFO(4);
+			m_Poly.updateLFO(3);
 		}
 		if (*m_Set.m_State->m_bLFOSynch_LFO5 == static_cast<int>(SWITCH::SWITCH_ON)) {
-			m_Poly.updateLFO(5);
+			m_Poly.updateLFO(4);
 		}
 		m_fxBus1.updateTiming();
 		m_fxBus2.updateTiming();
@@ -584,10 +584,12 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
 	}
 
 	//=================================================================================================
-	m_Set.m_RoutingBuffers.fAudioInputBuffer->copyFrom(0, 0, buffer.getReadPointer(0), numFrames); //MONO only
-	if (m_Set.modMatrixSourceSetFast(MODMATSRCE::InputEnvelope) == true)
-		m_Set.processEnvelope(numFrames);
-
+    if (buffer.getNumChannels() > 0) {
+        m_Set.m_RoutingBuffers.fAudioInputBuffer->copyFrom(0, 0, buffer.getReadPointer(0), numFrames); //MONO only
+        if (m_Set.modMatrixSourceSetFast(MODMATSRCE::InputEnvelope) == true)
+            m_Set.processEnvelope(numFrames);
+    }
+    
 	//clear buffer before poly
 	buffer.clear();
 	m_Poly.processAudioBuffer(m_Set.m_RoutingBuffers, midiMessages);
@@ -666,24 +668,35 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
 		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.FxBusBuffer[2]->getReadPointer(1, 0), numFrames); //gain??
 	}
 
-	buffer.copyFrom(0, 0, m_Set.m_RoutingBuffers.MasterOutBuffer->getReadPointer(0, 0), numFrames, m_Set.m_fMasterVolume); // directly apply gain!
-	buffer.copyFrom(1, 0, m_Set.m_RoutingBuffers.MasterOutBuffer->getReadPointer(1, 0), numFrames, m_Set.m_fMasterVolume); // directly apply gain!
+    if (uNumOutChannels > 0)
+        buffer.copyFrom(0, 0, m_Set.m_RoutingBuffers.MasterOutBuffer->getReadPointer(0, 0), numFrames, m_Set.m_fMasterVolume); // directly apply gain!
+    if (uNumOutChannels > 1)
+        buffer.copyFrom(1, 0, m_Set.m_RoutingBuffers.MasterOutBuffer->getReadPointer(1, 0), numFrames, m_Set.m_fMasterVolume); // directly apply gain!
 
 	//=================================================================================================
 
-	Range<float> minmaxL = buffer.findMinMax(0, 0, numFrames);
-	Range<float> minmaxR = buffer.findMinMax(1, 0, numFrames);
-	if ((minmaxL.getStart() >= OUTPUT_MIN_MINUS) && (minmaxL.getEnd() <= OUTPUT_MIN_PLUS) &&
-		(minmaxR.getStart() >= OUTPUT_MIN_MINUS) && (minmaxR.getEnd() <= OUTPUT_MIN_PLUS)) {
-		m_bLastChainBufferZero = true;		
-		m_bBufferZeroMilliSeconds += ceil(1000.f * float(numFrames) / float(m_Set.m_nSampleRate));
-		buffer.clear(); // underflow check 
-	}
-	else {
-		m_bLastChainBufferZero = false;
-		m_bBufferZeroMilliSeconds = 0;
-	}
-
+    //check filter empty and processing completed
+    bool bClearBuffer = false;
+    if (uNumOutChannels > 0) {
+        Range<float> minmaxL = buffer.findMinMax(0, 0, numFrames);
+        if ((minmaxL.getStart() >= OUTPUT_MIN_MINUS) && (minmaxL.getEnd() <= OUTPUT_MIN_PLUS))
+            bClearBuffer = true;
+    }
+    if (uNumOutChannels > 1) {
+        Range<float> minmaxR = buffer.findMinMax(1, 0, numFrames);
+        if ((minmaxR.getStart() >= OUTPUT_MIN_MINUS) && (minmaxR.getEnd() <= OUTPUT_MIN_PLUS))
+            bClearBuffer = true;
+    }
+    if (bClearBuffer) {
+        m_bLastChainBufferZero = true;
+        m_bBufferZeroMilliSeconds += ceil(1000.f * float(numFrames) / float(m_Set.m_nSampleRate));
+        buffer.clear(); // underflow check
+    }
+    else {
+        m_bLastChainBufferZero = false;
+        m_bBufferZeroMilliSeconds = 0;
+    }
+    
 	//Fade out when program change
 	if (m_iFadeOutSamples > 0) {
 		float startVal = m_iFadeOutSamples / float(m_iMaxFadeSamples);
@@ -709,33 +722,34 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
 	endSoftFade(); 
 
 #ifdef _DEBUG
-	//-------------------------------
-	//check processing time
-	std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
-	auto duration = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
-	float mfMaxAllowedMicroSecs = (1.0f / m_nSampleRate) * float(buffer.getNumSamples()) * 1000000;
-	if (duration > mfMaxAllowedMicroSecs) {
-		m_Set.m_cUnderruns++;
-	}
+    if (uNumOutChannels > 1) {
+        //-------------------------------
+        //check processing time
+        std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+        float mfMaxAllowedMicroSecs = (1.0f / m_nSampleRate) * float(buffer.getNumSamples()) * 1000000;
+        if (duration > mfMaxAllowedMicroSecs) {
+            m_Set.m_cUnderruns++;
+        }
 
-	if (m_Set.m_bShallCatchClicks) {
-		float l_clickTolerance = (48000.f / m_Set.m_nSampleRate) * 0.2f; //larger than 0.2 step at 48khz is way too much (too high freq)
-		float* clickBuffer = buffer.getWritePointer(0);
-		for (int i = 0; i < buffer.getNumSamples() - 1; i++) {
-			if ((abs(clickBuffer[i] - clickBuffer[i + 1]) > l_clickTolerance) &&
-				(clickBuffer[i] * clickBuffer[i + 1] > 0.f)) { //above tolerance and not + to -
-				m_Set.m_bShallDump = true;
-				VDBG("!!!Click detected at samplepos: " << i << "! Dumping Log!");
-			}
-		}
-	}
-	if (m_Set.m_bShallDump) {
-		myProcessor->dumpBuffers();
-	} else 
-		if (myProcessor->isDumping()) { //flush now
-			myProcessor->dumpBuffersFlush();
-		}
-	
+        if (m_Set.m_bShallCatchClicks) {
+            float l_clickTolerance = (48000.f / m_Set.m_nSampleRate) * 0.2f; //larger than 0.2 step at 48khz is way too much (too high freq)
+            float* clickBuffer = buffer.getWritePointer(0);
+            for (int i = 0; i < buffer.getNumSamples() - 1; i++) {
+                if ((abs(clickBuffer[i] - clickBuffer[i + 1]) > l_clickTolerance) &&
+                    (clickBuffer[i] * clickBuffer[i + 1] > 0.f)) { //above tolerance and not + to -
+                    m_Set.m_bShallDump = true;
+                    VDBG("!!!Click detected at samplepos: " << i << "! Dumping Log!");
+                }
+            }
+        }
+        if (m_Set.m_bShallDump) {
+            myProcessor->dumpBuffers();
+        } else
+            if (myProcessor->isDumping()) { //flush now
+                myProcessor->dumpBuffersFlush();
+            }
+    }
 #endif
 
 	//=================================================================================================

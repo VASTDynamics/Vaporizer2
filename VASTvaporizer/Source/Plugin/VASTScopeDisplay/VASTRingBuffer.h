@@ -52,6 +52,9 @@ public:
      */
     void writeSamples (AudioBuffer<Type> & newAudioData, int startSample, int numSamples)
     {
+        if (newAudioData.getNumChannels() < numChannels) 
+            return;
+        
         for (int i = 0; i < numChannels; ++i)
         {
             const int curWritePosition = writePosition.get();

@@ -180,7 +180,7 @@ bool VASTAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) cons
 	if (layouts.getMainInputChannelSet().isDisabled()) 
 		return true;
 	else
-		return ((inSize == 2) && (outSize == 2));
+		return (((inSize == 2) && (outSize == 2)) || ((inSize == 0) && (outSize == 2)));
 	
 }
 
@@ -687,24 +687,25 @@ void VASTAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mid
         loadPreset(m_presetToLoad);
 
 	//if (buffer.getNumChannels() != 2) return;
-
+    
 	for (int i = getTotalNumInputChannels(); i < getTotalNumOutputChannels(); ++i)
 		buffer.clear(i, 0, buffer.getNumSamples());
-
+    
 	m_midiKeyboardState.processNextMidiBuffer(midiMessages, 0, buffer.getNumSamples(), true);
-	
-	// send MIDI clock
-    AudioPlayHead::PositionInfo positionDefault{};
-    Optional<AudioPlayHead::PositionInfo> positionInfo = *getPlayHead()->getPosition();
     
 	//do synth
+     
+    // send MIDI clock
+    AudioPlayHead::PositionInfo positionDefault{};
+    Optional<AudioPlayHead::PositionInfo> positionInfo = *getPlayHead()->getPosition();
+     
 	m_pVASTXperience.processAudioBuffer(buffer, midiMessages, getTotalNumOutputChannels(),
         positionInfo.orFallback(positionDefault).getIsPlaying(),
         positionInfo.orFallback(positionDefault).getPpqPosition().orFallback(0.0),
         positionInfo.orFallback(positionDefault).getIsLooping(),
         positionInfo.orFallback(positionDefault).getPpqPositionOfLastBarStart().orFallback(0.0),
         positionInfo.orFallback(positionDefault).getBpm().orFallback(0.0));
-
+    
 	//VU meter
 	m_meterSource.measureBlock(buffer);
 
@@ -712,11 +713,10 @@ void VASTAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mid
 	m_pVASTXperience.oscilloscopeRingBuffer->writeSamples(buffer, 0, buffer.getNumSamples());
 
 	//check for click 	
-	/*
-	if (buffer.getMagnitude(0, buffer.getNumSamples()) > 10.f) {
-		dumpBuffers();
-	}
-	*/
+	
+	//if (buffer.getMagnitude(0, buffer.getNumSamples()) > 10.f) {
+	//	dumpBuffers();
+	//}
 
 	//clear midi after processing (-->midi keyboard & arp generate some that shall not be passed through)
 	midiMessages.clear();
@@ -2203,6 +2203,53 @@ void VASTAudioProcessor::initSettings() {
         writeSettingsToFile();
     }
 }
+
+/*
+https://steinbergmedia.github.io/vst3_dev_portal/pages/Technical+Documentation/Locations+Format/Preset+Locations.html
+Folder structure:
+**Windows:**
+Program and plugin copies: \Program Files\Vaporizer2 (default - selectable in installer = [$APPFOLDER]) (read-only)
+Settings: [Users/$USERNAME]\AppData\Roaming\Vaporizer2\VASTvaporizerSettings.xml [userApplicationDataDirectory] (write-enabled) (Installer needs to create folder and grant write access rights for everyone)
+Factory Presets: [$APPFOLDER]\Presets (read-only, no choice of folder)
+Factory Noises: [$APPFOLDER]\Noises (read-only, no choice of folder)
+Factory Wavetables: [$APPFOLDER]\Tables (read-only, no choice of folder)
+User Presets: [Users\$USERNAME\Documents]\Vaporizer2\Presets (write-enabled) [userDocumentsDirectory ]
+User Noises: [Users\$USERNAME\Documents]\Vaporizer2\Noises (write-enabled, contains copy of factory [userDocumentsDirectory ]
+User Tables: [Users\$USERNAME\Documents]\Vaporizer2\Tables (write-enabled, contains copy of factory) [userDocumentsDirectory ]
+
+JUCE>> File::getSpecialLocation(File::userApplicationDataDirectory) = "[Users/$USERNAME]\AppData\Roaming"
+JUCE>> File::getSpecialLocation(File::commonApplicationDataDirectory) ="C:\ProgramData"
+JUCE>> File::getSpecialLocation(File::commonDocumentsDirectory ) ="C:\Users\Public\Documents"
+JUCE>> File::getSpecialLocation(File::userDocumentsDirectory ) =[Users\$USERNAME\Documents]"
+
+**macOS:**
+Program and plugin copies:  /Applications/Vaporizer2 (default - selectable in installer = [$APPFOLDER]) (read-only)
+Settings: ~/Library/Application Support/Vaporizer2/VASTvaporizerSettings.xml [userApplicationDataDirectory]/Application Support (write-enabled)
+Factory Presets: [$APPFOLDER]/Presets (read-only)
+Factory Noises: [$APPFOLDER]/Noises (read-only)
+Factory Wavetables: [$APPFOLDER]/Tables (read-only)
+User Presets: [Users/$USERNAME/Documents/Vaporizer2/Presets (write-enabled)
+User Noises: [Users/$USERNAME/Documents/Vaporizer2/Noises (write-enabled, contains copy of factory)
+User Tables: [Users/$USERNAME/Documents/Vaporizer2/Tables (write-enabled, contains copy of factory)
+
+JUCE>> File::getSpecialLocation(File::userApplicationDataDirectory) = "~ /Library"
+JUCE>> File::getSpecialLocation(File::commonApplicationDataDirectory) = "/Library"
+JUCE>> File::getSpecialLocation(File::userDocumentsDirectory) = "~ /Documents"
+
+**Linux:**
+Program and plugin copies: /usr/share/Vaporizer2 (default - selectable in installer = [$APPFOLDER]) (read-only)
+Settings: $HOME/.config/Vaporizer2/VASTvaporizerSettings.xml [userApplicationDataDirectory]/Vaporizer2 (write-enabled)
+Factory Presets: [$APPFOLDER]/Presets (read-only)
+Factory Noises: [$APPFOLDER]/Noises (read-only)
+Factory Wavetables: [$APPFOLDER]/Tables (read-only)
+User Presets: $HOME/.Documents/Vaporizer2/Presets (write-enabled) [userDocumentsDirectory]
+User Noises: $HOME/Documents/Vaporizer2/Noises (write-enabled, contains copy of factory) [userDocumentsDirectory]
+User Tables: $HOME/Documents/Vaporizer2/Tables (write-enabled, contains copy of factory) [userDocumentsDirectory]
+
+JUCE>> File::getSpecialLocation(File::commonApplicationDataDirectory) = "/opt"
+JUCE>> File::getSpecialLocation(File::userApplicationDataDirectory) =$HOME "~/.config"
+JUCE> File::getSpecialLocation(File::userHomeDirectory)  =$HOME "~"
+*/
 
 void VASTAudioProcessor::writeSettingsToFileAsync() {
 	Component::SafePointer<Label> spl(&safePointerLabel);

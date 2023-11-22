@@ -39,7 +39,7 @@ public:
 	//bool midiClock();	
 	//bool midiMessage(unsigned char cChannel, unsigned char cStatus, unsigned char cData1, unsigned char cData2);
 
-	bool processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& midiMessages, MYUINT uNumChannels, bool isPlaying,
+	bool processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& midiMessages, MYUINT uNumOutChannels, bool isPlaying,
 		double ppqPosition, bool isLooping, double ppqPositionOfLastBarStart, double bpm);
 
 	//VASTEffectInterface
