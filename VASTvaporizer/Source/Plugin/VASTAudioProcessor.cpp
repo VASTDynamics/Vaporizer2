@@ -80,7 +80,7 @@ VASTAudioProcessor::VASTAudioProcessor() :
 	mIntPpq = 0;
 	m_sLicenseInformation.m_bExpired = false;
 	m_fTrialSeconds = 0.0;
-	m_bShallComponentValueUpdate = false,
+    m_bShallComponentValueUpdate = false;
 
 	mUIAlert.store(false);
     mUIUpdateFlag.store(false);
