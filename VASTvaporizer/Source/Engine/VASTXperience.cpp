@@ -258,217 +258,214 @@ void CVASTXperience::endSoftFade() {
 //==========================================================================================================================
 
 bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& midiMessages, MYUINT uNumOutChannels, bool isPlaying,
-	double ppqPosition, bool isLooping, double ppqPositionOfLastBarStart, double bpm) {
-
-	if (buffer.getNumSamples() > C_MAX_BUFFER_SIZE) {
-		myProcessor->setErrorState(myProcessor->vastErrorState::errorState25_maxBufferSizeExceeded); //buffer size to large
-		return false;
-	}
-
+                                        double ppqPosition, bool isLooping, double ppqPositionOfLastBarStart, double bpm) {
+    
+    if (buffer.getNumSamples() > C_MAX_BUFFER_SIZE) {
+        myProcessor->setErrorState(myProcessor->vastErrorState::errorState25_maxBufferSizeExceeded); //buffer size to large
+        return false;
+    }
+    
 #ifdef _DEBUG
-	//-------------------------------
-	//check processing time
-	std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+    //-------------------------------
+    //check processing time
+    std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
 #endif
+    
+    //time code at buffer start position
+    m_Set.m_dPpqPosition = ppqPosition;
+    m_Set.m_bPpqIsPlaying = isPlaying;
+    m_Set.m_bPpqIsLooping = isLooping;
+    m_Set.m_dPpqPositionOfLastBarStart = ppqPositionOfLastBarStart;
+    if (m_Set.m_dPpqBpm != bpm) {
+        VDBG("BPM changed! Now: " << bpm);
+        m_Set.m_dPpqBpm = bpm;
+        if (*m_Set.m_State->m_bLFOSynch_LFO1 == static_cast<int>(SWITCH::SWITCH_ON)) {
+            m_Poly.updateLFO(0);
+        }
+        if (*m_Set.m_State->m_bLFOSynch_LFO2 == static_cast<int>(SWITCH::SWITCH_ON)) {
+            m_Poly.updateLFO(1);
+        }
+        if (*m_Set.m_State->m_bLFOSynch_LFO3 == static_cast<int>(SWITCH::SWITCH_ON)) {
+            m_Poly.updateLFO(2);
+        }
+        if (*m_Set.m_State->m_bLFOSynch_LFO4 == static_cast<int>(SWITCH::SWITCH_ON)) {
+            m_Poly.updateLFO(3);
+        }
+        if (*m_Set.m_State->m_bLFOSynch_LFO5 == static_cast<int>(SWITCH::SWITCH_ON)) {
+            m_Poly.updateLFO(4);
+        }
+        m_fxBus1.updateTiming();
+        m_fxBus2.updateTiming();
+        m_fxBus3.updateTiming();
+        
+        for (int mseg = 0; mseg < 5; mseg++) {
+            m_Set.m_MSEGData[mseg].setDirty();
+            m_Set.m_MSEGData_changed[mseg].setDirty();
+            
+            //hack should be in set time beats!
+            bool synch = false;
+            if (mseg == 0) { synch = *m_Set.m_State->m_bMSEGSynch_MSEG1; }
+            else if (mseg == 1) { synch = *m_Set.m_State->m_bMSEGSynch_MSEG2; }
+            else if (mseg == 2) { synch = *m_Set.m_State->m_bMSEGSynch_MSEG3; }
+            else if (mseg == 3) { synch = *m_Set.m_State->m_bMSEGSynch_MSEG4; }
+            else if (mseg == 4) { synch = *m_Set.m_State->m_bMSEGSynch_MSEG5; }
+            
+            if (synch == static_cast<int>(SWITCH::SWITCH_ON)) {
+                m_Set.m_MSEGData[mseg].setSynch(true);
+                m_Set.m_MSEGData_changed[mseg].setSynch(true);
+                m_Set.m_MSEGData[mseg].setAttackSteps(m_Set.m_MSEGData[mseg].getAttackSteps(), &m_Set);
+                m_Set.m_MSEGData_changed[mseg].setAttackSteps(m_Set.m_MSEGData_changed[mseg].getAttackSteps(), &m_Set);
+                m_Set.m_MSEGData[mseg].setDecaySteps(m_Set.m_MSEGData[mseg].getDecaySteps(), &m_Set);
+                m_Set.m_MSEGData_changed[mseg].setDecaySteps(m_Set.m_MSEGData_changed[mseg].getDecaySteps(), &m_Set);
+                m_Set.m_MSEGData[mseg].setReleaseSteps(m_Set.m_MSEGData[mseg].getReleaseSteps(), &m_Set);
+                m_Set.m_MSEGData_changed[mseg].setReleaseSteps(m_Set.m_MSEGData_changed[mseg].getReleaseSteps(), &m_Set);
+            }
+            else {
+                m_Set.m_MSEGData[mseg].setSynch(false);
+                m_Set.m_MSEGData_changed[mseg].setSynch(false);
+            }
+        }
 
-	//time code at buffer start position
-	m_Set.m_dPpqPosition = ppqPosition;
-	m_Set.m_bPpqIsPlaying = isPlaying;
-	m_Set.m_bPpqIsLooping = isLooping;
-	m_Set.m_dPpqPositionOfLastBarStart = ppqPositionOfLastBarStart;
-	if (m_Set.m_dPpqBpm != bpm) {
-		VDBG("BPM changed! Now: " << bpm);
-		m_Set.m_dPpqBpm = bpm;
-		if (*m_Set.m_State->m_bLFOSynch_LFO1 == static_cast<int>(SWITCH::SWITCH_ON)) {
-			m_Poly.updateLFO(0);
-		}
-		if (*m_Set.m_State->m_bLFOSynch_LFO2 == static_cast<int>(SWITCH::SWITCH_ON)) {
-			m_Poly.updateLFO(1);
-		}
-		if (*m_Set.m_State->m_bLFOSynch_LFO3 == static_cast<int>(SWITCH::SWITCH_ON)) {
-			m_Poly.updateLFO(2);
-		}
-		if (*m_Set.m_State->m_bLFOSynch_LFO4 == static_cast<int>(SWITCH::SWITCH_ON)) {
-			m_Poly.updateLFO(3);
-		}
-		if (*m_Set.m_State->m_bLFOSynch_LFO5 == static_cast<int>(SWITCH::SWITCH_ON)) {
-			m_Poly.updateLFO(4);
-		}
-		m_fxBus1.updateTiming();
-		m_fxBus2.updateTiming();
-		m_fxBus3.updateTiming();
-
-		for (int mseg = 0; mseg < 5; mseg++) {
-			m_Set.m_MSEGData[mseg].setDirty();
-			m_Set.m_MSEGData_changed[mseg].setDirty();
-
-			//hack should be in set time beats!
-			bool synch = false;
-			if (mseg == 0) { synch = *m_Set.m_State->m_bMSEGSynch_MSEG1; }
-			else if (mseg == 1) { synch = *m_Set.m_State->m_bMSEGSynch_MSEG2; }
-			else if (mseg == 2) { synch = *m_Set.m_State->m_bMSEGSynch_MSEG3; }
-			else if (mseg == 3) { synch = *m_Set.m_State->m_bMSEGSynch_MSEG4; }
-			else if (mseg == 4) { synch = *m_Set.m_State->m_bMSEGSynch_MSEG5; }
-
-			if (synch == static_cast<int>(SWITCH::SWITCH_ON)) {
-				m_Set.m_MSEGData[mseg].setSynch(true);
-				m_Set.m_MSEGData_changed[mseg].setSynch(true);
-				m_Set.m_MSEGData[mseg].setAttackSteps(m_Set.m_MSEGData[mseg].getAttackSteps(), &m_Set);
-				m_Set.m_MSEGData_changed[mseg].setAttackSteps(m_Set.m_MSEGData_changed[mseg].getAttackSteps(), &m_Set);
-				m_Set.m_MSEGData[mseg].setDecaySteps(m_Set.m_MSEGData[mseg].getDecaySteps(), &m_Set);
-				m_Set.m_MSEGData_changed[mseg].setDecaySteps(m_Set.m_MSEGData_changed[mseg].getDecaySteps(), &m_Set);
-				m_Set.m_MSEGData[mseg].setReleaseSteps(m_Set.m_MSEGData[mseg].getReleaseSteps(), &m_Set);
-				m_Set.m_MSEGData_changed[mseg].setReleaseSteps(m_Set.m_MSEGData_changed[mseg].getReleaseSteps(), &m_Set);
-			}
-			else {
-				m_Set.m_MSEGData[mseg].setSynch(false);
-				m_Set.m_MSEGData_changed[mseg].setSynch(false);
-			}
-		}
-
-		//if (m_Set.m_bPpqIsPlaying) {
-		float l_fIntervalTime = 0.f;
-		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ1 == static_cast<int>(SWITCH::SWITCH_ON)) {
-			l_fIntervalTime = m_Set.getIntervalTimeFromDAWBeats(*m_Set.m_State->m_uStepSeqTimeBeats_STEPSEQ1);
-			m_Set.m_StepSeqData[0].setStepSeqTime(l_fIntervalTime); //is in ms
-			m_Set.m_StepSeqData_changed[0].setStepSeqTime(l_fIntervalTime); //is in ms
-		}
-		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ2 == static_cast<int>(SWITCH::SWITCH_ON)) {
-			l_fIntervalTime = m_Set.getIntervalTimeFromDAWBeats(*m_Set.m_State->m_uStepSeqTimeBeats_STEPSEQ2);
-			m_Set.m_StepSeqData[1].setStepSeqTime(l_fIntervalTime); //is in ms
-			m_Set.m_StepSeqData_changed[1].setStepSeqTime(l_fIntervalTime); //is in ms
-		}
-		if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ3 == static_cast<int>(SWITCH::SWITCH_ON)) {
-			l_fIntervalTime = m_Set.getIntervalTimeFromDAWBeats(*m_Set.m_State->m_uStepSeqTimeBeats_STEPSEQ3);
-			m_Set.m_StepSeqData[2].setStepSeqTime(l_fIntervalTime); //is in ms
-			m_Set.m_StepSeqData_changed[2].setStepSeqTime(l_fIntervalTime); //is in ms
-		}
-		//}
-	}
-
-	m_Set.m_dPpqBpm = bpm;
-
-	//=================================================================================================
-	// Is prepare for play running?
-	if (m_BlockProcessing == true) {
-		const ScopedLock sl(myProcessor->getCallbackLock());
-		m_BlockProcessingIsBlockedSuccessfully = true;
+        //if (m_Set.m_bPpqIsPlaying) {
+        float l_fIntervalTime = 0.f;
+        if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ1 == static_cast<int>(SWITCH::SWITCH_ON)) {
+            l_fIntervalTime = m_Set.getIntervalTimeFromDAWBeats(*m_Set.m_State->m_uStepSeqTimeBeats_STEPSEQ1);
+            m_Set.m_StepSeqData[0].setStepSeqTime(l_fIntervalTime); //is in ms
+            m_Set.m_StepSeqData_changed[0].setStepSeqTime(l_fIntervalTime); //is in ms
+        }
+        if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ2 == static_cast<int>(SWITCH::SWITCH_ON)) {
+            l_fIntervalTime = m_Set.getIntervalTimeFromDAWBeats(*m_Set.m_State->m_uStepSeqTimeBeats_STEPSEQ2);
+            m_Set.m_StepSeqData[1].setStepSeqTime(l_fIntervalTime); //is in ms
+            m_Set.m_StepSeqData_changed[1].setStepSeqTime(l_fIntervalTime); //is in ms
+        }
+        if (*m_Set.m_State->m_bStepSeqSynch_STEPSEQ3 == static_cast<int>(SWITCH::SWITCH_ON)) {
+            l_fIntervalTime = m_Set.getIntervalTimeFromDAWBeats(*m_Set.m_State->m_uStepSeqTimeBeats_STEPSEQ3);
+            m_Set.m_StepSeqData[2].setStepSeqTime(l_fIntervalTime); //is in ms
+            m_Set.m_StepSeqData_changed[2].setStepSeqTime(l_fIntervalTime); //is in ms
+        }
+        //}
+    }
+    
+    m_Set.m_dPpqBpm = bpm;
+    
+    //=================================================================================================
+    // Is prepare for play running?
+    if (m_BlockProcessing == true) {
+        const ScopedLock sl(myProcessor->getCallbackLock());
+        m_BlockProcessingIsBlockedSuccessfully = true;
         VDBG("BlockProcessingIsBlockedSuccessfully is true!");
-		buffer.clear();
-		m_iFadeOutSamples = 0;
-		m_iFadeInSamples = 0;
-		return false;
-	}
-
-	beginSoftFade();
-
-	//Hardcore check
-	if ((m_bLastChainBufferZero) && (m_iFadeOutSamples == 0) && (m_iFadeInSamples == 0) &&
-		(midiMessages.isEmpty() && (m_Poly.getSynthesizer()->getNumMidiNotesKeyDown() == 0) && (!m_Poly.voicesMSEGStillActive()) &&
-		((*m_Set.m_State->m_bARPOnOff == static_cast<int>(SWITCH::SWITCH_OFF)) || (m_Poly.m_ARP_midiInNotes.size() == 0))
-			)) {
-
-		for (int bank = 0; bank < 4; bank++)
-			m_Poly.m_OscBank[bank]->m_bWavetableSoftfadeStillNeeded = false;
-
-		if (m_bBufferZeroMilliSeconds > 2000.f) { //2s silence?
-			buffer.clear();
-			endSoftFade();
-			m_iFadeOutSamples = 0;
-			m_iFadeInSamples = 0;
-			return false;
-		}
-	}
-
-	if (myProcessor->getActiveEditor() != nullptr) {
-		if (myProcessor->isEditorCurrentlyProbablyVisible()) {
-			for (int bank = 0; bank < 4; bank++) {
-				std::shared_ptr<CVASTWaveTable> l_wavetable;
-				l_wavetable = m_Poly.m_OscBank[bank]->getNewSharedSoftFadeWavetable();
-				if (l_wavetable == nullptr) {
-					l_wavetable = m_Poly.m_OscBank[bank]->getWavetablePointer();
-				}
-				if (l_wavetable != nullptr)
-					l_wavetable->copyUIFXUpdates();
-			}
-		}
-	}
-
-	//===========================================================================================
-	//MIDI processing
-	int samplePosition = 0;
-
-	auto midiIterator = midiMessages.findNextSamplePosition(samplePosition);
-	std::for_each(midiIterator,
-		midiMessages.cend(),
-		[&](const MidiMessageMetadata& metadata)
-		{
-			if (metadata.getMessage().isPitchWheel()) {
-				if (!myProcessor->isMPEenabled() || (metadata.getMessage().getChannel() == m_Poly.getSynthesizer()->m_MPEMasterChannel)) {
-					float wheelPos = (limit_range(metadata.getMessage().getPitchWheelValue(), 0.f, 16384.f));
-					VASTSynthesiser* synth = m_Poly.getSynthesizer();
-					if (synth != nullptr) {
-						for (int i = 0; i < 16; i++) //all midichannels?
-							synth->handlePitchWheel(i, wheelPos);
-					}
-				}						
-			}
-			else if (metadata.getMessage().isController()) {
-				//Check for MIDI learn
-				if (metadata.getMessage().getControllerNumber() == 0) { //CC00 bank change
-					VDBG("Bank Change " << metadata.getMessage().getControllerValue());
-					m_midiBank = metadata.getMessage().getControllerValue();
-				}
-				else if (metadata.getMessage().getControllerNumber() == 1) { //CC01 mod wheel
-					int wheelPos = metadata.getMessage().getControllerValue();
-					wheelPos = limit_range(wheelPos, 0.f, 127.f);
-
-					VASTSynthesiser* synth = m_Poly.getSynthesizer();
-					if (synth != nullptr) {
-						for (int i = 0; i < 16; i++) //all midichannels?
-							synth->handleController(i, 1, wheelPos); //controlle# 1 is modwheel
-					}
-				}
-			
-				//midi CC 1 (MSB) and midi CC 2
-				//CC02 mod wheel high precision?
-				else
-					if (myProcessor->m_iNowLearningMidiParameter >= 0) {
-						myProcessor->midiParameterLearned(metadata.getMessage().getControllerNumber());
-						myProcessor->requestUIUpdate();
-					}
-					else {
-						//check for mapped parameters
-						int lParamInternal = 0;
-						lParamInternal = myProcessor->midiMappingGetParameterIndex(metadata.getMessage().getControllerNumber());
-						if (lParamInternal >= 0) {
-							float lValue = metadata.getMessage().getControllerValue() / 127.0f;
-							if (lParamInternal == 9999) { //UI 
-								String uiComponentName = myProcessor->midiMappingComponentVariableName(metadata.getMessage().getControllerNumber());
-								myProcessor->registerComponentValueUpdate(uiComponentName, lValue); //UI only parameter that is not in parameter state, e.g. WT functions
-							}
-							else if (lParamInternal < getParameters().size()) {
-								getParameters()[lParamInternal]->setValueNotifyingHost(lValue);
-							}
-						}
-					}
-			}
-			else if (metadata.getMessage().isProgramChange()) {
-				int presetindex = myProcessor->m_presetData.bankProgramGetPresetIndex(m_midiBank, metadata.getMessage().getProgramChangeNumber());	
-				if (presetindex >= 0) {
-					myProcessor->setCurrentProgram(presetindex); //will set block process
-					VDBG("Program Change " << presetindex);
-				}
-			}
-		});
-	
-	//===========================================================================================
-	
-	//check buffer
-	//if (buffer.getNumChannels() != 2) return true; //stereo only - and VST3 sends 0 channels
-
-	//resize buffers
-	m_Set.m_RoutingBuffers.resize(buffer.getNumSamples(), true);
+        buffer.clear();
+        m_iFadeOutSamples = 0;
+        m_iFadeInSamples = 0;
+        return false;
+    }
+    
+    beginSoftFade();
+    
+    //Hardcore check
+    if ((m_bLastChainBufferZero) && (m_iFadeOutSamples == 0) && (m_iFadeInSamples == 0) &&
+        (midiMessages.isEmpty() && (m_Poly.getSynthesizer()->getNumMidiNotesKeyDown() == 0) && (!m_Poly.voicesMSEGStillActive()) &&
+         ((*m_Set.m_State->m_bARPOnOff == static_cast<int>(SWITCH::SWITCH_OFF)) || (m_Poly.m_ARP_midiInNotes.size() == 0))
+         )) {
+        
+        for (int bank = 0; bank < 4; bank++)
+            m_Poly.m_OscBank[bank]->m_bWavetableSoftfadeStillNeeded = false;
+        
+        if (m_bBufferZeroMilliSeconds > 2000.f) { //2s silence?
+            buffer.clear();
+            endSoftFade();
+            m_iFadeOutSamples = 0;
+            m_iFadeInSamples = 0;
+            return false;
+        }
+    }
+    
+    if (myProcessor->getActiveEditor() != nullptr) {
+        if (myProcessor->isEditorCurrentlyProbablyVisible()) {
+            for (int bank = 0; bank < 4; bank++) {
+                std::shared_ptr<CVASTWaveTable> l_wavetable;
+                l_wavetable = m_Poly.m_OscBank[bank]->getNewSharedSoftFadeWavetable();
+                if (l_wavetable == nullptr) {
+                    l_wavetable = m_Poly.m_OscBank[bank]->getWavetablePointer();
+                }
+                if (l_wavetable != nullptr)
+                    l_wavetable->copyUIFXUpdates();
+            }
+        }
+    }
+    
+    //===========================================================================================
+    //MIDI processing
+    int samplePosition = 0;
+    
+    auto midiIterator = midiMessages.findNextSamplePosition(samplePosition);
+    std::for_each(midiIterator,
+                  midiMessages.cend(),
+                  [&](const MidiMessageMetadata& metadata)
+                  {
+        if (metadata.getMessage().isPitchWheel()) {
+            if (!myProcessor->isMPEenabled() || (metadata.getMessage().getChannel() == m_Poly.getSynthesizer()->m_MPEMasterChannel)) {
+                float wheelPos = (limit_range(metadata.getMessage().getPitchWheelValue(), 0.f, 16384.f));
+                VASTSynthesiser* synth = m_Poly.getSynthesizer();
+                if (synth != nullptr) {
+                    for (int i = 0; i < 16; i++) //all midichannels?
+                        synth->handlePitchWheel(i, wheelPos);
+                }
+            }
+        }
+        else if (metadata.getMessage().isController()) {
+            //Check for MIDI learn
+            if (metadata.getMessage().getControllerNumber() == 0) { //CC00 bank change
+                VDBG("Bank Change " << metadata.getMessage().getControllerValue());
+                m_midiBank = metadata.getMessage().getControllerValue();
+            }
+            else if (metadata.getMessage().getControllerNumber() == 1) { //CC01 mod wheel
+                int wheelPos = metadata.getMessage().getControllerValue();
+                wheelPos = limit_range(wheelPos, 0.f, 127.f);
+                
+                VASTSynthesiser* synth = m_Poly.getSynthesizer();
+                if (synth != nullptr) {
+                    for (int i = 0; i < 16; i++) //all midichannels?
+                        synth->handleController(i, 1, wheelPos); //controlle# 1 is modwheel
+                }
+            }
+            
+            //midi CC 1 (MSB) and midi CC 2
+            //CC02 mod wheel high precision?
+            else
+                if (myProcessor->m_iNowLearningMidiParameter >= 0) {
+                    myProcessor->midiParameterLearned(metadata.getMessage().getControllerNumber());
+                    myProcessor->requestUIUpdate();
+                }
+                else {
+                    //check for mapped parameters
+                    int lParamInternal = 0;
+                    lParamInternal = myProcessor->midiMappingGetParameterIndex(metadata.getMessage().getControllerNumber());
+                    if (lParamInternal >= 0) {
+                        float lValue = metadata.getMessage().getControllerValue() / 127.0f;
+                        if (lParamInternal == 9999) { //UI
+                            String uiComponentName = myProcessor->midiMappingComponentVariableName(metadata.getMessage().getControllerNumber());
+                            myProcessor->registerComponentValueUpdate(uiComponentName, lValue); //UI only parameter that is not in parameter state, e.g. WT functions
+                        }
+                        else if (lParamInternal < getParameters().size()) {
+                            getParameters()[lParamInternal]->setValueNotifyingHost(lValue);
+                        }
+                    }
+                }
+        }
+        else if (metadata.getMessage().isProgramChange()) {
+            int presetindex = myProcessor->m_presetData.bankProgramGetPresetIndex(m_midiBank, metadata.getMessage().getProgramChangeNumber());
+            if (presetindex >= 0) {
+                myProcessor->setCurrentProgram(presetindex); //will set block process
+                VDBG("Program Change " << presetindex);
+            }
+        }
+    });
+    
+    //===========================================================================================
+    
+    //resize buffers
+    m_Set.m_RoutingBuffers.resize(buffer.getNumSamples(), true);
 
 	//===========================================================================================
 	//LFO used?
@@ -555,126 +552,126 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
 		((*m_Set.m_State->m_uLFOMSEG_LFO4 == static_cast<int>(MSEGLFOENV::MSEGLFO5)) && (m_Set.m_RoutingBuffers.lfoUsed[3].load() == true)) ||
 		((*m_Set.m_State->m_uLFOMSEG_LFO5 == static_cast<int>(MSEGLFOENV::MSEGLFO5)) && (m_Set.m_RoutingBuffers.lfoUsed[4].load() == true))));
 
-	m_Set.m_RoutingBuffers.stepSeqUsed[0].store(m_Set.modMatrixSourceSetFast(MODMATSRCE::StepSeq1));
-	m_Set.m_RoutingBuffers.stepSeqUsed[1].store(m_Set.modMatrixSourceSetFast(MODMATSRCE::StepSeq2));
-	m_Set.m_RoutingBuffers.stepSeqUsed[2].store(m_Set.modMatrixSourceSetFast(MODMATSRCE::StepSeq3));
-
-	//=================================================================================================
-
-	const int numFrames = buffer.getNumSamples();
-
-	//=================================================================================================
-
-	m_Set.m_fMasterVolume = m_Set.m_fMasterVolume_smoothed.getNextValue();
-	m_Set.m_fMasterVolume_smoothed.skip(numFrames - 1);
-
-	//=================================================================================================
-	//Check oversampling changes
-	if (m_bOversampleBus1_changed) {
-		m_bOversampleBus1_changed = false;
-		m_fxBus1.prepareToPlay(m_Set.m_nSampleRate, m_Set.m_nExpectedSamplesPerBlock);
-	}
-	if (m_bOversampleBus2_changed) {
-		m_bOversampleBus2_changed = false;
-		m_fxBus2.prepareToPlay(m_Set.m_nSampleRate, m_Set.m_nExpectedSamplesPerBlock);
-	}
-	if (m_bOversampleBus3_changed) {
-		m_bOversampleBus3_changed = false;
-		m_fxBus3.prepareToPlay(m_Set.m_nSampleRate, m_Set.m_nExpectedSamplesPerBlock);
-	}
-
-	//=================================================================================================
+    m_Set.m_RoutingBuffers.stepSeqUsed[0].store(m_Set.modMatrixSourceSetFast(MODMATSRCE::StepSeq1));
+    m_Set.m_RoutingBuffers.stepSeqUsed[1].store(m_Set.modMatrixSourceSetFast(MODMATSRCE::StepSeq2));
+    m_Set.m_RoutingBuffers.stepSeqUsed[2].store(m_Set.modMatrixSourceSetFast(MODMATSRCE::StepSeq3));
+    
+    //=================================================================================================
+    
+    const int numFrames = buffer.getNumSamples();
+    
+    //=================================================================================================
+    
+    m_Set.m_fMasterVolume = m_Set.m_fMasterVolume_smoothed.getNextValue();
+    m_Set.m_fMasterVolume_smoothed.skip(numFrames - 1);
+    
+    //=================================================================================================
+    //Check oversampling changes
+    if (m_bOversampleBus1_changed) {
+        m_bOversampleBus1_changed = false;
+        m_fxBus1.prepareToPlay(m_Set.m_nSampleRate, m_Set.m_nExpectedSamplesPerBlock);
+    }
+    if (m_bOversampleBus2_changed) {
+        m_bOversampleBus2_changed = false;
+        m_fxBus2.prepareToPlay(m_Set.m_nSampleRate, m_Set.m_nExpectedSamplesPerBlock);
+    }
+    if (m_bOversampleBus3_changed) {
+        m_bOversampleBus3_changed = false;
+        m_fxBus3.prepareToPlay(m_Set.m_nSampleRate, m_Set.m_nExpectedSamplesPerBlock);
+    }
+    
+    //=================================================================================================
     if (buffer.getNumChannels() > 0) {
         m_Set.m_RoutingBuffers.fAudioInputBuffer->copyFrom(0, 0, buffer.getReadPointer(0), numFrames); //MONO only
         if (m_Set.modMatrixSourceSetFast(MODMATSRCE::InputEnvelope) == true)
             m_Set.processEnvelope(numFrames);
     }
     
-	//clear buffer before poly
-	buffer.clear();
-	m_Poly.processAudioBuffer(m_Set.m_RoutingBuffers, midiMessages);
-
-	//=================================================================================================
-	//FX Busses
-	m_fxBus1.processBuffers(m_Set.m_RoutingBuffers, midiMessages);
-	m_fxBus2.processBuffers(m_Set.m_RoutingBuffers, midiMessages);
-	m_fxBus3.processBuffers(m_Set.m_RoutingBuffers, midiMessages);
-
-	//=================================================================================================
-
-	//Master Volume
-	//Fill output buffer	
-	//do routing
-	if ((*m_Set.m_State->m_uOscRouting1_OscA == static_cast<int>(OSCROUTE::OSCROUTE_Master)) || (*m_Set.m_State->m_uOscRouting2_OscA == static_cast<int>(OSCROUTE::OSCROUTE_Master))) {
-		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.OscBuffer[0]->getReadPointer(0, 0), numFrames); //gain??
-		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.OscBuffer[0]->getReadPointer(1, 0), numFrames); //gain??
-	}
-	if ((*m_Set.m_State->m_uOscRouting1_OscB == static_cast<int>(OSCROUTE::OSCROUTE_Master)) || (*m_Set.m_State->m_uOscRouting2_OscB == static_cast<int>(OSCROUTE::OSCROUTE_Master))) {
-		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.OscBuffer[1]->getReadPointer(0, 0), numFrames); //gain??
-		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.OscBuffer[1]->getReadPointer(1, 0), numFrames); //gain??
-	}
-	if ((*m_Set.m_State->m_uOscRouting1_OscC == static_cast<int>(OSCROUTE::OSCROUTE_Master)) || (*m_Set.m_State->m_uOscRouting2_OscC == static_cast<int>(OSCROUTE::OSCROUTE_Master))) {
-		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.OscBuffer[2]->getReadPointer(0, 0), numFrames); //gain??
-		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.OscBuffer[2]->getReadPointer(1, 0), numFrames); //gain??
-	}
-	if ((*m_Set.m_State->m_uOscRouting1_OscD == static_cast<int>(OSCROUTE::OSCROUTE_Master)) || (*m_Set.m_State->m_uOscRouting2_OscD == static_cast<int>(OSCROUTE::OSCROUTE_Master))) {
-		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.OscBuffer[3]->getReadPointer(0, 0), numFrames); //gain??
-		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.OscBuffer[3]->getReadPointer(1, 0), numFrames); //gain??
-	}
-	if ((*m_Set.m_State->m_uNoiseRouting1 == static_cast<int>(OSCROUTE::OSCROUTE_Master)) || (*m_Set.m_State->m_uNoiseRouting2 == static_cast<int>(OSCROUTE::OSCROUTE_Master))) {
-		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.NoiseBuffer->getReadPointer(0, 0), numFrames); //gain??
-		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.NoiseBuffer->getReadPointer(1, 0), numFrames); //gain??
-	}
-	if ((*m_Set.m_State->m_uSamplerRouting1 == static_cast<int>(OSCROUTE::OSCROUTE_Master)) || (*m_Set.m_State->m_uSamplerRouting2 == static_cast<int>(OSCROUTE::OSCROUTE_Master))) {
-		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.SamplerBuffer->getReadPointer(0, 0), numFrames); //gain??
-		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.SamplerBuffer->getReadPointer(1, 0), numFrames); //gain??
-	}
-	//filter
-	if (*m_Set.m_State->m_uFilterRouting_Filter1 == static_cast<int>(FILTER1ROUTE::FILTER1ROUTE_Master)) {
-		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.FilterBuffer[0]->getReadPointer(0, 0), numFrames); //gain??
-		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.FilterBuffer[0]->getReadPointer(1, 0), numFrames); //gain??
-	}
-	if (*m_Set.m_State->m_uFilterRouting2_Filter1 == static_cast<int>(FILTER1ROUTE::FILTER1ROUTE_Master)) {
-		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.FilterBuffer[0]->getReadPointer(0, 0), numFrames); //gain??
-		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.FilterBuffer[0]->getReadPointer(1, 0), numFrames); //gain??
-	}
-	if (*m_Set.m_State->m_uFilterRouting_Filter2 == static_cast<int>(FILTER2ROUTE::FILTER2ROUTE_Master)) {
-		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.FilterBuffer[1]->getReadPointer(0, 0), numFrames); //gain??
-		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.FilterBuffer[1]->getReadPointer(1, 0), numFrames); //gain??
-	}
-	if (*m_Set.m_State->m_uFilterRouting2_Filter2 == static_cast<int>(FILTER2ROUTE::FILTER2ROUTE_Master)) {
-		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.FilterBuffer[1]->getReadPointer(0, 0), numFrames); //gain??
-		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.FilterBuffer[1]->getReadPointer(1, 0), numFrames); //gain??
-	}
-	if (*m_Set.m_State->m_uFilterRouting_Filter3 == static_cast<int>(FILTER3ROUTE::FILTER3ROUTE_Master)) {
-		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.FilterBuffer[2]->getReadPointer(0, 0), numFrames); //gain??
-		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.FilterBuffer[2]->getReadPointer(1, 0), numFrames); //gain??
-	}
-	if (*m_Set.m_State->m_uFilterRouting2_Filter3 == static_cast<int>(FILTER3ROUTE::FILTER3ROUTE_Master)) {
-		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.FilterBuffer[2]->getReadPointer(0, 0), numFrames); //gain??
-		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.FilterBuffer[2]->getReadPointer(1, 0), numFrames); //gain??
-	}
-	//fxbusses
-	if (*m_Set.m_State->m_uFxBusRouting == static_cast<int>(FXBUSROUTE::FXBUSROUTE_Master)) {
-		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.FxBusBuffer[0]->getReadPointer(0, 0), numFrames); //gain??
-		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.FxBusBuffer[0]->getReadPointer(1, 0), numFrames); //gain??
-	}
-	if (*m_Set.m_State->m_uFxBusRouting_Bus2 == static_cast<int>(FXBUSROUTE::FXBUSROUTE_Master)) {
-		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.FxBusBuffer[1]->getReadPointer(0, 0), numFrames); //gain??
-		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.FxBusBuffer[1]->getReadPointer(1, 0), numFrames); //gain??
-	}
-	if (*m_Set.m_State->m_uFxBusRouting_Bus3 == static_cast<int>(FXBUSROUTE::FXBUSROUTE_Master)) {
-		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.FxBusBuffer[2]->getReadPointer(0, 0), numFrames); //gain??
-		m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.FxBusBuffer[2]->getReadPointer(1, 0), numFrames); //gain??
-	}
-
+    //clear buffer before poly
+    buffer.clear();
+    m_Poly.processAudioBuffer(m_Set.m_RoutingBuffers, midiMessages);
+    
+    //=================================================================================================
+    //FX Busses
+    m_fxBus1.processBuffers(m_Set.m_RoutingBuffers, midiMessages);
+    m_fxBus2.processBuffers(m_Set.m_RoutingBuffers, midiMessages);
+    m_fxBus3.processBuffers(m_Set.m_RoutingBuffers, midiMessages);
+    
+    //=================================================================================================
+    
+    //Master Volume
+    //Fill output buffer
+    //do routing
+    if ((*m_Set.m_State->m_uOscRouting1_OscA == static_cast<int>(OSCROUTE::OSCROUTE_Master)) || (*m_Set.m_State->m_uOscRouting2_OscA == static_cast<int>(OSCROUTE::OSCROUTE_Master))) {
+        m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.OscBuffer[0]->getReadPointer(0, 0), numFrames); //gain??
+        m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.OscBuffer[0]->getReadPointer(1, 0), numFrames); //gain??
+    }
+    if ((*m_Set.m_State->m_uOscRouting1_OscB == static_cast<int>(OSCROUTE::OSCROUTE_Master)) || (*m_Set.m_State->m_uOscRouting2_OscB == static_cast<int>(OSCROUTE::OSCROUTE_Master))) {
+        m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.OscBuffer[1]->getReadPointer(0, 0), numFrames); //gain??
+        m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.OscBuffer[1]->getReadPointer(1, 0), numFrames); //gain??
+    }
+    if ((*m_Set.m_State->m_uOscRouting1_OscC == static_cast<int>(OSCROUTE::OSCROUTE_Master)) || (*m_Set.m_State->m_uOscRouting2_OscC == static_cast<int>(OSCROUTE::OSCROUTE_Master))) {
+        m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.OscBuffer[2]->getReadPointer(0, 0), numFrames); //gain??
+        m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.OscBuffer[2]->getReadPointer(1, 0), numFrames); //gain??
+    }
+    if ((*m_Set.m_State->m_uOscRouting1_OscD == static_cast<int>(OSCROUTE::OSCROUTE_Master)) || (*m_Set.m_State->m_uOscRouting2_OscD == static_cast<int>(OSCROUTE::OSCROUTE_Master))) {
+        m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.OscBuffer[3]->getReadPointer(0, 0), numFrames); //gain??
+        m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.OscBuffer[3]->getReadPointer(1, 0), numFrames); //gain??
+    }
+    if ((*m_Set.m_State->m_uNoiseRouting1 == static_cast<int>(OSCROUTE::OSCROUTE_Master)) || (*m_Set.m_State->m_uNoiseRouting2 == static_cast<int>(OSCROUTE::OSCROUTE_Master))) {
+        m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.NoiseBuffer->getReadPointer(0, 0), numFrames); //gain??
+        m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.NoiseBuffer->getReadPointer(1, 0), numFrames); //gain??
+    }
+    if ((*m_Set.m_State->m_uSamplerRouting1 == static_cast<int>(OSCROUTE::OSCROUTE_Master)) || (*m_Set.m_State->m_uSamplerRouting2 == static_cast<int>(OSCROUTE::OSCROUTE_Master))) {
+        m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.SamplerBuffer->getReadPointer(0, 0), numFrames); //gain??
+        m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.SamplerBuffer->getReadPointer(1, 0), numFrames); //gain??
+    }
+    //filter
+    if (*m_Set.m_State->m_uFilterRouting_Filter1 == static_cast<int>(FILTER1ROUTE::FILTER1ROUTE_Master)) {
+        m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.FilterBuffer[0]->getReadPointer(0, 0), numFrames); //gain??
+        m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.FilterBuffer[0]->getReadPointer(1, 0), numFrames); //gain??
+    }
+    if (*m_Set.m_State->m_uFilterRouting2_Filter1 == static_cast<int>(FILTER1ROUTE::FILTER1ROUTE_Master)) {
+        m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.FilterBuffer[0]->getReadPointer(0, 0), numFrames); //gain??
+        m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.FilterBuffer[0]->getReadPointer(1, 0), numFrames); //gain??
+    }
+    if (*m_Set.m_State->m_uFilterRouting_Filter2 == static_cast<int>(FILTER2ROUTE::FILTER2ROUTE_Master)) {
+        m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.FilterBuffer[1]->getReadPointer(0, 0), numFrames); //gain??
+        m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.FilterBuffer[1]->getReadPointer(1, 0), numFrames); //gain??
+    }
+    if (*m_Set.m_State->m_uFilterRouting2_Filter2 == static_cast<int>(FILTER2ROUTE::FILTER2ROUTE_Master)) {
+        m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.FilterBuffer[1]->getReadPointer(0, 0), numFrames); //gain??
+        m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.FilterBuffer[1]->getReadPointer(1, 0), numFrames); //gain??
+    }
+    if (*m_Set.m_State->m_uFilterRouting_Filter3 == static_cast<int>(FILTER3ROUTE::FILTER3ROUTE_Master)) {
+        m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.FilterBuffer[2]->getReadPointer(0, 0), numFrames); //gain??
+        m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.FilterBuffer[2]->getReadPointer(1, 0), numFrames); //gain??
+    }
+    if (*m_Set.m_State->m_uFilterRouting2_Filter3 == static_cast<int>(FILTER3ROUTE::FILTER3ROUTE_Master)) {
+        m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.FilterBuffer[2]->getReadPointer(0, 0), numFrames); //gain??
+        m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.FilterBuffer[2]->getReadPointer(1, 0), numFrames); //gain??
+    }
+    //fxbusses
+    if (*m_Set.m_State->m_uFxBusRouting == static_cast<int>(FXBUSROUTE::FXBUSROUTE_Master)) {
+        m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.FxBusBuffer[0]->getReadPointer(0, 0), numFrames); //gain??
+        m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.FxBusBuffer[0]->getReadPointer(1, 0), numFrames); //gain??
+    }
+    if (*m_Set.m_State->m_uFxBusRouting_Bus2 == static_cast<int>(FXBUSROUTE::FXBUSROUTE_Master)) {
+        m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.FxBusBuffer[1]->getReadPointer(0, 0), numFrames); //gain??
+        m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.FxBusBuffer[1]->getReadPointer(1, 0), numFrames); //gain??
+    }
+    if (*m_Set.m_State->m_uFxBusRouting_Bus3 == static_cast<int>(FXBUSROUTE::FXBUSROUTE_Master)) {
+        m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(0, 0, m_Set.m_RoutingBuffers.FxBusBuffer[2]->getReadPointer(0, 0), numFrames); //gain??
+        m_Set.m_RoutingBuffers.MasterOutBuffer->addFrom(1, 0, m_Set.m_RoutingBuffers.FxBusBuffer[2]->getReadPointer(1, 0), numFrames); //gain??
+    }
+    
     if (uNumOutChannels > 0)
         buffer.copyFrom(0, 0, m_Set.m_RoutingBuffers.MasterOutBuffer->getReadPointer(0, 0), numFrames, m_Set.m_fMasterVolume); // directly apply gain!
     if (uNumOutChannels > 1)
         buffer.copyFrom(1, 0, m_Set.m_RoutingBuffers.MasterOutBuffer->getReadPointer(1, 0), numFrames, m_Set.m_fMasterVolume); // directly apply gain!
-
-	//=================================================================================================
-
+    
+    //=================================================================================================
+    
     //check filter empty and processing completed
     bool bClearBuffer = false;
     if (uNumOutChannels > 0) {
@@ -697,30 +694,30 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
         m_bBufferZeroMilliSeconds = 0;
     }
     
-	//Fade out when program change
-	if (m_iFadeOutSamples > 0) {
-		float startVal = m_iFadeOutSamples / float(m_iMaxFadeSamples);
-		float endVal = (m_iFadeOutSamples - numFrames) / float(m_iMaxFadeSamples);
-		startVal = jlimit<float>(0.f, 1.f, startVal);
-		endVal = jlimit<float>(0.f, 1.f, endVal);
-		buffer.applyGainRamp(0, numFrames, startVal, endVal);
-		m_iFadeOutSamples -= numFrames;
-		if (m_iFadeOutSamples < 0)
-			m_iFadeOutSamples = 0;
-	} 
-	if (m_iFadeInSamples > 0) {
-		float startVal = 1 - m_iFadeInSamples / float(m_iMaxFadeSamples);
-		float endVal = 1 - (m_iFadeInSamples - numFrames) / float(m_iMaxFadeSamples);
-		startVal = jlimit<float>(0.f, 1.f, startVal);
-		endVal = jlimit<float>(0.f, 1.f, endVal);
-		buffer.applyGainRamp(0, numFrames, startVal, endVal);
-		m_iFadeInSamples -= numFrames;
-		if (m_iFadeInSamples < 0)
-			m_iFadeInSamples = 0;
-	}
-
-	endSoftFade(); 
-
+    //Fade out when program change
+    if (m_iFadeOutSamples > 0) {
+        float startVal = m_iFadeOutSamples / float(m_iMaxFadeSamples);
+        float endVal = (m_iFadeOutSamples - numFrames) / float(m_iMaxFadeSamples);
+        startVal = jlimit<float>(0.f, 1.f, startVal);
+        endVal = jlimit<float>(0.f, 1.f, endVal);
+        buffer.applyGainRamp(0, numFrames, startVal, endVal);
+        m_iFadeOutSamples -= numFrames;
+        if (m_iFadeOutSamples < 0)
+            m_iFadeOutSamples = 0;
+    }
+    if (m_iFadeInSamples > 0) {
+        float startVal = 1 - m_iFadeInSamples / float(m_iMaxFadeSamples);
+        float endVal = 1 - (m_iFadeInSamples - numFrames) / float(m_iMaxFadeSamples);
+        startVal = jlimit<float>(0.f, 1.f, startVal);
+        endVal = jlimit<float>(0.f, 1.f, endVal);
+        buffer.applyGainRamp(0, numFrames, startVal, endVal);
+        m_iFadeInSamples -= numFrames;
+        if (m_iFadeInSamples < 0)
+            m_iFadeInSamples = 0;
+    }
+    
+    endSoftFade();
+    
 #ifdef _DEBUG
     if (uNumOutChannels > 1) {
         //-------------------------------
@@ -731,7 +728,7 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
         if (duration > mfMaxAllowedMicroSecs) {
             m_Set.m_cUnderruns++;
         }
-
+        
         if (m_Set.m_bShallCatchClicks) {
             float l_clickTolerance = (48000.f / m_Set.m_nSampleRate) * 0.2f; //larger than 0.2 step at 48khz is way too much (too high freq)
             float* clickBuffer = buffer.getWritePointer(0);

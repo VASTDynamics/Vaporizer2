@@ -858,7 +858,8 @@ bool VASTAudioProcessor::doUndo() {
 	bool success = m_parameterState.undoManager->undo();	
 	VASTAudioProcessorEditor* editor = (VASTAudioProcessorEditor*)getActiveEditor();
 	if (editor != nullptr) {
-		editor->vaporizerComponent->updateAll();
+        if (editor->vaporizerComponent.get() != nullptr)
+            editor->vaporizerComponent->updateAll();
 	}
 
 	return success;

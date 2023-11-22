@@ -222,8 +222,6 @@ public:
 	void getCurrentProgramStateInformation(juce::MemoryBlock &destData) override; //preset
     void setStateInformation (const void* data, int sizeInBytes) override; //bank
 	void setCurrentProgramStateInformation(const void *data, int sizeInBytes) override;
-	
-	//void atomicPluginStateUpdate();
 	void addChunkTreeState(ValueTree* treeState);
 
 	bool isLicensed();
@@ -239,9 +237,6 @@ public:
 	void randomizePatch(); //not yet implemented
 
 	String getVersionString();
-
-	//static void crashHandler(void* signum) {
-	//static void crashHandler(void * exceptionPointers) {
 	static void crashHandler(void*);
 
 	void loadDefaultMidiMapping();
@@ -365,9 +360,6 @@ public:
 	String getEncodedIDString(const String& input);
 	char getPlatformPrefix();
 
-	//void createCachedVASTEditor();
-	//void createCachedVASTEditorDelayed();
-
 	bool m_showNewerVersionPopup = false;
 	String m_newerVersionThatIsAvailble = "No newer version";
 	bool readLicense();
@@ -399,15 +391,12 @@ private:
     void registerLoadPreset(int index);
     int m_presetToLoad = -1;
     
-	//bool writeLicense(const String &name, const String &email, const String &cuno, const String &purdat);
 	juce::uint32 m_tSetChunkCalled = 0;
 
 	std::string  XOREncrypt(std::string  a_sValue, std::string  a_sKey);
 	std::string  XORDecrypt(std::string  a_sValue, std::string  a_sKey);
 	void convertToASCIIhex(std::string  & output, std::string  & input);
-	//void convertHexToBinary(std::string  & output, std::string  & input);
 	void convertASCIIhexToString(std::string  & output, std::string  & input);
-	//void convertBinaryToHex(std::string  & output, std::string  & input);
   
 	void checkForNewerVersion(String resultString);
 
@@ -438,13 +427,10 @@ private:
 
 	std::atomic<bool> mUIInitFlag;
     std::atomic<bool> mUIAlert;
-	//bool mUIPresetUpdateFlag;	
 
 	int mIntPpq = 0;
 	String m_sLicenseString = " n/a ";
 	float m_fTrialSeconds = 0.0;
-	String m_vstParams[500];  // number of vaporizer parameters must not exceed 500!
-	//int mapExternalInternalParameterIndex(int vstparamindex);
 
 	void initSettings();
 

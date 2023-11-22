@@ -14,23 +14,35 @@
 
 //==============================================================================
 VASTAudioProcessorEditor::VASTAudioProcessorEditor(VASTAudioProcessor& p)
-	: AudioProcessorEditor(&p), processor(p) {
-
-		if (juce::Desktop::getInstance().isHeadless() == false)
-		{
-			juce::Rectangle<int> r = Desktop::getInstance().getDisplays().getPrimaryDisplay()->userArea;
-			int screenW = r.getWidth();
-			int screenH = r.getHeight();
-			if (m_iMaxWidth > screenW) m_iMaxWidth = screenW;
-			if (m_iMaxHeight > screenH) m_iMaxHeight = screenH;
-		}
-
-	resizeCalledFromConstructor = true;
+: AudioProcessorEditor(&p), processor(p) {
+    
+    if (juce::Desktop::getInstance().isHeadless() == false)
+    {
+        juce::Rectangle<int> r = Desktop::getInstance().getDisplays().getPrimaryDisplay()->userArea;
+        int screenW = r.getWidth();
+        int screenH = r.getHeight();
+        if (m_iMaxWidth > screenW) m_iMaxWidth = screenW;
+        if (m_iMaxHeight > screenH) m_iMaxHeight = screenH;
+    }
+    
+    // delayed construction of GUI
+    //WeakReference<VASTAudioProcessorEditor> editor(this);
+    VASTAudioProcessorEditor* editor = this;
+    MessageManager::callAsync([editor]() {
+        if (editor != nullptr) {
+            editor->vaporizerComponent = std::make_unique<VASTVaporizerComponent>(editor, editor->getProcessor());
+            editor->addAndMakeVisible(editor->vaporizerComponent.get());
+            editor->vaporizerComponent->setVersionText(editor->getProcessor()->getVersionString());
+            editor-> resizeCalledFromConstructor = true;
+            editor->setSize(editor->processor.m_iUserTargetPluginHeight * editor->processor.m_dPluginRatio, editor->processor.m_iUserTargetPluginHeight);
+            editor->startTimer(0, 100); //ui update
+            editor->startTimer(1, 10); //param update
+        }
+    });
+    
+    resizeCalledFromConstructor = true;
 
 	processor.m_mapParameterNameToControl.clear(); //clear slider mapping
-	vaporizerComponent = std::make_unique<VASTVaporizerComponent>(this, &processor);
-	
-	//VASTAudioProcessor* _processor = getProcessor();
 
 	m_VASTComponentsAll = juce::Array<Component*>();
 	//Make sure that before the constructor has finished, you've set the
@@ -49,22 +61,14 @@ VASTAudioProcessorEditor::VASTAudioProcessorEditor(VASTAudioProcessor& p)
 
 	tooltipWindow.setLookAndFeel(getProcessor()->getCurrentVASTLookAndFeel());
 	
-	addAndMakeVisible(vaporizerComponent.get());
-	resizeCalledFromConstructor = true;
-	//setSize(processor.m_iUserTargetPluginWidth, processor.m_iUserTargetPluginHeight);
 	resizeCalledFromConstructor = true;
 #if !defined JUCE_LINUX
 	m_componentBoundsConstrainer.setFixedAspectRatio(processor.m_dPluginRatio);
 	m_componentBoundsConstrainer.setSizeLimits(m_iMinWidth, m_iMinHeight, m_iMaxWidth, m_iMaxHeight); //CHECK https://forum.juce.com/t/best-way-to-implement-resizable-plugin/12644/5
 	setConstrainer(&m_componentBoundsConstrainer);
 #endif
-	resizeCalledFromConstructor = true;
-	setSize(processor.m_iUserTargetPluginHeight * processor.m_dPluginRatio, processor.m_iUserTargetPluginHeight);
-	//vaporizerComponent->setBounds(Rectangle<int>(0, 0, processor.m_iUserTargetPluginWidth, processor.m_iUserTargetPluginHeight));
-	vaporizerComponent->setVersionText(processor.getVersionString());
+
 	setOpaque(true);
-	startTimer(0, 100); //ui update
-	startTimer(1, 10); //param update
 }
 
 VASTAudioProcessorEditor::~VASTAudioProcessorEditor() {
@@ -254,15 +258,17 @@ void VASTAudioProcessorEditor::resized() {
 		getProcessor()->writeSettingsToFile(); //must not be async
 	}
 #endif
-
-	vaporizerComponent->setSize(this->getWidth(), this->getHeight());
+    if (vaporizerComponent.get() != nullptr)
+        vaporizerComponent->setSize(this->getWidth(), this->getHeight());
 }
 
 void VASTAudioProcessorEditor::startPaintingToImage() {
-	vaporizerComponent->startPaintingToImage();
+    if (vaporizerComponent.get() != nullptr)
+        vaporizerComponent->startPaintingToImage();
 }
 void VASTAudioProcessorEditor::endPaintingToImage() {
-	vaporizerComponent->endPaintingToImage();
+    if (vaporizerComponent.get() != nullptr)
+        vaporizerComponent->endPaintingToImage();
 }
 
 void VASTAudioProcessorEditor::initAllLookAndFeels() {
@@ -289,6 +295,8 @@ VASTLookAndFeel* VASTAudioProcessorEditor::getCurrentVASTLookAndFeel() {
 }
 
 void VASTAudioProcessorEditor::showNewerVersionPopup() {
+    if (vaporizerComponent.get() == nullptr)
+        return;
 	getProcessor()->m_showNewerVersionPopup = false;
 	//transportable alertwindows without modalloop! https://forum.juce.com/t/is-there-a-easy-way-to-replace-alertwindow-runmodalloop/15072/16
 	m_alertWindow = std::make_unique<juce::AlertWindow>(TRANS("Newer version " + getProcessor()->m_newerVersionThatIsAvailble +" available"), TRANS("Please visit the website and download the newest version of Vaporizer2."), juce::AlertWindow::InfoIcon, this);
