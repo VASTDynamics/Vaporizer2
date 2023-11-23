@@ -36,7 +36,9 @@ using namespace BinaryData;
 //==============================================================================
 VASTAudioProcessor::VASTAudioProcessor() :
 			m_parameterState(*this, &m_undoManager), 
-			m_pVASTXperience(this) {
+			m_pVASTXperience(this),
+			AudioProcessor(BusesProperties().withInput("Input", juce::AudioChannelSet::stereo(), true).withOutput("Output", juce::AudioChannelSet::stereo(), true)) // default 2 inputs, 2outputs, enabled
+{
                 
 //CRT memory leak detection	
 /*
@@ -106,14 +108,6 @@ VASTAudioProcessor::VASTAudioProcessor() :
 	VDBG("End AudioProcesor constructor.");
 }
 
-void* VASTAudioProcessor::deleteComponent(void* userData)
-{
-	Component* comp = static_cast<Component*>(userData);
-	Component* top = comp->getTopLevelComponent();
-	delete top;
-	return 0;
-}
-
 VASTAudioProcessor::~VASTAudioProcessor()
 {
 	AudioProcessorEditor* editor = getActiveEditor();
@@ -132,6 +126,14 @@ VASTAudioProcessor::~VASTAudioProcessor()
 	_CrtDumpMemoryLeaks();
 #endif
 */
+}
+
+void* VASTAudioProcessor::deleteComponent(void* userData)
+{
+	Component* comp = static_cast<Component*>(userData);
+	Component* top = comp->getTopLevelComponent();
+	delete top;
+	return 0;
 }
 
 //==============================================================================
@@ -177,9 +179,9 @@ bool VASTAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) cons
 	VDBG("layouts.getMainInputChannelSet().getSpeakerArrangementAsString():" << (layouts.getMainInputChannelSet().getSpeakerArrangementAsString()));
 	VDBG("layouts.getMainOutputChannelSet().getSpeakerArrangementAsString():" << (layouts.getMainOutputChannelSet().getSpeakerArrangementAsString()));
 	
-	if (layouts.getMainInputChannelSet().isDisabled()) 
-		return true;
-	else
+	//if (layouts.getMainInputChannelSet().isDisabled()) 
+		//return true;
+	//else
 		return (((inSize == 2) && (outSize == 2)) || ((inSize == 0) && (outSize == 2)));
 	
 }

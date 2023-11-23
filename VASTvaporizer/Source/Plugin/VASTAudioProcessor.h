@@ -50,7 +50,7 @@ class VASTAudioProcessor  : public AudioProcessor
 {
 public:
     //==============================================================================
-    VASTAudioProcessor();
+	VASTAudioProcessor();
     ~VASTAudioProcessor();
 
 	enum VstStringConstants

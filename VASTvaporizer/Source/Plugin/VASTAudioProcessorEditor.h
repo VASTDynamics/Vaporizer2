@@ -19,6 +19,7 @@
 //==============================================================================
 /**
 */
+static atomic<bool> b_ap_alive;
 
 class VASTAudioProcessorEditor : public AudioProcessorEditor, MultiTimer
 {
