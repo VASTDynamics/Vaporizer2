@@ -27,19 +27,28 @@ VASTAudioProcessorEditor::VASTAudioProcessorEditor(VASTAudioProcessor& p)
     
     // delayed construction of GUI
     //WeakReference<VASTAudioProcessorEditor> editor(this);
+	b_ap_alive.store(true);
     VASTAudioProcessorEditor* editor = this;
     MessageManager::callAsync([editor]() {
         if (editor != nullptr) {
-            editor->vaporizerComponent = std::make_unique<VASTVaporizerComponent>(editor, editor->getProcessor());
-            editor->addAndMakeVisible(editor->vaporizerComponent.get());
-            editor->vaporizerComponent->setVersionText(editor->getProcessor()->getVersionString());
-            editor-> resizeCalledFromConstructor = true;
-            editor->setSize(editor->processor.m_iUserTargetPluginHeight * editor->processor.m_dPluginRatio, editor->processor.m_iUserTargetPluginHeight);
-            editor->startTimer(0, 100); //ui update
-            editor->startTimer(1, 10); //param update
+			if (b_ap_alive.load())
+				editor->vaporizerComponent = std::make_unique<VASTVaporizerComponent>(editor, editor->getProcessor());
+			if (b_ap_alive.load())
+				editor->addAndMakeVisible(editor->vaporizerComponent.get());
+			if (b_ap_alive.load())
+				editor->vaporizerComponent->setVersionText(editor->getProcessor()->getVersionString());
+			if (b_ap_alive.load())
+				Timer::callAfterDelay(300, [editor]() {
+					if (editor != nullptr) {
+						if (b_ap_alive.load())
+							editor->startTimer(0, 100); //ui update
+						if (b_ap_alive.load())
+							editor->startTimer(1, 10); //param update
+					}
+					});
         }
     });
-    
+		
     resizeCalledFromConstructor = true;
 
 	processor.m_mapParameterNameToControl.clear(); //clear slider mapping
@@ -68,10 +77,12 @@ VASTAudioProcessorEditor::VASTAudioProcessorEditor(VASTAudioProcessor& p)
 	setConstrainer(&m_componentBoundsConstrainer);
 #endif
 
+	editor->setSize(editor->processor.m_iUserTargetPluginHeight * editor->processor.m_dPluginRatio, editor->processor.m_iUserTargetPluginHeight);
 	setOpaque(true);
 }
 
 VASTAudioProcessorEditor::~VASTAudioProcessorEditor() {
+	b_ap_alive.store(false);
 	this->removeAllChildren();
 	m_alertWindow = nullptr;
 	stopTimer(0);

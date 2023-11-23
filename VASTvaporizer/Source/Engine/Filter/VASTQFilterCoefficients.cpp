@@ -216,9 +216,11 @@ double VASTQFilterCoefficients::Map2PoleResonance(double reso, double freq, int 
 double VASTQFilterCoefficients::Map2PoleResonance_noboost(double reso, double freq, int subtype)
 {
    if (subtype == st_Rough)
-      return (1.0 - 0.99 * limit_range((double)(1 - (1 - reso) * (1 - reso)), 0.001, 1.0));
+	   return (1.0 - 0.99 * jlimit<double>(0.001, 1.0, 1 - (1 - reso) * (1 - reso)));
+      //return (1.0 - 0.99 * limit_range((double)(1 - (1 - reso) * (1 - reso)), 0.001, 1.0));
    else
-      return (0.99 - 0.98 * limit_range((double)(1 - (1 - reso) * (1 - reso)), 0.0, 1.0));
+	   return (0.99 - 0.98 * jlimit<double>(0.0, 1.0, 1 - (1 - reso) * (1 - reso)));
+      //return (0.99 - 0.98 * limit_range((double)(1 - (1 - reso) * (1 - reso)), 0.0, 1.0));
 }
 
 double VASTQFilterCoefficients::Map4PoleResonance(double reso, double freq, int subtype)
