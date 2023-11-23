@@ -673,18 +673,19 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
     //=================================================================================================
     
     //check filter empty and processing completed
-    bool bClearBuffer = false;
+    bool bClearBufferL = false;
+	bool bClearBufferR = false;
     if (uNumOutChannels > 0) {
         Range<float> minmaxL = buffer.findMinMax(0, 0, numFrames);
         if ((minmaxL.getStart() >= OUTPUT_MIN_MINUS) && (minmaxL.getEnd() <= OUTPUT_MIN_PLUS))
-            bClearBuffer = true;
+			bClearBufferL = true;
     }
     if (uNumOutChannels > 1) {
         Range<float> minmaxR = buffer.findMinMax(1, 0, numFrames);
         if ((minmaxR.getStart() >= OUTPUT_MIN_MINUS) && (minmaxR.getEnd() <= OUTPUT_MIN_PLUS))
-            bClearBuffer = true;
+			bClearBufferR = true;
     }
-    if (bClearBuffer) {
+    if (bClearBufferL && bClearBufferR) {
         m_bLastChainBufferZero = true;
         m_bBufferZeroMilliSeconds += ceil(1000.f * float(numFrames) / float(m_Set.m_nSampleRate));
         buffer.clear(); // underflow check

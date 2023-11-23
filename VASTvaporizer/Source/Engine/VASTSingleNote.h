@@ -135,9 +135,6 @@ private:
 	MYUINT m_uVelocityNext = 0;
 	int m_iNumParallelOsc = 0;
 
-	float m_lLeftCosPan = 0;
-	float m_lRightCosPan = 0;
-	
 	float m_fOscAMaxPeak = 1.0f;
 	float m_fOscADivisor = 1.0f;
 	float m_fOscBMaxPeak = 1.0f;

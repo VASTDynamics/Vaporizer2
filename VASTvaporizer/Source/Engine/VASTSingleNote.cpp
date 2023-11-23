@@ -68,8 +68,6 @@ void CVASTSingleNote::init(CVASTSettings &set, CVASTPoly* poly, MYUINT voiceNo) 
 	m_uMIDINoteNext = 0;
 	m_uVelocity = 0;
 	m_uVelocityNext = 0;
-	m_lLeftCosPan = 0;
-	m_lRightCosPan = 0;
 
 	m_uLastuNumOscAOscsPlaying = 0;
 	m_uLastuNumOscBOscsPlaying = 0;
@@ -1118,12 +1116,8 @@ void CVASTSingleNote::nextNote(bool legato) {
 			m_iCurCycleSamples[bank] = 0;
 			m_iLastCycleSamples[bank] = 0;
 		}
-		//for (int i = 0; i < *m_Set->m_State->m_iNumNoiseOscs; i++) {
 		m_OscillatorNoise->noteOn(m_uChannel, m_uMIDINote, m_uVelocity);
 		m_OscillatorNoise->resynch(0, false); //re-synch - immediately
-										  //}
-		m_lLeftCosPan = 0;
-		m_lRightCosPan = 0;
 
 		m_fOscADivisor = *m_Set->m_State->m_iNumOscs_OscA;
 		m_fOscAMaxPeak = 1.0;
@@ -2099,6 +2093,7 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 				FloatVectorOperations::multiply(routingBuffers.OscVoices[0][mVoiceNo]->getWritePointer(1, startSample), m_velocityBuffer->getReadPointer(0, startSample), numSamples); //multiply with velocity		
 			}
 
+			float ftest = cosf(fPanBegin);
 			routingBuffers.OscVoices[0][mVoiceNo]->applyGainRamp(0, startSample, numSamples, fAttenuateBegin * cosf(fPanBegin), fAttenuateEnd * cosf(fPanEnd));
 			routingBuffers.OscVoices[0][mVoiceNo]->applyGainRamp(1, startSample, numSamples, fAttenuateBegin * sinf(fPanBegin), fAttenuateEnd * sinf(fPanEnd));
 		}
