@@ -94,7 +94,9 @@ if (BUILD_AVX)
 else()
   target_compile_definitions(${PROJECT_NAME} PRIVATE SSE_AVX=SSE2 _SSE2_VERSION)
 endif(BUILD_AVX)
-	
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE VAST_FFT_FFTW3) #use FFTW3 
+
 if(WIN32)
   message(STATUS "Building on Windows ${CMAKE_GENERATOR_PLATFORM} with AVX flags: ${BUILD_AVX}")  
   list(APPEND MY_PUBLIC_COMPILE_OPTIONS "/Zc:preprocessor")
@@ -186,6 +188,7 @@ target_compile_definitions(${PROJECT_NAME}
     JUCE_WEB_BROWSER=0
     JUCE_WIN_PER_MONITOR_DPI_AWARE=0
     JUCE_DISPLAY_SPLASH_SCREEN=0
+    JUCE_DSP_USE_STATIC_FFTW=1
 )
 
 target_compile_options(${PROJECT_NAME} 
@@ -375,6 +378,9 @@ if(UNIX AND NOT APPLE) #linux
   target_link_libraries(${PROJECT_NAME} PRIVATE atomic)
 endif(UNIX AND NOT APPLE)
 
+add_library(fttw3 STATIC IMPORTED)
+set_target_properties(fttw3 PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/fftw-3.3.10/build/Release/fftw3f.lib)
+
 target_link_libraries(${PROJECT_NAME}
   PRIVATE
     VASTvaporizer2_BinaryData
@@ -392,7 +398,8 @@ target_link_libraries(${PROJECT_NAME}
     juce::juce_graphics
     juce::juce_gui_basics
     juce::juce_gui_extra
-    juce::juce_opengl
+    juce::juce_opengl    
+    fttw3
 )
 
 if(NOT WIN32)

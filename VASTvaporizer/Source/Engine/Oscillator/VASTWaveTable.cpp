@@ -8,8 +8,6 @@ VAST Dynamics Audio Software (TM)
 #include "../VASTSettings.h"
 #include <chrono>
 #include <math.h>
-#include "../../muFFT/fft.h"
-#include "../../muFFT/fft_internal.h"
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
@@ -944,7 +942,7 @@ void CVASTWaveTable::setFreqDomainTables(int wtPos, std::vector<dsp::Complex<flo
 }
 
 
-void CVASTWaveTable::frequencyDomainBufferFromNaive(int tableLen, const std::vector<float> &naiveTable, std::vector<dsp::Complex<float>> &frequencyDomainBuffer) {
+void CVASTWaveTable::frequencyDomainBufferFromNaive(int tableLen, const std::vector<float>& naiveTable, std::vector<dsp::Complex<float>>& frequencyDomainBuffer) {
 	std::vector<dsp::Complex<float>> timeBuffer = std::vector<dsp::Complex<float>>(C_WAVE_TABLE_SIZE);
 	int idx;
 	// convert to frequency domain
@@ -956,26 +954,25 @@ void CVASTWaveTable::frequencyDomainBufferFromNaive(int tableLen, const std::vec
 		timeBuffer[idx].real(0.0f);
 	}
 
+	//========================================================================================================================================
+	//
 	{
-		ScopedLock sl(m_Set->fftSingletonFactory.FFTLock);
-		mufft_execute_plan_1d(m_Set->fftSingletonFactory.muplanInverse2048, &*frequencyDomainBuffer.begin(), &*timeBuffer.begin());
-		///VDBG("mufft execute frequencyDomainBufferFromNaive");
+#ifdef _DEBUG	
+		std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+#endif
+		//---------------------------------------------------------------------------------------
+		// EXPENSIVE
+		m_Set->fftSingletonFactory.performFFT(&*timeBuffer.begin(), &*frequencyDomainBuffer.begin(), true); //mufft inverse
+
+#ifdef _DEBUG	
+		std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
+		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+		VDBG("fftw3 execute frequencyDomainBufferFromNaive duration: " << duration);
+#endif
 	}
+	//
+	//========================================================================================================================================
 
-	/*
-	//TESTING
-	std::chrono::high_resolution_clock::time_point t3 = std::chrono::high_resolution_clock::now();
-	//---------------------------------------------------------------------------------------
-	// EXPENSIVE
-	if (fft.get() == nullptr)
-		fft = new dsp::FFT(log2(C_WAVE_TABLE_SIZE));
-	fft->perform(&*timeBuffer.begin(), &*wtp->frequencyDomainBuffer.begin(), true); //new
-
-	std::chrono::high_resolution_clock::time_point t4 = std::chrono::high_resolution_clock::now();
-	auto duration2 = std::chrono::duration_cast<std::chrono::microseconds>(t4 - t3).count();
-	//TESTING
-	*/
-	
 	//remove imag noise
 	for (idx = 0; idx < tableLen; idx++) {
 
@@ -1609,27 +1606,24 @@ void CVASTWaveTable::makeWaveTableFreq(int wtPos, int len, float bottomFreq, flo
 
 	vassert(ar[0] == ar[0]);
 
+	//========================================================================================================================================
+	//
 	{
-		ScopedLock sl(m_Set->fftSingletonFactory.FFTLock);
-		mufft_execute_plan_1d(m_Set->fftSingletonFactory.muplanForward2048, &*outBuffer.begin(), &*timeBuffer.begin());
-#ifdef _DEBUG
-		if (abs(outBuffer[0].real()) > 2.f)
-			VDBG("Check mufft output - seams to be broken!");
+#ifdef _DEBUG	
+		std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+#endif
+		//---------------------------------------------------------------------------------------
+		// EXPENSIVE
+		m_Set->fftSingletonFactory.performFFT(&*timeBuffer.begin(), &*outBuffer.begin(), false); //mufft forward
+
+#ifdef _DEBUG	
+		std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
+		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+		VDBG("fftw3 execute makeWaveTableFreq duration: " << duration);
 #endif
 	}
-	//VDBG("mufft execute makeWaveTableFreq");
-
-/*
-	//------------------------------------------------------------------------------------
-	// EXPENSIVE
-
-	if (fft.get() == nullptr)
-		fft = new dsp::FFT(log2(C_WAVE_TABLE_SIZE));
-	fft->perform(&*timeBuffer.begin(), &*outBuffer.begin(), false);
-
-	// EXPENSIVE
-	//------------------------------------------------------------------------------------
-	*/
+	//
+	//========================================================================================================================================
 
 	/*
 	float scale = 0.0f;

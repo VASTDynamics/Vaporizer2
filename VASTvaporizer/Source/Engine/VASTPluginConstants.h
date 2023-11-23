@@ -23,21 +23,28 @@ typedef signed int MYUINT; //CHECK FOR PORTABILITY
 #endif
 */
 
+//from wavetable
+#define C_WAVE_TABLE_SIZE		2048 //2048; //256 works ok
+#define C_WAV_FORMAT_WT_SIZE	2048 //serum format has always 2048 samples
+#define C_MAX_NUM_POSITIONS		256
+#define C_MAX_NUM_FREQS			128 //was 32 
+#define C_WTFXTYPE_FM			29
+
 //from m_set
-#define C_MAX_SOFTFADE 2000 // 1:20 sec
-#define C_OVERSAMPLING_RATIO 4 // not more here due to FIR filter design
-#define C_MAX_SAMPLE_RATE 192000 // to prevent dynamic buffer creation
-#define C_MAX_BUFFER_SIZE 32768 //8192 //in VSTHost
-#define C_MAX_PARALLEL_OSC	24 //per Bank
+#define C_MAX_SOFTFADE			2000 // 1:20 sec
+#define C_OVERSAMPLING_RATIO	4 // not more here due to FIR filter design
+#define C_MAX_SAMPLE_RATE		192000 // to prevent dynamic buffer creation
+#define C_MAX_BUFFER_SIZE		32768 //8192 //in VSTHost
+#define C_MAX_PARALLEL_OSC		24 //per Bank
 
-#define C_MAX_EDITOR_THREADS 1 //parallel threads maximum
+#define C_MAX_EDITOR_THREADS	1 //parallel threads maximum
 
-#define C_MAX_POLY 32
-#define C_MAX_NUM_KEYS 128
+#define C_MAX_POLY				32
+#define C_MAX_NUM_KEYS			128
 
 #define C_MAX_SAMPLER_VIEWPORT_MARKERS 50
 
-#define C_F127SQUARED 16129.0f
+#define C_F127SQUARED			16129.0f
 
 #define M_TWELFTH_ROOT_TWO 1.0594630943592952645618252949463
 

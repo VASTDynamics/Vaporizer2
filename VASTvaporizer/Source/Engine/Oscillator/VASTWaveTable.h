@@ -17,12 +17,6 @@ VAST Dynamics Audio Software (TM)
 
 //#define float float      /* float or float, to set the resolution of the FFT, etc. (the resulting wavetables are always float) */
 
-static const int C_WAVE_TABLE_SIZE = 2048; //2048; //256 works ok
-static const int C_WAV_FORMAT_WT_SIZE = 2048; //serum format has always 2048 samples
-static const int C_MAX_NUM_POSITIONS = 256;
-static const int C_MAX_NUM_FREQS = 128; //was 32 
-static const int C_WTFXTYPE_FM = 29;
-
 //no std::vector - is not trivially copyable!
 typedef struct sWaveTableFreq {
 	bool invalid;
