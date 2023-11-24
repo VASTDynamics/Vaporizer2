@@ -18,7 +18,7 @@ Available formats: VST2 / VST3 / AU / AAX plugins and a standalone version for b
 * You need a (free) developer license from [Steinberg](https://www.steinberg.net/de/developers/) to use the VST2 SDK (to build a .vst instead of .vst3).  In that case put the SDK in the VST_SDK folder.
 * You need a (free) ASIO SDK 2.3 installation from [Steinberg](https://www.steinberg.net/de/developers/). Place it in the asiosdk folder.  
 * You need a (free) developer license from [Avid Technology](http://developer.avid.com/aax/) to use the AAX SDK (to build an AAX plugin for ProTools). In that case put the SDK in the AAX_SDK folder. The compiled AAXLibrary_x64.lib is expected here C:\Vaporizer2\AAX_SDK\aax-sdk-2-6-0\Libs\Release\AAXLibrary_x64.lib. You can change the folder in the global path settings of the Projucer.
-* Code signing is required to build an AAX or an AU on MacOS. The process is not described here.
+* Code signing and notarization is required to build an AAX or an AU on MacOS. The process is not described here.
 * To the best of our knowledge the true type fonts in [VASTvaporizer/Resources/Fonts/](VASTvaporizer/Resources/Fonts/) are freeware and can be distributed. 
 
 ## Donation to support the project 
