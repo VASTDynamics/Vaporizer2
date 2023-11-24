@@ -21,7 +21,6 @@ package_win.bat
 *.so
 *.so*
 *.dylib
-*.a
 *.vst*
 *.au
 *.aax

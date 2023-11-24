@@ -379,7 +379,19 @@ if(UNIX AND NOT APPLE) #linux
 endif(UNIX AND NOT APPLE)
 
 add_library(fttw3 STATIC IMPORTED)
-set_target_properties(fttw3 PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/fftw-3.3.10/build/Release/fftw3f.lib)
+if(WIN32)
+    set_target_properties(fttw3 PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/fftw-3.3.10/lib/fftw3f.lib)
+endif()
+if(APPLE)
+     if(BUILD_AVX)
+         set_target_properties(fttw3 PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/fftw-3.3.10/lib/libfftw3_x64.a)
+     else()
+         set_target_properties(fttw3 PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/fftw-3.3.10/lib/libfftw3_universal.a)
+     endif()
+endif()
+if(UNIX AND NOT APPLE) 
+    set_target_properties(fttw3 PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/fftw-3.3.10/lib/fftw3f.a)
+endif()
 
 target_link_libraries(${PROJECT_NAME}
   PRIVATE
