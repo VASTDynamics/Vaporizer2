@@ -378,25 +378,24 @@ target_compile_options(VASTvaporizer2_BinaryData
 
 if(UNIX AND NOT APPLE) #linux
   target_link_libraries(${PROJECT_NAME} PRIVATE atomic)
+  find_package(PkgConfig REQUIRED)
+  pkg_check_modules (FFTW3F REQUIRED fftw3f)
+else()
+  add_library(fftw3f STATIC IMPORTED)
 endif(UNIX AND NOT APPLE)
 
-add_library(fttw3 STATIC IMPORTED)
 if(WIN32)
-  set_property(TARGET fttw3 PROPERTY
+  set_property(TARGET fftw3f PROPERTY
              MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
   set_target_properties(fttw3 PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/fftw-3.3.10/lib/fftw3f.lib)
 endif()
 if(APPLE)
      if(BUILD_AVX)
-         set_target_properties(fttw3 PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/fftw-3.3.10/lib/libfftw3_x64.a)
+         set_target_properties(ffw3f PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/fftw-3.3.10/lib/libfftw3_x64.a)
      else()
-         set_target_properties(fttw3 PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/fftw-3.3.10/lib/libfftw3_universal.a)
+         set_target_properties(fftw3f PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/fftw-3.3.10/lib/libfftw3_universal.a)
      endif()
 endif()
-if(UNIX AND NOT APPLE) 
-    set_target_properties(fttw3 PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/fftw-3.3.10/lib/fftw3f.a)
-endif()
-
 
 target_link_libraries(${PROJECT_NAME}
   PRIVATE
@@ -415,8 +414,8 @@ target_link_libraries(${PROJECT_NAME}
     juce::juce_graphics
     juce::juce_gui_basics
     juce::juce_gui_extra
-    juce::juce_opengl    
-    fttw3
+    juce::juce_opengl
+    fftw3f
 )
 
 if(NOT WIN32)
