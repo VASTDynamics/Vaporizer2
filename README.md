@@ -106,7 +106,7 @@ You can download installers for Windows and macOS with the built and packaged pl
 ### Plug-in editor user interface
 - Easy to use and intuitive user interface that is freely scalable and resizable even up to 4k and more with many drag and drop features and many graphical components, e.g. audio-out oscilloscope, filter response, MSEG / LFO / ARP
 - Polyphonic real-time visualization of parameter modulations
-- Four different UI themes to choose from
+- Four different UI themes to choose from allowing for different contrasts and look-and-feel
 - Hotkeys for most important editor functions
 ### Available platforms and formats
 - Available formats: VST2 / VST3 / AU / AAX / LV2 plugins and a standalone version
