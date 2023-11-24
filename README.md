@@ -53,8 +53,8 @@ You can download installers for Windows and macOS with the built and packaged pl
 ## Plug-in features
 
 - Includes 780+ wavetables and single cycles and 450+ factory presets.
-- Vaporizer2 features a comprehensive preset management system with tags, free text search, file system folder management and ratings.
 - State-of the art wavetable engine with four independent alias-free wavetable oscillator banks with up to 24 oscillator unison
+- Vaporizer2 features a comprehensive preset management system with tags, free text search, file system folder management and ratings.
 - Low system CPU resource usage - even with more than 1.000 oscillators playing
 - Groundbreaking wavetable editor with a vast number of editing possibilities including frequency shift, smooth, clean, bend and bloat for single-cycles, parts of single-cycles or even whole wavetables
 - Easy-to use wavetable draw mode with smooth Bezier curves and snap to grid function
@@ -72,6 +72,7 @@ You can download installers for Windows and macOS with the built and packaged pl
 - Resample samples to wavetables with pitch detection
 - Intelligent polyphonic portamento / glissando (you need to hear it!)
 - Mono legato mode or polyphonic 4 / 16 / 32(!) voice modes
+- Microtuning support (AnaMark Tuning files .TUN support)
 - Three effects busses including 4 x oversampling and mono cutoff to preserve a clean low end
 - 11+ highly parameterizable effects including reverb, delay, chorus, flanger, bitcrush, eq, compressor, limiter, flanger, phaser, comb filter, waveshaper and more
 - All effect times and durations can be synced to DAW
@@ -96,7 +97,7 @@ You can download installers for Windows and macOS with the built and packaged pl
 - Four different UI themes to choose from
 - Hotkeys for most important editor functions
 - Plus: the sound is stunning!
-- Available formats: VST2 / VST3 / AU / AAX plugins and a standalone version for both macOS and Windows.
+- Available formats: VST2 / VST3 / AU / AAX / LV2 plugins and a standalone version for macOS (native Mac M1/M2 silicon support with neon vector extensions), Windows and Linux.
 
 ### SYSTEM REQUIREMENTS
 
