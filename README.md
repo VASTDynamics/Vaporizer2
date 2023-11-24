@@ -56,14 +56,21 @@ You can download installers for Windows and macOS with the built and packaged pl
 - Can freely combine and modulate additive / FM / subtractive / wavetable / sampler sound generation types
 - Vaporizer2 features a comprehensive preset management system with tags, free text search, file system folder management and ratings.
 - Low system CPU resource usage - even with more than 1.000 oscillators playing
-- Intelligent polyphonic portamento / glissando (you need to hear it!)
-- Mono legato mode or polyphonic 4 / 16 / 32(!) voice modes
-- Microtuning support (AnaMark Tuning files .TUN support)
+- All parameter knobs / sliders automatable and support manual editing for exact parameter values
+- State of the art preset management system with tags, free text search, file system folder management and ratings
+- Comes with a rapdily growing number of presets – freely available on the website and GitHub
 - Plus: the sound is stunning!
+### Oscillators, polyphony, MPE and aftertouch
+- Mono legato mode or polyphonic 4 / 16 / 32(!) voice modes
+- Support for MIDI Polyphonic Expression (MPE): receive MPE MIDI dimensions (X/Y/Z) pitchbend, aftertouch (freely assignable), release velocity / lift (controlled via MSEG) and brightness / timbre (freely assignable) form supported controllers for highly expressive control options
+- Intelligent polyphonic portamento / glissando (you need to hear it!)
+- Support for polyphonic aftertouch
+- Oscillator pitch modulation and phase modulation with very fast modulations (up to ~ 2kHz)
+- Microtuning support (AnaMark Tuning files .TUN support)
 ### Wavetable engine
- - Oscillator pitch modulation and phase modulation with very fast modulations (up to ~ 2kHz)
 - 30 real-time wavetable effects per oscillator including innovative algorithms for hard sync, sincify, brew and bend / bloat
 - FM synthesis up to a chain of 4 oscillators
+-  General setting of wavetable frequency characteristics: sharp (ideal filtering), soft (butterworth filtering), dull (linear) 
 ### Wavetable editor
 - Groundbreaking wavetable editor with a vast number of editing possibilities including frequency shift, smooth, clean, bend and bloat for single-cycles, parts of single-cycles or even whole wavetables
 - Easy-to use wavetable draw mode with smooth Bezier curves and snap to grid function
@@ -94,13 +101,8 @@ You can download installers for Windows and macOS with the built and packaged pl
 - Five freely editable MSEG envelopes with loop function and DAW timecode sync
 - Five LFOs (per voice - means up to 80 LFOs in total) with smooth generation optimized for lowest frequencies with ramp and phase that can be set per voice or global - can be synced to the DAW
 ### Arpeggiator and Step Sequencers
-- Built-in arpeggiator that is freely editable and supports polyphonic modes, hold and midi file drag and drop
+- Built-in arpeggiator that is freely editable and supports polyphonic modes, hold and midi file drag and drop and can be synced to the DAW
 - Three step sequencers that can be synced to the DAW
-- All parameter knobs / sliders automatable and support manual editing for exact parameter values
-- Support for MIDI Polyphonic Expression (MPE): receive MPE MIDI dimensions (X/Y/Z) pitchbend, aftertouch (freely assignable), release velocity / lift (controlled via MSEG) and brightness / timbre (freely assignable) form supported controllers for highly expressive control options
-- State of the art preset management system with tags, free text search, file system folder management and ratings
-- General setting of wavetable frequency characteristics: sharp (ideal filtering), soft (butterworth filtering), dull (linear) 
-- Comes with a daily growing number of presets – free regular updates on the website
 ### Plug-in editor user interface
 - Easy to use and intuitive user interface that is freely scalable and resizable even up to 4k and more with many drag and drop features and many graphical components, e.g. audio-out oscilloscope, filter response, MSEG / LFO / ARP
 - Polyphonic real-time visualization of parameter modulations
