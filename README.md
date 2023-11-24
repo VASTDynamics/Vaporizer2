@@ -3,7 +3,7 @@
 ![logo](Artwork/vaporizer2.png)
  
 "PROBABLY THE MOST VERSATILE WAVETABLE SYNTHESIZER"  
-Vaporizer2 is a hybrid wavetable additive / subtractive VST / AU / AAX synthesizer / sampler workstation.  
+Vaporizer2 is a hybrid wavetable additive / subtractive VST / AU / AAX / LV2 synthesizer / sampler workstation.  
 
 The heart of this plugin is the alias-free versatile high-performance wavetable sound engine with low system CPU resource usage.  
 
@@ -53,6 +53,7 @@ You can download installers for Windows and macOS with the built and packaged pl
 ## Plug-in features
 - Includes 780+ wavetables and single cycles and 450+ factory presets.
 - State-of the art wavetable engine with four independent alias-free wavetable oscillator banks with up to 24 oscillator unison
+- Can freely combine and modulate additive / FM / subtractive / wavetable / sampler sound generation types
 - Vaporizer2 features a comprehensive preset management system with tags, free text search, file system folder management and ratings.
 - Low system CPU resource usage - even with more than 1.000 oscillators playing
 - Intelligent polyphonic portamento / glissando (you need to hear it!)
