@@ -145,7 +145,7 @@ if(APPLE)
   message(STATUS "Building on Apple macOS ${CMAKE_GENERATOR_PLATFORM} with AVX flags: ${BUILD_AVX}")
   list(APPEND MY_PUBLIC_COMPILE_OPTIONS "-ffast-math")
   target_compile_definitions(${PROJECT_NAME} PUBLIC JUCE_SILENCE_XCODE_15_LINKER_WARNING) #temporarily due to xcode 15 issue
-  target_link_options(${PROJECT_NAME} PUBLIC -v -ld_classic) #temporarily due to xcode 15 issue  
+  target_link_options(${PROJECT_NAME} PUBLIC -ld_classic) #temporarily due to xcode 15 issue  
   if(VASTBUILD) 
     set_xcode_property(${PROJECT_NAME} CODE_SIGN_STYLE "Manual")
     set_xcode_property(${PROJECT_NAME} DEVELOPMENT_TEAM "PK93HYD6ZN") 
@@ -380,23 +380,23 @@ if(UNIX AND NOT APPLE) #linux
   target_link_libraries(${PROJECT_NAME} PRIVATE atomic)
 endif(UNIX AND NOT APPLE)
 
-add_library(fttw3 STATIC IMPORTED)
 if(WIN32)
-  set_property(TARGET fttw3 PROPERTY
-             MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+  add_library(fttw3 STATIC IMPORTED GLOBAL)
+  set_property(TARGET fttw3 PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
   set_target_properties(fttw3 PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/fftw-3.3.10/lib/fftw3f.lib)
+  target_link_libraries(${PROJECT_NAME} PRIVATE fftw3f)
 endif()
 if(APPLE)
+     target_link_options(${PROJECT_NAME} PUBLIC -L${CMAKE_SOURCE_DIR}/fftw-3.3.10/lib)
      if(BUILD_AVX)
-         set_target_properties(fttw3 PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/fftw-3.3.10/lib/libfftw3_x64.a)
+         target_link_options(${PROJECT_NAME} PUBLIC -lfftw3_x64)
      else()
-         set_target_properties(fttw3 PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/fftw-3.3.10/lib/libfftw3_universal.a)
+        target_link_options(${PROJECT_NAME} PUBLIC -lfftw3_universal)
      endif()
 endif()
 if(UNIX AND NOT APPLE) 
     set_target_properties(fttw3 PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/fftw-3.3.10/lib/fftw3f.a)
 endif()
-
 
 target_link_libraries(${PROJECT_NAME}
   PRIVATE
@@ -416,7 +416,6 @@ target_link_libraries(${PROJECT_NAME}
     juce::juce_gui_basics
     juce::juce_gui_extra
     juce::juce_opengl    
-    fttw3
 )
 
 if(NOT WIN32)
