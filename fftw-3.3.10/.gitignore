@@ -1,5 +1,6 @@
 *
 !.gitignore
 !build_fftwlib.sh
+!build_fftwlib.bat
 !*/
 !lib/*
