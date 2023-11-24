@@ -109,7 +109,7 @@ You can download installers for Windows and macOS with the built and packaged pl
 - Available formats: VST2 / VST3 / AU / AAX / LV2 plugins and a standalone version
 - Available platforms (64-bit): macOS (native Mac M1/M2 silicon support with neon vector extensions), Windows and Linux.
 - 32-bit plug-ins can be build with CMake if needed
-### MINIMUM SYSTEM REQUIREMENTS
+### Minimum system requirements
 - Any CPU that supports AVX or SSE2 (Intel, AMD or arm)
 - 1GB RAM
 - Windows 8/10 (32/64bit)
