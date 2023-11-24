@@ -52,11 +52,8 @@ You can download installers for Windows and macOS with the built and packaged pl
 
 ## Plug-in features
 
-- Includes 780+ wavetables and single cycles and 410+ factory presets.
+- Includes 780+ wavetables and single cycles and 450+ factory presets.
 - Vaporizer2 features a comprehensive preset management system with tags, free text search, file system folder management and ratings.
-
-### MANY MORE HIGHLIGHTS
-
 - State-of the art wavetable engine with four independent alias-free wavetable oscillator banks with up to 24 oscillator unison
 - Low system CPU resource usage - even with more than 1.000 oscillators playing
 - Groundbreaking wavetable editor with a vast number of editing possibilities including frequency shift, smooth, clean, bend and bloat for single-cycles, parts of single-cycles or even whole wavetables
@@ -74,7 +71,7 @@ You can download installers for Windows and macOS with the built and packaged pl
 - Granular synthesis mode in the sampler section for stunning ambient effects
 - Resample samples to wavetables with pitch detection
 - Intelligent polyphonic portamento / glissando (you need to hear it!)
-- Mono legato mode or polyphonic 4 / 16 voice modes
+- Mono legato mode or polyphonic 4 / 16 / 32(!) voice modes
 - Three effects busses including 4 x oversampling and mono cutoff to preserve a clean low end
 - 11+ highly parameterizable effects including reverb, delay, chorus, flanger, bitcrush, eq, compressor, limiter, flanger, phaser, comb filter, waveshaper and more
 - All effect times and durations can be synced to DAW
@@ -94,7 +91,6 @@ You can download installers for Windows and macOS with the built and packaged pl
 - State of the art preset management system with tags, free text search, file system folder management and ratings
 - General setting of wavetable frequency characteristics: sharp (ideal filtering), soft (butterworth filtering), dull (linear) 
 - Comes with a daily growing number of presets – free regular updates on the website
-- Includes 780+ wavetables and single cycles and 410+ factory presets
 - Easy to use and intuitive user interface that is freely scalable and resizable even up to 4k and more with many drag and drop features and many graphical components, e.g. audio-out oscilloscope, filter response, MSEG / LFO / ARP
 - Polyphonic real-time visualization of parameter modulations
 - Four different UI themes to choose from
