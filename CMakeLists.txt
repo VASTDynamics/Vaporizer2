@@ -2,6 +2,8 @@
 
 cmake_minimum_required(VERSION 3.15)
 
+cmake_policy(SET CMP0091 NEW)
+
 file(STRINGS VERSION PLUGIN_VERSION)
 option(USE_SYSTEM_JUCE "Use system installation of juce" OFF)
 set(VST2_SDK_LOCATION "" CACHE STRING "Steinberg VST2 SDK directory for non-FOSS builds")
@@ -380,7 +382,9 @@ endif(UNIX AND NOT APPLE)
 
 add_library(fttw3 STATIC IMPORTED)
 if(WIN32)
-    set_target_properties(fttw3 PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/fftw-3.3.10/lib/fftw3f.lib)
+  set_property(TARGET fttw3 PROPERTY
+             MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+  set_target_properties(fttw3 PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/fftw-3.3.10/lib/fftw3f.lib)
 endif()
 if(APPLE)
      if(BUILD_AVX)
@@ -392,6 +396,7 @@ endif()
 if(UNIX AND NOT APPLE) 
     set_target_properties(fttw3 PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/fftw-3.3.10/lib/fftw3f.a)
 endif()
+
 
 target_link_libraries(${PROJECT_NAME}
   PRIVATE
