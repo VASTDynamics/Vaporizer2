@@ -18,9 +18,6 @@ VAST Dynamics Audio Software (TM)
 CVASTWaveTable::CVASTWaveTable(CVASTSettings &set) : m_Set(&set) {
 	clear();
 
-	//fft = new dsp::FFT(log2(C_WAVE_TABLE_SIZE));
-    //fft = nullptr; //initialize on demand
-
 	int initSize = 16;
 	m_x0_curPos = std::make_unique<AudioSampleBuffer>(1, initSize);
 	m_y0_curPos = std::make_unique<AudioSampleBuffer>(1, initSize);
@@ -963,7 +960,7 @@ void CVASTWaveTable::frequencyDomainBufferFromNaive(int tableLen, const std::vec
 		//---------------------------------------------------------------------------------------
 		// EXPENSIVE
 		m_Set->fftSingletonFactory.performFFT(&*timeBuffer.begin(), &*frequencyDomainBuffer.begin(), true); //mufft inverse
-
+		
 #ifdef _DEBUG	
 		std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
 		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
