@@ -39,8 +39,15 @@ JUCE_BEGIN_IGNORE_WARNINGS_MSVC(4244 4267)
 
 void CVASTPoly::init() {
 	//executed once
-	m_OscillatorSynthesizer.init(m_Set, this);
 
+	//save for freerunnng LFO
+	ULong64_t l_last = 0;
+	int lastPlayed = m_OscillatorSynthesizer.getLastPlayedVoiceNo();	
+	if (lastPlayed >= 0) {
+		ULong64_t l_last = m_singleNote[lastPlayed]->m_startPlayTimestamp;
+	}
+
+	m_OscillatorSynthesizer.init(m_Set, this);	
 	for (int i = 0; i < m_Set->m_uMaxPoly; i++) {
 		m_singleNote[i] = nullptr; //release old voices
 	}
@@ -53,6 +60,9 @@ void CVASTPoly::init() {
 	for (int i = 0; i < m_Set->m_uMaxPoly; i++) { //check if things duplicated here
 		m_singleNote[i]->prepareForPlay();
 	}
+
+	// save for freerunnng LFO
+	m_singleNote[0]->m_startPlayTimestamp = l_last;
 
 	m_global_LFO_Osc[0].init(*m_Set);
 	m_global_LFO_Osc[0].updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO1), 1, 0, 0, 0);
@@ -68,6 +78,12 @@ void CVASTPoly::init() {
 
 	m_global_LFO_Osc[4].init(*m_Set);
 	m_global_LFO_Osc[4].updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO5), 1, 0, 0, 0);
+
+	updateLFO(0);
+	updateLFO(1);
+	updateLFO(2);
+	updateLFO(3);
+	updateLFO(4);
 
 	for (int stepSeq = 0; stepSeq < 3; stepSeq++) {
 		if (stepSeq == 0) {
