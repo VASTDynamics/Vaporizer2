@@ -14,7 +14,7 @@ Available formats: VST2 / VST3 / AU / AAX plugins and a standalone version for b
 
 * Vaporizer2 was developed by VAST Dynamics GbR between 2017 and 2023 and is now free software under GPL3 license.  
 * Vaporizer2 is based on the [JUCE framework](https://github.com/juce-framework/JUCE) under GPL3 license.  
-* Vaporizer2 ueses [muFFT](https://github.com/Themaister/muFFT/tree/master) under GPL2 license.
+* Vaporizer2 ueses either [muFFT](https://github.com/Themaister/muFFT/tree/master) or [FFTW3](https://github.com/FFTW/fftw3) under GPL2 license. Usage can be comtrolled with build parameters VAST_FFT_MUFFT or VAST_FFT_FFTW3.
 * You need a (free) developer license from [Steinberg](https://www.steinberg.net/de/developers/) to use the VST2 SDK (to build a .vst instead of .vst3).  In that case put the SDK in the VST_SDK folder.
 * You need a (free) ASIO SDK 2.3 installation from [Steinberg](https://www.steinberg.net/de/developers/). Place it in the asiosdk folder.  
 * You need a (free) developer license from [Avid Technology](http://developer.avid.com/aax/) to use the AAX SDK (to build an AAX plugin for ProTools). In that case put the SDK in the AAX_SDK folder. The compiled AAXLibrary_x64.lib is expected here C:\Vaporizer2\AAX_SDK\aax-sdk-2-6-0\Libs\Release\AAXLibrary_x64.lib. You can change the folder in the global path settings of the Projucer.
