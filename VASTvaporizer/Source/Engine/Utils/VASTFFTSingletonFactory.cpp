@@ -40,9 +40,8 @@ VASTFFTSingletonFactory::~VASTFFTSingletonFactory() {
 
 void VASTFFTSingletonFactory::performFFT(const juce::dsp::Complex<float>* input, juce::dsp::Complex<float>* output, bool inverse) {
 	
-	ScopedLock sl(FFTLock);
-
 #ifdef VAST_FFT_MUFFT
+	ScopedLock sl(FFTLock);
 	if (inverse)
 		mufft_execute_plan_1d(muplanInverse2048, output, input); //frequencyDomainBufferFromNaive >> muplanInverse2048
 	else 
@@ -55,8 +54,12 @@ void VASTFFTSingletonFactory::performFFT(const juce::dsp::Complex<float>* input,
 #endif
 
 #ifdef VAST_FFT_FFTW3
-	bool fft_inverse = false;
-	m_fft->perform(input, output, fft_inverse);
-#endif
+	m_fft->perform(input, output, inverse);
 
+	if (inverse) {
+		auto n = m_fft->getSize();
+		FloatVectorOperations::multiply((float*)output, static_cast<float> (n), (int)n << 1); //why is juce doing it? Has to be undone here.
+	}
+
+#endif
 }

@@ -1,2 +1,3 @@
 *
 !.gitignore
+!build/Release/fftw3f.lib
