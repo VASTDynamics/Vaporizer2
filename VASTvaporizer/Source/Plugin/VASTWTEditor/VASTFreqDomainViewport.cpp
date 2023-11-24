@@ -231,45 +231,6 @@ void VASTFreqDomainViewport::updateContentAsync() {
 	m_dirty = true;
 }
 
-void VASTFreqDomainViewport::mouseDrag(const MouseEvent &e) { // show value
-	ModifierKeys modifiers = ModifierKeys::getCurrentModifiersRealtime();
-	if (modifiers.isLeftButtonDown()) { //draw bins
-		int starty = e.getMouseDownY();
-		int start = e.getMouseDownX();
-		int end = start + e.getDistanceFromDragStartX();
-		int endy = starty + e.getDistanceFromDragStartY();
-		if (end < 0) end = 0;
-		if (end > getWidth() - 1)
-			end = getWidth() - 1;
-		if (endy < 0) endy = 0;
-		if (endy > getHeight() - 1)
-			endy = getHeight() - 1;
-
-		int arrayidx = mouseXGetBinArrayIdx(end);
-		if (endy < m_reSliderBottomY / m_screenHeightScale) { //real slider
-			if (starty < m_reSliderBottomY / m_screenHeightScale) {
-				float percentage = (m_reSliderBottomY / m_screenHeightScale - endy) / (m_reSliderBottomY / m_screenHeightScale);
-				if (percentage < 0.08) percentage = 0.f;
-				jassert((percentage >= 0.f) && (percentage <= 1.f));
-				adjustFreqDomainReal(arrayidx, percentage);
-			}
-		}
-		else if (endy > m_imSliderTopY / m_screenHeightScale) { //imag slider
-			if (starty > m_imSliderTopY / m_screenHeightScale) {
-				float percentage = (m_imSliderBottomY / m_screenHeightScale - endy) / (m_imSliderBottomY / m_screenHeightScale) * (1 - reToImSliderRatio);
-				if (percentage > 0.99) percentage = 1.f;
-				if (percentage < 0.08) percentage = 0.f;
-				jassert((percentage >= 0.f) && (percentage <= 1.f));
-				adjustFreqDomainImag(arrayidx, percentage);
-			}
-		}
-	}
-}
-
-void VASTFreqDomainViewport::mouseDoubleClick(const MouseEvent &e) {
-	
-}
-
 int VASTFreqDomainViewport::mouseXGetBinArrayIdx(int posX) {
 	juce::Rectangle<int> lVisibleArea = myWtEditor->getFreqDomainViewport()->getViewArea();
 	int pos = posX - (lVisibleArea.getX() - int(lVisibleArea.getX() / m_sliderWidth) * m_sliderWidth);
@@ -498,6 +459,7 @@ void VASTFreqDomainViewport::adjustFreqDomainImag(int slot, double percentage) {
 		domainBufferPos.domainBuffer = *wavetable->getFreqDomainBuffer(wtPos);		
 		if (myProcessor->getBinEditMode() == FreqEditMode::SingleBin) {
 			domainBufferPos.domainBuffer[slot] = setDomainBufferSlotImagPercentage(percentage, domainBufferPos.domainBuffer[slot]);
+			VDBG("Percentage: " << percentage);
 		}
 		else if (myProcessor->getBinEditMode() == FreqEditMode::EverySecond) {
 			for (int i = 0; i < C_WAVE_TABLE_SIZE / 2 - slot; i++) {
@@ -760,12 +722,57 @@ void VASTFreqDomainViewport::mouseDown(const MouseEvent &e) {
 			adjustFreqDomainReal(arrayidx, percentage);
 		}
 		else if (y > m_imSliderTopY / m_screenHeightScale) { //imag slider
-
 			float percentage = (m_imSliderBottomY / m_screenHeightScale - y) / (m_imSliderBottomY / m_screenHeightScale * (1 - reToImSliderRatio));
-			if (percentage > 0.99) percentage = 1.f;
-			if (percentage < 0.08) percentage = 0.f;
+			if (percentage > 0.94) percentage = 0.94f;
+			if (percentage < 0.06) percentage = 0.f;
 			jassert((percentage >= 0.f) && (percentage <= 1.f));
 			adjustFreqDomainImag(arrayidx, percentage);
 		}
+	}
+}
+
+void VASTFreqDomainViewport::mouseDrag(const MouseEvent& e) { // show value
+	ModifierKeys modifiers = ModifierKeys::getCurrentModifiersRealtime();
+	if (modifiers.isLeftButtonDown()) { //draw bins
+		int starty = e.getMouseDownY();
+		int start = e.getMouseDownX();
+		int end = start + e.getDistanceFromDragStartX();
+		int endy = starty + e.getDistanceFromDragStartY();
+		if (end < 0) end = 0;
+		if (end > getWidth() - 1)
+			end = getWidth() - 1;
+		if (endy < 0) endy = 0;
+		if (endy > getHeight() - 1)
+			endy = getHeight() - 1;
+
+		int arrayidx = mouseXGetBinArrayIdx(end);
+		if (starty < m_reSliderBottomY / m_screenHeightScale) { //real slider
+			float percentage = (m_reSliderBottomY / m_screenHeightScale - endy) / (m_reSliderBottomY / m_screenHeightScale);
+			if (percentage < 0.08) percentage = 0.f;
+			jassert((percentage >= 0.f) && (percentage <= 1.f));
+			adjustFreqDomainReal(arrayidx, percentage);
+		}
+		else if (starty > m_imSliderTopY / m_screenHeightScale) { //imag slider
+			float percentage = (m_imSliderBottomY / m_screenHeightScale - endy) / (m_imSliderBottomY / m_screenHeightScale * (1 - reToImSliderRatio));
+			if (percentage > 0.94) percentage = 0.94f;
+			if (percentage < 0.06) percentage = 0.f;
+			jassert((percentage >= 0.f) && (percentage <= 1.f));
+			adjustFreqDomainImag(arrayidx, percentage);
+		}
+	}
+}
+
+void VASTFreqDomainViewport::mouseDoubleClick(const MouseEvent& e) {
+	ModifierKeys modifiers = ModifierKeys::getCurrentModifiersRealtime();
+	int x = e.getMouseDownX();
+	int y = e.getMouseDownY();
+	int arrayidx = mouseXGetBinArrayIdx(x);
+	if (y < m_reSliderBottomY / m_screenHeightScale) { //real slider
+		float percentage = 0.f;
+		adjustFreqDomainReal(arrayidx, percentage);
+	}
+	else if (y > m_imSliderTopY / m_screenHeightScale) { //imag slider
+		float percentage = 0.f;
+		adjustFreqDomainImag(arrayidx, percentage);
 	}
 }
