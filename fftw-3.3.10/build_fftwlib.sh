@@ -9,4 +9,4 @@ cmake --build "cmake-build/x64SSE" --config Release
 
 mkdir -p lib
 cp -frv cmake-build/x64/libfftw3f.a lib/libfftw3_x64.a
-cp -frv cmake-build/x64SSE/libfftw3f.a lib/libfftw3_universal.a 
+cp -frv cmake-build/x64SSE/libfftw3f.a lib/libfftw3_universal.a
