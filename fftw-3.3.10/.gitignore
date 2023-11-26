@@ -4,4 +4,5 @@
 !build_fftwlib.sh
 !build_fftwlib.bat
 !*/
-!lib/*
+!lib/*.a
+!lib/*.lib
