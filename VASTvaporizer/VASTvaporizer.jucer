@@ -623,8 +623,8 @@
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX" vstFolder="/SDKs/VST3-SDK" iosDevelopmentTeamID="PK93HYD6ZN"
                smallIcon="A2sWSy" bigIcon="A2sWSy" hardenedRuntime="1" extraDefs=" JUCE_SILENCE_XCODE_15_LINKER_WARNING "
-               xcodeValidArchs="i386,x86_64" extraLinkerFlags="-ld_classic"
-               userNotes="JUCE_DISABLE_CAUTIOUS_PARAMETER_ID_CHECKING">
+               xcodeValidArchs="i386,x86_64" extraLinkerFlags="-ld_classic -L../../../fftw-3.3.10/lib"
+               userNotes="JUCE_DISABLE_CAUTIOUS_PARAMETER_ID_CHECKING" externalLibraries="fftw3f_x64">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" osxCompatibility="10.13 SDK" isDebug="1" optimisation="1"
                        targetName="VASTvaporizer2_dbg" defines="_MACOSX _MACOSX64BIT SSE_AVX=AVX "
@@ -670,7 +670,7 @@
     <XCODE_MAC targetFolder="Builds/MacOSX_SSE" smallIcon="A2sWSy" bigIcon="A2sWSy"
                iosDevelopmentTeamID="PK93HYD6ZN" hardenedRuntime="1" extraDefs=" JUCE_SILENCE_XCODE_15_LINKER_WARNING "
                userNotes="This is the universal binary build also supporting arm64 silicon on Neon."
-               extraLinkerFlags="-ld_classic">
+               extraLinkerFlags="-ld_classic -L../../../fftw-3.3.10/lib" externalLibraries="fftw3f_universal">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="0" name="Release 64bit SSE3" targetName="VASTvaporizer2"
                        defines="_MACOSX _MACOSX64BIT NDEBUG  SSE_AVX=SSE2 _SSE2_VERSION "

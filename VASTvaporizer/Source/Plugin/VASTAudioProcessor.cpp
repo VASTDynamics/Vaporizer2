@@ -25,7 +25,7 @@ VAST Dynamics Audio Software (TM)
 #include "../Engine/Utils/VASTFFTSingletonFactory.h"
 #include "VASTPreset/VASTPresetData.h"
 
-#include <vld.h> //visual leak detector /* uncomment for leak detection */
+//#include <vld.h> //visual leak detector /* uncomment for leak detection */
 
 using namespace std;
 using namespace BinaryData;
