@@ -20,9 +20,9 @@ VASTFFTSingletonFactory::VASTFFTSingletonFactory() {
 	muplanForward2048 = mufft_create_plan_1d_c2c(C_WAVE_TABLE_SIZE, MUFFT_FORWARD, flags);
 #endif
 
-#ifdef VAST_FFT_FFTW3
-	m_fft.reset(new dsp::FFT(log2(int(C_WAVE_TABLE_SIZE))));
-#endif
+//#ifdef VAST_FFT_FFTW3
+//	m_fft.reset(new dsp::FFT(log2(int(C_WAVE_TABLE_SIZE))));
+//#endif
 }
 
 VASTFFTSingletonFactory::~VASTFFTSingletonFactory() {
@@ -34,7 +34,7 @@ VASTFFTSingletonFactory::~VASTFFTSingletonFactory() {
 #endif
 
 #ifdef VAST_FFT_FFTW3
-	m_fft = nullptr;
+	//m_fft = nullptr;
 #endif
 }
 
@@ -54,10 +54,10 @@ void VASTFFTSingletonFactory::performFFT(const juce::dsp::Complex<float>* input,
 #endif
 
 #ifdef VAST_FFT_FFTW3
-	m_fft->perform(input, output, inverse);
+	m_fft.perform(input, output, inverse);
 
 	if (inverse) {
-		auto n = m_fft->getSize();
+		auto n = m_fft.getSize();
 		FloatVectorOperations::multiply((float*)output, static_cast<float> (n), (int)n << 1); //why is juce doing it? Has to be undone here.
 	}
 

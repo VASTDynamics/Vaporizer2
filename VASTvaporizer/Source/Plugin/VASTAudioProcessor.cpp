@@ -25,7 +25,7 @@ VAST Dynamics Audio Software (TM)
 #include "../Engine/Utils/VASTFFTSingletonFactory.h"
 #include "VASTPreset/VASTPresetData.h"
 
-//#include <vld.h> //visual leak detector /* uncomment for leak detection */
+#include <vld.h> //visual leak detector /* uncomment for leak detection */
 
 using namespace std;
 using namespace BinaryData;
@@ -533,8 +533,8 @@ void VASTAudioProcessor::setCurrentProgram(int index)
 		return;
 	}
 
-	if (index != 0) //initpatch shall always be used
-		if (m_presetData.getCurPatchData().presetarrayindex == index) return;
+	//if (index != 0) //initpatch shall always be used
+		//if (m_presetData.getCurPatchData().presetarrayindex == index) return;
 
 	if ((Time::getMillisecondCounter() - m_tSetChunkCalled) < 400) {  // see http://www.juce.com/forum/topic/problems-recalling-plugin-state-versus-current-preset
 		return;
