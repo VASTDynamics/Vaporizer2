@@ -29,7 +29,7 @@ VASTStepSeqEditor::VASTStepSeqEditor(AudioProcessor* processor, VASTMSEGData* da
 	startAutoUpdate();
 
 	resized();
-	updateContent(true);
+	//updateContent(true);
 }
 
 VASTStepSeqEditor::~VASTStepSeqEditor() {

@@ -26,7 +26,7 @@ VASTLFOEditor::VASTLFOEditor(AudioProcessor* processor, String suffix)
 	setOpaque(true); //avoid repaints of parents
 
 	resized();
-	updateContent(true);
+	//updateContent(true);
 }
 
 VASTLFOEditor::~VASTLFOEditor() {

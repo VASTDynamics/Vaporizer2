@@ -35,9 +35,9 @@ using namespace BinaryData;
 
 //==============================================================================
 VASTAudioProcessor::VASTAudioProcessor() :
-			m_parameterState(*this, &m_undoManager), 
-			m_pVASTXperience(this),
-			AudioProcessor(BusesProperties().withInput("Input", juce::AudioChannelSet::stereo(), true).withOutput("Output", juce::AudioChannelSet::stereo(), true)) // default 2 inputs, 2outputs, enabled
+			AudioProcessor(BusesProperties().withInput("Input", juce::AudioChannelSet::stereo(), true).withOutput("Output", juce::AudioChannelSet::stereo(), true)), // default 2 inputs, 2outputs, enabled
+            m_parameterState(*this, &m_undoManager),
+            m_pVASTXperience(this)
 {
                 
 //CRT memory leak detection	

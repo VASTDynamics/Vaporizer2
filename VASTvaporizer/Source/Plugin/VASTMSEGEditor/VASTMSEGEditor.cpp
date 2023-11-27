@@ -31,7 +31,7 @@ VASTMSEGEditor::VASTMSEGEditor(AudioProcessor* processor, VASTMSEGData* data, VA
 
 	startAutoUpdate();
 	resized();
-	updateContent(true);
+	//updateContent(true);
 }
 
 VASTMSEGEditor::~VASTMSEGEditor() {

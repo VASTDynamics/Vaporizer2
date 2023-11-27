@@ -19,8 +19,7 @@
 //==============================================================================
 /**
 */
-static atomic<bool> b_ap_alive;
-
+class VASTVaporizerComponent; //forward declaration
 class VASTAudioProcessorEditor : public AudioProcessorEditor, MultiTimer
 {
 public:
@@ -79,7 +78,8 @@ private:
 
 	TooltipWindow tooltipWindow{ this, 200 }; //just add and leave here
     std::unique_ptr<juce::AlertWindow> m_alertWindow;
-
+    int mi_update_delay = 0;
+    
 	bool resizeCalledFromConstructor = false;
 	void showNewerVersionPopup();
 

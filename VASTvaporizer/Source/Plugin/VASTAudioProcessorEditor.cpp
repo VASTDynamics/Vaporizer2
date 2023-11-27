@@ -11,6 +11,7 @@
 #include "../Engine/VASTEngineHeader.h"
 #include "VASTAudioProcessor.h"
 #include "VASTAudioProcessorEditor.h"
+#include "VASTVaporizerComponent.h"
 
 //==============================================================================
 VASTAudioProcessorEditor::VASTAudioProcessorEditor(VASTAudioProcessor& p)
@@ -25,30 +26,8 @@ VASTAudioProcessorEditor::VASTAudioProcessorEditor(VASTAudioProcessor& p)
         if (m_iMaxHeight > screenH) m_iMaxHeight = screenH;
     }
     
-    // delayed construction of GUI
-    //WeakReference<VASTAudioProcessorEditor> editor(this);
-	b_ap_alive.store(true);
-    VASTAudioProcessorEditor* editor = this;
-    MessageManager::callAsync([editor]() {
-        if (editor != nullptr) {
-			if (b_ap_alive.load())
-				editor->vaporizerComponent = std::make_unique<VASTVaporizerComponent>(editor, editor->getProcessor());
-			if (b_ap_alive.load())
-				editor->addAndMakeVisible(editor->vaporizerComponent.get());
-			if (b_ap_alive.load())
-				editor->vaporizerComponent->setVersionText(editor->getProcessor()->getVersionString());
-			if (b_ap_alive.load())
-				Timer::callAfterDelay(300, [editor]() {
-					if (editor != nullptr) {
-						if (b_ap_alive.load())
-							editor->startTimer(0, 100); //ui update
-						if (b_ap_alive.load())
-							editor->startTimer(1, 10); //param update
-					}
-					});
-        }
-    });
-		
+    vaporizerComponent.reset(new VASTVaporizerComponent(this, &processor));
+
     resizeCalledFromConstructor = true;
 
 	processor.m_mapParameterNameToControl.clear(); //clear slider mapping
@@ -77,12 +56,15 @@ VASTAudioProcessorEditor::VASTAudioProcessorEditor(VASTAudioProcessor& p)
 	setConstrainer(&m_componentBoundsConstrainer);
 #endif
 
-	editor->setSize(editor->processor.m_iUserTargetPluginHeight * editor->processor.m_dPluginRatio, editor->processor.m_iUserTargetPluginHeight);
+	setSize(processor.m_iUserTargetPluginHeight * processor.m_dPluginRatio, processor.m_iUserTargetPluginHeight);
 	setOpaque(true);
+    
+    startTimer(0, 100); //ui update
+    startTimer(1, 10); //param update
+
 }
 
 VASTAudioProcessorEditor::~VASTAudioProcessorEditor() {
-	b_ap_alive.store(false);
 	this->removeAllChildren();
 	m_alertWindow = nullptr;
 	stopTimer(0);
@@ -111,16 +93,27 @@ Component* VASTAudioProcessorEditor::findChildComponetWithName(Component* parent
 
 //should be optimal now
 void VASTAudioProcessorEditor::timerCallback(int timerID) {
-	if (!isVisible()) {
-		processor.m_editorIsProbablyVisible.store(false);
-		return;
-	}
-	else 
-		processor.m_editorIsProbablyVisible.store(true);
-
-	if (vaporizerComponent->isActive == false) return; //not yet ready?
-
-	VASTAudioProcessor* _processor = getProcessor();
+    if (mi_update_delay<10) {
+        mi_update_delay++;
+        return;
+    }
+    VASTAudioProcessor* _processor = getProcessor();
+    
+    if (vaporizerComponent.get() != nullptr) {
+            addAndMakeVisible(vaporizerComponent.get());
+            vaporizerComponent->setVersionText(_processor->getVersionString());
+    } else
+        return;
+    
+    if (vaporizerComponent->isActive == false)
+        return; //not yet ready?
+    
+    if (!isVisible()) {
+        _processor->m_editorIsProbablyVisible.store(false);
+        return;
+    }
+    else
+        _processor->m_editorIsProbablyVisible.store(true);
 	if (timerID == 1) { //component update
 		if (_processor->m_bShallComponentValueUpdate.load()) {
 			if (_processor->m_shallComponentUpdate != "") {

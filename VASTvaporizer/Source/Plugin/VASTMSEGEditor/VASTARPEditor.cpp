@@ -20,7 +20,7 @@ VASTARPEditor::VASTARPEditor(AudioProcessor* processor, VASTARPData* data, VASTA
 	setOpaque(true); //avoid repaints of parents
 
 	resized();
-	updateContent(true);
+	//updateContent(true);
 }
 
 VASTARPEditor::~VASTARPEditor() {
