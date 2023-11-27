@@ -12,6 +12,7 @@ http://slideplayer.com/slide/6554987/
 #include "VASTLFOEditor.h"
 #include "../../Engine/VASTEngineHeader.h"
 #include "../VASTAudioProcessor.h"
+#include "../VASTAudioProcessorEditor.h"
 
 VASTLFOEditor::VASTLFOEditor(AudioProcessor* processor, String suffix)
 	: myProcessor((VASTAudioProcessor*)processor), mySuffix(suffix)
@@ -57,7 +58,8 @@ void VASTLFOEditor::fillBuffers() { //for UI only
 }
 
 void VASTLFOEditor::lookAndFeelChanged() {
-	updateContent(true);
+	if (myProcessor->isCurrentEditorInitialized())
+		updateContent(true);
 }
 
 void VASTLFOEditor::paint(Graphics& g)

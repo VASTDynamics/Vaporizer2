@@ -19,9 +19,9 @@ VAST Dynamics
 #define c_minDisp float(c_fftSize / 512.f) //lower are too coarse
 #define c_maxminDisp float(c_maxDisp) / float(c_minDisp)
 
-VASTFilterDisplay::VASTFilterDisplay()
+VASTFilterDisplay::VASTFilterDisplay(VASTAudioProcessor* processor)
 {
-	myProcessor = nullptr;
+	myProcessor = processor;
 	myEditor = nullptr;
 	
 	//myFont.setTypefaceName("Open Sans"); //bold 1-2, regular 2
@@ -51,6 +51,9 @@ VASTFilterDisplay::~VASTFilterDisplay() {
 }
 
 void VASTFilterDisplay::lookAndFeelChanged() {
+	if (!myProcessor->isCurrentEditorInitialized())
+		return;
+
 	if (myEditor == nullptr)
 		return;
 	if (myEditor->vaporizerComponent == nullptr)
@@ -62,6 +65,9 @@ void VASTFilterDisplay::lookAndFeelChanged() {
 //==============================================================================
 void VASTFilterDisplay::resized()
 {
+	if (!myProcessor->isCurrentEditorInitialized())
+		return;
+
 	waveformImageBuffer.reset(new Image(Image::RGB,
 		jmax(1, getScreenBounds().getWidth()), jmax(1, getScreenBounds().getHeight()),
 		true));

@@ -237,6 +237,21 @@ void VASTAudioProcessor::requestUIInit() {
     mUIInitFlag.store(true);
     requestUIUpdate(true, true, true); }
 
+void VASTAudioProcessor::resetCurrentEditorInitialized()
+{
+	mCurrentEditorInitialized.store(false);
+}
+
+void VASTAudioProcessor::setCurrentEditorInitialized()
+{
+	mCurrentEditorInitialized.store(true);
+}
+
+bool VASTAudioProcessor::isCurrentEditorInitialized()
+{
+	return mCurrentEditorInitialized.load();
+}
+
 bool VASTAudioProcessor::needsUIUpdate() const {
     return mUIUpdateFlag.load(); }
 

@@ -163,7 +163,9 @@ public:
 	bool needsUIInit() const;
 	void clearUIInitFlag();
 	void requestUIInit();
-
+	bool isCurrentEditorInitialized();
+	void resetCurrentEditorInitialized();
+	void setCurrentEditorInitialized();
 	bool needsUIUpdate() const;
 	bool needsUIUpdate_tabs() const;
 	bool needsUIUpdate_matrix() const;
@@ -417,6 +419,7 @@ private:
     std::atomic<int> mUIUpdateFlag_slider2dest = -1;
     std::atomic<bool> mUIPresetUpdate = false;
     std::atomic<bool> mUIPresetReloadUpdate = false;
+	std::atomic<bool> mCurrentEditorInitialized = false;
 
 	int m_MPEmode = 0; // settings
 	int m_ModWheelPermaLink = 0;

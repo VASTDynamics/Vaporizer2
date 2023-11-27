@@ -72,9 +72,7 @@ public:
 	};
 
 private:
-    // This reference is provided as a quick way for your editor to
-    // access the processor object that created it.
-    VASTAudioProcessor& processor;
+    VASTAudioProcessor* processor;
 
 	TooltipWindow tooltipWindow{ this, 200 }; //just add and leave here
     std::unique_ptr<juce::AlertWindow> m_alertWindow;

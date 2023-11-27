@@ -169,7 +169,7 @@ public:
 	bool keyPressed(const KeyPress& key, Component* originatingComponent) override; //return true for the ableton bug
     bool keyStateChanged(bool isKeyDown, Component* originatingComponent) override;
 
-	bool isActive = false;
+	std::atomic<bool> isActive = false;
 	bool m_wasShown = false;
 	void setLicenseText(StringRef text, bool bInErrorState, VASTAudioProcessor::vastErrorState iErrorState);
 	void setVersionText(StringRef text);

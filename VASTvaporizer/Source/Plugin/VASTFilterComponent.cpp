@@ -360,7 +360,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
     m_bOnOff_Filter3->setButtonText (juce::String());
     m_bOnOff_Filter3->addListener (this);
 
-    c_filterDisplay.reset (new VASTFilterDisplay());
+    c_filterDisplay.reset (new VASTFilterDisplay (myProcessor));
     addAndMakeVisible (c_filterDisplay.get());
     c_filterDisplay->setName ("c_filterDisplay");
 
@@ -1368,7 +1368,7 @@ BEGIN_JUCER_METADATA
                 needsCallback="1" radioGroupId="0" state="0"/>
   <GENERICCOMPONENT name="c_filterDisplay" id="61bd7bec450e402b" memberName="c_filterDisplay"
                     virtualName="" explicitFocusOrder="0" pos="99%r 40.348% 98% 58.435%"
-                    class="VASTFilterDisplay" params=""/>
+                    class="VASTFilterDisplay" params="myProcessor"/>
   <COMBOBOX name="m_uVCFEnv_Filter1" id="39afd5b0c0d4b799" memberName="m_uVCFEnv_Filter1"
             virtualName="VASTParameterComboBox" explicitFocusOrder="8" pos="61.25% 7.304% 9.375% 2.435%"
             tooltip="Envelope used as LPF envelope" editable="0" layout="33"

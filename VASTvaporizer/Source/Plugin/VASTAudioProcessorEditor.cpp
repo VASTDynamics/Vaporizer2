@@ -9,13 +9,13 @@
 */
 
 #include "../Engine/VASTEngineHeader.h"
-#include "VASTAudioProcessor.h"
+#include "VASTAudioprocessor.h"
 #include "VASTAudioProcessorEditor.h"
 #include "VASTVaporizerComponent.h"
 
 //==============================================================================
 VASTAudioProcessorEditor::VASTAudioProcessorEditor(VASTAudioProcessor& p)
-: AudioProcessorEditor(&p), processor(p) {
+: AudioProcessorEditor(p), processor(&p) {
     
     if (juce::Desktop::getInstance().isHeadless() == false)
     {
@@ -26,11 +26,11 @@ VASTAudioProcessorEditor::VASTAudioProcessorEditor(VASTAudioProcessor& p)
         if (m_iMaxHeight > screenH) m_iMaxHeight = screenH;
     }
     
-    vaporizerComponent.reset(new VASTVaporizerComponent(this, &processor));
+    vaporizerComponent.reset(new VASTVaporizerComponent(this, processor));
 
     resizeCalledFromConstructor = true;
 
-	processor.m_mapParameterNameToControl.clear(); //clear slider mapping
+	processor->m_mapParameterNameToControl.clear(); //clear slider mapping
 
 	m_VASTComponentsAll = juce::Array<Component*>();
 	//Make sure that before the constructor has finished, you've set the
@@ -42,21 +42,21 @@ VASTAudioProcessorEditor::VASTAudioProcessorEditor(VASTAudioProcessor& p)
 	setResizable(true, true);
 #endif
 
-	if ((processor.m_iUserTargetPluginHeight == 0) || (processor.m_iUserTargetPluginWidth == 0)) {
-		processor.m_iUserTargetPluginWidth = processor.m_iDefaultPluginWidth;
-		processor.m_iUserTargetPluginHeight = processor.m_iDefaultPluginHeight;
+	if ((processor->m_iUserTargetPluginHeight == 0) || (processor->m_iUserTargetPluginWidth == 0)) {
+		processor->m_iUserTargetPluginWidth = processor->m_iDefaultPluginWidth;
+		processor->m_iUserTargetPluginHeight = processor->m_iDefaultPluginHeight;
 	}
 
 	tooltipWindow.setLookAndFeel(getProcessor()->getCurrentVASTLookAndFeel());
 	
 	resizeCalledFromConstructor = true;
 #if !defined JUCE_LINUX
-	m_componentBoundsConstrainer.setFixedAspectRatio(processor.m_dPluginRatio);
+	m_componentBoundsConstrainer.setFixedAspectRatio(processor->m_dPluginRatio);
 	m_componentBoundsConstrainer.setSizeLimits(m_iMinWidth, m_iMinHeight, m_iMaxWidth, m_iMaxHeight); //CHECK https://forum.juce.com/t/best-way-to-implement-resizable-plugin/12644/5
 	setConstrainer(&m_componentBoundsConstrainer);
 #endif
 
-	setSize(processor.m_iUserTargetPluginHeight * processor.m_dPluginRatio, processor.m_iUserTargetPluginHeight);
+	setSize(processor->m_iUserTargetPluginHeight * processor->m_dPluginRatio, processor->m_iUserTargetPluginHeight);
 	setOpaque(true);
     
     startTimer(0, 100); //ui update
@@ -65,6 +65,7 @@ VASTAudioProcessorEditor::VASTAudioProcessorEditor(VASTAudioProcessor& p)
 }
 
 VASTAudioProcessorEditor::~VASTAudioProcessorEditor() {
+	processor->resetCurrentEditorInitialized();
 	this->removeAllChildren();
 	m_alertWindow = nullptr;
 	stopTimer(0);
@@ -97,11 +98,11 @@ void VASTAudioProcessorEditor::timerCallback(int timerID) {
         mi_update_delay++;
         return;
     }
-    VASTAudioProcessor* _processor = getProcessor();
     
     if (vaporizerComponent.get() != nullptr) {
             addAndMakeVisible(vaporizerComponent.get());
-            vaporizerComponent->setVersionText(_processor->getVersionString());
+            vaporizerComponent->setVersionText(processor->getVersionString());
+			processor->setCurrentEditorInitialized();
     } else
         return;
     
@@ -109,48 +110,48 @@ void VASTAudioProcessorEditor::timerCallback(int timerID) {
         return; //not yet ready?
     
     if (!isVisible()) {
-        _processor->m_editorIsProbablyVisible.store(false);
+        processor->m_editorIsProbablyVisible.store(false);
         return;
     }
     else
-        _processor->m_editorIsProbablyVisible.store(true);
+        processor->m_editorIsProbablyVisible.store(true);
 	if (timerID == 1) { //component update
-		if (_processor->m_bShallComponentValueUpdate.load()) {
-			if (_processor->m_shallComponentUpdate != "") {
-				VASTSlider* lslider = dynamic_cast<VASTSlider*>(findChildComponetWithName(vaporizerComponent.get(), _processor->m_shallComponentUpdate));
+		if (processor->m_bShallComponentValueUpdate.load()) {
+			if (processor->m_shallComponentUpdate != "") {
+				VASTSlider* lslider = dynamic_cast<VASTSlider*>(findChildComponetWithName(vaporizerComponent.get(), processor->m_shallComponentUpdate));
 				if (lslider != nullptr) {
-					if (lslider->getComponentID().equalsIgnoreCase(_processor->m_shallComponentUpdate)) {
-						float sVal = lslider->getRange().getStart() + (lslider->getRange().getEnd() - lslider->getRange().getStart()) * jlimit<float>(0.f, 1.f, _processor->m_shallComponentUpdateValue);
+					if (lslider->getComponentID().equalsIgnoreCase(processor->m_shallComponentUpdate)) {
+						float sVal = lslider->getRange().getStart() + (lslider->getRange().getEnd() - lslider->getRange().getStart()) * jlimit<float>(0.f, 1.f, processor->m_shallComponentUpdateValue);
 						lslider->setValue(sVal, NotificationType::sendNotificationAsync);
 					}
 				}
 			}
-			_processor->m_bShallComponentValueUpdate.store(false);
+			processor->m_bShallComponentValueUpdate.store(false);
 		}
 	}
 	else { //ui update
-		vaporizerComponent->setLicenseText(_processor->getLicenseText(), _processor->isInErrorState(), _processor->getErrorState());
+		vaporizerComponent->setLicenseText(processor->getLicenseText(), processor->isInErrorState(), processor->getErrorState());
 
-		if (_processor->m_showNewerVersionPopup) {
+		if (processor->m_showNewerVersionPopup) {
 			showNewerVersionPopup();
 		}
 
-		if (_processor->needsUIInit()) {
+		if (processor->needsUIInit()) {
 			vaporizerComponent->initAll();
-			_processor->clearUIInitFlag();
+			processor->clearUIInitFlag();
 		}
 
-		if (_processor->needsUIUpdate()) {
-			if (_processor->needsUIUpdate_tabs())
+		if (processor->needsUIUpdate()) {
+			if (processor->needsUIUpdate_tabs())
 				vaporizerComponent->updateAll();
 
-			if (_processor->needsUIUpdate_matrix())
+			if (processor->needsUIUpdate_matrix())
 				vaporizerComponent->updateMatrixDisplay();
 
-			if (_processor->needsUIUpdate_sliders()) {
-				if ((_processor->needsUIUpdate_slider1dest() == -1) && (_processor->needsUIUpdate_slider2dest() == -1)) { //repaint all sliders 
-					for (int i = 0; i < _processor->m_mapParameterNameToControl.size(); i++) {
-						VASTParameterSlider* lslider = dynamic_cast<VASTParameterSlider*>(_processor->m_mapParameterNameToControl[i]);
+			if (processor->needsUIUpdate_sliders()) {
+				if ((processor->needsUIUpdate_slider1dest() == -1) && (processor->needsUIUpdate_slider2dest() == -1)) { //repaint all sliders 
+					for (int i = 0; i < processor->m_mapParameterNameToControl.size(); i++) {
+						VASTParameterSlider* lslider = dynamic_cast<VASTParameterSlider*>(processor->m_mapParameterNameToControl[i]);
 						if (lslider != nullptr) {
 							if (lslider->isShowing())
 								lslider->repaint();
@@ -158,11 +159,11 @@ void VASTAudioProcessorEditor::timerCallback(int timerID) {
 					}
 				}
 				else { //repaint only the two that are given
-					String param1name = _processor->autoDestinationGetParam(_processor->needsUIUpdate_slider1dest());
-					String param2name = _processor->autoDestinationGetParam(_processor->needsUIUpdate_slider2dest());
+					String param1name = processor->autoDestinationGetParam(processor->needsUIUpdate_slider1dest());
+					String param2name = processor->autoDestinationGetParam(processor->needsUIUpdate_slider2dest());
 
-					for (int i = 0; i < _processor->m_mapParameterNameToControl.size(); i++) {
-						VASTParameterSlider* lslider = dynamic_cast<VASTParameterSlider*>(_processor->m_mapParameterNameToControl[i]);
+					for (int i = 0; i < processor->m_mapParameterNameToControl.size(); i++) {
+						VASTParameterSlider* lslider = dynamic_cast<VASTParameterSlider*>(processor->m_mapParameterNameToControl[i]);
 						if (lslider != nullptr) {
 							if ((lslider->getComponentID().equalsIgnoreCase(param1name)) || (lslider->getComponentID().equalsIgnoreCase(param2name))) {
 								if (lslider->isShowing())
@@ -173,39 +174,39 @@ void VASTAudioProcessorEditor::timerCallback(int timerID) {
 				}
 			}
 
-			if (_processor->needsUIPresetUpdate()) {
+			if (processor->needsUIPresetUpdate()) {
 				VASTPresetComponent* pres = vaporizerComponent->getConcertinaPanel()->getPresetOverlay();
 				if (pres != nullptr)
 					pres->updateAll();
-				_processor->clearUIPresetFlag();
+				processor->clearUIPresetFlag();
 			}
-			if (_processor->needsUIPresetReloadUpdate()) {
+			if (processor->needsUIPresetReloadUpdate()) {
 				VASTPresetComponent* pres = vaporizerComponent->getConcertinaPanel()->getPresetOverlay();
 				if (pres != nullptr)
 					pres->reloadPresets();
-				_processor->clearUIPresetReloadFlag();
+				processor->clearUIPresetReloadFlag();
 			}
 
-			_processor->clearUIUpdateFlag();
+			processor->clearUIUpdateFlag();
 		}
 
-		if (_processor->wantsUIAlert()) {
-			_processor->clearUIAlertFlag();
+		if (processor->wantsUIAlert()) {
+			processor->clearUIAlertFlag();
 			AlertWindow::showMessageBoxAsync(MessageBoxIconType::WarningIcon, TRANS("Load preset failed"), TRANS("Invalid data structure."), TRANS("Continue"), this);
 		}
 
 		VASTMasterVoicingComponent* voicingComp = vaporizerComponent->getMasterVoicingComponent();
 		if (voicingComp != nullptr) {
 			Label* labelV = voicingComp->getComponentCVoices();
-			int numVoicesPlaying = _processor->m_pVASTXperience.m_Poly.numNotesPlaying();
-			int numOscsPlaying = _processor->m_pVASTXperience.m_Poly.numOscsPlaying();
+			int numVoicesPlaying = processor->m_pVASTXperience.m_Poly.numNotesPlaying();
+			int numOscsPlaying = processor->m_pVASTXperience.m_Poly.numOscsPlaying();
 			labelV->setText(String(String(numVoicesPlaying) + "/" + String(numOscsPlaying)), NotificationType::dontSendNotification);
 		}
 	}
 }
 
 VASTAudioProcessor* VASTAudioProcessorEditor::getProcessor() {
-	return &processor;
+	return processor;
 }
 
 void VASTAudioProcessorEditor::paint(Graphics& ) {
@@ -239,10 +240,10 @@ void VASTAudioProcessorEditor::resized() {
 		return;
 	}
 
-	if (processor.wrapperType == AudioProcessor::wrapperType_VST3) {
+	if (processor->wrapperType == AudioProcessor::wrapperType_VST3) {
 		if (!this->resizableCorner->isMouseOverOrDragging())
 			if (resizeCalledFromConstructor == false) {
-				processor.readSettingsFromFile();
+				processor->readSettingsFromFile();
 				resizeCalledFromConstructor = true;
 				Timer::callAfterDelay(100, [editor, this] { 
 					if (editor != nullptr)

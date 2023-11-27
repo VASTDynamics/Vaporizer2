@@ -29,7 +29,8 @@ VASTARPEditor::~VASTARPEditor() {
 }
 
 void VASTARPEditor::lookAndFeelChanged() {
-	updateContent(true);
+	if (myProcessor->isCurrentEditorInitialized())
+		updateContent(true);
 }
 
 void VASTARPEditor::resized()

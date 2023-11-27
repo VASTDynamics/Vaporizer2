@@ -43,7 +43,8 @@ void VASTStepSeqEditor::resized() {
 }
 
 void VASTStepSeqEditor::lookAndFeelChanged() {
-	updateContent(true);
+	if (myProcessor->isCurrentEditorInitialized())
+		updateContent(true);
 }
 
 

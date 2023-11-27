@@ -65,7 +65,8 @@ float VASTMSEGEditor::valToScreenY(float yVal) {
 }
 
 void VASTMSEGEditor::lookAndFeelChanged() {
-	updateContent(true);
+	if (myProcessor->isCurrentEditorInitialized())
+		updateContent(true);
 }
 
 void VASTMSEGEditor::paint(Graphics& g)

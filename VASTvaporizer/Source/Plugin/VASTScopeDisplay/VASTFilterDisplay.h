@@ -14,7 +14,7 @@ class VASTAudioProcessor; //forward declaration
 class VASTFilterDisplay : public Component, public Timer
 {
 public:
-	VASTFilterDisplay();
+	VASTFilterDisplay(VASTAudioProcessor* processor);
 	~VASTFilterDisplay();
 	
 	void resized() override;
