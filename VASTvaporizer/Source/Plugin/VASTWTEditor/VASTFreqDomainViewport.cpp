@@ -763,7 +763,6 @@ void VASTFreqDomainViewport::mouseDrag(const MouseEvent& e) { // show value
 }
 
 void VASTFreqDomainViewport::mouseDoubleClick(const MouseEvent& e) {
-	ModifierKeys modifiers = ModifierKeys::getCurrentModifiersRealtime();
 	int x = e.getMouseDownX();
 	int y = e.getMouseDownY();
 	int arrayidx = mouseXGetBinArrayIdx(x);

@@ -2093,7 +2093,6 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 				FloatVectorOperations::multiply(routingBuffers.OscVoices[0][mVoiceNo]->getWritePointer(1, startSample), m_velocityBuffer->getReadPointer(0, startSample), numSamples); //multiply with velocity		
 			}
 
-			float ftest = cosf(fPanBegin);
 			routingBuffers.OscVoices[0][mVoiceNo]->applyGainRamp(0, startSample, numSamples, fAttenuateBegin * cosf(fPanBegin), fAttenuateEnd * cosf(fPanEnd));
 			routingBuffers.OscVoices[0][mVoiceNo]->applyGainRamp(1, startSample, numSamples, fAttenuateBegin * sinf(fPanBegin), fAttenuateEnd * sinf(fPanEnd));
 		}
