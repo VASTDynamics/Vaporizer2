@@ -44,7 +44,7 @@ void CVASTPoly::init() {
 	ULong64_t l_last = 0;
 	int lastPlayed = m_OscillatorSynthesizer.getLastPlayedVoiceNo();	
 	if (lastPlayed >= 0) {
-		ULong64_t l_last = m_singleNote[lastPlayed]->m_startPlayTimestamp;
+        l_last = m_singleNote[lastPlayed]->m_startPlayTimestamp;
 	}
 
 	m_OscillatorSynthesizer.init(m_Set, this);	
