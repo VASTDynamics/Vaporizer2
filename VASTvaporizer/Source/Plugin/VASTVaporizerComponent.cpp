@@ -159,7 +159,7 @@ VASTVaporizerComponent::VASTVaporizerComponent (AudioProcessorEditor *editor, Au
 	lookAndFeelChanged();
 	setOpaque(true);
 
-	setSize(myProcessor->m_iUserTargetPluginWidth, myProcessor->m_iUserTargetPluginHeight);
+	//setSize(myProcessor->m_iUserTargetPluginWidth, myProcessor->m_iUserTargetPluginHeight);
 
 	//initAll();	// calls updateAll(); //otherwise black osci //has to be first Tab!! //CHANGED CHECK!
 	myProcessor->requestUIInit();
