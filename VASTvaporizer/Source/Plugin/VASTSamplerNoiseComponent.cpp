@@ -590,6 +590,8 @@ VASTSamplerNoiseComponent::VASTSamplerNoiseComponent (AudioProcessorEditor *edit
 		}
 	}
 	setOpaque(true);
+    
+    return; //dont call setSize
     //[/UserPreSize]
 
     setSize (536, 130);

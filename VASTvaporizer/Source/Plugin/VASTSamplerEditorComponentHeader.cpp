@@ -175,6 +175,7 @@ VASTSamplerEditorComponentHeader::VASTSamplerEditorComponentHeader (VASTAudioPro
 
 	setOpaque(true);
 
+    return; //dont call setSize
     //[/UserPreSize]
 
     setSize (800, 20);

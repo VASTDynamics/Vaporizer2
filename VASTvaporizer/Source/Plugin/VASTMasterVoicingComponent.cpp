@@ -273,6 +273,8 @@ VASTMasterVoicingComponent::VASTMasterVoicingComponent (AudioProcessorEditor *ed
 	}
 	setOpaque(true);
     m_initDone = false;
+    
+    return; //dont call setSize
     //[/UserPreSize]
 
     setSize (668, 76);

@@ -52,61 +52,13 @@
 class VASTTabbedComponent : public TabbedComponent
 {
 public:
+    enum TabSequence { WTEDITOR, FILTER, LFOMSEG, MATRIX, FX, ARP, PRESET };
 	std::function<void(int)> TabChangedFunc;
-	VASTTabbedComponent(TabbedButtonBar::Orientation orientation) : TabbedComponent(orientation)
-	{
-		TabChangedFunc = [](int) {};
-	}
-	void currentTabChanged(int index, const String&) override
-	{
-		VASTWaveTableEditorComponent* tab1 = ((VASTWaveTableEditorComponent*)getTabContentComponent(0));
-		if (tab1 == nullptr) return; //not initialied
-		VASTFilterComponent* tab2 = ((VASTFilterComponent*)getTabContentComponent(1));
-		if (tab2 == nullptr) return; //not initialied
-		VASTLFOMsegComponent* tab3 = ((VASTLFOMsegComponent*)getTabContentComponent(2));
-		if (tab3 == nullptr) return; //not initialied
-		VASTMatrixComponent* tab4 = ((VASTMatrixComponent*)getTabContentComponent(3));
-		if (tab4 == nullptr) return; //not initialied
-		VASTFXComponent* tab5 = ((VASTFXComponent*)getTabContentComponent(4));
-		if (tab5 == nullptr) return; //not initialied
-		VASTArpComponent* tab6 = ((VASTArpComponent*)getTabContentComponent(5));
-		if (tab6 == nullptr) return; //not initialied
-		VASTPresetEditorComponent* tab7 = ((VASTPresetEditorComponent*)getTabContentComponent(6));
-		if (tab7 == nullptr) return; //not initialied
-
-		tab1->stopAutoUpdate();
-		tab2->stopAutoUpdate();
-		tab3->stopAutoUpdate();
-		tab4->stopAutoUpdate();
-		tab5->stopAutoUpdate();
-		tab6->stopAutoUpdate();
-		tab7->stopAutoUpdate();
-		switch (index) {
-		case 0:
-			tab1->startAutoUpdate();
-			break;
-		case 1:
-			tab2->startAutoUpdate();
-			break;
-		case 2:
-			tab3->startAutoUpdate();
-			break;
-		case 3:
-			tab4->startAutoUpdate();
-			break;
-		case 4:
-			tab5->startAutoUpdate();
-			break;
-		case 5:
-			tab6->startAutoUpdate();
-			break;
-		case 6:
-			tab7->startAutoUpdate();
-			break;
-		}
-
-		TabChangedFunc(index);
-	}
+    VASTTabbedComponent(TabbedButtonBar::Orientation orientation, AudioProcessorEditor *editor, AudioProcessor* processor);
+    void currentTabChanged(int index, const String&) override;
+    AudioProcessor* myProcessor;
+    AudioProcessorEditor* myEditor;
+    bool m_bInitialized = false;
 };
 //[/Headers]
 

@@ -33,7 +33,7 @@ public:
 	
 	//==============================================================================
 	VASTAudioProcessor* getProcessor();
-    std::unique_ptr<VASTVaporizerComponent> vaporizerComponent;
+    std::unique_ptr<VASTVaporizerComponent> vaporizerComponent = nullptr;
 	
 	juce::Array<Component*> m_VASTComponentsAll;
 

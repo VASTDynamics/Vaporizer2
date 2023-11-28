@@ -13,13 +13,21 @@ VASTDrawableButton::VASTDrawableButton(const juce::String &componentName, const 
 	//vastPopupHandler.setComponentName(componentName);
 	//this->addMouseListener(&vastPopupHandler, true);
 
-	std::unique_ptr<Drawable> image = Drawable::createFromImageData(normalImage, normalImageSize);
-	setImages(image.get(), image.get(), image.get(), image.get(), image.get(), image.get(), image.get(), image.get());
+    m_normalImage = normalImage;
+    m_normalImageSize = normalImageSize;
+    auto asyncImageLoad = [p = juce::Component::SafePointer<VASTDrawableButton> (this)]()
+    {
+        if (p) {
+            std::unique_ptr<Drawable> image = Drawable::createFromImageData(p->m_normalImage, p->m_normalImageSize);
+            p->setImages(image.get(), nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr);
+        }
+    };
+    
 	//setRepaintsOnMouseActivity(false); //performance
 	//setBufferedToImage(true); //performance
 
 	setOpaque(false);
-
+    Timer::callAfterDelay (200, asyncImageLoad);
 	m_processor = NULL;
 }
 

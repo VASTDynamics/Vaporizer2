@@ -117,6 +117,7 @@ VASTWaveTableEditorComponent::VASTWaveTableEditorComponent (AudioProcessorEditor
 
 	setWantsKeyboardFocus(false);
 	mFileChoserIsOpen = false;
+    
     //[/UserPreSize]
 
     setSize (800, 575);

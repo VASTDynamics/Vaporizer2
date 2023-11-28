@@ -144,7 +144,8 @@ VASTHeaderComponent::VASTHeaderComponent (AudioProcessorEditor *editor, AudioPro
 
 	String presetdisplay = myProcessor->m_presetData.getCurPatchData().category + " " + myProcessor->m_presetData.getCurPatchData().presetname;
 	c_Preset->setText(presetdisplay, juce::NotificationType::dontSendNotification);
-
+    
+    return; //dont call setSize
     //[/UserPreSize]
 
     setSize (325, 76);

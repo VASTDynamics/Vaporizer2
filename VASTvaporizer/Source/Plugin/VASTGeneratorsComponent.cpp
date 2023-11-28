@@ -64,7 +64,7 @@ VASTGeneratorsComponent::VASTGeneratorsComponent (AudioProcessorEditor *editor, 
 	oscillatorDComponent->assignComponentIDsForChildren(String("OscD"));
 
 	setOpaque(true);
-
+    return; //dont call setSize
     //[/UserPreSize]
 
     setSize (536, 641);

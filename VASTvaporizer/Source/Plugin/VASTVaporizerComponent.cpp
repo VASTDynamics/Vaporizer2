@@ -47,6 +47,144 @@
 
 
 //[MiscUserDefs] You can add your own user definitions and misc code here...
+
+VASTTabbedComponent::VASTTabbedComponent(TabbedButtonBar::Orientation orientation, AudioProcessorEditor *editor, AudioProcessor* processor) : TabbedComponent(orientation), myProcessor(processor), myEditor(editor)
+{
+    TabChangedFunc = [](int) {};
+    
+    setTabBarDepth(30);
+    addTab(TRANS("WT EDITOR"), Colour(0xff3e3e3e), new VASTWaveTableEditorComponent(myEditor, myProcessor), true, TabSequence::WTEDITOR);
+    addTab(TRANS("FILTER"), Colour(0xff334761), new Label(), true, TabSequence::FILTER);
+    addTab(TRANS("LFO MSEG ENV"), Colour(0xff68493e), new Label(), true, TabSequence::LFOMSEG);
+    addTab(TRANS("MATRIX"), Colour(0xff2d5f33), new Label(), true, TabSequence::MATRIX);
+    addTab(TRANS("FX"), Colour(0xff7d7d3b), new Label(), true, TabSequence::FX);
+    addTab(TRANS("ARP"), Colour(0xff73376c), new Label(), true, TabSequence::ARP);
+    addTab(TRANS("PRESET"), Colour(0xff3d6065), new Label(), true, TabSequence::PRESET);
+    setCurrentTabIndex(0);
+    currentTabChanged(0, ""); //to force update
+    getTabbedButtonBar().setColour(TabbedButtonBar::tabTextColourId, juce::Colour::fromFloatRGBA(0.f, 0.f, 0.f, 1.f));
+    getTabbedButtonBar().setColour(TabbedButtonBar::frontTextColourId, juce::Colour::fromFloatRGBA(1.f, 1.f, 1.f, 1.f));
+    setOutline(0);
+    setOpaque(false); // this does not work!
+    m_bInitialized = true;
+    VASTWaveTableEditorComponent* tab1 = dynamic_cast<VASTWaveTableEditorComponent*>(getTabContentComponent(TabSequence::WTEDITOR));
+    if (tab1 != nullptr)
+        tab1->startAutoUpdate();
+}
+
+void VASTTabbedComponent::currentTabChanged(int index, const String&) {
+    if (!m_bInitialized)
+        return;
+    
+    VASTWaveTableEditorComponent* tab1 = dynamic_cast<VASTWaveTableEditorComponent*>(getTabContentComponent(TabSequence::WTEDITOR));
+    if (tab1 == nullptr) return; //not initialized
+    
+    //lazy load
+    VASTFilterComponent* tab2 = dynamic_cast<VASTFilterComponent*>(getTabContentComponent(TabSequence::FILTER));
+    if (tab2 == nullptr) {
+        if (index == TabSequence::FILTER) {
+            removeTab(index);
+            addTab(TRANS("FILTER"), Colour(0xff334761), new VASTFilterComponent(myEditor, myProcessor), true, TabSequence::FILTER);
+            setCurrentTabIndex(TabSequence::FILTER);
+            ((VASTAudioProcessorEditor*)myEditor)->vaporizerComponent->lookAndFeelChanged();
+        }
+    }
+    VASTLFOMsegComponent* tab3 = dynamic_cast<VASTLFOMsegComponent*>(getTabContentComponent(TabSequence::LFOMSEG));
+    if (tab3 == nullptr) {
+        if (index == TabSequence::LFOMSEG) {
+            removeTab(index);
+            addTab(TRANS("LFO MSEG ENV"), Colour(0xff68493e), new VASTLFOMsegComponent(myEditor, myProcessor), true, TabSequence::LFOMSEG);
+            setCurrentTabIndex(TabSequence::LFOMSEG);
+            ((VASTAudioProcessorEditor*)myEditor)->vaporizerComponent->lookAndFeelChanged();
+        }
+    }
+    VASTMatrixComponent* tab4 = dynamic_cast<VASTMatrixComponent*>(getTabContentComponent(TabSequence::MATRIX));
+    if (tab4 == nullptr) {
+        if (index == TabSequence::MATRIX) {
+            removeTab(index);
+            addTab(TRANS("MATRIX"), Colour(0xff2d5f33), new VASTMatrixComponent(myEditor, myProcessor), true, TabSequence::MATRIX);
+            setCurrentTabIndex(TabSequence::MATRIX);
+            ((VASTAudioProcessorEditor*)myEditor)->vaporizerComponent->lookAndFeelChanged();
+        }
+    }
+    VASTFXComponent* tab5 = dynamic_cast<VASTFXComponent*>(getTabContentComponent(TabSequence::FX));
+    if (tab5 == nullptr) {
+        if (index == TabSequence::FX) {
+            removeTab(index);
+            addTab(TRANS("FX"), Colour(0xff7d7d3b), new VASTFXComponent(myEditor, myProcessor), true, TabSequence::FX);
+            setCurrentTabIndex(TabSequence::FX);
+            ((VASTAudioProcessorEditor*)myEditor)->vaporizerComponent->lookAndFeelChanged();
+        }
+    }
+    VASTArpComponent* tab6 = dynamic_cast<VASTArpComponent*>(getTabContentComponent(TabSequence::ARP));
+    if (tab6 == nullptr) {
+        if (index == TabSequence::ARP) {
+            removeTab(index);
+            addTab(TRANS("ARP"), Colour(0xff73376c), new VASTArpComponent(myEditor, myProcessor), true, TabSequence::ARP);
+            setCurrentTabIndex(TabSequence::ARP);
+            ((VASTAudioProcessorEditor*)myEditor)->vaporizerComponent->lookAndFeelChanged();
+        }
+    }
+    VASTPresetEditorComponent* tab7 = dynamic_cast<VASTPresetEditorComponent*>(getTabContentComponent(TabSequence::PRESET));
+    if (tab7 == nullptr) {
+        if (index == TabSequence::PRESET) {
+            removeTab(index);
+            addTab(TRANS("PRESET"), Colour(0xff3d6065), new VASTPresetEditorComponent(myEditor, myProcessor), true, TabSequence::PRESET);
+            setCurrentTabIndex(TabSequence::PRESET);
+            ((VASTAudioProcessorEditor*)myEditor)->vaporizerComponent->lookAndFeelChanged();
+        }
+    }
+
+    if (tab1 != nullptr)
+        tab1->stopAutoUpdate();
+    if (tab2 != nullptr)
+        tab2->stopAutoUpdate();
+    if (tab3 != nullptr)
+        tab3->stopAutoUpdate();
+    if (tab4 != nullptr)
+        tab4->stopAutoUpdate();
+    if (tab5 != nullptr)
+        tab5->stopAutoUpdate();
+    if (tab6 != nullptr)
+        tab6->stopAutoUpdate();
+    if (tab7 != nullptr)
+        tab7->stopAutoUpdate();
+    
+    switch (index) {
+    case TabSequence::WTEDITOR:
+            if (tab1 != nullptr)
+                tab1->startAutoUpdate();
+        break;
+    case TabSequence::FILTER:
+            if (tab2 != nullptr)
+                tab2->startAutoUpdate();
+        break;
+    case TabSequence::LFOMSEG:
+            if (tab3 != nullptr)
+                tab3->startAutoUpdate();
+        break;
+    case TabSequence::MATRIX:
+            if (tab4 != nullptr)
+                tab4->startAutoUpdate();
+        break;
+    case TabSequence::FX:
+            if (tab5 != nullptr)
+                tab5->startAutoUpdate();
+        break;
+    case TabSequence::ARP:
+            if (tab6 != nullptr)
+                tab6->startAutoUpdate();
+        break;
+    case TabSequence::PRESET:
+            if (tab7 != nullptr)
+                tab7->startAutoUpdate();
+        break;
+    }
+
+    TabChangedFunc(index);
+}
+
+
 //[/MiscUserDefs]
 
 //==============================================================================
@@ -110,38 +248,8 @@ VASTVaporizerComponent::VASTVaporizerComponent (AudioProcessorEditor *editor, Au
 	c_sidePanel->setTitleBarComponent(c_sidePanelHeader.get(), false, false);
 	c_sidePanel->setContent(sidePanelComponent.get(), false); //do not own
 
-	/*
-	c_sidePanel->onPanelShowHide = [this](bool isShowing)
-	{
-		if (isShowing)
-		{
-			sidePanelWidth = jmax(0, c_sidePanel->getWidth());
-			resized();
-		}
-		else
-		{
-			sidePanelWidth = 0;
-			Timer::callAfterDelay(250, [this] { resized(); });
-		}
-	};
-	*/
-
 	c_concertinaCenter.reset(new VASTConcertinaPanel(myProcessor, false));
-	c_tabbedComponent.reset(new VASTTabbedComponent(TabbedButtonBar::TabsAtLeft));
-	c_tabbedComponent->setTabBarDepth(30);
-	c_tabbedComponent->addTab(TRANS("WT EDITOR"), Colour(0xff3e3e3e), new VASTWaveTableEditorComponent(myEditor, myProcessor), true);
-	c_tabbedComponent->addTab(TRANS("FILTER"), Colour(0xff334761), new VASTFilterComponent(myEditor, myProcessor), true);
-	c_tabbedComponent->addTab(TRANS("LFO MSEG ENV"), Colour(0xff68493e), new VASTLFOMsegComponent(myEditor, myProcessor), true);
-	c_tabbedComponent->addTab(TRANS("MATRIX"), Colour(0xff2d5f33), new VASTMatrixComponent(myEditor, myProcessor), true);
-	c_tabbedComponent->addTab(TRANS("FX"), Colour(0xff7d7d3b), new VASTFXComponent(myEditor, myProcessor), true);
-	c_tabbedComponent->addTab(TRANS("ARP"), Colour(0xff73376c), new VASTArpComponent(myEditor, myProcessor), true);
-	c_tabbedComponent->addTab(TRANS("PRESET"), Colour(0xff3d6065), new VASTPresetEditorComponent(myEditor, myProcessor), true);
-	c_tabbedComponent->setCurrentTabIndex(0);
-	c_tabbedComponent->currentTabChanged(0, ""); //to force update
-	c_tabbedComponent->getTabbedButtonBar().setColour(TabbedButtonBar::tabTextColourId, juce::Colour::fromFloatRGBA(0.f, 0.f, 0.f, 1.f));
-	c_tabbedComponent->getTabbedButtonBar().setColour(TabbedButtonBar::frontTextColourId, juce::Colour::fromFloatRGBA(1.f, 1.f, 1.f, 1.f));
-	c_tabbedComponent->setOutline(0);
-	c_tabbedComponent->setOpaque(false); // this does not work!
+	c_tabbedComponent.reset(new VASTTabbedComponent(TabbedButtonBar::TabsAtLeft, myEditor, myProcessor));
 	lastMouseWheelEvent = juce::Time::getCurrentTime();
 
 	c_keyboardComponent.reset(new VASTKeyboardComponent(myEditor, myProcessor));
@@ -352,17 +460,17 @@ void VASTVaporizerComponent::setVersionText(StringRef text) {
 
 void VASTVaporizerComponent::initAll() {
 	lookAndFeelChanged();
-	VASTWaveTableEditorComponent* tab1 = ((VASTWaveTableEditorComponent*)c_tabbedComponent->getTabContentComponent(0));
-	jassert(tab1 != nullptr); //sequence changed?
-	tab1->initAll();
+	VASTWaveTableEditorComponent* tab1 = dynamic_cast<VASTWaveTableEditorComponent*>(c_tabbedComponent->getTabContentComponent(VASTTabbedComponent::TabSequence::WTEDITOR));
+    if (tab1 != nullptr)
+        tab1->initAll();
 
-	VASTLFOMsegComponent* tab3 = ((VASTLFOMsegComponent*)c_tabbedComponent->getTabContentComponent(2));
-	jassert(tab3 != nullptr); //sequence changed?
-	tab3->initAll();
+	VASTLFOMsegComponent* tab3 = dynamic_cast<VASTLFOMsegComponent*>(c_tabbedComponent->getTabContentComponent(VASTTabbedComponent::TabSequence::LFOMSEG));
+    if (tab3 != nullptr)
+        tab3->initAll();
 
-	VASTArpComponent* tab6 = ((VASTArpComponent*)c_tabbedComponent->getTabContentComponent(5));
-	jassert(tab6 != nullptr); //sequence changed?
-	tab6->initAll();
+	VASTArpComponent* tab6 = dynamic_cast<VASTArpComponent*>(c_tabbedComponent->getTabContentComponent(VASTTabbedComponent::TabSequence::ARP));
+    if (tab6 != nullptr)
+        tab6->initAll();
 
 	getOscillatorComponent(0)->initAll();
 	getOscillatorComponent(1)->initAll();
@@ -377,33 +485,33 @@ void VASTVaporizerComponent::initAll() {
 }
 
 void VASTVaporizerComponent::updateMatrixDisplay() {
-	VASTMatrixComponent* matrix = (VASTMatrixComponent*)c_tabbedComponent->getTabContentComponent(3);
-	matrix->updateAll();
+	VASTMatrixComponent* matrix = dynamic_cast<VASTMatrixComponent*>(c_tabbedComponent->getTabContentComponent(VASTTabbedComponent::TabSequence::MATRIX));
+	if (matrix != nullptr)
+        matrix->updateAll();
 }
 
 void VASTVaporizerComponent::updateAll() {
-	VASTWaveTableEditorComponent* tab1 = ((VASTWaveTableEditorComponent*)c_tabbedComponent->getTabContentComponent(0));
-	jassert(tab1 != nullptr); //sequence changed?
-	//tab1->updateAll(true);
-	tab1->requestUIUpdate();
+	VASTWaveTableEditorComponent* tab1 = dynamic_cast<VASTWaveTableEditorComponent*>(c_tabbedComponent->getTabContentComponent(VASTTabbedComponent::TabSequence::WTEDITOR));
+    if (tab1 != nullptr)
+        tab1->requestUIUpdate();
 
-	VASTLFOMsegComponent* tab3 = ((VASTLFOMsegComponent*)c_tabbedComponent->getTabContentComponent(2));
-	jassert(tab3 != nullptr); //sequence changed?
-	tab3->updateAll();
+	VASTLFOMsegComponent* tab3 = dynamic_cast<VASTLFOMsegComponent*>(c_tabbedComponent->getTabContentComponent(VASTTabbedComponent::VASTTabbedComponent::TabSequence::LFOMSEG));
+    if (tab3 != nullptr)
+        tab3->updateAll();
 
-	VASTFXComponent* tab5 = ((VASTFXComponent*)c_tabbedComponent->getTabContentComponent(4));
-	jassert(tab5 != nullptr); //sequence changed?
-	tab5->updateAll();
+	VASTFXComponent* tab5 = dynamic_cast<VASTFXComponent*>(c_tabbedComponent->getTabContentComponent(VASTTabbedComponent::TabSequence::FX));
+    if (tab5 != nullptr)
+        tab5->updateAll();
 
-	VASTArpComponent* tab6 = ((VASTArpComponent*)c_tabbedComponent->getTabContentComponent(5));
-	jassert(tab6 != nullptr); //sequence changed?
-	tab6->updateAll();
+	VASTArpComponent* tab6 = dynamic_cast<VASTArpComponent*>(c_tabbedComponent->getTabContentComponent(VASTTabbedComponent::TabSequence::ARP));
+    if (tab6 != nullptr)
+        tab6->updateAll();
 
-	VASTPresetEditorComponent* tab7 = ((VASTPresetEditorComponent*)c_tabbedComponent->getTabContentComponent(6));
-	jassert(tab7 != nullptr); //sequence changed?
-	tab7->updateAll();
+	VASTPresetEditorComponent* tab7 = dynamic_cast<VASTPresetEditorComponent*>(c_tabbedComponent->getTabContentComponent(VASTTabbedComponent::TabSequence::PRESET));
+	if (tab7 != nullptr)
+        tab7->updateAll();
 
-	VASTGeneratorsComponent* generators = (VASTGeneratorsComponent*)c_concertinaCenter->getFirstComponent();
+	VASTGeneratorsComponent* generators = dynamic_cast<VASTGeneratorsComponent*>(c_concertinaCenter->getFirstComponent());
 	if (generators != nullptr) {
 		generators->getOscillatorAComponent()->updateAll();
 		generators->getOscillatorBComponent()->updateAll();
@@ -439,7 +547,7 @@ bool VASTVaporizerComponent::keyPressed(const KeyPress& key, Component* originat
 	VDBG(key.getTextDescription() << "   " << key.getKeyCode());
 	ModifierKeys mod = key.getModifiers();
 
-	VASTWaveTableEditorComponent* myWtEditor = ((VASTWaveTableEditorComponent*)c_tabbedComponent->getTabContentComponent(0));
+	VASTWaveTableEditorComponent* myWtEditor = ((VASTWaveTableEditorComponent*)c_tabbedComponent->getTabContentComponent(VASTTabbedComponent::TabSequence::WTEDITOR));
 	jassert(myWtEditor != nullptr); //sequence changed?
 	if (myWtEditor->isVisible()) { //WT Editor
 		if (mod.isCtrlDown()) {

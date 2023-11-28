@@ -17,11 +17,13 @@ public:
 
 	void setAudioProcessor(VASTAudioProcessor &processor);
 	VASTAudioProcessor* getAudioProcessor();
-
+    const char* m_normalImage;
+    int m_normalImageSize;
+    
 private:
 	//void mouseDrag(const MouseEvent &e);
 	//void mouseDown(const MouseEvent &e);
-
+    
 	//VASTPopupHandler vastPopupHandler;
 	VASTAudioProcessor *m_processor;
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(VASTDrawableButton)

@@ -138,6 +138,7 @@ VASTKeyboardComponent::VASTKeyboardComponent (AudioProcessorEditor *editor, Audi
 	setOpaque(true);
 	updateAll();
     startTimer(50);
+    return; //dont call setSize
     //[/UserPreSize]
 
     setSize (1420, 88);

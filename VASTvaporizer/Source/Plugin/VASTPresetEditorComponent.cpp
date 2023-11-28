@@ -545,6 +545,7 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     logEditorComponent->setOpaque(true);
 #endif
 
+    return; //dont call setSize
     //[/UserPreSize]
 
     setSize (800, 575);

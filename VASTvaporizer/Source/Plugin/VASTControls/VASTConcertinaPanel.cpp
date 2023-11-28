@@ -589,7 +589,7 @@ void VASTConcertinaPanel::resized()
 {	
 	applyLayout(getFittedSizes(), false);
 
-	if (getNumPanels() == 2) {//this is VAST 
+	if (getNumPanels() == 2) {//this is VAST
 		setLayoutAccordingToStatus(false);
 	}
 }

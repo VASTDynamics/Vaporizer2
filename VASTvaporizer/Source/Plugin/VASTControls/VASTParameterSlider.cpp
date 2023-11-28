@@ -27,8 +27,8 @@ VASTParameterSlider::VASTParameterSlider(const juce::String &componentName) {
 }
 
 VASTParameterSlider::~VASTParameterSlider() {
-	stopTimer();
-	this->setLookAndFeel(nullptr);
+    stopTimer();
+    this->setLookAndFeel(nullptr);
 	sliderAttachment = nullptr; //to delete unique ptr
 }
 

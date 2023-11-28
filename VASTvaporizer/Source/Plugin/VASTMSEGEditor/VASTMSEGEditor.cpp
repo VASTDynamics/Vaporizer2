@@ -670,6 +670,8 @@ void VASTMSEGEditor::timerCallback() {
 
 		for (int i = 0; i < processor->m_mapParameterNameToControl.size(); i++) {
 			VASTParameterSlider* lslider = dynamic_cast<VASTParameterSlider*>(processor->m_mapParameterNameToControl[i]);
+            if (lslider == nullptr)
+                continue;
 			if (lslider->getComponentID().equalsIgnoreCase("m_fSustainLevel_MSEG" + String(myData->m_msegNo + 1)))
 				lslider->setValue(myData->getSustainLevel() * 100.f, juce::NotificationType::dontSendNotification);
 

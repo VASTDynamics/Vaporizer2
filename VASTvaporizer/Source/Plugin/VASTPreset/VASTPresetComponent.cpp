@@ -210,8 +210,8 @@ void VASTValueTreeItem::paintItem(Graphics& g, int width, int height)
 		g.setColour(Colours::black);
 	}
 	else if ((tree["id"].toString() == "presetfolder") || (tree["id"].toString() == "folder")) {
-		std::unique_ptr<Drawable> img = Drawable::createFromImageData(_presetComponent->folder_fill_svg, _presetComponent->folder_fill_svgSize);
-		img->drawWithin(g, juce::Rectangle<float>(0, 0, 10 * wf, height), RectanglePlacement::centred, 0.6f);
+        if (_presetComponent->m_folderImg != nullptr)
+            _presetComponent->m_folderImg->drawWithin(g, juce::Rectangle<float>(0, 0, 10 * wf, height), RectanglePlacement::centred, 0.6f);
 		g.setColour(vComboTextColor);
 		g.setFont(_presetComponent->m_font);
 		if (isSelected())
@@ -688,7 +688,14 @@ VASTPresetComponent::VASTPresetComponent (VASTAudioProcessor* proc, ComboBox* bo
     addAndMakeVisible (c_treeheader4.get());
     c_treeheader4->setName ("c_treeheader4");
 
-
+    auto asyncImageLoad = [p = juce::Component::SafePointer<VASTPresetComponent> (this)]()
+    {
+        if (p) {
+            p->m_folderImg = Drawable::createFromImageData(p->folder_fill_svg, p->folder_fill_svgSize);
+        }
+    };
+    Timer::callAfterDelay (200, asyncImageLoad);
+    
     //[UserPreSize]
 	m_searchText->addListener(this);
 	getTopLevelComponent()->addKeyListener(this);

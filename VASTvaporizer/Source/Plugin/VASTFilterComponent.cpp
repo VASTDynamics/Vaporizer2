@@ -699,7 +699,8 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
 	c_filterDisplay->setProcessor(myProcessor);
 	c_filterDisplay->setEditor(myEditor);
 	setOpaque(true);
-
+    
+    return; //dont call setSizes
     //[/UserPreSize]
 
     setSize (800, 575);

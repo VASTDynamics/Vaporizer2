@@ -464,6 +464,7 @@ VASTOscillatorComponent::VASTOscillatorComponent (AudioProcessorEditor *editor, 
 
 	setOpaque(true);
 
+    return; //dont call setSize
     //[/UserPreSize]
 
     setSize (500, 130);

@@ -26,12 +26,10 @@ VASTAudioProcessorEditor::VASTAudioProcessorEditor(VASTAudioProcessor& p)
         if (m_iMaxHeight > screenH) m_iMaxHeight = screenH;
     }
     
-    vaporizerComponent.reset(new VASTVaporizerComponent(this, processor));
-
-    resizeCalledFromConstructor = true;
-
 	processor->m_mapParameterNameToControl.clear(); //clear slider mapping
-
+    resizeCalledFromConstructor = true;
+    vaporizerComponent.reset(new VASTVaporizerComponent(this, processor));
+    
 	m_VASTComponentsAll = juce::Array<Component*>();
 	//Make sure that before the constructor has finished, you've set the
 	//editor's size to whatever you need it to be.
@@ -56,8 +54,8 @@ VASTAudioProcessorEditor::VASTAudioProcessorEditor(VASTAudioProcessor& p)
 	setConstrainer(&m_componentBoundsConstrainer);
 #endif
 
-	setSize(processor->m_iUserTargetPluginHeight * processor->m_dPluginRatio, processor->m_iUserTargetPluginHeight);
 	setOpaque(true);
+    setSize(1,1); //intermediate
     
     startTimer(0, 100); //ui update
     startTimer(1, 10); //param update
@@ -100,9 +98,12 @@ void VASTAudioProcessorEditor::timerCallback(int timerID) {
     }
     
     if (vaporizerComponent.get() != nullptr) {
-            addAndMakeVisible(vaporizerComponent.get());
-            vaporizerComponent->setVersionText(processor->getVersionString());
-			processor->setCurrentEditorInitialized();
+        addAndMakeVisible(vaporizerComponent.get());
+        //addChildComponent(vaporizerComponent.get());
+        vaporizerComponent->setVersionText(processor->getVersionString());
+        resizeCalledFromConstructor = false;
+        setSize(processor->m_iUserTargetPluginHeight * processor->m_dPluginRatio, processor->m_iUserTargetPluginHeight);
+        processor->setCurrentEditorInitialized();
     } else
         return;
     
@@ -220,39 +221,6 @@ void VASTAudioProcessorEditor::resized() {
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
 	VDBG("AudioProcessorEditor resized to w: " + String(this->getWidth()) + " h: " + String(this->getHeight()));
-	/*
-	Component::SafePointer<VASTAudioProcessorEditor> editor(this);
-	if (this->getWidth() < (m_iMinWidth + 10)) {
-		resizeCalledFromConstructor = true;
-		Timer::callAfterDelay(100, [editor, this] { 
-			if (editor != nullptr)
-				editor.getComponent()->setBoundsConstrained(juce::Rectangle<int>(0,0, editor->m_iMinWidth + 30, editor->getHeight())); });
-		return;
-	}
-	*/
-
-	/*
-	if (this->getHeight() < (m_iMinHeight + 10)) {
-		resizeCalledFromConstructor = true;
-		Timer::callAfterDelay(100, [editor, this] { 
-			if (editor != nullptr)
-				editor.getComponent()->setBoundsConstrained(juce::Rectangle<int>(0, 0, editor->getWidth(), editor->m_iMinHeight + 30)); });
-		return;
-	}
-
-	if (processor->wrapperType == AudioProcessor::wrapperType_VST3) {
-		if (!this->resizableCorner->isMouseOverOrDragging())
-			if (resizeCalledFromConstructor == false) {
-				processor->readSettingsFromFile();
-				resizeCalledFromConstructor = true;
-				Timer::callAfterDelay(100, [editor, this] { 
-					if (editor != nullptr)
-						editor.getComponent()->setBoundsConstrained(juce::Rectangle<int>(0, 0, editor.getComponent()->getProcessor()->m_iUserTargetPluginWidth, editor.getComponent()->getProcessor()->m_iUserTargetPluginHeight)); });
-			}
-	}
-	*/
-
-	resizeCalledFromConstructor = false;
 	getCurrentVASTLookAndFeel()->setCurrentScalingFactors(getProcessor()->getPluginScaleWidthFactor(), getProcessor()->getPluginScaleHeightFactor());
 	initAllLookAndFeels();
 
@@ -263,8 +231,10 @@ void VASTAudioProcessorEditor::resized() {
 		getProcessor()->writeSettingsToFile(); //must not be async
 	}
 #endif
-    if (vaporizerComponent.get() != nullptr)
-        vaporizerComponent->setSize(this->getWidth(), this->getHeight());
+    if (vaporizerComponent.get() != nullptr) {
+        if (!resizeCalledFromConstructor)
+            vaporizerComponent->setSize(this->getWidth(), this->getHeight());
+    }
 }
 
 void VASTAudioProcessorEditor::startPaintingToImage() {

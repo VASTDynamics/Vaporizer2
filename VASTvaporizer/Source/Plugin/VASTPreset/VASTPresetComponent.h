@@ -55,7 +55,7 @@ public:
 	void itemDropped(const DragAndDropTarget::SourceDetails&, int insertIndex) override;
 	static void moveItems(TreeView& treeView, const OwnedArray<ValueTree>& items, ValueTree newParent, int insertIndex);
 	static void getSelectedTreeViewItems(TreeView& treeView, OwnedArray<ValueTree>& items);
-
+    
 private:
 	ValueTree tree;
 	std::unique_ptr<FileChooser> myChooser;
@@ -112,7 +112,8 @@ public:
 	std::unique_ptr<Drawable> mFolderDrawable = nullptr;
 
 	juce::TreeView* getTreeViewFiles();
-
+    std::unique_ptr<Drawable> m_folderImg;
+    
     //[/UserMethods]
 
     void paint (juce::Graphics& g) override;
