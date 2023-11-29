@@ -9,7 +9,7 @@
 */
 
 #include "../Engine/VASTEngineHeader.h"
-#include "VASTAudioprocessor.h"
+#include "VASTAudioProcessor.h"
 #include "VASTAudioProcessorEditor.h"
 #include "VASTVaporizerComponent.h"
 
