@@ -38,31 +38,29 @@ JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE("-Wconversion")
 JUCE_BEGIN_IGNORE_WARNINGS_MSVC(4244 4267)
 
 void CVASTPoly::init() {
-	//executed once
+	//executed at startup and whenever maxpoly changes
+    if (m_lastInitPoly.load() != m_Set->m_uMaxPoly)
+        m_QFilter.m_bInitFilterAfterMaxPolyChange.store(true);
+    
+	m_OscillatorSynthesizer.init(m_Set, this);
+    if (m_lastInitPoly.load() > m_Set->m_uMaxPoly) {
+        for (int i = C_MAX_POLY - 1; i >= m_Set->m_uMaxPoly; i--) {
+            m_OscillatorSynthesizer.removeVoice(i);
+            m_singleNote[i] = nullptr; //release old voices
+        }
+    }
 
-	//save for freerunnng LFO
-	ULong64_t l_last = 0;
-	int lastPlayed = m_OscillatorSynthesizer.getLastPlayedVoiceNo();	
-	if (lastPlayed >= 0) {
-        l_last = m_singleNote[lastPlayed]->m_startPlayTimestamp;
-	}
-
-	m_OscillatorSynthesizer.init(m_Set, this);	
-	for (int i = 0; i < m_Set->m_uMaxPoly; i++) {
-		m_singleNote[i] = nullptr; //release old voices
-	}
-
-	for (int i = 0; i < m_Set->m_uMaxPoly; i++) {
-		m_singleNote[i] = new CVASTSingleNote(); //new is OK - will be stored in owned array as voices
-		m_singleNote[i]->init(*m_Set, this, i); //voice->mVoiceNo
-	}
+    if (m_lastInitPoly.load() < m_Set->m_uMaxPoly) {
+        for (int i = m_lastInitPoly.load(); i < m_Set->m_uMaxPoly; i++) {
+            m_singleNote[i] = new CVASTSingleNote(); //new is OK - will be stored in owned array as voices
+            m_singleNote[i]->init(*m_Set, this, i); //voice->mVoiceNo
+            m_OscillatorSynthesizer.addVoice((VASTSynthesiserVoice*)m_singleNote[i]);
+        }
+    }
 
 	for (int i = 0; i < m_Set->m_uMaxPoly; i++) { //check if things duplicated here
 		m_singleNote[i]->prepareForPlay();
 	}
-
-	// save for freerunnng LFO
-	m_singleNote[0]->m_startPlayTimestamp = l_last;
 
 	m_global_LFO_Osc[0].init(*m_Set);
 	m_global_LFO_Osc[0].updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO1), 1, 0, 0, 0);
@@ -113,13 +111,12 @@ void CVASTPoly::init() {
 	//Oscillator voices
 	m_OscillatorSynthesizer.setNoteStealingEnabled(true);	
 	m_OscillatorSynthesizer.setMinimumRenderingSubdivisionSize(32, false); //not strict
-	for (int i = 0; i < m_Set->m_uMaxPoly; i++) {
-		m_OscillatorSynthesizer.addVoice((VASTSynthesiserVoice*)m_singleNote[i]);
-	}
 	
 	VASTSynthesiserSound* l_vastSound = new VASTSynthesiserSound();
 	m_OscillatorSynthesizer.addSound(l_vastSound);
 	m_shallInitARP = false;
+    
+    m_lastInitPoly = m_Set->m_uMaxPoly;
 }
 
 void CVASTPoly::releaseResources() {
@@ -846,8 +843,8 @@ void CVASTPoly::processAudioBuffer(sRoutingBuffers& routingBuffers, MidiBuffer& 
 	std::fill_n(&m_samplerViewportPosMarker[0], sizeof(m_samplerViewportPosMarker) / sizeof(m_samplerViewportPosMarker[0]), 0.0);
 	std::fill_n(&m_currentWTPosFloatPercentage[0][0], sizeof(m_currentWTPosFloatPercentage) / sizeof(m_currentWTPosFloatPercentage[0][0]), 0.f);
 	std::fill_n(&m_safePhaseFloat[0][0], sizeof(m_safePhaseFloat) / sizeof(m_safePhaseFloat[0][0]), 0.f);
-	std::fill_n(&m_fLastLFOOscValue[0][0], sizeof(m_fLastLFOOscValue) / sizeof(m_fLastLFOOscValue[0][0]), 0.f);
-	std::fill_n(&m_fLastGlobalLFOOscValue[0], sizeof(m_fLastGlobalLFOOscValue) / sizeof(m_fLastGlobalLFOOscValue[0]), 0.f);
+	//std::fill_n(&m_fLastLFOOscValue[0][0], sizeof(m_fLastLFOOscValue) / sizeof(m_fLastLFOOscValue[0][0]), 0.f);
+	//std::fill_n(&m_fLastGlobalLFOOscValue[0], sizeof(m_fLastGlobalLFOOscValue) / sizeof(m_fLastGlobalLFOOscValue[0]), 0.f);
 	//Clear UI atomics
 
 	//===========================================================================================

@@ -1413,23 +1413,36 @@ void VASTLookAndFeel::drawRotarySlider(Graphics& g, int x, int y, int width, int
 
 			//actual indicator
 			if (!myProcessor->m_disableOpenGLGFX) {				
+                /*
 				for (int voice = 0; voice < C_MAX_POLY; voice++) {
 					if (myProcessor->m_pVASTXperience.m_Poly.isVoicePlaying(voice)) {
 						float lastSrceValPercentage = modStartPercentage + ((lastSrceVals[voice] + 1.f) * 0.5f)  * (modEndPercentage - modStartPercentage);
 						float lastSrceValPercentageUI = std::pow(lastSrceValPercentage, _parameterslider->getSkewFactor());
 						//store for animation
 						float lastDrawnSrceValPercentageUI = _parameterslider->m_lastDrawnValPercentageUI[voice];
-						_parameterslider->m_lastDrawnValPercentageUI[voice] = lastSrceValPercentageUI;
-
-						Path pArcIndicator;
-						//pArcIndicator.addCentredArc(centreX, centreY, radius*1.3f, radius*1.3f, 0.0f, (1.2f * M_PI) + jlimit<float>(0.f, 1.f ,lastSrceValPercentageUI - 0.05f) * (2.8f - 1.2f) * M_PI, (1.2f * M_PI) + jlimit<float>(0.f, 1.f, lastSrceValPercentageUI + 0.05f) * (2.8f - 1.2f) * M_PI, true);			
-						pArcIndicator.addCentredArc(centreX, centreY, radius*1.3f, radius*1.3f, 0.0f, (1.2f * M_PI) + jlimit<float>(0.f, 1.f, lastSrceValPercentageUI) * (2.8f - 1.2f) * M_PI, (1.2f * M_PI) + jlimit<float>(0.f, 1.f, lastDrawnSrceValPercentageUI) * (2.8f - 1.2f) * M_PI, true);
-
-						g.setGradientFill(ColourGradient(Colours::white, pArcIndicator.getPointAlongPath(0.f), Colours::transparentBlack, pArcIndicator.getPointAlongPath(pArcIndicator.getLength()), false));
-						//g.setColour(Colours::white);
-						g.strokePath(pArcIndicator, PathStrokeType(radius40perc));
+                        
+                        if (abs(lastDrawnSrceValPercentageUI - lastSrceValPercentageUI) < 0.4f) {
+                            _parameterslider->m_lastDrawnValPercentageUI[voice] = lastSrceValPercentageUI;
+                            Path pArcIndicator;
+                            pArcIndicator.addCentredArc(centreX, centreY, radius*1.3f, radius*1.3f, 0.0f, (1.2f * M_PI) + jlimit<float>(0.f, 1.f, lastSrceValPercentageUI) * (2.8f - 1.2f) * M_PI, (1.2f * M_PI) + jlimit<float>(0.f, 1.f, lastDrawnSrceValPercentageUI) * (2.8f - 1.2f) * M_PI, true);
+                            
+                            g.setGradientFill(ColourGradient(Colour(Colours::magenta).withAlpha(0.5f), pArcIndicator.getPointAlongPath(0.f), Colour(Colours::magenta).withAlpha(0.5f), pArcIndicator.getPointAlongPath(pArcIndicator.getLength()), false));
+                            //g.setColour(Colours::white);
+                            //g.strokePath(pArcIndicator, PathStrokeType(radius40perc));
+                        }
 					}
 				}
+                 */
+                for (int voice = 0; voice < C_MAX_POLY; voice++) { //magenta indicators
+                    if (myProcessor->m_pVASTXperience.m_Poly.isVoicePlaying(voice)) {
+                        float lastSrceValPercentage = modStartPercentage + ((lastSrceVals[voice] + 1.f) * 0.5f)  * (modEndPercentage - modStartPercentage);
+                        float lastSrceValPercentageUI = std::pow(lastSrceValPercentage, _parameterslider->getSkewFactor());
+                        g.setColour(Colours::white);
+                        Path pInid;
+                        pInid.addCentredArc(centreX, centreY, radius*1.3f, radius*1.3f, 0.0f, -0.2f + (1.2f * M_PI) + jlimit<float>(0.f, 1.f, lastSrceValPercentageUI) * (2.8f - 1.2f) * M_PI, 0.2f + (1.2f * M_PI) + jlimit<float>(0.f, 1.f, lastSrceValPercentageUI) * (2.8f - 1.2f) * M_PI, true);
+                        g.strokePath(pInid, PathStrokeType(radius40perc));
+                    }
+                }
 			}
 		}
 	}

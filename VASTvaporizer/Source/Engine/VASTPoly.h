@@ -97,6 +97,7 @@ private:
 	bool m_arpHasActiveStepToFinish = false;
 	double m_dLastRealPos = 0.0;
 	void initArpInternal(MidiBuffer& midiMessages);	
+    std::atomic<int> m_lastInitPoly = 0;
 
 	void doArp(sRoutingBuffers &routingBuffers, MidiBuffer& midiMessages);	
 	SortedSet<int> m_ARP_currentARPNoteValues;

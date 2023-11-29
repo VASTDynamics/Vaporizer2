@@ -159,7 +159,7 @@ void VASTLFOEditor::handleBorderDisplay() {
 	Graphics g(waveformImageWithBorder);
 	g.drawImageAt(waveformImage, 0, 0);
 
-	for (int voiceNo = 0; voiceNo < C_MAX_POLY; voiceNo++) {
+	for (int voiceNo = 0; voiceNo < myProcessor->m_pVASTXperience.m_Set.m_uMaxPoly; voiceNo++) {
 		if (!m_dispReset[voiceNo]) {
 			float markerPos = 1.f - (lastLFOVal[voiceNo] + 1.f) * 0.5f; //0..1
 
@@ -337,8 +337,8 @@ void VASTLFOEditor::mouseDrag(const MouseEvent & e)
 bool VASTLFOEditor::checkForPositionChanges() {
 	bool valChanged = false;
 	if (myDrawState.pervoice)
-		for (int i = 0; i < C_MAX_POLY; i++) {
-			if (myProcessor->m_pVASTXperience.m_Poly.isVoicePlaying(i)) {				
+		for (int i = 0; i < myProcessor->m_pVASTXperience.m_Set.m_uMaxPoly; i++) {
+			if (myProcessor->m_pVASTXperience.m_Poly.isVoicePlaying(i)) {
 
 				if (lastLFOVal[i] != myProcessor->m_pVASTXperience.m_Poly.m_fLastLFOOscValue[myDrawState.lfonr][i].load()) {
 					lastLFOVal[i] = myProcessor->m_pVASTXperience.m_Poly.m_fLastLFOOscValue[myDrawState.lfonr][i].load();
@@ -355,7 +355,7 @@ bool VASTLFOEditor::checkForPositionChanges() {
 	else {
 		bool lastdispReset0 = m_dispReset[0];
 		if (lastLFOVal[0] != myProcessor->m_pVASTXperience.m_Poly.m_fLastGlobalLFOOscValue[myDrawState.lfonr].load()) {
-			for (int i = 0; i < C_MAX_POLY; i++) {
+			for (int i = 0; i < myProcessor->m_pVASTXperience.m_Set.m_uMaxPoly; i++) {
 				m_dispReset[i] = true;
 				lastLFOVal[i] = myProcessor->m_pVASTXperience.m_Poly.m_fLastGlobalLFOOscValue[myDrawState.lfonr].load();
 				if (myProcessor->m_pVASTXperience.m_Poly.isVoicePlaying(i)) {
@@ -363,7 +363,9 @@ bool VASTLFOEditor::checkForPositionChanges() {
 					m_dispReset[0] = false;
 					m_dispReset[i] = false;
 					valChanged = true;
-				}				
+                    VDBG("i: " << i << " lastLFOVal[0] " << lastLFOVal[0]);
+                    jassert(lastLFOVal[0] != 0.0f);
+				}
 			}
 		}			
 		if (lastdispReset0 != m_dispReset[0])

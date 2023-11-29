@@ -767,8 +767,9 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 		//LFO
 		bool bPlayiningInRange = ((CVASTSingleNote*)voice)->isPlayingInRange(startSample, numSamples); //requires that mseg is processed before!
 
-		if (bPlayiningInRange) { //perf opt, check with phase and frequency hat is not updated?			
+		if (bPlayiningInRange) { //perf opt, check with phase and frequency that is not updated?
 			m_voicePlaying[((CVASTSingleNote*)voice)->getVoiceNo()] = true;
+            
 			m_numVoicesPlaying++;
 
 			m_numOscsPlaying+=((CVASTSingleNote*)voice)->getNumOscsPlaying();

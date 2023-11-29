@@ -47,7 +47,7 @@ public:
 		if (tab2 != nullptr)
             tab2->stopAutoUpdate();
 		VASTStepSeqEditorPane* tab3 = dynamic_cast<VASTStepSeqEditorPane*>(getTabContentComponent(2));
-		if (tab3 != nullptr) return
+		if (tab3 != nullptr) 
             tab3->stopAutoUpdate();
 
 		switch (index) {

@@ -178,7 +178,7 @@ void VASTParameterSlider::updateContent(bool ) {
 }
 
 void VASTParameterSlider::startAutoUpdate() {
-	startTimer(50);
+	startTimer(25);
 	m_timerRunning = true;
 }
 
