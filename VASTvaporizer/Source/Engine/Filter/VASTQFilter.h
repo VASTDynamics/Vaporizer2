@@ -129,7 +129,7 @@ public:
 	VASTQFilterProcessState* FBQ[3]; //3 filters
 	FBQFPtr ProcessQuadFB{};
 
-    std::atomic<bool> m_bInitFilterAfterMaxPolyChange = false;
+    std::atomic<bool> m_bInitFilterAfterMaxPolyChange[3] = {false,false,false};
     
 private:
     std::unique_ptr<AudioSampleBuffer> inBufferUp;

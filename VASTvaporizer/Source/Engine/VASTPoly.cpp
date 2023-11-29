@@ -39,8 +39,11 @@ JUCE_BEGIN_IGNORE_WARNINGS_MSVC(4244 4267)
 
 void CVASTPoly::init() {
 	//executed at startup and whenever maxpoly changes
-    if (m_lastInitPoly.load() != m_Set->m_uMaxPoly)
-        m_QFilter.m_bInitFilterAfterMaxPolyChange.store(true);
+    if (m_lastInitPoly.load() != m_Set->m_uMaxPoly) {
+        m_QFilter.m_bInitFilterAfterMaxPolyChange[0].store(true);
+        m_QFilter.m_bInitFilterAfterMaxPolyChange[1].store(true);
+        m_QFilter.m_bInitFilterAfterMaxPolyChange[2].store(true);
+    }
     
 	m_OscillatorSynthesizer.init(m_Set, this);
     if (m_lastInitPoly.load() > m_Set->m_uMaxPoly) {

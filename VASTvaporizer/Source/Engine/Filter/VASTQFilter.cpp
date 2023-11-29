@@ -229,7 +229,7 @@ void VASTQFilter::filterTypeChanged(OwnedArray<VASTSynthesiserVoice>* voices, in
 		if (ftype == fut_vastscream)
 			uiVCF[filter]->m_ladderFilter1.setMode(dsp::LadderFilter<float>::Mode::LPF12);
 	}
-    m_bInitFilterAfterMaxPolyChange.store(false);
+    m_bInitFilterAfterMaxPolyChange[filter].store(false);
 }
 
 int VASTQFilter::processBlock(OwnedArray<VASTSynthesiserVoice>* voices, modMatrixInputState* matrixInputState, sRoutingBuffers* routingBuffers, CVASTSettings* m_Set, int filter, dsp::AudioBlock<float> filterBlock, int startSample, int numSamples, bool isUI, bool hasNextFilter, std::unique_ptr<CVASTVcf>* uiVCF, bool warmup) {
@@ -319,7 +319,7 @@ int VASTQFilter::processBlock(OwnedArray<VASTSynthesiserVoice>* voices, modMatri
 
 	bool bTypeChanged = (paramType != m_paramType[filter]);
 	m_paramType[filter] = paramType;
-	if ((bTypeChanged) || (warmup || m_bInitFilterAfterMaxPolyChange.load())) { 
+	if ((bTypeChanged) || (warmup || m_bInitFilterAfterMaxPolyChange[filter].load())) {
 		filterTypeChanged(voices, filter, ftype, fsubtype, ftype2, fsubtype2, ftype3, fsubtype3, fOsFactor, isUI, uiVCF, m_Set);
 	}
     int numVoices = 0;
