@@ -394,7 +394,7 @@ private:
     //[UserVariables]   -- You can add your own custom variables in this section.
 
     std::shared_ptr<CVASTWaveTable> m_cur_wavetable;
-	<std::shared_ptr<CVASTWaveTable> m_copypaste_wavetable;
+	std::shared_ptr<CVASTWaveTable> m_copypaste_wavetable;
 
     std::unique_ptr<juce::AlertWindow> m_alertWindow;
 	std::unique_ptr<FileChooser> myChooser;
