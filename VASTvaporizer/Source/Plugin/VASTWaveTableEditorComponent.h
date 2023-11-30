@@ -410,7 +410,7 @@ private:
 	std::unique_ptr<VASTWaveTableEditorView> c_waveTableEditorView;
 
 	Slider* sliderThatWasLastMoved;
-	std::atomic<std::shared_ptr<CVASTWaveTable>> newWTToUpdate;
+	std::shared_ptr<CVASTWaveTable> newWTToUpdate;
 	bool newWTToUpdate_failed = false;
 
 	bool m_needsUIUpdate = false;
