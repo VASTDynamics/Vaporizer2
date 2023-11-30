@@ -378,26 +378,26 @@ void CVASTOscillatorBank::stopRecording() {
 	m_iRecordingPos = -1;
 }
 
-std::atomic<std::shared_ptr<CVASTWaveTable>> CVASTOscillatorBank::getSoftOrCopyWavetable(bool getCopy, bool copyAlsoFreqs) {
+std::shared_ptr<CVASTWaveTable> CVASTOscillatorBank::getSoftOrCopyWavetable(bool getCopy, bool copyAlsoFreqs) {
 	//make thread safe!! https://stackoverflow.com/questions/7688107/is-copy-thread-safe
 
-	std::atomic<std::shared_ptr<CVASTWaveTable>> wtshared;
+	std::shared_ptr<CVASTWaveTable> wtshared;
 	if ((!getCopy) && (getSoftFadeWavetablePointerNext() != nullptr)) {
-		wtshared.store(getNewSharedSoftFadeWavetableNext()); 
+		std::atomic_store(&wtshared, getNewSharedSoftFadeWavetableNext()); //check
 	}
 	else {
 		vassert(m_wavetable->m_Set == m_Set);
-		wtshared.store(getNewSharedWavetable()->getClonedInstance(false, copyAlsoFreqs)); 
+		std::atomic_store(&wtshared, getNewSharedWavetable()->getClonedInstance(false, copyAlsoFreqs)); //check
 		setWavetableSoftFade(wtshared);
 	}
-	vassert(wtshared.load() != nullptr);
-	if (wtshared.load() == nullptr) {
+	vassert(wtshared != nullptr);
+	if (wtshared == nullptr) {
 		//safety hack
-		std::atomic<std::shared_ptr<CVASTWaveTable>> wavetable = std::make_shared<CVASTWaveTable>(*m_Set);
-		wtshared.store(wavetable); //create fresh one
+		std::shared_ptr<CVASTWaveTable> wavetable = std::make_shared<CVASTWaveTable>(*m_Set);
+		std::atomic_store(&wtshared, wavetable); //create fresh one
 	}
 
-	return wtshared.load();
+	return wtshared;
 }
 
 //https://stackoverflow.com/questions/11666610/how-to-give-priority-to-privileged-thread-in-mutex-locking

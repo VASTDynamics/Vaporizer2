@@ -52,7 +52,7 @@ public:
 	void setSoloMode(bool solo);
 	bool getSoloMode() const;
 
-	std::atomic<std::shared_ptr<CVASTWaveTable>> getSoftOrCopyWavetable(bool getCopy = false, bool copyAlsoFreqs = false); //returns a reference of an exisiting shared_ptr - not a new one - has to be ensured that SFNext is not used
+	std::shared_ptr<CVASTWaveTable> getSoftOrCopyWavetable(bool getCopy = false, bool copyAlsoFreqs = false); //returns a reference of an exisiting shared_ptr - not a new one - has to be ensured that SFNext is not used
 
 	CriticalSection mSharedPtrSoftFadeLock;
 

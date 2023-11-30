@@ -118,15 +118,16 @@ void CVASTWaveTable::copyWTFreqsFrom(const CVASTWaveTable& wavetable) {
 	};
 }
 
-std::atomic<std::shared_ptr<CVASTWaveTable>> CVASTWaveTable::getClonedInstance(bool deleteGeneratedContent, bool copyAlsoFreqs) {
-	std::atomic<std::shared_ptr<CVASTWaveTable>> wtshared;
-	wtshared.store(std::make_shared<CVASTWaveTable>(*this)); //assigning a new instance to a shared pointer make thread safe: https://www.modernescpp.com/index.php/atomic-smart-pointers
+std::shared_ptr<CVASTWaveTable> CVASTWaveTable::getClonedInstance(bool deleteGeneratedContent, bool copyAlsoFreqs) {
+	//std::shared_ptr<CVASTWaveTable> wtshared = std::make_shared<CVASTWaveTable>(*this); //copy constructor implict
+	std::shared_ptr<CVASTWaveTable> wtshared;
+	std::atomic_store(&wtshared, std::make_shared<CVASTWaveTable>(*this)); //assigning a new instance to a shared pointer make thread safe: https://www.modernescpp.com/index.php/atomic-smart-pointers
 
 	if (copyAlsoFreqs)
-		wtshared.load()->copyWTFreqsFrom(*this);
+		wtshared->copyWTFreqsFrom(*this);
 	if (deleteGeneratedContent)
-		wtshared.load()->deleteGeneratedContent();
-	return wtshared.load();
+		wtshared->deleteGeneratedContent();
+	return wtshared;
 }
 
 void CVASTWaveTable::deleteGeneratedContent() {
