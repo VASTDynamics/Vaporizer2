@@ -340,18 +340,15 @@ void CVASTSingleNote::stopNote(float velocity, bool allowTailOff)
 {	
 	//allowtailoff means release is still done. if false it stops immediately --> clicks, dont use
 	if (allowTailOff == false)
-		if (this->isVoiceActive())
+		if (this->isVoiceActive()) {
 			m_VCA->hardStop();
+			for (int bank = 0; bank < 4; bank++) {
+				m_Poly->m_OscBank.getUnchecked(bank)->removeSingleNoteSoftFadeCycle(mVoiceNo);
+			}
+		}
 
 	if (this->isVoiceActive())
 		noteOff(velocity);
-
-	/*
-	do not do that here
-	if (allowTailOff == false)
-		clearCurrentNote(); //hard stop immediately
-		*/
-
 }
 
 void CVASTSingleNote::pitchWheelMoved(int newPitchWheelValue, bool zone)

@@ -367,8 +367,8 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 	float* custModBuffer1 = routingBuffers.CustomModulatorBuffer[1]->getWritePointer(0);
 	float* custModBuffer2 = routingBuffers.CustomModulatorBuffer[2]->getWritePointer(0);
 	float* custModBuffer3 = routingBuffers.CustomModulatorBuffer[3]->getWritePointer(0);
-	m_numVoicesPlaying = 0;
-	m_numOscsPlaying = 0;
+	int l_numVoicesPlaying = 0;
+	int l_numOscsPlaying = 0;
 
 	for (int i = startSample; i < startSample + numSamples; i++) {
 		//custom modulators - first depends on nothing
@@ -772,11 +772,9 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 		bool bPlayiningInRange = ((CVASTSingleNote*)voice)->isPlayingInRange(startSample, numSamples); //requires that mseg is processed before!
 
 		if (bPlayiningInRange) { //perf opt, check with phase and frequency that is not updated?
-			m_voicePlaying[((CVASTSingleNote*)voice)->getVoiceNo()] = true;
-            
-			m_numVoicesPlaying++;
-
-			m_numOscsPlaying+=((CVASTSingleNote*)voice)->getNumOscsPlaying();
+			m_voicePlaying[((CVASTSingleNote*)voice)->getVoiceNo()] = true;            
+			l_numVoicesPlaying++;
+			l_numOscsPlaying+=((CVASTSingleNote*)voice)->getNumOscsPlaying();
 			if (routingBuffers.lfoUsed[0].load()) {
 				if (blfoprocessed[0] == false) {
 					if (m_Set->modMatrixDestinationSetFast(MODMATDEST::LFO1Frequency) == true) {
@@ -991,7 +989,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 			onoff = *m_Set->m_State->m_bOnOff_Filter3;
 			break;
 		}
-	
+
 		int numPlaying = 0;
 		if (onoff == static_cast<int>(SWITCH::SWITCH_ON)) {
 			bool bAddedSomething = false;
@@ -1136,7 +1134,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 					filterInput.getChannelPointer(0), numSamples);
 				routingBuffers.FilterBuffer[filter]->addFrom(1, startSample,
 					filterInput.getChannelPointer(1), numSamples);
-				
+
 				/* //does not work
 				Range<float> rangeL = routingBuffers.FilterBuffer[filter]->findMinMax(0, startSample, numSamples);
 				Range<float> rangeR = routingBuffers.FilterBuffer[filter]->findMinMax(1, startSample, numSamples);
@@ -1202,7 +1200,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 							)) {
 							anyFilterContent[filter][mVoiceNo] = true;
 						}
-						else 
+						else
 							VDBG("No filter content anymore!");
 
 						//post drywet
@@ -1298,26 +1296,9 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 				((CVASTSingleNote*)voice)->m_bLastFilterOutputZero[filter] = false;
 			else
 				((CVASTSingleNote*)voice)->m_bLastFilterOutputZero[filter] = true;
-
-
-		//copy output to circular buffer for display
-		/*
-		if (filter == 0) {
-			if ((routingBuffers.m_circularFilterOutputPos + numSamples) <= routingBuffers.m_circularFilterOutputLen) { //m_circularFilterOutputPos is where the next sample is written! // = is OK
-				routingBuffers.CircularFilterOutput->copyFrom(0, routingBuffers.m_circularFilterOutputPos, routingBuffers.FilterBuffer[filter]->getReadPointer(0, startSample), numSamples);
-				routingBuffers.m_circularFilterOutputPos += numSamples;
-				routingBuffers.m_circularFilterOutputPos = routingBuffers.m_circularFilterOutputPos % routingBuffers.m_circularFilterOutputLen;
-			}
-			else {
-				int delta = (routingBuffers.m_circularFilterOutputPos + numSamples) % routingBuffers.m_circularFilterOutputLen; //what spills over
-				routingBuffers.CircularFilterOutput->copyFrom(0, routingBuffers.m_circularFilterOutputPos, routingBuffers.FilterBuffer[filter]->getReadPointer(0, startSample), numSamples - delta - 1);
-				routingBuffers.CircularFilterOutput->copyFrom(0, 0, routingBuffers.FilterBuffer[filter]->getReadPointer(0, startSample), delta + 1);
-				routingBuffers.m_circularFilterOutputPos = delta + 1;
-				routingBuffers.m_circularFilterOutputPos = routingBuffers.m_circularFilterOutputPos % routingBuffers.m_circularFilterOutputLen;
-			}
-		}
-		*/
 	}
+	m_numVoicesPlaying = l_numVoicesPlaying;
+	m_numOscsPlaying = l_numOscsPlaying;
 }
 
 void VASTSynthesiser::handleMidiEvent(const MidiMessage& m)

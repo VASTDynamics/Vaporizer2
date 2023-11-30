@@ -87,7 +87,7 @@ void CVASTOscillatorBank::beginSoftFade() { //to be called at start of buffer pr
 	//VDBG("beginSoftFade()");
 
 	if (m_bWavetableSoftfadeStillNeeded) {
-		if (m_bWavetableSoftfadePickedUp && (isInSingleNoteSoftFadeCycle() <= 0)) {
+		if (m_bWavetableSoftfadePickedUp && (!isInSingleNoteSoftFadeCycle())) {
 			m_iSingleNoteSoftFadeID = -1;
 			m_bWavetableSoftfadeStillNeeded.store(false);
 		}
@@ -161,7 +161,7 @@ bool CVASTOscillatorBank::endSoftFade() { //to be called at start of buffer proc
 					m_bWavetableSoftfadePickedUp = true;
 				}
 
-				if (m_bWavetableSoftfadePickedUp && (isInSingleNoteSoftFadeCycle() <= 0)) {
+				if (m_bWavetableSoftfadePickedUp && (!isInSingleNoteSoftFadeCycle())) {
 					m_bWavetableSoftfadeStillNeeded.store(false);
 					m_iSingleNoteSoftFadeID = -1;
 					VDBG("endSoftFade Resetting m_bWavetableSoftfadeStillNeeded!");
@@ -350,15 +350,13 @@ void CVASTOscillatorBank::removeSingleNoteSoftFadeCycle(int voiceNo) {
 	//VDBG("removeSingleNoteSoftFadeCycle SingleNoteSoftFadeCycle now " + String((isInSingleNoteSoftFadeCycle())));
 }
 
-int CVASTOscillatorBank::isInSingleNoteSoftFadeCycle() const {
-	return m_iSingleNoteSoftFadeCycle[0] + m_iSingleNoteSoftFadeCycle[1] + m_iSingleNoteSoftFadeCycle[2] + m_iSingleNoteSoftFadeCycle[3] +
-		m_iSingleNoteSoftFadeCycle[4] + m_iSingleNoteSoftFadeCycle[5] + m_iSingleNoteSoftFadeCycle[6] + m_iSingleNoteSoftFadeCycle[7] +
-		m_iSingleNoteSoftFadeCycle[8] + m_iSingleNoteSoftFadeCycle[9] + m_iSingleNoteSoftFadeCycle[10] + m_iSingleNoteSoftFadeCycle[11] +
-		m_iSingleNoteSoftFadeCycle[12] + m_iSingleNoteSoftFadeCycle[13] + m_iSingleNoteSoftFadeCycle[14] + m_iSingleNoteSoftFadeCycle[15];
+bool CVASTOscillatorBank::isInSingleNoteSoftFadeCycle() const {
+	int sum = std::accumulate(m_iSingleNoteSoftFadeCycle, m_iSingleNoteSoftFadeCycle + C_MAX_POLY, 0);
+	return sum > 0;
 }
 
 void CVASTOscillatorBank::clearSingleNoteSoftFadeCycle() {
-	m_iSingleNoteSoftFadeCycle->store(false); //CHECK
+	std::fill(m_iSingleNoteSoftFadeCycle, m_iSingleNoteSoftFadeCycle + C_MAX_POLY, false);
 }
 
 void CVASTOscillatorBank::startRecording(int wtPos) {

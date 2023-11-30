@@ -69,12 +69,12 @@ public:
 	
 	void addSingleNoteSoftFadeCycle(int voiceNo);
 	void removeSingleNoteSoftFadeCycle(int voiceNo);
-	int isInSingleNoteSoftFadeCycle() const;
+	bool isInSingleNoteSoftFadeCycle() const;
 	void clearSingleNoteSoftFadeCycle();
-    atomic<bool> m_iSingleNoteSoftFadeCycle[C_MAX_POLY] {};
+    std::atomic<bool> m_iSingleNoteSoftFadeCycle[C_MAX_POLY] {};
 
-    atomic<bool> m_bWavetableSoftfadeStillNeeded = false;
-    atomic<bool> m_bWavetableSoftfadePickedUp = false;
+	std::atomic<bool> m_bWavetableSoftfadeStillNeeded = false;
+	std::atomic<bool> m_bWavetableSoftfadePickedUp = false;
 
 	int m_iSingleNoteSoftFadeID = 0;
 	void startRecording(int wtPos);
