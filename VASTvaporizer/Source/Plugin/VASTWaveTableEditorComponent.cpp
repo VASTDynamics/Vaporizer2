@@ -55,8 +55,7 @@ VASTWaveTableEditorComponent::VASTWaveTableEditorComponent (AudioProcessorEditor
 
 
     //[UserPreSize]
-	//m_copypaste_wavetable = nullptr;
-	std::atomic_store(&m_copypaste_wavetable, std::shared_ptr<CVASTWaveTable>{}); //thread safe nullptr https://stackoverflow.com/questions/30117975/is-thread-safe-to-assign-a-shared-ptr-nullptr
+	m_copypaste_wavetable.store(std::shared_ptr<CVASTWaveTable>{}); //thread safe nullptr https://stackoverflow.com/questions/30117975/is-thread-safe-to-assign-a-shared-ptr-nullptr
 	std::shared_ptr<CVASTWaveTable> curWT(new CVASTWaveTable(myProcessor->m_pVASTXperience.m_Set));
 	curWT->addPosition();
 	curWT->clearMultiSelect();
@@ -133,9 +132,9 @@ VASTWaveTableEditorComponent::~VASTWaveTableEditorComponent()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
     VDBG("Destructing VASTWaveTableEditorComponent");
-    m_cur_wavetable.reset();
-    m_copypaste_wavetable.reset();
-    newWTToUpdate.reset();
+    m_cur_wavetable.store(nullptr);
+    m_copypaste_wavetable.store(nullptr);
+    newWTToUpdate.store(nullptr);
 
     this->setLookAndFeel(nullptr);
     if (isTimerRunning(0))
@@ -2411,7 +2410,7 @@ void VASTWaveTableEditorComponent::textEditorTextChanged(TextEditor& textEditorT
 	if (&textEditorThatWasChanged == c_waveTableEditorView->getHeader()->getWTNameBox())
 	{
 		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank]->getWavetablePointer()->setWaveTableName(c_waveTableEditorView->getHeader()->getWTNameBox()->getText());
-		m_cur_wavetable->setWaveTableName(c_waveTableEditorView->getHeader()->getWTNameBox()->getText());
+		m_cur_wavetable.load()->setWaveTableName(c_waveTableEditorView->getHeader()->getWTNameBox()->getText());
 	}
 	else if (&textEditorThatWasChanged == c_samplerEditorComponent->getHeader()->getWAVNameBox())
 	{
@@ -2425,7 +2424,7 @@ void VASTWaveTableEditorComponent::textEditorTextChanged(TextEditor& textEditorT
 }
 
 void VASTWaveTableEditorComponent::loadWTFileThreaded(juce::File file) {
-	newWTToUpdate = nullptr;
+	newWTToUpdate.store(nullptr);
 	std::thread load_thread(&VASTWaveTableEditorComponent::loadWTFileThread, file, this);
 	newWTToUpdate_failed = false;
 	load_thread.detach();
@@ -2586,8 +2585,8 @@ void VASTWaveTableEditorComponent::timerCallback(int timerID) {
 			m_positionviewport->setZoomFactor(c_waveTableEditorView->getHeader()->getWTEditorZoom()->getValue());
 		}
 
-		if (newWTToUpdate == nullptr) return;
-		vassert(newWTToUpdate->getNumPositions() > 0);
+		if (newWTToUpdate.load() == nullptr) return;
+		vassert(newWTToUpdate.load()->getNumPositions() > 0);
 		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank]->addSoftFadeEditor();
 		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank]->setWavetableSoftFade(newWTToUpdate);
 		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank]->removeSoftFadeEditor();

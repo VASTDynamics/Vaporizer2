@@ -38,6 +38,10 @@ bool VASTSynthesiserVoice::wasStartedBefore(const VASTSynthesiserVoice& other) c
 //==============================================================================
 VASTSynthesiser::VASTSynthesiser(VASTAudioProcessor* processor) : myProcessor(processor)
 {
+	clearVoices();
+	clearSounds();
+	VASTSynthesiserSound* l_vastSound = new VASTSynthesiserSound();
+	addSound(l_vastSound);
 	initValues();
 }
 

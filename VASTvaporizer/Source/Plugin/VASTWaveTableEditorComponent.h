@@ -96,18 +96,18 @@ public:
 	std::shared_ptr<CVASTWaveTable> getBankWavetable(int bank) {
 		return myProcessor->m_pVASTXperience.m_Poly.m_OscBank[bank]->getNewSharedWavetable(); };
 	void setCurWavetable(const std::shared_ptr<CVASTWaveTable> &wavetable) { //const is faster https://stackoverflow.com/questions/3310737/should-we-pass-a-shared-ptr-by-reference-or-by-value#:~:text=Most%20of%20the%20time%20passing,by%20const%20reference%2C%20would%20do.&text=An%20example%20of%20when%20passing,the%20callee%20completes%20its%20job.
-		//m_cur_wavetable = std::make_shared<CVASTWaveTable>(*wavetable); //copies it
-		std::atomic_store(&m_cur_wavetable, std::make_shared<CVASTWaveTable>(*wavetable)); //copies it //assigning a new instance to a shared pointer make thread safe: https://www.modernescpp.com/index.php/atomic-smart-pointers
+		//std::atomic_store(&m_cur_wavetable, std::make_shared<CVASTWaveTable>(*wavetable)); //copies it //assigning a new instance to a shared pointer make thread safe: https://www.modernescpp.com/index.php/atomic-smart-pointers
+		m_cur_wavetable.store(std::make_shared<CVASTWaveTable>(*wavetable)); //copies it //assigning a new instance to a shared pointer make thread safe: https://www.modernescpp.com/index.php/atomic-smart-pointers
 	};
 	void setCopyPasteWavetable(const std::shared_ptr<CVASTWaveTable> &wavetable) { //const is faster https://stackoverflow.com/questions/3310737/should-we-pass-a-shared-ptr-by-reference-or-by-value#:~:text=Most%20of%20the%20time%20passing,by%20const%20reference%2C%20would%20do.&text=An%20example%20of%20when%20passing,the%20callee%20completes%20its%20job.
-		//m_copypaste_wavetable = std::make_shared<CVASTWaveTable>(*wavetable); //copies it
-		std::atomic_store(&m_copypaste_wavetable, std::make_shared<CVASTWaveTable>(*wavetable)); //copies it //assigning a new instance to a shared pointer make thread safe: https://www.modernescpp.com/index.php/atomic-smart-pointers
+		//std::atomic_store(&m_copypaste_wavetable, std::make_shared<CVASTWaveTable>(*wavetable)); //copies it //assigning a new instance to a shared pointer make thread safe: https://www.modernescpp.com/index.php/atomic-smart-pointers
+		m_copypaste_wavetable.store(std::make_shared<CVASTWaveTable>(*wavetable));
 	};
 	std::shared_ptr<CVASTWaveTable> getCurWavetable() {
-		return m_cur_wavetable;
+		return m_cur_wavetable.load();
 	};
 	std::shared_ptr<CVASTWaveTable> getCopyPasteWavetable() {
-		return m_copypaste_wavetable;
+		return m_copypaste_wavetable.load();
 	};
 
 	VASTSamplerSound* getCurSamplerSound() {
@@ -393,8 +393,8 @@ public:
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
 
-    std::shared_ptr<CVASTWaveTable> m_cur_wavetable;
-    std::shared_ptr<CVASTWaveTable> m_copypaste_wavetable;
+    std::atomic<std::shared_ptr<CVASTWaveTable>> m_cur_wavetable;
+	std::atomic<std::shared_ptr<CVASTWaveTable>> m_copypaste_wavetable;
 
     std::unique_ptr<juce::AlertWindow> m_alertWindow;
 	std::unique_ptr<FileChooser> myChooser;
@@ -409,9 +409,8 @@ private:
 	std::unique_ptr<VASTSamplerEditorComponent> c_samplerEditorComponent;
 	std::unique_ptr<VASTWaveTableEditorView> c_waveTableEditorView;
 
-	//int m_wtPos = 0;
 	Slider* sliderThatWasLastMoved;
-	std::shared_ptr<CVASTWaveTable> newWTToUpdate;
+	std::atomic<std::shared_ptr<CVASTWaveTable>> newWTToUpdate;
 	bool newWTToUpdate_failed = false;
 
 	bool m_needsUIUpdate = false;

@@ -115,8 +115,6 @@ void CVASTPoly::init() {
 	m_OscillatorSynthesizer.setNoteStealingEnabled(true);	
 	m_OscillatorSynthesizer.setMinimumRenderingSubdivisionSize(32, false); //not strict
 	
-	VASTSynthesiserSound* l_vastSound = new VASTSynthesiserSound();
-	m_OscillatorSynthesizer.addSound(l_vastSound);
 	m_shallInitARP = false;
     
     m_lastInitPoly = m_Set->m_uMaxPoly;
@@ -251,13 +249,13 @@ modMatrixInputState CVASTPoly::getOldestNotePlayedInputState(int currentFrame) {
 
 VASTSynthesiser* CVASTPoly::getSynthesizer() { return &m_OscillatorSynthesizer; }
 
-VASTSynthesiserSound* CVASTPoly::getSynthSound() {
-	VASTSynthesiserSound* sound = (VASTSynthesiserSound*)getSynthesizer()->getSound(0);
+VASTSynthesiserSound* CVASTPoly::getSynthSound() {	
+	VASTSynthesiserSound* sound = dynamic_cast<VASTSynthesiserSound*>(getSynthesizer()->getSound(0));
 	return sound;
 }
 
 VASTSamplerSound* CVASTPoly::getSamplerSound() { //live Data
-	VASTSynthesiserSound* sound = (VASTSynthesiserSound*)getSynthesizer()->getSound(0);
+	VASTSynthesiserSound* sound = dynamic_cast<VASTSynthesiserSound*>(getSynthesizer()->getSound(0));
 	if (sound != nullptr)
 		return sound->getSamplerSound();
 	else 
@@ -265,7 +263,7 @@ VASTSamplerSound* CVASTPoly::getSamplerSound() { //live Data
 }
 
 VASTSamplerSound* CVASTPoly::getSamplerSoundChanged() {
-	VASTSynthesiserSound* sound = (VASTSynthesiserSound*)getSynthesizer()->getSound(0);
+	VASTSynthesiserSound* sound = dynamic_cast<VASTSynthesiserSound*>(getSynthesizer()->getSound(0));
 	if (sound != nullptr)
 		return sound->getSamplerSoundChanged();
 	else
@@ -273,7 +271,7 @@ VASTSamplerSound* CVASTPoly::getSamplerSoundChanged() {
 }
 
 void CVASTPoly::clearSamplerSoundChanged() {
-	VASTSynthesiserSound* sound = (VASTSynthesiserSound*)getSynthesizer()->getSound(0);
+	VASTSynthesiserSound* sound = dynamic_cast<VASTSynthesiserSound*>(getSynthesizer()->getSound(0));
 	if (sound != nullptr)
 		sound->clearSamplerSoundChanged();
 }

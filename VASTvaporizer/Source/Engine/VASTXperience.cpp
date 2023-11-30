@@ -229,8 +229,10 @@ void CVASTXperience::beginSoftFade() {
 
 void CVASTXperience::endSoftFade() {
 	for (int bank = 0; bank < 4; bank++) {
-		if (!m_Poly.m_OscBank[bank]->endSoftFade())
-			myProcessor->setErrorState(VASTAudioProcessor::vastErrorState::errorState17_internalWavetableEngineError);
+		if (!m_Poly.m_OscBank[bank]->endSoftFade()) {
+			vassertfalse; //dont treat as error for now
+			//myProcessor->setErrorState(VASTAudioProcessor::vastErrorState::errorState17_internalWavetableEngineError);
+		}
 	}
 
 	for (int mseg = 0; mseg < 5; mseg++) {

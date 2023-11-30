@@ -14,6 +14,7 @@ Vaporizer2_installer_OSX64*.zip
 package_macos.sh
 package_win.bat
 .vscode/
+.vs/
 .idea/
 *.kdev4
 *.o

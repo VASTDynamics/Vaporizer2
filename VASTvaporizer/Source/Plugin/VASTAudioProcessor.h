@@ -147,6 +147,7 @@ public:
 	bool isBusesLayoutSupported(const BusesLayout& layouts) const override;
 
 	bool isInErrorState() { return bIsInErrorState; };
+	void clearErrorState();
 	void setErrorState(vastErrorState state);
 	VASTAudioProcessor::vastErrorState getErrorState() const;
 	bool wantsUIAlert() const;

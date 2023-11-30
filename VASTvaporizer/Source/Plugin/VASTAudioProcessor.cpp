@@ -179,11 +179,12 @@ bool VASTAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) cons
 	VDBG("layouts.getMainInputChannelSet().getSpeakerArrangementAsString():" << (layouts.getMainInputChannelSet().getSpeakerArrangementAsString()));
 	VDBG("layouts.getMainOutputChannelSet().getSpeakerArrangementAsString():" << (layouts.getMainOutputChannelSet().getSpeakerArrangementAsString()));
 	
-	//if (layouts.getMainInputChannelSet().isDisabled()) 
-		//return true;
-	//else
-		return (((inSize == 2) && (outSize == 2)) || ((inSize == 0) && (outSize == 2)));
-	
+	return (((inSize == 2) && (outSize == 2)) || ((inSize == 0) && (outSize == 2)));	
+}
+
+void VASTAudioProcessor::clearErrorState() {
+	bIsInErrorState.store(false);
+	iErrorState.store(vastErrorState::noError);
 }
 
 void VASTAudioProcessor::setErrorState(vastErrorState state) {
@@ -340,6 +341,7 @@ double VASTAudioProcessor::getTailLengthSeconds() const
 
 void VASTAudioProcessor::initializeToDefaults() {
 	VDBG("Init to defaults");
+	clearErrorState();
 	m_pVASTXperience.m_Set.m_bBeforeV22CompatibilityMode = false;
 
 	//int numparam = getNumParameters(); //deprecated
@@ -1319,8 +1321,14 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 
 			//WAV
 			if (m_soundToUpdate != nullptr) {
-				processor->m_pVASTXperience.m_Poly.getSynthSound()->clearSamplerSound();
-				processor->m_pVASTXperience.m_Poly.getSynthSound()->addSamplerSound(m_soundToUpdate); //changed done inside
+				VASTSynthesiserSound* sound = processor->m_pVASTXperience.m_Poly.getSynthSound();
+				vassert(sound != nullptr);
+				if (sound != nullptr) {
+					sound->clearSamplerSound();
+					sound->addSamplerSound(m_soundToUpdate); //changed done inside
+				}
+				else
+					processor->setErrorState(vastErrorState::errorState10_loadPresetChunkDataInvalid);
 			}
 
 			//msegs
@@ -1411,7 +1419,9 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 					break;
 				}
 
-				m_bank_wavetableToUpdate[bank]->pregenerateWithWTFX(wtFxType, wtFxVal, processor->getWTmode());
+				//Expensive and optional
+				//m_bank_wavetableToUpdate[bank]->pregenerateWithWTFX(wtFxType, wtFxVal, processor->getWTmode());
+				//Expensive and optional
 
 				if (processor->m_bAudioThreadRunning) 
 					processor->m_pVASTXperience.m_Poly.m_OscBank[bank]->setWavetableSoftFade(m_bank_wavetableToUpdate[bank]);

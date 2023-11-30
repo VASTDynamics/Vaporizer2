@@ -362,7 +362,6 @@ void CVASTOscillatorBank::clearSingleNoteSoftFadeCycle() {
 }
 
 void CVASTOscillatorBank::startRecording(int wtPos) {
-	std::shared_ptr<CVASTWaveTable> l_wavetable = getSoftOrCopyWavetable();
 	m_bIsRecording = true;
 	m_iRecordingPos = wtPos;
 }
@@ -379,29 +378,26 @@ void CVASTOscillatorBank::stopRecording() {
 	m_iRecordingPos = -1;
 }
 
-std::shared_ptr<CVASTWaveTable> CVASTOscillatorBank::getSoftOrCopyWavetable(bool getCopy, bool copyAlsoFreqs) {
+std::atomic<std::shared_ptr<CVASTWaveTable>> CVASTOscillatorBank::getSoftOrCopyWavetable(bool getCopy, bool copyAlsoFreqs) {
 	//make thread safe!! https://stackoverflow.com/questions/7688107/is-copy-thread-safe
 
-	std::shared_ptr<CVASTWaveTable> wtshared;
+	std::atomic<std::shared_ptr<CVASTWaveTable>> wtshared;
 	if ((!getCopy) && (getSoftFadeWavetablePointerNext() != nullptr)) {
-		//wtshared = getNewSharedSoftFadeWavetableNext(); 
-		std::atomic_store(&wtshared, getNewSharedSoftFadeWavetableNext()); //check
+		wtshared.store(getNewSharedSoftFadeWavetableNext()); 
 	}
 	else {
 		vassert(m_wavetable->m_Set == m_Set);
-
-		//wtshared = getNewSharedWavetable()->getClonedInstance(false); //dont delete generated stuff
-		std::atomic_store(&wtshared, getNewSharedWavetable()->getClonedInstance(false, copyAlsoFreqs)); //check
+		wtshared.store(getNewSharedWavetable()->getClonedInstance(false, copyAlsoFreqs)); 
 		setWavetableSoftFade(wtshared);
 	}
-	vassert(wtshared != nullptr);
-	if (wtshared == nullptr) {
+	vassert(wtshared.load() != nullptr);
+	if (wtshared.load() == nullptr) {
 		//safety hack
-		std::shared_ptr<CVASTWaveTable> wavetable = std::make_shared<CVASTWaveTable>(*m_Set);
-		std::atomic_store(&wtshared, wavetable); //create fresh one
+		std::atomic<std::shared_ptr<CVASTWaveTable>> wavetable = std::make_shared<CVASTWaveTable>(*m_Set);
+		wtshared.store(wavetable); //create fresh one
 	}
 
-	return wtshared;
+	return wtshared.load();
 }
 
 //https://stackoverflow.com/questions/11666610/how-to-give-priority-to-privileged-thread-in-mutex-locking

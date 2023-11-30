@@ -284,8 +284,6 @@ public:
 	void init(CVASTSettings* set, CVASTPoly* poly) {
 		m_Poly = poly;
 		m_Set = set;
-		//clearVoices();
-		clearSounds();
 		initValues();
 	}
 

@@ -67,7 +67,7 @@ public:
 	CVASTWaveTable(const CVASTWaveTable &wavetable); //copy constructor
 
 	//avoid all locking on the audio thread: http://www.rossbencina.com/code/real-time-audio-programming-101-time-waits-for-nothing
-	std::shared_ptr<CVASTWaveTable> getClonedInstance(bool deleteGeneratedContent, bool copyAlsoFreqs);
+	std::atomic<std::shared_ptr<CVASTWaveTable>> getClonedInstance(bool deleteGeneratedContent, bool copyAlsoFreqs);
 	void deleteGeneratedContent();
 
 	void duplicatePosition(int wtPos, int newPos);

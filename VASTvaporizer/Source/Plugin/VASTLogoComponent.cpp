@@ -53,14 +53,15 @@ VASTLogoComponent::VASTLogoComponent (AudioProcessorEditor *editor, AudioProcess
             p->drawable3 = juce::Drawable::createFromImageData (logokreis_svg, logokreis_svgSize);
             p->drawable4 = juce::Drawable::createFromImageData (copyright_svg, copyright_svgSize);
             p->drawable5 = juce::Drawable::createFromImageData (dynamics_svg, dynamics_svgSize);
-            p->drawable6 = juce::Drawable::createFromImageData (logokreisv_svg, logokreisv_svgSize);        }
+            p->drawable6 = juce::Drawable::createFromImageData (logokreisv_svg, logokreisv_svgSize);       
+        }
     };
     
     //setRepaintsOnMouseActivity(false); //performance
     //setBufferedToImage(true); //performance
 
     setOpaque(false);
-    Timer::callAfterDelay (200, asyncImageLoad);
+    Timer::callAfterDelay (100, asyncImageLoad);
     
     //[UserPreSize]
 

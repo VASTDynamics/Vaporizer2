@@ -29,6 +29,7 @@ VASTAudioProcessorEditor::VASTAudioProcessorEditor(VASTAudioProcessor& p)
 	processor->m_mapParameterNameToControl.clear(); //clear slider mapping
     resizeCalledFromConstructor = true;
     vaporizerComponent.reset(new VASTVaporizerComponent(this, processor));
+	vaporizerComponent->setVisible(false);
     
 	m_VASTComponentsAll = juce::Array<Component*>();
 	//Make sure that before the constructor has finished, you've set the
@@ -46,7 +47,7 @@ VASTAudioProcessorEditor::VASTAudioProcessorEditor(VASTAudioProcessor& p)
 	}
 
 	tooltipWindow.setLookAndFeel(getProcessor()->getCurrentVASTLookAndFeel());
-	
+
 	resizeCalledFromConstructor = true;
 #if !defined JUCE_LINUX
 	m_componentBoundsConstrainer.setFixedAspectRatio(processor->m_dPluginRatio);
@@ -55,8 +56,9 @@ VASTAudioProcessorEditor::VASTAudioProcessorEditor(VASTAudioProcessor& p)
 #endif
 
 	setOpaque(true);
-    setSize(1,1); //intermediate
-    
+    //setSize(1,1); //intermediate
+	setSize(processor->m_iUserTargetPluginHeight * processor->m_dPluginRatio, processor->m_iUserTargetPluginHeight);
+
     startTimer(0, 100); //ui update
     startTimer(1, 10); //param update
 
@@ -97,15 +99,18 @@ void VASTAudioProcessorEditor::timerCallback(int timerID) {
         return;
     }
     
-    if (vaporizerComponent.get() != nullptr) {
-        addAndMakeVisible(vaporizerComponent.get());
-        //addChildComponent(vaporizerComponent.get());
-        vaporizerComponent->setVersionText(processor->getVersionString());
-        resizeCalledFromConstructor = false;
-        setSize(processor->m_iUserTargetPluginHeight * processor->m_dPluginRatio, processor->m_iUserTargetPluginHeight);
-        processor->setCurrentEditorInitialized();
-    } else
-        return;
+	if (!processor->isCurrentEditorInitialized()) {
+		if (vaporizerComponent.get() != nullptr) {
+			addChildComponent(vaporizerComponent.get());
+			vaporizerComponent->setVersionText(processor->getVersionString());
+			resizeCalledFromConstructor = false;
+			resized();
+			vaporizerComponent->setVisible(true);
+			processor->setCurrentEditorInitialized();
+		}
+		else
+			return;
+	}
     
     if (vaporizerComponent->isActive == false)
         return; //not yet ready?
