@@ -130,8 +130,8 @@ void CVASTXperience::audioProcessLock()
 
 	const ScopedLock sl(myProcessor->getCallbackLock()); //this is required here but why
 	for (int bank = 0; bank < 4; bank ++)
-		m_Poly.m_OscBank[bank]->m_bWavetableSoftfadeStillNeeded = false;
-	m_BlockProcessing.store(true); 
+		m_Poly.m_OscBank[bank]->m_bWavetableSoftfadeStillRendered.store(false);
+	m_BlockProcessing.store(true);
 	m_BlockProcessingIsBlockedSuccessfully.store(false);
 }
 
@@ -371,7 +371,7 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
          )) {
         
         for (int bank = 0; bank < 4; bank++)
-            m_Poly.m_OscBank[bank]->m_bWavetableSoftfadeStillNeeded = false;
+            m_Poly.m_OscBank[bank]->m_bWavetableSoftfadeStillRendered.store(false);
         
         if (m_bBufferZeroMilliSeconds > 2000.f) { //2s silence?
             buffer.clear();

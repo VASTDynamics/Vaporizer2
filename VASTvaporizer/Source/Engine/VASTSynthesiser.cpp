@@ -1426,7 +1426,6 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 			//==================================================================
 			
 			if ((m_Set->m_uMaxPoly) == 1) { //MONO MODE
-				//stop all notes playing
 
 				VASTSynthesiserVoice* voice = nullptr;
 
@@ -1539,20 +1538,6 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 							}
 						}
 					}
-/*
-
-								assigned++;
-								if ((assigned - 1) == m_iGlissandoAssigned) { //arbitrary order - good enough? dont know more here
-									if (voice != nullptr) {
-										((CVASTSingleNote*)voice)->setGlissandoStart(i, false);
-										m_iGlissandoAssigned++;
-										VDBG("voice: " + String(voice->getVoiceNo()) + " glissandoStart for note  " + String(i));
-										break; //lowest old note
-									}
-								}
-							}
-					}
-			*/
 			}
 			else if ((m_Set->m_uMaxPoly) == 4) { //POLY 4 MODE
 				int active = 0;
@@ -1701,7 +1686,7 @@ void VASTSynthesiser::stopVoice(VASTSynthesiserVoice* voice, float velocity, con
 	jassert(voice != nullptr);
 
 	VDBG("StopVoice " << voice->mVoiceNo);
-
+    
 	//int iLegatoNote = 0;
 	if ((*m_Set->m_State->m_bLegatoMode == static_cast<int>(SWITCH::SWITCH_ON)) && m_Set->m_uMaxPoly == 1) { //mono legato
 		int keyDown = -1;
@@ -1727,7 +1712,6 @@ void VASTSynthesiser::stopVoice(VASTSynthesiserVoice* voice, float velocity, con
 
 	// the subclass MUST call clearCurrentNote() if it's not tailing off! RTFM for stopNote()!
 	jassert(allowTailOff || (voice->getCurrentlyPlayingNote() < 0 && voice->getCurrentlyPlayingSound() == nullptr));
-	//jassert(allowTailOff || (voice->getCurrentlyPlayingNote() < 0 && voice->getCurrentlyPlayingSound() == 0)); //CHTS
 }
 
 void VASTSynthesiser::noteOff(const int midiChannel,
@@ -1736,7 +1720,7 @@ void VASTSynthesiser::noteOff(const int midiChannel,
 	const bool allowTailOff)
 {
 	const ScopedLock sl(lock);
-
+    
 	if (m_midiNotesKeyDown[midiNoteNumber] == true) {
 		m_midiNotesKeyDown[midiNoteNumber] = false;
 		m_midiNotesKeyDownTime[midiNoteNumber] = 0;
@@ -1748,8 +1732,6 @@ void VASTSynthesiser::noteOff(const int midiChannel,
 	}
 #endif
 
-	//VASTSynthesiserVoice* stoppedVoice = nullptr;
-	//int active = 0;
 	for (auto* voice : voices)
 	{
 		if (voice->getCurrentlyPlayingNote() == midiNoteNumber
@@ -1772,25 +1754,7 @@ void VASTSynthesiser::noteOff(const int midiChannel,
 				}
 			}
 		}
-
-		//if (voice->isVoiceActive()) active++;
 	}
-
-	/*
-	//Mono legato here?
-	CVASTPoly* m_Poly = ((CVASTSingleNote*)voices[0])->m_Poly; //just to get Poly
-	if (*m_Set->m_State->m_uPolyMode == POLYMODE::MONO) {
-		if (active != 0) {
-			for (auto* voice : voices) {
-				if ((!voice->isVoiceActive()) && (voice->isKeyDown()) && (voice != stoppedVoice)) {
-					VDBG("Mono legato restart voice " + String(voice->mVoiceNo));
-					startVoice(voice, sounds[0], 1, ((CVASTSingleNote*)voice)->getMIDINote(), ((CVASTSingleNote*)voice)->m_uVelocity); //CHECK sounds[0]
-					break;
-				}
-			}
-		}
-	}
-	*/
 }
 
 void VASTSynthesiser::allNotesOff(const int midiChannel, const bool allowTailOff)

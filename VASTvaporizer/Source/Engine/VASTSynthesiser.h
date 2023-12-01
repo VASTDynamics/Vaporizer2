@@ -545,7 +545,7 @@ public:
 	int getNumMidiNotesKeyDown() const { 
 		return m_midiNotesNumKeyDown; 
 	};
-	
+
 	atomic<int> m_numVoicesPlaying = 0;
 	atomic<int> m_numOscsPlaying = 0;
 	atomic<bool> m_voicePlaying[C_MAX_POLY];

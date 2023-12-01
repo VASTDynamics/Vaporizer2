@@ -682,7 +682,7 @@ void VASTAudioProcessor::processBlockBypassed(AudioBuffer<float>& buffer,
         loadPreset(m_presetToLoad);
     
 	for (int bank = 0; bank < 4; bank++)
-		m_pVASTXperience.m_Poly.m_OscBank[bank]->m_bWavetableSoftfadeStillNeeded = false;
+		m_pVASTXperience.m_Poly.m_OscBank[bank]->m_bWavetableSoftfadeStillRendered.store(false);
 	m_pVASTXperience.beginSoftFade(); //CHECKTS
 	m_pVASTXperience.endSoftFade(); //CHECKTS
     
@@ -1531,6 +1531,11 @@ void VASTAudioProcessor::unregisterThread() {
 bool VASTAudioProcessor::getTreeThreadLock() {
 	const ScopedLock sl(getCallbackLock());
 	return m_iNumPassTreeThreads > 1;
+}
+
+void VASTAudioProcessor::toggleKeyboardHoldMode() {
+    m_keyboardHoldMode.store(!m_keyboardHoldMode.load());
+    m_pVASTXperience.m_Poly.setKeyboardHoldMode(m_keyboardHoldMode.load());
 }
 
 void VASTAudioProcessor::addModMatrixLookupTable(int modMatrixDestination, float rangeStart, float rangeEnd, float rangeSkew, StringRef paramID, AudioProcessorParameterWithID* param) {
