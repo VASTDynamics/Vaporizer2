@@ -10,7 +10,7 @@ The heart of this plugin is the alias-free versatile high-performance wavetable 
 Vaporizer2 comes with a groundbreaking wavetable editor with a vast number of editing possibilities including frequency shift, smooth, clean, bend and bloat for single-cycles, parts of single-cycles or even whole wavetables.
 Featuring an easy-to use wavetable draw mode with smooth Bezier curves and snap to grid function.
 
-Available formats: VST2 / VST3 / AU / AAX plugins and a standalone version for both macOS and Windows.
+Available formats: VST2 / VST3 / AU / AAX / LV2 plugins and a standalone version for macOS, Linux and Windows.
 
 * Vaporizer2 was developed by VAST Dynamics GbR between 2017 and 2023 and is now free software under GPL3 license.  
 * Vaporizer2 is based on the [JUCE framework](https://github.com/juce-framework/JUCE) under GPL3 license.  
@@ -68,9 +68,10 @@ You can download installers for Windows and macOS with the built and packaged pl
 - Oscillator pitch modulation and phase modulation with very fast modulations (up to ~ 2kHz)
 - Microtuning support (AnaMark Tuning files .TUN support)
 ### Wavetable engine
+- Unique architecture allowing to freely change and even exchange / load wavetables while playing without aliasing 
 - 30 real-time wavetable effects per oscillator including innovative algorithms for hard sync, sincify, brew and bend / bloat
 - FM synthesis up to a chain of 4 oscillators
--  General setting of wavetable frequency characteristics: sharp (ideal filtering), soft (butterworth filtering), dull (linear) 
+- General setting of wavetable frequency characteristics: sharp (ideal filtering), soft (butterworth filtering), dull (linear) 
 ### Wavetable editor
 - Groundbreaking wavetable editor with a vast number of editing possibilities including frequency shift, smooth, clean, bend and bloat for single-cycles, parts of single-cycles or even whole wavetables
 - Easy-to use wavetable draw mode with smooth Bezier curves and snap to grid function
