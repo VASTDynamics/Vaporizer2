@@ -381,7 +381,9 @@ public:
 	atomic<bool> m_bShallComponentValueUpdate = false;
 	String m_shallComponentUpdate = "";
 	atomic<float> m_shallComponentUpdateValue = 0.f;
-
+    void toggleKeyboardHoldMode();
+    std::atomic<bool> m_keyboardHoldMode = false;
+    
 #if defined(VASTCOMMERCIAL) || defined(VASTBUILD)
 	VASTLicense mLicense;
 #endif
@@ -461,8 +463,7 @@ private:
 	VASTVUMeterSource m_meterSource;
 
 	int m_iNumPassTreeThreads = 0;
-	bool getTreeThreadLock();	
-
+	bool getTreeThreadLock();
     Label safePointerLabel; //for safePointerOnly
 
 	//std::unique_ptr<VASTAudioProcessorEditor> cachedVASTEditor = nullptr;

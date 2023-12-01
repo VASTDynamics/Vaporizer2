@@ -167,6 +167,14 @@ void CVASTPoly::prepareForPlay() {
 	m_QFilter.updateVariables();
 }
 
+void CVASTPoly::setKeyboardHoldMode(bool keyboardHoldMode) {
+    m_keyboardHoldMode = keyboardHoldMode;
+    if (!m_keyboardHoldMode) {
+        stopAllNotes(true);
+        initArp();
+    }
+}
+
 void CVASTPoly::initArpInternal(MidiBuffer& midiMessages) {
 	for (int note = 0; note < m_ARP_currentARPNoteValues.size(); note++) {
 		if (m_ARP_currentARPNoteValues[note] > 0)
@@ -919,7 +927,22 @@ void CVASTPoly::processAudioBuffer(sRoutingBuffers& routingBuffers, MidiBuffer& 
 
 	//===========================================================================================
 	//Check ARP
-	if (m_shallInitARP) initArpInternal(midiMessages);
+	
+    if (m_keyboardHoldMode) { //delete noteOff events
+        MidiBuffer newBuffer;
+        int samplePos = 0;
+        auto midiIterator = midiMessages.findNextSamplePosition (samplePos);
+        std::for_each (midiIterator,
+                       midiMessages.cend(),
+                       [&] (const MidiMessageMetadata& metadata) {
+            if (!metadata.getMessage().isNoteOff()) {
+                newBuffer.addEvent(metadata.getMessage(), metadata.samplePosition);
+            }
+        });
+        midiMessages.swapWith(newBuffer);
+    }
+    
+    if (m_shallInitARP) initArpInternal(midiMessages);
 	if (*m_Set->m_State->m_bARPOnOff == static_cast<int>(SWITCH::SWITCH_ON)) {
 		doArp(routingBuffers, midiMessages);
 	}

@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 7.0.8
+  Created with Projucer version: 7.0.9
 
   ------------------------------------------------------------------------------
 
@@ -39,7 +39,8 @@
 */
 class VASTKeyboardComponent  : public Component,
                                public Slider::Listener,
-                               public Timer
+                               public Timer,
+                               public TooltipClient
 {
 public:
     //==============================================================================
@@ -53,7 +54,9 @@ public:
 	void sliderValueChanged(Slider* sliderThatWasMoved) override;
     void updateAll();
     void timerCallback() override;
-
+    void mouseDown (const MouseEvent &) override;
+    String getTooltip() override;
+    
     //[/UserMethods]
 
     void paint (juce::Graphics& g) override;

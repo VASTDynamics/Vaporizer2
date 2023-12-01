@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 7.0.8
+  Created with Projucer version: 7.0.9
 
   ------------------------------------------------------------------------------
 
@@ -59,7 +59,7 @@ VASTKeyboardComponent::VASTKeyboardComponent (AudioProcessorEditor *editor, Audi
     label100.reset (new juce::Label ("new label",
                                      TRANS ("BEND RNG")));
     addAndMakeVisible (label100.get());
-    label100->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label100->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain));
     label100->setJustificationType (juce::Justification::centred);
     label100->setEditable (false, false, false);
     label100->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -69,7 +69,7 @@ VASTKeyboardComponent::VASTKeyboardComponent (AudioProcessorEditor *editor, Audi
     label2.reset (new juce::Label ("new label",
                                    TRANS ("PORTAM")));
     addAndMakeVisible (label2.get());
-    label2->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label2->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain));
     label2->setJustificationType (juce::Justification::centred);
     label2->setEditable (false, false, false);
     label2->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -88,6 +88,7 @@ VASTKeyboardComponent::VASTKeyboardComponent (AudioProcessorEditor *editor, Audi
 
 
     //[UserPreSize]
+
 	c_midiKeyboard->setVelocity(1.0, true); // use mouse position for velocity
 	c_midiKeyboard->setMidiChannelsToDisplay(3); // display channel 1 & 2
 	c_midiKeyboard->setMidiChannel(2); // own channel 2
@@ -179,8 +180,14 @@ void VASTKeyboardComponent::paint (juce::Graphics& g)
         int x = 0, y = 0, width = getWidth() - 0, height = getHeight() - 0;
         juce::Colour fillColour1 = juce::Colour (0xff212527), fillColour2 = juce::Colour (0xff0b0b0b);
         //[UserPaintCustomArguments] Customize the painting arguments here..
-    		fillColour1 = myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colMasterVoicingComponentBackgroundGradientFrom);
-    		fillColour2 = myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colMasterVoicingComponentBackgroundGradientTo);
+        fillColour1 = myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colMasterVoicingComponentBackgroundGradientFrom);
+        fillColour2 = myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colMasterVoicingComponentBackgroundGradientTo);
+
+        if (myProcessor->m_keyboardHoldMode.load()) {
+            fillColour1 = fillColour1.contrasting();
+            fillColour2 = fillColour2.contrasting();
+        }
+
         //[/UserPaintCustomArguments]
         g.setGradientFill (juce::ColourGradient (fillColour1,
                                              0.0f - 0.0f + x,
@@ -338,13 +345,25 @@ void VASTKeyboardComponent::updateAll() {
 void VASTKeyboardComponent::timerCallback() {
     if (!c_pitchBend->isMouseOverOrDragging()) {
         float wheelpos = myProcessor->m_pVASTXperience.m_Poly.getSynthesizer()->lastPitchWheelValues[0].load() - 8192.f; //check channel 0!
-        c_pitchBend->setValue(wheelpos, NotificationType::dontSendNotification); //send only on 
+        c_pitchBend->setValue(wheelpos, NotificationType::dontSendNotification); //send only on
     }
 
     if (!c_pitchBend->isMouseOverOrDragging()) {
         float wheelpos = myProcessor->m_pVASTXperience.m_Set.m_uModWheel.load(); //0..127
-        c_modWheel->setValue(wheelpos, NotificationType::dontSendNotification); //send only on         
+        c_modWheel->setValue(wheelpos, NotificationType::dontSendNotification); //send only on
     }
+}
+
+void VASTKeyboardComponent::mouseDown (const MouseEvent &) {
+    ModifierKeys modifiers = ModifierKeys::getCurrentModifiersRealtime();
+    if (modifiers.isRightButtonDown()) {
+        myProcessor->toggleKeyboardHoldMode();
+        repaint();
+    }
+}
+
+String VASTKeyboardComponent::getTooltip() {
+    return (TRANS("Right click to toggle keyboard hold mode"));
 }
 
 //[/MiscUserCode]
@@ -360,7 +379,7 @@ void VASTKeyboardComponent::timerCallback() {
 BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="VASTKeyboardComponent" componentName=""
-                 parentClasses="public Component, public Slider::Listener, public Timer"
+                 parentClasses="public Component, public Slider::Listener, public Timer, public TooltipClient"
                  constructorParams="AudioProcessorEditor *editor, AudioProcessor* processor"
                  variableInitialisers="myEditor((VASTAudioProcessorEditor*)editor), myProcessor((VASTAudioProcessor*)processor)"
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"

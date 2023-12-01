@@ -78,6 +78,9 @@ public:
 	LinearSmoothedValue<float> m_fCustomModulator4_smoothed;
 	LinearSmoothedValue<float> m_fARP_Speed_smoothed;
 
+    void setKeyboardHoldMode(bool keyboardHoldMode);
+    atomic<bool> m_keyboardHoldMode = false;
+    
 	float m_ARP_speed = 0.0f;
 
 	CVASTSettings * m_Set;
