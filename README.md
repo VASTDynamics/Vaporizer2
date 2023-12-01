@@ -68,7 +68,8 @@ You can download installers for Windows and macOS with the built and packaged pl
 - Oscillator pitch modulation and phase modulation with very fast modulations (up to ~ 2kHz)
 - Microtuning support (AnaMark Tuning files .TUN support)
 ### Wavetable engine
-- Unique architecture allowing to freely change and even exchange / load wavetables while playing without aliasing 
+- Unique architecture allowing to freely change and even exchange / load wavetables while playing without aliasing
+- Engine vectorized with CPU-specific intrinsics for highest performance (SSE2/3, AVX, Neon)
 - 30 real-time wavetable effects per oscillator including innovative algorithms for hard sync, sincify, brew and bend / bloat
 - FM synthesis up to a chain of 4 oscillators
 - General setting of wavetable frequency characteristics: sharp (ideal filtering), soft (butterworth filtering), dull (linear) 
@@ -111,7 +112,7 @@ You can download installers for Windows and macOS with the built and packaged pl
 - Hotkeys for most important editor functions
 ### Available platforms and formats
 - Available formats: VST2 / VST3 / AU / AAX / LV2 plugins and a standalone version
-- Available platforms (64-bit): macOS (native Mac M1/M2 silicon support with neon vector extensions), Windows and Linux.
+- Available platforms (64-bit): macOS (native Mac M1/M2 silicon support with neon vector extensions), Windows and Linux
 - 32-bit plug-ins can be build with CMake if needed
 ### Minimum system requirements
 - Any CPU that supports AVX or SSE2 (Intel, AMD or arm)
