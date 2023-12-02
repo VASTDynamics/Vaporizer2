@@ -30,7 +30,7 @@ CVASTSettings::CVASTSettings(VASTAudioProcessor* processor) : my_processor(proce
 
 	CVASTSettings::loadCustomFonts();
 	
-	modMatrixInputState l_inputState{ 0,0 };
+	modMatrixInputState l_inputState{ 0, 0 };
 	bufferInputState.store(l_inputState);
 
 	for (int stepSeq = 0; stepSeq < 3; stepSeq++) {
