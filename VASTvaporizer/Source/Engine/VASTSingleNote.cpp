@@ -326,7 +326,7 @@ void CVASTSingleNote::startNote(int midiNoteNumber, float velocity, SynthesiserS
 				samplerUpdatePitch(sSound, true);
 
 				m_grainTable.clear();
-				modMatrixInputState inputState{ 0, getVoiceNo() };
+				modMatrixInputState inputState{ getVoiceNo(), 0 };
 				float samplerGrainShape = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fSamplerGrainShape, MODMATDEST::SamplerGrainShape, &inputState);
 				samplerNewGrain(0, samplerGrainShape, 0.f);
 			}
@@ -480,7 +480,7 @@ void CVASTSingleNote::samplerRenderNextBlock(AudioSampleBuffer* outputBuffer, in
 
 		VASTSamplerSound* samplerSound = playingSound->getSamplerSound();
 
-		modMatrixInputState inputState{ startSample, getVoiceNo() };
+		modMatrixInputState inputState{ getVoiceNo(), startSample };
 		const int iMaxFadeSteps = 20;
 		auto& data = *samplerSound->getAudioData(); //play live data
 		int soundLength = samplerSound->getLength(); //play live data
@@ -1413,7 +1413,7 @@ bool CVASTSingleNote::prepareNextPhaseCycle(int bank, int skips, int startSample
 }
 
 bool CVASTSingleNote::prepareEachSample(int bank, int currentFrame, bool &freqsHaveToBeDoneForEachSample, bool bTakeNextValue, CVASTWaveTableOscillator*  l_Oscillator[]) {
-	modMatrixInputState l_inputState{ mVoiceNo,currentFrame };
+	modMatrixInputState l_inputState{ mVoiceNo, currentFrame };
 
 	bool wrap = false;
 	int skips = l_Oscillator[bank]->m_unisonOscis * 10 - 9; //1 - 11 - 21 ...
@@ -1818,7 +1818,7 @@ void CVASTSingleNote::doWavetableBufferGet(const int bank, CVASTWaveTableOscilla
 //=============================================================================================================
 
 void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSample, int numSamples) {
-	modMatrixInputState l_inputState{ mVoiceNo,startSample };
+	modMatrixInputState l_inputState{ mVoiceNo, startSample };
 	if (!isPlayingInRange(startSample, numSamples) || (m_iNumParallelOsc == 0)) {
 		clearCurrentNote(); 
 		
