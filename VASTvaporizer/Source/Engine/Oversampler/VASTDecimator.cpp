@@ -5,12 +5,16 @@ VAST Dynamics Audio Software (TM)
 #include "VASTDecimator.h"
 #include <stdio.h>
 
-#if defined _MACOSX || defined JUCE_LINUX
-    #include <pmmintrin.h>
-    #include <cstddef>
+#ifdef __aarch64__ //arm64
+    #include "../../sse2neon.h"
 #else
-    #include "../Utils/VASTSSEHelper.h"
-    #include "immintrin.h"
+    #if defined _MACOSX || defined JUCE_LINUX
+        #include <pmmintrin.h>
+        #include <cstddef>
+    #else
+        #include "../Utils/VASTSSEHelper.h"
+        #include "immintrin.h"
+    #endif
 #endif
 
 #ifdef DEBUG

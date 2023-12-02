@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 6.0.1
+  Created with Projucer version: 7.0.7
 
   ------------------------------------------------------------------------------
 
@@ -464,6 +464,7 @@ VASTOscillatorComponent::VASTOscillatorComponent (AudioProcessorEditor *editor, 
 
 	setOpaque(true);
 
+    return; //dont call setSize
     //[/UserPreSize]
 
     setSize (500, 130);

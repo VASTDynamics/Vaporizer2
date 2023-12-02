@@ -23,7 +23,7 @@ public:
 	bool isActive();
 	bool hardStop();	//returns success
 	bool isHardStop();
-	bool isNoteOff() { return m_bNoteOff; };
+	bool isNoteOff();
 
 	CVASTMSEGEnvelope m_MSEG_Envelope[5]; 
 
@@ -31,7 +31,7 @@ private:
 	
 	CVASTSettings* m_Set;
 	MYUINT m_voiceNo = 0;
-	bool m_bNoteOff = true;
+	std::atomic<bool> m_bNoteOff = true;
 	ULong64_t m_startPlayTimestamp = 0;
 
 	JUCE_LEAK_DETECTOR(CVASTVca)

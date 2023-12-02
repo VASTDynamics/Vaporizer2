@@ -84,6 +84,7 @@ VASTFXComponent::VASTFXComponent (AudioProcessorEditor *editor, AudioProcessor* 
 	setOpaque(true);
 	c_iconMaximizeEditor->addListener(this);
 
+    return; //dont call setSize
     //[/UserPreSize]
 
     setSize (800, 575);
@@ -96,7 +97,7 @@ VASTFXComponent::VASTFXComponent (AudioProcessorEditor *editor, AudioProcessor* 
 VASTFXComponent::~VASTFXComponent()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
-    DBG("Destructing VASTFXComponent");
+    VDBG("Destructing VASTFXComponent");
 	this->setLookAndFeel(nullptr);
     //[/Destructor_pre]
 
@@ -164,17 +165,17 @@ void VASTFXComponent::resized()
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 void VASTFXComponent::updateAll() {
 
-	VASTFXPane* bus1 = ((VASTFXPane*)c_fxBusTab->getTabContentComponent(0));
-	jassert(bus1!= nullptr); //sequence changed?
-	bus1->updateAll();
+	VASTFXPane* bus1 = dynamic_cast<VASTFXPane*>(c_fxBusTab->getTabContentComponent(0));
+	if (bus1!= nullptr)
+        bus1->updateAll();
 
-	VASTFXPane* bus2 = ((VASTFXPane*)c_fxBusTab->getTabContentComponent(1));
-	jassert(bus2 != nullptr); //sequence changed?
-	bus2->updateAll();
+	VASTFXPane* bus2 = dynamic_cast<VASTFXPane*>(c_fxBusTab->getTabContentComponent(1));
+	if (bus2 != nullptr)
+        bus2->updateAll();
 
-	VASTFXPane* bus3 = ((VASTFXPane*)c_fxBusTab->getTabContentComponent(2));
-	jassert(bus3 != nullptr); //sequence changed?
-	bus3->updateAll();
+	VASTFXPane* bus3 = dynamic_cast<VASTFXPane*>(c_fxBusTab->getTabContentComponent(2));
+	if (bus3 != nullptr)
+        bus3->updateAll();
 
 	repaint();
 }

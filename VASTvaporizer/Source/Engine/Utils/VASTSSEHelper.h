@@ -3,7 +3,11 @@ VAST Dynamics Audio Software (TM)
 */
 #pragma once
 #include "../VASTEngineHeader.h"
-#include "immintrin.h"
+#ifdef __aarch64__ //arm64
+	#include "../../sse2neon.h"
+#else
+	#include "immintrin.h"
+#endif
 
 //http://www.juce.com/forum/topic/simple-sse-wrapper
 
@@ -16,7 +20,7 @@ VAST Dynamics Audio Software (TM)
 
 union vec4 {
 	struct { float x, y, z, w; };
-	__m128 sse;
+	__m128 sse{ 0.f, 0.f, 0.f, 0.f };
 
 	inline vec4(void) {}
 	inline vec4(__m128 val) { sse = val; }

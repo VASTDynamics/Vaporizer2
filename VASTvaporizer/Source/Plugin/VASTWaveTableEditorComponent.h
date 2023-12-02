@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 6.0.1
+  Created with Projucer version: 7.0.7
 
   ------------------------------------------------------------------------------
 
@@ -74,7 +74,7 @@ public:
 	void sliderValueChanged(Slider* sliderThatWasMoved) override;
 	void buttonClicked(Button* buttonThatWasClicked) override;
 
-	int numFreqThreads = 0;
+	std::atomic<int> numFreqThreads = 0;
 
 	void textEditorTextChanged(TextEditor &) override;
 	void notifySelectionChanged();
@@ -89,9 +89,9 @@ public:
 		setDrawMode(dmode);
 	};
 
-	int getOscBank() { return m_bank; };
+	int getOscBank()  const { return m_bank; };
 	void setOscBank(int bank);
-	std::shared_ptr<CVASTWaveTable> getBankWavetable() {
+	std::shared_ptr<CVASTWaveTable> getBankWavetable() const {
 		return myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank]->getNewSharedWavetable(); };
 	std::shared_ptr<CVASTWaveTable> getBankWavetable(int bank) {
 		return myProcessor->m_pVASTXperience.m_Poly.m_OscBank[bank]->getNewSharedWavetable(); };
@@ -125,11 +125,13 @@ public:
 	void stopAutoUpdate();
 	void initAll();
 	void updateAll(bool force);
-	int getWtPos() {
+	int getWtPos() const {
 		return getBankWavetable()->getSelectedWtPos();
 		//return m_wtPos;
 	};
 	void setWtPos(int wtpos) { //normally use setSelectedWtPos on Wavetable!!
+        if (getBankWavetable()->m_isBeingUpdated)
+            return;
 		getBankWavetable()->setSelectedWtPos(wtpos);
 		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank]->setChangedFlag();
 		//m_wtPos = wtpos;
@@ -172,10 +174,10 @@ public:
 	/*bool isMultiSelected() {
 		return m_multiSelect;
 	};
-	int getMultiSelectBegin() {
+	int getMultiSelectBegin()  const {
 		return m_multiSelectBegin;
 	};
-	int getMultiSelectEnd() {
+	int getMultiSelectEnd()  const {
 		return m_multiSelectEnd;
 	};
 
@@ -392,9 +394,9 @@ private:
     //[UserVariables]   -- You can add your own custom variables in this section.
 
     std::shared_ptr<CVASTWaveTable> m_cur_wavetable;
-    std::shared_ptr<CVASTWaveTable> m_copypaste_wavetable;
+	std::shared_ptr<CVASTWaveTable> m_copypaste_wavetable;
 
-	ScopedPointer<juce::AlertWindow> m_alertWindow;
+    std::unique_ptr<juce::AlertWindow> m_alertWindow;
 	std::unique_ptr<FileChooser> myChooser;
 
 	bool mFileChoserIsOpen = false;
@@ -407,7 +409,6 @@ private:
 	std::unique_ptr<VASTSamplerEditorComponent> c_samplerEditorComponent;
 	std::unique_ptr<VASTWaveTableEditorView> c_waveTableEditorView;
 
-	//int m_wtPos = 0;
 	Slider* sliderThatWasLastMoved;
 	std::shared_ptr<CVASTWaveTable> newWTToUpdate;
 	bool newWTToUpdate_failed = false;

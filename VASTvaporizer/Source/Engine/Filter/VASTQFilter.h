@@ -6,7 +6,11 @@
 #include "../VASTEngineHeader.h"
 //#include "../VASTVcf.h"
 #include "VASTVCFCombFilter.h"
-#include "emmintrin.h"
+#ifdef __aarch64__ //arm64
+	#include "../../sse2neon.h"
+#else
+	#include "emmintrin.h"
+#endif
 
 //not allocated structs can be global
 struct VASTQFilterStepState
@@ -48,12 +52,12 @@ public:
 	VASTQFilter();
 	~VASTQFilter();
 	void initQuadFilter(CVASTSettings* m_Set);
-	int processBlock(OwnedArray<VASTSynthesiserVoice>* voices, modMatrixInputState* matrixInputState, sRoutingBuffers* routingBuffers, CVASTSettings* m_Set, int filter, dsp::AudioBlock<float> filterBlock, int startSample, int numSamples, bool isUI, bool hasNextFilter, ScopedPointer<CVASTVcf>* uiVCF, bool warmup);
-	int processQFilter(dsp::AudioBlock<float> filterBlock, sRoutingBuffers* routingBuffers, int numSamples, int startSample, int ftype, int fsubtype, int ftype2, int fsubtype2, int ftype3, int fsubtype3, int fws, int osFactor, OwnedArray<VASTSynthesiserVoice>* voices, int filter, float gain, float drive, float feedback, bool isUI, bool hasNextFilter, ScopedPointer<CVASTVcf>* uiVCF, bool warmup);
+	int processBlock(OwnedArray<VASTSynthesiserVoice>* voices, modMatrixInputState* matrixInputState, sRoutingBuffers* routingBuffers, CVASTSettings* m_Set, int filter, dsp::AudioBlock<float> filterBlock, int startSample, int numSamples, bool isUI, bool hasNextFilter, std::unique_ptr<CVASTVcf>* uiVCF, bool warmup);
+	int processQFilter(dsp::AudioBlock<float> filterBlock, sRoutingBuffers* routingBuffers, int numSamples, int startSample, int ftype, int fsubtype, int ftype2, int fsubtype2, int ftype3, int fsubtype3, int fws, int osFactor, OwnedArray<VASTSynthesiserVoice>* voices, int filter, float gain, float drive, float feedback, bool isUI, bool hasNextFilter, std::unique_ptr<CVASTVcf>* uiVCF, bool warmup);
 	void calcFilterCoefficients(bool isUi, int ftype, int fsubtype, int ftype2, int fsubtype2, int ftype3, int fsubtype3, int osFactor, float fVCFEnvelopeMod, double &cutoff1, double &resonance1, double &scale1, double &cutoff2, double &resonance2, double &scale2, double &cutoff3, double &resonance3, double &scale3, int samplerate, VASTQFilterCoefficients* coeffMaker1, VASTQFilterCoefficients* coeffMaker2);
 	void calcFilterSettings(bool isUi, int ftype, int fsubtype, int ftype2, int fsubtype2, int ftype3, int fsubtype3, int osFactor, double &drive, double &feedback, double &gain);
 	void filterGetVariables(int paramType, int &ftype, int &fsubtype, int &ftype2, int &fsubtype2, int &ftype3, int &fsubtype3, int &fws, int &fOsFactor, float &fAttenuateFactor, bool &fParameterSmoothing);
-	void filterTypeChanged(OwnedArray<VASTSynthesiserVoice>* voices, int filter, int ftype, int fsubtype, int ftype2, int fsubtype2, int ftype3, int fsubtype3, int osFactor, bool isUI, ScopedPointer<CVASTVcf>* uiVCF, CVASTSettings* m_Set);
+	void filterTypeChanged(OwnedArray<VASTSynthesiserVoice>* voices, int filter, int ftype, int fsubtype, int ftype2, int fsubtype2, int ftype3, int fsubtype3, int osFactor, bool isUI, std::unique_ptr<CVASTVcf>* uiVCF, CVASTSettings* m_Set);
 	void updateVariables();
 
 	bool QFirstRun = false;
@@ -123,12 +127,14 @@ public:
 	//
 
 	VASTQFilterProcessState* FBQ[3]; //3 filters
-	FBQFPtr ProcessQuadFB;
+	FBQFPtr ProcessQuadFB{};
 
+    std::atomic<bool> m_bInitFilterAfterMaxPolyChange[3] = {false,false,false};
+    
 private:
-	ScopedPointer<AudioSampleBuffer> inBufferUp;
-	int m_paramType[3]; //per filter
-	alignas(16) CDecimator m_Decimator[3]; //per filter
-	alignas(16) CDecimator m_DecimatorVoices[3][C_MAX_POLY];
-	void ProcessLegacy(dsp::AudioBlock<float> filterBlock, sRoutingBuffers* routingBuffers, int numSamples, int startSample, int ftype, int fsubtype, int ftype2, int fsubtype2, int ftype3, int fsubtype3, int fws, int osFactor, OwnedArray<VASTSynthesiserVoice>* voices, int filter, float gain, float drive, float feedback, bool isUI, bool hasNextFilter, ScopedPointer<CVASTVcf>* uiVCF, bool warmup);
+    std::unique_ptr<AudioSampleBuffer> inBufferUp;
+	int m_paramType[3]{ 0,0,0 }; //per filter
+	alignas(16) CDecimator m_Decimator[3]{}; //per filter
+	alignas(16) CDecimator m_DecimatorVoices[3][C_MAX_POLY]{};
+	void ProcessLegacy(dsp::AudioBlock<float> filterBlock, sRoutingBuffers* routingBuffers, int numSamples, int startSample, int ftype, int fsubtype, int ftype2, int fsubtype2, int ftype3, int fsubtype3, int fws, int osFactor, OwnedArray<VASTSynthesiserVoice>* voices, int filter, float gain, float drive, float feedback, bool isUI, bool hasNextFilter, std::unique_ptr<CVASTVcf>* uiVCF, bool warmup);
 };

@@ -21,12 +21,7 @@ public:
 	void startAutoUpdate();
 	void stopAutoUpdate();
 
-	bool isInterestedInFileDrag(const StringArray& files) override {
-		for (int i = 0; i < files.size(); i++) {
-			if (files[i].endsWithIgnoreCase(".mid")) return true;
-		}
-		return false;
-	};
+	bool isInterestedInFileDrag(const StringArray& files) override;
 	void filesDropped(const StringArray& files, int x, int y) override;
 
 private:

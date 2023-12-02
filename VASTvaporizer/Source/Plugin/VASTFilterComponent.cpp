@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 6.1.2
+  Created with Projucer version: 7.0.8
 
   ------------------------------------------------------------------------------
 
@@ -41,7 +41,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
     //[/Constructor_pre]
 
     label40.reset (new juce::Label ("new label",
-                                    TRANS("CUTOFF")));
+                                    TRANS ("CUTOFF")));
     addAndMakeVisible (label40.get());
     label40->setFont (juce::Font (9.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label40->setJustificationType (juce::Justification::centred);
@@ -51,7 +51,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
     label40->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label42.reset (new juce::Label ("new label",
-                                    TRANS("RESO")));
+                                    TRANS ("RESO")));
     addAndMakeVisible (label42.get());
     label42->setFont (juce::Font (9.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label42->setJustificationType (juce::Justification::centred);
@@ -61,7 +61,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
     label42->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label75.reset (new juce::Label ("new label",
-                                    TRANS("RESO")));
+                                    TRANS ("RESO")));
     addAndMakeVisible (label75.get());
     label75->setFont (juce::Font (9.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label75->setJustificationType (juce::Justification::centred);
@@ -71,7 +71,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
     label75->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label26.reset (new juce::Label ("new label",
-                                    TRANS("CUTOFF")));
+                                    TRANS ("CUTOFF")));
     addAndMakeVisible (label26.get());
     label26->setFont (juce::Font (9.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label26->setJustificationType (juce::Justification::centred);
@@ -81,7 +81,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
     label26->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label28.reset (new juce::Label ("new label",
-                                    TRANS("DRIVE")));
+                                    TRANS ("DRIVE")));
     addAndMakeVisible (label28.get());
     label28->setFont (juce::Font (9.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label28->setJustificationType (juce::Justification::centred);
@@ -91,7 +91,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
     label28->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label44.reset (new juce::Label ("new label",
-                                    TRANS("DRIVE")));
+                                    TRANS ("DRIVE")));
     addAndMakeVisible (label44.get());
     label44->setFont (juce::Font (9.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label44->setJustificationType (juce::Justification::centred);
@@ -102,7 +102,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
 
     m_fFilterCutoff_Filter2.reset (new VASTParameterSlider ("m_fFilterCutoff_Filter2"));
     addAndMakeVisible (m_fFilterCutoff_Filter2.get());
-    m_fFilterCutoff_Filter2->setTooltip (TRANS("Filter 2 cutoff (hz)"));
+    m_fFilterCutoff_Filter2->setTooltip (TRANS ("Filter 2 cutoff (hz)"));
     m_fFilterCutoff_Filter2->setExplicitFocusOrder (16);
     m_fFilterCutoff_Filter2->setRange (20, 22000, 0.001);
     m_fFilterCutoff_Filter2->setSliderStyle (juce::Slider::RotaryVerticalDrag);
@@ -114,7 +114,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
 
     m_fFilterReso_Filter1.reset (new VASTParameterSlider ("m_fFilterReso_Filter1"));
     addAndMakeVisible (m_fFilterReso_Filter1.get());
-    m_fFilterReso_Filter1->setTooltip (TRANS("Filter 1 resonance"));
+    m_fFilterReso_Filter1->setTooltip (TRANS ("Filter 1 resonance"));
     m_fFilterReso_Filter1->setExplicitFocusOrder (5);
     m_fFilterReso_Filter1->setRange (0, 100, 0.001);
     m_fFilterReso_Filter1->setSliderStyle (juce::Slider::RotaryVerticalDrag);
@@ -126,7 +126,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
 
     m_fVCFEnvMod_Filter2.reset (new VASTParameterSlider ("m_fVCFEnvMod_Filter2"));
     addAndMakeVisible (m_fVCFEnvMod_Filter2.get());
-    m_fVCFEnvMod_Filter2->setTooltip (TRANS("VCF filter 2 envelope modulation"));
+    m_fVCFEnvMod_Filter2->setTooltip (TRANS ("VCF filter 2 envelope modulation"));
     m_fVCFEnvMod_Filter2->setExplicitFocusOrder (21);
     m_fVCFEnvMod_Filter2->setRange (-100, 100, 0.01);
     m_fVCFEnvMod_Filter2->setSliderStyle (juce::Slider::RotaryVerticalDrag);
@@ -138,7 +138,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
 
     m_fFilterCutoff_Filter1.reset (new VASTParameterSlider ("m_fFilterCutoff_Filter1"));
     addAndMakeVisible (m_fFilterCutoff_Filter1.get());
-    m_fFilterCutoff_Filter1->setTooltip (TRANS("Filter 1 cutoff (hz)"));
+    m_fFilterCutoff_Filter1->setTooltip (TRANS ("Filter 1 cutoff (hz)"));
     m_fFilterCutoff_Filter1->setExplicitFocusOrder (4);
     m_fFilterCutoff_Filter1->setRange (20, 22000, 0.001);
     m_fFilterCutoff_Filter1->setSliderStyle (juce::Slider::RotaryVerticalDrag);
@@ -150,7 +150,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
 
     m_fFilterDrive_Filter2.reset (new VASTParameterSlider ("m_fFilterDrive_Filter2"));
     addAndMakeVisible (m_fFilterDrive_Filter2.get());
-    m_fFilterDrive_Filter2->setTooltip (TRANS("Filter 2 drive in dB - pre gain (0 - full, >0 overdrive)"));
+    m_fFilterDrive_Filter2->setTooltip (TRANS ("Filter 2 drive in dB - pre gain (0 - full, >0 overdrive)"));
     m_fFilterDrive_Filter2->setExplicitFocusOrder (15);
     m_fFilterDrive_Filter2->setRange (-20, 20, 0.001);
     m_fFilterDrive_Filter2->setSliderStyle (juce::Slider::RotaryVerticalDrag);
@@ -162,7 +162,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
 
     m_fFilterReso_Filter2.reset (new VASTParameterSlider ("m_fFilterReso_Filter2"));
     addAndMakeVisible (m_fFilterReso_Filter2.get());
-    m_fFilterReso_Filter2->setTooltip (TRANS("Filter 2 resonance"));
+    m_fFilterReso_Filter2->setTooltip (TRANS ("Filter 2 resonance"));
     m_fFilterReso_Filter2->setExplicitFocusOrder (17);
     m_fFilterReso_Filter2->setRange (0, 100, 0.001);
     m_fFilterReso_Filter2->setSliderStyle (juce::Slider::RotaryVerticalDrag);
@@ -174,7 +174,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
 
     m_fFilterDrive_Filter1.reset (new VASTParameterSlider ("m_fFilterDrive_Filter1"));
     addAndMakeVisible (m_fFilterDrive_Filter1.get());
-    m_fFilterDrive_Filter1->setTooltip (TRANS("Filter 1 drive in dB - pre gain (0 - full, >0 overdrive)"));
+    m_fFilterDrive_Filter1->setTooltip (TRANS ("Filter 1 drive in dB - pre gain (0 - full, >0 overdrive)"));
     m_fFilterDrive_Filter1->setExplicitFocusOrder (3);
     m_fFilterDrive_Filter1->setRange (-20, 20, 0.001);
     m_fFilterDrive_Filter1->setSliderStyle (juce::Slider::RotaryVerticalDrag);
@@ -185,7 +185,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
     m_fFilterDrive_Filter1->addListener (this);
 
     label77.reset (new juce::Label ("new label",
-                                    TRANS("CUTOFF")));
+                                    TRANS ("CUTOFF")));
     addAndMakeVisible (label77.get());
     label77->setFont (juce::Font (9.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label77->setJustificationType (juce::Justification::centred);
@@ -195,7 +195,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
     label77->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label78.reset (new juce::Label ("new label",
-                                    TRANS("RESO")));
+                                    TRANS ("RESO")));
     addAndMakeVisible (label78.get());
     label78->setFont (juce::Font (9.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label78->setJustificationType (juce::Justification::centred);
@@ -205,7 +205,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
     label78->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label81.reset (new juce::Label ("new label",
-                                    TRANS("DRIVE")));
+                                    TRANS ("DRIVE")));
     addAndMakeVisible (label81.get());
     label81->setFont (juce::Font (9.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label81->setJustificationType (juce::Justification::centred);
@@ -216,7 +216,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
 
     m_fFilterCutoff_Filter3.reset (new VASTParameterSlider ("m_fFilterCutoff_Filter3"));
     addAndMakeVisible (m_fFilterCutoff_Filter3.get());
-    m_fFilterCutoff_Filter3->setTooltip (TRANS("Filter 3 cutoff (hz)"));
+    m_fFilterCutoff_Filter3->setTooltip (TRANS ("Filter 3 cutoff (hz)"));
     m_fFilterCutoff_Filter3->setExplicitFocusOrder (28);
     m_fFilterCutoff_Filter3->setRange (20, 22000, 0.001);
     m_fFilterCutoff_Filter3->setSliderStyle (juce::Slider::RotaryVerticalDrag);
@@ -228,7 +228,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
 
     m_fFilterDrive_Filter3.reset (new VASTParameterSlider ("m_fFilterDrive_Filter3"));
     addAndMakeVisible (m_fFilterDrive_Filter3.get());
-    m_fFilterDrive_Filter3->setTooltip (TRANS("Filter 3 drive in dB - pre gain (0 - full, >0 overdrive)"));
+    m_fFilterDrive_Filter3->setTooltip (TRANS ("Filter 3 drive in dB - pre gain (0 - full, >0 overdrive)"));
     m_fFilterDrive_Filter3->setExplicitFocusOrder (27);
     m_fFilterDrive_Filter3->setRange (-20, 20, 0.001);
     m_fFilterDrive_Filter3->setSliderStyle (juce::Slider::RotaryVerticalDrag);
@@ -240,7 +240,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
 
     m_fFilterReso_Filter3.reset (new VASTParameterSlider ("m_fFilterReso_Filter3"));
     addAndMakeVisible (m_fFilterReso_Filter3.get());
-    m_fFilterReso_Filter3->setTooltip (TRANS("Filter 3 resonance"));
+    m_fFilterReso_Filter3->setTooltip (TRANS ("Filter 3 resonance"));
     m_fFilterReso_Filter3->setExplicitFocusOrder (29);
     m_fFilterReso_Filter3->setRange (0, 100, 0.001);
     m_fFilterReso_Filter3->setSliderStyle (juce::Slider::RotaryVerticalDrag);
@@ -252,7 +252,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
 
     m_fFilterDryWet_Filter1.reset (new VASTParameterSlider ("m_fFilterDryWet_Filter1"));
     addAndMakeVisible (m_fFilterDryWet_Filter1.get());
-    m_fFilterDryWet_Filter1->setTooltip (TRANS("Filter 1 mix in (dry - wet)"));
+    m_fFilterDryWet_Filter1->setTooltip (TRANS ("Filter 1 mix in (dry - wet)"));
     m_fFilterDryWet_Filter1->setExplicitFocusOrder (2);
     m_fFilterDryWet_Filter1->setRange (0, 100, 0.01);
     m_fFilterDryWet_Filter1->setSliderStyle (juce::Slider::RotaryVerticalDrag);
@@ -264,7 +264,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
 
     m_fFilterDryWet_Filter3.reset (new VASTParameterSlider ("m_fFilterDryWet_Filter3"));
     addAndMakeVisible (m_fFilterDryWet_Filter3.get());
-    m_fFilterDryWet_Filter3->setTooltip (TRANS("Filter 3 mix in (dry - wet)"));
+    m_fFilterDryWet_Filter3->setTooltip (TRANS ("Filter 3 mix in (dry - wet)"));
     m_fFilterDryWet_Filter3->setExplicitFocusOrder (26);
     m_fFilterDryWet_Filter3->setRange (0, 100, 0.01);
     m_fFilterDryWet_Filter3->setSliderStyle (juce::Slider::RotaryVerticalDrag);
@@ -275,7 +275,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
     m_fFilterDryWet_Filter3->addListener (this);
 
     label97.reset (new juce::Label ("new label",
-                                    TRANS("WET")));
+                                    TRANS ("WET")));
     addAndMakeVisible (label97.get());
     label97->setFont (juce::Font (9.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label97->setJustificationType (juce::Justification::centred);
@@ -285,7 +285,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
     label97->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label112.reset (new juce::Label ("new label",
-                                     TRANS("WET")));
+                                     TRANS ("WET")));
     addAndMakeVisible (label112.get());
     label112->setFont (juce::Font (9.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label112->setJustificationType (juce::Justification::centred);
@@ -295,7 +295,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
     label112->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label113.reset (new juce::Label ("new label",
-                                     TRANS("WET")));
+                                     TRANS ("WET")));
     addAndMakeVisible (label113.get());
     label113->setFont (juce::Font (9.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label113->setJustificationType (juce::Justification::centred);
@@ -306,7 +306,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
 
     m_fFilterDryWet_Filter2.reset (new VASTParameterSlider ("m_fFilterDryWet_Filter2"));
     addAndMakeVisible (m_fFilterDryWet_Filter2.get());
-    m_fFilterDryWet_Filter2->setTooltip (TRANS("Filter 2 mix in (dry - wet)"));
+    m_fFilterDryWet_Filter2->setTooltip (TRANS ("Filter 2 mix in (dry - wet)"));
     m_fFilterDryWet_Filter2->setExplicitFocusOrder (14);
     m_fFilterDryWet_Filter2->setRange (0, 100, 0.01);
     m_fFilterDryWet_Filter2->setSliderStyle (juce::Slider::RotaryVerticalDrag);
@@ -318,7 +318,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
 
     m_fVCFEnvMod_Filter1.reset (new VASTParameterSlider ("m_fVCFEnvMod_Filter1"));
     addAndMakeVisible (m_fVCFEnvMod_Filter1.get());
-    m_fVCFEnvMod_Filter1->setTooltip (TRANS("VCF filter 1 envelope modulation"));
+    m_fVCFEnvMod_Filter1->setTooltip (TRANS ("VCF filter 1 envelope modulation"));
     m_fVCFEnvMod_Filter1->setExplicitFocusOrder (9);
     m_fVCFEnvMod_Filter1->setRange (-100, 100, 0.01);
     m_fVCFEnvMod_Filter1->setSliderStyle (juce::Slider::RotaryVerticalDrag);
@@ -330,7 +330,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
 
     m_fVCFEnvMod_Filter3.reset (new VASTParameterSlider ("m_fVCFEnvMod_Filter3"));
     addAndMakeVisible (m_fVCFEnvMod_Filter3.get());
-    m_fVCFEnvMod_Filter3->setTooltip (TRANS("VCF filter 3 envelope modulation"));
+    m_fVCFEnvMod_Filter3->setTooltip (TRANS ("VCF filter 3 envelope modulation"));
     m_fVCFEnvMod_Filter3->setExplicitFocusOrder (33);
     m_fVCFEnvMod_Filter3->setRange (-100, 100, 0.01);
     m_fVCFEnvMod_Filter3->setSliderStyle (juce::Slider::RotaryVerticalDrag);
@@ -342,42 +342,42 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
 
     m_bOnOff_Filter1.reset (new VASTParameterButton ("m_bOnOff_Filter1"));
     addAndMakeVisible (m_bOnOff_Filter1.get());
-    m_bOnOff_Filter1->setTooltip (TRANS("Switch filter 1 on / off"));
+    m_bOnOff_Filter1->setTooltip (TRANS ("Switch filter 1 on / off"));
     m_bOnOff_Filter1->setButtonText (juce::String());
     m_bOnOff_Filter1->addListener (this);
 
     m_bOnOff_Filter2.reset (new VASTParameterButton ("m_bOnOff_Filter2"));
     addAndMakeVisible (m_bOnOff_Filter2.get());
-    m_bOnOff_Filter2->setTooltip (TRANS("Switch filter 2 on / off"));
+    m_bOnOff_Filter2->setTooltip (TRANS ("Switch filter 2 on / off"));
     m_bOnOff_Filter2->setExplicitFocusOrder (12);
     m_bOnOff_Filter2->setButtonText (juce::String());
     m_bOnOff_Filter2->addListener (this);
 
     m_bOnOff_Filter3.reset (new VASTParameterButton ("m_bOnOff_Filter3"));
     addAndMakeVisible (m_bOnOff_Filter3.get());
-    m_bOnOff_Filter3->setTooltip (TRANS("Switch filter 3 on / off"));
+    m_bOnOff_Filter3->setTooltip (TRANS ("Switch filter 3 on / off"));
     m_bOnOff_Filter3->setExplicitFocusOrder (24);
     m_bOnOff_Filter3->setButtonText (juce::String());
     m_bOnOff_Filter3->addListener (this);
 
-    c_filterDisplay.reset (new VASTFilterDisplay());
+    c_filterDisplay.reset (new VASTFilterDisplay (myProcessor));
     addAndMakeVisible (c_filterDisplay.get());
     c_filterDisplay->setName ("c_filterDisplay");
 
     m_uVCFEnv_Filter1.reset (new VASTParameterComboBox ("m_uVCFEnv_Filter1"));
     addAndMakeVisible (m_uVCFEnv_Filter1.get());
-    m_uVCFEnv_Filter1->setTooltip (TRANS("Envelope used as LPF envelope"));
+    m_uVCFEnv_Filter1->setTooltip (TRANS ("Envelope used as LPF envelope"));
     m_uVCFEnv_Filter1->setExplicitFocusOrder (8);
     m_uVCFEnv_Filter1->setEditableText (false);
     m_uVCFEnv_Filter1->setJustificationType (juce::Justification::centredLeft);
     m_uVCFEnv_Filter1->setTextWhenNothingSelected (juce::String());
-    m_uVCFEnv_Filter1->setTextWhenNoChoicesAvailable (TRANS("---"));
+    m_uVCFEnv_Filter1->setTextWhenNoChoicesAvailable (TRANS ("---"));
     m_uVCFEnv_Filter1->addListener (this);
 
     label13.reset (new juce::Label ("new label",
-                                    TRANS("VCFENV")));
+                                    TRANS ("VCFENV")));
     addAndMakeVisible (label13.get());
-    label13->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain));
+    label13->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label13->setJustificationType (juce::Justification::centred);
     label13->setEditable (false, false, false);
     label13->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -386,38 +386,38 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
 
     m_uVCFEnv_Filter2.reset (new VASTParameterComboBox ("m_uVCFEnv_Filter2"));
     addAndMakeVisible (m_uVCFEnv_Filter2.get());
-    m_uVCFEnv_Filter2->setTooltip (TRANS("Envelope used as filter 2 envelope"));
+    m_uVCFEnv_Filter2->setTooltip (TRANS ("Envelope used as filter 2 envelope"));
     m_uVCFEnv_Filter2->setExplicitFocusOrder (20);
     m_uVCFEnv_Filter2->setEditableText (false);
     m_uVCFEnv_Filter2->setJustificationType (juce::Justification::centredLeft);
     m_uVCFEnv_Filter2->setTextWhenNothingSelected (juce::String());
-    m_uVCFEnv_Filter2->setTextWhenNoChoicesAvailable (TRANS("---"));
+    m_uVCFEnv_Filter2->setTextWhenNoChoicesAvailable (TRANS ("---"));
     m_uVCFEnv_Filter2->addListener (this);
 
     m_uVCFEnv_Filter3.reset (new VASTParameterComboBox ("m_uVCFEnv_Filter3"));
     addAndMakeVisible (m_uVCFEnv_Filter3.get());
-    m_uVCFEnv_Filter3->setTooltip (TRANS("Envelope used as filter 3 envelope"));
+    m_uVCFEnv_Filter3->setTooltip (TRANS ("Envelope used as filter 3 envelope"));
     m_uVCFEnv_Filter3->setExplicitFocusOrder (32);
     m_uVCFEnv_Filter3->setEditableText (false);
     m_uVCFEnv_Filter3->setJustificationType (juce::Justification::centredLeft);
     m_uVCFEnv_Filter3->setTextWhenNothingSelected (juce::String());
-    m_uVCFEnv_Filter3->setTextWhenNoChoicesAvailable (TRANS("---"));
+    m_uVCFEnv_Filter3->setTextWhenNoChoicesAvailable (TRANS ("---"));
     m_uVCFEnv_Filter3->addListener (this);
 
     m_uFilterRouting_Filter1.reset (new VASTParameterComboBox ("m_uFilterRouting_Filter1"));
     addAndMakeVisible (m_uFilterRouting_Filter1.get());
-    m_uFilterRouting_Filter1->setTooltip (TRANS("Filter 1 routing"));
+    m_uFilterRouting_Filter1->setTooltip (TRANS ("Filter 1 routing"));
     m_uFilterRouting_Filter1->setExplicitFocusOrder (10);
     m_uFilterRouting_Filter1->setEditableText (false);
     m_uFilterRouting_Filter1->setJustificationType (juce::Justification::centredLeft);
     m_uFilterRouting_Filter1->setTextWhenNothingSelected (juce::String());
-    m_uFilterRouting_Filter1->setTextWhenNoChoicesAvailable (TRANS("---"));
+    m_uFilterRouting_Filter1->setTextWhenNoChoicesAvailable (TRANS ("---"));
     m_uFilterRouting_Filter1->addListener (this);
 
     label6.reset (new juce::Label ("new label",
-                                   TRANS("ROUTING 1")));
+                                   TRANS ("ROUTING 1")));
     addAndMakeVisible (label6.get());
-    label6->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain));
+    label6->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label6->setJustificationType (juce::Justification::centred);
     label6->setEditable (false, false, false);
     label6->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -426,58 +426,58 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
 
     m_uFilterRouting_Filter2.reset (new VASTParameterComboBox ("m_uFilterRouting_Filter2"));
     addAndMakeVisible (m_uFilterRouting_Filter2.get());
-    m_uFilterRouting_Filter2->setTooltip (TRANS("Filter 2 routing"));
+    m_uFilterRouting_Filter2->setTooltip (TRANS ("Filter 2 routing"));
     m_uFilterRouting_Filter2->setExplicitFocusOrder (22);
     m_uFilterRouting_Filter2->setEditableText (false);
     m_uFilterRouting_Filter2->setJustificationType (juce::Justification::centredLeft);
     m_uFilterRouting_Filter2->setTextWhenNothingSelected (juce::String());
-    m_uFilterRouting_Filter2->setTextWhenNoChoicesAvailable (TRANS("---"));
+    m_uFilterRouting_Filter2->setTextWhenNoChoicesAvailable (TRANS ("---"));
     m_uFilterRouting_Filter2->addListener (this);
 
     m_uFilterRouting_Filter3.reset (new VASTParameterComboBox ("m_uFilterRouting_Filter3"));
     addAndMakeVisible (m_uFilterRouting_Filter3.get());
-    m_uFilterRouting_Filter3->setTooltip (TRANS("Filter 3 routing"));
+    m_uFilterRouting_Filter3->setTooltip (TRANS ("Filter 3 routing"));
     m_uFilterRouting_Filter3->setExplicitFocusOrder (34);
     m_uFilterRouting_Filter3->setEditableText (false);
     m_uFilterRouting_Filter3->setJustificationType (juce::Justification::centredLeft);
     m_uFilterRouting_Filter3->setTextWhenNothingSelected (juce::String());
-    m_uFilterRouting_Filter3->setTextWhenNoChoicesAvailable (TRANS("---"));
+    m_uFilterRouting_Filter3->setTextWhenNoChoicesAvailable (TRANS ("---"));
     m_uFilterRouting_Filter3->addListener (this);
 
     m_uFilterType_Filter1.reset (new VASTParameterComboBox ("m_uFilterType_Filter1"));
     addAndMakeVisible (m_uFilterType_Filter1.get());
-    m_uFilterType_Filter1->setTooltip (TRANS("Filter 1 type"));
+    m_uFilterType_Filter1->setTooltip (TRANS ("Filter 1 type"));
     m_uFilterType_Filter1->setExplicitFocusOrder (1);
     m_uFilterType_Filter1->setEditableText (false);
     m_uFilterType_Filter1->setJustificationType (juce::Justification::centredLeft);
     m_uFilterType_Filter1->setTextWhenNothingSelected (juce::String());
-    m_uFilterType_Filter1->setTextWhenNoChoicesAvailable (TRANS("---"));
+    m_uFilterType_Filter1->setTextWhenNoChoicesAvailable (TRANS ("---"));
     m_uFilterType_Filter1->addListener (this);
 
     m_uFilterType_Filter2.reset (new VASTParameterComboBox ("m_uFilterType_Filter2"));
     addAndMakeVisible (m_uFilterType_Filter2.get());
-    m_uFilterType_Filter2->setTooltip (TRANS("Filter 2 type"));
+    m_uFilterType_Filter2->setTooltip (TRANS ("Filter 2 type"));
     m_uFilterType_Filter2->setExplicitFocusOrder (13);
     m_uFilterType_Filter2->setEditableText (false);
     m_uFilterType_Filter2->setJustificationType (juce::Justification::centredLeft);
     m_uFilterType_Filter2->setTextWhenNothingSelected (juce::String());
-    m_uFilterType_Filter2->setTextWhenNoChoicesAvailable (TRANS("---"));
+    m_uFilterType_Filter2->setTextWhenNoChoicesAvailable (TRANS ("---"));
     m_uFilterType_Filter2->addListener (this);
 
     m_uFilterType_Filter3.reset (new VASTParameterComboBox ("m_uFilterType_Filter3"));
     addAndMakeVisible (m_uFilterType_Filter3.get());
-    m_uFilterType_Filter3->setTooltip (TRANS("Filter 3 type"));
+    m_uFilterType_Filter3->setTooltip (TRANS ("Filter 3 type"));
     m_uFilterType_Filter3->setExplicitFocusOrder (25);
     m_uFilterType_Filter3->setEditableText (false);
     m_uFilterType_Filter3->setJustificationType (juce::Justification::centredLeft);
     m_uFilterType_Filter3->setTextWhenNothingSelected (juce::String());
-    m_uFilterType_Filter3->setTextWhenNoChoicesAvailable (TRANS("---"));
+    m_uFilterType_Filter3->setTextWhenNoChoicesAvailable (TRANS ("---"));
     m_uFilterType_Filter3->addListener (this);
 
     label2.reset (new juce::Label ("new label",
-                                   TRANS("ENV MOD")));
+                                   TRANS ("ENV MOD")));
     addAndMakeVisible (label2.get());
-    label2->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain));
+    label2->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label2->setJustificationType (juce::Justification::centred);
     label2->setEditable (false, false, false);
     label2->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -486,18 +486,18 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
 
     m_uFilterRouting2_Filter1.reset (new VASTParameterComboBox ("m_uFilterRouting2_Filter1"));
     addAndMakeVisible (m_uFilterRouting2_Filter1.get());
-    m_uFilterRouting2_Filter1->setTooltip (TRANS("Filter 1 routing 2"));
+    m_uFilterRouting2_Filter1->setTooltip (TRANS ("Filter 1 routing 2"));
     m_uFilterRouting2_Filter1->setExplicitFocusOrder (11);
     m_uFilterRouting2_Filter1->setEditableText (false);
     m_uFilterRouting2_Filter1->setJustificationType (juce::Justification::centredLeft);
     m_uFilterRouting2_Filter1->setTextWhenNothingSelected (juce::String());
-    m_uFilterRouting2_Filter1->setTextWhenNoChoicesAvailable (TRANS("---"));
+    m_uFilterRouting2_Filter1->setTextWhenNoChoicesAvailable (TRANS ("---"));
     m_uFilterRouting2_Filter1->addListener (this);
 
     label3.reset (new juce::Label ("new label",
-                                   TRANS("ROUTING 2")));
+                                   TRANS ("ROUTING 2")));
     addAndMakeVisible (label3.get());
-    label3->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain));
+    label3->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label3->setJustificationType (juce::Justification::centred);
     label3->setEditable (false, false, false);
     label3->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -506,26 +506,26 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
 
     m_uFilterRouting2_Filter2.reset (new VASTParameterComboBox ("m_uFilterRouting2_Filter2"));
     addAndMakeVisible (m_uFilterRouting2_Filter2.get());
-    m_uFilterRouting2_Filter2->setTooltip (TRANS("Filter 2 routing 2"));
+    m_uFilterRouting2_Filter2->setTooltip (TRANS ("Filter 2 routing 2"));
     m_uFilterRouting2_Filter2->setExplicitFocusOrder (23);
     m_uFilterRouting2_Filter2->setEditableText (false);
     m_uFilterRouting2_Filter2->setJustificationType (juce::Justification::centredLeft);
     m_uFilterRouting2_Filter2->setTextWhenNothingSelected (juce::String());
-    m_uFilterRouting2_Filter2->setTextWhenNoChoicesAvailable (TRANS("---"));
+    m_uFilterRouting2_Filter2->setTextWhenNoChoicesAvailable (TRANS ("---"));
     m_uFilterRouting2_Filter2->addListener (this);
 
     m_uFilterRouting2_Filter3.reset (new VASTParameterComboBox ("m_uFilterRouting2_Filter3"));
     addAndMakeVisible (m_uFilterRouting2_Filter3.get());
-    m_uFilterRouting2_Filter3->setTooltip (TRANS("Filter 3 routing 2"));
+    m_uFilterRouting2_Filter3->setTooltip (TRANS ("Filter 3 routing 2"));
     m_uFilterRouting2_Filter3->setExplicitFocusOrder (35);
     m_uFilterRouting2_Filter3->setEditableText (false);
     m_uFilterRouting2_Filter3->setJustificationType (juce::Justification::centredLeft);
     m_uFilterRouting2_Filter3->setTextWhenNothingSelected (juce::String());
-    m_uFilterRouting2_Filter3->setTextWhenNoChoicesAvailable (TRANS("---"));
+    m_uFilterRouting2_Filter3->setTextWhenNoChoicesAvailable (TRANS ("---"));
     m_uFilterRouting2_Filter3->addListener (this);
 
     label4.reset (new juce::Label ("new label",
-                                   TRANS("SCALE")));
+                                   TRANS ("SCALE")));
     addAndMakeVisible (label4.get());
     label4->setFont (juce::Font (9.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label4->setJustificationType (juce::Justification::centred);
@@ -535,7 +535,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
     label4->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label5.reset (new juce::Label ("new label",
-                                   TRANS("SCALE")));
+                                   TRANS ("SCALE")));
     addAndMakeVisible (label5.get());
     label5->setFont (juce::Font (9.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label5->setJustificationType (juce::Justification::centred);
@@ -546,7 +546,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
 
     m_fFilterScale_Filter1.reset (new VASTParameterSlider ("m_fFilterScale_Filter1"));
     addAndMakeVisible (m_fFilterScale_Filter1.get());
-    m_fFilterScale_Filter1->setTooltip (TRANS("Filter 1 scale (gain for notch, peak, shelf filters)"));
+    m_fFilterScale_Filter1->setTooltip (TRANS ("Filter 1 scale (gain for notch, peak, shelf filters)"));
     m_fFilterScale_Filter1->setExplicitFocusOrder (6);
     m_fFilterScale_Filter1->setRange (0, 100, 0.001);
     m_fFilterScale_Filter1->setSliderStyle (juce::Slider::RotaryVerticalDrag);
@@ -558,7 +558,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
 
     m_fFilterScale_Filter2.reset (new VASTParameterSlider ("m_fFilterScale_Filter2"));
     addAndMakeVisible (m_fFilterScale_Filter2.get());
-    m_fFilterScale_Filter2->setTooltip (TRANS("Filter 2 scale (gain for notch, peak, shelf filters)"));
+    m_fFilterScale_Filter2->setTooltip (TRANS ("Filter 2 scale (gain for notch, peak, shelf filters)"));
     m_fFilterScale_Filter2->setExplicitFocusOrder (18);
     m_fFilterScale_Filter2->setRange (0, 100, 0.001);
     m_fFilterScale_Filter2->setSliderStyle (juce::Slider::RotaryVerticalDrag);
@@ -569,7 +569,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
     m_fFilterScale_Filter2->addListener (this);
 
     label7.reset (new juce::Label ("new label",
-                                   TRANS("SCALE")));
+                                   TRANS ("SCALE")));
     addAndMakeVisible (label7.get());
     label7->setFont (juce::Font (9.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label7->setJustificationType (juce::Justification::centred);
@@ -580,7 +580,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
 
     m_fFilterScale_Filter3.reset (new VASTParameterSlider ("m_fFilterScale_Filter3"));
     addAndMakeVisible (m_fFilterScale_Filter3.get());
-    m_fFilterScale_Filter3->setTooltip (TRANS("Filter 3 scale (gain for notch, peak, shelf filters)"));
+    m_fFilterScale_Filter3->setTooltip (TRANS ("Filter 3 scale (gain for notch, peak, shelf filters)"));
     m_fFilterScale_Filter3->setExplicitFocusOrder (30);
     m_fFilterScale_Filter3->setRange (0, 100, 0.001);
     m_fFilterScale_Filter3->setSliderStyle (juce::Slider::RotaryVerticalDrag);
@@ -591,7 +591,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
     m_fFilterScale_Filter3->addListener (this);
 
     label8.reset (new juce::Label ("new label",
-                                   TRANS("GAIN")));
+                                   TRANS ("GAIN")));
     addAndMakeVisible (label8.get());
     label8->setFont (juce::Font (9.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label8->setJustificationType (juce::Justification::centred);
@@ -601,7 +601,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
     label8->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label9.reset (new juce::Label ("new label",
-                                   TRANS("GAIN")));
+                                   TRANS ("GAIN")));
     addAndMakeVisible (label9.get());
     label9->setFont (juce::Font (9.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label9->setJustificationType (juce::Justification::centred);
@@ -612,7 +612,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
 
     m_fFilterGain_Filter1.reset (new VASTParameterSlider ("m_fFilterGain_Filter1"));
     addAndMakeVisible (m_fFilterGain_Filter1.get());
-    m_fFilterGain_Filter1->setTooltip (TRANS("Filter 1 output gain"));
+    m_fFilterGain_Filter1->setTooltip (TRANS ("Filter 1 output gain"));
     m_fFilterGain_Filter1->setExplicitFocusOrder (7);
     m_fFilterGain_Filter1->setRange (0, 200, 0.001);
     m_fFilterGain_Filter1->setSliderStyle (juce::Slider::RotaryVerticalDrag);
@@ -624,7 +624,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
 
     m_fFilterGain_Filter2.reset (new VASTParameterSlider ("m_fFilterGain_Filter2"));
     addAndMakeVisible (m_fFilterGain_Filter2.get());
-    m_fFilterGain_Filter2->setTooltip (TRANS("Filter 2 output gain"));
+    m_fFilterGain_Filter2->setTooltip (TRANS ("Filter 2 output gain"));
     m_fFilterGain_Filter2->setExplicitFocusOrder (19);
     m_fFilterGain_Filter2->setRange (0, 200, 0.001);
     m_fFilterGain_Filter2->setSliderStyle (juce::Slider::RotaryVerticalDrag);
@@ -635,7 +635,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
     m_fFilterGain_Filter2->addListener (this);
 
     label10.reset (new juce::Label ("new label",
-                                    TRANS("GAIN")));
+                                    TRANS ("GAIN")));
     addAndMakeVisible (label10.get());
     label10->setFont (juce::Font (9.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label10->setJustificationType (juce::Justification::centred);
@@ -646,7 +646,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
 
     m_fFilterGain_Filter3.reset (new VASTParameterSlider ("m_fFilterGain_Filter3"));
     addAndMakeVisible (m_fFilterGain_Filter3.get());
-    m_fFilterGain_Filter3->setTooltip (TRANS("Filter 3 output gain"));
+    m_fFilterGain_Filter3->setTooltip (TRANS ("Filter 3 output gain"));
     m_fFilterGain_Filter3->setExplicitFocusOrder (31);
     m_fFilterGain_Filter3->setRange (0, 200, 0.001);
     m_fFilterGain_Filter3->setSliderStyle (juce::Slider::RotaryVerticalDrag);
@@ -657,9 +657,9 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
     m_fFilterGain_Filter3->addListener (this);
 
     label11.reset (new juce::Label ("new label",
-                                    TRANS("TYPE")));
+                                    TRANS ("TYPE")));
     addAndMakeVisible (label11.get());
-    label11->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain));
+    label11->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label11->setJustificationType (juce::Justification::centred);
     label11->setEditable (false, false, false);
     label11->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -699,7 +699,8 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
 	c_filterDisplay->setProcessor(myProcessor);
 	c_filterDisplay->setEditor(myEditor);
 	setOpaque(true);
-
+    
+    return; //dont call setSizes
     //[/UserPreSize]
 
     setSize (800, 575);
@@ -712,7 +713,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
 VASTFilterComponent::~VASTFilterComponent()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
-    DBG("Destructing VASTFilterComponent");
+    VDBG("Destructing VASTFilterComponent");
 	this->setLookAndFeel(nullptr);
     //[/Destructor_pre]
 
@@ -1368,7 +1369,7 @@ BEGIN_JUCER_METADATA
                 needsCallback="1" radioGroupId="0" state="0"/>
   <GENERICCOMPONENT name="c_filterDisplay" id="61bd7bec450e402b" memberName="c_filterDisplay"
                     virtualName="" explicitFocusOrder="0" pos="99%r 40.348% 98% 58.435%"
-                    class="VASTFilterDisplay" params=""/>
+                    class="VASTFilterDisplay" params="myProcessor"/>
   <COMBOBOX name="m_uVCFEnv_Filter1" id="39afd5b0c0d4b799" memberName="m_uVCFEnv_Filter1"
             virtualName="VASTParameterComboBox" explicitFocusOrder="8" pos="61.25% 7.304% 9.375% 2.435%"
             tooltip="Envelope used as LPF envelope" editable="0" layout="33"

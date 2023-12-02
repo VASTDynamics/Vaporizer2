@@ -1,6 +1,7 @@
 /*
 VAST Dynamics
 */
+
 #ifndef VASTVUMETERSOURCE_H_INCLUDED
 #define VASTVUMETERSOURCE_H_INCLUDED
 #include <atomic>
@@ -9,6 +10,9 @@ VAST Dynamics
 
 class VASTVUMeterSource
 {
+JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE("-Wconversion")
+JUCE_BEGIN_IGNORE_WARNINGS_MSVC(4244 4267) //C4244 conversion from 'type1' to 'type2', possible loss of data //C4267 conversion
+
 private:
 	class ChannelData {
 	public:
@@ -76,10 +80,10 @@ private:
 			rmsHistory.assign(numBlocks, 0.0f);
 			rmsSum = 0.0;
 			if (numBlocks > 1) {
-				rmsPtr %= rmsHistory.size();
+                rmsPtr.store(rmsPtr.load() % rmsHistory.size());
 			}
 			else {
-				rmsPtr = 0;
+				rmsPtr.store(0);
 			}
 		}
 	private:
@@ -102,7 +106,7 @@ private:
 		std::atomic<juce::int64> hold;
 		std::vector<double>      rmsHistory;
 		std::atomic<double>      rmsSum;
-		int                      rmsPtr;
+        std::atomic<int>         rmsPtr;
 	};
 
 public:
@@ -312,5 +316,9 @@ private:
 	std::atomic<juce::int64> lastMeasurement;
 
 	bool suspended;
+	
+	JUCE_END_IGNORE_WARNINGS_GCC_LIKE
+	JUCE_END_IGNORE_WARNINGS_MSVC
 };
 #endif
+

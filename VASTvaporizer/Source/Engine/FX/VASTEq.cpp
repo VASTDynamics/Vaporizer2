@@ -25,9 +25,8 @@ CVASTEq::CVASTEq(VASTAudioProcessor* processor, int busnr) {
 
 void CVASTEq::initParameters() {
 	AudioProcessorValueTreeState& parameters = my_processor->getParameterTree();
-	int lDestination = 0;
 
-	createAndAddParameter(&m_bEQOnOff, parameters, "m_bEQOnOff", "EQ on / off", "On", 0,
+	createAndAddParameter(&m_bEQOnOff, parameters, 1, "m_bEQOnOff", "EQ on / off", "On", 0,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		CVASTParamState::toggleButtonValueToTextFunction,
@@ -35,63 +34,63 @@ void CVASTEq::initParameters() {
 		false, true, true, true,
 		true);
 
-	createAndAddParameter(&m_fEQ1, parameters, "m_fEQ1", "EQ low shelf", "Low", 1,
+	createAndAddParameter(&m_fEQ1, parameters, 1, "m_fEQ1", "EQ low shelf", "Low", 1,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(-20, 20), 0,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fEQ2, parameters, "m_fEQ2", "EQ notch at +/- 250hz", "250hz", 2,
+	createAndAddParameter(&m_fEQ2, parameters, 1, "m_fEQ2", "EQ notch at +/- 250hz", "250hz", 2,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(-20, 20), 0,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fEQ3, parameters, "m_fEQ3", "EQ notch at +/- 500hz", "500hz", 3,
+	createAndAddParameter(&m_fEQ3, parameters, 1, "m_fEQ3", "EQ notch at +/- 500hz", "500hz", 3,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(-20, 20), 0,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fEQ4, parameters, "m_fEQ4", "EQ notch at +/- 1kHz", "1kHz", 4,
+	createAndAddParameter(&m_fEQ4, parameters, 1, "m_fEQ4", "EQ notch at +/- 1kHz", "1kHz", 4,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(-20, 20), 0,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fEQ5, parameters, "m_fEQ5", "EQ notch at +/- 2kHz", "2kHz", 5,
+	createAndAddParameter(&m_fEQ5, parameters, 1, "m_fEQ5", "EQ notch at +/- 2kHz", "2kHz", 5,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(-20, 20), 0,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fEQ6, parameters, "m_fEQ6", "EQ notch at +/- 4kHz", "4kHz", 6,
+	createAndAddParameter(&m_fEQ6, parameters, 1, "m_fEQ6", "EQ notch at +/- 4kHz", "4kHz", 6,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(-20, 20), 0,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fEQ7, parameters, "m_fEQ7", "EQ notch at +/- 8kHz", "8kHz", 7,
+	createAndAddParameter(&m_fEQ7, parameters, 1, "m_fEQ7", "EQ notch at +/- 8kHz", "8kHz", 7,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(-20, 20), 0,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fEQ8, parameters, "m_fEQ8", "EQ high shelf", "High", 8,
+	createAndAddParameter(&m_fEQ8, parameters, 1, "m_fEQ8", "EQ high shelf", "High", 8,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(-20, 20), 0,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fEQGain, parameters, "m_fEQGain", "EQ output gain", "Gain", 9,
+	createAndAddParameter(&m_fEQGain, parameters, 1, "m_fEQGain", "EQ output gain", "Gain", 9,
 		MODMATDEST::EQGain,
 		NormalisableRange<float>(0, 200), 100,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -171,7 +170,7 @@ void CVASTEq::reset() {
 	}
 }
 
-void CVASTEq::prepareToPlay(double sampleRate, int samplesPerBlock) {
+void CVASTEq::prepareToPlay(double, int samplesPerBlock) {
 	//m_iSampleRate is set in useroversampling
 	m_iExpectedSamplesPerBlock = samplesPerBlock;
 	
@@ -183,10 +182,10 @@ void CVASTEq::prepareToPlay(double sampleRate, int samplesPerBlock) {
 }
 
 void CVASTEq::parameterChanged(const String& parameterID, float newValue) {
-	float fQ = sqrt2over2; //was 1.0f
+	float fQ = float(sqrt2over2); //was 1.0f
 		
 	if (parameterID.startsWith("m_bEQOnOff")) {
-		if (newValue == SWITCH::SWITCH_ON)
+		if (newValue == static_cast<int>(SWITCH::SWITCH_ON))
 			switchOn();
 		else
 			switchOff();
@@ -288,7 +287,7 @@ void CVASTEq::parameterChanged(const String& parameterID, float newValue) {
 	}
 
 	else if (parameterID.startsWith("m_fEQGain")) {
-		m_fEQGain_smoothed.setValue(newValue);
+		m_fEQGain_smoothed.setTargetValue(newValue);
 	}
 }
 
@@ -297,7 +296,7 @@ void CVASTEq::updateVariables() {
 	// Biquad type PEAK (with BOOST & CUT)
 	// see: http://www.musicdsp.org/files/biquad.c
 
-	float fQ = sqrt2over2; //was 1.0f
+	float fQ = float(sqrt2over2); //was 1.0f
 
 	m_biQuad1L.calcBiquad(CVASTBiQuad::LOWSHELF, 50.0f, m_iSampleRate, fQ, *m_fEQ1);
 	m_biQuad1R.copySettingsFrom(&m_biQuad1L);
@@ -350,7 +349,7 @@ void CVASTEq::updateVariables() {
 	*/
 }
 
-void CVASTEq::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages, const int numSamples) {
+void CVASTEq::processBlock(AudioSampleBuffer& buffer, MidiBuffer&, const int numSamples) {
 	if (isOffAndShallBeOff() == true) return;
 
 	float* bufferWritePointerL = buffer.getWritePointer(0);
@@ -381,7 +380,7 @@ void CVASTEq::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages, 
 
 	modMatrixInputState inputState = ((VASTAudioProcessor*)my_processor)->m_pVASTXperience.m_Poly.getOldestNotePlayedInputState(0); // make parameter oldest or newest
 	//Gain Mod
-	m_fEQGain_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fEQGain, MODMATDEST::EQGain, &inputState));
+	m_fEQGain_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fEQGain, MODMATDEST::EQGain, &inputState));
 	float lEQGain = m_fEQGain_smoothed.getNextValue();
 	m_fEQGain_smoothed.skip(numSamples - 1);
 
@@ -390,7 +389,7 @@ void CVASTEq::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages, 
 	//=================================================================================================	
 }
 
-bool CVASTEq::processAudioFrame(float* pInputBuffer, float* pOutputBuffer, MYUINT uNumInputChannels, MYUINT uNumOutputChannels)
+bool CVASTEq::processAudioFrame(float* pInputBuffer, float* pOutputBuffer, MYUINT, MYUINT)
 {
 	//if (m_iSoftFade != C_MAX_SOFTFADE)
 		//updateVariables();
@@ -584,15 +583,15 @@ bool CVASTEq::processAudioFrame(float* pInputBuffer, float* pOutputBuffer, MYUIN
 
 //==============================================================================
 
-void CVASTEq::getStateInformation(MemoryBlock& destData)
+void CVASTEq::getStateInformation(MemoryBlock&)
 {
-	//ScopedPointer<XmlElement> xml (parameters.valueTreeState.state.createXml());
+	//std::unique_ptr<XmlElement> xml (parameters.valueTreeState.state.createXml());
 	//copyXmlToBinary (*xml, destData);
 }
 
-void CVASTEq::setStateInformation(const void* data, int sizeInBytes)
+void CVASTEq::setStateInformation(const void*, int)
 {
-	//ScopedPointer<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
+	//std::unique_ptr<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
 	//if (xmlState != nullptr)
 	//  if (xmlState->hasTagName (parameters.valueTreeState.state.getType()))
 	//    parameters.valueTreeState.state = ValueTree::fromXml (*xmlState);

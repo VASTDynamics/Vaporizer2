@@ -99,6 +99,8 @@ VASTArpComponent::VASTArpComponent (AudioProcessorEditor *editor, AudioProcessor
 	c_arpTab->setOutline(0);
 	lastMouseWheelEvent = juce::Time::getCurrentTime();
 	setOpaque(true);
+    
+    return; //dont call setSize
     //[/UserPreSize]
 
     setSize (800, 575);
@@ -111,7 +113,7 @@ VASTArpComponent::VASTArpComponent (AudioProcessorEditor *editor, AudioProcessor
 VASTArpComponent::~VASTArpComponent()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
-    DBG("Destructing VASTArpComponent");
+    VDBG("Destructing VASTArpComponent");
 	this->setLookAndFeel(nullptr);
     //[/Destructor_pre]
 
@@ -172,21 +174,21 @@ void VASTArpComponent::resized()
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 
 void VASTArpComponent::initAll() {
-	VASTARPEditorPane* tab1 = ((VASTARPEditorPane*)c_arpTab->getTabContentComponent(0));
-	jassert(tab1 != nullptr); //sequence changed?
-	tab1->initAll();
+	VASTARPEditorPane* tab1 = dynamic_cast<VASTARPEditorPane*>(c_arpTab->getTabContentComponent(0));
+	if (tab1!=nullptr)
+        tab1->initAll();
 }
 
 void VASTArpComponent::updateAll() {
-	VASTStepSeqEditorPane* tab1 = ((VASTStepSeqEditorPane*)c_stepseqTab->getTabContentComponent(0));
-	jassert(tab1 != nullptr); //sequence changed?
-	tab1->updateAll();
-	VASTStepSeqEditorPane* tab2 = ((VASTStepSeqEditorPane*)c_stepseqTab->getTabContentComponent(1));
-	jassert(tab2 != nullptr); //sequence changed?
-	tab2->updateAll();
-	VASTStepSeqEditorPane* tab3 = ((VASTStepSeqEditorPane*)c_stepseqTab->getTabContentComponent(2));
-	jassert(tab3 != nullptr); //sequence changed?
-	tab3->updateAll();
+	VASTStepSeqEditorPane* tab1 = dynamic_cast<VASTStepSeqEditorPane*>(c_stepseqTab->getTabContentComponent(0));
+	if (tab1 != nullptr)
+        tab1->updateAll();
+	VASTStepSeqEditorPane* tab2 = dynamic_cast<VASTStepSeqEditorPane*>(c_stepseqTab->getTabContentComponent(1));
+	if (tab2 != nullptr)
+        tab2->updateAll();
+	VASTStepSeqEditorPane* tab3 = dynamic_cast<VASTStepSeqEditorPane*>(c_stepseqTab->getTabContentComponent(2));
+	if (tab3 != nullptr)
+        tab3->updateAll();
 }
 
 void VASTArpComponent::lookAndFeelChanged() {
@@ -209,23 +211,23 @@ void VASTArpComponent::startAutoUpdate() {
 	if (isShowing()) grabKeyboardFocus();
 	c_stepseqTab->currentTabChanged(c_stepseqTab->getCurrentTabIndex(), "");
 
-	VASTARPEditorPane* tabarp = ((VASTARPEditorPane*)c_arpTab->getTabContentComponent(0));
-	jassert(tabarp != nullptr); //sequence changed?
-	tabarp->startAutoUpdate();
+	VASTARPEditorPane* tabarp = dynamic_cast<VASTARPEditorPane*>(c_arpTab->getTabContentComponent(0));
+	if (tabarp != nullptr)
+        tabarp->startAutoUpdate();
 }
 void VASTArpComponent::stopAutoUpdate() {
-	VASTStepSeqEditorPane* tab1 = ((VASTStepSeqEditorPane*)c_stepseqTab->getTabContentComponent(0));
-	jassert(tab1 != nullptr); //sequence changed?
-	tab1->stopAutoUpdate();
-	VASTStepSeqEditorPane* tab2 = ((VASTStepSeqEditorPane*)c_stepseqTab->getTabContentComponent(1));
-	jassert(tab2 != nullptr); //sequence changed?
-	tab2->stopAutoUpdate();
-	VASTStepSeqEditorPane* tab3 = ((VASTStepSeqEditorPane*)c_stepseqTab->getTabContentComponent(2));
-	jassert(tab3 != nullptr); //sequence changed?
-	tab3->stopAutoUpdate();
-	VASTARPEditorPane* tabarp = ((VASTARPEditorPane*)c_arpTab->getTabContentComponent(0));
-	jassert(tabarp != nullptr); //sequence changed?
-	tabarp->stopAutoUpdate();
+	VASTStepSeqEditorPane* tab1 = dynamic_cast<VASTStepSeqEditorPane*>(c_stepseqTab->getTabContentComponent(0));
+	if (tab1 != nullptr)
+        tab1->stopAutoUpdate();
+	VASTStepSeqEditorPane* tab2 = dynamic_cast<VASTStepSeqEditorPane*>(c_stepseqTab->getTabContentComponent(1));
+	if (tab2 != nullptr)
+        tab2->stopAutoUpdate();
+	VASTStepSeqEditorPane* tab3 = dynamic_cast<VASTStepSeqEditorPane*>(c_stepseqTab->getTabContentComponent(2));
+	if (tab3 != nullptr)
+        tab3->stopAutoUpdate();
+	VASTARPEditorPane* tabarp = dynamic_cast<VASTARPEditorPane*>(c_arpTab->getTabContentComponent(0));
+	if (tabarp != nullptr)
+        tabarp->stopAutoUpdate();
 }
 
 void VASTArpComponent::buttonClicked(Button* buttonThatWasClicked)

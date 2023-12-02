@@ -18,7 +18,7 @@ CVASTDelay::CVASTDelay(void)
 	m_fDelayInSamples = 0.0;
 	m_nSampleRate = 0;
 
-	m_pBuffer = new AudioSampleBuffer(1, 44100 * 2); // inital value
+	m_pBuffer = std::make_unique<AudioSampleBuffer>(1, 44100 * 2); // inital value
 
 	resetDelay();
 }
@@ -77,7 +77,7 @@ void CVASTDelay::cookVariables()
 	m_fOutputAttenuation = pow((float)10.0, (float)m_fOutputAttenuation_dB/(float)20.0);
 
 	if (m_fDelayInSamples == 0) {
-		m_fDelayInSamples = m_fDelay_ms*((float)m_nSampleRate / 1000.0);
+		m_fDelayInSamples = m_fDelay_ms*((float)m_nSampleRate / 1000.0f);
 	}
 
 	/*
@@ -147,7 +147,7 @@ float CVASTDelay::readDelayAt(float fmSec)
 {
 	softAdjustVariables();
 
-	float fDelayInSamples = fmSec*((float)m_nSampleRate)/1000.0;
+	float fDelayInSamples = fmSec*((float)m_nSampleRate)/1000.0f;
 
 	// subtract to make read index
 	int nReadIndex = m_nWriteIndex - (int)fDelayInSamples;

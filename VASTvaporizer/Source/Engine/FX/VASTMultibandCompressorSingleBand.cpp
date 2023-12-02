@@ -29,8 +29,6 @@ CVASTMultibandCompressorSingleBand::CVASTMultibandCompressorSingleBand(VASTAudio
 
 void CVASTMultibandCompressorSingleBand::initParameters() {
 	AudioProcessorValueTreeState& parameters = my_processor->getParameterTree();
-	int lDestination = 0;
-
 	float initLowFreq = 0.f;
 	float initHighFreq = 0.f;
 	float initThreshold = 0.0f;
@@ -65,7 +63,7 @@ void CVASTMultibandCompressorSingleBand::initParameters() {
 		initGain = 22.f;
 	}
 
-	createAndAddParameter(&m_bMultibandCompressorOffOn, parameters, "m_bMultibandCompressorOffOn" + suffix, "Single-band compressor on / off", "On", 0,
+	createAndAddParameter(&m_bMBCompOffOn, parameters, 1, "m_bMBCompOffOn" + suffix, "Single-band compressor on / off", "On", 0,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		CVASTParamState::toggleButtonValueToTextFunction,
@@ -73,45 +71,45 @@ void CVASTMultibandCompressorSingleBand::initParameters() {
 		false, true, true, true,
 		true);
 
-	createAndAddParameter(&m_fMultibandCompressorFcLow, parameters, "m_fMultibandCompressorFcLow" + suffix, "Single-band compressor low band cut frequency (hz)", "Lo(Hz)", 1,
+	createAndAddParameter(&m_fMBCompFcLow, parameters, 1, "m_fMBCompFcLow" + suffix, "Single-band compressor low band cut frequency (hz)", "Lo(Hz)", 1,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(10.0f, 20000.f), initLowFreq,
 		[](float value) {return String(value) + " Hz"; },
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fMultibandCompressorFcHigh, parameters, "m_fMultibandCompressorFcHigh" + suffix, "Single-band compressor high band cut frequency (hz)", "Hi(Hz)", 2,
+	createAndAddParameter(&m_fMBCompFcHigh, parameters, 1, "m_fMBCompFcHigh" + suffix, "Single-band compressor high band cut frequency (hz)", "Hi(Hz)", 2,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(10.0f, 20000.f), initHighFreq,
 		[](float value) {return String(value) + " Hz"; },
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fMultibandCompressorThreshold, parameters, "m_fMultibandCompressorThreshold" + suffix, "Single-band compressor threshold low band (dB)", "Threshold", 3,
+	createAndAddParameter(&m_fMBCompThreshold, parameters, 1, "m_fMBCompThreshold" + suffix, "Single-band compressor threshold low band (dB)", "Threshold", 3,
 		MODMATDEST::NoDestination,
-		NormalisableRange<float>(-60.0f, -0.0001), initThreshold,
+		NormalisableRange<float>(-60.0f, -0.0001f), initThreshold,
 		[](float value) {return String(value) + " dB" ; },
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false);
-	createAndAddParameter(&m_fMultibandCompressorRatio, parameters, "m_fMultibandCompressorRatio" + suffix, "Single-band compressor ratio low band (:1)", "Ratio", 4,
+	createAndAddParameter(&m_fMBCompRatio, parameters, 1, "m_fMBCompRatio" + suffix, "Single-band compressor ratio low band (:1)", "Ratio", 4,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(1.f, 100, 0.000001f, 0.3f, false), initRatio,
 		[](float value) {return String(value) + " :1"; },
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false);
-	createAndAddParameter(&m_fMultibandCompressorAttack, parameters, "m_fMultibandCompressorAttack" + suffix, "Single-band compressor attack low band (ms)", "Attack", 5,
+	createAndAddParameter(&m_fMBCompAttack, parameters, 1, "m_fMBCompAttack" + suffix, "Single-band compressor attack low band (ms)", "Attack", 5,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.1f, 80.0), 4.0f,
 		[](float value) {return String(value) + " ms"; },
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false);
-	createAndAddParameter(&m_fMultibandCompressorRelease, parameters, "m_fMultibandCompressorReleaseLB" + suffix, "Single-band compressor release low band (ms)", "Release", 6,
+	createAndAddParameter(&m_fMBCompRelease, parameters, 1, "m_fMBCompReleaseLB" + suffix, "Single-band compressor release low band (ms)", "Release", 6,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.1f, 1000.0), 4.0f,
 		[](float value) {return String(value) + " ms"; },
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false);
-	createAndAddParameter(&m_fMultibandCompressorGain, parameters, "m_fMultibandCompressorGain" + suffix, "Single-band compressor gain low band (dB)", "Gain", 7,
+	createAndAddParameter(&m_fMBCompGain, parameters, 1, "m_fMBCompGain" + suffix, "Single-band compressor gain low band (dB)", "Gain", 7,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 40.f), initGain,
 		[](float value) {return String(value) + " dB"; },
@@ -132,16 +130,16 @@ CVASTMultibandCompressorSingleBand::~CVASTMultibandCompressorSingleBand() {
 }
 
 void CVASTMultibandCompressorSingleBand::parameterChanged(const String& parameterID, float newValue) {
-	if (parameterID.startsWith("m_bMultibandCompressorOffOn")) {
-		if (newValue == SWITCH::SWITCH_ON)
+	if (parameterID.startsWith("m_bMBCompOffOn")) {
+		if (newValue == static_cast<int>(SWITCH::SWITCH_ON))
 			switchOn();
 		else
 			switchOff();
 	}
-	else if (parameterID.startsWith("m_fMultibandCompressorFcLow")) {
+	else if (parameterID.startsWith("m_fMBCompFcLow")) {
 		adjustLowband();
 	}
-	else if (parameterID.startsWith("m_fMultibandCompressorFcHigh")) {
+	else if (parameterID.startsWith("m_fMBCompFcHigh")) {
 		adjustHighband();
 	}
 }
@@ -152,13 +150,13 @@ void CVASTMultibandCompressorSingleBand::init(CVASTSettings &set) {
 }
 
 void CVASTMultibandCompressorSingleBand::reset() { 
-	m_yL_prev = 0;
+	m_yL_prev = 0.f;
 
 	for (int i = 0; i < m_iExpectedSamplesPerBlock; ++i)
 	{
-		m_x_g[i] = 0; m_y_g[i] = 0;
-		m_x_l[i] = 0; m_y_l[i] = 0;
-		m_c[i] = 0;
+		m_x_g[i] = 0.f; m_y_g[i] = 0.f;
+		m_x_l[i] = 0.f; m_y_l[i] = 0.f;
+		m_c[i] = 0.f;
 	}
 
 	if ((m_bIsOff == false) && (m_bShallBeOff == false)) {
@@ -197,7 +195,7 @@ void CVASTMultibandCompressorSingleBand::releaseResources() {
 }
 
 void CVASTMultibandCompressorSingleBand::adjustLowband() {
-	float fcLow = *m_fMultibandCompressorFcLow;
+	float fcLow = *m_fMBCompFcLow;
 	lowBandPassL1.setCoefficients(coeff.makeHighPass(m_iSampleRate, fcLow));
 	lowBandPassL2.setCoefficients(coeff.makeHighPass(m_iSampleRate, fcLow));
 	lowBandPassR1.setCoefficients(coeff.makeHighPass(m_iSampleRate, fcLow));
@@ -205,7 +203,7 @@ void CVASTMultibandCompressorSingleBand::adjustLowband() {
 }
 
 void CVASTMultibandCompressorSingleBand::adjustHighband() {
-	float fcHigh = *m_fMultibandCompressorFcHigh;
+	float fcHigh = *m_fMBCompFcHigh;
 	highBandPassL1.setCoefficients(coeff.makeLowPass(m_iSampleRate, fcHigh));
 	highBandPassL2.setCoefficients(coeff.makeLowPass(m_iSampleRate, fcHigh));
 	highBandPassR1.setCoefficients(coeff.makeLowPass(m_iSampleRate, fcHigh));
@@ -252,7 +250,7 @@ void CVASTMultibandCompressorSingleBand::processBlock (AudioSampleBuffer& buffer
 	//   Apply Compressors to Buffers                    //
 	//===================================================//
 
-	if (*m_bMultibandCompressorOffOn == SWITCH::SWITCH_ON)
+	if (*m_bMBCompOffOn == static_cast<int>(SWITCH::SWITCH_ON))
 	{
 		int M = round(m_iNumChannels / 2);
 		for (int m = 0; m < M; ++m) 
@@ -281,11 +279,11 @@ void CVASTMultibandCompressorSingleBand::processBlock (AudioSampleBuffer& buffer
 
 // Low compressor function
 void CVASTMultibandCompressorSingleBand::compressorBand(AudioSampleBuffer &buffer, int m, const int numSamples) {
-	float threshold = *m_fMultibandCompressorThreshold;
-	float tauAttack = *m_fMultibandCompressorAttack;
-	float tauRelease = *m_fMultibandCompressorRelease;
-	float ratio = *m_fMultibandCompressorRatio;
-	float makeUpGain = *m_fMultibandCompressorGain;
+	float threshold = *m_fMBCompThreshold;
+	float tauAttack = *m_fMBCompAttack;
+	float tauRelease = *m_fMBCompRelease;
+	float ratio = *m_fMBCompRatio;
+	float makeUpGain = *m_fMBCompGain;
 
 	float alphaAttack = exp(-1 / (0.001 * m_iSampleRate * tauAttack));
 	float alphaRelease = exp(-1 / (0.001 * m_iSampleRate * tauRelease));
@@ -309,15 +307,15 @@ void CVASTMultibandCompressorSingleBand::compressorBand(AudioSampleBuffer &buffe
 
 //==============================================================================
 
-void CVASTMultibandCompressorSingleBand::getStateInformation (MemoryBlock& destData)
+void CVASTMultibandCompressorSingleBand::getStateInformation (MemoryBlock& )
 {
-    //ScopedPointer<XmlElement> xml (parameters.valueTreeState.state.createXml());
+    //std::unique_ptr<XmlElement> xml (parameters.valueTreeState.state.createXml());
     //copyXmlToBinary (*xml, destData);
 }
 
-void CVASTMultibandCompressorSingleBand::setStateInformation (const void* data, int sizeInBytes)
+void CVASTMultibandCompressorSingleBand::setStateInformation (const void* , int )
 {
-    //ScopedPointer<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
+    //std::unique_ptr<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
     //if (xmlState != nullptr)
       //  if (xmlState->hasTagName (parameters.valueTreeState.state.getType()))
         //    parameters.valueTreeState.state = ValueTree::fromXml (*xmlState);

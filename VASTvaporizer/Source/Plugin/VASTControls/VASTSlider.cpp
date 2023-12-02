@@ -38,6 +38,12 @@ VASTAudioProcessor* VASTSlider::getAudioProcessor() {
 	return m_processor;
 }
 
+void VASTSlider::setDefaultValue(float defaultVal) {
+	hasDefaultValue = true;
+	mDefaultVal = defaultVal;
+	setDoubleClickReturnValue(true, mDefaultVal);
+}
+
 void VASTSlider::mouseDown(const MouseEvent &e) {
 	if (e.getNumberOfClicks() > 1) { //double click shall reset to default
 		if (getSliderStyle() != SliderStyle::IncDecButtons) { //no doubleclick!

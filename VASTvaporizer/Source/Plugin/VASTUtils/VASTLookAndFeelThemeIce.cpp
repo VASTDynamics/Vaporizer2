@@ -11,8 +11,10 @@ VAST Dynamics
 
 #include <sstream>
 
-VASTLookAndFeelThemeIce::VASTLookAndFeelThemeIce()
+VASTLookAndFeelThemeIce::VASTLookAndFeelThemeIce(CVASTSettings& set, VASTAudioProcessor* processor)
 {
+	m_Set = &set;
+	myProcessor = processor;
 
 	setColour(GroupComponent::outlineColourId, Colours::darkgrey);
 	setColour(GroupComponent::textColourId, Colours::black);
@@ -25,42 +27,14 @@ VASTLookAndFeelThemeIce::VASTLookAndFeelThemeIce()
 	setColour(TextEditor::backgroundColourId, findVASTColour(colBoxTextBackground));
 	setColour(TextEditor::textColourId, findVASTColour(colBoxText));
 
-	//myDefaultFontRegular.setTypefaceName("Syntax"); //bold 2-3
-	//myDefaultFontRegular.setTypefaceName("Montserrat");	//bold 3-4
-	//myDefaultFontRegular.setTypefaceName("Alte Haas Grotesk"); //bold 1-2 plain 2-3
-	//myDefaultFontRegular.setTypefaceName("Code Pro Demo"); //bold 3-4
-	//myDefaultFontRegular.setTypefaceName("SF UI Display"); //bold 1-2
-	//myDefaultFontRegular.setTypefaceName("neo latina");
-	//myDefaultFontRegular.setTypefaceName("Open Sans"); //bold 1-2, regular 2
-
-//	myDefaultFontRegular = Font(Typeface::createSystemTypefaceFor(BinaryData::OpenSansBold_ttf,
-//		BinaryData::OpenSansBold_ttfSize)); //get from binary data
-	//OpenSansSemibold_ttf
-	//OpenSansRegular_ttf
-
-	//myDefaultFontRegular = Font(m_tf_regular); //get from binary data
-
-	/*
-	myDefaultFontRegular.setTypefaceName("Code Pro Demo"); //bold 3-4
-	myDefaultFontRegular = Font(getTypefaceForFont(myDefaultFontRegular));
-	myDefaultFontRegular.setDefaultMinimumHorizontalScaleFactor(1.0);
-	myDefaultFontRegular.setSizeAndStyle(10.f, Font::plain, 1.0f, 0.0f); // no squashing, no kerning
-
-	myDefaultFontBold.setTypefaceName("Code Pro Demo");
-	myDefaultFontBold = Font(getTypefaceForFont(myDefaultFontBold));
-	myDefaultFontBold.setDefaultMinimumHorizontalScaleFactor(1.0);
-	myDefaultFontBold.setSizeAndStyle(10.f, 0, 1.0f, 0.0f); // no squashing, no kerning
-	*/
-
 	mFontSizeFactor = 0.85f;
 	setUIFontSize(0);
-	myDefaultFontRegular.setTypefaceName("Alte Haas Grotesk"); //bold 3-4
-	myDefaultFontRegular = Font(getTypefaceForFont(myDefaultFontRegular));
+
+	myDefaultFontRegular = m_Set->getCustomFont(CVASTSettings::customFonts::AlteHaasGrotesk);
 	myDefaultFontRegular.setDefaultMinimumHorizontalScaleFactor(1.0);
 	myDefaultFontRegular.setSizeAndStyle(8.f, myDefaultFontBold.getStyleFlags(), 1.0f, 0.0f); // no squashing, no kerning
 
-	myDefaultFontBold.setTypefaceName("Alte Haas Grotesk Bold");
-	myDefaultFontBold = Font(getTypefaceForFont(myDefaultFontBold));
+	myDefaultFontBold = m_Set->getCustomFont(CVASTSettings::customFonts::AlteHaasGroteskBold);
 	myDefaultFontBold.setDefaultMinimumHorizontalScaleFactor(1.0);
 	myDefaultFontBold.setSizeAndStyle(8.f, myDefaultFontBold.getStyleFlags(), 1.0f, 0.0f); // no squashing, no kerning
 	
@@ -223,7 +197,7 @@ Colour VASTLookAndFeelThemeIce::findVASTColour(int colourID) {
 		return Colour::fromFloatRGBA(0.5f, 0.5f, 0.5f, 1.0f); //transparent
 		break;
 	case colToggleButtonOuter:
-		return Colour::fromFloatRGBA(0.15f, 0.15, 0.15f, 1.0f); //transparent
+		return Colour::fromFloatRGBA(0.15f, 0.15f, 0.15f, 1.0f); //transparent
 		break;
 	case colToggleButtonShadeOn:
 		return Colour::fromFloatRGBA(0.7f, 0.9f, 1.0f, 0.35f);

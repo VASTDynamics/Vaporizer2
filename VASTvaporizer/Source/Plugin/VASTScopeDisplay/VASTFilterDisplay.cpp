@@ -1,5 +1,4 @@
 /*
-/*
 VAST Dynamics
 */
 
@@ -20,9 +19,9 @@ VAST Dynamics
 #define c_minDisp float(c_fftSize / 512.f) //lower are too coarse
 #define c_maxminDisp float(c_maxDisp) / float(c_minDisp)
 
-VASTFilterDisplay::VASTFilterDisplay()
+VASTFilterDisplay::VASTFilterDisplay(VASTAudioProcessor* processor)
 {
-	myProcessor = nullptr;
+	myProcessor = processor;
 	myEditor = nullptr;
 	
 	//myFont.setTypefaceName("Open Sans"); //bold 1-2, regular 2
@@ -52,6 +51,9 @@ VASTFilterDisplay::~VASTFilterDisplay() {
 }
 
 void VASTFilterDisplay::lookAndFeelChanged() {
+	if (!myProcessor->isCurrentEditorInitialized())
+		return;
+
 	if (myEditor == nullptr)
 		return;
 	if (myEditor->vaporizerComponent == nullptr)
@@ -63,6 +65,9 @@ void VASTFilterDisplay::lookAndFeelChanged() {
 //==============================================================================
 void VASTFilterDisplay::resized()
 {
+	if (!myProcessor->isCurrentEditorInitialized())
+		return;
+
 	waveformImageBuffer.reset(new Image(Image::RGB,
 		jmax(1, getScreenBounds().getWidth()), jmax(1, getScreenBounds().getHeight()),
 		true));
@@ -76,8 +81,6 @@ void VASTFilterDisplay::resized()
 		cBack.darker(1.00f), waveformImageBuffer->getWidth(), (float)waveformImageBuffer->getHeight(), false));
 	g.fillRect(0, 0, waveformImageBuffer->getWidth(), waveformImageBuffer->getHeight());
 	//scales
-	int l_numVertical = 24;
-	float fGridWidth = waveformImageBuffer->getWidth() / float(l_numVertical);
 	float fGridHeight = waveformImageBuffer->getHeight() / 8.f;
 
 	for (int horiz = 0; horiz < 8; horiz++) {
@@ -100,7 +103,6 @@ void VASTFilterDisplay::resized()
 	g.drawRect(0.f, 0.f, float(waveformImageBuffer->getWidth()), float(waveformImageBuffer->getHeight()), 0.5f);
 	g.drawLine(1.f, waveformImageBuffer->getHeight() * 0.5f, float(waveformImageBuffer->getWidth() -1.f), waveformImageBuffer->getHeight() * 0.5f, 0.5f);
 	
-	int counter = 0;
 	float fontSize = (waveformImageBuffer->getWidth() / 1000.f) * 16.f;
 	Font myFont = myProcessor->getCurrentVASTLookAndFeel()->getDefaultFont();
 	myFont.setSizeAndStyle(fontSize, Font::plain, 1.0f, 0.0f); // no squashing, no kerning
@@ -206,6 +208,10 @@ void VASTFilterDisplay::doUpdates(bool force) {
 	}
 }
 
+void VASTFilterDisplay::setEditor(VASTAudioProcessorEditor* editor) { myEditor = editor; }
+
+void VASTFilterDisplay::setProcessor(VASTAudioProcessor* processor) { myProcessor = processor; }
+
 void VASTFilterDisplay::timerCallback() {
 	if (b_newImageReady) {
 
@@ -222,7 +228,7 @@ void VASTFilterDisplay::timerCallback() {
 	}
 
 	if (m_bRestart) {
-		DBG("VASTFilterDisplay Display Restart!");
+		VDBG("VASTFilterDisplay Display Restart!");
 		m_bRestart = false;
 		doUpdates(false);
 	}
@@ -230,7 +236,6 @@ void VASTFilterDisplay::timerCallback() {
 
 void VASTFilterDisplay::updateThread(VASTFilterDisplay* display, bool force) {
 	if (display == nullptr) {
-		display->m_iThreadsRunning.store(display->m_iThreadsRunning.load() - 1);
 		return;
 	}
 	if (!force)
@@ -247,9 +252,9 @@ void VASTFilterDisplay::updateThread(VASTFilterDisplay* display, bool force) {
 		return;
 	}
 
-	//ScopedPointer<dsp::FFT> fft;
+	//std::unique_ptr<dsp::FFT> fft;
 	//AudioSampleBuffer fftResults;
-	//ScopedPointer<CVASTVcf> m_VCF[3];
+	//std::unique_ptr<CVASTVcf> m_VCF[3];
 	//VASTQFilter m_QFilter;
 
 	bool l_display = true;
@@ -275,9 +280,9 @@ void VASTFilterDisplay::updateThread(VASTFilterDisplay* display, bool force) {
 
 	if (display->mb_init == false) {
 		display->m_QFilter.initQuadFilter(&display->myProcessor->m_pVASTXperience.m_Set);
-		display->fft = new dsp::FFT(c_fftOrder); //scoped pointer
+		display->fft = std::make_unique<dsp::FFT>(c_fftOrder); //scoped pointer
 		for (int filter = 0; filter < 3; filter++) {
-			display->m_VCF[filter] = new CVASTVcf();
+			display->m_VCF[filter] = std::make_unique<CVASTVcf>();
 		}
 		display->mb_init = true;
 	}
@@ -298,14 +303,10 @@ void VASTFilterDisplay::updateThread(VASTFilterDisplay* display, bool force) {
 		l_filterBuffer_out[i].real(0.f);
 	}
 
-	//modMatrixInputState inputStateBuffer = l_Set->bufferInputState.load();
 	modMatrixInputState inputStateCopy;
 	inputStateCopy.voiceNo = 0;
 	inputStateCopy.currentFrame = 0;
-	//inputStateCopy = inputStateBuffer;
-	//inputStateCopy.voiceNo = myProcessor->m_pVASTXperience.m_Poly.getLastNotePlayed();
 
-	int numSamples = c_fftSize;
 	AudioSampleBuffer buffer = AudioSampleBuffer(2, c_fftSize);
 	buffer.clear();
 	buffer.setSample(0, 0, 1.f); //impulse
@@ -314,9 +315,6 @@ void VASTFilterDisplay::updateThread(VASTFilterDisplay* display, bool force) {
 
 	modMatrixInputState l_inputState;
 	l_inputState.currentFrame = 0;
-	//float l_maxDispAdjustFactor = 1.f;
-	//float l_scaleAdjustFactor = 1.f;
-	//bool b_processed = false;
 
 	for (int filter = 0; filter < 3; filter++) {
 		int ftype = 0.f;
@@ -336,7 +334,7 @@ void VASTFilterDisplay::updateThread(VASTFilterDisplay* display, bool force) {
 			onoff = *l_Set->m_State->m_bOnOff_Filter3;
 			break;
 		}
-		if (onoff == SWITCH::SWITCH_ON) {
+		if (onoff == static_cast<int>(SWITCH::SWITCH_ON)) {
 			//process filter					
 			if (((ftype >= FILTERTYPE::DQFLPF12) && (ftype <= FILTERTYPE::DQFCOMBWSSINE)) || 
 				(ftype == FILTERTYPE::COMBFILTER) || (ftype == FILTERTYPE::SCREAMFILTER))
@@ -349,30 +347,8 @@ void VASTFilterDisplay::updateThread(VASTFilterDisplay* display, bool force) {
 	float fftData[c_fftSize * 2];
 	for (int idx = 0; idx < c_fftSize; idx++) {
 
-		//int pos = (l_Set->m_RoutingBuffers.m_circularFilterOutputPos + idx) % l_Set->m_RoutingBuffers.m_circularFilterOutputLen;
-		//fftData[idx] = l_Set->m_RoutingBuffers.CircularFilterOutput->getSample(0, pos);
 		fftData[idx] = filterBlock.getSample(0, idx);
 	}
-
-	//dsp::WindowingFunction<float> window(C_WAVE_TABLE_SIZE * multiplier, dsp::WindowingFunction<float>::hann);
-	//window.multiplyWithWindowingTable(fftData, C_WAVE_TABLE_SIZE * multiplier);
-
-
-	//for (int idx = 0; idx < C_WAVE_TABLE_SIZE * multiplier; idx++) {
-		//l_filterBuffer_in[idx].imag(filterBlock.getChannelPointer(0)[idx]); //zero pad				
-
-		/*
-		if (idx % multiplier == 0)
-			l_filterBuffer_in[idx].imag(filterBlock.getChannelPointer(0)[idx / multiplier]); //zero pad
-		else
-			l_filterBuffer_in[idx].imag(0.f);
-		l_filterBuffer_in[idx].real(0.0f);
-		*/
-		//}
-
-		//fft->perform(&*l_filterBuffer_in.begin(), &*l_filterBuffer_out.begin(), false);
-
-	std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
 
 	display->fft->performFrequencyOnlyForwardTransform(fftData);
 	
@@ -382,29 +358,7 @@ void VASTFilterDisplay::updateThread(VASTFilterDisplay* display, bool force) {
 	//if (l_filterBuffer_out.empty()) l_display = false;
 	if (l_display == true) {
 
-		/*
-		//CHECK
-		bool isRed = false;
-		for (int i = 0; i < l_filterBuffer_out.size(); i++) {
-			if (std::isnan(l_filterBuffer_in[i].imag()) || std::isinf(l_filterBuffer_in[i].imag()))
-				isRed = true;
-			if (std::isnan(l_filterBuffer_out[i].imag()) || std::isinf(l_filterBuffer_out[i].imag()))
-				isRed = true;
-			if (!b_processed)
-				l_filterBuffer_out[i].imag(1.f);
-		}
-		*/
-
 		//https://dsp.stackexchange.com/questions/26927/what-is-a-frequency-bin
-
-		//l_filterBuffer_out is upsampled by factor multiplier
-		//Fs is l_Set->m_nSampleRate * multiplier
-		//BinFreq is (l_Set->m_nSampleRate * multiplier) / (l_filterBuffer_out.size() / 2);
-
-		//double binFreq = (l_Set->m_nSampleRate * multiplier) / (l_filterBuffer_out.size()) * l_scaleAdjustFactor; //is definetly dependent on sampleRate!
-
-		//double minDisp = 78.f;
-		//double maxDisp = 20000.f;
 
 		auto mindB = -48.0f;
 		auto maxdB = 48.0f;
@@ -413,11 +367,6 @@ void VASTFilterDisplay::updateThread(VASTFilterDisplay* display, bool force) {
 		fftResults.setSize(1, int(width), false, false, true);
 				for (int x = 0; x < width; x++) {
 
-
-			/*
-						auto skewedProportionX = 1.0f - std::exp(std::log(1.0f - x / (float)width) * 0.2f);
-						auto fftDataIndex = jlimit(0, fftSize / 2, (int)(skewedProportionX * fftSize / 2));
-						*/
 			auto skewedProportionX = c_minDisp * pow(c_maxminDisp, float(x) / float(width));
 			auto fftDataIndex = jlimit(0, c_fftSize / 2, int(skewedProportionX));
 
@@ -557,7 +506,7 @@ void VASTFilterDisplay::updateContent(bool force) {
 			onoff = *l_Set->m_State->m_bOnOff_Filter3;
 			break;
 		}
-		if (onoff == SWITCH::SWITCH_ON) {
+		if (onoff == static_cast<int>(SWITCH::SWITCH_ON)) {
 			//process filter					
 			if ((ftype >= FILTERTYPE::DQFLPF12) && (ftype <= FILTERTYPE::DQFCOMBWSSINE))
 				m_QFilter.processBlock(nullptr, &l_inputState, nullptr, l_Set, filter, filterBlock, 0, c_fftSize, true, false, m_VCF, true); //warmup

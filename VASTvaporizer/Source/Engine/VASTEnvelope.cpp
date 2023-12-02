@@ -90,7 +90,7 @@ void CVASTEnvelope::noteOff() {
 void CVASTEnvelope::updateVariables(float AttackTime, float DecayTime, float SustainLevel, float ReleaseTime, MYUINT egMode) {
 	m_fAttackTime = AttackTime;
 	m_fDecayTime = DecayTime;
-	m_fSustainLevel = SustainLevel / 100.0; //max 1.0 here
+	m_fSustainLevel = SustainLevel / 100.f; //max 1.0 here
 	m_fReleaseTime = ReleaseTime;
 	setEGMode(egMode); //calls calculateTimes();
 }
@@ -116,23 +116,23 @@ bool CVASTEnvelope::isHardStopNoteOff() { //NoteOff during Hardstop
 
 void CVASTEnvelope::calculateTimes() {
 	float lMinAttack = 1.0f; //minimum attack time 1 ms
-	//if (*m_Set->m_State->m_bOscRetrigOnOff_OscA == SWITCH::SWITCH_ON) //TODO CHECK OSCA!!!
+	//if (*m_Set->m_State->m_bOscRetrigOnOff_OscA == static_cast<int>(SWITCH::SWITCH_ON)) //TODO CHECK OSCA!!!
 	lMinAttack = 3.0; //if random retrig attack time 3 ms
 	
 	float fSamples = m_Set->m_nSampleRate * (((m_fAttackTime + lMinAttack) / 1000.0f));
-	m_fAttackCoeff = exp(-log((1.0 + m_fAttackTCO) / m_fAttackTCO) / fSamples);
-	m_fAttackOffset = (1.0 + m_fAttackTCO) * (1.0f - m_fAttackCoeff);
+	m_fAttackCoeff = exp(-log((1.f + m_fAttackTCO) / m_fAttackTCO) / fSamples);
+	m_fAttackOffset = (1.f + m_fAttackTCO) * (1.0f - m_fAttackCoeff);
 
 	float lMinDecay = 10.0f; //minimum decay time 10 ms
 	fSamples = m_Set->m_nSampleRate * (((m_fDecayTime + lMinDecay) / 1000.0f));
-	m_fDecayCoeff = exp(-log((1.0 + m_fDecayTCO) / m_fDecayTCO) / fSamples);
+	m_fDecayCoeff = exp(-log((1.f + m_fDecayTCO) / m_fDecayTCO) / fSamples);
 	m_fDecayOffset = (m_fSustainLevel - m_fDecayTCO) * (1.0f - m_fDecayCoeff);
 
 	float lMinRelease = 10.0f; //minimum release time 10 ms
 	if (m_isVCF)
 		lMinRelease = 45.0f; //minimum filter release time 45ms
 	fSamples = m_Set->m_nSampleRate * (((m_fReleaseTime + lMinRelease) / 1000.0f));
-	m_fReleaseCoeff = exp(-log((1.0 + m_fReleaseTCO) / m_fReleaseTCO) / fSamples);
+	m_fReleaseCoeff = exp(-log((1.f + m_fReleaseTCO) / m_fReleaseTCO) / fSamples);
 	m_fReleaseOffset = -m_fReleaseTCO* (1.0f - m_fReleaseCoeff);
 }
 

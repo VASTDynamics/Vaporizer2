@@ -20,7 +20,7 @@ typedef struct sSelection {
 	int iWTSelectionEnd = C_WAVE_TABLE_SIZE;
 } sSelection;
 
-class VASTOscilloscope : public Component, public Timer, public FileDragAndDropTarget /*, public juce::OpenGLRenderer*/
+class VASTOscilloscope : public Component, public Timer, public FileDragAndDropTarget, public TooltipClient /*, public juce::OpenGLRenderer*/
 {
 public:
 	VASTOscilloscope();
@@ -40,12 +40,12 @@ public:
 
 	void setToOpenGLRender();
 	void setToStandardRender();
+	
+	void setEditor(VASTAudioProcessorEditor* editor);
+	void setProcessor(VASTAudioProcessor* processor);
+	void setWTEditor(VASTWaveTableEditorComponent* wtEditor);
 
-	void setEditor(VASTAudioProcessorEditor* editor) { myEditor = editor; };
-	void setProcessor(VASTAudioProcessor* processor) {
-		myProcessor = processor;
-	};
-	void setWTEditor(VASTWaveTableEditorComponent* wtEditor) { myWtEditor = wtEditor; };
+	String getTooltip() override;
 
 	void selectAll(bool noUIUpdate);
 
@@ -69,7 +69,7 @@ private:
 	//int m_count = -1;
 	bool m_newImageForRepaint = true; //needed?
 
-	bool m_dirty = true;
+	std::atomic<bool> m_dirty = true;
 	Image waveformImage;
 	Image waveformImageWithBorder;
 	Image waveformImageLastSafe;
@@ -110,19 +110,19 @@ private:
 
 	void notifySelectionChanged();
 
-	float m_safeWtPosFloat = 0.0f;
-	float m_safePhaseFloat = 0.0f;
-	int m_safeWTFXType = 0;
-	float m_safeWTFXVal = 0.f;
+	std::atomic<float> m_safeWtPosFloat = 0.0f;
+    std::atomic<float> m_safePhaseFloat = 0.0f;
+    std::atomic<int> m_safeWTFXType = 0;
+    std::atomic<float> m_safeWTFXVal = 0.f;
 
-	float m_screenWidthScale = 1.f;
-	float m_screenHeightScale = 1.f;
+    std::atomic<float> m_screenWidthScale = 1.f;
+    std::atomic<float> m_screenHeightScale = 1.f;
 
-	int m_last_active_voice = -1;
-	int m_last_active_counter = 10;
+    std::atomic<int> m_last_active_voice = -1;
+    std::atomic<int> m_last_active_counter = 10;
 
 	juce::Array<juce::Point<float>> m_freeHandBuffer;
-	bool m_bLast_update_was_with_voice_playing = false;
+    std::atomic<bool> m_bLast_update_was_with_voice_playing = false;
 
 	//==============================================================================
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(VASTOscilloscope);

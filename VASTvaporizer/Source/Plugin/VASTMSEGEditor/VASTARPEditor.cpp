@@ -20,7 +20,7 @@ VASTARPEditor::VASTARPEditor(AudioProcessor* processor, VASTARPData* data, VASTA
 	setOpaque(true); //avoid repaints of parents
 
 	resized();
-	updateContent(true);
+	//updateContent(true);
 }
 
 VASTARPEditor::~VASTARPEditor() {
@@ -29,7 +29,8 @@ VASTARPEditor::~VASTARPEditor() {
 }
 
 void VASTARPEditor::lookAndFeelChanged() {
-	updateContent(true);
+	if (myProcessor->isCurrentEditorInitialized())
+		updateContent(true);
 }
 
 void VASTARPEditor::resized()
@@ -79,16 +80,16 @@ void VASTARPEditor::updateContent(bool force)
 
 	int numSteps = myData->getNumSteps();	
 	float stepWidth = m_drawwidth / float(numSteps);
-	float octaveHeight = m_drawheight / 7.0; //seven octaves (including semitones up and down)
+	float octaveHeight = m_drawheight / 7.0f; //seven octaves (including semitones up and down)
 
 	float insetPixels = 2.0f  * myProcessor->getPluginScaleWidthFactor() * m_screenWidthScale;
 
 	//current pos marker
-	if ((myDataLive->m_dispActiveStep >= 0) && (numSteps >= myDataLive->m_dispActiveStep)) {
-		g.setColour(myProcessor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colARPEditorPosMarker)); 
+	if ((myDataLive->m_dispActiveStep.load() >= 0) && (numSteps >= myDataLive->m_dispActiveStep.load())) {
+		g.setColour(myProcessor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colARPEditorPosMarker));
 
-		//float markerPos = m_xbounds + myData->m_dispActiveStep * (m_drawwidth / float(numSteps));
-		g.fillRect(juce::Rectangle<float>(m_xbounds + myDataLive->m_dispActiveStep  * stepWidth + insetPixels, m_ybounds + insetPixels, stepWidth - 2.f* insetPixels, m_drawheight -2.f * insetPixels));
+		//float markerPos = m_xbounds + myData->m_dispActiveStep.load() * (m_drawwidth / float(numSteps));
+		g.fillRect(juce::Rectangle<float>(m_xbounds + myDataLive->m_dispActiveStep.load()  * stepWidth + insetPixels, m_ybounds + insetPixels, stepWidth - 2.f* insetPixels, m_drawheight -2.f * insetPixels));
 		//g.drawLine(markerPos, 0.0f + m_ybounds, markerPos, m_drawheight + m_ybounds, 6.0f);
 	}
 
@@ -135,18 +136,18 @@ void VASTARPEditor::updateContent(bool force)
 	}
 
 	// Text
-	float sync = *myProcessor->m_pVASTXperience.m_Set.m_State->m_bARPSynch;
-	float beats = *myProcessor->m_pVASTXperience.m_Set.m_State->m_uARPTimeBeats;
+	bool sync = static_cast<bool>(*myProcessor->m_pVASTXperience.m_Set.m_State->m_bARPSynch);
+	int beats = static_cast<int>(*myProcessor->m_pVASTXperience.m_Set.m_State->m_uARPTimeBeats);
 	float speed = *myProcessor->m_pVASTXperience.m_Set.m_State->m_fARPSpeed;
 	float lIntervalTime = speed / 1000.f;
 	float displayPeriod = myData->getNumSteps() * lIntervalTime;
 	if (sync) {
-		lIntervalTime = myProcessor->m_pVASTXperience.m_Set.getIntervalTimeFromDAWBeats(beats) / 1000.f;
-		displayPeriod = myData->getNumSteps() * myProcessor->m_pVASTXperience.m_Set.getIntervalRatio(beats) * lIntervalTime;
+		lIntervalTime = float(myProcessor->m_pVASTXperience.m_Set.getIntervalTimeFromDAWBeats(beats)) / 1000.f;
+		displayPeriod = myData->getNumSteps() * float(myProcessor->m_pVASTXperience.m_Set.getIntervalRatio(beats)) * lIntervalTime;
 	}
 	float beatsPerDisplay = displayPeriod / lIntervalTime;
 
-	int fontHeight = myFont.getHeightInPoints();
+	int fontHeight = static_cast<int>(myFont.getHeightInPoints());
 	g.setColour(myProcessor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colLabelText));
 	if (sync)
 		g.drawText(String(int(beatsPerDisplay + 0.5f)) + " beats", juce::Rectangle<int>(waveformImage.getWidth() * 0.8f, waveformImage.getHeight() - fontHeight - 2.f, waveformImage.getWidth() * 0.2f - m_xbounds, fontHeight + 2.f), Justification::centredRight, false);
@@ -197,7 +198,7 @@ void VASTARPEditor::mouseDown(const MouseEvent & e)
 	repaint();
 }
 
-void VASTARPEditor::mouseUp(const MouseEvent & e) {
+void VASTARPEditor::mouseUp(const MouseEvent &) {
 	m_isDragged = -1;
 }
 
@@ -233,7 +234,6 @@ void VASTARPEditor::mouseMove(const MouseEvent& e) {
 	updateContent(true);
 
 	int numSteps = myData->getNumSteps();
-	float mouseY = e.getMouseDownY();
 	float mouseX = e.getMouseDownX();
 	m_mouseOverStep = ((mouseX - m_xbounds / m_screenWidthScale) / (m_drawwidth / m_screenWidthScale)) * float(numSteps);
 	for (int step = 0; step < numSteps; step++) {
@@ -248,7 +248,7 @@ void VASTARPEditor::mouseMove(const MouseEvent& e) {
 	repaint();
 }
 
-void VASTARPEditor::mouseExit(const MouseEvent& e) {
+void VASTARPEditor::mouseExit(const MouseEvent& ) {
 	updateContent(true);
 }
 
@@ -268,7 +268,14 @@ void VASTARPEditor::timerCallback() {
 		updateContent(false);
 }
 
-void VASTARPEditor::filesDropped(const StringArray& files, int x, int y) {
+inline bool VASTARPEditor::isInterestedInFileDrag(const StringArray& files) {
+	for (int i = 0; i < files.size(); i++) {
+		if (files[i].endsWithIgnoreCase(".mid")) return true;
+	}
+	return false;
+}
+
+void VASTARPEditor::filesDropped(const StringArray& files, int, int) {
 	String file = files[0];
 	File midiFile = File(file);
 	std::unique_ptr<FileInputStream> midiFileInputStream;
@@ -296,7 +303,6 @@ void VASTARPEditor::filesDropped(const StringArray& files, int x, int y) {
 		}
 		
 		if (bHasNotes) {
-			int arpNotes = numEvents;
 			int arpNoteReal = -1;
 			
 			//clear??
@@ -314,7 +320,7 @@ void VASTARPEditor::filesDropped(const StringArray& files, int x, int y) {
 						int octaves = semitones / 12;
 						semitones = semitones % 12;
 						int velocity = m.getVelocity();
-						DBG("Track " + String(track) + " Midinote: " + String(m.getNoteNumber()) + " Duration: " + String(duration) + " Velocity: " + String(m.getVelocity()));
+						VDBG("Track " << track << " Midinote: " << m.getNoteNumber() << " Duration: " << duration << " Velocity: " << m.getVelocity());
 						//} else if (m.isNoteOn()) {
 		//					//l_lastNoteOn = m.getTempoSecondsPerQuarterNote();
 

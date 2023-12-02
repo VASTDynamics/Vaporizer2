@@ -169,7 +169,7 @@ void VASTManualRenameEditor::buttonClicked (juce::Button* buttonThatWasClicked)
 			lElem.internalid = newfilename;
 			myProcessor->m_presetData.exchangeCurPatchData(lElem);
 			myProcessor->savePatchXML(&presetFile);
-			bool success = presetFile.moveFileTo(newfilename);
+			bool UNUSED(success) = presetFile.moveFileTo(newfilename);
 			mPresetComponent->reloadPresets();
 		}
 		getParentComponent()->exitModalState(0);
@@ -217,6 +217,14 @@ void VASTManualRenameEditor::textEditorEscapeKeyPressed(TextEditor& textEditorTh
 	{
 		c_Cancel->triggerClick();
 	}
+}
+void VASTManualRenameEditor::setName(String text) {
+    c_textEditor->setText(text, NotificationType::sendNotification);
+    c_textEditor->applyFontToAllText(((VASTLookAndFeel*)&getLookAndFeel())->getTextEditorFont(*c_textEditor));
+    c_textEditor->selectAll();
+}
+void VASTManualRenameEditor::setCategory(String text) {
+    c_presetCategoryCombo->setText(text, NotificationType::sendNotification);
 }
 //[/MiscUserCode]
 

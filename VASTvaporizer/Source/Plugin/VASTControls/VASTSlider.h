@@ -18,11 +18,7 @@ public:
 	VASTAudioProcessorEditor* getEditor();
 	void setAudioProcessor(VASTAudioProcessor &processor);
 	VASTAudioProcessor* getAudioProcessor();
-	void setDefaultValue(float defaultVal) {
-		hasDefaultValue = true;
-		mDefaultVal = defaultVal;
-		setDoubleClickReturnValue(true, mDefaultVal);
-	}
+	void setDefaultValue(float defaultVal);
 
 private:
 	VASTPopupHandler vastPopupHandler;

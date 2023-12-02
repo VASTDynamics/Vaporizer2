@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="wPTx8T" name="VASTvaporizer2" projectType="audioplug" version="3.3.0"
+<JUCERPROJECT id="wPTx8T" name="VASTvaporizer2" projectType="audioplug" version="3.3.5"
               bundleIdentifier="com.vastdynamics.VAST2" includeBinaryInAppConfig="1"
               buildVST="0" buildVST3="1" buildAU="1" buildRTAS="0" buildAAX="1"
               pluginName="Vaporizer2" pluginDesc="VAST Dynamics Vaporizer2 Hybrid Synthesizer Plug-in"
@@ -12,11 +12,13 @@
               companyEmail="contact@vast-dynamics.com" pluginIsMidiEffectPlugin="0"
               buildAUv3="0" displaySplashScreen="0" reportAppUsage="0" splashScreenColour="Dark"
               buildStandalone="1" enableIAA="0" cppLanguageStandard="latest"
-              companyCopyright="VAST Dynamics" headerPath="..\..\Source\Engine; ..\..\Source\Plugin; ..\..\Source; ..\..\Source\muFFT"
+              companyCopyright="VAST Dynamics" headerPath=".;Engine;Plugin;muFFT;AnaMark-Tuning-Library;../../../asiosdk/common"
               pluginFormats="buildAAX,buildAU,buildLV2,buildStandalone,buildVST3"
               pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn"
               pluginAUMainType="'aumu'" pluginChannelConfigs="{2,2}" maxBinaryFileSize="20971520"
-              jucerFormatVersion="1" lv2Uri="https://www.vast-dynamics.com/plugins/VASTvaporizer2">
+              jucerFormatVersion="1" lv2Uri="https://www.vast-dynamics.com/plugins/VASTvaporizer2"
+              userNotes="..\..\Source; ..\..\Source\Engine; ..\..\Source\Plugin; ..\..\Source; ..\..\Source\muFFT; ..\..\Source\AnaMark-Tuning-Library; ..\..\..\asiosdk\common"
+              pluginAAXCategory="0">
   <MAINGROUP id="xqLnpn" name="VASTvaporizer2">
     <GROUP id="{1D7203A2-55A5-B073-6013-4046AC173451}" name="AnaMark-Tuning-Library">
       <FILE id="cy1eIQ" name="LICENSE.md" compile="0" resource="1" file="Source/AnaMark-Tuning-Library/LICENSE.md"/>
@@ -113,7 +115,7 @@
       </GROUP>
       <GROUP id="{7111349C-415B-B572-4908-8843261E4386}" name="FX">
         <GROUP id="{1A0EC0B3-9169-7D0E-95D8-F40B4494E90A}" name="FXUtils">
-          <FILE id="AlF1mf" name="STFT.h" compile="0" resource="0" file="Source/Engine/FX/FXUtils/STFT.h"/>
+          <FILE id="aZHhGb" name="STFT.h" compile="0" resource="0" file="Source/Engine/FX/FXUtils/STFT.h"/>
           <FILE id="IVTHJ5" name="VASTDDLModule.cpp" compile="1" resource="0"
                 file="Source/Engine/FX/FXUtils/VASTDDLModule.cpp"/>
           <FILE id="adsEb0" name="VASTDDLModule.h" compile="0" resource="0" file="Source/Engine/FX/FXUtils/VASTDDLModule.h"/>
@@ -220,10 +222,6 @@
               file="Source/Engine/Utils/VASTFFTSingletonFactory.cpp"/>
         <FILE id="fL4jze" name="VASTFFTSingletonFactory.h" compile="0" resource="0"
               file="Source/Engine/Utils/VASTFFTSingletonFactory.h"/>
-        <FILE id="Nygpge" name="VASTFloatVectorOperations.cpp" compile="1"
-              resource="0" file="Source/Engine/Utils/VASTFloatVectorOperations.cpp"/>
-        <FILE id="opQOaA" name="VASTFloatVectorOperations.h" compile="0" resource="0"
-              file="Source/Engine/Utils/VASTFloatVectorOperations.h"/>
         <FILE id="PSRNvb" name="VASTLookuptables.h" compile="0" resource="0"
               file="Source/Engine/Utils/VASTLookuptables.h"/>
         <FILE id="d7Q6Vd" name="VASTSSEHelper.h" compile="0" resource="0" file="Source/Engine/Utils/VASTSSEHelper.h"/>
@@ -623,93 +621,97 @@
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
-    <XCODE_MAC targetFolder="Builds/MacOSX" vstFolder="/SDKs/VST3-SDK" extraCompilerFlags="-W2"
-               iosDevelopmentTeamID="PK93HYD6ZN" smallIcon="A2sWSy" bigIcon="A2sWSy"
-               hardenedRuntime="1" extraDefs="JUCE_DISABLE_CAUTIOUS_PARAMETER_ID_CHECKING">
+    <XCODE_MAC targetFolder="Builds/MacOSX" vstFolder="/SDKs/VST3-SDK" iosDevelopmentTeamID="PK93HYD6ZN"
+               smallIcon="A2sWSy" bigIcon="A2sWSy" hardenedRuntime="1" extraDefs=" JUCE_SILENCE_XCODE_15_LINKER_WARNING "
+               xcodeValidArchs="i386,x86_64" extraLinkerFlags="-ld_classic -L../../../fftw-3.3.10/lib"
+               userNotes="JUCE_DISABLE_CAUTIOUS_PARAMETER_ID_CHECKING" externalLibraries="fftw3f_x64">
       <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" osxCompatibility="10.6 SDK" isDebug="1" optimisation="1"
+        <CONFIGURATION name="Debug" osxCompatibility="10.13 SDK" isDebug="1" optimisation="1"
                        targetName="VASTvaporizer2_dbg" defines="_MACOSX _MACOSX64BIT SSE_AVX=AVX "
                        enablePluginBinaryCopyStep="1" vstBinaryLocation="/Library/Audio/Plug-Ins/VST/"
                        auBinaryLocation="/Library/Audio/Plug-Ins/Components/" customXcodeFlags="VALID_ARCHS = &quot;x86_64&quot;,  CLANG_X86_VECTOR_INSTRUCTIONS=avx"
                        vst3BinaryLocation="/Library/Audio/Plug-Ins/VST3/" osxArchitecture="64BitIntel"
-                       fastMath="1" macOSDeploymentTarget="10.6"/>
+                       fastMath="1" macOSDeploymentTarget="10.13" lv2BinaryLocation="/Library/Audio/Plug-Ins/LV2/"
+                       aaxBinaryLocation="/Library/Application Support/Avid/Audio/Plug-Ins/"/>
         <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="VASTvaporizer2"
                        linkTimeOptimisation="1" defines="_MACOSX _MACOSX32BIT NDEBUG  SSE_AVX=AVX "
                        enablePluginBinaryCopyStep="1" osxArchitecture="32BitUniversal"
                        vstBinaryLocation="/Library/Audio/Plug-Ins/VST/" auBinaryLocation="/Library/Audio/Plug-Ins/Components/"
                        customXcodeFlags="VALID_ARCHS = &quot;x86_64&quot;,  CLANG_X86_VECTOR_INSTRUCTIONS=avx"
-                       vst3BinaryLocation="/Library/Audio/Plug-Ins/VST3/" fastMath="1"/>
-        <CONFIGURATION name="Release 64bit" isDebug="0" optimisation="3" targetName="VASTvaporizer2_64"
+                       vst3BinaryLocation="/Library/Audio/Plug-Ins/VST3/" fastMath="1"
+                       stripLocalSymbols="1" lv2BinaryLocation="/Library/Audio/Plug-Ins/LV2/"
+                       aaxBinaryLocation="/Library/Application Support/Avid/Audio/Plug-Ins/"/>
+        <CONFIGURATION name="Release 64bit" isDebug="0" optimisation="3" targetName="VASTvaporizer2"
                        linkTimeOptimisation="1" defines="_MACOSX _MACOSX64BIT NDEBUG  SSE_AVX=AVX"
                        enablePluginBinaryCopyStep="1" vstBinaryLocation="/Library/Audio/Plug-Ins/VST/"
-                       auBinaryLocation="/Library/Audio/Plug-Ins/Components/" headerPath="/Users/setup/Library/Developer/VST/VST_SDK/VST2_SDK"
-                       customXcodeFlags="VALID_ARCHS = &quot;x86_64&quot;,  CLANG_X86_VECTOR_INSTRUCTIONS=avx"
+                       auBinaryLocation="/Library/Audio/Plug-Ins/Components/" customXcodeFlags="VALID_ARCHS = &quot;x86_64&quot;,  CLANG_X86_VECTOR_INSTRUCTIONS=avx"
                        vst3BinaryLocation="/Library/Audio/Plug-Ins/VST3/" fastMath="1"
-                       stripLocalSymbols="1" aaxBinaryLocation="/Library/Application Support/Avid/Audio/Plug-Ins/"/>
+                       stripLocalSymbols="1" aaxBinaryLocation="/Library/Application Support/Avid/Audio/Plug-Ins/"
+                       osxArchitecture="64BitIntel" lv2BinaryLocation="/Library/Audio/Plug-Ins/LV2/"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_gui_extra" path="/Users/d026198/Desktop/JUCE-OSX/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="/Users/d026198/Desktop/JUCE-OSX/modules"/>
-        <MODULEPATH id="juce_graphics" path="/Users/d026198/Desktop/JUCE-OSX/modules"/>
-        <MODULEPATH id="juce_events" path="/Users/d026198/Desktop/JUCE-OSX/modules"/>
-        <MODULEPATH id="juce_data_structures" path="/Users/d026198/Desktop/JUCE-OSX/modules"/>
-        <MODULEPATH id="juce_cryptography" path="/Users/d026198/Desktop/JUCE-OSX/modules"/>
-        <MODULEPATH id="juce_core" path="/Users/d026198/Desktop/JUCE-OSX/modules"/>
-        <MODULEPATH id="juce_audio_utils" path="/Users/d026198/Desktop/JUCE-OSX/modules"/>
-        <MODULEPATH id="juce_audio_processors" path="/Users/d026198/Desktop/JUCE-OSX/modules"/>
-        <MODULEPATH id="juce_audio_plugin_client" path="/Users/d026198/Desktop/JUCE-OSX/modules"/>
-        <MODULEPATH id="juce_audio_formats" path="/Users/d026198/Desktop/JUCE-OSX/modules"/>
-        <MODULEPATH id="juce_audio_devices" path="/Users/d026198/Desktop/JUCE-OSX/modules"/>
-        <MODULEPATH id="juce_audio_basics" path="/Users/d026198/Desktop/JUCE-OSX/modules"/>
-        <MODULEPATH id="juce_dsp" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_opengl" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
     <XCODE_MAC targetFolder="Builds/MacOSX_SSE" smallIcon="A2sWSy" bigIcon="A2sWSy"
-               iosDevelopmentTeamID="PK93HYD6ZN" extraCompilerFlags="-W2" hardenedRuntime="1"
-               extraDefs="JUCE_DISABLE_CAUTIOUS_PARAMETER_ID_CHECKING">
+               iosDevelopmentTeamID="PK93HYD6ZN" hardenedRuntime="1" extraDefs=" JUCE_SILENCE_XCODE_15_LINKER_WARNING "
+               userNotes="This is the universal binary build also supporting arm64 silicon on Neon."
+               extraLinkerFlags="-ld_classic -L../../../fftw-3.3.10/lib" externalLibraries="fftw3f_universal">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="0" name="Release 64bit SSE3" targetName="VASTvaporizer2_64_SSE"
-                       headerPath="/Users/setup/Library/Developer/VST/VST_SDK/VST2_SDK"
+        <CONFIGURATION isDebug="0" name="Release 64bit SSE3" targetName="VASTvaporizer2"
                        defines="_MACOSX _MACOSX64BIT NDEBUG  SSE_AVX=SSE2 _SSE2_VERSION "
                        vst3BinaryLocation="/Library/Audio/Plug-Ins/VST3/" auBinaryLocation="/Library/Audio/Plug-Ins/Components/"
                        vstBinaryLocation="/Library/Audio/Plug-Ins/VST/" optimisation="3"
-                       customXcodeFlags="VALID_ARCHS = &quot;x86_64&quot;, CLANG_X86_VECTOR_INSTRUCTIONS=sse3"
-                       osxArchitecture="64BitIntel" fastMath="1" stripLocalSymbols="1"/>
+                       customXcodeFlags="VALID_ARCHS = &quot;x86_64 arm64&quot;, CLANG_X86_VECTOR_INSTRUCTIONS=sse3"
+                       fastMath="1" stripLocalSymbols="1" userNotes="This is the universal binary build also supporting arm64 silicon on Neon."
+                       lv2BinaryLocation="/Library/Audio/Plug-Ins/LV2/" aaxBinaryLocation="/Library/Application Support/Avid/Audio/Plug-Ins/"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_gui_extra"/>
-        <MODULEPATH id="juce_gui_basics"/>
-        <MODULEPATH id="juce_graphics"/>
-        <MODULEPATH id="juce_events"/>
-        <MODULEPATH id="juce_dsp"/>
-        <MODULEPATH id="juce_data_structures"/>
-        <MODULEPATH id="juce_cryptography"/>
-        <MODULEPATH id="juce_core"/>
-        <MODULEPATH id="juce_audio_utils"/>
-        <MODULEPATH id="juce_audio_processors"/>
-        <MODULEPATH id="juce_audio_plugin_client"/>
-        <MODULEPATH id="juce_audio_formats"/>
-        <MODULEPATH id="juce_audio_devices"/>
-        <MODULEPATH id="juce_audio_basics"/>
-        <MODULEPATH id="juce_opengl" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
-    <VS2019 targetFolder="Builds/VisualStudio2019" extraCompilerFlags="-W3 /arch:${SSE_AVX} /Qvec-report:1 /permissive- /I&quot;C:\Vaporizer2\asiosdk\common&quot; "
-            extraLinkerFlags="/LTCG /NXCOMPAT:NO" smallIcon="A2sWSy" bigIcon="A2sWSy"
-            extraDefs="JUCE_DISABLE_CAUTIOUS_PARAMETER_ID_CHECKING">
+    <VS2019 targetFolder="Builds/VisualStudio2019" extraCompilerFlags="/arch:${SSE_AVX} /Qvec-report:1 /permissive- /I&quot;C:\Vaporizer2\asiosdk\common&quot; "
+            extraLinkerFlags="/LTCG /NXCOMPAT:NO" smallIcon="A2sWSy" bigIcon="A2sWSy">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug FLStudio 64bit" targetName="VASTvaporizer2_64_dbg"
+        <CONFIGURATION isDebug="1" name="Debug FLStudio 64bit" targetName="VASTvaporizer2_dbg"
                        defines="_WIN64 _WIN64BIT SSE_AVX=AVX" linkTimeOptimisation="0"
                        enablePluginBinaryCopyStep="1" vstBinaryLocation="%ProgramW6432%\Steinberg\VSTPlugins\VASTvaporizer"
                        winArchitecture="x64" debugInformationFormat="ProgramDatabase"
                        fastMath="1" optimisation="1" useRuntimeLibDLL="0" generateManifest="1"/>
-        <CONFIGURATION isDebug="0" name="Release Optimized 64bit" targetName="VASTvaporizer2_64"
+        <CONFIGURATION isDebug="0" name="Release Optimized 64bit" targetName="VASTvaporizer2"
                        defines="_WIN64 _WIN64BIT NDEBUG SSE_AVX=AVX " linkTimeOptimisation="1"
                        enablePluginBinaryCopyStep="1" vstBinaryLocation="%ProgramW6432%\Steinberg\VSTPlugins\Vaporizer2"
                        winArchitecture="x64" fastMath="1" useRuntimeLibDLL="0" generateManifest="1"
                        winWarningLevel="4" optimisation="4"/>
-        <CONFIGURATION isDebug="0" name="Release Optimized 64bit SSE2" targetName="VASTvaporizer2_64_SSE2"
+        <CONFIGURATION isDebug="0" name="Release Optimized 64bit SSE2" targetName="VASTvaporizer2"
                        defines="_WIN64 _WIN64BIT NDEBUG SSE_AVX=SSE2 _SSE2_VERSION"
                        linkTimeOptimisation="1" enablePluginBinaryCopyStep="1" vstBinaryLocation="%ProgramW6432%\Steinberg\VSTPlugins\Vaporizer2"
                        winArchitecture="x64" fastMath="1" useRuntimeLibDLL="0" generateManifest="1"
@@ -719,72 +721,75 @@
                        enablePluginBinaryCopyStep="1" vstBinaryLocation="%ProgramW6432%\Steinberg\VSTPlugins\Vaporizer2"
                        winArchitecture="Win32" fastMath="1" useRuntimeLibDLL="0" generateManifest="1"
                        optimisation="4" winWarningLevel="2"/>
-        <CONFIGURATION isDebug="0" name="Release Optimized 32bit SSE2" targetName="VASTvaporizer2_SSE2"
+        <CONFIGURATION isDebug="0" name="Release Optimized 32bit SSE2" targetName="VASTvaporizer2"
                        defines="_WIN32 _WIN32BIT NDEBUG SSE_AVX=SSE2 _SSE2_VERSION"
                        linkTimeOptimisation="1" enablePluginBinaryCopyStep="1" vstBinaryLocation="%ProgramW6432%\Steinberg\VSTPlugins\Vaporizer2"
                        winArchitecture="Win32" fastMath="1" useRuntimeLibDLL="0" generateManifest="1"
                        optimisation="4" winWarningLevel="2"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_opengl"/>
-        <MODULEPATH id="juce_gui_extra"/>
-        <MODULEPATH id="juce_gui_basics"/>
-        <MODULEPATH id="juce_graphics"/>
-        <MODULEPATH id="juce_events"/>
-        <MODULEPATH id="juce_dsp"/>
-        <MODULEPATH id="juce_data_structures"/>
-        <MODULEPATH id="juce_cryptography"/>
-        <MODULEPATH id="juce_core"/>
-        <MODULEPATH id="juce_audio_utils"/>
-        <MODULEPATH id="juce_audio_processors"/>
-        <MODULEPATH id="juce_audio_plugin_client"/>
-        <MODULEPATH id="juce_audio_formats"/>
-        <MODULEPATH id="juce_audio_devices"/>
-        <MODULEPATH id="juce_audio_basics"/>
+        <MODULEPATH id="juce_opengl" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../JUCE/modules"/>
       </MODULEPATHS>
     </VS2019>
-    <LINUX_MAKE targetFolder="Builds/LinuxMakefile" externalLibraries="atomic">
+    <LINUX_MAKE targetFolder="Builds/LinuxMakefile" externalLibraries="atomic"
+                smallIcon="A2sWSy" bigIcon="A2sWSy">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" enablePluginBinaryCopyStep="0"/>
-        <CONFIGURATION isDebug="0" name="Release" extraLinkerFlags="-latomic&#10;-fdata-sections -ffunction-sections -Wl,--gc-sections -Wl,-O1 -Wl,--as-needed -Wl,--strip-all"
-                       extraCompilerFlags="-fvisibility=hidden" enablePluginBinaryCopyStep="0"/>
+        <CONFIGURATION isDebug="1" name="Debug" enablePluginBinaryCopyStep="0" defines="_LINUX _LINUX64BIT SSE_AVX=AVX"
+                       targetName="VASTvaporizer2"/>
+        <CONFIGURATION isDebug="0" name="Release" extraLinkerFlags="-fdata-sections -ffunction-sections -Wl,--gc-sections -Wl,-O1 -Wl,--as-needed -Wl,--strip-all"
+                       extraCompilerFlags="-fvisibility=hidden" enablePluginBinaryCopyStep="0"
+                       defines="_LINUX _LINUX64BIT NDEBUG SSE_AVX=AVX" targetName="VASTvaporizer2"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_audio_basics" path="../../juce"/>
-        <MODULEPATH id="juce_audio_devices" path="../../juce"/>
-        <MODULEPATH id="juce_audio_formats" path="../../juce"/>
-        <MODULEPATH id="juce_audio_plugin_client" path="../../juce"/>
-        <MODULEPATH id="juce_audio_processors" path="../../juce"/>
-        <MODULEPATH id="juce_audio_utils" path="../../juce"/>
-        <MODULEPATH id="juce_core" path="../../juce"/>
-        <MODULEPATH id="juce_cryptography" path="../../juce"/>
-        <MODULEPATH id="juce_data_structures" path="../../juce"/>
-        <MODULEPATH id="juce_dsp" path="../../juce"/>
-        <MODULEPATH id="juce_events" path="../../juce"/>
-        <MODULEPATH id="juce_graphics" path="../../juce"/>
-        <MODULEPATH id="juce_gui_basics" path="../../juce"/>
-        <MODULEPATH id="juce_gui_extra" path="../../juce"/>
-        <MODULEPATH id="juce_opengl" path="../../juce"/>
+        <MODULEPATH id="juce_audio_basics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../JUCE/modules"/>
       </MODULEPATHS>
     </LINUX_MAKE>
   </EXPORTFORMATS>
   <MODULES>
-    <MODULES id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
-    <MODULES id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
-    <MODULES id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULES id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULES id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULES id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULES id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="0"
-             useGlobalPath="1"/>
-    <MODULES id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
-    <MODULES id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
-    <MODULES id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
-    <MODULES id="juce_cryptography" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
-    <MODULES id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
-    <MODULE id="juce_dsp" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
-    <MODULES id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
-    <MODULES id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
-    <MODULES id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
-    <MODULES id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
-    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+             useGlobalPath="0"/>
+    <MODULES id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULES id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULES id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULES id="juce_cryptography" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULES id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_dsp" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULES id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULES id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULES id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULES id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
   </MODULES>
   <JUCEOPTIONS DROWAUDIO_USE_FFTREAL="disabled" DROWAUDIO_USE_SOUNDTOUCH="disabled"
                DROWAUDIO_USE_CURL="disabled" JUCE_WEB_BROWSER="0" JUCE_PLUGINHOST_AU="0"

@@ -26,7 +26,7 @@ CVASTCompressorExpander::CVASTCompressorExpander(VASTAudioProcessor* processor, 
 void CVASTCompressorExpander::initParameters() {
 	AudioProcessorValueTreeState& parameters = my_processor->getParameterTree();
 
-	createAndAddParameter(&m_bLimiterOffOn, parameters, "m_bLimiterOffOn", "Limiter on / off", "On", 0,
+	createAndAddParameter(&m_bLimiterOffOn, parameters, 1, "m_bLimiterOffOn", "Limiter on / off", "On", 0,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		CVASTParamState::toggleButtonValueToTextFunction,
@@ -34,46 +34,46 @@ void CVASTCompressorExpander::initParameters() {
 		false, true, true, true,
 		true);
 
-	createAndAddParameter(&m_fLimiterDryWet, parameters, "m_fLimiterDryWet", "Limiter dry / wet (no effect - full effect)", "DryWet", 1,
+	createAndAddParameter(&m_fLimiterDryWet, parameters, 1, "m_fLimiterDryWet", "Limiter dry / wet (no effect - full effect)", "DryWet", 1,
 		MODMATDEST::LimiterDryWet,
 		NormalisableRange<float>(0, 100), 100,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_uLimiterMode, parameters, "m_uLimiterMode", "Limiter mode", "Mode", 2,
+	createAndAddParameter(&m_uLimiterMode, parameters, 1, "m_uLimiterMode", "Limiter mode", "Mode", 2,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		[](float value) { return StringArray("Limiter", "Noise gate")[int(value)]; },
 		[](String text) { return StringArray("Limiter", "Noise gate").indexOf(StringRef(text), true); },
 		false, true, true, false);
-	createAndAddParameter(&m_fLimiterThreshold, parameters, "m_fLimiterThreshold", "Limiter threshold (dB)", "Threshold", 3,
+	createAndAddParameter(&m_fLimiterThreshold, parameters, 1, "m_fLimiterThreshold", "Limiter threshold (dB)", "Threshold", 3,
 		MODMATDEST::LimiterThreshold,
 		NormalisableRange<float>(-60.0f, 0.0f), -24.0f, 
 		[](float value) {return String(value) + " dB" ; },
 		[](String text) {return text.dropLastCharacters(3).getFloatValue(); },
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fLimiterRatio, parameters, "m_fLimiterRatio", "Limiter ratio", "Ratio :1", 4,
+	createAndAddParameter(&m_fLimiterRatio, parameters, 1, "m_fLimiterRatio", "Limiter ratio", "Ratio :1", 4,
 		MODMATDEST::LimiterRatio,
 		NormalisableRange<float>(1.0f, 100.0f), 50.0f, 
 		[](float value) {return ":" + String(value); },
 		[](String text) {return text.substring(1).getFloatValue(); },
 		false, true, false, false, 
 		true);
-	createAndAddParameter(&m_fLimiterAttack, parameters, "m_fLimiterAttack", "Limiter attack (ms)", "Attack", 5,
+	createAndAddParameter(&m_fLimiterAttack, parameters, 1, "m_fLimiterAttack", "Limiter attack (ms)", "Attack", 5,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.1f, 100.0f), 2.0f, 
 		[](float value) {return String(value) + " ms"; },
 		[](String text) {return text.dropLastCharacters(3).getFloatValue(); }, 
 		false, true, false, false);
-	createAndAddParameter(&m_fLimiterRelease, parameters, "m_fLimiterRelease", "Limiter release (ms)", "Release", 6,
+	createAndAddParameter(&m_fLimiterRelease, parameters, 1, "m_fLimiterRelease", "Limiter release (ms)", "Release", 6,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(10.0f, 1000.0f), 300.0f, 
 		[](float value) {return String(value) + " ms"; },
 		[](String text) {return text.dropLastCharacters(3).getFloatValue(); },
 		false, true, false, false);
-	createAndAddParameter(&m_fLimiterMakeupGain, parameters, "m_fLimiterMakeupGain", "Limiter makeup gain (dB)", "Gain", 7,
+	createAndAddParameter(&m_fLimiterMakeupGain, parameters, 1, "m_fLimiterMakeupGain", "Limiter makeup gain (dB)", "Gain", 7,
 		MODMATDEST::LimiterGain,
 		NormalisableRange<float>(-12.0f, 12.0f), 0.0f, 
 		[](float value) {return String(value) + " dB"; },
@@ -96,24 +96,24 @@ CVASTCompressorExpander::~CVASTCompressorExpander() {
 
 void CVASTCompressorExpander::parameterChanged(const String& parameterID, float newValue) {
 	if (parameterID.startsWith("m_bLimiterOffOn")) {
-		if (newValue == SWITCH::SWITCH_ON)
+		if (newValue == static_cast<int>(SWITCH::SWITCH_ON))
 			switchOn();
 		else
 			switchOff();
 	}
 
 	else if (parameterID.startsWith("m_fLimiterDryWet")) {
-		m_fLimiterDryWet_smoothed.setValue(newValue);
+		m_fLimiterDryWet_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fLimiterThreshold")) {
-		m_fLimiterThreshold_smoothed.setValue(newValue);
+		m_fLimiterThreshold_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fLimiterMakeupGain")) {
-		m_fLimiterGain_smoothed.setValue(newValue);
+		m_fLimiterGain_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fLimiterRatio")) {
-		m_fLimiterRatio_smoothed.setValue(newValue);
-	}		
+		m_fLimiterRatio_smoothed.setTargetValue(newValue);
+	}
 }
 
 void CVASTCompressorExpander::init(CVASTSettings &set) {
@@ -132,7 +132,7 @@ void CVASTCompressorExpander::reset() {
 
 //==============================================================================
 
-void CVASTCompressorExpander::prepareToPlay (double sampleRate, int samplesPerBlock) {
+void CVASTCompressorExpander::prepareToPlay (double , int samplesPerBlock) {
 	//m_iSampleRate is set in useoversampling
 	m_iExpectedSamplesPerBlock = samplesPerBlock;
 
@@ -163,14 +163,14 @@ void CVASTCompressorExpander::prepareToPlay (double sampleRate, int samplesPerBl
 	ylPrev[1] = 0.0f;
 
     inverseSampleRate = 1.0f / (float)m_iSampleRate;
-    inverseE = 1.0f / M_E;
+    inverseE = 1.0f / float(M_E);
 }
 
 void CVASTCompressorExpander::releaseResources()
 {
 }
 
-void CVASTCompressorExpander::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages, const int numSamples) {
+void CVASTCompressorExpander::processBlock (AudioSampleBuffer& buffer, MidiBuffer& , const int numSamples) {
 	if (isOffAndShallBeOff() == true) return;
 
  	ScopedNoDenormals noDenormals;
@@ -190,16 +190,16 @@ void CVASTCompressorExpander::processBlock (AudioSampleBuffer& buffer, MidiBuffe
 		checkSoftFade();
 
 		inputState.currentFrame = sample;
-		m_fLimiterDryWet_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fLimiterDryWet, MODMATDEST::LimiterDryWet, &inputState));
+		m_fLimiterDryWet_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fLimiterDryWet, MODMATDEST::LimiterDryWet, &inputState));
 		float lLimiterDryWet = m_fLimiterDryWet_smoothed.getNextValue();
 
-		m_fLimiterThreshold_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fLimiterThreshold, MODMATDEST::LimiterThreshold, &inputState));
+		m_fLimiterThreshold_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fLimiterThreshold, MODMATDEST::LimiterThreshold, &inputState));
 		float T = m_fLimiterThreshold_smoothed.getNextValue();
 
-		m_fLimiterRatio_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fLimiterRatio, MODMATDEST::LimiterRatio, &inputState));
+		m_fLimiterRatio_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fLimiterRatio, MODMATDEST::LimiterRatio, &inputState));
 		float R = m_fLimiterRatio_smoothed.getNextValue();
 
-		m_fLimiterGain_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fLimiterMakeupGain, MODMATDEST::LimiterGain, &inputState));
+		m_fLimiterGain_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fLimiterMakeupGain, MODMATDEST::LimiterGain, &inputState));
 		float lLimiterGain = m_fLimiterGain_smoothed.getNextValue();
 		
 		float inputSquared_left = powf(bufferWritePointerL[sample], 2.0f);
@@ -299,15 +299,15 @@ float CVASTCompressorExpander::calculateAttackOrRelease (float value)
 
 //==============================================================================
 
-void CVASTCompressorExpander::getStateInformation (MemoryBlock& destData)
+void CVASTCompressorExpander::getStateInformation (MemoryBlock& )
 {
-    //ScopedPointer<XmlElement> xml (parameters.valueTreeState.state.createXml());
+    //std::unique_ptr<XmlElement> xml (parameters.valueTreeState.state.createXml());
     //copyXmlToBinary (*xml, destData);
 }
 
-void CVASTCompressorExpander::setStateInformation (const void* data, int sizeInBytes)
+void CVASTCompressorExpander::setStateInformation (const void* , int )
 {
-    //ScopedPointer<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
+    //std::unique_ptr<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
     //if (xmlState != nullptr)
       //  if (xmlState->hasTagName (parameters.valueTreeState.state.getType()))
         //    parameters.valueTreeState.state = ValueTree::fromXml (*xmlState);

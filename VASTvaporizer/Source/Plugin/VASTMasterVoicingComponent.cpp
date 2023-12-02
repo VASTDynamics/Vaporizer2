@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 6.1.2
+  Created with Projucer version: 7.0.7
 
   ------------------------------------------------------------------------------
 
@@ -239,7 +239,7 @@ VASTMasterVoicingComponent::VASTMasterVoicingComponent (AudioProcessorEditor *ed
 	//c_underruns->setOpaque(true);
 	c_voices->setOpaque(true);
 
-	//oscilloscopeOLG2D->start();
+    oscilloscopeOLG2D->setVisible(false); //make visible after initAll()
 	oscilloscopeOLG2D->setOpaque(true);
 
 	//debug controls
@@ -272,6 +272,9 @@ VASTMasterVoicingComponent::VASTMasterVoicingComponent (AudioProcessorEditor *ed
 		}
 	}
 	setOpaque(true);
+    m_initDone = false;
+    
+    return; //dont call setSize
     //[/UserPreSize]
 
     setSize (668, 76);
@@ -317,12 +320,13 @@ VASTMasterVoicingComponent::~VASTMasterVoicingComponent()
 void VASTMasterVoicingComponent::paint (juce::Graphics& g)
 {
     //[UserPrePaint] Add your own custom painting code here..
+    if (m_initDone) {
 #if defined JUCE_LINUX
-    oscilloscopeOLG2D->setVisible(false);
+        oscilloscopeOLG2D->setVisible(false);
 #else
-    oscilloscopeOLG2D->setVisible(!myProcessor->m_disableOpenGLGFX);
+        oscilloscopeOLG2D->setVisible(!myProcessor->m_disableOpenGLGFX);
 #endif
-
+    }
     //[/UserPrePaint]
 
     g.fillAll (juce::Colour (0xff0b0b0b));
@@ -494,6 +498,11 @@ Label* VASTMasterVoicingComponent::getComponentCUnderruns() {
 
 Label* VASTMasterVoicingComponent::getComponentCVoices() {
 	return c_voices.get();
+}
+
+void VASTMasterVoicingComponent::initAll()
+{
+    m_initDone = true;
 }
 //[/MiscUserCode]
 

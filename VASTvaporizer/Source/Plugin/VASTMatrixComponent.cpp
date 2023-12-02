@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 6.1.2
+  Created with Projucer version: 7.0.7
 
   ------------------------------------------------------------------------------
 
@@ -97,6 +97,8 @@ VASTMatrixComponent::VASTMatrixComponent (AudioProcessorEditor *editor, AudioPro
 
     //[UserPreSize]
 	setOpaque(true);
+    
+    return; //dont call setSize
     //[/UserPreSize]
 
     setSize (800, 575);
@@ -109,7 +111,7 @@ VASTMatrixComponent::VASTMatrixComponent (AudioProcessorEditor *editor, AudioPro
 VASTMatrixComponent::~VASTMatrixComponent()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
-    DBG("Destructing VASTMatrixComponent");
+    VDBG("Destructing VASTMatrixComponent");
 	this->setLookAndFeel(nullptr);
     //[/Destructor_pre]
 

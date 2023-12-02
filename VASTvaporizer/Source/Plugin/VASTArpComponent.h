@@ -40,31 +40,34 @@ public:
 	}
 	void currentTabChanged(int index, const String&) override
 	{
-		VASTStepSeqEditorPane* tab1 = ((VASTStepSeqEditorPane*)getTabContentComponent(0));
-		if (tab1 == nullptr) return; //not initialied
-		tab1->stopAutoUpdate();
-		VASTStepSeqEditorPane* tab2 = ((VASTStepSeqEditorPane*)getTabContentComponent(1));
-		if (tab2 == nullptr) return; //not initialied
-		tab2->stopAutoUpdate();
-		VASTStepSeqEditorPane* tab3 = ((VASTStepSeqEditorPane*)getTabContentComponent(2));
-		if (tab3 == nullptr) return; //not initialied
-		tab3->stopAutoUpdate();
+		VASTStepSeqEditorPane* tab1 = dynamic_cast<VASTStepSeqEditorPane*>(getTabContentComponent(0));
+		if (tab1 != nullptr)
+            tab1->stopAutoUpdate();
+		VASTStepSeqEditorPane* tab2 = dynamic_cast<VASTStepSeqEditorPane*>(getTabContentComponent(1));
+		if (tab2 != nullptr)
+            tab2->stopAutoUpdate();
+		VASTStepSeqEditorPane* tab3 = dynamic_cast<VASTStepSeqEditorPane*>(getTabContentComponent(2));
+		if (tab3 != nullptr) 
+            tab3->stopAutoUpdate();
 
 		switch (index) {
 		case 0:
-			tab1->startAutoUpdate();
+            if (tab1 != nullptr)
+                tab1->startAutoUpdate();
 			break;
 		case 1:
-			tab2->startAutoUpdate();
+            if (tab2 != nullptr)
+                tab2->startAutoUpdate();
 			break;
 		case 2:
-			tab3->startAutoUpdate();
+            if (tab3 != nullptr)
+                tab3->startAutoUpdate();
 			break;
 		}
 		TabChangedFunc(index);
 	}
 
-	TabBarButton* createTabButton(const String &tabName, int tabIndex) {
+	TabBarButton* createTabButton(const String &tabName, int) override {
 		return new VASTDnDTabBarButton(myProcessor, tabName, getTabbedButtonBar());
 	}
 };
@@ -95,7 +98,7 @@ public:
 	void lookAndFeelChanged() override;
 	void startAutoUpdate();
 	void stopAutoUpdate();
-	void buttonClicked(Button* buttonThatWasClicked);
+	void buttonClicked(Button* buttonThatWasClicked) override;
 	void mouseWheelMove(const MouseEvent &event, const MouseWheelDetails &wheel) override;
     //[/UserMethods]
 

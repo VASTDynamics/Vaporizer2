@@ -29,7 +29,7 @@ VASTSamplerSound::VASTSamplerSound(const juce::String& soundName,
 
 	if ((sourceSampleRate > 0) && (source.lengthInSamples > 0))
 	{
-		int length = source.lengthInSamples;
+		int length = int(source.lengthInSamples);
 
 		//data.reset(new AudioBuffer<float>(jmin(2, (int)source.numChannels), length + 4)); //no idea what the +4 is for
 		//data_changed.reset(new AudioBuffer<float>(jmin(2, (int)source.numChannels), length + 4)); //no idea what the +4 is for
@@ -85,14 +85,182 @@ VASTSamplerSound::VASTSamplerSound(const juce::String& soundName,
 	calcZeroCrossings();
 }
 
-VASTSamplerSound::~VASTSamplerSound()
-{
+VASTSamplerSound::VASTSamplerSound(VASTSamplerSound* sound) { //copy constructor
+	name = sound->name;
 	data = nullptr;
+	data_changed = nullptr;
+	if (sound->data.get() != nullptr) {
+		data.reset(new AudioBuffer<float>(sound->data->getNumChannels(), sound->data->getNumSamples()));
+		for (int ch = 0; ch < sound->data->getNumChannels(); ch++) {
+			data->copyFrom(ch, 0, sound->data->getReadPointer(ch, 0), sound->data->getNumSamples());
+		}
+	}
+	if (sound->data_changed.get() != nullptr) {
+		data_changed.reset(new AudioBuffer<float>(sound->data_changed->getNumChannels(), sound->data_changed->getNumSamples()));
+		for (int ch = 0; ch < sound->data_changed->getNumChannels(); ch++) {
+			data_changed->copyFrom(ch, 0, sound->data_changed->getReadPointer(ch, 0), sound->data_changed->getNumSamples());
+		}
+	}
+
+	m_zeroCrossings = sound->m_zeroCrossings;
+	m_bChangedFlag = sound->m_bChangedFlag;
+
+	m_bAudioDataChangedFlag = sound->m_bAudioDataChangedFlag;
+	m_PositionChanged.store(sound->m_PositionChanged.load());
+
+	sourceSampleRate = sound->sourceSampleRate;
+	midiNotes = sound->midiNotes;
+
+	attackSamples = sound->attackSamples;
+	releaseSamples = sound->releaseSamples;
+	midiRootNote = sound->midiRootNote;
+	bHasLoop = sound->bHasLoop;
+	iLoopStart = sound->iLoopStart;
+	iLoopEnd = sound->iLoopEnd;
+
+	bHasLoop_changed = sound->bHasLoop_changed;
+	iLoopStart_changed = sound->iLoopStart_changed;
+	iLoopEnd_changed = sound->iLoopEnd_changed;
+}
+
+VASTSamplerSound::~VASTSamplerSound() {
+	data = nullptr;
+}
+
+void VASTSamplerSound::clearAllData() {
+	//nothing implemented
 }
 
 void VASTSamplerSound::setMidiRootNode(int rootNote) {
 	midiRootNote = rootNote;
 }
+
+int VASTSamplerSound::getMidiRootNote() const { 
+	return midiRootNote; 
+}
+
+int VASTSamplerSound::getSourceSampleRate() const { 
+	return static_cast<int>(sourceSampleRate); 
+}
+
+bool VASTSamplerSound::softFadeExchangeSample() {
+	if (m_bChangedFlag) {
+		bHasLoop = bHasLoop_changed;
+		iLoopStart = iLoopStart_changed;
+		iLoopEnd = iLoopEnd_changed;
+
+		if (m_bAudioDataChangedFlag) {
+			if (data_changed.get() != nullptr) {
+				data->setSize(data_changed->getNumChannels(), data_changed->getNumSamples());
+				int chan = data_changed->getNumChannels();
+				for (int c = 0; c < chan; c++) {
+					data->copyFrom(c, 0, data_changed->getReadPointer(c, 0), data_changed->getNumSamples());
+				}
+			}
+		}
+		m_bChangedFlag = false;
+		m_bAudioDataChangedFlag = false;
+		return true;
+	}
+	return false;
+}
+
+bool VASTSamplerSound::hasLoop() {
+	return bHasLoop;
+}
+
+int VASTSamplerSound::getLoopStart() const {
+	return iLoopStart;
+}
+
+int VASTSamplerSound::getLoopEnd() const {
+	return iLoopEnd;
+}
+
+void VASTSamplerSound::setLoop(int loopstart, int loopend) {
+	bHasLoop = true;
+	if (loopstart < 0) return;
+	if (loopstart > loopend) return;
+	if (loopend > (getLength() - 1)) return; //loop is on live data
+	iLoopStart = loopstart;
+	iLoopEnd = loopend;
+}
+
+
+/*
+void clearLoop() { bHasLoop = false;
+iLoopStart = 0;
+iLoopEnd = 0;
+}
+*/
+
+int VASTSamplerSound::getAttackSamples() const { return attackSamples; }
+
+int VASTSamplerSound::getReleaseSamples() const { return releaseSamples; }
+
+void VASTSamplerSound::setLoopChanged(int loopstart, int loopend) {
+	bHasLoop_changed = true;
+	if (loopstart < 0) return;
+	if (loopstart > loopend) return;
+	if (loopend > (getLengthChanged() - 1)) return;
+	iLoopStart_changed = loopstart;
+	iLoopEnd_changed = loopend;
+	setChangedFlag();
+}
+
+void VASTSamplerSound::clearLoopChanged() {
+	bHasLoop_changed = false;
+	iLoopStart_changed = 0;
+	iLoopEnd_changed = 0;
+	setChangedFlag();
+}
+
+int VASTSamplerSound::getLoopStartChanged() const {
+	return iLoopStart_changed;
+}
+
+int VASTSamplerSound::getLoopEndChanged() const {
+	return iLoopEnd_changed;
+}
+
+bool VASTSamplerSound::hasLoopChanged() const {
+	return bHasLoop_changed;
+}
+
+void VASTSamplerSound::setChangedFlag() {
+	m_bChangedFlag = true;
+}
+
+void VASTSamplerSound::setAudioDataChangedFlag() {
+	setChangedFlag();
+	m_bAudioDataChangedFlag = true;
+	calcZeroCrossings();
+}
+
+
+/** Returns the audio sample data.
+This could return nullptr if there was a problem loading the data.
+*/
+
+
+//==============================================================================
+/** Returns the sample's name */
+
+const String& VASTSamplerSound::getName() const noexcept { return name; }
+
+AudioBuffer<float>* VASTSamplerSound::getAudioData() const noexcept {
+	return data.get();
+}
+
+//liveData
+
+AudioBuffer<float>* VASTSamplerSound::getAudioDataChanged() const {
+	return data_changed.get();
+}
+
+int VASTSamplerSound::getLength() const { return getAudioData()->getNumSamples(); }
+
+int VASTSamplerSound::getLengthChanged() const { return getAudioDataChanged()->getNumSamples(); }
 
 bool VASTSamplerSound::appliesToNote(int midiNoteNumber)
 {
@@ -127,14 +295,19 @@ void VASTSamplerSound::calcZeroCrossings() {
 }
 
 void VASTSamplerSound::notifyPositionChanged() {
-	m_PositionChanged = true;
+    m_PositionChanged.store(true);
 }
 
-bool VASTSamplerSound::getPositionChanged() {
-	bool l_PositionChanged = m_PositionChanged;
-	m_PositionChanged = false;
+bool VASTSamplerSound::getPositionChanged() const {
+	bool l_PositionChanged = m_PositionChanged.load();
+	m_PositionChanged.store(false);
 	return l_PositionChanged;
 }
+
+
+//CHVAST
+
+void VASTSamplerSound::setName(String changedName) { name = changedName; }
 
 void VASTSamplerSound::getValueTreeState(ValueTree* tree, UndoManager* undoManager) { //save
 	tree->removeAllChildren(undoManager);
@@ -165,6 +338,8 @@ void VASTSamplerSound::getValueTreeState(ValueTree* tree, UndoManager* undoManag
 		tree->setProperty("audioChannelData" + String(ch), nTable, undoManager);
 	}
 }
+
+//save
 
 VASTSamplerSound* VASTSamplerSound::getSoundFromTree(ValueTree* tree) { //load //static method
 	String l_name = tree->getProperty("sampleName");
@@ -198,7 +373,7 @@ VASTSamplerSound* VASTSamplerSound::getSoundFromTree(ValueTree* tree) { //load /
 		bool l_hasLoop = tree->getProperty("hasLoop");
 		int l_loopStart = tree->getProperty("loopStart");
 		int l_loopEnd = tree->getProperty("loopEnd");
-		VASTSamplerSound* sound = new VASTSamplerSound(l_name, audioBuffer, l_length, l_sourceSampleRate, allNotes, l_midiRootNote);
+		VASTSamplerSound* sound = new VASTSamplerSound(l_name, audioBuffer, l_length, static_cast<int>(l_sourceSampleRate), allNotes, l_midiRootNote);
 		if (l_hasLoop) {
 			sound->setLoop(l_loopStart, l_loopEnd);
 			sound->setLoopChanged(l_loopStart, l_loopEnd);
@@ -207,3 +382,4 @@ VASTSamplerSound* VASTSamplerSound::getSoundFromTree(ValueTree* tree) { //load /
 	}
 	return nullptr;
 }
+

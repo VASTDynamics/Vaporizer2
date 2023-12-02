@@ -30,9 +30,11 @@ VASTAudioProcessor* VASTImageButton::getAudioProcessor() {
 }
 
 void VASTImageButton::mouseDrag(const MouseEvent &e) {
-	if (m_processor == nullptr) return; //not draggable
+	if (m_processor == nullptr) 
+		return; //not draggable
 	VASTAudioProcessorEditor* editor = (VASTAudioProcessorEditor*)m_processor->getActiveEditor();
-	if (editor == nullptr) return;
+	if (editor == nullptr) 
+		return;
 	Image img = this->getOverImage().rescaled(32, 32, juce::Graphics::ResamplingQuality::highResamplingQuality);
 	Image result = img.createCopy();	
 	Graphics g(result);
@@ -41,7 +43,7 @@ void VASTImageButton::mouseDrag(const MouseEvent &e) {
 	g.setColour(m_processor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colDragSource));
 	g.drawImage(img, result.getBounds().getSmallestIntegerContainer().toFloat(), RectanglePlacement::onlyReduceInSize, true);
 
-	editor->vaporizerComponent->startDragging(getName(), this, result, false);
+	editor->vaporizerComponent->startDragging(getName(), this, (ScaledImage)result, false);
 	ImageButton::mouseDrag(e);
 }
 

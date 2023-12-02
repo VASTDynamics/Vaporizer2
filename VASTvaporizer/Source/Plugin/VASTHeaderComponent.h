@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 6.0.1
+  Created with Projucer version: 7.0.7
 
   ------------------------------------------------------------------------------
 
@@ -75,11 +75,11 @@ private:
     //[UserVariables]   -- You can add your own custom variables in this section.
 	VASTAudioProcessorEditor* myEditor = nullptr;
 	VASTAudioProcessor* myProcessor = nullptr;
-	
+
 #ifdef VASTCOMMERCIAL
 	std::unique_ptr<VASTLicenseEditor> l_veditor;
 #endif
-	
+
     std::unique_ptr<FileChooser> myChooser;
     //[/UserVariables]
 

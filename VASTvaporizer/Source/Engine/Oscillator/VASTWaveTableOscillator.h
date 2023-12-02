@@ -61,7 +61,7 @@ public:
 	bool updatePhase(int unisonOsci);
 	float drift_noise(float& lastval);
 
-	MYUINT getOscType();
+	MYUINT getOscType() const;
 	void noteOn(MYUINT uChannel, MYUINT uMIDINote, MYUINT uVelocity);
 	void noteOff();
 
@@ -69,7 +69,7 @@ public:
 	//void retriggerLFO();
 
 	void updatePitchMod(float pitchMod);
-	void updateNoiseBiquad();
+	void updateNoiseBiquad(int skips);
 
 	bool isPlaying();
 	float m_fLastValue = 0.0f;
@@ -89,18 +89,16 @@ public:
 
 	void resetSmoothers();
 
-	ScopedPointer<AudioSampleBuffer> m_phasedPhasorBuffer[C_MAX_PARALLEL_OSC];
+    std::unique_ptr<AudioSampleBuffer> m_phasedPhasorBuffer[C_MAX_PARALLEL_OSC];
 	float* m_phasedPhasorBufferPointer[C_MAX_PARALLEL_OSC];
-	ScopedPointer<AudioSampleBuffer> m_phaseIncBuffer[C_MAX_PARALLEL_OSC];
+    std::unique_ptr<AudioSampleBuffer> m_phaseIncBuffer[C_MAX_PARALLEL_OSC];
 	float* m_phaseIncBufferPointer[C_MAX_PARALLEL_OSC];
 	int m_unisonOscis = 1;
 	CVASTSettings *m_Set; 
 	
-	void syncAllPhasorsToMaster() {
-		for (int osci = 1; osci < m_unisonOscis; osci++)
-			phasor[osci] = phasor[0];
-	}
-
+	void syncAllPhasorsToMaster();
+    float doWhiteNoiseFast();
+    
 protected:
 	// this should be protected
 	float phasor[C_MAX_PARALLEL_OSC];       // phase accumulator
@@ -110,7 +108,6 @@ private:
 	void random_retrig(int unisonOsci);
     
 	long unsigned int rand31_next();
-	float doWhiteNoiseFast();
 	
 	bool getOsci(float* pOutput); //int inFramesToProcess required to detect small variable buffersizes (FLStudio)
 	
@@ -121,6 +118,8 @@ private:
 	float m_fDriftLfo[C_MAX_PARALLEL_OSC];
 	float m_fDriftLfo2[C_MAX_PARALLEL_OSC];
 
+    int m_whiteNoisePhasor = 0;
+    
 	//global parameters
 	bool m_bIsPlaying;
 	bool m_bNoteOnNextZero;
@@ -143,7 +142,8 @@ private:
 
 	CVASTOscillatorBank* m_oscBank;
 
-	int m_seed = 0; // for random
+    int m_noise_skips = 0;
+	long m_seed = 0; // for random
 	float m_fRsHoldValue = 0.0f; // sample & hold
 	float m_fRshCounter = -1.0f;
 	

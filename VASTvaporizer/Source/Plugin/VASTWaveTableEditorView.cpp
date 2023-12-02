@@ -74,7 +74,6 @@ VASTWaveTableEditorView::VASTWaveTableEditorView (AudioProcessorEditor *editor, 
 	c_editorOscilloscope->setProcessor(myProcessor);
 	c_editorOscilloscope->setEditor(myEditor);
 	c_editorOscilloscope->setWTEditor(myWTEditor);
-	c_editorOscilloscope->startAutoUpdate(true);
 
 	//CHECK
 	myWTEditor->m_freqviewport = (VASTFreqDomainViewport*)c_viewportFreqDomain->getViewedComponent();
@@ -87,7 +86,7 @@ VASTWaveTableEditorView::VASTWaveTableEditorView (AudioProcessorEditor *editor, 
 	myWTEditor->m_positionviewport->setEditor(myEditor);
 	myWTEditor->m_positionviewport->setWTEditor(myWTEditor);
 
-	c_viewportPositions->setScrollOnDragEnabled(false);
+	c_viewportPositions->setScrollOnDragMode(Viewport::ScrollOnDragMode::never);
 
 	myWTEditor->m_samplerviewport = (VASTSamplerViewport*)myWTEditor->getSamplerEditor()->getSamplerViewport()->getViewedComponent();
 	myWTEditor->m_samplerviewport->setProcessor(myProcessor);

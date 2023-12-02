@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 6.0.1
+  Created with Projucer version: 7.0.7
 
   ------------------------------------------------------------------------------
 
@@ -91,7 +91,7 @@ VASTHeaderComponent::VASTHeaderComponent (AudioProcessorEditor *editor, AudioPro
     c_Redo->addListener (this);
 
     c_LabelLicense.reset (new juce::Label ("c_LabelLicense",
-                                           TRANS("DEMO VERSION - click to license")));
+                                           TRANS("Free version")));
     addAndMakeVisible (c_LabelLicense.get());
     c_LabelLicense->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain));
     c_LabelLicense->setJustificationType (juce::Justification::centred);
@@ -144,7 +144,8 @@ VASTHeaderComponent::VASTHeaderComponent (AudioProcessorEditor *editor, AudioPro
 
 	String presetdisplay = myProcessor->m_presetData.getCurPatchData().category + " " + myProcessor->m_presetData.getCurPatchData().presetname;
 	c_Preset->setText(presetdisplay, juce::NotificationType::dontSendNotification);
-
+    
+    return; //dont call setSize
     //[/UserPreSize]
 
     setSize (325, 76);
@@ -245,6 +246,23 @@ void VASTHeaderComponent::buttonClicked (juce::Button* buttonThatWasClicked)
     {
         //[UserButtonCode_c_ReloadPresets] -- add your button handler code here..
 		myProcessor->m_pVASTXperience.audioProcessLock(); //CHECKTS
+        
+        bool done = false;
+        int counter = 0;
+        while (!done) {
+            if ((counter<30) && (myProcessor->m_bAudioThreadRunning.load() && (!myProcessor->m_pVASTXperience.getBlockProcessingIsBlockedSuccessfully()))) {
+                VDBG("VASTHeaderComponent::buttonClicked - sleep");
+                Thread::sleep(100);
+                counter++;
+                continue;
+            }
+            vassert(counter<30);
+            if (counter==30) {
+                return; //dont unlock what is not locked
+            }
+            done = true;
+        }
+        
 		myEditor->vaporizerComponent->getWaveTableEditorComponent()->stopWTRecording();
 
 		String lid = myProcessor->m_presetData.getCurPatchData().internalid;
@@ -254,7 +272,7 @@ void VASTHeaderComponent::buttonClicked (juce::Button* buttonThatWasClicked)
 
 		int lindnex = myProcessor->m_presetData.getIndexInPresetArray(lid);
 		if (lindnex >= 0)
-			myProcessor->loadPreset(lindnex);
+			myProcessor->setCurrentProgram(lindnex);
 
 		myEditor->vaporizerComponent->updateAll();
 		myProcessor->requestUIPresetReloadUpdate();
@@ -280,36 +298,40 @@ void VASTHeaderComponent::buttonClicked (juce::Button* buttonThatWasClicked)
 
         myChooser = std::make_unique<FileChooser>(TRANS("Please specify name and location of the preset file you want to save ..."), initialFile, "*.vvp");
         myChooser->launchAsync(FileBrowserComponent::saveMode
-            | FileBrowserComponent::canSelectFiles,
+            | FileBrowserComponent::canSelectFiles | FileBrowserComponent::warnAboutOverwriting,
             [this](const FileChooser& fileChooser)
         {
             File presetFile(fileChooser.getResult());
-
-            String lPresetFileName = presetFile.getFileNameWithoutExtension().fromFirstOccurrenceOf(" ", false, true);
-            String lPresetCategory = presetFile.getFileNameWithoutExtension().dropLastCharacters(presetFile.getFileNameWithoutExtension().length() - 2); //TODO
-            if (!lPresetFileName.equalsIgnoreCase("")) {
-                VASTPresetElement lElem = myProcessor->m_presetData.getCurPatchData();
-                lElem.presetname = lPresetFileName;
-                myProcessor->m_presetData.exchangeCurPatchData(lElem);
-            }
-
-            myProcessor->savePatchXML(&presetFile);
-            myProcessor->m_presetData.reloadPresetArray();
-            int intid = -1;
-            for (int i = 0; i < myProcessor->getNumPrograms(); i++) {
-                String fname = myProcessor->m_presetData.getPreset(i)->internalid;
-                if (fname == presetFile.getFullPathName()) {
-                    intid = i;
-                    break;
+            if (presetFile.getFileName() != "") {
+                String lPresetFileName = presetFile.getFileNameWithoutExtension().fromFirstOccurrenceOf(" ", false, true);
+                String lPresetCategory = presetFile.getFileNameWithoutExtension().dropLastCharacters(presetFile.getFileNameWithoutExtension().length() - 2); //TODO
+                if (!lPresetFileName.equalsIgnoreCase("")) {
+                    VASTPresetElement lElem = myProcessor->m_presetData.getCurPatchData();
+                    lElem.presetname = lPresetFileName;
+                    myProcessor->m_presetData.exchangeCurPatchData(lElem);
                 }
+
+                myProcessor->savePatchXML(&presetFile);
+                myProcessor->m_presetData.reloadPresetArray();
+                int intid = -1;
+                for (int i = 0; i < myProcessor->getNumPrograms(); i++) {
+                    String fname = myProcessor->m_presetData.getPreset(i)->internalid;
+                    if (fname == presetFile.getFullPathName()) {
+                        intid = i;
+                        break;
+                    }
+                }
+                if (intid >= 0)
+                    myProcessor->setCurrentProgram(intid);
+                else {
+                    //was saved outside of path
+                    AlertWindow::showMessageBoxAsync(AlertWindow::InfoIcon,
+                        "",
+                        TRANS("The preset was saved outside of the preset path root folder in settings."), String(), this);
+                }
+                myEditor->vaporizerComponent->updateAll();
             }
-            if (intid >= 0)
-                myProcessor->loadPreset(intid);
-            else {
-                //was saved outside of path
-            }
-            myEditor->vaporizerComponent->updateAll();
-        });		
+        });
         //[/UserButtonCode_c_SavePreset]
     }
     else if (buttonThatWasClicked == c_PresetUp.get())
@@ -321,13 +343,14 @@ void VASTHeaderComponent::buttonClicked (juce::Button* buttonThatWasClicked)
 		int ll = myProcessor->m_presetData.getIndexInSearchArray(lcurPatchData->internalid);
 		if (ll != -1)
 		{
-			if (ll < myProcessor->m_presetData.getSearchArray().size() - 1) {
-				ll++;
-				String intid = myProcessor->m_presetData.getSearchArray()[ll]->internalid;
-				idx = myProcessor->m_presetData.getIndexInPresetArray(intid);
-				vassert(idx >= 0);
-				myProcessor->setCurrentProgram(idx);
-			}
+            if (ll < myProcessor->m_presetData.getSearchArray().size() - 1)
+                ll++;
+            else
+                ll = 0;
+			String intid = myProcessor->m_presetData.getSearchArray()[ll]->internalid;
+			idx = myProcessor->m_presetData.getIndexInPresetArray(intid);
+			vassert(idx >= 0);
+			myProcessor->setCurrentProgram(idx);
 		}
 		else {
 			idx = myProcessor->m_presetData.getCurPatchData().presetarrayindex;
@@ -347,13 +370,14 @@ void VASTHeaderComponent::buttonClicked (juce::Button* buttonThatWasClicked)
 		int ll = myProcessor->m_presetData.getIndexInSearchArray(lcurPatchData->internalid);
 		if (ll != -1)
 		{
-			if (ll > 0) {
-				ll--;
-				String intid = myProcessor->m_presetData.getSearchArray()[ll]->internalid;
-				idx = myProcessor->m_presetData.getIndexInPresetArray(intid);
-				vassert(idx >= 0);
-				myProcessor->setCurrentProgram(idx);
-			}
+            if (ll > 0)
+                ll--;
+            else
+                ll = myProcessor->m_presetData.getSearchArray().size() - 1;
+			String intid = myProcessor->m_presetData.getSearchArray()[ll]->internalid;
+			idx = myProcessor->m_presetData.getIndexInPresetArray(intid);
+			vassert(idx >= 0);
+			myProcessor->setCurrentProgram(idx);
 		}
 		else {
 			idx = myProcessor->m_presetData.getCurPatchData().presetarrayindex;
@@ -484,7 +508,7 @@ BEGIN_JUCER_METADATA
               buttonText="Redo" connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <LABEL name="c_LabelLicense" id="a925086450924204" memberName="c_LabelLicense"
          virtualName="" explicitFocusOrder="0" pos="0.923% 15.789% 98.154% 11.842%"
-         textCol="ff838d95" edTextCol="ff000000" edBkgCol="0" labelText="DEMO VERSION - click to license"
+         textCol="ff838d95" edTextCol="ff000000" edBkgCol="0" labelText="Free version"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Syntax" fontsize="11.0" kerning="0.0" bold="0" italic="0"
          justification="36"/>

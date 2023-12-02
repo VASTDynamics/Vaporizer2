@@ -41,6 +41,12 @@ VASTAudioProcessor* VASTPitchbendSlider::getAudioProcessor() {
 	return m_processor;
 }
 
+void VASTPitchbendSlider::setDefaultValue(float defaultVal) {
+	hasDefaultValue = true;
+	mDefaultVal = defaultVal;
+	setDoubleClickReturnValue(true, mDefaultVal);
+}
+
 void VASTPitchbendSlider::mouseDown(const MouseEvent &e) {
 	if (e.getNumberOfClicks() > 1) { //double click shall reset to default
 		if (hasDefaultValue) {
@@ -51,13 +57,13 @@ void VASTPitchbendSlider::mouseDown(const MouseEvent &e) {
 	Slider::mouseDown(e);
 }
 
-void VASTPitchbendSlider::mouseExit(const MouseEvent &e) {
+void VASTPitchbendSlider::mouseExit(const MouseEvent &) {
 	if (hasDefaultValue) {
 		setValue(mDefaultVal, juce::NotificationType::sendNotificationAsync);
 	}
 }
 
-void VASTPitchbendSlider::mouseUp(const MouseEvent &e) {
+void VASTPitchbendSlider::mouseUp(const MouseEvent &) {
 	if (hasDefaultValue) {
 		setValue(mDefaultVal, juce::NotificationType::sendNotificationAsync);
 	}

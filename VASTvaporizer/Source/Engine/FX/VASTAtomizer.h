@@ -39,26 +39,26 @@ public:
 
 	//==============================================================================
 
-	void setHarmonics(float harmonics) { m_harmonics = harmonics; };
+	void setHarmonics(float harmonics);
 	float m_harmonics = 0.0f;
 
-	void setDephase(float dephase) { m_dephase = dephase; };
+	void setDephase(float dephase);
 	float m_dephase = 0.0f;
 
-	void setLowcut(float lowcut) { m_lowcut = lowcut; };
+	void setLowcut(float lowcut);
 	float m_lowcut = 0.0f;
 
-	void setHighcut(float highcut) { m_highcut = highcut; };
+	void setHighcut(float highcut);
 	float m_highcut = 0.0f;
 
-	void setEmphasis(float emphasis) { m_emphasis = emphasis; };
+	void setEmphasis(float emphasis);
 	float m_emphasis = 0.0f;
 
-	void setGain(float gain) { m_gain = gain; };
+	void setGain(float gain);
 	float m_gain = 0.0f;
 
 	float m_transients = 0.0f;
-	void setLFO(float lfo) { m_lfo = lfo; };
+	void setLFO(float lfo);
 	float m_lfo = 0.0f;
 
 	void modification() override;

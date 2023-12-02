@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 6.1.2
+  Created with Projucer version: 7.0.9
 
   ------------------------------------------------------------------------------
 
@@ -36,7 +36,7 @@ VASTKeyboardComponent::VASTKeyboardComponent (AudioProcessorEditor *editor, Audi
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
 
-    c_midiKeyboard.reset (new MidiKeyboardComponent (myMidiKeyboardState , MidiKeyboardComponent::horizontalKeyboard));
+    c_midiKeyboard.reset (new MidiKeyboardComponent (myProcessor->m_midiKeyboardState, MidiKeyboardComponent::horizontalKeyboard));
     addAndMakeVisible (c_midiKeyboard.get());
     c_midiKeyboard->setName ("c_midiKeyboard");
 
@@ -50,14 +50,14 @@ VASTKeyboardComponent::VASTKeyboardComponent (AudioProcessorEditor *editor, Audi
 
     c_iBendRange.reset (new VASTSlider ("c_iBendRange"));
     addAndMakeVisible (c_iBendRange.get());
-    c_iBendRange->setTooltip (TRANS("Pitch bend wheel sensitivity in semitiones (up/down)"));
+    c_iBendRange->setTooltip (TRANS ("Pitch bend wheel sensitivity in semitiones (up/down)"));
     c_iBendRange->setExplicitFocusOrder (1);
     c_iBendRange->setRange (1, 96, 1);
     c_iBendRange->setSliderStyle (juce::Slider::IncDecButtons);
     c_iBendRange->setTextBoxStyle (juce::Slider::TextBoxLeft, false, 28, 20);
 
     label100.reset (new juce::Label ("new label",
-                                     TRANS("BEND RNG")));
+                                     TRANS ("BEND RNG")));
     addAndMakeVisible (label100.get());
     label100->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain));
     label100->setJustificationType (juce::Justification::centred);
@@ -67,7 +67,7 @@ VASTKeyboardComponent::VASTKeyboardComponent (AudioProcessorEditor *editor, Audi
     label100->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label2.reset (new juce::Label ("new label",
-                                   TRANS("PORTAM")));
+                                   TRANS ("PORTAM")));
     addAndMakeVisible (label2.get());
     label2->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain));
     label2->setJustificationType (juce::Justification::centred);
@@ -78,7 +78,7 @@ VASTKeyboardComponent::VASTKeyboardComponent (AudioProcessorEditor *editor, Audi
 
     m_fPortamento.reset (new VASTParameterSlider ("m_fPortamento"));
     addAndMakeVisible (m_fPortamento.get());
-    m_fPortamento->setTooltip (TRANS("Portamento time in ms - available in poly modes and mono mode"));
+    m_fPortamento->setTooltip (TRANS ("Portamento time in ms - available in poly modes and mono mode"));
     m_fPortamento->setRange (0, 5000, 0.001);
     m_fPortamento->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     m_fPortamento->setTextBoxStyle (juce::Slider::NoTextBox, false, 30, 14);
@@ -88,6 +88,7 @@ VASTKeyboardComponent::VASTKeyboardComponent (AudioProcessorEditor *editor, Audi
 
 
     //[UserPreSize]
+
 	c_midiKeyboard->setVelocity(1.0, true); // use mouse position for velocity
 	c_midiKeyboard->setMidiChannelsToDisplay(3); // display channel 1 & 2
 	c_midiKeyboard->setMidiChannel(2); // own channel 2
@@ -137,7 +138,8 @@ VASTKeyboardComponent::VASTKeyboardComponent (AudioProcessorEditor *editor, Audi
 	}
 	setOpaque(true);
 	updateAll();
-
+    startTimer(50);
+    return; //dont call setSize
     //[/UserPreSize]
 
     setSize (1420, 88);
@@ -178,8 +180,14 @@ void VASTKeyboardComponent::paint (juce::Graphics& g)
         int x = 0, y = 0, width = getWidth() - 0, height = getHeight() - 0;
         juce::Colour fillColour1 = juce::Colour (0xff212527), fillColour2 = juce::Colour (0xff0b0b0b);
         //[UserPaintCustomArguments] Customize the painting arguments here..
-    		fillColour1 = myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colMasterVoicingComponentBackgroundGradientFrom);
-    		fillColour2 = myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colMasterVoicingComponentBackgroundGradientTo);
+        fillColour1 = myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colMasterVoicingComponentBackgroundGradientFrom);
+        fillColour2 = myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colMasterVoicingComponentBackgroundGradientTo);
+
+        if (myProcessor->m_keyboardHoldMode.load()) {
+            fillColour1 = fillColour1.contrasting();
+            fillColour2 = fillColour2.contrasting();
+        }
+
         //[/UserPaintCustomArguments]
         g.setGradientFill (juce::ColourGradient (fillColour1,
                                              0.0f - 0.0f + x,
@@ -197,7 +205,7 @@ void VASTKeyboardComponent::paint (juce::Graphics& g)
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (strokeColour);
-        g.strokePath (internalPath1, juce::PathStrokeType (1.000f), juce::AffineTransform::translation(x, y));
+        g.strokePath (internalPath1, juce::PathStrokeType (1.000f), juce::AffineTransform::translation (x, y));
     }
 
     {
@@ -206,7 +214,7 @@ void VASTKeyboardComponent::paint (juce::Graphics& g)
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (strokeColour);
-        g.strokePath (internalPath2, juce::PathStrokeType (1.000f), juce::AffineTransform::translation(x, y));
+        g.strokePath (internalPath2, juce::PathStrokeType (1.000f), juce::AffineTransform::translation (x, y));
     }
 
     {
@@ -215,7 +223,7 @@ void VASTKeyboardComponent::paint (juce::Graphics& g)
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (strokeColour);
-        g.strokePath (internalPath3, juce::PathStrokeType (1.000f), juce::AffineTransform::translation(x, y));
+        g.strokePath (internalPath3, juce::PathStrokeType (1.000f), juce::AffineTransform::translation (x, y));
     }
 
     {
@@ -296,11 +304,16 @@ void VASTKeyboardComponent::resized()
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
+
+MidiKeyboardComponent* VASTKeyboardComponent::getMidiKeyboard() {
+    return c_midiKeyboard.get();
+}
+
 void VASTKeyboardComponent::sliderValueChanged(Slider* sliderThatWasMoved)
 {
 	if (sliderThatWasMoved == c_pitchBend.get())
 	{
-		float pitchWheelVal = c_pitchBend->getValue() + 8192.f;
+		float pitchWheelVal = c_pitchBend->getValue() + 8192.f; //0..16384
 		VASTSynthesiser* synth = myProcessor->m_pVASTXperience.m_Poly.getSynthesizer();
 		if (synth != nullptr) {
 			for (int i = 0; i< 16; i++)
@@ -325,6 +338,34 @@ void VASTKeyboardComponent::sliderValueChanged(Slider* sliderThatWasMoved)
 	}
 }
 
+void VASTKeyboardComponent::updateAll() {
+    c_iBendRange->setValue(myProcessor->getBendRange(), NotificationType::dontSendNotification);
+}
+
+void VASTKeyboardComponent::timerCallback() {
+    if (!c_pitchBend->isMouseOverOrDragging()) {
+        float wheelpos = myProcessor->m_pVASTXperience.m_Poly.getSynthesizer()->lastPitchWheelValues[0].load() - 8192.f; //check channel 0!
+        c_pitchBend->setValue(wheelpos, NotificationType::dontSendNotification); //send only on
+    }
+
+    if (!c_pitchBend->isMouseOverOrDragging()) {
+        float wheelpos = myProcessor->m_pVASTXperience.m_Set.m_uModWheel.load(); //0..127
+        c_modWheel->setValue(wheelpos, NotificationType::dontSendNotification); //send only on
+    }
+}
+
+void VASTKeyboardComponent::mouseDown (const MouseEvent &) {
+    ModifierKeys modifiers = ModifierKeys::getCurrentModifiersRealtime();
+    if (modifiers.isRightButtonDown()) {
+        myProcessor->toggleKeyboardHoldMode();
+        repaint();
+    }
+}
+
+String VASTKeyboardComponent::getTooltip() {
+    return (TRANS("Right click to toggle keyboard hold mode"));
+}
+
 //[/MiscUserCode]
 
 
@@ -338,7 +379,8 @@ void VASTKeyboardComponent::sliderValueChanged(Slider* sliderThatWasMoved)
 BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="VASTKeyboardComponent" componentName=""
-                 parentClasses="public Component, public Slider::Listener" constructorParams="AudioProcessorEditor *editor, AudioProcessor* processor"
+                 parentClasses="public Component, public Slider::Listener, public Timer, public TooltipClient"
+                 constructorParams="AudioProcessorEditor *editor, AudioProcessor* processor"
                  variableInitialisers="myEditor((VASTAudioProcessorEditor*)editor), myProcessor((VASTAudioProcessor*)processor)"
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
                  fixedSize="1" initialWidth="1420" initialHeight="88">
@@ -358,7 +400,7 @@ BEGIN_JUCER_METADATA
   </BACKGROUND>
   <GENERICCOMPONENT name="c_midiKeyboard" id="164c4e11cc2226ca" memberName="c_midiKeyboard"
                     virtualName="MidiKeyboardComponent" explicitFocusOrder="0" pos="11.268% 0% 88.732% 100%"
-                    class="MidiKeyboardComponent" params="myMidiKeyboardState , MidiKeyboardComponent::horizontalKeyboard"/>
+                    class="MidiKeyboardComponent" params="myProcessor-&gt;m_midiKeyboardState, MidiKeyboardComponent::horizontalKeyboard"/>
   <GENERICCOMPONENT name="c_pitchBend" id="235d975d77d1b957" memberName="c_pitchBend"
                     virtualName="VASTPitchbendSlider" explicitFocusOrder="0" pos="6.549% 3.409% 1.69% 93.182%"
                     class="VASTPitchbendSlider" params="&quot;Pitchbend&quot;"/>

@@ -1,5 +1,4 @@
 /*
-/*
 VAST Dynamics Audio Software (TM)
 
 Global settings for AUDIO THREAD!
@@ -29,11 +28,9 @@ CVASTSettings::CVASTSettings(VASTAudioProcessor* processor) : my_processor(proce
 	m_bShallDump = false;
 	m_fPitchBend = 1.0f; //middle
 
-	//std::shared_ptr<CVASTParamState> m_State(std::make_shared<CVASTParamState>());
+	CVASTSettings::loadCustomFonts();
 	
-	modMatrixInputState l_inputState;
-	l_inputState.voiceNo = 0; // or -1? 
-	l_inputState.currentFrame = 0;
+	modMatrixInputState l_inputState{ 0,0 };
 	bufferInputState.store(l_inputState);
 
 	for (int stepSeq = 0; stepSeq < 3; stepSeq++) {
@@ -47,6 +44,12 @@ CVASTSettings::CVASTSettings(VASTAudioProcessor* processor) : my_processor(proce
 		iMPETimbre[i] = -1;
 		iMPETimbreMidiNote[i] = -1;
 	}
+    
+    //buffer white noise
+	CVASTWaveTableOscillator wtosc;
+    for (int i = 0; i < C_MAX_SAMPLE_RATE * 3; i++) {
+        m_whiteNoiseBuffer[i] = wtosc.doWhiteNoiseFast();
+    }
 
 	//fill frequency lut
 	for (int i = 0; i < M_CENTS_LUT_SIZE; i++)
@@ -59,6 +62,9 @@ Destroy variables allocated in the contructor()
 */
 CVASTSettings::~CVASTSettings(void) {	
 }
+
+JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE("-Wconversion")
+JUCE_BEGIN_IGNORE_WARNINGS_MSVC(4244 4267)
 
 float CVASTSettings::getFrequencyFactorFromLUT(float octave) {
 	int intpart = floorf(octave);
@@ -78,7 +84,7 @@ void CVASTSettings::sendStatusMessage(StringRef pText) {
 		juce::String writable;
 		writable = pText;		
 		writable += '\0'; // don't forget the terminating 0
-		//DBG(writable);
+		//VDBG(writable);
 		
 		if (m_bWriteDebug == true) {
 			std::string filename = "C:\\Users\\d026198\\Desktop\\debuginfo.txt";
@@ -169,41 +175,108 @@ int CVASTSettings::_gettimeofday(struct timeval *tv)
 	return 0;
 }
 
+void CVASTSettings::setTuning(String tuningFile) {
+	const char* sclFilepath = static_cast<const char*> (tuningFile.toUTF8());
+	long res = m_scale.Read(sclFilepath);
+	if (res != 1) { //1 means OK
+		m_scale.Reset();
+	}
+}
+
 float CVASTSettings::midiNoteGetBaseFreq(MYUINT uMIDINote, float oscMasterTune) {
+	if (uMIDINote < 0)
+		return 0.f;
+	/*
+	//original logic
 	signed int key = uMIDINote;
 	float divi = (key - 45.0 - (24)) / 12.0;
 	float freq = powf(2.0, divi) * oscMasterTune;
 	freq = (freq > m_nSampleRate - 1.0f) ? m_nSampleRate - 1.0f : freq;
+	*/
 
-	//const char* sclFilepath = "G:\\Downloads\\Sevish Tunings Pack\\No Octaves\\tun\\19 ed3 (12 tet stretched).tun";
-	//long res = m_scale.Read(sclFilepath);
-	//if (res == 0) {
-		int iMidiNote = jlimit(0, 127, uMIDINote);
-		float nfreq = m_scale.GetNoteFrequenciesHz()[iMidiNote];
-		freq = nfreq * (oscMasterTune / 440.f);
-	//}
-
-		/*testing //add micotuning support here
-		int uScaleNote = uMIDINote % 12; //only support scl files with 12 note scales?
-		//float sclFile[12] = { 2187.f/2048, 9.f/8, 32.f/27, 81.f/64, 4.f/3, 729.f/512, 3.f/2, 6561.f/4096, 27.f/16, 16.f/9, 243.f/128, 2.f/1 }; //12 - tone Pythagorean scale
-		float sclFile[12] = { 2.f / 1, 11.f / 8, 132.f / 27, 81.f / 64, 10.f / 3, 729.f / 512, 1.f / 2, 6561.f / 40196, 27.f / 16, 116.f / 9, 2432.f / 128, 2.f / 11 }; //test
-
-
-		const char* sclFilepath = "G:\\Downloads\\scales\\scl\\11-19-mclaren.scl";
-		SCLImport.ReadSCL(sclFilepath);
-
-
-		signed int key = uMIDINote - uScaleNote;
-		float divi = (key - 45.0 - (24)) / 12.0;
-		float freq = powf(2.0, divi) * oscMasterTune;
-		freq *= sclFile[uScaleNote];
-		freq = (freq > m_nSampleRate - 1.0f) ? m_nSampleRate - 1.0f : freq;
-		*/
-
-	if (uMIDINote < 0) 
-		freq = 0.f;
-
+	int iMidiNote = jlimit(0, 127, uMIDINote);
+	float nfreq = m_scale.GetNoteFrequenciesHz()[iMidiNote];
+	float freq = nfreq * (oscMasterTune / 440.f);
 	return freq;
+}
+
+double CVASTSettings::getMillisecondsPerBeat() {
+	double dawbpm = m_dPpqBpm.load();
+	if (dawbpm < 3.0)
+		dawbpm = 120.0; //standard value
+	double millisecondsPerBeat = (1.0 / dawbpm) * 60.0 * 1000.0;
+	return millisecondsPerBeat;
+}
+
+double CVASTSettings::getIntervalRatio(int beatindex) {
+	double l_dRatio = 0.0;
+	switch (beatindex) {
+	case TIMEBEATS::BEATS1_256:
+		l_dRatio = (1.0 / 256.0);
+		break;
+	case TIMEBEATS::BEATS1_128:
+		l_dRatio = (1.0 / 128.0);
+		break;
+	case TIMEBEATS::BEATS1_64:
+		l_dRatio = (1.0 / 64.0);
+		break;
+	case TIMEBEATS::BEATS1_32:
+		l_dRatio = (1.0 / 32.0);
+		break;
+	case TIMEBEATS::BEATS1_16:
+		l_dRatio = (1.0 / 16.0);
+		break;
+	case TIMEBEATS::BEATS1_9:
+		l_dRatio = (1.0 / 9.0);
+		break;
+	case TIMEBEATS::BEATS1_8:
+		l_dRatio = (1.0 / 8.0);
+		break;
+	case TIMEBEATS::BEATS1_4:
+		l_dRatio = (1.0 / 4.0);
+		break;
+	case TIMEBEATS::BEATS1_3:
+		l_dRatio = (1.0 / 3.0);
+		break;
+	case TIMEBEATS::BEATS1_2:
+		l_dRatio = (1.0 / 2.0);
+		break;
+	case TIMEBEATS::BEATS1:
+		l_dRatio = 1.0;
+		break;
+	case TIMEBEATS::BEATS3_2:
+		l_dRatio = 1.5;
+		break;
+	case TIMEBEATS::BEATS2:
+		l_dRatio = 2.0;
+		break;
+	case TIMEBEATS::BEATS3:
+		l_dRatio = 3.0;
+		break;
+	case TIMEBEATS::BEATS4:
+		l_dRatio = 4.0;
+		break;
+	case TIMEBEATS::BEATS8:
+		l_dRatio = 8.0;
+		break;
+	case TIMEBEATS::BEATS16:
+		l_dRatio = 16.0;
+		break;
+	case TIMEBEATS::BEATS32:
+		l_dRatio = 32.0;
+		break;
+	case TIMEBEATS::BEATS64:
+		l_dRatio = 64.0;
+		break;
+	}
+	return l_dRatio;
+}
+
+double CVASTSettings::getIntervalTimeFromDAWBeats(int beatindex) {
+	double l_dIntervalTime = 0.f;
+	double millisecondsPerBeat = getMillisecondsPerBeat();
+	l_dIntervalTime = millisecondsPerBeat * getIntervalRatio(beatindex);
+	return l_dIntervalTime;
 }
 
 void CVASTSettings::initModMatrix() {
@@ -224,13 +297,13 @@ void CVASTSettings::modMatrixCalcBuffers() {
 		int slotDestination = 0;
 		float slotValue = 0;
 		double slotCurvy = 0;
-		float lastSrceVals[C_MAX_POLY] = { 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f };
+		float lastSrceVals[C_MAX_POLY] {};
 		int slotPolarity = 0;
 		modMatrixSlotGetValues(slot, slotValue, slotCurvy, slotSource, slotDestination, slotPolarity, lastSrceVals);
 		if ((slotSource != MODMATSRCE::NoSource) && (slotDestination != MODMATDEST::NoDestination)) //val can be 0? Check
 			modMatrixSlotUsed[slot] = true;
-		else 
-			modMatrixSlotUsed[slot] = false;
+		else
+            modMatrixSlotUsed[slot] = false;
 		modMatrixSlotDest[slot] = slotDestination; //onl for UI update
 	}
 
@@ -256,13 +329,13 @@ void CVASTSettings::modMatrixSwapSlots(int slot1, int slot2) {
 	int slot1Source = 0;
 	int slot1Destination = 0;
 	int slot1Polarity = 0;
-	float slot1LasSrceVals[C_MAX_POLY] = { 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f };
+	float slot1LasSrceVals[C_MAX_POLY] {};
 	float slot2Value = 0;
 	double slot2Curvy = 0;
 	int slot2Source = 0;
 	int slot2Destination = 0;
 	int slot2Polarity = 0;
-	float slot2LasSrceVals[C_MAX_POLY] = { 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f };
+	float slot2LasSrceVals[C_MAX_POLY] {};
 	modMatrixSlotGetValues(slot1, slot1Value, slot1Curvy, slot1Source, slot1Destination, slot1Polarity, slot1LasSrceVals);
 	modMatrixSlotGetValues(slot2, slot2Value, slot2Curvy, slot2Source, slot2Destination, slot2Polarity, slot2LasSrceVals);
 
@@ -286,7 +359,7 @@ bool CVASTSettings::modMatrixIsSet(MYUINT source, MYUINT destination) {
 			int slotDestination = 0;
 			float slotValue = 0;
 			double slotCurvy = 0;
-			float lastSrceVals[C_MAX_POLY] = { 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f };
+			float lastSrceVals[C_MAX_POLY] {};
 			int slotPolarity = 0;
 			modMatrixSlotGetValues(slot, slotValue, slotCurvy, slotSource, slotDestination, slotPolarity, lastSrceVals);
 			if ((slotSource == source) && (slotDestination == destination))
@@ -303,7 +376,7 @@ int CVASTSettings::modMatrixGetFirstSlotWithDestination(MYUINT destination) { //
 			int slotDestination = 0;
 			float slotValue = 0;
 			double slotCurvy = 0;
-			float lastSrceVals[C_MAX_POLY] = { 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f };
+			float lastSrceVals[C_MAX_POLY] {};
 			int slotPolarity = 0;
 			modMatrixSlotGetValues(slot, slotValue, slotCurvy, slotSource, slotDestination, slotPolarity, lastSrceVals);
 			if (slotDestination == destination)
@@ -459,22 +532,22 @@ void CVASTSettings::modMatrixSlotGetValuesWithMod(int slot, float &slotValue, fl
 }
 
 bool CVASTSettings::modMatrixSourceSet(MYUINT source) {
-	if (((*m_State->m_uModMatDest1 != MODMATDEST::NoDestination) && (*m_State->m_uModMatSrce1 == source) && (*m_State->m_fModMatVal1 != 0.0f)) ||
-		((*m_State->m_uModMatDest2 != MODMATDEST::NoDestination) && (*m_State->m_uModMatSrce2 == source) && (*m_State->m_fModMatVal2 != 0.0f)) ||
-		((*m_State->m_uModMatDest3 != MODMATDEST::NoDestination) && (*m_State->m_uModMatSrce3 == source) && (*m_State->m_fModMatVal3 != 0.0f)) ||
-		((*m_State->m_uModMatDest4 != MODMATDEST::NoDestination) && (*m_State->m_uModMatSrce4 == source) && (*m_State->m_fModMatVal4 != 0.0f)) ||
-		((*m_State->m_uModMatDest5 != MODMATDEST::NoDestination) && (*m_State->m_uModMatSrce5 == source) && (*m_State->m_fModMatVal5 != 0.0f)) ||
-		((*m_State->m_uModMatDest6 != MODMATDEST::NoDestination) && (*m_State->m_uModMatSrce6 == source) && (*m_State->m_fModMatVal6 != 0.0f)) ||
-		((*m_State->m_uModMatDest7 != MODMATDEST::NoDestination) && (*m_State->m_uModMatSrce7 == source) && (*m_State->m_fModMatVal7 != 0.0f)) ||
-		((*m_State->m_uModMatDest8 != MODMATDEST::NoDestination) && (*m_State->m_uModMatSrce8 == source) && (*m_State->m_fModMatVal8 != 0.0f)) ||
-		((*m_State->m_uModMatDest9 != MODMATDEST::NoDestination) && (*m_State->m_uModMatSrce9 == source) && (*m_State->m_fModMatVal9 != 0.0f)) ||
-		((*m_State->m_uModMatDest10 != MODMATDEST::NoDestination) && (*m_State->m_uModMatSrce10 == source) && (*m_State->m_fModMatVal10 != 0.0f)) ||
-		((*m_State->m_uModMatDest11 != MODMATDEST::NoDestination) && (*m_State->m_uModMatSrce11 == source) && (*m_State->m_fModMatVal11 != 0.0f)) ||
-		((*m_State->m_uModMatDest12 != MODMATDEST::NoDestination) && (*m_State->m_uModMatSrce12 == source) && (*m_State->m_fModMatVal12 != 0.0f)) ||
-		((*m_State->m_uModMatDest13 != MODMATDEST::NoDestination) && (*m_State->m_uModMatSrce13 == source) && (*m_State->m_fModMatVal13 != 0.0f)) ||
-		((*m_State->m_uModMatDest14 != MODMATDEST::NoDestination) && (*m_State->m_uModMatSrce14 == source) && (*m_State->m_fModMatVal14 != 0.0f)) ||
-		((*m_State->m_uModMatDest15 != MODMATDEST::NoDestination) && (*m_State->m_uModMatSrce15 == source) && (*m_State->m_fModMatVal15 != 0.0f)) ||
-		((*m_State->m_uModMatDest16 != MODMATDEST::NoDestination) && (*m_State->m_uModMatSrce16 == source) && (*m_State->m_fModMatVal16 != 0.0f)))
+	if (((*m_State->m_uModMatDest1 != static_cast<int>(MODMATDEST::NoDestination)) && (*m_State->m_uModMatSrce1 == source) && (*m_State->m_fModMatVal1 != 0.0f)) ||
+		((*m_State->m_uModMatDest2 != static_cast<int>(MODMATDEST::NoDestination)) && (*m_State->m_uModMatSrce2 == source) && (*m_State->m_fModMatVal2 != 0.0f)) ||
+		((*m_State->m_uModMatDest3 != static_cast<int>(MODMATDEST::NoDestination)) && (*m_State->m_uModMatSrce3 == source) && (*m_State->m_fModMatVal3 != 0.0f)) ||
+		((*m_State->m_uModMatDest4 != static_cast<int>(MODMATDEST::NoDestination)) && (*m_State->m_uModMatSrce4 == source) && (*m_State->m_fModMatVal4 != 0.0f)) ||
+		((*m_State->m_uModMatDest5 != static_cast<int>(MODMATDEST::NoDestination)) && (*m_State->m_uModMatSrce5 == source) && (*m_State->m_fModMatVal5 != 0.0f)) ||
+		((*m_State->m_uModMatDest6 != static_cast<int>(MODMATDEST::NoDestination)) && (*m_State->m_uModMatSrce6 == source) && (*m_State->m_fModMatVal6 != 0.0f)) ||
+		((*m_State->m_uModMatDest7 != static_cast<int>(MODMATDEST::NoDestination)) && (*m_State->m_uModMatSrce7 == source) && (*m_State->m_fModMatVal7 != 0.0f)) ||
+		((*m_State->m_uModMatDest8 != static_cast<int>(MODMATDEST::NoDestination)) && (*m_State->m_uModMatSrce8 == source) && (*m_State->m_fModMatVal8 != 0.0f)) ||
+		((*m_State->m_uModMatDest9 != static_cast<int>(MODMATDEST::NoDestination)) && (*m_State->m_uModMatSrce9 == source) && (*m_State->m_fModMatVal9 != 0.0f)) ||
+		((*m_State->m_uModMatDest10 != static_cast<int>(MODMATDEST::NoDestination)) && (*m_State->m_uModMatSrce10 == source) && (*m_State->m_fModMatVal10 != 0.0f)) ||
+		((*m_State->m_uModMatDest11 != static_cast<int>(MODMATDEST::NoDestination)) && (*m_State->m_uModMatSrce11 == source) && (*m_State->m_fModMatVal11 != 0.0f)) ||
+		((*m_State->m_uModMatDest12 != static_cast<int>(MODMATDEST::NoDestination)) && (*m_State->m_uModMatSrce12 == source) && (*m_State->m_fModMatVal12 != 0.0f)) ||
+		((*m_State->m_uModMatDest13 != static_cast<int>(MODMATDEST::NoDestination)) && (*m_State->m_uModMatSrce13 == source) && (*m_State->m_fModMatVal13 != 0.0f)) ||
+		((*m_State->m_uModMatDest14 != static_cast<int>(MODMATDEST::NoDestination)) && (*m_State->m_uModMatSrce14 == source) && (*m_State->m_fModMatVal14 != 0.0f)) ||
+		((*m_State->m_uModMatDest15 != static_cast<int>(MODMATDEST::NoDestination)) && (*m_State->m_uModMatSrce15 == source) && (*m_State->m_fModMatVal15 != 0.0f)) ||
+		((*m_State->m_uModMatDest16 != static_cast<int>(MODMATDEST::NoDestination)) && (*m_State->m_uModMatSrce16 == source) && (*m_State->m_fModMatVal16 != 0.0f)))
 		return true;
 	return false;
 }
@@ -540,22 +613,22 @@ bool CVASTSettings::modMatrixSourceSetFast(MYUINT source) {
 }
 
 bool CVASTSettings::modMatrixDestinationSet(MYUINT destination) {
-	if (((*m_State->m_uModMatSrce1 != MODMATSRCE::NoSource) && (*m_State->m_uModMatDest1 == destination) && (*m_State->m_fModMatVal1 != 0.0f)) ||
-		((*m_State->m_uModMatSrce2 != MODMATSRCE::NoSource) && (*m_State->m_uModMatDest2 == destination) && (*m_State->m_fModMatVal2 != 0.0f)) ||
-		((*m_State->m_uModMatSrce3 != MODMATSRCE::NoSource) && (*m_State->m_uModMatDest3 == destination) && (*m_State->m_fModMatVal3 != 0.0f)) ||
-		((*m_State->m_uModMatSrce4 != MODMATSRCE::NoSource) && (*m_State->m_uModMatDest4 == destination) && (*m_State->m_fModMatVal4 != 0.0f)) ||
-		((*m_State->m_uModMatSrce5 != MODMATSRCE::NoSource) && (*m_State->m_uModMatDest5 == destination) && (*m_State->m_fModMatVal5 != 0.0f)) ||
-		((*m_State->m_uModMatSrce6 != MODMATSRCE::NoSource) && (*m_State->m_uModMatDest6 == destination) && (*m_State->m_fModMatVal6 != 0.0f)) ||
-		((*m_State->m_uModMatSrce7 != MODMATSRCE::NoSource) && (*m_State->m_uModMatDest7 == destination) && (*m_State->m_fModMatVal7 != 0.0f)) ||
-		((*m_State->m_uModMatSrce8 != MODMATSRCE::NoSource) && (*m_State->m_uModMatDest8 == destination) && (*m_State->m_fModMatVal8 != 0.0f)) ||
-		((*m_State->m_uModMatSrce9 != MODMATSRCE::NoSource) && (*m_State->m_uModMatDest9 == destination) && (*m_State->m_fModMatVal9 != 0.0f)) ||
-		((*m_State->m_uModMatSrce10 != MODMATSRCE::NoSource) && (*m_State->m_uModMatDest10 == destination) && (*m_State->m_fModMatVal10 != 0.0f)) ||
-		((*m_State->m_uModMatSrce11 != MODMATSRCE::NoSource) && (*m_State->m_uModMatDest11 == destination) && (*m_State->m_fModMatVal11 != 0.0f)) ||
-		((*m_State->m_uModMatSrce12 != MODMATSRCE::NoSource) && (*m_State->m_uModMatDest12 == destination) && (*m_State->m_fModMatVal12 != 0.0f)) ||
-		((*m_State->m_uModMatSrce13 != MODMATSRCE::NoSource) && (*m_State->m_uModMatDest13 == destination) && (*m_State->m_fModMatVal13 != 0.0f)) ||
-		((*m_State->m_uModMatSrce14 != MODMATSRCE::NoSource) && (*m_State->m_uModMatDest14 == destination) && (*m_State->m_fModMatVal14 != 0.0f)) ||
-		((*m_State->m_uModMatSrce15 != MODMATSRCE::NoSource) && (*m_State->m_uModMatDest15 == destination) && (*m_State->m_fModMatVal15 != 0.0f)) ||
-		((*m_State->m_uModMatSrce16 != MODMATSRCE::NoSource) && (*m_State->m_uModMatDest16 == destination) && (*m_State->m_fModMatVal16 != 0.0f)))
+	if (((*m_State->m_uModMatSrce1 != static_cast<int>(MODMATSRCE::NoSource)) && (*m_State->m_uModMatDest1 == destination) && (*m_State->m_fModMatVal1 != 0.0f)) ||
+		((*m_State->m_uModMatSrce2 != static_cast<int>(MODMATSRCE::NoSource)) && (*m_State->m_uModMatDest2 == destination) && (*m_State->m_fModMatVal2 != 0.0f)) ||
+		((*m_State->m_uModMatSrce3 != static_cast<int>(MODMATSRCE::NoSource)) && (*m_State->m_uModMatDest3 == destination) && (*m_State->m_fModMatVal3 != 0.0f)) ||
+		((*m_State->m_uModMatSrce4 != static_cast<int>(MODMATSRCE::NoSource)) && (*m_State->m_uModMatDest4 == destination) && (*m_State->m_fModMatVal4 != 0.0f)) ||
+		((*m_State->m_uModMatSrce5 != static_cast<int>(MODMATSRCE::NoSource)) && (*m_State->m_uModMatDest5 == destination) && (*m_State->m_fModMatVal5 != 0.0f)) ||
+		((*m_State->m_uModMatSrce6 != static_cast<int>(MODMATSRCE::NoSource)) && (*m_State->m_uModMatDest6 == destination) && (*m_State->m_fModMatVal6 != 0.0f)) ||
+		((*m_State->m_uModMatSrce7 != static_cast<int>(MODMATSRCE::NoSource)) && (*m_State->m_uModMatDest7 == destination) && (*m_State->m_fModMatVal7 != 0.0f)) ||
+		((*m_State->m_uModMatSrce8 != static_cast<int>(MODMATSRCE::NoSource)) && (*m_State->m_uModMatDest8 == destination) && (*m_State->m_fModMatVal8 != 0.0f)) ||
+		((*m_State->m_uModMatSrce9 != static_cast<int>(MODMATSRCE::NoSource)) && (*m_State->m_uModMatDest9 == destination) && (*m_State->m_fModMatVal9 != 0.0f)) ||
+		((*m_State->m_uModMatSrce10 != static_cast<int>(MODMATSRCE::NoSource)) && (*m_State->m_uModMatDest10 == destination) && (*m_State->m_fModMatVal10 != 0.0f)) ||
+		((*m_State->m_uModMatSrce11 != static_cast<int>(MODMATSRCE::NoSource)) && (*m_State->m_uModMatDest11 == destination) && (*m_State->m_fModMatVal11 != 0.0f)) ||
+		((*m_State->m_uModMatSrce12 != static_cast<int>(MODMATSRCE::NoSource)) && (*m_State->m_uModMatDest12 == destination) && (*m_State->m_fModMatVal12 != 0.0f)) ||
+		((*m_State->m_uModMatSrce13 != static_cast<int>(MODMATSRCE::NoSource)) && (*m_State->m_uModMatDest13 == destination) && (*m_State->m_fModMatVal13 != 0.0f)) ||
+		((*m_State->m_uModMatSrce14 != static_cast<int>(MODMATSRCE::NoSource)) && (*m_State->m_uModMatDest14 == destination) && (*m_State->m_fModMatVal14 != 0.0f)) ||
+		((*m_State->m_uModMatSrce15 != static_cast<int>(MODMATSRCE::NoSource)) && (*m_State->m_uModMatDest15 == destination) && (*m_State->m_fModMatVal15 != 0.0f)) ||
+		((*m_State->m_uModMatSrce16 != static_cast<int>(MODMATSRCE::NoSource)) && (*m_State->m_uModMatDest16 == destination) && (*m_State->m_fModMatVal16 != 0.0f)))
 		return true;
 	return false;
 }
@@ -566,7 +639,7 @@ void CVASTSettings::getMatrixModulationSlotMultiplier(int slot, float& modVal, f
 	int slotDestination = 0;
 	float slotVal = 0.f;
 	double curvy = 0.0; //-100 .. 100
-	float lastSrceVals[C_MAX_POLY] = { 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f };
+	float lastSrceVals[C_MAX_POLY] {};
 	modMatrixSlotGetValues(slot, slotVal, curvy, slotSource, slotDestination, slotPolarity, lastSrceVals); //this includes modmatval modulations!
 	if (destination != slotDestination) {
 		modVal = 0.f;  return;
@@ -579,76 +652,76 @@ void CVASTSettings::getMatrixModulationSlotMultiplier(int slot, float& modVal, f
 		switch (slotSource) {
 		case MODMATSRCE::MSEG1Env: {
 			sourceVal = m_RoutingBuffers.MSEGBuffer[0][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame); //0..1
-			if (*m_State->m_uMSEGPolarity_MSEG1 == POLARITY::Bipolar)
+			if (*m_State->m_uMSEGPolarity_MSEG1 == static_cast<int>(POLARITY::Bipolar))
 				sourceVal = (sourceVal - 0.5f) * 2.f; //-1..1	
 			break;
 		}
 		case MODMATSRCE::MSEG2Env: {
 			sourceVal = m_RoutingBuffers.MSEGBuffer[1][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame); //0..1
-			if (*m_State->m_uMSEGPolarity_MSEG2 == POLARITY::Bipolar)
+			if (*m_State->m_uMSEGPolarity_MSEG2 == static_cast<int>(POLARITY::Bipolar))
 				sourceVal = (sourceVal - 0.5f) * 2.f; //-1..1	
 			break;
 		}
 		case MODMATSRCE::MSEG3Env: {
 			sourceVal = m_RoutingBuffers.MSEGBuffer[2][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame); //0..1
-			if (*m_State->m_uMSEGPolarity_MSEG3 == POLARITY::Bipolar)
+			if (*m_State->m_uMSEGPolarity_MSEG3 == static_cast<int>(POLARITY::Bipolar))
 				sourceVal = (sourceVal - 0.5f) * 2.f; //-1..1	
 			break;
 		}
 		case MODMATSRCE::MSEG4Env: {
 			sourceVal = m_RoutingBuffers.MSEGBuffer[3][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame); //0..1
-			if (*m_State->m_uMSEGPolarity_MSEG4 == POLARITY::Bipolar)
+			if (*m_State->m_uMSEGPolarity_MSEG4 == static_cast<int>(POLARITY::Bipolar))
 				sourceVal = (sourceVal - 0.5f) * 2.f; //-1..1	
 			break;
 		}
 		case MODMATSRCE::MSEG5Env: {
 			sourceVal = m_RoutingBuffers.MSEGBuffer[4][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame); //0..1
-			if (*m_State->m_uMSEGPolarity_MSEG5 == POLARITY::Bipolar)
+			if (*m_State->m_uMSEGPolarity_MSEG5 == static_cast<int>(POLARITY::Bipolar))
 				sourceVal = (sourceVal - 0.5f) * 2.f; //-1..1	
 			break;
 		}
 		case MODMATSRCE::LFO1: {
-			if (*m_State->m_bLFOPerVoice_LFO1 == SWITCH::SWITCH_ON)
+			if (*m_State->m_bLFOPerVoice_LFO1 == static_cast<int>(SWITCH::SWITCH_ON))
 				sourceVal = m_RoutingBuffers.LFOBuffer[0][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame); //-1 ..1 				
 			else
 				sourceVal = m_RoutingBuffers.LFOGlobalBuffer[0]->getSample(0, matrixInputState->currentFrame); //-1 ..1
-			if (*m_State->m_uLFOPolarity_LFO1 == POLARITY::Unipolar)
+			if (*m_State->m_uLFOPolarity_LFO1 == static_cast<int>(POLARITY::Unipolar))
 				sourceVal = (sourceVal + 1.f) * 0.5f; //0..1				
 			break;
 		}
 		case MODMATSRCE::LFO2: {
-			if (*m_State->m_bLFOPerVoice_LFO2 == SWITCH::SWITCH_ON)
+			if (*m_State->m_bLFOPerVoice_LFO2 == static_cast<int>(SWITCH::SWITCH_ON))
 				sourceVal = m_RoutingBuffers.LFOBuffer[1][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame); //-1 ..1 				
 			else
 				sourceVal = m_RoutingBuffers.LFOGlobalBuffer[1]->getSample(0, matrixInputState->currentFrame); //-1 ..1
-			if (*m_State->m_uLFOPolarity_LFO2 == POLARITY::Unipolar)
+			if (*m_State->m_uLFOPolarity_LFO2 == static_cast<int>(POLARITY::Unipolar))
 				sourceVal = (sourceVal + 1.f) * 0.5f; //0..1				
 			break;
 		}
 		case MODMATSRCE::LFO3: {
-			if (*m_State->m_bLFOPerVoice_LFO3 == SWITCH::SWITCH_ON)
+			if (*m_State->m_bLFOPerVoice_LFO3 == static_cast<int>(SWITCH::SWITCH_ON))
 				sourceVal = m_RoutingBuffers.LFOBuffer[2][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame); //-1 ..1 				
 			else
 				sourceVal = m_RoutingBuffers.LFOGlobalBuffer[2]->getSample(0, matrixInputState->currentFrame); //-1 ..1
-			if (*m_State->m_uLFOPolarity_LFO3 == POLARITY::Unipolar)
+			if (*m_State->m_uLFOPolarity_LFO3 == static_cast<int>(POLARITY::Unipolar))
 				sourceVal = (sourceVal + 1.f) * 0.5f; //0..1				
 			break;
 		}
 		case MODMATSRCE::LFO4: {
-			if (*m_State->m_bLFOPerVoice_LFO4 == SWITCH::SWITCH_ON)
+			if (*m_State->m_bLFOPerVoice_LFO4 == static_cast<int>(SWITCH::SWITCH_ON))
 				sourceVal = m_RoutingBuffers.LFOBuffer[3][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame); //-1 ..1 				
 			else
 				sourceVal = m_RoutingBuffers.LFOGlobalBuffer[3]->getSample(0, matrixInputState->currentFrame); //-1 ..1
-			if (*m_State->m_uLFOPolarity_LFO4 == POLARITY::Unipolar)
+			if (*m_State->m_uLFOPolarity_LFO4 == static_cast<int>(POLARITY::Unipolar))
 				sourceVal = (sourceVal + 1.f) * 0.5f; //0..1				
 			break;
 		}
 		case MODMATSRCE::LFO5: {
-			if (*m_State->m_bLFOPerVoice_LFO5 == SWITCH::SWITCH_ON)
+			if (*m_State->m_bLFOPerVoice_LFO5 == static_cast<int>(SWITCH::SWITCH_ON))
 				sourceVal = m_RoutingBuffers.LFOBuffer[4][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame); //-1 ..1 				
 			else
 				sourceVal = m_RoutingBuffers.LFOGlobalBuffer[4]->getSample(0, matrixInputState->currentFrame); //-1 ..1
-			if (*m_State->m_uLFOPolarity_LFO5 == POLARITY::Unipolar)
+			if (*m_State->m_uLFOPolarity_LFO5 == static_cast<int>(POLARITY::Unipolar))
 				sourceVal = (sourceVal + 1.f) * 0.5f; //0..1				
 			break;
 		}
@@ -776,11 +849,11 @@ void CVASTSettings::getMatrixModulationSlotMultiplier(int slot, float& modVal, f
 	multiplier = sourceVal;
 
 	if (multiplier < -1.f) {
-		DBG("had to clip mod mat multiplier!");
+		VDBG("had to clip mod mat multiplier!");
 		multiplier = -1.f;
 	}
 	if (multiplier > 1.f) {
-		DBG("had to clip mod mat multiplier!");
+		VDBG("had to clip mod mat multiplier!");
 		multiplier = 1.f;
 	}
 
@@ -846,16 +919,15 @@ float CVASTSettings::getParameterValueWithMatrixModulation(std::atomic<float> *p
 	double  modEndPercentage = curValPercentage + abs(modVal * 0.01f);
 	if (modEndPercentage > 1.f) modEndPercentage = 1.f;
 	if (modEndPercentage < 0.f) modEndPercentage = 0.f;	
-	if (firstRelevantSlotPolarity == POLARITY::Unipolar)
-		if (modVal > 0.f) {
-			modStartPercentage = curValPercentage;
-		}
-		else {
-			modEndPercentage = modStartPercentage;
-			modStartPercentage = curValPercentage;
-		}
-		
-	//jassert(modEndPercentage >= modStartPercentage);
+    if (firstRelevantSlotPolarity == POLARITY::Unipolar) {
+        if (modVal > 0.f) {
+            modStartPercentage = curValPercentage;
+        }
+        else {
+            modEndPercentage = modStartPercentage;
+            modStartPercentage = curValPercentage;
+        }
+    }
 	
 	jassert(skew > 0);
 		
@@ -877,7 +949,7 @@ float CVASTSettings::getParameterValueWithMatrixModulation(std::atomic<float> *p
 	}
 	else {
 		if (modVal < 0.f)
-			multiplier = 1.f - multiplier;
+			multiplier0to1 = 1.f - multiplier0to1;
 	}
 
 	if (isModulating != nullptr)
@@ -895,8 +967,8 @@ void CVASTSettings::processEnvelope(int inFramesToProcess) {
 	/** Sets the times for the vaious stages of the envelope.
 	1 is an instant attack/release, 0 will never change the value.
 	*/
-	float envAttack = 0.9;	//coefficient param
-	float envRelease = 0.1; //coefficient param
+	float envAttack = 0.9f;	//coefficient param
+	float envRelease = 0.1f; //coefficient param
 
 	for (int i = 0; i < inFramesToProcess; i++) {
 		float envIn = fabsf(m_RoutingBuffers.fAudioInputBuffer->getReadPointer(0)[i]);
@@ -928,3 +1000,22 @@ float CVASTSettings::driftNoiseFast(int slot)
 	m_fDriftLfoFast[slot] = newVal;
 	return m_fDriftLfoFast[slot] * c_randdriftm_fast;
 }
+
+//enum class customFonts { OpenSans, OpenSansBold, AlteHaasGrotesk, AlteHaasGroteskBold, SFUIDisplayRegular, SFUIDisplayBold, TradeGothicLT, TradeGothicLTBold };
+void CVASTSettings::loadCustomFonts() {
+	customFontBuffer[0] = Font(Typeface::createSystemTypefaceFor(BinaryData::OpenSansRegular_ttf, BinaryData::OpenSansRegular_ttfSize));
+	customFontBuffer[1] = Font(Typeface::createSystemTypefaceFor(BinaryData::OpenSansBold_ttf, BinaryData::OpenSansBold_ttfSize));
+	customFontBuffer[2] = Font(Typeface::createSystemTypefaceFor(BinaryData::AlteHaasGroteskRegular_ttf, BinaryData::AlteHaasGroteskRegular_ttfSize));
+	customFontBuffer[3] = Font(Typeface::createSystemTypefaceFor(BinaryData::AlteHaasGroteskBold_ttf, BinaryData::AlteHaasGroteskBold_ttfSize));
+	customFontBuffer[4] = Font(Typeface::createSystemTypefaceFor(BinaryData::SFUIDisplayRegular_ttf, BinaryData::SFUIDisplayRegular_ttfSize));
+	customFontBuffer[5] = Font(Typeface::createSystemTypefaceFor(BinaryData::SFUIDisplayBold_ttf, BinaryData::SFUIDisplayBold_ttfSize));
+	customFontBuffer[6] = Font(Typeface::createSystemTypefaceFor(BinaryData::Trade_Gothic_LT_ttf, BinaryData::Trade_Gothic_LT_ttfSize));
+	customFontBuffer[7] = Font(Typeface::createSystemTypefaceFor(BinaryData::Trade_Gothic_LT_Bold_ttf, BinaryData::Trade_Gothic_LT_Bold_ttfSize));
+}
+
+Font CVASTSettings::getCustomFont(CVASTSettings::customFonts customFont) {
+	return customFontBuffer[static_cast<int>(customFont)];
+}
+
+JUCE_END_IGNORE_WARNINGS_GCC_LIKE
+JUCE_END_IGNORE_WARNINGS_MSVC

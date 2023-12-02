@@ -8,7 +8,7 @@ VAST Dynamics Audio Software (TM)
 
 //Prefix Category AR Arpeggio AT Atmosphere BA Bass BR Brass BL Bell CH Chord DK Drum kit DR Drum DL Drum loop FX Effect GT Guitar IN Instrument KB Keyboard LD Lead MA Mallet OR Organ OC Orchestral PN Piano PL Plucked RD Reed ST String SY Synth SQ Sequence / Split TG Trancegate VC Vocal / Voice WW Woodwind
 
-int VASTPresetData::getNumPresets() {
+int VASTPresetData::getNumPresets() const {
 	return m_numUserPresets;
 }
 
@@ -42,7 +42,7 @@ void VASTPresetData::loadFromSettings() {
 }
 
 void VASTPresetData::reloadPresetArray() {
-	
+	VDBG("Start reloadPresetArray");
 	m_PresetArray.clear();
 	m_usedAuthors.clear();
 	m_usedTags.clear();
@@ -68,8 +68,11 @@ void VASTPresetData::reloadPresetArray() {
 	}
 
 	FileSearchPath sPath = FileSearchPath(myProcessor->m_UserPresetRootFolder);
+	sPath.addIfNotAlreadyThere(File(myProcessor->getVSTPath()).getChildFile("Presets").getFullPathName()); //add search path for factory presets in app folder (not configurable) //not needed with symlink solution
+
 	Array<File> presetFiles;
 	sPath.findChildFiles(presetFiles, File::findFiles, true, "*.vvp");
+	
 	m_numUserPresets = 0;
 	for (int i = 0; i < presetFiles.size(); i++) {
 		VASTPresetElement* l_PresetArray = new VASTPresetElement(); //new OK because of owned Array
@@ -96,11 +99,13 @@ void VASTPresetData::reloadPresetArray() {
 				if (tags[j].trim() != "")
 					m_usedTags.addIfNotAlreadyThere(tags[j].trim(), true);
 		}
+		VDBG("Added to PresetArray: " + presetFiles[i].getFullPathName());
 	}
 	loadFromSettings();
 	doSearchWithVector();
 	myProcessor->requestUIPresetUpdate();
 	m_needsTreeUpdate = true;
+	VDBG("End reloadPresetArray");
 }
 
 void VASTPresetData::doSearchWithVector() {
@@ -242,7 +247,7 @@ void VASTPresetData::doSearchWithVector() {
 		while (i < m_SearchArray.size()) {
 			bool keep = false;
 			for (int j = 0; j < mSearchVector.searchAuthors.size(); j++) {
-				if (m_SearchArray[i]->authorname.isNotEmpty() && (m_SearchArray[i]->authorname.containsIgnoreCase(mSearchVector.searchAuthors[j]) == true)) {
+				if (m_SearchArray[i]->authorname.isNotEmpty() && (m_SearchArray[i]->authorname.equalsIgnoreCase(mSearchVector.searchAuthors[j]) == true)) {
 					keep = true;
 					break;
 				}
@@ -302,7 +307,7 @@ void VASTPresetData::loadSearchData() {
 	}
 }
 
-int VASTPresetData::getIndexInSearchArray(String internalid) {
+int VASTPresetData::getIndexInSearchArray(String internalid) const {
 	for (int i = 0; i < m_SearchArray.size(); i++) {
 		if (m_SearchArray[i]->internalid.equalsIgnoreCase(internalid))
 			return i;
@@ -310,7 +315,7 @@ int VASTPresetData::getIndexInSearchArray(String internalid) {
 	return -1;
 }
 
-int VASTPresetData::getIndexInPresetArray(String internalid) {
+int VASTPresetData::getIndexInPresetArray(String internalid) const {
 	for (int i = 0; i < m_PresetArray.size(); i++) {
 		if (m_PresetArray[i]->internalid.equalsIgnoreCase(internalid))
 			return i;
@@ -327,7 +332,7 @@ void VASTPresetData::exchangeCurPatchData(VASTPresetElement& newPatchData) {
 	myProcessor->requestUIPresetUpdate();
 }
 
-bool VASTPresetData::needsTreeUpdate() {
+bool VASTPresetData::needsTreeUpdate() const {
 	return m_needsTreeUpdate;
 }
 
@@ -357,11 +362,11 @@ void VASTPresetData::setProgramChangeArray(int bank, StringArray progChangeArray
 	m_programChangeData[bank] = progChangeArray;
 }
 
-StringArray VASTPresetData::getProgramChangeData(int bank) {
+StringArray VASTPresetData::getProgramChangeData(int bank) const {
 	return m_programChangeData[bank];
 }
 
-StringArray VASTPresetData::getProgramChangeDisplayData(int bank) {
+StringArray VASTPresetData::getProgramChangeDisplayData(int bank) const {
 	StringArray pcdd;
 	for (int i = 0; i < m_programChangeData[bank].size(); i++) {
 		String sstr = m_programChangeData[bank][i];
@@ -438,12 +443,9 @@ int VASTPresetData::getStars(String internalid) {
 	it = m_stars.find(internalid);
 	if (it == m_stars.end()) return 0;
 	return it->second;
-	
-	//String s1 = m_stars[internalid];
-	//return s1.getIntValue();
 }
 
-bool VASTPresetData::getFavorite(String internalid, int favoriteNo) {	
+bool VASTPresetData::getFavorite(String internalid, int favoriteNo) const {
 	auto result = m_favorites.equal_range(internalid);
 	for (auto it = result.first; it != result.second; ++it) {
 		if (it->second == favoriteNo)
@@ -506,4 +508,10 @@ void VASTPresetData::addTag(String tagToAdd) {
 	tags.addTokens(m_curPatchData.freetag, " ,#", "\"");
 	if (!(tags.contains(tagToAdd, true)))
 		m_curPatchData.freetag = m_curPatchData.freetag + " " + tagToAdd;
+}
+
+inline int VASTPresetData::VASTPresetElementCompareDates::compareElements(VASTPresetElement* first, const VASTPresetElement* second)
+{
+	return (first->presetdate < second->presetdate) ? -1
+		: ((first->presetdate == second->presetdate) ? 0 : 1);
 }

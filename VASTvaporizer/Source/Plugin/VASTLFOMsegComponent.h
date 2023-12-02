@@ -81,43 +81,48 @@ public:
 	}
 	void currentTabChanged(int index, const String&) override
 	{
-		VASTMSEGEditorPane* tab1 = ((VASTMSEGEditorPane*)getTabContentComponent(0));
-		if (tab1 == nullptr) return; //not initialized
-		tab1->stopAutoUpdate();
-		VASTMSEGEditorPane* tab2 = ((VASTMSEGEditorPane*)getTabContentComponent(1));
-		if (tab2 == nullptr) return; //not initialized
-		tab2->stopAutoUpdate();
-		VASTMSEGEditorPane* tab3 = ((VASTMSEGEditorPane*)getTabContentComponent(2));
-		if (tab3 == nullptr) return; //not initialized
-		tab3->stopAutoUpdate();
-		VASTMSEGEditorPane* tab4 = ((VASTMSEGEditorPane*)getTabContentComponent(3));
-		if (tab4 == nullptr) return; //not initialized
-		tab4->stopAutoUpdate();
-		VASTMSEGEditorPane* tab5 = ((VASTMSEGEditorPane*)getTabContentComponent(4));
-		if (tab5 == nullptr) return; //not initialized
-		tab5->stopAutoUpdate();
+		VASTMSEGEditorPane* tab1 = dynamic_cast<VASTMSEGEditorPane*>(getTabContentComponent(0));
+		if (tab1 != nullptr)
+            tab1->stopAutoUpdate();
+		VASTMSEGEditorPane* tab2 = dynamic_cast<VASTMSEGEditorPane*>(getTabContentComponent(1));
+		if (tab2 != nullptr)
+            tab2->stopAutoUpdate();
+		VASTMSEGEditorPane* tab3 = dynamic_cast<VASTMSEGEditorPane*>(getTabContentComponent(2));
+		if (tab3 != nullptr)
+            tab3->stopAutoUpdate();
+		VASTMSEGEditorPane* tab4 = dynamic_cast<VASTMSEGEditorPane*>(getTabContentComponent(3));
+		if (tab4 != nullptr)
+            tab4->stopAutoUpdate();
+		VASTMSEGEditorPane* tab5 = dynamic_cast<VASTMSEGEditorPane*>(getTabContentComponent(4));
+		if (tab5 != nullptr)
+            tab5->stopAutoUpdate();
 
 		switch (index) {
 		case 0:
-			tab1->startAutoUpdate();
+                if (tab1 != nullptr)
+                    tab1->startAutoUpdate();
 			break;
 		case 1:
-			tab2->startAutoUpdate();
+                if (tab2 != nullptr)
+                    tab2->startAutoUpdate();
 			break;
 		case 2:
-			tab3->startAutoUpdate();
+                if (tab3 != nullptr)
+                    tab3->startAutoUpdate();
 			break;
 		case 3:
-			tab4->startAutoUpdate();
+                if (tab4 != nullptr)
+                    tab4->startAutoUpdate();
 			break;
 		case 4:
-			tab5->startAutoUpdate();
+                if (tab5 != nullptr)
+                    tab5->startAutoUpdate();
 			break;
 		}
 		TabChangedFunc(index);
 	}
 
-	TabBarButton* createTabButton(const String &tabName, int tabIndex) {
+	TabBarButton* createTabButton(const String &tabName, int ) override {
 		return new VASTDnDTabBarButton(myProcessor, tabName, getTabbedButtonBar());
 	}
 };
@@ -132,43 +137,48 @@ public:
 	}
 	void currentTabChanged(int index, const String&) override
 	{
-		VASTLFOEditorPane* tab1 = ((VASTLFOEditorPane*)getTabContentComponent(0));
-		if (tab1 == nullptr) return; //not initialized
-		tab1->stopAutoUpdate();
-		VASTLFOEditorPane* tab2 = ((VASTLFOEditorPane*)getTabContentComponent(1));
-		if (tab2 == nullptr) return; //not initialized
-		tab2->stopAutoUpdate();
-		VASTLFOEditorPane* tab3 = ((VASTLFOEditorPane*)getTabContentComponent(2));
-		if (tab3 == nullptr) return; //not initialized
-		tab3->stopAutoUpdate();
-		VASTLFOEditorPane* tab4 = ((VASTLFOEditorPane*)getTabContentComponent(3));
-		if (tab4 == nullptr) return; //not initialized
-		tab4->stopAutoUpdate();
-		VASTLFOEditorPane* tab5 = ((VASTLFOEditorPane*)getTabContentComponent(4));
-		if (tab5 == nullptr) return; //not initialized
-		tab5->stopAutoUpdate();
+		VASTLFOEditorPane* tab1 = dynamic_cast<VASTLFOEditorPane*>(getTabContentComponent(0));
+		if (tab1 != nullptr)
+            tab1->stopAutoUpdate();
+		VASTLFOEditorPane* tab2 = dynamic_cast<VASTLFOEditorPane*>(getTabContentComponent(1));
+		if (tab2 != nullptr)
+            tab2->stopAutoUpdate();
+		VASTLFOEditorPane* tab3 = dynamic_cast<VASTLFOEditorPane*>(getTabContentComponent(2));
+		if (tab3 != nullptr)
+            tab3->stopAutoUpdate();
+		VASTLFOEditorPane* tab4 = dynamic_cast<VASTLFOEditorPane*>(getTabContentComponent(3));
+		if (tab4 != nullptr)
+            tab4->stopAutoUpdate();
+		VASTLFOEditorPane* tab5 = dynamic_cast<VASTLFOEditorPane*>(getTabContentComponent(4));
+		if (tab5 != nullptr) 
+            tab5->stopAutoUpdate();
 
 		switch (index) {
 		case 0:
-			tab1->startAutoUpdate();
+                if (tab1 != nullptr)
+                    tab1->startAutoUpdate();
 			break;
 		case 1:
-			tab2->startAutoUpdate();
+                if (tab2 != nullptr)
+                    tab2->startAutoUpdate();
 			break;
 		case 2:
-			tab3->startAutoUpdate();
+                if (tab3 != nullptr)
+                    tab3->startAutoUpdate();
 			break;
 		case 3:
-			tab4->startAutoUpdate();
+                if (tab1 != nullptr)
+                    tab4->startAutoUpdate();
 			break;
 		case 4:
-			tab5->startAutoUpdate();
+                if (tab5 != nullptr)
+                    tab5->startAutoUpdate();
 			break;
 		}
 		TabChangedFunc(index);
 	}
 
-	TabBarButton* createTabButton(const String &tabName, int tabIndex) {
+	TabBarButton* createTabButton(const String &tabName, int ) override {
 		return new VASTDnDTabBarButton(myProcessor, tabName, getTabbedButtonBar());
 	}
 };

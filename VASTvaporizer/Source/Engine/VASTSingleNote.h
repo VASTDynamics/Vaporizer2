@@ -55,13 +55,13 @@ public:
 	void prepareForPlay();
 	void updateVariables();
 
-	MYUINT getChannel();
-	MYUINT getMIDINote();
+	MYUINT getChannel() const;
+	MYUINT getMIDINote() const;
 	bool noteOn(MYUINT uChannel, MYUINT uMIDINote, MYUINT uVelocity, bool legato); //returns success
-	void noteOff(float releaseVelocity);
-	bool isPlayingInRange(int startsample, int numsamples);
-	bool isPlayingAtSamplePosition(int sample);
-	bool isPlayingCalledFromUI();
+	void noteOff(float releaseVelocity) ;
+	bool isPlayingInRange(int startsample, int numsamples) const;
+	bool isPlayingAtSamplePosition(int sample) const;
+	bool isPlayingCalledFromUI() const;
 	void processBuffer(sRoutingBuffers& routingBuffers, int startSample, int numSamples);
 
 	void generate_normalized_irrationals(float *destination, int count);
@@ -69,9 +69,7 @@ public:
 	void setGlissandoStart(int midinote, bool reset);
 	void setPortamentoTime(float time); //in s
 	
-	int getNumOscsPlaying() {
-		return m_uLast_NumTotalPlaying;
-	};
+    int getNumOscsPlaying() const;
 
 	//==============================================================================
 	//from SynthesiserVoice
@@ -97,9 +95,7 @@ public:
 	//==============================================================================
 	void samplerUpdatePitch(VASTSamplerSound* sound, bool force);
 	int m_samplerMidiNoteNumber = 0;
-	int getVoiceNo() { 
-		return mVoiceNo; 
-	};
+	int getVoiceNo() const;
 	ULong64_t m_startPlayTimestamp = 0;
 
 	void setWTPosSmooth(int bank);
@@ -107,41 +103,38 @@ public:
 	void resetSmoothers();
 	
 	// public instances
-	ScopedPointer<CVASTVca> m_VCA;
+    std::unique_ptr<CVASTVca> m_VCA;
 	OwnedArray<CVASTVcf> m_VCF;
 
 	// instances
 	OwnedArray<CVASTWaveTableOscillator> m_Oscillator;
-	ScopedPointer<CVASTWaveTableOscillator> m_OscillatorNoise;	
+    std::unique_ptr<CVASTWaveTableOscillator> m_OscillatorNoise;
 	OwnedArray<CVASTWaveTableOscillator> m_LFO_Osc; // LFOs 1-5
 
-	MYUINT m_uChannel;
-	MYUINT m_uMIDINote;
-	MYUINT m_uVelocity;
+	MYUINT m_uChannel = 0;
+	MYUINT m_uMIDINote = 0;
+	MYUINT m_uVelocity = 0;
 
-	bool m_bLastFilterOutputZero[3]; //filters
+    bool m_bLastFilterOutputZero[3] = {true, true, true}; //filters
 
-	float m_safePhaseFloat[4];
 	int m_iCurCycleSamples[4] = { 0, 0, 0, 0 };
 	int m_iLastCycleSamples[4] = { 0, 0, 0, 0 };
 
 	LinearSmoothedValue<float> m_wtFXVal_smoothed[4];
-	float m_wtFXVal[4];
-	int m_wtFXType[4];
-	bool m_wtFXTypeChanged[4];	
-	float m_currentWTPosFloatPercentage[4]; //bank
+	float m_wtFXVal[4] {0.f,0.f,0.f,0.f};
+	int m_wtFXType[4]{ 0, 0, 0, 0 };
+	bool m_wtFXTypeChanged[4]{ false, false, false, false };
+	std::atomic<float> m_currentWTPosFloatPercentage[4] { 0.f,0.f,0.f,0.f }; //bank
+	std::atomic<float> m_safePhaseFloat[4]{ 0.f,0.f,0.f,0.f }; //bank
 
 private:
 	void nextNote(bool legato);
 
-	MYUINT m_uChannelNext;
-	MYUINT m_uMIDINoteNext;
-	MYUINT m_uVelocityNext;
-	int m_iNumParallelOsc;
+	MYUINT m_uChannelNext = 0;
+	MYUINT m_uMIDINoteNext = 0;
+	MYUINT m_uVelocityNext = 0;
+	int m_iNumParallelOsc = 0;
 
-	float m_lLeftCosPan = 0;
-	float m_lRightCosPan = 0;
-	
 	float m_fOscAMaxPeak = 1.0f;
 	float m_fOscADivisor = 1.0f;
 	float m_fOscBMaxPeak = 1.0f;
@@ -154,18 +147,18 @@ private:
 	float m_fNoiseDivisor = 1.0f;
 	void writeDebugInfo();
 
-	MYUINT m_uLastuNumOscAOscsPlaying = 0;
-	MYUINT m_uLastuNumOscBOscsPlaying = 0;
-	MYUINT m_uLastuNumOscCOscsPlaying = 0;
-	MYUINT m_uLastuNumOscDOscsPlaying = 0;
-	MYUINT m_uLast_NumTotalPlaying = 0;
+    std::atomic<MYUINT> m_uLastuNumOscAOscsPlaying = 0;
+    std::atomic<MYUINT> m_uLastuNumOscBOscsPlaying = 0;
+    std::atomic<MYUINT> m_uLastuNumOscCOscsPlaying = 0;
+    std::atomic<MYUINT> m_uLastuNumOscDOscsPlaying = 0;
+	std::atomic<MYUINT> m_uLast_NumTotalPlaying = 0;
 
 	void syncOscToMaster(int bank, int i);
 	
-	ScopedPointer<AudioSampleBuffer> m_centerBuffer;
-	ScopedPointer<AudioSampleBuffer> m_velocityBuffer;
+    std::unique_ptr<AudioSampleBuffer> m_centerBuffer;
+    std::unique_ptr<AudioSampleBuffer> m_velocityBuffer;
 
-	float mSpread[4]; //per bank
+	float mSpread[4] { 0.f,0.f,0.f,0.f }; //per bank
 
 	float m_pitchBendNote = 1.f; //for sampler
 
@@ -189,13 +182,13 @@ private:
 	std::shared_ptr<CVASTWaveTable> m_localVoiceBankWavetable[4] = { nullptr, nullptr, nullptr, nullptr }; //can be nullptr, can hold a WT longer than bank, bank is only copy template
 	std::shared_ptr<CVASTWaveTable> m_localVoiceBankWavetableSoftfade[4] = { nullptr, nullptr, nullptr, nullptr }; //can be nullptr, can hold a WT longer than bank, bank is only copy template
 
-	float normalized_irrational[4][C_MAX_PARALLEL_OSC + 1]; //for detune / "fixed detune"
-	float delta[4][C_MAX_PARALLEL_OSC + 1];
-	float detune[4][C_MAX_PARALLEL_OSC];
+	float normalized_irrational[4][C_MAX_PARALLEL_OSC + 1]{}; //for detune / "fixed detune"
+	float delta[4][C_MAX_PARALLEL_OSC + 1]{};
+	float detune[4][C_MAX_PARALLEL_OSC]{};
 
 	void updateDetune(int bank, float detuneValue, bool updateFrequency);
 	bool prepareNextPhaseCycle(int bank, int skips, int startSample, bool bTakeNextValue, bool wtfxFXTypeChanged);
-	bool prepareEachSample(int bank, int currentFrame, bool &freqsHaveToBeDoneForEachSample, bool bTakeNextValue);
+	bool prepareEachSample(int bank, int currentFrame, bool &freqsHaveToBeDoneForEachSample, bool bTakeNextValue, CVASTWaveTableOscillator* l_Oscillator[]);
 	bool prepareFrequency(int bank, int skips, int startSample, bool bTakeNextValue, bool bIsStartOfCycle);
 	void initWavetableProcessing(int bank, sRoutingBuffers& routingBuffers, modMatrixInputState& inputState);
 	void setTargetWTPos(int bank, float targetWTPosPercentage, bool takeNext);

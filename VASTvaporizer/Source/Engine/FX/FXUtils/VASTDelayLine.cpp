@@ -13,7 +13,7 @@ CDelayLine::CDelayLine(void)
 	m_dDelay_ms = 0.0;
 	m_dDelayInSamples = 0.0;
 	m_nSampleRate = 0;
-	m_pBuffer = new AudioSampleBuffer(1, 44100 * 2); // inital value
+	m_pBuffer = std::make_unique<AudioSampleBuffer>(1, 44100 * 2); // inital value
 
 	m_dDelay_ms_next = 0.0;
 	m_nCrossFadeSteps = 0;
@@ -25,6 +25,9 @@ CDelayLine::CDelayLine(void)
 CDelayLine::~CDelayLine(void)
 {
 }
+
+JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE("-Wconversion")
+JUCE_BEGIN_IGNORE_WARNINGS_MSVC(4244 4267)
 
 void CDelayLine::init(int nDelayLength)
 {
@@ -99,7 +102,7 @@ double CDelayLine::readDelay()
 	double yn = m_pBuffer->getReadPointer(0)[m_nReadIndex];
 	//vassert((yn > -10.0f) && (yn <= 10.0));
 	if (!((yn > -10.0f) && (yn <= 10.0))) {
-		DBG("CDelayLine::readDelay() overflow > 10.f");
+		VDBG("CDelayLine::readDelay() overflow > 10.f");
 		yn = 0.0;
 		resetDelay(); // try auto correct! BUT THIS IS NOT A SOLUTION!
 	}
@@ -114,7 +117,7 @@ double CDelayLine::readDelay()
 	double yn_1 = m_pBuffer->getReadPointer(0)[nReadIndex_1];
 	//vassert((yn_1 > -10.0f) && (yn_1 <= 10.0));
 	if (!((yn_1 > -10.0f) && (yn_1 <= 10.0))) {
-		DBG("CDelayLine::readDelay() overflow > 10.f");
+		VDBG("CDelayLine::readDelay() overflow > 10.f");
 		yn_1 = 0.0;
 		resetDelay(); // try auto correct! BUT THIS IS NOT A SOLUTION!
 	}
@@ -229,3 +232,5 @@ bool CDelayLine::processAudio(double* pInput, double* pOutput)
 	return true; // all OK
 }
 
+JUCE_END_IGNORE_WARNINGS_GCC_LIKE
+JUCE_END_IGNORE_WARNINGS_MSVC

@@ -24,7 +24,7 @@ CVASTDistortion::CVASTDistortion(VASTAudioProcessor* processor, int busnr) {
 void CVASTDistortion::initParameters() {
 	AudioProcessorValueTreeState& parameters = my_processor->getParameterTree();
 
-	createAndAddParameter(&m_bDistortionOnOff, parameters, "m_bDistortionOnOff", "Distortion effect on / off", "On", 0,
+	createAndAddParameter(&m_bDistortionOnOff, parameters, 1, "m_bDistortionOnOff", "Distortion effect on / off", "On", 0,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		CVASTParamState::toggleButtonValueToTextFunction,
@@ -32,7 +32,7 @@ void CVASTDistortion::initParameters() {
 		false, true, true, true,
 		true);
 
-	createAndAddParameter(&m_fDistDryWet, parameters, "m_fDistDryWet", "Distortion dry / wet (no effect - full effect)", "DryWet", 1,
+	createAndAddParameter(&m_fDistDryWet, parameters, 1, "m_fDistDryWet", "Distortion dry / wet (no effect - full effect)", "DryWet", 1,
 		MODMATDEST::DistortionDryWet,
 		NormalisableRange<float>(0, 100), 10.f,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -40,7 +40,7 @@ void CVASTDistortion::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_fDistPreGain, parameters, "m_fDistPreGain", "Distortion pre-gain", "PreGain", 2,
+	createAndAddParameter(&m_fDistPreGain, parameters, 1, "m_fDistPreGain", "Distortion pre-gain", "PreGain", 2,
 		MODMATDEST::DistortionPreGain, 
 		NormalisableRange<float>(0, 200), 100,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -48,28 +48,28 @@ void CVASTDistortion::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_fDistLowcut, parameters, "m_fDistLowcut", "Distortion lowcut frequency", "Lowcut", 3,
+	createAndAddParameter(&m_fDistLowcut, parameters, 1, "m_fDistLowcut", "Distortion lowcut frequency", "Lowcut", 3,
 		MODMATDEST::DistortionLowCut,
 		NormalisableRange<float>(50.f, 18000.f, 0.001f, 0.3f, false), 50.f,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fDistDrive, parameters, "m_fDistDrive", "Distortion drive (pre gain before waveshaping)", "Drive", 4,
+	createAndAddParameter(&m_fDistDrive, parameters, 1, "m_fDistDrive", "Distortion drive (pre gain before waveshaping)", "Drive", 4,
 		MODMATDEST::DistortionDrive,
 		NormalisableRange<float>(0, 100), 30.f,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fDistFuzz, parameters, "m_fDistFuzz", "Distortion fuzz level", "Fuzz", 5,
+	createAndAddParameter(&m_fDistFuzz, parameters, 1, "m_fDistFuzz", "Distortion fuzz level", "Fuzz", 5,
 		MODMATDEST::DistortionFuzz,
 		NormalisableRange<float>(0, 100), 10.f,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fDistGain, parameters, "m_fDistGain", "Distortion output gain", "Gain", 6,
+	createAndAddParameter(&m_fDistGain, parameters, 1, "m_fDistGain", "Distortion output gain", "Gain", 6,
 		MODMATDEST::DistortionGain,
 		NormalisableRange<float>(0, 200), 100,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -92,28 +92,28 @@ CVASTDistortion::~CVASTDistortion(void) {
 
 void CVASTDistortion::parameterChanged(const String& parameterID, float newValue) {
 	if (parameterID.startsWith("m_bDistortionOnOff")) {
-		if (newValue == SWITCH::SWITCH_ON)
+		if (newValue == static_cast<int>(SWITCH::SWITCH_ON))
 			switchOn();
 		else
 			switchOff();
 	}
 	else if (parameterID.startsWith("m_fDistDryWet")) {
-		m_fDistDryWet_smoothed.setValue(newValue);
+		m_fDistDryWet_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fDistDrive")) {
-		m_fDistDrive_smoothed.setValue(newValue);
+		m_fDistDrive_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fDistFuzz")) {
-		m_fDistFuzz_smoothed.setValue(newValue);
+		m_fDistFuzz_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fDistLowcut")) {
-		m_fDistLowcut_smoothed.setValue(newValue);
+		m_fDistLowcut_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fDistGain")) {
-		m_fDistGain_smoothed.setValue(newValue);
+		m_fDistGain_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fDistPreGain")) {
-		m_fDistPreGain_smoothed.setValue(newValue);
+		m_fDistPreGain_smoothed.setTargetValue(newValue);
 	}
 }
 
@@ -159,7 +159,7 @@ void CVASTDistortion::reset() {
 	}
 }
 
-void CVASTDistortion::prepareToPlay(double sampleRate, int samplesPerBlock) {
+void CVASTDistortion::prepareToPlay(double, int samplesPerBlock) {
 	//m_iSampleRate is set in useroversampling
 	m_iExpectedSamplesPerBlock = samplesPerBlock;
 
@@ -190,7 +190,7 @@ void CVASTDistortion::releaseResources()
 {
 }
 
-void CVASTDistortion::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages, const int numSamples) {
+void CVASTDistortion::processBlock(AudioSampleBuffer& buffer, MidiBuffer&, const int numSamples) {
 	if (isOffAndShallBeOff() == true) return;
 
 	modMatrixInputState inputState;
@@ -212,7 +212,7 @@ void CVASTDistortion::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMe
 		
 		processAudioFrame(fIn, fOut, 2, 2, inputState);
 
-		m_fDistGain_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fDistGain, MODMATDEST::DistortionGain, &inputState));
+		m_fDistGain_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fDistGain, MODMATDEST::DistortionGain, &inputState));
 		float lDistGain = m_fDistGain_smoothed.getNextValue();
 
 		bufferWritePointerL[currentFrame] = fOut[0] * lDistGain * 0.01f;
@@ -239,32 +239,32 @@ void CVASTDistortion::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMe
 	}
 }
 
-bool CVASTDistortion::processAudioFrame(float* pInputBuffer, float* pOutputBuffer, MYUINT uNumInputChannels, MYUINT uNumOutputChannels, modMatrixInputState &inputState)
+bool CVASTDistortion::processAudioFrame(float* pInputBuffer, float* pOutputBuffer, MYUINT uNumInputChannels, MYUINT, modMatrixInputState &inputState)
 {
 	//pre - eq(bandpass) > pre - gain > nonlinear waveshaping function > post - eq(lowpass) > post - gain and you may wish to eliminate aliasing using the bandlimited polynomials or by oversampling.
 	//http://music.columbia.edu/cmc/music-dsp/FAQs/guitar_distortion_FAQ.html
 		
 	//DryWet Mod
-	m_fDistDryWet_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fDistDryWet, MODMATDEST::DistortionDryWet, &inputState));
+	m_fDistDryWet_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fDistDryWet, MODMATDEST::DistortionDryWet, &inputState));
 	float lDistortionWet = m_fDistDryWet_smoothed.getNextValue();
 
 	//Drive Mod
-	m_fDistDrive_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fDistDrive, MODMATDEST::DistortionDrive, &inputState));
+	m_fDistDrive_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fDistDrive, MODMATDEST::DistortionDrive, &inputState));
 	float lDistortionDrive = m_fDistDrive_smoothed.getNextValue();
 
 	//Fuzz Mod
-	m_fDistFuzz_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fDistFuzz, MODMATDEST::DistortionFuzz, &inputState));
+	m_fDistFuzz_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fDistFuzz, MODMATDEST::DistortionFuzz, &inputState));
 	float lDistortionFuzz = m_fDistFuzz_smoothed.getNextValue();
 
 	//Pregain Mod
-	m_fDistPreGain_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fDistPreGain, MODMATDEST::DistortionPreGain, &inputState));
+	m_fDistPreGain_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fDistPreGain, MODMATDEST::DistortionPreGain, &inputState));
 	float lDistortionPreGain = m_fDistPreGain_smoothed.getNextValue();
 
 	//Lowcut Mod
-	m_fDistLowcut_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fDistLowcut, MODMATDEST::DistortionLowCut, &inputState));
+	m_fDistLowcut_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fDistLowcut, MODMATDEST::DistortionLowCut, &inputState));
 	if (m_fDistLowcut_smoothed.isSmoothing()) {
 		float lDistortionLowcut = m_fDistLowcut_smoothed.getNextValue();
-		float fQ = sqrt2over2;
+		float fQ = float(sqrt2over2);
 		m_lowCutBiquadL.calcBiquad(CVASTBiQuad::HIGHPASS, lDistortionLowcut, m_iSampleRate, fQ, -18.0f);
 		m_lowCutBiquadR.copySettingsFrom(&m_lowCutBiquadL);
 	}
@@ -305,12 +305,12 @@ bool CVASTDistortion::processAudioFrame(float* pInputBuffer, float* pOutputBuffe
 	float fFuzzL = 0.f;
 	float fFuzzR = 0.f;
 	if (fDriveL == 0.0f) fFuzzL = 0.0f;
-	else fFuzzL = (fDriveL / abs(fDriveL))*(1 - powf(M_E, fAlpha * powf(fDriveL, 2.0f) / abs(fDriveL))) * 0.06f; //attenuate fuzz
+	else fFuzzL = (fDriveL / abs(fDriveL))*(1.f - powf(float(M_E), fAlpha * powf(fDriveL, 2.0f) / abs(fDriveL))) * 0.06f; //attenuate fuzz
 	if (fFuzzL > 1.0f) fFuzzL = 1.0f;
 	if (fFuzzL < -1.0f) fFuzzL = -1.0f;
 	if (isnan(fFuzzL)) fFuzzL = 0.0f; //NaN check
 	if (fDriveR == 0.0f) fFuzzR = 0.0f;
-	else fFuzzR = (fDriveR / abs(fDriveR))*(1 - powf(M_E, fAlpha * powf(fDriveR, 2.0f) / abs(fDriveR))) * 0.06f; //attenuate fuzz
+	else fFuzzR = (fDriveR / abs(fDriveR))*(1.f - powf(float(M_E), fAlpha * powf(fDriveR, 2.0f) / abs(fDriveR))) * 0.06f; //attenuate fuzz
 	if (fFuzzR > 1.0f) fFuzzR = 1.0f;
 	if (fFuzzR < -1.0f) fFuzzR = -1.0f;
 	if (isnan(fFuzzR)) fFuzzR = 0.0f; //NaN check
@@ -331,15 +331,15 @@ bool CVASTDistortion::processAudioFrame(float* pInputBuffer, float* pOutputBuffe
 
 //==============================================================================
 
-void CVASTDistortion::getStateInformation(MemoryBlock& destData)
+void CVASTDistortion::getStateInformation(MemoryBlock&)
 {
-	//ScopedPointer<XmlElement> xml (parameters.valueTreeState.state.createXml());
+	//std::unique_ptr<XmlElement> xml (parameters.valueTreeState.state.createXml());
 	//copyXmlToBinary (*xml, destData);
 }
 
-void CVASTDistortion::setStateInformation(const void* data, int sizeInBytes)
+void CVASTDistortion::setStateInformation(const void*, int)
 {
-	//ScopedPointer<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
+	//std::unique_ptr<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
 	//if (xmlState != nullptr)
 	//  if (xmlState->hasTagName (parameters.valueTreeState.state.getType()))
 	//    parameters.valueTreeState.state = ValueTree::fromXml (*xmlState);

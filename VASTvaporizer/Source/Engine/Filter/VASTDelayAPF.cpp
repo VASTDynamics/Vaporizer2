@@ -13,6 +13,11 @@ CDelayAPF::~CDelayAPF(void)
 {
 }
 	
+
+// set our g value
+
+void CDelayAPF::setAPF_g(float fAPFg) { m_fAPF_g = fAPFg; }
+
 bool CDelayAPF::processAudio(float* pInput, float* pOutput)
 {
 	// read the delay line to get w(n-D); call base class

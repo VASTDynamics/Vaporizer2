@@ -46,14 +46,14 @@ public:
 	*/
 
 	void reloadPresetArray();
-	int getNumPresets();
+	int getNumPresets() const;
 	VASTPresetElement* getPreset(int index);
 	OwnedArray<VASTPresetElement>& getSearchArray();
 	void initSearch();
 	void doSearchWithVector();
 
-	int getIndexInSearchArray(String internalid);
-	int getIndexInPresetArray(String internalid);
+	int getIndexInSearchArray(String internalid) const;
+	int getIndexInPresetArray(String internalid) const;
 
 	StringArray* getUsedCategories();
 	StringArray* getUsedAuthors();
@@ -62,7 +62,7 @@ public:
 	const VASTPresetElement& getCurPatchData();
 	void exchangeCurPatchData(VASTPresetElement& newPatchData);
 	
-	bool needsTreeUpdate();
+	bool needsTreeUpdate() const;
 	void clearNeedsTreeUpdate();
 
 	int bankProgramGetPresetIndex(int bank, int program);
@@ -71,10 +71,10 @@ public:
 	void swapProgramChangeData(int bankFrom, int bankTo, int position1, int position2);
 	void moveProgramChangeData(int bankFrom, int bankTo, int position1, int position2);
 	void removeProgramChangeData(int bank, int position);
-	StringArray getProgramChangeData(int bank);
-	StringArray getProgramChangeDisplayData(int bank);
+	StringArray getProgramChangeData(int bank) const;
+	StringArray getProgramChangeDisplayData(int bank) const;
 	void setFavorite(String internalid, int favoriteNo);
-	bool getFavorite(String internalid, int favoriteNo);
+	bool getFavorite(String internalid, int favoriteNo) const;
 	int getNumFavorites(int favoriteNo);
 	void removeAllFavorites(int favoriteNo);
 	void removeFromAllFavorites(String internalid);
@@ -113,10 +113,6 @@ private:
 	//ElementComparator
 	class VASTPresetElementCompareDates {
 	public:
-		int compareElements(VASTPresetElement* first, const VASTPresetElement* second)
-		{
-			return (first->presetdate < second->presetdate) ? -1
-				: ((first->presetdate == second->presetdate) ? 0 : 1);
-		}		
+		int compareElements(VASTPresetElement* first, const VASTPresetElement* second);
 	};
 };

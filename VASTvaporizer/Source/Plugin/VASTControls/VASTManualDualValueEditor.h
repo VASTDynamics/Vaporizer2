@@ -48,19 +48,9 @@ public:
     //[UserMethods]     -- You can add your own custom methods in this section.
 	void textEditorReturnKeyPressed(TextEditor& textEditorThatWasChanged) override;
 	void textEditorEscapeKeyPressed(TextEditor& textEditorThatWasChanged) override;
-	void setTextStart(String text) {
-		c_textEditorFrom->setText(text, NotificationType::sendNotification);
-		c_textEditorFrom->applyFontToAllText(((VASTLookAndFeel*)&getLookAndFeel())->getTextEditorFont(*c_textEditorFrom));
-		c_textEditorFrom->selectAll();
-	}
-	void setTextEnd(String text) {
-		c_textEditorTo->setText(text, NotificationType::sendNotification);
-		c_textEditorTo->applyFontToAllText(((VASTLookAndFeel*)&getLookAndFeel())->getTextEditorFont(*c_textEditorTo));
-		c_textEditorTo->selectAll();
-	}
-	void setPolarity(int polarity) {
-		c_unipolar->setToggleState(polarity == POLARITY::Unipolar, true);
-	}
+    void setTextStart(String text);
+    void setTextEnd(String text);
+    void setPolarity(int polarity);
 
     //[/UserMethods]
 

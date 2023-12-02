@@ -41,6 +41,12 @@ VASTAudioProcessor* VASTModwheelSlider::getAudioProcessor() {
 	return m_processor;
 }
 
+void VASTModwheelSlider::setDefaultValue(float defaultVal) {
+	hasDefaultValue = true;
+	mDefaultVal = defaultVal;
+	setDoubleClickReturnValue(true, mDefaultVal);
+}
+
 void VASTModwheelSlider::mouseDown(const MouseEvent &e) {
 	if (e.getNumberOfClicks() > 1) { //double click shall reset to default
 		if (hasDefaultValue) {

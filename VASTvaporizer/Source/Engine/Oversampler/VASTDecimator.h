@@ -5,7 +5,11 @@ VAST Dynamics Audio Software (TM)
 #pragma once
 #include "../VASTEngineHeader.h"
 #include "VASTRateConvertor.h"
-#include "emmintrin.h" 
+#ifdef __aarch64__ //arm64
+	#include "../../sse2neon.h"
+#else
+	#include "emmintrin.h"
+#endif
 
 #define C_FACTOR4_IR_LENGTH 512
 #define C_FACTOR4_OVERSAMPLE 4

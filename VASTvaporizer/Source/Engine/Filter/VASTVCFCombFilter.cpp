@@ -8,28 +8,31 @@ All modulators tested: OK
 #include "../VASTEngineHeader.h"
 #include "../VASTSettings.h"
 
+JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE("-Wconversion")
+JUCE_BEGIN_IGNORE_WARNINGS_MSVC(4244 4267) //C4244 conversion from 'type1' to 'type2', possible loss of data //C4267 conversion
+
 CVASTVCFCombFilter::CVASTVCFCombFilter() {
 }
 
 void CVASTVCFCombFilter::parameterChanged(const String& parameterID, float newValue, bool takeNext, int skips) {
 	if (parameterID.startsWith("m_fCombFrequOffset")) {
-		m_fCombFrequOffset_smoothed.setValue(newValue, takeNext);
+        takeNext ? m_fCombFrequOffset_smoothed.setCurrentAndTargetValue(newValue) : m_fCombFrequOffset_smoothed.setTargetValue(newValue);
 		m_fCombFrequOffset_smoothed.skip(skips);
 	}
 	else if (parameterID.startsWith("m_fCombLevel")) {
-		m_fCombLevel_smoothed.setValue(newValue, takeNext);
+        takeNext ? m_fCombLevel_smoothed.setCurrentAndTargetValue(newValue) : m_fCombLevel_smoothed.setTargetValue(newValue);
 		m_fCombLevel_smoothed.skip(skips);
 	}
 	else if (parameterID.startsWith("m_fCombDrive")) {
-		m_fCombDrive_smoothed.setValue(newValue, takeNext);
+        takeNext ? m_fCombDrive_smoothed.setCurrentAndTargetValue(newValue) : m_fCombDrive_smoothed.setTargetValue(newValue);
 		m_fCombDrive_smoothed.skip(skips);
 	}
 	else if (parameterID.startsWith("m_fCombDryWet")) {
-		m_fCombDryWet_smoothed.setValue(newValue, takeNext);
+        takeNext ? m_fCombDryWet_smoothed.setCurrentAndTargetValue(newValue) : m_fCombDryWet_smoothed.setTargetValue(newValue);
 		m_fCombDryWet_smoothed.skip(skips);
 	}
 	else if (parameterID.startsWith("m_fCombGain")) {
-		m_fCombGain_smoothed.setValue(newValue, takeNext);
+        takeNext ? m_fCombGain_smoothed.setCurrentAndTargetValue(newValue) : m_fCombGain_smoothed.setTargetValue(newValue);
 		m_fCombGain_smoothed.skip(skips);
 	}
 }
@@ -121,8 +124,8 @@ bool CVASTVCFCombFilter::processAudioFrame(float* pInputBuffer, float* pOutputBu
 
 	float lCombDryWet = m_fCombDryWet_smoothed.getNextValue();
 
-	float fbL = pInputBuffer[0] + powf(0.001, (1.0 - (lCombLevel / 101.0f))) * ynL;
-	float fbR = pInputBuffer[1] + powf(0.001, (1.0 - (lCombLevel / 101.0f))) * ynR;
+	float fbL = pInputBuffer[0] + powf(0.001f, (1.0f - (lCombLevel / 101.0f))) * ynL;
+	float fbR = pInputBuffer[1] + powf(0.001f, (1.0f - (lCombLevel / 101.0f))) * ynR;
 
 	// write delay line
 	mDelayLeft.writeDelayAndInc(fbL);
@@ -163,14 +166,17 @@ void CVASTVCFCombFilter::setDelay_mSec(float fmSec) {
 
 void CVASTVCFCombFilter::getStateInformation(MemoryBlock& destData)
 {
-	//ScopedPointer<XmlElement> xml (parameters.valueTreeState.state.createXml());
+	//std::unique_ptr<XmlElement> xml (parameters.valueTreeState.state.createXml());
 	//copyXmlToBinary (*xml, destData);
 }
 
 void CVASTVCFCombFilter::setStateInformation(const void* data, int sizeInBytes)
 {
-	//ScopedPointer<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
+	//std::unique_ptr<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
 	//if (xmlState != nullptr)
 	//  if (xmlState->hasTagName (parameters.valueTreeState.state.getType()))
 	//    parameters.valueTreeState.state = ValueTree::fromXml (*xmlState);
 }
+
+JUCE_END_IGNORE_WARNINGS_GCC_LIKE
+JUCE_END_IGNORE_WARNINGS_MSVC

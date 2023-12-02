@@ -32,7 +32,7 @@ protected:
 	// output attenuation value, cooked
 	float m_fOutputAttenuation;
 
-	juce::ScopedPointer<AudioSampleBuffer> m_pBuffer;
+    std::unique_ptr<AudioSampleBuffer> m_pBuffer;
 
 	// sample rate (needed for other function)
 	int m_nSampleRate;

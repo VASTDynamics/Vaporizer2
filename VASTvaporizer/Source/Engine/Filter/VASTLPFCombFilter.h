@@ -26,21 +26,11 @@ public:
 	void setComb_g(float fCombg){m_fComb_g = fCombg;}
 
 	// set our g value using RT60
-	void setComb_g_with_RTSixty(float fRT)
-	{
-		float fExponent = -3.0*m_fDelayInSamples*(1.0/m_nSampleRate);
-		fRT /= 1000.0; // RT is in mSec!
-
-		m_fComb_g = pow((float)10.0, fExponent/fRT);
-	}
+	void setComb_g_with_RTSixty(float fRT);
 
 	// set the LPF gain
 	// NOTE: call setComb_g_with_RTSixty FIRST, then this
-	void setLPF_g(float fOverAllGain)
-	{
-		// g2 = g*(1-g1)
-		m_fLPF_g = fOverAllGain*(1.0 - m_fComb_g);
-	}
+	void setLPF_g(float fOverAllGain);
 
 
 	// overrides

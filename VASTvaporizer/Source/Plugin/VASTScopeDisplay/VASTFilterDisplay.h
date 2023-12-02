@@ -14,7 +14,7 @@ class VASTAudioProcessor; //forward declaration
 class VASTFilterDisplay : public Component, public Timer
 {
 public:
-	VASTFilterDisplay();
+	VASTFilterDisplay(VASTAudioProcessor* processor);
 	~VASTFilterDisplay();
 	
 	void resized() override;
@@ -24,8 +24,8 @@ public:
 	void timerCallback() override;
 	//void updateContent(bool force);
 	void doUpdates(bool force);
-	void setEditor(VASTAudioProcessorEditor* editor) { myEditor = editor; };
-	void setProcessor(VASTAudioProcessor* processor) { myProcessor = processor; };	
+	void setEditor(VASTAudioProcessorEditor* editor);
+	void setProcessor(VASTAudioProcessor* processor);
     void lookAndFeelChanged() override;
 
 	static void updateThread(VASTFilterDisplay* display, bool force);
@@ -40,7 +40,7 @@ public:
 private:
 	//==============================================================================
 	//Font myFont;
-	ScopedPointer<dsp::FFT> fft;
+	std::unique_ptr<dsp::FFT> fft;
 
 	float getSkewForTargetFrequency(float targetFreq);
 	std::atomic<bool> deleted_ = false;
@@ -50,7 +50,7 @@ private:
 	std::unique_ptr<Image> waveformImage;
 	std::unique_ptr<Image> waveformImageNext;
 	std::unique_ptr<Image> waveformImageBuffer;
-	ScopedPointer<CVASTVcf> m_VCF[3];
+    std::unique_ptr<CVASTVcf> m_VCF[3];
 	VASTQFilter m_QFilter;
 	bool mb_init = false;
 

@@ -18,7 +18,7 @@ CVASTVca::CVASTVca(){
 
 */
 CVASTVca::~CVASTVca(void) {
-	m_bNoteOff = true;
+	m_bNoteOff.store(true);
 }
 
 void CVASTVca::init(CVASTSettings &set, MYUINT voiceNo) {
@@ -29,7 +29,7 @@ void CVASTVca::init(CVASTSettings &set, MYUINT voiceNo) {
 		m_MSEG_Envelope[mseg].init(*m_Set, m_Set->m_MSEGData[mseg], m_Set->m_MSEGData_changed[mseg], m_voiceNo, mseg, -1);
 	}
 
-	m_bNoteOff = true;
+	m_bNoteOff.store(true);
 }
 
 void CVASTVca::updateVariables() {
@@ -41,30 +41,30 @@ void CVASTVca::noteOn(ULong64_t startPlayTimestamp, bool legatoStartSustain) {
 	updateVariables(); //update ADSR changes for new note only
 
 	for (int mseg = 0; mseg < 5; mseg++) {
-		if (m_Set->m_RoutingBuffers.msegUsed[mseg])
+		if (m_Set->m_RoutingBuffers.msegUsed[mseg].load())
 			m_MSEG_Envelope[mseg].noteOn(m_startPlayTimestamp, legatoStartSustain);
 	}
-	m_bNoteOff = false;
+	m_bNoteOff.store(false);
 }
 
 void CVASTVca::noteOff(float releaseVelocity) {
-	m_bNoteOff = true;
+	m_bNoteOff.store(true);
 	for (int mseg = 0; mseg < 5; mseg++) {
-		if (m_Set->m_RoutingBuffers.msegUsed[mseg]) {
+		if (m_Set->m_RoutingBuffers.msegUsed[mseg].load()) {
 			m_MSEG_Envelope[mseg].noteOff(releaseVelocity);
 
 			//testing
 			if (m_MSEG_Envelope[mseg].isHardStopNoteOff())
-				m_bNoteOff = false;
+				m_bNoteOff.store(false);
 			//testing
 		}
 	}
 }
 
 bool CVASTVca::hardStop() {
-	DBG("hardstop voice " + String(m_voiceNo));
+	VDBG("hardstop voice " << m_voiceNo);
 	for (int mseg = 0; mseg < 5; mseg++) {
-		if (m_Set->m_RoutingBuffers.msegUsed[mseg])
+		if (m_Set->m_RoutingBuffers.msegUsed[mseg].load())
 			m_MSEG_Envelope[mseg].hardStop();
 	}
 	return true; //CHECK
@@ -72,7 +72,7 @@ bool CVASTVca::hardStop() {
 
 bool CVASTVca::isActive() {
 	for (int mseg = 0; mseg < 5; mseg++) {
-		if (m_Set->m_RoutingBuffers.msegUsed[mseg])
+		if (m_Set->m_RoutingBuffers.msegUsed[mseg].load())
 			if (m_MSEG_Envelope[mseg].isActive())
 				return true;
 	}
@@ -81,9 +81,13 @@ bool CVASTVca::isActive() {
 
 bool CVASTVca::isHardStop() {
 	for (int mseg = 0; mseg < 5; mseg++) {
-		if (m_Set->m_RoutingBuffers.msegUsed[mseg])
+		if (m_Set->m_RoutingBuffers.msegUsed[mseg].load())
 			if (m_MSEG_Envelope[mseg].isHardStop())
 				return true;
 	}
 	return false;
+}
+
+bool CVASTVca::isNoteOff() {
+    return m_bNoteOff.load();
 }

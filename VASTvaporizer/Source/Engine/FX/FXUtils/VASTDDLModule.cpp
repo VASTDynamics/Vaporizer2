@@ -19,7 +19,7 @@ CDDLModule::CDDLModule() {
 	m_fFeedback_pct = 0;
 	m_fWetLevel = 0;
 	
-	m_pBuffer = new AudioSampleBuffer(1, 16); // inital value
+	m_pBuffer = std::make_unique<AudioSampleBuffer>(1, 16); // inital value
 
 	// reset 
 	m_nReadIndex = 0;
@@ -27,6 +27,9 @@ CDDLModule::CDDLModule() {
 	m_fDDLOutput = 0;
 
 }
+
+JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE("-Wconversion")
+JUCE_BEGIN_IGNORE_WARNINGS_MSVC(4244 4267)
 
 void CDDLModule::init(CVASTSettings &set) {
 	m_Set = &set;
@@ -47,6 +50,21 @@ void CDDLModule::resetDelay(int nDelayLength)
 	m_fDDLOutput = 0;
 }
 
+// set the feedback sample
+
+
+// current FB is fb*output
+
+float CDDLModule::getCurrentFeedbackOutput() { return m_fFeedback * m_pBuffer->getReadPointer(0)[m_nReadIndex]; }
+
+void CDDLModule::setCurrentFeedbackInput(float f) { m_fFeedbackIn = f; }
+
+// enable/disable external FB source
+
+void CDDLModule::setUsesExternalFeedback(bool) {
+	m_bUseExternalFeedback = false;
+}
+
 /* destructor()
 	Destroy variables allocated in the contructor()
 
@@ -55,11 +73,13 @@ CDDLModule::~CDDLModule(void)
 {
 }
 
+
+
 void CDDLModule::cookVariables()
 {
 	m_fFeedback = m_fFeedback_pct / 100.0;
 	m_fWetLevel = m_fWetLevel_pct / 100.0;
-	m_fDelayInSamples = m_fDelay_ms * (m_Set->m_nSampleRate / 1000.0);
+	m_fDelayInSamples = m_fDelay_ms * (m_iSampleRate / 1000.0);
 	
 	// subtract to make read index
 	m_nReadIndex = m_nWriteIndex - (int)m_fDelayInSamples;
@@ -86,12 +106,14 @@ void CDDLModule::cookVariables()
 
     NOTE: if you allocte memory in this function, destroy it in ::destroy() above
 */
-bool CDDLModule::prepareForPlay()
+bool CDDLModule::prepareForPlay(int iSampleRate, bool bOversampling)
 {
 	// Add your code here:
 	// reset first
-	resetDelay(2 * m_Set->m_nSampleRate * C_OVERSAMPLING_RATIO);	// 2 seconds delay @ fs;
-
+    m_iSampleRate = iSampleRate; //includes oversampling factor
+    m_bOversampling = bOversampling;
+    resetDelay(2 * iSampleRate);	// 2 seconds delay @ fs;
+ 
 	// cook
 	cookVariables();
 	return true;
@@ -126,7 +148,7 @@ bool CDDLModule::processAudioFrame(float* pInputBuffer, float* pOutputBuffer, MY
 	//vassert((yn > -10.0f) && (yn <= 10.0));
 	if (!((yn > -10.0f) && (yn <= 10.0))) {
 		yn = 0.0;
-		prepareForPlay(); // try auto correct! BUT THIS IS NOT A SOLUTION!
+		prepareForPlay(m_iSampleRate, m_bOversampling); // try auto correct! BUT THIS IS NOT A SOLUTION!
 	}
 
 	// delay < 1 sample
@@ -147,7 +169,7 @@ bool CDDLModule::processAudioFrame(float* pInputBuffer, float* pOutputBuffer, MY
 	vassert((yn_1 > -10.0f) && (yn_1 <= 10.0));
 	if (!((yn_1 > -10.0f) && (yn_1 <= 10.0))) {
 		yn = 0.0;
-		prepareForPlay(); // try auto correct! BUT THIS IS NOT A SOLUTION!
+		prepareForPlay(m_iSampleRate, m_bOversampling); // try auto correct! BUT THIS IS NOT A SOLUTION!
 	}
 
 	// interpolate: (0, yn) and (1, yn_1) by the amount fracDelay
@@ -203,3 +225,6 @@ bool CDDLModule::processAudioFrame(float* pInputBuffer, float* pOutputBuffer, MY
 
 	return true;
 }
+
+JUCE_END_IGNORE_WARNINGS_GCC_LIKE
+JUCE_END_IGNORE_WARNINGS_MSVC

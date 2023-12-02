@@ -40,7 +40,7 @@
 
 //==============================================================================
 VASTMSEGEditorPane::VASTMSEGEditorPane (AudioProcessorEditor *editor, AudioProcessor* processor, VASTMSEGData* data, VASTMSEGData* datalive, String parameterSuffix, int msegNo)
-    : myEditor((VASTAudioProcessorEditor*)editor), myProcessor((VASTAudioProcessor*)processor), myData(data), myDataLive(datalive), mySuffix(parameterSuffix), myMSEGNo(msegNo)
+    : myEditor((VASTAudioProcessorEditor*)editor), myProcessor((VASTAudioProcessor*)processor), myData(data), myDataLive(datalive), myMSEGNo(msegNo), mySuffix(parameterSuffix)
 {
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
@@ -415,6 +415,7 @@ void VASTMSEGEditorPane::comboBoxChanged (juce::ComboBox* comboBoxThatHasChanged
     else if (comboBoxThatHasChanged == m_uMSEGTimeBeats.get())
     {
         //[UserComboBoxCode_m_uMSEGTimeBeats] -- add your combo box handling code here..
+        updateAll();
         //[/UserComboBoxCode_m_uMSEGTimeBeats]
     }
 
@@ -475,7 +476,8 @@ void VASTMSEGEditorPane::buttonClicked (juce::Button* buttonThatWasClicked)
     if (buttonThatWasClicked == m_bMSEGSynch.get())
     {
         //[UserButtonCode_m_bMSEGSynch] -- add your button handler code here..
-		updateAll();
+        synchToggled();
+        updateAll();
         //[/UserButtonCode_m_bMSEGSynch]
     }
     else if (buttonThatWasClicked == m_bMSEGPerVoice.get())
@@ -491,6 +493,36 @@ void VASTMSEGEditorPane::buttonClicked (juce::Button* buttonThatWasClicked)
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
+void VASTMSEGEditorPane::synchToggled() {
+    bool isSync = m_bMSEGSynch.get()->getToggleState();
+    if (isSync) {
+            float millisPerBeat = myProcessor->m_pVASTXperience.m_Set.getMillisecondsPerBeat();
+            float intRatio = myProcessor->m_pVASTXperience.m_Set.getIntervalRatio(m_uMSEGTimeBeats->getSelectedItemIndex());
+            double steps = roundToInt(m_fAttackTime->getValue() / (intRatio * millisPerBeat));
+            if (m_fAttackSteps->getValue() == 0.0)
+                m_fAttackSteps->setValue(steps, NotificationType::sendNotification);
+            steps = roundToInt(m_fDecayTime->getValue() / (intRatio * millisPerBeat));
+            if (m_fAttackSteps->getValue() == 0.0)
+                m_fDecaySteps->setValue(steps, NotificationType::sendNotification);
+            steps = roundToInt(m_fReleaseTime->getValue() / (intRatio * millisPerBeat));
+            if (m_fReleaseSteps->getValue() == 0.0)
+                m_fReleaseSteps->setValue(steps, NotificationType::sendNotification);
+        }
+    else {
+        float millisPerBeat = myProcessor->m_pVASTXperience.m_Set.getMillisecondsPerBeat();
+        float intRatio = myProcessor->m_pVASTXperience.m_Set.getIntervalRatio(m_uMSEGTimeBeats->getSelectedItemIndex());
+        double time = m_fAttackSteps->getValue() * (intRatio * millisPerBeat);
+        if (m_fAttackSteps->getValue() != 0.0)
+            m_fAttackTime->setValue(time, NotificationType::sendNotification);
+        time = m_fDecaySteps->getValue() * (intRatio * millisPerBeat);
+        if (m_fDecaySteps->getValue() != 0.0)
+            m_fDecayTime->setValue(time, NotificationType::sendNotification);
+        time = m_fReleaseSteps->getValue() * (intRatio * millisPerBeat);
+        if (m_fReleaseSteps->getValue() != 0.0)
+            m_fReleaseTime->setValue(time, NotificationType::sendNotification);
+    }
+}
+
 void VASTMSEGEditorPane::updateAll() {
 	bool isSync = m_bMSEGSynch.get()->getToggleState();
 	if (isSync) {
@@ -500,15 +532,16 @@ void VASTMSEGEditorPane::updateAll() {
 		m_fAttackSteps->setVisible(true);
 		m_fDecaySteps->setVisible(true);
 		m_fReleaseSteps->setVisible(true);
+        
 	}
-	else {
-		m_fAttackTime->setVisible(true);
-		m_fDecayTime->setVisible(true);
-		m_fReleaseTime->setVisible(true);
-		m_fAttackSteps->setVisible(false);
-		m_fDecaySteps->setVisible(false);
-		m_fReleaseSteps->setVisible(false);
-	}
+    else {
+        m_fAttackTime->setVisible(true);
+        m_fDecayTime->setVisible(true);
+        m_fReleaseTime->setVisible(true);
+        m_fAttackSteps->setVisible(false);
+        m_fDecaySteps->setVisible(false);
+        m_fReleaseSteps->setVisible(false);
+    }
 }
 
 void VASTMSEGEditorPane::startAutoUpdate() {

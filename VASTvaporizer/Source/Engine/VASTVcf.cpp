@@ -18,7 +18,7 @@ VAST Dynamics Audio Software (TM)
 #define C_FILTER_OVERSAMPLINGFACTOR 4
 
 CVASTVcf::CVASTVcf() {
-	inBufferUp = new AudioSampleBuffer(2, C_FILTER_BLOCKSIZE * C_FILTER_OVERSAMPLINGFACTOR);
+	inBufferUp = std::make_unique<AudioSampleBuffer>(2, C_FILTER_BLOCKSIZE * C_FILTER_OVERSAMPLINGFACTOR);
 }
 
 /* destructor()
@@ -169,9 +169,9 @@ void CVASTVcf::init(CVASTSettings &set, MYUINT voiceNo, MYUINT filterNo, bool is
 	//Quad filter
 	memset(&FBP, 0, sizeof(FBP));
 	bfirstRun = true; 
-	m_filterCoefficientMaker[0].prepareForPlay(m_Set->m_nSampleRate, 1, m_Set->m_fMasterTune.get());
-	m_filterCoefficientMaker[1].prepareForPlay(m_Set->m_nSampleRate, 1, m_Set->m_fMasterTune.get());
-	m_filterCoefficientMaker[2].prepareForPlay(m_Set->m_nSampleRate, 1, m_Set->m_fMasterTune.get());
+	m_filterCoefficientMaker[0].prepareForPlay(m_Set->m_nSampleRate, 1, m_Set->m_fMasterTune.load());
+	m_filterCoefficientMaker[1].prepareForPlay(m_Set->m_nSampleRate, 1, m_Set->m_fMasterTune.load());
+	m_filterCoefficientMaker[2].prepareForPlay(m_Set->m_nSampleRate, 1, m_Set->m_fMasterTune.load());
 	
 	SetQFB(0, 0, 0.f, 0.f, 0.f, 0, 0, 0, 0, 0, 0, 0); // init qfilter 
 	   	  
@@ -198,9 +198,9 @@ void CVASTVcf::prepareForPlay() { //called on program change
 	*/
 
 	//Quad filter
-	m_filterCoefficientMaker[0].prepareForPlay(m_Set->m_nSampleRate, 1, m_Set->m_fMasterTune.get()); //for real samplerate!
-	m_filterCoefficientMaker[1].prepareForPlay(m_Set->m_nSampleRate, 1, m_Set->m_fMasterTune.get()); //for real samplerate!
-	m_filterCoefficientMaker[2].prepareForPlay(m_Set->m_nSampleRate, 1, m_Set->m_fMasterTune.get()); //for real samplerate!
+	m_filterCoefficientMaker[0].prepareForPlay(m_Set->m_nSampleRate, 1, m_Set->m_fMasterTune.load()); //for real samplerate!
+	m_filterCoefficientMaker[1].prepareForPlay(m_Set->m_nSampleRate, 1, m_Set->m_fMasterTune.load()); //for real samplerate!
+	m_filterCoefficientMaker[2].prepareForPlay(m_Set->m_nSampleRate, 1, m_Set->m_fMasterTune.load()); //for real samplerate!
 	
 	SetQFB(0, 0, 0.f, 0.f, 0.f, 0, 0, 0, 0, 0, 0, 0); // init qfilter 
 
@@ -512,6 +512,9 @@ bool CVASTVcf::KorgThreeFiveHPFmkIIprepareForPlay()
 	return true;
 }
 
+JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE("-Wconversion")
+JUCE_BEGIN_IGNORE_WARNINGS_MSVC(4244 4267)
+
 void CVASTVcf::KorgThreeFiveHPFmkIIupdateFilters()
 {
 	//CHTS check if necessary
@@ -613,6 +616,8 @@ void CVASTVcf::KorgThreeFiveHPFmkIIdoFilter(double* pInputBuffer, double* pOutpu
 }
 //--HPF
 
+JUCE_END_IGNORE_WARNINGS_GCC_LIKE
+JUCE_END_IGNORE_WARNINGS_MSVC
 
 /*
 //Diode Ladder Filter
@@ -774,7 +779,7 @@ void CVASTVcf::VADiodeLadderFilterDoFilter(double* pInputBuffer, double* pOutput
 /*
 //--------------------------------------------------------------------------------------------
 void CVASTVcf::processBlock(dsp::AudioBlock<float> filterBlock, modMatrixInputState* matrixInputState, sRoutingBuffers& routingBuffers, int startSample, int numSamples, bool isUI) {
-	//DBG("VCF do filter voice " + String(matrixInputState->voiceNo) + " " + String(startSample)  +" "  + String(numSamples));
+	//VDBG("VCF do filter voice " + String(matrixInputState->voiceNo) + " " + String(startSample)  +" "  + String(numSamples));
 	float fVCFEnvelopeMod = 0.f; //CHECK
 	int paramType = 0;
 	int paramFilterEnv = 0;	
@@ -1120,19 +1125,19 @@ void CVASTVcf::processBlock(dsp::AudioBlock<float> filterBlock, modMatrixInputSt
 				fVCFEnvelopeMod = 1.0f;
 			}
 			else {
-				if (paramFilterEnv == MSEGENV::MSEG1) {
+				if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG1)) {
 					fVCFEnvelopeMod = routingBuffers.MSEGBuffer[0][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame);
 				}
-				else if (paramFilterEnv == MSEGENV::MSEG2) {
+				else if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG2)) {
 					fVCFEnvelopeMod = routingBuffers.MSEGBuffer[1][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame);
 				}
-				else if (paramFilterEnv == MSEGENV::MSEG3) {
+				else if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG3)) {
 					fVCFEnvelopeMod = routingBuffers.MSEGBuffer[2][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame);
 				}
-				else if (paramFilterEnv == MSEGENV::MSEG4) {
+				else if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG4)) {
 					fVCFEnvelopeMod = routingBuffers.MSEGBuffer[3][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame);
 				}
-				else if (paramFilterEnv == MSEGENV::MSEG5) {
+				else if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG5)) {
 					fVCFEnvelopeMod = routingBuffers.MSEGBuffer[4][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame);
 				}
 				lFilterEnvMod = m_Set->getParameterValueWithMatrixModulation(&paramFilterEnvMod, paramIDFilterEnvMod, matrixInputState);
@@ -1555,19 +1560,19 @@ void CVASTVcf::processBlock(dsp::AudioBlock<float> filterBlock, modMatrixInputSt
 				fVCFEnvelopeMod = 1.0f;
 			}
 			else {
-				if (paramFilterEnv == MSEGENV::MSEG1) {
+				if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG1)) {
 					fVCFEnvelopeMod = routingBuffers.MSEGBuffer[0][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame);
 				}
-				else if (paramFilterEnv == MSEGENV::MSEG2) {
+				else if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG2)) {
 					fVCFEnvelopeMod = routingBuffers.MSEGBuffer[1][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame);
 				}
-				else if (paramFilterEnv == MSEGENV::MSEG3) {
+				else if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG3)) {
 					fVCFEnvelopeMod = routingBuffers.MSEGBuffer[2][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame);
 				}
-				else if (paramFilterEnv == MSEGENV::MSEG4) {
+				else if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG4)) {
 					fVCFEnvelopeMod = routingBuffers.MSEGBuffer[3][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame);
 				}
-				else if (paramFilterEnv == MSEGENV::MSEG5) {
+				else if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG5)) {
 					fVCFEnvelopeMod = routingBuffers.MSEGBuffer[4][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame);
 				}
 				lFilterEnvMod = m_Set->getParameterValueWithMatrixModulation(&paramFilterEnvMod, paramIDFilterEnvMod, matrixInputState);
@@ -1886,19 +1891,19 @@ void CVASTVcf::processBlock(dsp::AudioBlock<float> filterBlock, modMatrixInputSt
 				fVCFEnvelopeMod = 1.0f;
 			}
 			else {
-				if (paramFilterEnv == MSEGENV::MSEG1) {
+				if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG1)) {
 					fVCFEnvelopeMod = routingBuffers.MSEGBuffer[0][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame);
 				}
-				else if (paramFilterEnv == MSEGENV::MSEG2) {
+				else if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG2)) {
 					fVCFEnvelopeMod = routingBuffers.MSEGBuffer[1][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame);
 				}
-				else if (paramFilterEnv == MSEGENV::MSEG3) {
+				else if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG3)) {
 					fVCFEnvelopeMod = routingBuffers.MSEGBuffer[2][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame);
 				}
-				else if (paramFilterEnv == MSEGENV::MSEG4) {
+				else if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG4)) {
 					fVCFEnvelopeMod = routingBuffers.MSEGBuffer[3][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame);
 				}
-				else if (paramFilterEnv == MSEGENV::MSEG5) {
+				else if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG5)) {
 					fVCFEnvelopeMod = routingBuffers.MSEGBuffer[4][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame);
 				}
 				lFilterEnvMod = m_Set->getParameterValueWithMatrixModulation(&paramFilterEnvMod, paramIDFilterEnvMod, matrixInputState);
@@ -2209,19 +2214,19 @@ void CVASTVcf::processBlock(dsp::AudioBlock<float> filterBlock, modMatrixInputSt
 					fVCFEnvelopeMod = 1.0f;
 				}
 				else {
-					if (paramFilterEnv == MSEGENV::MSEG1) {
+					if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG1)) {
 						fVCFEnvelopeMod = routingBuffers.MSEGBuffer[0][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame);
 					}
-					else if (paramFilterEnv == MSEGENV::MSEG2) {
+					else if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG2)) {
 						fVCFEnvelopeMod = routingBuffers.MSEGBuffer[1][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame);
 					}
-					else if (paramFilterEnv == MSEGENV::MSEG3) {
+					else if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG3)) {
 						fVCFEnvelopeMod = routingBuffers.MSEGBuffer[2][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame);
 					}
-					else if (paramFilterEnv == MSEGENV::MSEG4) {
+					else if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG4)) {
 						fVCFEnvelopeMod = routingBuffers.MSEGBuffer[3][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame);
 					}
-					else if (paramFilterEnv == MSEGENV::MSEG5) {
+					else if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG5)) {
 						fVCFEnvelopeMod = routingBuffers.MSEGBuffer[4][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame);
 					}
 					lFilterEnvMod = m_Set->getParameterValueWithMatrixModulation(&paramFilterEnvMod, paramIDFilterEnvMod, matrixInputState);
@@ -2348,19 +2353,19 @@ void CVASTVcf::processBlock(dsp::AudioBlock<float> filterBlock, modMatrixInputSt
 				fVCFEnvelopeMod = 1.0f;
 			}
 			else {
-				if (paramFilterEnv == MSEGENV::MSEG1) {
+				if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG1)) {
 					fVCFEnvelopeMod = routingBuffers.MSEGBuffer[0][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame);
 				}
-				else if (paramFilterEnv == MSEGENV::MSEG2) {
+				else if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG2)) {
 					fVCFEnvelopeMod = routingBuffers.MSEGBuffer[1][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame);
 				}
-				else if (paramFilterEnv == MSEGENV::MSEG3) {
+				else if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG3)) {
 					fVCFEnvelopeMod = routingBuffers.MSEGBuffer[2][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame);
 				}
-				else if (paramFilterEnv == MSEGENV::MSEG4) {
+				else if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG4)) {
 					fVCFEnvelopeMod = routingBuffers.MSEGBuffer[3][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame);
 				}
-				else if (paramFilterEnv == MSEGENV::MSEG5) {
+				else if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG5)) {
 					fVCFEnvelopeMod = routingBuffers.MSEGBuffer[4][matrixInputState->voiceNo]->getSample(0, matrixInputState->currentFrame);
 				}
 				lFilterEnvMod = m_Set->getParameterValueWithMatrixModulation(&paramFilterEnvMod, paramIDFilterEnvMod, matrixInputState);

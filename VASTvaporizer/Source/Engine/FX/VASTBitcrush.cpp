@@ -21,7 +21,7 @@ CVASTBitcrush::CVASTBitcrush(VASTAudioProcessor* processor, int busnr) {
 	m_bShallBeOff = true;
 	m_iSoftFade = 0;
 
-	srand(time(0));
+	srand(int(time(0)));
 }
 
 CVASTBitcrush::~CVASTBitcrush(void) {
@@ -34,9 +34,8 @@ CVASTBitcrush::~CVASTBitcrush(void) {
 
 void CVASTBitcrush::initParameters() {
 	AudioProcessorValueTreeState& parameters = my_processor->getParameterTree();
-	int lDestination = 0;
 
-	createAndAddParameter(&m_bBitcrushOnOff, parameters, "m_bBitcrushOnOff", "Bitcrush effect on / off", "On", 0,
+	createAndAddParameter(&m_bBitcrushOnOff, parameters, 1, "m_bBitcrushOnOff", "Bitcrush effect on / off", "On", 0,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		CVASTParamState::toggleButtonValueToTextFunction,
@@ -44,42 +43,42 @@ void CVASTBitcrush::initParameters() {
 		false, true, true, true,
 		true);
 
-	createAndAddParameter(&m_fBitcrushDryWet, parameters, "m_fBitcrushDryWet", "Bitcrush dry / wet (no effect - full effect)", "DryWet", 1,
+	createAndAddParameter(&m_fBitcrushDryWet, parameters, 1, "m_fBitcrushDryWet", "Bitcrush dry / wet (no effect - full effect)", "DryWet", 1,
 		MODMATDEST::BitcrushDryWet,
 		NormalisableRange<float>(0, 100), 60,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fBitcrushLowcut, parameters, "m_fBitcrushLowcut", "Bitcrush lowcut frequency", "Lowcut", 2,
+	createAndAddParameter(&m_fBitcrushLowcut, parameters, 1, "m_fBitcrushLowcut", "Bitcrush lowcut frequency", "Lowcut", 2,
 		MODMATDEST::BitcrushLowCut,
 		NormalisableRange<float>(5.f, 18000.f, 0.001f, 0.3f, false), 50.f,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fBitcrushBitdepth, parameters, "m_fBitcrushBitdepth", "Bitcrush bitdepth", "Bitdepth", 3,
+	createAndAddParameter(&m_fBitcrushBitdepth, parameters, 1, "m_fBitcrushBitdepth", "Bitcrush bitdepth", "Bitdepth", 3,
 		MODMATDEST::BitcrushBitdepth,
 		NormalisableRange<float>(2.6f, 32.0f, 0.001f, 0.3f, false), 4.0f, //skew
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fBitcrushBitrate, parameters, "m_fBitcrushBitrate", "Bitcrush bitrate", "Bitrate", 4,
+	createAndAddParameter(&m_fBitcrushBitrate, parameters, 1, "m_fBitcrushBitrate", "Bitcrush bitrate", "Bitrate", 4,
 		MODMATDEST::BitcrushBitrate,
 		NormalisableRange<float>(0.0f, 100.0f, 1.0f, 3.8f, false), 100.0f, //skew
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, true, false,
 		true);
-	createAndAddParameter(&m_fBitcrushJitter, parameters, "m_fBitcrushJitter", "Bitcrush jitter", "Jitter", 5,
+	createAndAddParameter(&m_fBitcrushJitter, parameters, 1, "m_fBitcrushJitter", "Bitcrush jitter", "Jitter", 5,
 		MODMATDEST::BitcrushJitter,
 		NormalisableRange<float>(0.0f, 100.0f), 0.0f,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fBitcrushGain, parameters, "m_fBitcrushGain", "Bitcrush output gain", "Gain", 6,
+	createAndAddParameter(&m_fBitcrushGain, parameters, 1, "m_fBitcrushGain", "Bitcrush output gain", "Gain", 6,
 		MODMATDEST::BitcrushGain,
 		NormalisableRange<float>(0, 200), 100,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -93,22 +92,22 @@ void CVASTBitcrush::initCompatibilityParameters() {
 
 void CVASTBitcrush::parameterChanged(const String& parameterID, float newValue) {
 	if (parameterID.startsWith("m_bBitcrushOnOff")) {
-		if (newValue == SWITCH::SWITCH_ON)
+		if (newValue == static_cast<int>(SWITCH::SWITCH_ON))
 			switchOn();
 		else
 			switchOff();
 	}
 	else if (parameterID.startsWith("m_fBitcrushDryWet")) {
-		m_fBitcrushDryWet_smoothed.setValue(*m_fBitcrushDryWet);
+		m_fBitcrushDryWet_smoothed.setTargetValue(*m_fBitcrushDryWet);
 	}
 	else if (parameterID.startsWith("m_fBitcrushBitdepth")) {
-		m_fBitcrushBitdepth_smoothed.setValue(*m_fBitcrushBitdepth);
+		m_fBitcrushBitdepth_smoothed.setTargetValue(*m_fBitcrushBitdepth);
 	}
 	else if (parameterID.startsWith("m_fBitcrushJitter")) {
-		m_fBitcrushJitter_smoothed.setValue(*m_fBitcrushJitter);
+		m_fBitcrushJitter_smoothed.setTargetValue(*m_fBitcrushJitter);
 	}
 	else if (parameterID.startsWith("m_fBitcrushLowcut")) {
-		m_fBitcrushLowcut_smoothed.setValue(*m_fBitcrushLowcut);
+		m_fBitcrushLowcut_smoothed.setTargetValue(*m_fBitcrushLowcut);
 		m_lowCutBiquadL.calcBiquad(CVASTBiQuad::HIGHPASS, m_fBitcrushLowcut_smoothed.getNextValue(), m_iSampleRate, 0.707f, -18.0f);
 		m_lowCutBiquadR.copySettingsFrom(&m_lowCutBiquadL);
 	}
@@ -140,7 +139,7 @@ void CVASTBitcrush::reset() {
 	}
 }
 
-void CVASTBitcrush::prepareToPlay(double sampleRate, int samplesPerBlock) {
+void CVASTBitcrush::prepareToPlay(double, int samplesPerBlock) {
 	//m_iSampleRate is set in useroversampling
 	m_iExpectedSamplesPerBlock = samplesPerBlock;
 	reset();
@@ -156,7 +155,7 @@ void CVASTBitcrush::releaseResources()
 {
 }
 
-void CVASTBitcrush::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages, const int numSamples) {
+void CVASTBitcrush::processBlock(AudioSampleBuffer& buffer, MidiBuffer& , const int numSamples) {
 	if (isOffAndShallBeOff() == true) return;
 
 	modMatrixInputState inputState;
@@ -172,16 +171,16 @@ void CVASTBitcrush::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMess
 
 		inputState = ((VASTAudioProcessor*)my_processor)->m_pVASTXperience.m_Poly.getOldestNotePlayedInputState(currentFrameOSAdjusted); // make parameter oldest or newest
 
-		m_fBitcrushDryWet_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fBitcrushDryWet, MODMATDEST::BitcrushDryWet, &inputState));
+		m_fBitcrushDryWet_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fBitcrushDryWet, MODMATDEST::BitcrushDryWet, &inputState));
 		float lBitcrushDryWet = m_fBitcrushDryWet_smoothed.getNextValue();
 
-		m_fBitcrushBitdepth_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fBitcrushBitdepth, MODMATDEST::BitcrushBitdepth, &inputState));
+		m_fBitcrushBitdepth_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fBitcrushBitdepth, MODMATDEST::BitcrushBitdepth, &inputState));
 		float lBitcrushBitdepth = m_fBitcrushBitdepth_smoothed.getNextValue();
 
-		m_fBitcrushJitter_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fBitcrushJitter, MODMATDEST::BitcrushJitter, &inputState));
+		m_fBitcrushJitter_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fBitcrushJitter, MODMATDEST::BitcrushJitter, &inputState));
 		float lfBitcrushJitter = m_fBitcrushJitter_smoothed.getNextValue();
 
-		m_fBitcrushLowcut_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fBitcrushLowcut, MODMATDEST::BitcrushLowCut, &inputState));
+		m_fBitcrushLowcut_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fBitcrushLowcut, MODMATDEST::BitcrushLowCut, &inputState));
 		if (m_fBitcrushLowcut_smoothed.isSmoothing()) {
 			m_lowCutBiquadL.calcBiquad(CVASTBiQuad::HIGHPASS, m_fBitcrushLowcut_smoothed.getNextValue(), m_iSampleRate, 0.707f, -18.0f);
 			m_lowCutBiquadR.copySettingsFrom(&m_lowCutBiquadL);
@@ -257,15 +256,15 @@ void CVASTBitcrush::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMess
 
 //==============================================================================
 
-void CVASTBitcrush::getStateInformation(MemoryBlock& destData)
+void CVASTBitcrush::getStateInformation(MemoryBlock& )
 {
-	//ScopedPointer<XmlElement> xml (parameters.valueTreeState.state.createXml());
+	//std::unique_ptr<XmlElement> xml (parameters.valueTreeState.state.createXml());
 	//copyXmlToBinary (*xml, destData);
 }
 
-void CVASTBitcrush::setStateInformation(const void* data, int sizeInBytes)
+void CVASTBitcrush::setStateInformation(const void* , int )
 {
-	//ScopedPointer<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
+	//std::unique_ptr<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
 	//if (xmlState != nullptr)
 	//  if (xmlState->hasTagName (parameters.valueTreeState.state.getType()))
 	//    parameters.valueTreeState.state = ValueTree::fromXml (*xmlState);

@@ -106,6 +106,7 @@ VASTLFOMsegComponent::VASTLFOMsegComponent (AudioProcessorEditor *editor, AudioP
 	c_lfoTab->getTabbedButtonBar().setColour(TabbedButtonBar::frontTextColourId, juce::Colour::fromFloatRGBA(1.f, 1.f, 1.f, 1.f));
 	lastMouseWheelEvent = juce::Time::getCurrentTime();
 
+    return; //dont call setSize
     //[/UserPreSize]
 
     setSize (800, 575);
@@ -118,7 +119,7 @@ VASTLFOMsegComponent::VASTLFOMsegComponent (AudioProcessorEditor *editor, AudioP
 VASTLFOMsegComponent::~VASTLFOMsegComponent()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
-    DBG("Destructing VASTLFOMsegComponent");
+    VDBG("Destructing VASTLFOMsegComponent");
 	this->setLookAndFeel(nullptr);
     //[/Destructor_pre]
 
@@ -206,27 +207,37 @@ void VASTLFOMsegComponent::startAutoUpdate() {
 }
 
 void VASTLFOMsegComponent::stopAutoUpdate() {
-	VASTMSEGEditorPane* tab1 = ((VASTMSEGEditorPane*)c_envTab->getTabContentComponent(0));
-	tab1->stopAutoUpdate();
-	VASTMSEGEditorPane* tab2 = ((VASTMSEGEditorPane*)c_envTab->getTabContentComponent(1));
-	tab2->stopAutoUpdate();
-	VASTMSEGEditorPane* tab3 = ((VASTMSEGEditorPane*)c_envTab->getTabContentComponent(2));
-	tab3->stopAutoUpdate();
-	VASTMSEGEditorPane* tab4 = ((VASTMSEGEditorPane*)c_envTab->getTabContentComponent(3));
-	tab4->stopAutoUpdate();
-	VASTMSEGEditorPane* tab5 = ((VASTMSEGEditorPane*)c_envTab->getTabContentComponent(4));
-	tab5->stopAutoUpdate();
+	VASTMSEGEditorPane* tab1 = dynamic_cast<VASTMSEGEditorPane*>(c_envTab->getTabContentComponent(0));
+	if (tab1!=nullptr)
+        tab1->stopAutoUpdate();
+	VASTMSEGEditorPane* tab2 = dynamic_cast<VASTMSEGEditorPane*>(c_envTab->getTabContentComponent(1));
+    if (tab2!=nullptr)
+        tab2->stopAutoUpdate();
+	VASTMSEGEditorPane* tab3 = dynamic_cast<VASTMSEGEditorPane*>(c_envTab->getTabContentComponent(2));
+    if (tab3!=nullptr)
+        tab3->stopAutoUpdate();
+	VASTMSEGEditorPane* tab4 = dynamic_cast<VASTMSEGEditorPane*>(c_envTab->getTabContentComponent(3));
+    if (tab4!=nullptr)
+        tab4->stopAutoUpdate();
+	VASTMSEGEditorPane* tab5 = dynamic_cast<VASTMSEGEditorPane*>(c_envTab->getTabContentComponent(4));
+    if (tab5!=nullptr)
+        tab5->stopAutoUpdate();
 
-	VASTLFOEditorPane* tabl1 = ((VASTLFOEditorPane*)c_lfoTab->getTabContentComponent(0));
-	tabl1->stopAutoUpdate();
-	VASTLFOEditorPane* tabl2 = ((VASTLFOEditorPane*)c_lfoTab->getTabContentComponent(1));
-	tabl2->stopAutoUpdate();
-	VASTLFOEditorPane* tabl3 = ((VASTLFOEditorPane*)c_lfoTab->getTabContentComponent(2));
-	tabl3->stopAutoUpdate();
-	VASTLFOEditorPane* tabl4 = ((VASTLFOEditorPane*)c_lfoTab->getTabContentComponent(3));
-	tabl4->stopAutoUpdate();
-	VASTLFOEditorPane* tabl5 = ((VASTLFOEditorPane*)c_lfoTab->getTabContentComponent(4));
-	tabl5->stopAutoUpdate();
+	VASTLFOEditorPane* tabl1 = dynamic_cast<VASTLFOEditorPane*>(c_lfoTab->getTabContentComponent(0));
+    if (tabl1!=nullptr)
+        tabl1->stopAutoUpdate();
+	VASTLFOEditorPane* tabl2 = dynamic_cast<VASTLFOEditorPane*>(c_lfoTab->getTabContentComponent(1));
+    if (tabl2!=nullptr)
+        tabl2->stopAutoUpdate();
+	VASTLFOEditorPane* tabl3 = dynamic_cast<VASTLFOEditorPane*>(c_lfoTab->getTabContentComponent(2));
+    if (tabl3!=nullptr)
+        tabl3->stopAutoUpdate();
+	VASTLFOEditorPane* tabl4 = dynamic_cast<VASTLFOEditorPane*>(c_lfoTab->getTabContentComponent(3));
+    if (tabl4!=nullptr)
+        tabl4->stopAutoUpdate();
+	VASTLFOEditorPane* tabl5 = dynamic_cast<VASTLFOEditorPane*>(c_lfoTab->getTabContentComponent(4));
+    if (tabl5!=nullptr)
+        tabl5->stopAutoUpdate();
 }
 
 void VASTLFOMsegComponent::updateAll() {

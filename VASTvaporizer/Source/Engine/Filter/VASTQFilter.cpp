@@ -7,7 +7,11 @@
 #include "../VASTEngineHeader.h"
 #include "../VASTSingleNote.h"
 #include "../VASTVcf.h"
-#include "emmintrin.h"
+#ifdef __aarch64__ //arm64
+	#include "../../sse2neon.h"
+#else
+	#include "emmintrin.h"
+#endif
 
 #define c_blocksize_q 32
 #define c_max_os_factor_q 4
@@ -15,6 +19,9 @@ float waveshapers alignas(16)[8][1024];
 float sinctable alignas(16)[(FIRipol_M + 1) * FIRipol_N * 2];
 float sinctable1X alignas(16)[(FIRipol_M + 1) * FIRipol_N];
 short sinctableI16 alignas(16)[(FIRipol_M + 1) * FIRipolI16_N];
+
+JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE("-Wconversion")
+JUCE_BEGIN_IGNORE_WARNINGS_MSVC(4244 4267) //C4244 conversion from 'type1' to 'type2', possible loss of data //C4267 conversion
 
 double VASTQFilter::shafted_tanh(double x)
 {
@@ -72,10 +79,12 @@ void VASTQFilter::initQuadFilter(CVASTSettings* m_Set) {
 	FBQ[2] =
 		(VASTQFilterProcessState*)_aligned_malloc((C_MAX_POLY >> 2) * sizeof(VASTQFilterProcessState), 16); //not portable
 #endif
+	/*
 	memset(FBQ[0], 0, sizeof(&FBQ[0]));
 	memset(FBQ[1], 0, sizeof(&FBQ[1]));
 	memset(FBQ[2], 0, sizeof(&FBQ[2]));
-	
+	*/
+
 	for (int i = 0; i < (C_MAX_POLY >> 2); ++i)
 	{
 		InitQFilterProcessStateToZero(&(FBQ[0][i]));
@@ -83,7 +92,7 @@ void VASTQFilter::initQuadFilter(CVASTSettings* m_Set) {
 		InitQFilterProcessStateToZero(&(FBQ[2][i]));
 	}
 
-	inBufferUp = new AudioSampleBuffer(2, c_blocksize_q * c_max_os_factor_q);
+	inBufferUp = std::make_unique<AudioSampleBuffer>(2, c_blocksize_q * c_max_os_factor_q);
 
 	double mult = 1.0 / 32.0;
 	for (int i = 0; i < 1024; i++)
@@ -137,11 +146,9 @@ void VASTQFilter::initQuadFilter(CVASTSettings* m_Set) {
 	updateVariables();
 }
 
-void VASTQFilter::filterTypeChanged(OwnedArray<VASTSynthesiserVoice>* voices, int filter, int ftype, int fsubtype, int ftype2, int fsubtype2, int ftype3, int fsubtype3, int osFactor, bool isUI, ScopedPointer<CVASTVcf>* uiVCF, CVASTSettings* m_Set) {
+void VASTQFilter::filterTypeChanged(OwnedArray<VASTSynthesiserVoice>* voices, int filter, int ftype, int fsubtype, int ftype2, int fsubtype2, int ftype3, int fsubtype3, int osFactor, bool isUI, std::unique_ptr<CVASTVcf>* uiVCF, CVASTSettings* m_Set) {
 	if (!isUI) {
 		for (auto* voice : *voices) {
-			int mVoiceNo = voice->getVoiceNo();
-
 			//check prepareforplay comb filter!!
 
 			//Filter A
@@ -153,7 +160,7 @@ void VASTQFilter::filterTypeChanged(OwnedArray<VASTSynthesiserVoice>* voices, in
 				((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[1].type = ftype;
 				((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[1].subtype = fsubtype;
 				((CVASTSingleNote*)voice)->m_VCF[filter]->m_filterCoefficientMaker[0].Reset();
-				((CVASTSingleNote*)voice)->m_VCF[filter]->m_filterCoefficientMaker[0].prepareForPlay(m_Set->m_nSampleRate, osFactor, m_Set->m_fMasterTune.get());
+				((CVASTSingleNote*)voice)->m_VCF[filter]->m_filterCoefficientMaker[0].prepareForPlay(m_Set->m_nSampleRate, osFactor, m_Set->m_fMasterTune.load());
 			}
 			//Filter B
 			if (ftype2 != fut_none) {
@@ -164,7 +171,7 @@ void VASTQFilter::filterTypeChanged(OwnedArray<VASTSynthesiserVoice>* voices, in
 				((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[3].type = ftype2;
 				((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[3].subtype = fsubtype2;
 				((CVASTSingleNote*)voice)->m_VCF[filter]->m_filterCoefficientMaker[1].Reset();
-				((CVASTSingleNote*)voice)->m_VCF[filter]->m_filterCoefficientMaker[1].prepareForPlay(m_Set->m_nSampleRate, osFactor, m_Set->m_fMasterTune.get());
+				((CVASTSingleNote*)voice)->m_VCF[filter]->m_filterCoefficientMaker[1].prepareForPlay(m_Set->m_nSampleRate, osFactor, m_Set->m_fMasterTune.load());
 			}
 
 			//Filter C
@@ -176,7 +183,7 @@ void VASTQFilter::filterTypeChanged(OwnedArray<VASTSynthesiserVoice>* voices, in
 				((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[5].type = ftype3;
 				((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[5].subtype = fsubtype3;
 				((CVASTSingleNote*)voice)->m_VCF[filter]->m_filterCoefficientMaker[2].Reset();
-				((CVASTSingleNote*)voice)->m_VCF[filter]->m_filterCoefficientMaker[2].prepareForPlay(m_Set->m_nSampleRate, osFactor, m_Set->m_fMasterTune.get());
+				((CVASTSingleNote*)voice)->m_VCF[filter]->m_filterCoefficientMaker[2].prepareForPlay(m_Set->m_nSampleRate, osFactor, m_Set->m_fMasterTune.load());
 			}
 
 			if (ftype == fut_vastscream)
@@ -193,7 +200,7 @@ void VASTQFilter::filterTypeChanged(OwnedArray<VASTSynthesiserVoice>* voices, in
 			uiVCF[filter]->FBP.FU[1].type = ftype;
 			uiVCF[filter]->FBP.FU[1].subtype = fsubtype;
 			uiVCF[filter]->m_filterCoefficientMaker[0].Reset();
-			uiVCF[filter]->m_filterCoefficientMaker[0].prepareForPlay(m_Set->m_nSampleRate, osFactor, m_Set->m_fMasterTune.get());
+			uiVCF[filter]->m_filterCoefficientMaker[0].prepareForPlay(m_Set->m_nSampleRate, osFactor, m_Set->m_fMasterTune.load());
 		}
 
 		//Filter B
@@ -205,7 +212,7 @@ void VASTQFilter::filterTypeChanged(OwnedArray<VASTSynthesiserVoice>* voices, in
 			uiVCF[filter]->FBP.FU[3].type = ftype2;
 			uiVCF[filter]->FBP.FU[3].subtype = fsubtype2;
 			uiVCF[filter]->m_filterCoefficientMaker[1].Reset();
-			uiVCF[filter]->m_filterCoefficientMaker[1].prepareForPlay(m_Set->m_nSampleRate, osFactor, m_Set->m_fMasterTune.get());
+			uiVCF[filter]->m_filterCoefficientMaker[1].prepareForPlay(m_Set->m_nSampleRate, osFactor, m_Set->m_fMasterTune.load());
 		}
 		//Filter C
 		if (ftype3 != fut_none) {
@@ -216,15 +223,16 @@ void VASTQFilter::filterTypeChanged(OwnedArray<VASTSynthesiserVoice>* voices, in
 			uiVCF[filter]->FBP.FU[5].type = ftype2;
 			uiVCF[filter]->FBP.FU[5].subtype = fsubtype2;
 			uiVCF[filter]->m_filterCoefficientMaker[2].Reset();
-			uiVCF[filter]->m_filterCoefficientMaker[2].prepareForPlay(m_Set->m_nSampleRate, osFactor, m_Set->m_fMasterTune.get());
+			uiVCF[filter]->m_filterCoefficientMaker[2].prepareForPlay(m_Set->m_nSampleRate, osFactor, m_Set->m_fMasterTune.load());
 		}
 
 		if (ftype == fut_vastscream)
 			uiVCF[filter]->m_ladderFilter1.setMode(dsp::LadderFilter<float>::Mode::LPF12);
 	}
+    m_bInitFilterAfterMaxPolyChange[filter].store(false);
 }
 
-int VASTQFilter::processBlock(OwnedArray<VASTSynthesiserVoice>* voices, modMatrixInputState* matrixInputState, sRoutingBuffers* routingBuffers, CVASTSettings* m_Set, int filter, dsp::AudioBlock<float> filterBlock, int startSample, int numSamples, bool isUI, bool hasNextFilter, ScopedPointer<CVASTVcf>* uiVCF, bool warmup) {
+int VASTQFilter::processBlock(OwnedArray<VASTSynthesiserVoice>* voices, modMatrixInputState* matrixInputState, sRoutingBuffers* routingBuffers, CVASTSettings* m_Set, int filter, dsp::AudioBlock<float> filterBlock, int startSample, int numSamples, bool isUI, bool hasNextFilter, std::unique_ptr<CVASTVcf>* uiVCF, bool warmup) {
 
 	float fVCFEnvelopeMod = 0.f; //CHECK
 	int paramType = 0;
@@ -244,7 +252,7 @@ int VASTQFilter::processBlock(OwnedArray<VASTSynthesiserVoice>* voices, modMatri
 
 	switch (filter) {
 	case(0):
-		paramType = *m_Set->m_State->m_uFilterType_Filter1;
+		paramType = static_cast<int>(*m_Set->m_State->m_uFilterType_Filter1);
 		paramDrive.store(*m_Set->m_State->m_fFilterDrive_Filter1);
 		paramIDDrive = MODMATDEST::Filter1Drive;
 		paramFilterEnv = *m_Set->m_State->m_uVCFEnv_Filter1;
@@ -260,7 +268,7 @@ int VASTQFilter::processBlock(OwnedArray<VASTSynthesiserVoice>* voices, modMatri
 		paramIDGain = MODMATDEST::Filter1Gain;
 		break;
 	case(1):
-		paramType = *m_Set->m_State->m_uFilterType_Filter2;
+		paramType = static_cast<int>(*m_Set->m_State->m_uFilterType_Filter2);
 		paramDrive.store(*m_Set->m_State->m_fFilterDrive_Filter2);
 		paramIDDrive = MODMATDEST::Filter2Drive;
 		paramFilterEnv = *m_Set->m_State->m_uVCFEnv_Filter2;
@@ -276,7 +284,7 @@ int VASTQFilter::processBlock(OwnedArray<VASTSynthesiserVoice>* voices, modMatri
 		paramIDGain = MODMATDEST::Filter2Gain;
 		break;
 	case(2):
-		paramType = *m_Set->m_State->m_uFilterType_Filter3;
+		paramType = static_cast<int>(*m_Set->m_State->m_uFilterType_Filter3);
 		paramDrive.store(*m_Set->m_State->m_fFilterDrive_Filter3);
 		paramIDDrive = MODMATDEST::Filter3Drive;
 		paramFilterEnv = *m_Set->m_State->m_uVCFEnv_Filter3;
@@ -311,15 +319,14 @@ int VASTQFilter::processBlock(OwnedArray<VASTSynthesiserVoice>* voices, modMatri
 
 	bool bTypeChanged = (paramType != m_paramType[filter]);
 	m_paramType[filter] = paramType;
-	if ((bTypeChanged) || (warmup)) { 
+	if ((bTypeChanged) || (warmup || m_bInitFilterAfterMaxPolyChange[filter].load())) {
 		filterTypeChanged(voices, filter, ftype, fsubtype, ftype2, fsubtype2, ftype3, fsubtype3, fOsFactor, isUI, uiVCF, m_Set);
 	}
-
     int numVoices = 0;
 	    
 	//while (samplesToProcess >= c_blocksize_q) {
 	while (samplesToProcess > 0) {
-		matrixInputState->currentFrame = startSample + i;
+		matrixInputState->currentFrame = static_cast<uint64_t>(startSample) + i;
 
 		int curNumSamples = (samplesToProcess >= c_blocksize_q) ? c_blocksize_q : samplesToProcess;
 
@@ -332,7 +339,7 @@ int VASTQFilter::processBlock(OwnedArray<VASTSynthesiserVoice>* voices, modMatri
 		{
 			bool doit = true;
 			if (isUI) {
-				vcf = uiVCF[filter];
+				vcf = uiVCF[filter].get();
 				complete = true;
 			}
 			else {
@@ -341,31 +348,31 @@ int VASTQFilter::processBlock(OwnedArray<VASTSynthesiserVoice>* voices, modMatri
 				vcf = ((CVASTSingleNote*)voice)->m_VCF[filter];
 				bool bPlayiningInRange = ((CVASTSingleNote*)voice)->isPlayingInRange(startSample, numSamples); //requires that mseg is processed before!
 				doit = (bPlayiningInRange || (((CVASTSingleNote*)voice)->m_bLastFilterOutputZero[filter] == false));
-				if (voiceNo == C_MAX_POLY - 1)
+				if (voiceNo == m_Set->m_uMaxPoly - 1)
 					complete = true;
 			}
 			if (doit) {
 				matrixInputState->voiceNo = voiceNo;
-				float lFilterEnvMod = paramFilterEnvMod;
+                float lFilterEnvMod{};
 				if (isUI) {
 					fVCFEnvelopeMod = 1.0f;
 				} 
 				else {
 					{
-						if (paramFilterEnv == MSEGENV::MSEG1) {
-							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[0][voiceNo]->getSample(0, matrixInputState->currentFrame);
+						if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG1)) {
+							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[0][voiceNo]->getSample(0, int(matrixInputState->currentFrame));
 						}
-						else if (paramFilterEnv == MSEGENV::MSEG2) {
-							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[1][voiceNo]->getSample(0, matrixInputState->currentFrame);
+						else if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG2)) {
+							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[1][voiceNo]->getSample(0, int(matrixInputState->currentFrame));
 						}
-						else if (paramFilterEnv == MSEGENV::MSEG3) {
-							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[2][voiceNo]->getSample(0, matrixInputState->currentFrame);
+						else if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG3)) {
+							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[2][voiceNo]->getSample(0, int(matrixInputState->currentFrame));
 						}
-						else if (paramFilterEnv == MSEGENV::MSEG4) {
-							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[3][voiceNo]->getSample(0, matrixInputState->currentFrame);
+						else if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG4)) {
+							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[3][voiceNo]->getSample(0, int(matrixInputState->currentFrame));
 						}
-						else if (paramFilterEnv == MSEGENV::MSEG5) {
-							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[4][voiceNo]->getSample(0, matrixInputState->currentFrame);
+						else if (paramFilterEnv == static_cast<int>(MSEGENV::MSEG5)) {
+							fVCFEnvelopeMod = routingBuffers->MSEGBuffer[4][voiceNo]->getSample(0, int(matrixInputState->currentFrame));
 						}
 						lFilterEnvMod = m_Set->getParameterValueWithMatrixModulation(&paramFilterEnvMod, paramIDFilterEnvMod, matrixInputState);
 					}
@@ -1340,7 +1347,7 @@ void VASTQFilter::calcFilterSettings(bool isUi, int ftype, int fsubtype, int fty
 
 }
 
-int VASTQFilter::processQFilter(dsp::AudioBlock<float> filterBlock, sRoutingBuffers* routingBuffers, int numSamples, int startSample, int ftype, int fsubtype, int ftype2, int fsubtype2, int ftype3, int fsubtype3, int fws, int osFactor, OwnedArray<VASTSynthesiserVoice>* voices, int filter, float gain, float drive, float feedback, bool isUI, bool hasNextFilter, ScopedPointer<CVASTVcf>* uiVCF, bool warmup) {	
+int VASTQFilter::processQFilter(dsp::AudioBlock<float> filterBlock, sRoutingBuffers* routingBuffers, int numSamples, int startSample, int ftype, int fsubtype, int ftype2, int fsubtype2, int ftype3, int fsubtype3, int fws, int osFactor, OwnedArray<VASTSynthesiserVoice>* voices, int filter, float gain, float drive, float feedback, bool isUI, bool hasNextFilter, std::unique_ptr<CVASTVcf>* uiVCF, bool warmup) {
 	int numFilterVoices = 0;
 
 	bool isLegacy = false;
@@ -1350,7 +1357,7 @@ int VASTQFilter::processQFilter(dsp::AudioBlock<float> filterBlock, sRoutingBuff
 		ProcessLegacy(filterBlock, routingBuffers, numSamples, startSample, ftype, fsubtype, ftype2, fsubtype2, ftype3, fsubtype3, fws, osFactor, voices, filter, gain, drive, feedback, isUI, hasNextFilter, uiVCF, warmup);
 	} 
 	else {
-		Fbq_global g;
+		Fbq_global g{};
 		g.FU1ptr = VASTQFilter::GetQFPtrFilterUnit(ftype, fsubtype); //first filter A	
 		if (ftype2 != fut_none) //second filter B
 			g.FU2ptr = VASTQFilter::GetQFPtrFilterUnit(ftype2, fsubtype2);
@@ -1392,7 +1399,7 @@ int VASTQFilter::processQFilter(dsp::AudioBlock<float> filterBlock, sRoutingBuff
 		{
 			bool doit = true;
 			if (isUI) {
-				vcf = uiVCF[filter];
+				vcf = uiVCF[filter].get();
 				complete = true;
 			}
 			else {
@@ -1400,8 +1407,8 @@ int VASTQFilter::processQFilter(dsp::AudioBlock<float> filterBlock, sRoutingBuff
 				voice = (*voices)[voiceNo];
 				vcf = ((CVASTSingleNote*)voice)->m_VCF[filter];
 				bool bPlayiningInRange = ((CVASTSingleNote*)voice)->isPlayingInRange(startSample, numSamples); //requires that mseg is processed before!
-				doit = (bPlayiningInRange || (((CVASTSingleNote*)voice)->m_bLastFilterOutputZero[filter] == false));
-				if (voiceNo == C_MAX_POLY - 1)
+				doit = (bPlayiningInRange || (((CVASTSingleNote*)voice)->m_bLastFilterOutputZero[filter] == false));				
+				if (voiceNo == ((CVASTSingleNote*)voice)->m_Set->m_uMaxPoly - 1)
 					complete = true;
 			}
 			if (doit) {
@@ -1434,7 +1441,7 @@ int VASTQFilter::processQFilter(dsp::AudioBlock<float> filterBlock, sRoutingBuff
 				//vString += " " + String(mVoiceNo);
 			}
 		}
-		//DBG("Filter: " + String(filter) + " Filtervoices " + vString);
+		//VDBG("Filter: " + String(filter) + " Filtervoices " + vString);
 
 		//all voices	
 		//numFilterVoices = highestVoicePlaying + 1;
@@ -1524,7 +1531,7 @@ int VASTQFilter::processQFilter(dsp::AudioBlock<float> filterBlock, sRoutingBuff
 				//halfband filter if needed
 				if (osFactor == 2) {
 					//if (startSample % 4 != 0) 
-						//DBG("Not %4 StartSample!");
+						//VDBG("Not %4 StartSample!");
 					m_Decimator[filter].decimateSamples2(outl, outr, numSamples * osFactor, filterBlock.getChannelPointer(0), filterBlock.getChannelPointer(1)); //expects it to be dividable by 2 but no longer memory aligned to 16 bit!
 				}
 				else
@@ -1564,7 +1571,7 @@ int VASTQFilter::processQFilter(dsp::AudioBlock<float> filterBlock, sRoutingBuff
     return numFilterVoices;
 }
 
-void VASTQFilter::ProcessLegacy(dsp::AudioBlock<float> filterBlock, sRoutingBuffers* routingBuffers, int numSamples, int startSample, int ftype, int fsubtype, int ftype2, int fsubtype2, int ftype3, int fsubtype3, int fws, int osFactor, OwnedArray<VASTSynthesiserVoice>* voices, int filter, float gain, float drive, float feedback, bool isUI, bool hasNextFilter, ScopedPointer<CVASTVcf>* uiVCF, bool warmup) {
+void VASTQFilter::ProcessLegacy(dsp::AudioBlock<float> filterBlock, sRoutingBuffers* routingBuffers, int numSamples, int startSample, int ftype, int fsubtype, int ftype2, int fsubtype2, int ftype3, int fsubtype3, int fws, int osFactor, OwnedArray<VASTSynthesiserVoice>* voices, int filter, float gain, float drive, float feedback, bool isUI, bool hasNextFilter, std::unique_ptr<CVASTVcf>* uiVCF, bool warmup) {
 	int filterBlocksize = numSamples; //??
 	
 	AudioSampleBuffer inBufferUp(2, numSamples * osFactor); //the on in vcf not needed anymore?
@@ -1577,7 +1584,7 @@ void VASTQFilter::ProcessLegacy(dsp::AudioBlock<float> filterBlock, sRoutingBuff
 	{
 		bool doit = true;
 		if (isUI) {
-			vcf = uiVCF[filter];
+			vcf = uiVCF[filter].get();
 			complete = true;
 		}
 		else {
@@ -1586,7 +1593,7 @@ void VASTQFilter::ProcessLegacy(dsp::AudioBlock<float> filterBlock, sRoutingBuff
 			vcf = ((CVASTSingleNote*)voice)->m_VCF[filter];
 			bool bPlayiningInRange = ((CVASTSingleNote*)voice)->isPlayingInRange(startSample, numSamples); //requires that mseg is processed before!
 			doit = (bPlayiningInRange || (((CVASTSingleNote*)voice)->m_bLastFilterOutputZero[filter] == false));
-			if (voiceNo == C_MAX_POLY - 1)
+			if (voiceNo == ((CVASTSingleNote*)voice)->m_Set->m_uMaxPoly - 1)
 				complete = true;
 		}
 		
@@ -1627,12 +1634,8 @@ void VASTQFilter::ProcessLegacy(dsp::AudioBlock<float> filterBlock, sRoutingBuff
 						//vcf->m_TFHPF_uNonLinearProcessing = vcf->OFF; 
 					vcf->KorgThreeFiveHPFmkIIupdateFilters();
 					for (int i = 0; i < numSamples; i++) {
-						double lFilterIn[2];
-						lFilterIn[0] = inBlock.getSample(0, i);
-						lFilterIn[1] = inBlock.getSample(1, i);
-						double fOut[2];
-						fOut[0] = 0;
-						fOut[1] = 0;
+						double lFilterIn[2]{ inBlock.getSample(0, i), inBlock.getSample(1, i) };
+						double fOut[2]{ 0, 0 };
 						//do filter
 						vcf->KorgThreeFiveHPFmkIIdoFilter(lFilterIn, fOut);
 						if (!warmup) {
@@ -2300,7 +2303,6 @@ __m128 VASTQFilter::COMBquad_SSE1(VASTQFilterStepState* __restrict f, __m128 in)
 {
 	assert(FIRipol_M == 256); // changing the constant requires updating the code below
 	const __m128 m256 = _mm_set1_ps(256.f);
-	const __m128i m0xff = _mm_set1_epi32(0xff);
 
 	f->C[0] = _mm_add_ps(f->C[0], f->dC[0]);
 	f->C[1] = _mm_add_ps(f->C[1], f->dC[1]);
@@ -2367,8 +2369,8 @@ __m128 VASTQFilter::COMBquad_SSE2(VASTQFilterStepState* __restrict f, __m128 in)
 
 	__m128 a = _mm_mul_ps(f->C[0], m256);
 	__m128i e = _mm_cvtps_epi32(a);
-	int DTi alignas(16)[4],
-		SEi alignas(16)[4];
+	int DTi alignas(16)[4]{},
+		SEi alignas(16)[4]{};	
 	__m128i DT = _mm_srli_epi32(e, 8);
 	_mm_store_si128((__m128i*)DTi, DT);
 	__m128i SE = _mm_and_si128(e, m0xff);
@@ -2535,7 +2537,7 @@ __m128 VASTQFilter::SINUS_SSE2(__m128 in, __m128 drive)
 	e4[3] = _mm_cvtsi128_si32(_mm_shufflelo_epi16(e, _MM_SHUFFLE(3, 3, 3, 3)));
 #else
 	// on PC write to memory & back as XMM -> GPR is slow on K8
-	short e4 alignas(16)[8];
+	short e4 alignas(16)[8]{};
 	_mm_store_si128((__m128i*)&e4, e);
 #endif
 
@@ -2554,7 +2556,7 @@ __m128 VASTQFilter::SINUS_SSE2(__m128 in, __m128 drive)
 
 	return x;
 }
-
+/*
 #if !_M_X64
 __m128 VASTQFilter::ASYM_SSE1(__m128 in, __m128 drive)
 {
@@ -2597,6 +2599,7 @@ __m128 VASTQFilter::ASYM_SSE1(__m128 in, __m128 drive)
 	return x;
 }
 #endif
+ */
 
 __m128 VASTQFilter::ASYM_SSE2(__m128 in, __m128 drive)
 {
@@ -2623,7 +2626,7 @@ __m128 VASTQFilter::ASYM_SSE2(__m128 in, __m128 drive)
 
 #else
 	// on PC write to memory & back as XMM -> GPR is slow on K8
-	short e4 alignas(16)[8];
+	short e4 alignas(16)[8]{};
 	_mm_store_si128((__m128i*)&e4, e);
 #endif
 
@@ -2778,10 +2781,6 @@ VASTQFilter::WaveshaperQFPtr VASTQFilter::GetQFPtrWaveshaper(int type)
 template <bool WS, bool A, bool B, bool C>
 void VASTQFilter::ProcessFBQuad(VASTQFilterProcessState& d, Fbq_global& g, float* OutL, float* OutR, float VoicesL[][4], float VoicesR[][4], int numSamples)
 {
-	const __m128 hb_c = _mm_set1_ps(0.5f); // If this is changed from 0.5, make sure to change
-										   // this in the code because it is assumed to be half
-	const __m128 one = _mm_set1_ps(1.0f);
-
 	for (int k = 0; k < numSamples; k++)
 	{
 		d.FB = _mm_add_ps(d.FB, d.dFB); //TODO Check feedback - only to A?
@@ -2954,3 +2953,5 @@ void VASTQFilter::InitQFilterProcessStateToZero(VASTQFilterProcessState *Q)
 	Q->dOut2R = _mm_setzero_ps();
 }
 
+JUCE_END_IGNORE_WARNINGS_GCC_LIKE
+JUCE_END_IGNORE_WARNINGS_MSVC

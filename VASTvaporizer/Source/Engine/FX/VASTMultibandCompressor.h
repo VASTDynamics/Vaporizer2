@@ -57,36 +57,36 @@ private:
 
     //==============================================================================	
 	//parameters
-	std::atomic<float>* m_bMultibandCompressorOffOn = nullptr;
-	std::atomic<float>* m_fMultibandCompressorFcLow = nullptr;;
-	std::atomic<float>* m_fMultibandCompressorFcHigh = nullptr;
-	std::atomic<float>* m_fMultibandCompressorThresholdLB = nullptr;
-	std::atomic<float>* m_fMultibandCompressorThresholdMB = nullptr;
-	std::atomic<float>* m_fMultibandCompressorThresholdHB = nullptr;
-	std::atomic<float>* m_fMultibandCompressorAttackLB = nullptr;
-	std::atomic<float>* m_fMultibandCompressorAttackMB = nullptr;
-	std::atomic<float>* m_fMultibandCompressorAttackHB = nullptr;
-	std::atomic<float>* m_fMultibandCompressorReleaseLB = nullptr;
-	std::atomic<float>* m_fMultibandCompressorReleaseMB = nullptr;
-	std::atomic<float>* m_fMultibandCompressorReleaseHB = nullptr;
-	std::atomic<float>* m_fMultibandCompressorRatioLB = nullptr;
-	std::atomic<float>* m_fMultibandCompressorRatioMB = nullptr;
-	std::atomic<float>* m_fMultibandCompressorRatioHB = nullptr;
-	std::atomic<float>* m_fMultibandCompressorGainLB = nullptr;
-	std::atomic<float>* m_fMultibandCompressorGainMB = nullptr;
-	std::atomic<float>* m_fMultibandCompressorGainHB = nullptr;
+	std::atomic<float>* m_bMBCompOffOn = nullptr;
+	std::atomic<float>* m_fMBCompFcLow = nullptr;;
+	std::atomic<float>* m_fMBCompFcHigh = nullptr;
+	std::atomic<float>* m_fMBCompThresholdLB = nullptr;
+	std::atomic<float>* m_fMBCompThresholdMB = nullptr;
+	std::atomic<float>* m_fMBCompThresholdHB = nullptr;
+	std::atomic<float>* m_fMBCompAttackLB = nullptr;
+	std::atomic<float>* m_fMBCompAttackMB = nullptr;
+	std::atomic<float>* m_fMBCompAttackHB = nullptr;
+	std::atomic<float>* m_fMBCompReleaseLB = nullptr;
+	std::atomic<float>* m_fMBCompReleaseMB = nullptr;
+	std::atomic<float>* m_fMBCompReleaseHB = nullptr;
+	std::atomic<float>* m_fMBCompRatioLB = nullptr;
+	std::atomic<float>* m_fMBCompRatioMB = nullptr;
+	std::atomic<float>* m_fMBCompRatioHB = nullptr;
+	std::atomic<float>* m_fMBCompGainLB = nullptr;
+	std::atomic<float>* m_fMBCompGainMB = nullptr;
+	std::atomic<float>* m_fMBCompGainHB = nullptr;
 	
-	LinearSmoothedValue<float> m_fMultibandCompressorThresholdLB_smoothed;
-	LinearSmoothedValue<float> m_fMultibandCompressorThresholdHB_smoothed;
-	LinearSmoothedValue<float> m_fMultibandCompressorThresholdMB_smoothed;
-	LinearSmoothedValue<float> m_fMultibandCompressorRatioLB_smoothed;
-	LinearSmoothedValue<float> m_fMultibandCompressorRatioHB_smoothed;
-	LinearSmoothedValue<float> m_fMultibandCompressorRatioMB_smoothed;
-	LinearSmoothedValue<float> m_fMultibandCompressorGainLB_smoothed;
-	LinearSmoothedValue<float> m_fMultibandCompressorGainHB_smoothed;
-	LinearSmoothedValue<float> m_fMultibandCompressorGainMB_smoothed;
-	LinearSmoothedValue<float> m_fMultibandCompressorFcLow_smoothed;
-	LinearSmoothedValue<float> m_fMultibandCompressorFcHigh_smoothed;
+	LinearSmoothedValue<float> m_fMBCompThresholdLB_smoothed;
+	LinearSmoothedValue<float> m_fMBCompThresholdHB_smoothed;
+	LinearSmoothedValue<float> m_fMBCompThresholdMB_smoothed;
+	LinearSmoothedValue<float> m_fMBCompRatioLB_smoothed;
+	LinearSmoothedValue<float> m_fMBCompRatioHB_smoothed;
+	LinearSmoothedValue<float> m_fMBCompRatioMB_smoothed;
+	LinearSmoothedValue<float> m_fMBCompGainLB_smoothed;
+	LinearSmoothedValue<float> m_fMBCompGainHB_smoothed;
+	LinearSmoothedValue<float> m_fMBCompGainMB_smoothed;
+	LinearSmoothedValue<float> m_fMBCompFcLow_smoothed;
+	LinearSmoothedValue<float> m_fMBCompFcHigh_smoothed;
 	
 	//filters
 	CVASTIIRFilter lowPassL1, lowPassL2, lowPassR1, lowPassR2; //Filters for low band

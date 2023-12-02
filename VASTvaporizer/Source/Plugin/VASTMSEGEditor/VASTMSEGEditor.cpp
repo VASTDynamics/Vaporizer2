@@ -31,7 +31,7 @@ VASTMSEGEditor::VASTMSEGEditor(AudioProcessor* processor, VASTMSEGData* data, VA
 
 	startAutoUpdate();
 	resized();
-	updateContent(true);
+	//updateContent(true);
 }
 
 VASTMSEGEditor::~VASTMSEGEditor() {
@@ -65,7 +65,8 @@ float VASTMSEGEditor::valToScreenY(float yVal) {
 }
 
 void VASTMSEGEditor::lookAndFeelChanged() {
-	updateContent(true);
+	if (myProcessor->isCurrentEditorInitialized())
+		updateContent(true);
 }
 
 void VASTMSEGEditor::paint(Graphics& g)
@@ -100,7 +101,7 @@ void VASTMSEGEditor::handleBorderDisplay() {
 	if (m_drawwidth <= 0) return;
 
 	//current pos marker	
-	for (int voiceNo = 0; voiceNo < C_MAX_POLY; voiceNo++) {
+	for (int voiceNo = 0; voiceNo < myProcessor->m_pVASTXperience.m_Set.m_uMaxPoly; voiceNo++) {
 		if (myData->dispVoicePlaying(voiceNo)) {
 			if ((myData->controlPoints.size() - 1) > myData->getDispActiveSegment(voiceNo)) {
 					float markerPos = 0.f;
@@ -166,14 +167,14 @@ void VASTMSEGEditor::updateContent(bool force)
 
 	float prevxPos = 0.0f;
 	float prevyPos = 0.0f;
-	int numPoints = myData->controlPoints.size();	
+	int numPoints = int(myData->controlPoints.size());	
 	Path parea;
 
 	//sync grid
 	if (myData->getSynch()) {
 		int beats = myData->getTimeBeats();
 
-		float displayPeriod = myData->getTotalDuration();
+		float displayPeriod = myData->calcTotalDuration();
 		float millisPerBeat = myProcessor->m_pVASTXperience.m_Set.getMillisecondsPerBeat();
 		float intRatio = myProcessor->m_pVASTXperience.m_Set.getIntervalRatio(beats);
 		float stepsPerDisplay = (displayPeriod / (millisPerBeat * intRatio));
@@ -346,7 +347,7 @@ void VASTMSEGEditor::updateContent(bool force)
 		int beats = myData->getTimeBeats();
 		Colour col1 = myProcessor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colLabelText);
 		g.setColour(col1.withAlpha(1.f));
-		g.drawText(TRANS("Total   ") + String(round(myData->getTotalDuration())) + String(" ms in ") + String(CVASTParamState::comboBoxValueToTextFunction_TIMEBEATS(beats) + " beats"), juce::Rectangle<int>(x1, waveformImage.getHeight() - fontHeight - 2.f, wi, fontHeight + 2.f), Justification::centred, false);
+		g.drawText(TRANS("Total   ") + String(round(myData->calcTotalDuration())) + String(" ms in ") + String(CVASTParamState::comboBoxValueToTextFunction_TIMEBEATS(beats) + " beats"), juce::Rectangle<int>(x1, waveformImage.getHeight() - fontHeight - 2.f, wi, fontHeight + 2.f), Justification::centred, false);
 		g.drawText(TRANS("Decay   ") + String(round(myData->getDecaySteps())), juce::Rectangle<int>(x3, waveformImage.getHeight() - fontHeight - 2.f, wi, fontHeight + 2.f), Justification::centred, false);
 		if (!myData->hasAttackPhase())
 			g.setColour(col1.withAlpha(0.3f));
@@ -361,7 +362,7 @@ void VASTMSEGEditor::updateContent(bool force)
 	} else {
 		Colour col1 = myProcessor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colLabelText);
 		g.setColour(col1.withAlpha(1.f));
-		g.drawText(TRANS("Total   ") + String(round(myData->getTotalDuration())) + String(" ms"), juce::Rectangle<int>(x1, waveformImage.getHeight() - fontHeight - 2.f, wi, fontHeight + 2.f), Justification::centred, false);
+		g.drawText(TRANS("Total   ") + String(round(myData->calcTotalDuration())) + String(" ms"), juce::Rectangle<int>(x1, waveformImage.getHeight() - fontHeight - 2.f, wi, fontHeight + 2.f), Justification::centred, false);
 		g.drawText(TRANS("Decay   ") + String(round(myData->getDecayTime())) + String(" ms"), juce::Rectangle<int>(x3, waveformImage.getHeight() - fontHeight - 2.f, wi, fontHeight + 2.f), Justification::centred, false);
 		if (!myData->hasAttackPhase())
 			g.setColour(col1.withAlpha(0.3f));
@@ -387,7 +388,7 @@ void VASTMSEGEditor::mouseDown(const MouseEvent & e)
 
 	ModifierKeys modifiers = ModifierKeys::getCurrentModifiersRealtime();
 	// check the mod keys ..
-	int numPoints = myData->controlPoints.size();
+	int numPoints = int(myData->controlPoints.size());
 	float mouseY = e.getMouseDownY();
 	float mouseX = e.getMouseDownX();
 
@@ -483,7 +484,8 @@ void VASTMSEGEditor::mouseDown(const MouseEvent & e)
 		mainMenu.addItem(30, TRANS("Copy MSEG"));
 		mainMenu.addItem(31, TRANS("Paste MSEG"));
 
-		mainMenu.showMenuAsync(PopupMenu::Options(), juce::ModalCallbackFunction::create([this, numPoints, mouseX, mouseY, numIsClicked](int result) {
+		mainMenu.showMenuAsync(PopupMenu::Options().withTargetComponent(this).withTargetScreenArea(juce::Rectangle<int>{}.withPosition(Desktop::getMousePosition())),
+			juce::ModalCallbackFunction::create([this, numPoints, mouseX, mouseY, numIsClicked](int result) {
 			if (result == 1) {
 				int i = 0;
 				while ((i < numPoints) && (valToScreenX(myData->controlPoints[i].xVal) < mouseX)) {
@@ -585,7 +587,7 @@ void VASTMSEGEditor::mouseDown(const MouseEvent & e)
 
 void VASTMSEGEditor::mouseMove(const MouseEvent& e) {	
 
-	int numPoints = myData->controlPoints.size();
+	int numPoints = int(myData->controlPoints.size());
 	float mouseY = e.getMouseDownY();
 	float mouseX = e.getMouseDownX();
 
@@ -668,6 +670,8 @@ void VASTMSEGEditor::timerCallback() {
 
 		for (int i = 0; i < processor->m_mapParameterNameToControl.size(); i++) {
 			VASTParameterSlider* lslider = dynamic_cast<VASTParameterSlider*>(processor->m_mapParameterNameToControl[i]);
+            if (lslider == nullptr)
+                continue;
 			if (lslider->getComponentID().equalsIgnoreCase("m_fSustainLevel_MSEG" + String(myData->m_msegNo + 1)))
 				lslider->setValue(myData->getSustainLevel() * 100.f, juce::NotificationType::dontSendNotification);
 
@@ -709,7 +713,7 @@ void VASTMSEGEditor::timerCallback() {
 		/*
 		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - t1).count();
 		t1 = std::chrono::high_resolution_clock::now();
-		DBG("Last update ms " + String(duration));
+		VDBG("Last update ms " + String(duration));
 		*/
 
 	}

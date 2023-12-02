@@ -29,7 +29,7 @@ public:
 	void startAutoUpdate();
 	void stopAutoUpdate();
 
-	float m_lastDrawnValPercentageUI[C_MAX_POLY] = { 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f }; //for l&f
+	float m_lastDrawnValPercentageUI[C_MAX_POLY] {}; //for l&f
 	void paint(Graphics& g) override;
 
 private:
@@ -39,7 +39,7 @@ private:
 
 	void timerCallback() override;
 	bool m_timerRunning = false;
-	float m_lastSrceVals[C_MAX_POLY] = { 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f };
+	float m_lastSrceVals[C_MAX_POLY] {};
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(VASTParameterSlider)
 };

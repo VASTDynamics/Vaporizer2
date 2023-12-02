@@ -27,12 +27,12 @@ VASTParameterSlider::VASTParameterSlider(const juce::String &componentName) {
 }
 
 VASTParameterSlider::~VASTParameterSlider() {
-	stopTimer();
-	this->setLookAndFeel(nullptr);
+    stopTimer();
+    this->setLookAndFeel(nullptr);
 	sliderAttachment = nullptr; //to delete unique ptr
 }
 
-void VASTParameterSlider::setAutomationDestination(int destination) {
+void VASTParameterSlider::setAutomationDestination(int ) {
 //slider is automatable
 	//m_automationModMatDest = destination;
 }
@@ -63,6 +63,20 @@ void VASTParameterSlider::itemDropped(const SourceDetails& dragSourceDetails) {
 			m_processor->setParameterText("m_fModMatVal" + String(freeSlot + 1), String("100"), false);
 			m_processor->setParameterText("m_fModMatCurve" + String(freeSlot + 1), String("0"), false);
 			this->repaint();
+		}
+	}
+
+	//default name for custom modulator
+	if (pName.startsWithIgnoreCase("CustomModulator")) {
+		auto* param = m_processor->getParameterTree().getParameter(this->getComponentID());
+		if (param == nullptr) {
+			vassert(false);
+			return;
+		}
+		String paramDesc = param->name;
+		VASTDragSource* customMod = (VASTDragSource *)(dragSourceDetails.sourceComponent.get()->getParentComponent());
+		if (customMod != nullptr) {
+			customMod->setLabelDefaultText(paramDesc);
 		}
 	}
 };
@@ -116,7 +130,7 @@ void VASTParameterSlider::mouseDrag(const MouseEvent &e) {
 	else Slider::mouseDrag(e);
 }
 
-bool VASTParameterSlider::isInterestedInDragSource(const SourceDetails& dragSourceDetails) {
+bool VASTParameterSlider::isInterestedInDragSource(const SourceDetails& ) {
 	if (m_processor == nullptr) return false;
 	String cid = getComponentID();
 
@@ -136,7 +150,7 @@ VASTAudioProcessor* VASTParameterSlider::getAudioProcessor() {
 	return m_processor;
 }
 
-void VASTParameterSlider::updateContent(bool force) {
+void VASTParameterSlider::updateContent(bool ) {
 	if (m_processor == nullptr)
 		return;
 	if (m_processor->m_disableOpenGLGFX)
@@ -152,7 +166,7 @@ void VASTParameterSlider::updateContent(bool force) {
 	float modVal = 0.f;
 	double curvy = 0.f;
 	int polarity = 0;
-	float lastSrceVals[C_MAX_POLY] = { 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f };
+	float lastSrceVals[C_MAX_POLY] {};
 	m_processor->m_pVASTXperience.m_Set.modMatrixSlotGetValues(slot, modVal, curvy, polarity, lastSrceVals);
 
 	bool bchanged = false;
@@ -164,7 +178,7 @@ void VASTParameterSlider::updateContent(bool force) {
 }
 
 void VASTParameterSlider::startAutoUpdate() {
-	startTimer(50);
+	startTimer(25);
 	m_timerRunning = true;
 }
 

@@ -34,7 +34,7 @@ public:
 		//bool isOn = false;
 		bool isChain = false;
 		bool needsOversampling = false;
-		CVASTEffect* effectPlugin;
+		CVASTEffect* effectPlugin = nullptr;
 	};
 
 	void init(CVASTSettings &set);
@@ -46,19 +46,17 @@ public:
 	void updateTiming();
 	OwnedArray<insertEffect> effectBus;
 	void swapSlots(int first, int second);
-	int getSequence(int slot) {
-		return mFXBusSequence[slot];
-	}
+	int getSequence(int slot) const;
 	int findPosition(int slot);
 
 	void initSequence();
-	void getValueTreeState(ValueTree* tree, UndoManager* undoManager);
+	void getValueTreeState(ValueTree* tree, UndoManager* undoManager); //not const
 	void setValueTreeState(ValueTree* tree);
 
 private:
-	VASTAudioProcessor* myProcessor;
+	VASTAudioProcessor* myProcessor = nullptr;
 	int myBusnr = 0;
-	CVASTSettings* m_Set;
+	CVASTSettings* m_Set = nullptr;
 	int m_chainEffects = 0;
 
 	Array<int> mFXBusSequence;
@@ -67,16 +65,16 @@ private:
 	CVASTBiQuad m_lowPassBiQuadL;
 	CVASTBiQuad m_lowPassBiQuadR;
 	bool m_lastCycleLowBandCalculated = true;
-	juce::ScopedPointer<AudioSampleBuffer> m_lowbandMono;
-	juce::ScopedPointer<AudioSampleBuffer> m_chainBuffer;
-	juce::ScopedPointer<AudioSampleBuffer> m_chainProc;
-	juce::ScopedPointer<AudioSampleBuffer> m_chainResult;
+	std::unique_ptr<AudioSampleBuffer> m_lowbandMono;
+	std::unique_ptr<AudioSampleBuffer> m_chainBuffer;
+	std::unique_ptr<AudioSampleBuffer> m_chainProc;
+	std::unique_ptr<AudioSampleBuffer> m_chainResult;
 
 	//Oversampling
 	CVASTOversampler m_Oversampler;
 	CVASTOversampler m_Oversampler2;
 	CVASTOversampler m_Oversampler3;
-	juce::ScopedPointer<AudioSampleBuffer> m_inBufferOversampled;
+    std::unique_ptr<AudioSampleBuffer> m_inBufferOversampled;
 	
 	CVASTEq m_Eq;
 	CVASTChorus m_Chorus;

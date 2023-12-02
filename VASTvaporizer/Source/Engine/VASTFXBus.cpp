@@ -164,11 +164,11 @@ void CVASTFXBus::init(CVASTSettings &set) {
 	m_Oversampler3.init(*m_Set);
 	int initSize = 16;
 	
-	m_inBufferOversampled = new AudioSampleBuffer(2, initSize);
-	m_lowbandMono = new AudioSampleBuffer(1, initSize);
-	m_chainBuffer = new AudioSampleBuffer(2, initSize);
-	m_chainResult = new AudioSampleBuffer(2, initSize);
-	m_chainProc = new AudioSampleBuffer(2, initSize);
+	m_inBufferOversampled = std::make_unique<AudioSampleBuffer>(2, initSize);
+	m_lowbandMono = std::make_unique<AudioSampleBuffer>(1, initSize);
+	m_chainBuffer = std::make_unique<AudioSampleBuffer>(2, initSize);
+	m_chainResult = std::make_unique<AudioSampleBuffer>(2, initSize);
+	m_chainProc = std::make_unique<AudioSampleBuffer>(2, initSize);
 	mFXBusSequence.clear();
 	for (int i = 0; i < effectBus.size(); i++) {
 		effectBus[i]->effectPlugin->init(set);
@@ -236,6 +236,10 @@ void CVASTFXBus::swapSlots(int first, int second) {
 	mFXBusSequence.swap(first, second);
 }
 
+int CVASTFXBus::getSequence(int slot) const {
+	return mFXBusSequence[slot];
+}
+
 int CVASTFXBus::findPosition(int slot) {
 	for (int i = 0; i < mFXBusSequence.size(); i++) {
 		if (mFXBusSequence[i] == slot) return i;
@@ -252,181 +256,181 @@ void CVASTFXBus::processBuffers(sRoutingBuffers& routingBuffers, MidiBuffer& mid
 	float l_monoFrequency = 0.0f;
 	switch (myBusnr) {
 	case 0:
-		inBuffer = routingBuffers.FxBusBuffer[0];
+		inBuffer = routingBuffers.FxBusBuffer[0].get();
 		//l_oversample = *m_Set->m_State->m_bOversampleBus;
 		l_monoFrequency = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fMBMonoFrequency, MODMATDEST::Fxbus1MonoFrequency, &inputState);
 
 		//Do Routing
 		//bus1
-		if ((*m_Set->m_State->m_uOscRouting1_OscA == OSCROUTE::OSCROUTE_FXBus1) || (*m_Set->m_State->m_uOscRouting2_OscA == OSCROUTE::OSCROUTE_FXBus1)) {
+		if ((*m_Set->m_State->m_uOscRouting1_OscA == static_cast<int>(OSCROUTE::OSCROUTE_FXBus1)) || (*m_Set->m_State->m_uOscRouting2_OscA == static_cast<int>(OSCROUTE::OSCROUTE_FXBus1))) {
 			routingBuffers.FxBusBuffer[0]->addFrom(0, 0, routingBuffers.OscBuffer[0]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[0]->addFrom(1, 0, routingBuffers.OscBuffer[0]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if ((*m_Set->m_State->m_uOscRouting1_OscB == OSCROUTE::OSCROUTE_FXBus1) || (*m_Set->m_State->m_uOscRouting2_OscB == OSCROUTE::OSCROUTE_FXBus1)) {
+		if ((*m_Set->m_State->m_uOscRouting1_OscB == static_cast<int>(OSCROUTE::OSCROUTE_FXBus1)) || (*m_Set->m_State->m_uOscRouting2_OscB == static_cast<int>(OSCROUTE::OSCROUTE_FXBus1))) {
 			routingBuffers.FxBusBuffer[0]->addFrom(0, 0, routingBuffers.OscBuffer[1]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[0]->addFrom(1, 0, routingBuffers.OscBuffer[1]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if ((*m_Set->m_State->m_uOscRouting1_OscC == OSCROUTE::OSCROUTE_FXBus1) || (*m_Set->m_State->m_uOscRouting2_OscC == OSCROUTE::OSCROUTE_FXBus1)) {
+		if ((*m_Set->m_State->m_uOscRouting1_OscC == static_cast<int>(OSCROUTE::OSCROUTE_FXBus1)) || (*m_Set->m_State->m_uOscRouting2_OscC == static_cast<int>(OSCROUTE::OSCROUTE_FXBus1))) {
 			routingBuffers.FxBusBuffer[0]->addFrom(0, 0, routingBuffers.OscBuffer[2]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[0]->addFrom(1, 0, routingBuffers.OscBuffer[2]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if ((*m_Set->m_State->m_uOscRouting1_OscD == OSCROUTE::OSCROUTE_FXBus1) || (*m_Set->m_State->m_uOscRouting2_OscD == OSCROUTE::OSCROUTE_FXBus1)) {
+		if ((*m_Set->m_State->m_uOscRouting1_OscD == static_cast<int>(OSCROUTE::OSCROUTE_FXBus1)) || (*m_Set->m_State->m_uOscRouting2_OscD == static_cast<int>(OSCROUTE::OSCROUTE_FXBus1))) {
 			routingBuffers.FxBusBuffer[0]->addFrom(0, 0, routingBuffers.OscBuffer[3]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[0]->addFrom(1, 0, routingBuffers.OscBuffer[3]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if ((*m_Set->m_State->m_uNoiseRouting1 == OSCROUTE::OSCROUTE_FXBus1) || (*m_Set->m_State->m_uNoiseRouting2 == OSCROUTE::OSCROUTE_FXBus1)) {
+		if ((*m_Set->m_State->m_uNoiseRouting1 == static_cast<int>(OSCROUTE::OSCROUTE_FXBus1)) || (*m_Set->m_State->m_uNoiseRouting2 == static_cast<int>(OSCROUTE::OSCROUTE_FXBus1))) {
 			routingBuffers.FxBusBuffer[0]->addFrom(0, 0, routingBuffers.NoiseBuffer->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[0]->addFrom(1, 0, routingBuffers.NoiseBuffer->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if ((*m_Set->m_State->m_uSamplerRouting1 == OSCROUTE::OSCROUTE_FXBus1) || (*m_Set->m_State->m_uSamplerRouting2 == OSCROUTE::OSCROUTE_FXBus1)) {
+		if ((*m_Set->m_State->m_uSamplerRouting1 == static_cast<int>(OSCROUTE::OSCROUTE_FXBus1)) || (*m_Set->m_State->m_uSamplerRouting2 == static_cast<int>(OSCROUTE::OSCROUTE_FXBus1))) {
 			routingBuffers.FxBusBuffer[0]->addFrom(0, 0, routingBuffers.SamplerBuffer->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[0]->addFrom(1, 0, routingBuffers.SamplerBuffer->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if (*m_Set->m_State->m_uFilterRouting_Filter1 == FILTER1ROUTE::FILTER1ROUTE_FXBus1) {
+		if (*m_Set->m_State->m_uFilterRouting_Filter1 == static_cast<int>(FILTER1ROUTE::FILTER1ROUTE_FXBus1)) {
 			routingBuffers.FxBusBuffer[0]->addFrom(0, 0, routingBuffers.FilterBuffer[0]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[0]->addFrom(1, 0, routingBuffers.FilterBuffer[0]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if (*m_Set->m_State->m_uFilterRouting2_Filter1 == FILTER1ROUTE::FILTER1ROUTE_FXBus1) {
+		if (*m_Set->m_State->m_uFilterRouting2_Filter1 == static_cast<int>(FILTER1ROUTE::FILTER1ROUTE_FXBus1)) {
 			routingBuffers.FxBusBuffer[0]->addFrom(0, 0, routingBuffers.FilterBuffer[0]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[0]->addFrom(1, 0, routingBuffers.FilterBuffer[0]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if (*m_Set->m_State->m_uFilterRouting_Filter2 == FILTER2ROUTE::FILTER2ROUTE_FXBus1) {
+		if (*m_Set->m_State->m_uFilterRouting_Filter2 == static_cast<int>(FILTER2ROUTE::FILTER2ROUTE_FXBus1)) {
 			routingBuffers.FxBusBuffer[0]->addFrom(0, 0, routingBuffers.FilterBuffer[1]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[0]->addFrom(1, 0, routingBuffers.FilterBuffer[1]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if (*m_Set->m_State->m_uFilterRouting2_Filter2 == FILTER2ROUTE::FILTER2ROUTE_FXBus1) {
+		if (*m_Set->m_State->m_uFilterRouting2_Filter2 == static_cast<int>(FILTER2ROUTE::FILTER2ROUTE_FXBus1)) {
 			routingBuffers.FxBusBuffer[0]->addFrom(0, 0, routingBuffers.FilterBuffer[1]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[0]->addFrom(1, 0, routingBuffers.FilterBuffer[1]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if (*m_Set->m_State->m_uFilterRouting_Filter3 == FILTER3ROUTE::FILTER3ROUTE_FXBus1) {
+		if (*m_Set->m_State->m_uFilterRouting_Filter3 == static_cast<int>(FILTER3ROUTE::FILTER3ROUTE_FXBus1)) {
 			routingBuffers.FxBusBuffer[0]->addFrom(0, 0, routingBuffers.FilterBuffer[2]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[0]->addFrom(1, 0, routingBuffers.FilterBuffer[2]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if (*m_Set->m_State->m_uFilterRouting2_Filter3 == FILTER3ROUTE::FILTER3ROUTE_FXBus1) {
+		if (*m_Set->m_State->m_uFilterRouting2_Filter3 == static_cast<int>(FILTER3ROUTE::FILTER3ROUTE_FXBus1)) {
 			routingBuffers.FxBusBuffer[0]->addFrom(0, 0, routingBuffers.FilterBuffer[2]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[0]->addFrom(1, 0, routingBuffers.FilterBuffer[2]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
 		break;
 	case 1:
-		inBuffer = routingBuffers.FxBusBuffer[1];
+		inBuffer = routingBuffers.FxBusBuffer[1].get();
 		//l_oversample = *m_Set->m_State->m_bOversampleBus_Bus2;
 		l_monoFrequency = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fMBMonoFrequency_Bus2, MODMATDEST::Fxbus2MonoFrequency, &inputState);
 
 		//Do Routing
 		//bus2
-		if ((*m_Set->m_State->m_uOscRouting1_OscA == OSCROUTE::OSCROUTE_FXBus2) || (*m_Set->m_State->m_uOscRouting2_OscA == OSCROUTE::OSCROUTE_FXBus2)) {
+		if ((*m_Set->m_State->m_uOscRouting1_OscA == static_cast<int>(OSCROUTE::OSCROUTE_FXBus2)) || (*m_Set->m_State->m_uOscRouting2_OscA == static_cast<int>(OSCROUTE::OSCROUTE_FXBus2))) {
 			routingBuffers.FxBusBuffer[1]->addFrom(0, 0, routingBuffers.OscBuffer[0]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[1]->addFrom(1, 0, routingBuffers.OscBuffer[0]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if ((*m_Set->m_State->m_uOscRouting1_OscB == OSCROUTE::OSCROUTE_FXBus2) || (*m_Set->m_State->m_uOscRouting2_OscB == OSCROUTE::OSCROUTE_FXBus2)) {
+		if ((*m_Set->m_State->m_uOscRouting1_OscB == static_cast<int>(OSCROUTE::OSCROUTE_FXBus2)) || (*m_Set->m_State->m_uOscRouting2_OscB == static_cast<int>(OSCROUTE::OSCROUTE_FXBus2))) {
 			routingBuffers.FxBusBuffer[1]->addFrom(0, 0, routingBuffers.OscBuffer[1]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[1]->addFrom(1, 0, routingBuffers.OscBuffer[1]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if ((*m_Set->m_State->m_uOscRouting1_OscC == OSCROUTE::OSCROUTE_FXBus2) || (*m_Set->m_State->m_uOscRouting2_OscC == OSCROUTE::OSCROUTE_FXBus2)) {
+		if ((*m_Set->m_State->m_uOscRouting1_OscC == static_cast<int>(OSCROUTE::OSCROUTE_FXBus2)) || (*m_Set->m_State->m_uOscRouting2_OscC == static_cast<int>(OSCROUTE::OSCROUTE_FXBus2))) {
 			routingBuffers.FxBusBuffer[1]->addFrom(0, 0, routingBuffers.OscBuffer[2]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[1]->addFrom(1, 0, routingBuffers.OscBuffer[2]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if ((*m_Set->m_State->m_uOscRouting1_OscD == OSCROUTE::OSCROUTE_FXBus2) || (*m_Set->m_State->m_uOscRouting2_OscD == OSCROUTE::OSCROUTE_FXBus2)) {
+		if ((*m_Set->m_State->m_uOscRouting1_OscD == static_cast<int>(OSCROUTE::OSCROUTE_FXBus2)) || (*m_Set->m_State->m_uOscRouting2_OscD == static_cast<int>(OSCROUTE::OSCROUTE_FXBus2))) {
 			routingBuffers.FxBusBuffer[1]->addFrom(0, 0, routingBuffers.OscBuffer[3]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[1]->addFrom(1, 0, routingBuffers.OscBuffer[3]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if ((*m_Set->m_State->m_uNoiseRouting1 == OSCROUTE::OSCROUTE_FXBus2) || (*m_Set->m_State->m_uNoiseRouting2 == OSCROUTE::OSCROUTE_FXBus2)) {
+		if ((*m_Set->m_State->m_uNoiseRouting1 == static_cast<int>(OSCROUTE::OSCROUTE_FXBus2)) || (*m_Set->m_State->m_uNoiseRouting2 == static_cast<int>(OSCROUTE::OSCROUTE_FXBus2))) {
 			routingBuffers.FxBusBuffer[1]->addFrom(0, 0, routingBuffers.NoiseBuffer->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[1]->addFrom(1, 0, routingBuffers.NoiseBuffer->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if ((*m_Set->m_State->m_uSamplerRouting1 == OSCROUTE::OSCROUTE_FXBus2) || (*m_Set->m_State->m_uSamplerRouting2 == OSCROUTE::OSCROUTE_FXBus2)) {
+		if ((*m_Set->m_State->m_uSamplerRouting1 == static_cast<int>(OSCROUTE::OSCROUTE_FXBus2)) || (*m_Set->m_State->m_uSamplerRouting2 == static_cast<int>(OSCROUTE::OSCROUTE_FXBus2))) {
 			routingBuffers.FxBusBuffer[1]->addFrom(0, 0, routingBuffers.SamplerBuffer->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[1]->addFrom(1, 0, routingBuffers.SamplerBuffer->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if (*m_Set->m_State->m_uFilterRouting_Filter1 == FILTER1ROUTE::FILTER1ROUTE_FXBus2) {
+		if (*m_Set->m_State->m_uFilterRouting_Filter1 == static_cast<int>(FILTER1ROUTE::FILTER1ROUTE_FXBus2)) {
 			routingBuffers.FxBusBuffer[1]->addFrom(0, 0, routingBuffers.FilterBuffer[0]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[1]->addFrom(1, 0, routingBuffers.FilterBuffer[0]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if (*m_Set->m_State->m_uFilterRouting2_Filter1 == FILTER1ROUTE::FILTER1ROUTE_FXBus2) {
+		if (*m_Set->m_State->m_uFilterRouting2_Filter1 == static_cast<int>(FILTER1ROUTE::FILTER1ROUTE_FXBus2)) {
 			routingBuffers.FxBusBuffer[1]->addFrom(0, 0, routingBuffers.FilterBuffer[0]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[1]->addFrom(1, 0, routingBuffers.FilterBuffer[0]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if (*m_Set->m_State->m_uFilterRouting_Filter2 == FILTER2ROUTE::FILTER2ROUTE_FXBus2) {
+		if (*m_Set->m_State->m_uFilterRouting_Filter2 == static_cast<int>(FILTER2ROUTE::FILTER2ROUTE_FXBus2)) {
 			routingBuffers.FxBusBuffer[1]->addFrom(0, 0, routingBuffers.FilterBuffer[1]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[1]->addFrom(1, 0, routingBuffers.FilterBuffer[1]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if (*m_Set->m_State->m_uFilterRouting2_Filter2 == FILTER2ROUTE::FILTER2ROUTE_FXBus2) {
+		if (*m_Set->m_State->m_uFilterRouting2_Filter2 == static_cast<int>(FILTER2ROUTE::FILTER2ROUTE_FXBus2)) {
 			routingBuffers.FxBusBuffer[1]->addFrom(0, 0, routingBuffers.FilterBuffer[1]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[1]->addFrom(1, 0, routingBuffers.FilterBuffer[1]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if (*m_Set->m_State->m_uFilterRouting_Filter3 == FILTER3ROUTE::FILTER3ROUTE_FXBus2) {
+		if (*m_Set->m_State->m_uFilterRouting_Filter3 == static_cast<int>(FILTER3ROUTE::FILTER3ROUTE_FXBus2)) {
 			routingBuffers.FxBusBuffer[1]->addFrom(0, 0, routingBuffers.FilterBuffer[2]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[1]->addFrom(1, 0, routingBuffers.FilterBuffer[2]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if (*m_Set->m_State->m_uFilterRouting2_Filter3 == FILTER3ROUTE::FILTER3ROUTE_FXBus2) {
+		if (*m_Set->m_State->m_uFilterRouting2_Filter3 == static_cast<int>(FILTER3ROUTE::FILTER3ROUTE_FXBus2)) {
 			routingBuffers.FxBusBuffer[1]->addFrom(0, 0, routingBuffers.FilterBuffer[2]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[1]->addFrom(1, 0, routingBuffers.FilterBuffer[2]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if (*m_Set->m_State->m_uFxBusRouting == FXBUSROUTE::FXBUSROUTE_FXBus2) {
+		if (*m_Set->m_State->m_uFxBusRouting == static_cast<int>(FXBUSROUTE::FXBUSROUTE_FXBus2)) {
 			routingBuffers.FxBusBuffer[1]->addFrom(0, 0, routingBuffers.FxBusBuffer[0]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[1]->addFrom(1, 0, routingBuffers.FxBusBuffer[0]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
 		break;
 	case 2:
-		inBuffer = routingBuffers.FxBusBuffer[2];
+		inBuffer = routingBuffers.FxBusBuffer[2].get();
 		//l_oversample = *m_Set->m_State->m_bOversampleBus_Bus3;
 		l_monoFrequency = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fMBMonoFrequency_Bus3, MODMATDEST::Fxbus3MonoFrequency, &inputState);
 
 		//Do Routing
 		//bus3
-		if ((*m_Set->m_State->m_uOscRouting1_OscA == OSCROUTE::OSCROUTE_FXBus3) || (*m_Set->m_State->m_uOscRouting2_OscA == OSCROUTE::OSCROUTE_FXBus3)) {
+		if ((*m_Set->m_State->m_uOscRouting1_OscA == static_cast<int>(OSCROUTE::OSCROUTE_FXBus3)) || (*m_Set->m_State->m_uOscRouting2_OscA == static_cast<int>(OSCROUTE::OSCROUTE_FXBus3))) {
 			routingBuffers.FxBusBuffer[2]->addFrom(0, 0, routingBuffers.OscBuffer[0]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[2]->addFrom(1, 0, routingBuffers.OscBuffer[0]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if ((*m_Set->m_State->m_uOscRouting1_OscB == OSCROUTE::OSCROUTE_FXBus3) || (*m_Set->m_State->m_uOscRouting2_OscB == OSCROUTE::OSCROUTE_FXBus3)) {
+		if ((*m_Set->m_State->m_uOscRouting1_OscB == static_cast<int>(OSCROUTE::OSCROUTE_FXBus3)) || (*m_Set->m_State->m_uOscRouting2_OscB == static_cast<int>(OSCROUTE::OSCROUTE_FXBus3))) {
 			routingBuffers.FxBusBuffer[2]->addFrom(0, 0, routingBuffers.OscBuffer[1]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[2]->addFrom(1, 0, routingBuffers.OscBuffer[1]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if ((*m_Set->m_State->m_uOscRouting1_OscC == OSCROUTE::OSCROUTE_FXBus3) || (*m_Set->m_State->m_uOscRouting2_OscC == OSCROUTE::OSCROUTE_FXBus3)) {
+		if ((*m_Set->m_State->m_uOscRouting1_OscC == static_cast<int>(OSCROUTE::OSCROUTE_FXBus3)) || (*m_Set->m_State->m_uOscRouting2_OscC == static_cast<int>(OSCROUTE::OSCROUTE_FXBus3))) {
 			routingBuffers.FxBusBuffer[2]->addFrom(0, 0, routingBuffers.OscBuffer[2]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[2]->addFrom(1, 0, routingBuffers.OscBuffer[2]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if ((*m_Set->m_State->m_uOscRouting1_OscD == OSCROUTE::OSCROUTE_FXBus3) || (*m_Set->m_State->m_uOscRouting2_OscD == OSCROUTE::OSCROUTE_FXBus3)) {
+		if ((*m_Set->m_State->m_uOscRouting1_OscD == static_cast<int>(OSCROUTE::OSCROUTE_FXBus3)) || (*m_Set->m_State->m_uOscRouting2_OscD == static_cast<int>(OSCROUTE::OSCROUTE_FXBus3))) {
 			routingBuffers.FxBusBuffer[2]->addFrom(0, 0, routingBuffers.OscBuffer[3]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[2]->addFrom(1, 0, routingBuffers.OscBuffer[3]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if ((*m_Set->m_State->m_uNoiseRouting1 == OSCROUTE::OSCROUTE_FXBus3) || (*m_Set->m_State->m_uNoiseRouting2 == OSCROUTE::OSCROUTE_FXBus3)) {
+		if ((*m_Set->m_State->m_uNoiseRouting1 == static_cast<int>(OSCROUTE::OSCROUTE_FXBus3)) || (*m_Set->m_State->m_uNoiseRouting2 == static_cast<int>(OSCROUTE::OSCROUTE_FXBus3))) {
 			routingBuffers.FxBusBuffer[2]->addFrom(0, 0, routingBuffers.NoiseBuffer->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[2]->addFrom(1, 0, routingBuffers.NoiseBuffer->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if ((*m_Set->m_State->m_uSamplerRouting1 == OSCROUTE::OSCROUTE_FXBus3) || (*m_Set->m_State->m_uSamplerRouting2 == OSCROUTE::OSCROUTE_FXBus3)) {
+		if ((*m_Set->m_State->m_uSamplerRouting1 == static_cast<int>(OSCROUTE::OSCROUTE_FXBus3)) || (*m_Set->m_State->m_uSamplerRouting2 == static_cast<int>(OSCROUTE::OSCROUTE_FXBus3))) {
 			routingBuffers.FxBusBuffer[2]->addFrom(0, 0, routingBuffers.SamplerBuffer->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[2]->addFrom(1, 0, routingBuffers.SamplerBuffer->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if (*m_Set->m_State->m_uFilterRouting_Filter1 == FILTER1ROUTE::FILTER1ROUTE_FXBus3) {
+		if (*m_Set->m_State->m_uFilterRouting_Filter1 == static_cast<int>(FILTER1ROUTE::FILTER1ROUTE_FXBus3)) {
 			routingBuffers.FxBusBuffer[2]->addFrom(0, 0, routingBuffers.FilterBuffer[0]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[2]->addFrom(1, 0, routingBuffers.FilterBuffer[0]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if (*m_Set->m_State->m_uFilterRouting2_Filter1 == FILTER1ROUTE::FILTER1ROUTE_FXBus3) {
+		if (*m_Set->m_State->m_uFilterRouting2_Filter1 == static_cast<int>(FILTER1ROUTE::FILTER1ROUTE_FXBus3)) {
 			routingBuffers.FxBusBuffer[2]->addFrom(0, 0, routingBuffers.FilterBuffer[0]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[2]->addFrom(1, 0, routingBuffers.FilterBuffer[0]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if (*m_Set->m_State->m_uFilterRouting_Filter2 == FILTER2ROUTE::FILTER2ROUTE_FXBus3) {
+		if (*m_Set->m_State->m_uFilterRouting_Filter2 == static_cast<int>(FILTER2ROUTE::FILTER2ROUTE_FXBus3)) {
 			routingBuffers.FxBusBuffer[2]->addFrom(0, 0, routingBuffers.FilterBuffer[1]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[2]->addFrom(1, 0, routingBuffers.FilterBuffer[1]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if (*m_Set->m_State->m_uFilterRouting2_Filter2 == FILTER2ROUTE::FILTER2ROUTE_FXBus3) {
+		if (*m_Set->m_State->m_uFilterRouting2_Filter2 == static_cast<int>(FILTER2ROUTE::FILTER2ROUTE_FXBus3)) {
 			routingBuffers.FxBusBuffer[2]->addFrom(0, 0, routingBuffers.FilterBuffer[1]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[2]->addFrom(1, 0, routingBuffers.FilterBuffer[1]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if (*m_Set->m_State->m_uFilterRouting_Filter3 == FILTER3ROUTE::FILTER3ROUTE_FXBus3) {
+		if (*m_Set->m_State->m_uFilterRouting_Filter3 == static_cast<int>(FILTER3ROUTE::FILTER3ROUTE_FXBus3)) {
 			routingBuffers.FxBusBuffer[2]->addFrom(0, 0, routingBuffers.FilterBuffer[2]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[2]->addFrom(1, 0, routingBuffers.FilterBuffer[2]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if (*m_Set->m_State->m_uFilterRouting2_Filter3 == FILTER3ROUTE::FILTER3ROUTE_FXBus3) {
+		if (*m_Set->m_State->m_uFilterRouting2_Filter3 == static_cast<int>(FILTER3ROUTE::FILTER3ROUTE_FXBus3)) {
 			routingBuffers.FxBusBuffer[2]->addFrom(0, 0, routingBuffers.FilterBuffer[2]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[2]->addFrom(1, 0, routingBuffers.FilterBuffer[2]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if (*m_Set->m_State->m_uFxBusRouting == FXBUSROUTE::FXBUSROUTE_FXBus3) {
+		if (*m_Set->m_State->m_uFxBusRouting == static_cast<int>(FXBUSROUTE::FXBUSROUTE_FXBus3)) {
 			routingBuffers.FxBusBuffer[2]->addFrom(0, 0, routingBuffers.FxBusBuffer[0]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[2]->addFrom(1, 0, routingBuffers.FxBusBuffer[0]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
-		if (*m_Set->m_State->m_uFxBusRouting_Bus2 == FXBUSROUTE::FXBUSROUTE_FXBus3) {
+		if (*m_Set->m_State->m_uFxBusRouting_Bus2 == static_cast<int>(FXBUSROUTE::FXBUSROUTE_FXBus3)) {
 			routingBuffers.FxBusBuffer[2]->addFrom(0, 0, routingBuffers.FxBusBuffer[1]->getReadPointer(0, 0), routingBuffers.getNumSamples()); //gain??
 			routingBuffers.FxBusBuffer[2]->addFrom(1, 0, routingBuffers.FxBusBuffer[1]->getReadPointer(1, 0), routingBuffers.getNumSamples()); //gain??
 		}
@@ -559,9 +563,10 @@ void CVASTFXBus::processBuffers(sRoutingBuffers& routingBuffers, MidiBuffer& mid
 						lOversampler = &m_Oversampler2;
 					else if (useOversampler == 2)
 						lOversampler = &m_Oversampler3;
-					else
-						vassertfalse;
-
+                    else {
+                        lOversampler = &m_Oversampler;
+                        vassertfalse;
+                    }
 					lOversampler->downsampleAudioBuffer4(dsp::AudioBlock<float>(*m_inBufferOversampled), dsp::AudioBlock<float>(*inBuffer), m_inBufferOversampled->getNumSamples());
 					b_upsampled = false;
 					useOversampler++;
@@ -662,7 +667,7 @@ void CVASTFXBus::getValueTreeState(ValueTree* tree, UndoManager* undoManager) { 
 
 	tree->setProperty("numFX", int(mFXBusSequence.size()), undoManager);
 	for (int i = 0; i < mFXBusSequence.size(); i++) {
-		ScopedPointer<ValueTree> subtree = new ValueTree(Identifier("fxSequence" + String(i)));
+        std::unique_ptr<ValueTree> subtree(new ValueTree(Identifier("fxSequence" + String(i))));
 		subtree->setProperty("fxNo", mFXBusSequence[i], undoManager);
 		tree->appendChild(*subtree.get(), undoManager);
 	}

@@ -20,7 +20,7 @@ protected:
 
 public:
 	// set our g value
-	void setAPF_g(float fAPFg){m_fAPF_g = fAPFg;}
+	void setAPF_g(float fAPFg);
 
 	// overrides
 	bool processAudio(float* pInput, float* pOutput);

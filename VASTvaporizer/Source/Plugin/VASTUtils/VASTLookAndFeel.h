@@ -188,14 +188,14 @@ enum VASTColours {
 
 class VASTAudioProcessor; // forward declaration
 class VASTAudioProcessorEditor; // forward declaration
+class CVASTSettings; // forward declaration
 class VASTLookAndFeel : public LookAndFeel_V4
 {
 public:
 	//Virtuals -------------------------------------------------
 
-	VASTLookAndFeel();
-
-	~VASTLookAndFeel();
+	CVASTSettings *m_Set;
+	VASTAudioProcessor * myProcessor;
 
 	void initAll();
 
@@ -212,18 +212,9 @@ public:
 	Colour createBaseColour(Colour buttonColour,
 		bool hasKeyboardFocus,
 		bool isMouseOverButton,
-		bool isButtonDown) noexcept
-	{
-		const float sat = hasKeyboardFocus ? 1.3f : 0.9f;
-		const Colour baseColour(buttonColour.withMultipliedSaturation(sat));
+		bool isButtonDown) noexcept;
 
-		if (isButtonDown)      return baseColour.contrasting(0.2f);
-		if (isMouseOverButton) return baseColour.contrasting(0.1f);
-
-		return baseColour;
-	}
-
-	Typeface::Ptr getTypefaceForFont(const Font &font) override;
+	//Typeface::Ptr getTypefaceForFont(const Font &font) override;
 
 	Array<Image> m_knobBufferArray;
 	Array<Image> m_knobBufferArrayMouseOver;
@@ -259,7 +250,7 @@ public:
 	BorderSize<int> getLabelBorderSize(Label& label) override;
 
 	Array<int> getWidthsForTextButtons(AlertWindow&, const Array<TextButton*>& buttons) override;
-	int getAlertWindowButtonHeight();
+	int getAlertWindowButtonHeight() override;
 
 	int getCallOutBoxBorderSize(const CallOutBox &) override;
 	float getCallOutBoxCornerSize(const CallOutBox &) override;
@@ -302,7 +293,7 @@ public:
 	Button* createSliderButton(Slider&, bool isIncrement) override;
 	Label* createSliderTextBox(Slider & slider) override;
 
-	void drawTableHeaderBackground(Graphics& g, TableHeaderComponent& header);
+	void drawTableHeaderBackground(Graphics& g, TableHeaderComponent& header) override;
 	void drawTableHeaderColumn(Graphics& g, TableHeaderComponent& header,
 		const String& columnName, int /*columnId*/,
 		int width, int height, bool isMouseOver, bool isMouseDown,

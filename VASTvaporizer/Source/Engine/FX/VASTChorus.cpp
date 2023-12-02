@@ -24,7 +24,7 @@ CVASTChorus::CVASTChorus(VASTAudioProcessor* processor, int busnr) {
 void CVASTChorus::initParameters() {
 	AudioProcessorValueTreeState& parameters = my_processor->getParameterTree();
 
-	createAndAddParameter(&m_bChorusOnOff, parameters, "m_bChorusOnOff", "Chrorus effect on / off", "On", 0,
+	createAndAddParameter(&m_bChorusOnOff, parameters, 1, "m_bChorusOnOff", "Chrorus effect on / off", "On", 0,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		CVASTParamState::toggleButtonValueToTextFunction,
@@ -32,42 +32,42 @@ void CVASTChorus::initParameters() {
 		false, true, true, true,
 		true);
 
-	createAndAddParameter(&m_fChorusDryWet, parameters, "m_fChorusDryWet", "Chorus dry / wet (no effect - full effect)", "DryWet", 1,
+	createAndAddParameter(&m_fChorusDryWet, parameters, 1, "m_fChorusDryWet", "Chorus dry / wet (no effect - full effect)", "DryWet", 1,
 		MODMATDEST::ChorusDryWet,
 		NormalisableRange<float>(0, 100), 100.f,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fChorusDepth, parameters, "m_fChorusDepth", "Chorus depth", "Depth", 2,
+	createAndAddParameter(&m_fChorusDepth, parameters, 1, "m_fChorusDepth", "Chorus depth", "Depth", 2,
 		MODMATDEST::ChorusDepth,
 		NormalisableRange<float>(0, 100), 100.f,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_bChorusSynch, parameters, "m_bChorusSynch", "Chorus sync to DAW", "Sync", 3,
+	createAndAddParameter(&m_bChorusSynch, parameters, 1, "m_bChorusSynch", "Chorus sync to DAW", "Sync", 3,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		CVASTParamState::toggleButtonValueToTextFunction,
 		CVASTParamState::toggleButtonTextToValueFunction,
 		false, true, true, false,
 		true);
-	createAndAddParameter(&m_uChorusTimeBeats, parameters, "m_uChorusTimeBeats", "Chorus time in beats when synced to DAW", "DAW", 4,
+	createAndAddParameter(&m_uChorusTimeBeats, parameters, 1, "m_uChorusTimeBeats", "Chorus time in beats when synced to DAW", "DAW", 4,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, TIMEBEATS_Array.size() - 1, 1.0f), TIMEBEATS::BEATS1,
 		CVASTParamState::comboBoxValueToTextFunction_TIMEBEATS,
 		CVASTParamState::comboBoxTextToValueFunction_TIMEBEATS,
 		false, true, true, false,
 		true);
-	createAndAddParameter(&m_fChorusRate_hz, parameters, "m_fChorusRate_hz", "Chorus frequency in hz (is spread amog the 6 chorus oscillators - left, mid, right in stereo)", "Frequency", 5,
+	createAndAddParameter(&m_fChorusRate_hz, parameters, 1, "m_fChorusRate_hz", "Chorus frequency in hz (is spread amog the 6 chorus oscillators - left, mid, right in stereo)", "Frequency", 5,
 		MODMATDEST::ChorusFrequency,
 		NormalisableRange<float>(0.f, 10.f, 0.0001f, 0.3f, false), 0.10f, //skew
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fChorusGain, parameters, "m_fChorusGain", "Chorus output gain", "Gain", 6,
+	createAndAddParameter(&m_fChorusGain, parameters, 1, "m_fChorusGain", "Chorus output gain", "Gain", 6,
 		MODMATDEST::ChorusGain,
 		NormalisableRange<float>(0, 200), 100,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -116,7 +116,7 @@ void CVASTChorus::updateTiming() {
 
 void CVASTChorus::parameterChanged(const String& parameterID, float newValue) {
 	if (parameterID.startsWith("m_bChorusOnOff")) {
-		if (newValue == SWITCH::SWITCH_ON) {
+		if (newValue == static_cast<int>(SWITCH::SWITCH_ON)) {
 			switchOn();
 		}
 		else {
@@ -124,13 +124,13 @@ void CVASTChorus::parameterChanged(const String& parameterID, float newValue) {
 		}
 	}
 	else if (parameterID.startsWith("m_fChorusGain")) {
-		m_fChorusGain_smoothed.setValue(newValue);
+		m_fChorusGain_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fChorusDryWet")) {
-		m_fChorusDryWet_smoothed.setValue(newValue);
+		m_fChorusDryWet_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fChorusDepth")) {
-		m_fChorusDepth_smoothed.setValue(newValue);
+		m_fChorusDepth_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fChorusRate_hz")) {
 		updateLFOFreq();
@@ -147,8 +147,8 @@ void CVASTChorus::parameterChanged(const String& parameterID, float newValue) {
 }
 
 void CVASTChorus::updateLFOFreq() {
-	if (*m_bChorusSynch == SWITCH::SWITCH_OFF) {
-		m_fChorusRate_hz_smoothed.setValue(*m_fChorusRate_hz); //  *m_fTimeMod;
+	if (*m_bChorusSynch == static_cast<int>(SWITCH::SWITCH_OFF)) {
+		m_fChorusRate_hz_smoothed.setTargetValue(*m_fChorusRate_hz); //  *m_fTimeMod;
 	}
 	else { //bpm synch
 		float l_fIntervalTime = 0.f;
@@ -158,8 +158,8 @@ void CVASTChorus::updateLFOFreq() {
 		//if (l_fIntervalTime > 5000.0f) l_fIntervalTime = 5000.f; // maximum
 		if (l_fIntervalTime > 100000.0f) l_fIntervalTime = 100000.0f; // maximum  //CHTS 3.0.1
 		
-		m_fChorusRate_hz_smoothed.setValue(1, true); //reset it
-		m_fChorusRate_hz_smoothed.setValue(1.0f / (l_fIntervalTime / 1000.f));
+		m_fChorusRate_hz_smoothed.setCurrentAndTargetValue(1); //reset it
+		m_fChorusRate_hz_smoothed.setTargetValue(1.0f / (l_fIntervalTime / 1000.f));
 	}
 }
 
@@ -215,12 +215,12 @@ void CVASTChorus::updateModules()
 
 }
 
-void CVASTChorus::prepareToPlay(double sampleRate, int samplesPerBlock) {	
+void CVASTChorus::prepareToPlay(double, int samplesPerBlock) {	
 	//m_iSampleRate is set in use oversampling
 	m_iExpectedSamplesPerBlock = samplesPerBlock;
-	m_ModDelayLeft.prepareForPlay(m_iSampleRate);
-	m_ModDelayCenter.prepareForPlay(m_iSampleRate);
-	m_ModDelayRight.prepareForPlay(m_iSampleRate);
+	m_ModDelayLeft.prepareForPlay(m_iSampleRate, m_bOversampling);
+	m_ModDelayCenter.prepareForPlay(m_iSampleRate, m_bOversampling);
+	m_ModDelayRight.prepareForPlay(m_iSampleRate, m_bOversampling);
 
 	const double smoothTime = 0.02;  
 	m_fChorusRate_hz_smoothed.reset(m_iSampleRate, smoothTime);	
@@ -235,9 +235,9 @@ void CVASTChorus::prepareToPlay(double sampleRate, int samplesPerBlock) {
 }
 
 void CVASTChorus::reset() {
-	m_ModDelayLeft.prepareForPlay(m_iSampleRate);
-	m_ModDelayCenter.prepareForPlay(m_iSampleRate);
-	m_ModDelayRight.prepareForPlay(m_iSampleRate);
+	m_ModDelayLeft.prepareForPlay(m_iSampleRate, m_bOversampling);
+	m_ModDelayCenter.prepareForPlay(m_iSampleRate, m_bOversampling);
+	m_ModDelayRight.prepareForPlay(m_iSampleRate, m_bOversampling);
 
 	m_fFrequency = 1.0f;
 	m_fDepth = 1.0f;
@@ -255,7 +255,7 @@ void CVASTChorus::reset() {
 void CVASTChorus::releaseResources() {
 }
 
-void CVASTChorus::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages, const int numSamples) {
+void CVASTChorus::processBlock(AudioSampleBuffer& buffer, MidiBuffer&, const int numSamples) {
 	if (isOffAndShallBeOff() == true) return;
 
 	modMatrixInputState inputState;
@@ -271,8 +271,8 @@ void CVASTChorus::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessag
 		inputState = ((VASTAudioProcessor*)my_processor)->m_pVASTXperience.m_Poly.getOldestNotePlayedInputState(currentFrameOSAdjusted); // make parameter oldest or newest
 
 		//Frequency Mod
-		if (*m_bChorusSynch == SWITCH::SWITCH_OFF)
-			m_fChorusRate_hz_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fChorusRate_hz, MODMATDEST::ChorusFrequency, &inputState));
+		if (*m_bChorusSynch == static_cast<int>(SWITCH::SWITCH_OFF))
+			m_fChorusRate_hz_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fChorusRate_hz, MODMATDEST::ChorusFrequency, &inputState));
 		bool bUpdate = false;
 		if (m_fFrequency != m_fChorusRate_hz_smoothed.getNextValue()) {
 			m_fFrequency = m_fChorusRate_hz_smoothed.getNextValue();
@@ -280,27 +280,25 @@ void CVASTChorus::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessag
 		}
 
 		//Depth Mod
-		m_fChorusDepth_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fChorusDepth, MODMATDEST::ChorusDepth, &inputState));
+		m_fChorusDepth_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fChorusDepth, MODMATDEST::ChorusDepth, &inputState));
 		if (m_fDepth != m_fChorusDepth_smoothed.getNextValue()) { //max is 100
 			m_fDepth = m_fChorusDepth_smoothed.getNextValue();
 			bUpdate = true;
 		}
 
 		//DryWet Mod
-		m_fChorusDryWet_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fChorusDryWet, MODMATDEST::ChorusDryWet, &inputState));
+		m_fChorusDryWet_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fChorusDryWet, MODMATDEST::ChorusDryWet, &inputState));
 		m_fDrywetMod = m_fChorusDryWet_smoothed.getNextValue() * 0.01f;
 
 		//Gain Mod
-		m_fChorusGain_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fChorusGain, MODMATDEST::ChorusGain, &inputState));
+		m_fChorusGain_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fChorusGain, MODMATDEST::ChorusGain, &inputState));
 		m_fGain = m_fChorusGain_smoothed.getNextValue();				
 
 		if (m_fChorusRate_hz_smoothed.isSmoothing() || m_fChorusDepth_smoothed.isSmoothing() || bUpdate)
 			updateModules();
 
-		float fIn[2];
-		float fOut[2];
-		fIn[0] = bufferWritePointerL[currentFrame];
-		fIn[1] = bufferWritePointerR[currentFrame];
+		float fIn[2]{ bufferWritePointerL[currentFrame] , bufferWritePointerR[currentFrame] };
+		float fOut[2]{ 0.f,0.f };
 		
 		//do chorus
 		float fChorusOut_L = 0;
@@ -337,15 +335,15 @@ void CVASTChorus::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessag
 
 //==============================================================================
 
-void CVASTChorus::getStateInformation(MemoryBlock& destData)
+void CVASTChorus::getStateInformation(MemoryBlock&)
 {
-	//ScopedPointer<XmlElement> xml (parameters.valueTreeState.state.createXml());
+	//std::unique_ptr<XmlElement> xml (parameters.valueTreeState.state.createXml());
 	//copyXmlToBinary (*xml, destData);
 }
 
-void CVASTChorus::setStateInformation(const void* data, int sizeInBytes)
+void CVASTChorus::setStateInformation(const void*, int)
 {
-	//ScopedPointer<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
+	//std::unique_ptr<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
 	//if (xmlState != nullptr)
 	//  if (xmlState->hasTagName (parameters.valueTreeState.state.getType()))
 	//    parameters.valueTreeState.state = ValueTree::fromXml (*xmlState);

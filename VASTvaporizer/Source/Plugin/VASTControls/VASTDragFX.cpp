@@ -55,7 +55,7 @@ VASTDragFX::VASTDragFX(VASTAudioProcessorEditor *editor, VASTAudioProcessor *pro
 	ddToggleButton->setAudioProcessor(*my_processor);
 	ddToggleButton->bindParameter(paramID);
 	ddToggleButton->addListener(this);
-	addAndMakeVisible(ddToggleButton);
+	addAndMakeVisible(ddToggleButton.get());
 }
 
 void VASTDragFX::resized() {
@@ -99,6 +99,10 @@ VASTDragFX::~VASTDragFX() {
 
 VASTAudioProcessor* VASTDragFX::getAudioProcessor() {
 	return my_processor;
+}
+
+inline void VASTDragFX::setModString(const juce::String& dragText) {
+	ddLabel->setText(dragText, NotificationType::dontSendNotification);
 }
 
 void VASTDragFX::buttonClicked(Button* b) { //needed for listener interface

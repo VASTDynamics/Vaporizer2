@@ -34,7 +34,7 @@
 
 //==============================================================================
 VASTManualScaleEditor::VASTManualScaleEditor (VASTAudioProcessor* processor, VASTWaveTableEditorComponent* wtEditor, VASTSamplerViewport* samplerViewport)
-    : myProcessor(processor), mWTEditor(wtEditor), mSamplerViewport(samplerViewport)
+    : myProcessor(processor), mSamplerViewport(samplerViewport), mWTEditor(wtEditor)
 {
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
@@ -209,6 +209,16 @@ void VASTManualScaleEditor::textEditorReturnKeyPressed(TextEditor& textEditorTha
 }
 void VASTManualScaleEditor::textEditorEscapeKeyPressed(TextEditor& textEditorThatWasChanged) {
 	c_Cancel->triggerClick();
+}
+void VASTManualScaleEditor::setSamples(String text) {
+    c_samples->setText(text, NotificationType::sendNotification);
+    c_samples->applyFontToAllText(((VASTLookAndFeel*)&getLookAndFeel())->getTextEditorFont(*c_samples));
+    c_samples->selectAll();
+}
+void VASTManualScaleEditor::setCycles(String text) {
+    c_cycles->setText(text, NotificationType::sendNotification);
+    c_cycles->applyFontToAllText(((VASTLookAndFeel*)&getLookAndFeel())->getTextEditorFont(*c_cycles));
+    c_cycles->selectAll();
 }
 //[/MiscUserCode]
 

@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 6.1.2
+  Created with Projucer version: 7.0.7
 
   ------------------------------------------------------------------------------
 
@@ -48,32 +48,32 @@ public:
     //==============================================================================
     VASTMatrixComponent (AudioProcessorEditor *editor, AudioProcessor* processor);
     ~VASTMatrixComponent() override;
-
+    
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
-	void updateAll(); //repaint all
-	void buttonClicked(Button* buttonThatWasClicked) override;
-	void startAutoUpdate();
-	void stopAutoUpdate();
-	void lazyInit();
+    void updateAll(); //repaint all
+    void buttonClicked(Button* buttonThatWasClicked) override;
+    void startAutoUpdate();
+    void stopAutoUpdate();
+    void lazyInit();
     //[/UserMethods]
-
+    
     void paint (juce::Graphics& g) override;
     void resized() override;
-
+    
     // Binary resources:
     static const char* delete_svg;
     static const int delete_svgSize;
     static const char* arrow_right_corner_svg;
     static const int arrow_right_corner_svgSize;
-
-
+    
+    
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
-	VASTAudioProcessorEditor * myEditor = nullptr;
-	VASTAudioProcessor* myProcessor = nullptr;
-
-	OwnedArray<VASTDragMatrix> dragMatrixArray;
+    VASTAudioProcessorEditor * myEditor = nullptr;
+    VASTAudioProcessor* myProcessor = nullptr;
+    
+    OwnedArray<VASTDragMatrix> dragMatrixArray{};
 	bool m_lazyInit = false;
 
     //[/UserVariables]

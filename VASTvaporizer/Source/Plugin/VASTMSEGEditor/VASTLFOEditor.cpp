@@ -12,6 +12,7 @@ http://slideplayer.com/slide/6554987/
 #include "VASTLFOEditor.h"
 #include "../../Engine/VASTEngineHeader.h"
 #include "../VASTAudioProcessor.h"
+#include "../VASTAudioProcessorEditor.h"
 
 VASTLFOEditor::VASTLFOEditor(AudioProcessor* processor, String suffix)
 	: myProcessor((VASTAudioProcessor*)processor), mySuffix(suffix)
@@ -20,12 +21,13 @@ VASTLFOEditor::VASTLFOEditor(AudioProcessor* processor, String suffix)
 	//myFont.setDefaultMinimumHorizontalScaleFactor(1.0);
 	//myFont.setSizeAndStyle(14.f, Font::bold, 1.0f, 0.0f); // no squashing, no kerning
 
+	std::fill(m_dispReset, m_dispReset + C_MAX_POLY, true);
 	fillBuffers();
 
 	setOpaque(true); //avoid repaints of parents
 
 	resized();
-	updateContent(true);
+	//updateContent(true);
 }
 
 VASTLFOEditor::~VASTLFOEditor() {
@@ -56,7 +58,8 @@ void VASTLFOEditor::fillBuffers() { //for UI only
 }
 
 void VASTLFOEditor::lookAndFeelChanged() {
-	updateContent(true);
+	if (myProcessor->isCurrentEditorInitialized())
+		updateContent(true);
 }
 
 void VASTLFOEditor::paint(Graphics& g)
@@ -156,11 +159,7 @@ void VASTLFOEditor::handleBorderDisplay() {
 	Graphics g(waveformImageWithBorder);
 	g.drawImageAt(waveformImage, 0, 0);
 
-	for (int voiceNo = 0; voiceNo < C_MAX_POLY; voiceNo++) {
-		//if (!myDrawState.pervoice)
-			//voiceNo = myProcessor->m_pVASTXperience.m_Set.m_oldestPlaying;
-		//if (voiceNo < 0)
-			//break;
+	for (int voiceNo = 0; voiceNo < myProcessor->m_pVASTXperience.m_Set.m_uMaxPoly; voiceNo++) {
 		if (!m_dispReset[voiceNo]) {
 			float markerPos = 1.f - (lastLFOVal[voiceNo] + 1.f) * 0.5f; //0..1
 
@@ -213,7 +212,7 @@ void VASTLFOEditor::updateContent(bool force) {
 
 	std::vector<float> l_waveBuffer = std::vector<float>(C_WAVE_TABLE_SIZE);
 	
-	m_wavetable.getNaiveSamplesFromWave(l_waveBuffer, myDrawState.wave);
+	CVASTWaveTable::getNaiveSamplesFromWave(l_waveBuffer, myDrawState.wave);
 
 	if (myDrawState.wave == WAVE::noise) {
 		l_waveBuffer = m_noise_buffer;
@@ -338,10 +337,11 @@ void VASTLFOEditor::mouseDrag(const MouseEvent & e)
 bool VASTLFOEditor::checkForPositionChanges() {
 	bool valChanged = false;
 	if (myDrawState.pervoice)
-		for (int i = 0; i < C_MAX_POLY; i++) {
-			if (myProcessor->m_pVASTXperience.m_Poly.m_singleNote[i]->isPlayingCalledFromUI()) {
-				if (lastLFOVal[i] != myProcessor->m_pVASTXperience.m_Poly.m_singleNote[i]->m_LFO_Osc[myDrawState.lfonr]->m_fLastValue) {
-					lastLFOVal[i] = myProcessor->m_pVASTXperience.m_Poly.m_singleNote[i]->m_LFO_Osc[myDrawState.lfonr]->m_fLastValue;
+		for (int i = 0; i < myProcessor->m_pVASTXperience.m_Set.m_uMaxPoly; i++) {
+			if (myProcessor->m_pVASTXperience.m_Poly.isVoicePlaying(i)) {
+
+				if (lastLFOVal[i] != myProcessor->m_pVASTXperience.m_Poly.m_fLastLFOOscValue[myDrawState.lfonr][i].load()) {
+					lastLFOVal[i] = myProcessor->m_pVASTXperience.m_Poly.m_fLastLFOOscValue[myDrawState.lfonr][i].load();
 					m_dispReset[i] = false;
 					valChanged = true;
 				}
@@ -354,16 +354,18 @@ bool VASTLFOEditor::checkForPositionChanges() {
 		}
 	else {
 		bool lastdispReset0 = m_dispReset[0];
-		if (lastLFOVal[0] != myProcessor->m_pVASTXperience.m_Poly.m_global_LFO_Osc[myDrawState.lfonr].m_fLastValue) {
-			for (int i = 0; i < C_MAX_POLY; i++) {
+		if (lastLFOVal[0] != myProcessor->m_pVASTXperience.m_Poly.m_fLastGlobalLFOOscValue[myDrawState.lfonr].load()) {
+			for (int i = 0; i < myProcessor->m_pVASTXperience.m_Set.m_uMaxPoly; i++) {
 				m_dispReset[i] = true;
-				lastLFOVal[i] = myProcessor->m_pVASTXperience.m_Poly.m_global_LFO_Osc[myDrawState.lfonr].m_fLastValue;
-				if (myProcessor->m_pVASTXperience.m_Poly.m_singleNote[i]->isPlayingCalledFromUI()) {
+				lastLFOVal[i] = myProcessor->m_pVASTXperience.m_Poly.m_fLastGlobalLFOOscValue[myDrawState.lfonr].load();
+				if (myProcessor->m_pVASTXperience.m_Poly.isVoicePlaying(i)) {
 					lastLFOVal[0] = lastLFOVal[i];
 					m_dispReset[0] = false;
 					m_dispReset[i] = false;
 					valChanged = true;
-				}				
+                    VDBG("i: " << i << " lastLFOVal[0] " << lastLFOVal[0]);
+                    jassert(lastLFOVal[0] != 0.0f);
+				}
 			}
 		}			
 		if (lastdispReset0 != m_dispReset[0])

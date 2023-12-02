@@ -249,6 +249,22 @@ void VASTManualDualValueEditor::textEditorEscapeKeyPressed(TextEditor& textEdito
 	}
 }
 
+void VASTManualDualValueEditor::setTextStart(String text) {
+    c_textEditorFrom->setText(text, NotificationType::sendNotification);
+    c_textEditorFrom->applyFontToAllText(((VASTLookAndFeel*)&getLookAndFeel())->getTextEditorFont(*c_textEditorFrom));
+    c_textEditorFrom->selectAll();
+}
+
+void VASTManualDualValueEditor::setTextEnd(String text) {
+    c_textEditorTo->setText(text, NotificationType::sendNotification);
+    c_textEditorTo->applyFontToAllText(((VASTLookAndFeel*)&getLookAndFeel())->getTextEditorFont(*c_textEditorTo));
+    c_textEditorTo->selectAll();
+}
+
+void VASTManualDualValueEditor::setPolarity(int polarity) {
+    c_unipolar->setToggleState(polarity == POLARITY::Unipolar, NotificationType::sendNotification);
+}
+
 //[/MiscUserCode]
 
 

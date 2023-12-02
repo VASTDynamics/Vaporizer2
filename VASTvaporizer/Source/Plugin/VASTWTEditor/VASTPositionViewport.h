@@ -11,9 +11,9 @@ class VASTAudioProcessorEditor; //forward declaration
 class VASTAudioProcessor; //forward declaration
 class VASTWaveTableEditorComponent; //forward declaration
 
-class VASTPositionViewport : public Component,
+class VASTPositionViewport : public Component, 
+	public TooltipClient,
 	public Timer,
-	//public KeyListener,
 	public FileDragAndDropTarget
 {
 public:
@@ -33,9 +33,9 @@ public:
 	void updateContentAsync();
 	void setZoomFactor(int zoom);
 
-	void setEditor(VASTAudioProcessorEditor* editor) { myEditor = editor;};
-	void setProcessor(VASTAudioProcessor* processor) { myProcessor = processor; };
-	void setWTEditor (VASTWaveTableEditorComponent* wtEditor) { myWtEditor = wtEditor; };
+	void setEditor(VASTAudioProcessorEditor* editor);
+	void setProcessor(VASTAudioProcessor* processor);
+	void setWTEditor(VASTWaveTableEditorComponent* wtEditor);
 
 	//bool keyPressed(const KeyPress& key, Component* originatingComponent) override;
 
@@ -58,6 +58,8 @@ public:
 		return m_screenWidthScale;
 	}
 
+	String getTooltip() override;
+
 private:
 	//==============================================================================
 	friend class VASTWaveTableEditorView;
@@ -71,7 +73,7 @@ private:
 	VASTAudioProcessorEditor *myEditor = nullptr;
 	VASTAudioProcessor *myProcessor = nullptr;
 	VASTWaveTableEditorComponent *myWtEditor = nullptr;
-	int getArrayIdx(float logicalX);
+	int getArrayIdx(float logicalX) const;
 
 	float m_screenWidthScale = 1.f;
 	float m_screenHeightScale = 1.f;

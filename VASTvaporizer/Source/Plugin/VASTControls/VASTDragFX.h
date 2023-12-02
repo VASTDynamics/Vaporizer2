@@ -22,9 +22,7 @@ public:
 	void paint(Graphics& g) override;
 
 	VASTAudioProcessor* getAudioProcessor();
-	void setModString(const juce::String &dragText) {
-		ddLabel->setText(dragText, NotificationType::dontSendNotification);
-	}
+	void setModString(const juce::String& dragText);
 	void lookAndFeelChanged() override;
 	void buttonClicked(Button* b) override;
 	void buttonStateChanged(Button* b) override;
@@ -39,9 +37,9 @@ private:
 	int myBusnr = 0;
 	int myEffectno = 0;
 
-	ScopedPointer<VASTImageButton> ddImageButton;
-	ScopedPointer<Label> ddLabel;
-	ScopedPointer<VASTParameterButton> ddToggleButton;
+    std::unique_ptr<VASTImageButton> ddImageButton;
+    std::unique_ptr<Label> ddLabel;
+    std::unique_ptr<VASTParameterButton> ddToggleButton;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(VASTDragFX)
 };

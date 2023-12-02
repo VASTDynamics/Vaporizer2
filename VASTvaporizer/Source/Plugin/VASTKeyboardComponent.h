@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 6.1.2
+  Created with Projucer version: 7.0.9
 
   ------------------------------------------------------------------------------
 
@@ -38,7 +38,9 @@
                                                                     //[/Comments]
 */
 class VASTKeyboardComponent  : public Component,
-                               public Slider::Listener
+                               public Slider::Listener,
+                               public Timer,
+                               public TooltipClient
 {
 public:
     //==============================================================================
@@ -47,45 +49,14 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
-	MidiKeyboardComponent* getMidiKeyboard() {
-		return c_midiKeyboard.get();
-	}
 
-	MidiKeyboardState* getMidiKeyboardState() {
-		return &myMidiKeyboardState;
-	}
-
-	VASTModwheelSlider* getModwheel() {
-		return c_modWheel.get();
-	};
-
-	VASTPitchbendSlider* getPitchbend() {
-		return c_pitchBend.get();
-	};
-
+    MidiKeyboardComponent* getMidiKeyboard();
 	void sliderValueChanged(Slider* sliderThatWasMoved) override;
-
-    void updateModwheel(float modWheelVal) {
-
-        Component::SafePointer<VASTKeyboardComponent> kbc_(this);
-        Timer::callAfterDelay(10, [kbc_, modWheelVal, this] {
-            if (kbc_ != nullptr)
-               if (this->getModwheel() != nullptr)
-                   this->getModwheel()->setValue(modWheelVal, juce::NotificationType::dontSendNotification); });
-	};
-	void updatePitchbend(float pitchWheelVal) {
-
-        Component::SafePointer<VASTKeyboardComponent> kbc_(this);
-        Timer::callAfterDelay(10, [kbc_, pitchWheelVal, this] {
-            if (kbc_ != nullptr)
-                if (this->getPitchbend() != nullptr)
-                    this->getPitchbend()->setValue(pitchWheelVal, juce::NotificationType::dontSendNotification); });
-	};
-
-	void updateAll() {
-		c_iBendRange->setValue(myProcessor->getBendRange(), NotificationType::dontSendNotification);
-	};
-
+    void updateAll();
+    void timerCallback() override;
+    void mouseDown (const MouseEvent &) override;
+    String getTooltip() override;
+    
     //[/UserMethods]
 
     void paint (juce::Graphics& g) override;
@@ -95,9 +66,7 @@ public:
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
-	MidiKeyboardState myMidiKeyboardState;
-
-	VASTAudioProcessorEditor * myEditor = nullptr;
+	VASTAudioProcessorEditor* myEditor = nullptr;
 	VASTAudioProcessor* myProcessor = nullptr;
     //[/UserVariables]
 

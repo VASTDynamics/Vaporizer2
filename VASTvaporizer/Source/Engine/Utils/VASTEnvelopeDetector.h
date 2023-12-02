@@ -30,11 +30,9 @@ public:
 	// DETECT MS	 = 1
 	// DETECT RMS	 = 2
 	//
-	void setDetectMode(MYUINT uDetect) { m_uDetectMode = uDetect; }
-
-	void setSampleRate(float f) { m_fSampleRate = f; }
-
-	void setLogDetect(bool b) { m_bLogDetector = b; }
+	void setDetectMode(MYUINT uDetect);
+	void setSampleRate(float f);
+	void setLogDetect(bool b);
 
 	// call this to detect; it returns the peak ms or rms value at that instant
 	float detect(float fInput);

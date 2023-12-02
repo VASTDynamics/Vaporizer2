@@ -32,13 +32,13 @@ public:
 	double getFeedbackOutput(); 
 	
 	// provide access to set our feedback input
-	void setFeedback(double fb){m_dFeedback = fb;}
+	void setFeedback(double fb);
 
 	// for s_N only
-	double getStorageValue(){return m_dZ1;}
+	double getStorageValue();
 
 	// flush buffer
-	void reset(){m_dZ1 = 0;}
+	void reset();
 
 	// do the filter
 	double doFilter(double xn);

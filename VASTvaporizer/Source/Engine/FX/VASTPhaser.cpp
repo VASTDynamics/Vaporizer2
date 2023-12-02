@@ -25,9 +25,7 @@ CVASTPhaser::CVASTPhaser(VASTAudioProcessor* processor, int busnr) {
 
 void CVASTPhaser::initParameters() {
 	AudioProcessorValueTreeState& parameters = my_processor->getParameterTree();
-	int lDestination = 0;
-
-	createAndAddParameter(&m_bPhaserOnOff, parameters, "m_bPhaserOnOff", "Phaser on / off", "On", 0,
+	createAndAddParameter(&m_bPhaserOnOff, parameters, 1, "m_bPhaserOnOff", "Phaser on / off", "On", 0,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		CVASTParamState::toggleButtonValueToTextFunction,
@@ -35,7 +33,7 @@ void CVASTPhaser::initParameters() {
 		false, true, true, true,
 		true);
 
-	createAndAddParameter(&m_fPhaserDryWet, parameters, "m_fPhaserDryWet", "Phaser filter mix in (dry - wet)", "DryWet", 1,
+	createAndAddParameter(&m_fPhaserDryWet, parameters, 1, "m_fPhaserDryWet", "Phaser filter mix in (dry - wet)", "DryWet", 1,
 		MODMATDEST::PhaserDryWet,
 		NormalisableRange<float>(0, 100), 100,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -43,7 +41,7 @@ void CVASTPhaser::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_fPhaserWidth, parameters, "m_fPhaserWidth", "Phaser width", "Width", 2,
+	createAndAddParameter(&m_fPhaserWidth, parameters, 1, "m_fPhaserWidth", "Phaser width", "Width", 2,
 		MODMATDEST::PhaserWidth,
 		NormalisableRange<float>(50.f, 3000.f), 1000.f,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -51,7 +49,7 @@ void CVASTPhaser::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_fPhaserFeedback, parameters, "m_fPhaserFeedback", "Phase feedback", "Feedback", 3,
+	createAndAddParameter(&m_fPhaserFeedback, parameters, 1, "m_fPhaserFeedback", "Phase feedback", "Feedback", 3,
 		MODMATDEST::PhaserFeedback,
 		NormalisableRange<float>(0.f, 0.9f), 0.7f,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -59,7 +57,7 @@ void CVASTPhaser::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_fPhaserMinFrequency, parameters, "m_fPhaserMinFrequency", "Phaser min. frequency (Hz)", "Minfreq", 4,
+	createAndAddParameter(&m_fPhaserMinFrequency, parameters, 1, "m_fPhaserMinFrequency", "Phaser min. frequency (Hz)", "Minfreq", 4,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(50.f, 1000.f), 80.f,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -67,35 +65,35 @@ void CVASTPhaser::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_uPhaserLFOWave, parameters, "m_uPhaserLFOWave", "Phaser LFO waveform", "LFOWave", 5,
+	createAndAddParameter(&m_uPhaserLFOWave, parameters, 1, "m_uPhaserLFOWave", "Phaser LFO waveform", "LFOWave", 5,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, LFOWAVE_Array.size() - 1, 1.0f), 0.0f,
 		CVASTParamState::comboBoxValueToTextFunction_LFOWAVE,
 		CVASTParamState::comboBoxTextToValueFunction_LFOWAVE,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_bPhaserSynch, parameters, "m_bPhaserSynch", "Phaser sync to DAW", "Sync", 6,
+	createAndAddParameter(&m_bPhaserSynch, parameters, 1, "m_bPhaserSynch", "Phaser sync to DAW", "Sync", 6,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		CVASTParamState::toggleButtonValueToTextFunction,
 		CVASTParamState::toggleButtonTextToValueFunction,
 		false, true, true, false,
 		true);
-	createAndAddParameter(&m_uPhaserTimeBeats, parameters, "m_uPhaserTimeBeats", "Phaser time in beats when synced to DAW", "DAW", 7,
+	createAndAddParameter(&m_uPhaserTimeBeats, parameters, 1, "m_uPhaserTimeBeats", "Phaser time in beats when synced to DAW", "DAW", 7,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, TIMEBEATS_Array.size() - 1, 1.0f), TIMEBEATS::BEATS1,
 		CVASTParamState::comboBoxValueToTextFunction_TIMEBEATS,
 		CVASTParamState::comboBoxTextToValueFunction_TIMEBEATS,
 		false, true, true, false,
 		true);
-	createAndAddParameter(&m_fPhaserLFOFreq, parameters, "m_fPhaserLFOFreq", "Phaser LFO frequency (Hz)", "Frequency", 8,
+	createAndAddParameter(&m_fPhaserLFOFreq, parameters, 1, "m_fPhaserLFOFreq", "Phaser LFO frequency (Hz)", "Frequency", 8,
 		MODMATDEST::PhaserLFOFrequency,
 		NormalisableRange<float>(0.0f, 2.0f), 1.00f,
 		CVASTParamState::floatSliderValueToTextFunction,
 		CVASTParamState::floatSliderTextToValueFunction,
 		false, true, false, false,
 		true);
-	createAndAddParameter(&m_fPhaserGain, parameters, "m_fPhaserGain", "Phaser output gain", "Gain", 9,
+	createAndAddParameter(&m_fPhaserGain, parameters, 1, "m_fPhaserGain", "Phaser output gain", "Gain", 9,
 		MODMATDEST::PhaserGain,
 		NormalisableRange<float>(0, 200), 100,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -133,26 +131,26 @@ void CVASTPhaser::releaseResources() {
 
 void CVASTPhaser::parameterChanged(const String& parameterID, float newValue) {
 	if (parameterID.startsWith("m_bPhaserOnOff")) {
-		if (newValue == SWITCH::SWITCH_ON)
+		if (newValue == static_cast<int>(SWITCH::SWITCH_ON))
 			switchOn();
 		else
 			switchOff();
 		return;
 	}
 	else if (parameterID.startsWith("m_fPhaserWidth")) {
-		m_fPhaserWidth_smoothed.setValue(newValue);
+		m_fPhaserWidth_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fPhaserFeedback")) {
-		m_fPhaserFeedback_smoothed.setValue(newValue);
+		m_fPhaserFeedback_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fPhaserMinFrequency")) {
-		m_fPhaserMinFrequency_smoothed.setValue(newValue);
+		m_fPhaserMinFrequency_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fPhaserDryWet")) {
-		m_fPhaserDryWet_smoothed.setValue(newValue);
+		m_fPhaserDryWet_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fPhaserGain")) {
-		m_fPhaserGain_smoothed.setValue(newValue);
+		m_fPhaserGain_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fPhaserLFOFreq")) {
 		updateLFOFreq();
@@ -170,8 +168,8 @@ void CVASTPhaser::parameterChanged(const String& parameterID, float newValue) {
 }
 
 void CVASTPhaser::updateLFOFreq() {
-	if (*m_bPhaserSynch == SWITCH::SWITCH_OFF) {
-		m_fPhaserLFOFreq_smoothed.setValue(*m_fPhaserLFOFreq); //  *m_fTimeMod;
+	if (*m_bPhaserSynch == static_cast<int>(SWITCH::SWITCH_OFF)) {
+		m_fPhaserLFOFreq_smoothed.setTargetValue(*m_fPhaserLFOFreq); //  *m_fTimeMod;
 	}
 	else { //bpm synch
 		float l_fIntervalTime = 0.f;
@@ -182,12 +180,12 @@ void CVASTPhaser::updateLFOFreq() {
 		//if (l_fIntervalTime > 5000.0f) l_fIntervalTime = 5000.f; // maximum
 		if (l_fIntervalTime > 100000.0f) l_fIntervalTime = 100000.0f; // maximum  //CHTS 3.0.1
 
-		m_fPhaserLFOFreq_smoothed.setValue(1, true); //reset it
-		m_fPhaserLFOFreq_smoothed.setValue(1.0f / (l_fIntervalTime / 1000.f));
+		m_fPhaserLFOFreq_smoothed.setCurrentAndTargetValue(1); //reset it
+		m_fPhaserLFOFreq_smoothed.setTargetValue(1.0f / (l_fIntervalTime / 1000.f));
 	}
 }
 
-void CVASTPhaser::prepareToPlay(double sampleRate, int samplesPerBlock) {
+void CVASTPhaser::prepareToPlay(double , int samplesPerBlock) {
 	m_iExpectedSamplesPerBlock = samplesPerBlock;
 	//m_iSampleRate is set in useOversampling
 	if (m_bOversampling)
@@ -207,8 +205,7 @@ void CVASTPhaser::prepareToPlay(double sampleRate, int samplesPerBlock) {
 
 	filters.clear();
 	for (int i = 0; i < 2 * numFiltersPerChannel; ++i) {
-		Filter* filter;
-		filters.add(filter = new Filter());
+		filters.add(new Filter());
 	}
 
 	filteredOutputs.clear();
@@ -237,7 +234,7 @@ void CVASTPhaser::updateTiming() {
 	updateLFOFreq();
 }
 
-void CVASTPhaser::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages, const int numSamples) {
+void CVASTPhaser::processBlock(AudioSampleBuffer& buffer, MidiBuffer& , const int numSamples) {
 
 	if (isOffAndShallBeOff() == true) return;
 
@@ -261,22 +258,22 @@ void CVASTPhaser::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessag
 		checkSoftFade();
 		
 		inputState = ((VASTAudioProcessor*)my_processor)->m_pVASTXperience.m_Poly.getOldestNotePlayedInputState(currentFrameOSAdjusted); // make parameter oldest or newest
-		if (*m_bPhaserSynch == SWITCH::SWITCH_OFF)
-			m_fPhaserLFOFreq_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fPhaserLFOFreq, MODMATDEST::PhaserLFOFrequency, &inputState));
+		if (*m_bPhaserSynch == static_cast<int>(SWITCH::SWITCH_OFF))
+			m_fPhaserLFOFreq_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fPhaserLFOFreq, MODMATDEST::PhaserLFOFrequency, &inputState));
 		if (m_fPhaserLFOFreq_smoothed.isSmoothing()) {
 			m_LFO.startLFOFrequency(m_fPhaserLFOFreq_smoothed.getNextValue(), -1);
 		}
 																																									 
-		m_fPhaserDryWet_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fPhaserDryWet, MODMATDEST::PhaserDryWet, &inputState));
+		m_fPhaserDryWet_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fPhaserDryWet, MODMATDEST::PhaserDryWet, &inputState));
 		float lPhaserDryWet = m_fPhaserDryWet_smoothed.getNextValue();
 
-		m_fPhaserGain_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fPhaserGain, MODMATDEST::PhaserGain, &inputState));
+		m_fPhaserGain_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fPhaserGain, MODMATDEST::PhaserGain, &inputState));
 		float lPhaserGain = m_fPhaserGain_smoothed.getNextValue();
 
-		m_fPhaserWidth_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fPhaserWidth, MODMATDEST::PhaserWidth, &inputState));
+		m_fPhaserWidth_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fPhaserWidth, MODMATDEST::PhaserWidth, &inputState));
 		float lPhaserWidth = m_fPhaserWidth_smoothed.getNextValue();
 
-		m_fPhaserFeedback_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fPhaserFeedback, MODMATDEST::PhaserFeedback, &inputState));
+		m_fPhaserFeedback_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fPhaserFeedback, MODMATDEST::PhaserFeedback, &inputState));
 		float lPhaserFeedback = m_fPhaserFeedback_smoothed.getNextValue();
 
 		float fLFOOsc = 0.f;
@@ -337,15 +334,15 @@ void CVASTPhaser::updateFilters(double centreFrequency) {
 
 //==============================================================================
 
-void CVASTPhaser::getStateInformation(MemoryBlock& destData)
+void CVASTPhaser::getStateInformation(MemoryBlock& )
 {
-	//ScopedPointer<XmlElement> xml (parameters.valueTreeState.state.createXml());
+	//std::unique_ptr<XmlElement> xml (parameters.valueTreeState.state.createXml());
 	//copyXmlToBinary (*xml, destData);
 }
 
-void CVASTPhaser::setStateInformation(const void* data, int sizeInBytes)
+void CVASTPhaser::setStateInformation(const void* , int )
 {
-	//ScopedPointer<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
+	//std::unique_ptr<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
 	//if (xmlState != nullptr)
 	//  if (xmlState->hasTagName (parameters.valueTreeState.state.getType()))
 	//    parameters.valueTreeState.state = ValueTree::fromXml (*xmlState);

@@ -1,5 +1,5 @@
 /*
-VAST Dynamics GbR
+VAST Dynamics Software
 */
 
 #ifndef VASTENGINEHEADER_H_INCLUDED
@@ -7,19 +7,15 @@ VAST Dynamics GbR
 
 #include <assert.h>
 #include <math.h>
-//#include <stdlib.h> // for memory leak detection
-
-//TODO check at some point in time
-// turn off non-critical warnings
-#pragma warning(disable : 4244) //double to float
-#pragma warning(disable : 4996) //strncpy
-#pragma warning(disable : 4305) //double float truncation
-#pragma warning(disable : 4267) //size_t conversion
-#pragma warning(disable : 4018) //signed unsigned mismatch
-#pragma warning(disable : 4100) //unreferenced parameter
-#pragma warning(disable : 5055) //Operator "==": zwischen Enumerationen und Gleitkommatypen veraltet // solve some day
-
+#ifndef _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
 #define _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
+#endif
+#ifndef _SILENCE_ALL_CXX20_DEPRECATION_WARNINGS
+#define _SILENCE_ALL_CXX20_DEPRECATION_WARNINGS
+#endif
+#ifndef _SILENCE_CXX20_OLD_SHARED_PTR_ATOMIC_SUPPORT_DEPRECATION_WARNING
+#define _SILENCE_CXX20_OLD_SHARED_PTR_ATOMIC_SUPPORT_DEPRECATION_WARNING
+#endif
 
 // For WIN vs MacOS
 // XCode requires these be defined for compatibility
@@ -38,9 +34,6 @@ VAST Dynamics GbR
 	typedef unsigned long long ULong64_t;//Portable unsigned long integer 8 byte
 #endif							 
 										 
-//#include "VASTPluginConstants.h"
-//#include "Utils/VASTSynthfunctions.h"
-
 // platform independent assert
 #ifdef _WINDOWS
 	#ifndef v_ANALYZER_NORETURN
@@ -56,8 +49,17 @@ VAST Dynamics GbR
 #else
 	#define vassertfalse   // do nothing     
     #define vassert(expression)  // do nothing
+#endif						   
+
+//portable UNUSED macro
+#ifdef UNUSED
+#elif defined(__GNUC__)
+# define UNUSED(x) UNUSED_ ## x __attribute__((unused))
+#elif defined(__LCLINT__)
+# define UNUSED(x) /*@unused@*/ x
+#else
+# define UNUSED(x) x
 #endif
-						   // TODO platform independent assert
 
 #include <float.h>
 //#define MAXFLOAT FLT_MAX //redefined if set here
@@ -65,16 +67,21 @@ VAST Dynamics GbR
     #define MAXUINT 0xFFFFFFFF
 #endif
 
-#include "JuceHeader.h"
-	#ifdef _DEBUG   
-		#ifdef _WINDOWS
-			#ifndef DBG_NEW      
-				#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )      
-				#define new DBG_NEW  
-			#endif  // _DEBUG
+//own debug log logic
+#ifdef _DEBUG
+	#ifdef VASTLOG
+		#define VDBG(textToWrite)              JUCE_BLOCK_WITH_FORCED_SEMICOLON (juce::String tempDbgBuf; tempDbgBuf << textToWrite; juce::Logger::writeToLog(tempDbgBuf);)
+	#else
+		#define VDBG(textToWrite)              DBG(textToWrite)
+	#endif
+#else 
+	#ifdef VASTLOG
+		#define VDBG(textToWrite)              JUCE_BLOCK_WITH_FORCED_SEMICOLON (juce::String tempDbgBuf; tempDbgBuf << textToWrite; juce::Logger::writeToLog(tempDbgBuf);)
+	#else 
+		#define VDBG(textToWrite) 
+	#endif
+#endif
 
-			#define _CRTDBG_MAP_ALLOC
-			#include <crtdbg.h>
-		#endif
-	#endif  // _DEBUG
+#include "JuceHeader.h"
+
 #endif  // VASTENGINEHEADER_H_INCLUDED

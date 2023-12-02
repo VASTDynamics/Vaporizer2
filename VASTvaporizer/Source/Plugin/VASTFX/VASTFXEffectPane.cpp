@@ -83,7 +83,10 @@ void VASTFXEffectPane::resized()
     //[/UserPreResize]
 
     //[UserResized] Add your own custom resize handling here..
-	updateGUI("", false);
+if (juce::Desktop::getInstance().isHeadless() == false)
+    {
+		updateGUI("", false);
+	}
     //[/UserResized]
 }
 

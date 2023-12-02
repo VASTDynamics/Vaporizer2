@@ -16,8 +16,6 @@ VAST Dynamics Audio Software (TM)
 #include "../Plugin//VASTScopeDisplay/VASTRingBuffer.h"
 
 class VASTAudioProcessor; //forward declaration
-						  //class CUIControlList; //forward declaration
-						  //class CUICtrl; //forward declaration
 
 class CVASTXperience : public CVASTEffect
 {
@@ -41,21 +39,20 @@ public:
 	//bool midiClock();	
 	//bool midiMessage(unsigned char cChannel, unsigned char cStatus, unsigned char cData1, unsigned char cData2);
 
-	bool processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& midiMessages, MYUINT uNumChannels, bool isPlaying,
-		double ppqPosition, bool isLooping, double ppqLoopStart, double ppqLoopEnd, double ppqPositionOfLastBarStart, double bpm);
+	bool processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& midiMessages, MYUINT uNumOutChannels, bool isPlaying,
+		double ppqPosition, bool isLooping, double ppqPositionOfLastBarStart, double bpm);
 
 	//VASTEffectInterface
-	void init(CVASTSettings &set) {};
-	void initCompatibilityParameters() {}; //implemented in state
+	void init(CVASTSettings &) override {};
+	void initCompatibilityParameters() override {}; //implemented in state
 	void initCompatibilityParameters5() override {}; //new parameters go here
-	void prepareToPlay(double sampleRate, int samplesPerBlock) {};
-	void releaseResources() {};
-	void processBlock(AudioSampleBuffer&, MidiBuffer&, const int numSamples) {};
-	void getStateInformation(MemoryBlock& destData) {};
-	void setStateInformation(const void* data, int sizeInBytes) {};
-	void updateTiming() {};
-	
-	void parameterChanged(const String& parameterID, float newValue);
+	void prepareToPlay(double, int) override {};
+	void releaseResources() override {};
+	void processBlock(AudioSampleBuffer&, MidiBuffer&, const int) override {};
+	void getStateInformation(MemoryBlock&) override {};
+	void setStateInformation(const void*, int) override {};
+	void updateTiming() override {};
+	void parameterChanged(const String&, float) override;
 
 	CVASTSettings m_Set;
 	VASTAudioProcessor* myProcessor;
@@ -83,16 +80,16 @@ public:
 	bool getBlockProcessing();
 	bool nonThreadsafeIsBlockedProcessingInfo();
 
-	juce::ScopedPointer<AudioSampleBuffer> m_oversampledBuffer;
+    std::unique_ptr<AudioSampleBuffer> m_oversampledBuffer;
 
-	bool m_bLastChainBufferZero = false;
-	int m_bBufferZeroMilliSeconds = 0;
+    std::atomic<bool> m_bLastChainBufferZero = false;
+    std::atomic<int> m_bBufferZeroMilliSeconds = 0;
 
-	int m_nSampleRate = 44100; //default
+    std::atomic<int> m_nSampleRate = 44100; //default
 
-	int m_iFadeOutSamples = 0;
-	int m_iFadeInSamples = 0;
-	int m_iMaxFadeSamples = 2000;
+    std::atomic<int> m_iFadeOutSamples = 0;
+    std::atomic<int> m_iFadeInSamples = 0;
+    std::atomic<int> m_iMaxFadeSamples = 2000;
 
 	// I/O capabilities
 	MYUINT m_uMaxInputChannels;
@@ -113,5 +110,10 @@ public:
 	// Audio & GL Audio Buffer
 	std::unique_ptr<VASTRingBuffer<GLfloat>> oscilloscopeRingBuffer;
 
-	JUCE_LEAK_DETECTOR(CVASTXperience)
+private:
+	int m_midiBank = 0;
+
+
+	JUCE_HEAVYWEIGHT_LEAK_DETECTOR(CVASTXperience)
+	//JUCE_LEAK_DETECTOR(CVASTXperience)
 };

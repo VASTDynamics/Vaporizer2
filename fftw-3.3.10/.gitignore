@@ -1,0 +1,8 @@
+*
+!.gitignore
+!CMakeLists.txt
+!build_fftwlib.sh
+!build_fftwlib.bat
+!*/
+!lib/*.a
+!lib/*.lib

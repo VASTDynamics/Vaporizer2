@@ -19,7 +19,7 @@
 //==============================================================================
 /**
 */
-
+class VASTVaporizerComponent; //forward declaration
 class VASTAudioProcessorEditor : public AudioProcessorEditor, MultiTimer
 {
 public:
@@ -33,8 +33,8 @@ public:
 	
 	//==============================================================================
 	VASTAudioProcessor* getProcessor();
-	juce::ScopedPointer<VASTVaporizerComponent> vaporizerComponent;
-
+    std::unique_ptr<VASTVaporizerComponent> vaporizerComponent = nullptr;
+	
 	juce::Array<Component*> m_VASTComponentsAll;
 
 	//const int m_iMinWidth = 800;
@@ -49,11 +49,8 @@ public:
 
 	void initAllLookAndFeels();
 	void setActiveLookAndFeel(int no);
-	VASTLookAndFeel* getCurrentVASTLookAndFeel() {
-		return getProcessor()->getCurrentVASTLookAndFeel();
-	};	
+	VASTLookAndFeel* getCurrentVASTLookAndFeel();
 	Component* findChildComponetWithName(Component* parent, String compName);
-	void registerComponentValueUpdate(Component* comp, float lValue);
 
 	class VASTComponentBoundsConstrainer : public ComponentBoundsConstrainer {
 	public:
@@ -75,21 +72,18 @@ public:
 	};
 
 private:
-    // This reference is provided as a quick way for your editor to
-    // access the processor object that created it.
-    VASTAudioProcessor& processor;
+    VASTAudioProcessor* processor;
 
-	TooltipWindow tooltipWindow; //just add and leave here
-	ScopedPointer<juce::AlertWindow> m_alertWindow;
-
+	TooltipWindow tooltipWindow{ this, 200 }; //just add and leave here
+    std::unique_ptr<juce::AlertWindow> m_alertWindow;
+    int mi_update_delay = 0;
+    
 	bool resizeCalledFromConstructor = false;
 	void showNewerVersionPopup();
 
-	bool bShallComponentValueUpdate = false;
-	Component* shallComponentUpdate = nullptr;
-	float shallComponentUpdateValue = 0.f;
-
+#if !defined JUCE_LINUX
 	VASTComponentBoundsConstrainer m_componentBoundsConstrainer = { this };
+#endif
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (VASTAudioProcessorEditor)
 };

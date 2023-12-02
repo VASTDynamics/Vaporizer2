@@ -774,13 +774,13 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
 	c_oscC->addListener(myWTEditor);
 	c_oscD->addListener(myWTEditor);
 
-	c_applyOptions->setSelectedItemIndex(ApplyOption::ApplyInterpolation);
-	c_generationOptions->setSelectedItemIndex(GenerateOption::GenerateHardSync);
+	c_applyOptions->setSelectedItemIndex(ApplyOption::ApplyInterpolation, NotificationType::dontSendNotification);
+	c_generationOptions->setSelectedItemIndex(GenerateOption::GenerateHardSync, NotificationType::dontSendNotification);
 
-	c_gridMode->setSelectedItemIndex(OscillatorGridMode::NoGrid);
-	c_binMode->setSelectedItemIndex(BinMode::ClipBin);
-	c_binEditMode->setSelectedItemIndex(FreqEditMode::SingleBin);
-	c_drawMode->setSelectedItemIndex(OscillatorEditMode::SelectMode);
+	c_gridMode->setSelectedItemIndex(OscillatorGridMode::NoGrid, NotificationType::dontSendNotification);
+	c_binMode->setSelectedItemIndex(BinMode::ClipBin, NotificationType::dontSendNotification);
+	c_binEditMode->setSelectedItemIndex(FreqEditMode::SingleBin, NotificationType::dontSendNotification);
+	c_drawMode->setSelectedItemIndex(OscillatorEditMode::SelectMode, NotificationType::dontSendNotification);
 
 	setOpaque(true);
     //[/UserPreSize]
@@ -1115,10 +1115,10 @@ void VASTWaveTableEditorViewHeader::lookAndFeelChanged() {
 }
 
 void VASTWaveTableEditorViewHeader::updateAll() {
-	c_gridMode->setSelectedItemIndex(myProcessor->getGridMode(), false);
-	c_drawMode->setSelectedItemIndex(myProcessor->getDrawMode(), false);
-	c_binMode->setSelectedItemIndex(myProcessor->getBinMode(), false);
-	c_binEditMode->setSelectedItemIndex(myProcessor->getBinEditMode(), false);
+	c_gridMode->setSelectedItemIndex(myProcessor->getGridMode(), NotificationType::sendNotification);
+	c_drawMode->setSelectedItemIndex(myProcessor->getDrawMode(), NotificationType::sendNotification);
+	c_binMode->setSelectedItemIndex(myProcessor->getBinMode(), NotificationType::sendNotification);
+	c_binEditMode->setSelectedItemIndex(myProcessor->getBinEditMode(), NotificationType::sendNotification);
 }
 //[/MiscUserCode]
 

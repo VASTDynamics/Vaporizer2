@@ -23,7 +23,7 @@ public:	// Plug-In API Functions
 	virtual ~CModDelayModule(void);
 
 	// 3. The Prepare For Play Function is called just before audio streams
-	bool prepareForPlay(int sampleRate);
+	bool prepareForPlay(int sampleRate, bool bOversampling);
 
 	// 4. processAudioFrame() processes an audio input to create an audio output
 	bool processAudioFrame(float* pInputBuffer, float* pOutputBuffer, MYUINT uNumInputChannels, MYUINT uNumOutputChannels);
@@ -66,6 +66,7 @@ public:	// Plug-In API Functions
 private:
 	CVASTSettings *m_Set;
 	int m_iSampleRate = 44100;
+    bool m_bOversampling = false;
 };
 
 

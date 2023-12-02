@@ -11,197 +11,20 @@ VAST Dynamics
 
 #include <sstream>
 
-VASTLookAndFeel::VASTLookAndFeel()
-{
-}
-
-VASTLookAndFeel::~VASTLookAndFeel()
-{
-}
-
 void VASTLookAndFeel::initAll() {
 	m_knobBufferArray.clear();
 	m_knobBufferArrayMouseOver.clear();
 }
 
-Typeface::Ptr VASTLookAndFeel::getTypefaceForFont(const Font &font) {
+inline Colour VASTLookAndFeel::createBaseColour(Colour buttonColour, bool hasKeyboardFocus, bool isMouseOverButton, bool isButtonDown) noexcept
+{
+	const float sat = hasKeyboardFocus ? 1.3f : 0.9f;
+	const Colour baseColour(buttonColour.withMultipliedSaturation(sat));
 
-	Typeface::Ptr tf;
-	String faceName(font.getTypefaceName());
-	// Make requests for the default sans serif font use our
-	// FreeType hinted font instead.
-	if (faceName == "Open Sans Bold")
-	{
-		Font f(font);
-		// You'll need to know the exact name embedded in the font. There
-		// are a variety of free programs for retrieving this information.
-		f.setTypefaceName("Open Sans Bold");
-		// Now get the hinted typeface.
-		tf = Typeface::createSystemTypefaceFor(BinaryData::OpenSansBold_ttf,
-			BinaryData::OpenSansBold_ttfSize);
-	}
-	else if ((faceName == "Open Sans") || (faceName == "<Sans-Serif>")) {
-		Font f(font);
-		// You'll need to know the exact name embedded in the font. There
-		// are a variety of free programs for retrieving this information.
-		f.setTypefaceName("Open Sans");
-		// Now get the hinted typeface.
-		tf = Typeface::createSystemTypefaceFor(BinaryData::OpenSansRegular_ttf,
-			BinaryData::OpenSansRegular_ttfSize);
-	}
-	/*
-	else if (faceName == "Code Pro Demo") {
-		Font f(font);
-		// You'll need to know the exact name embedded in the font. There
-		// are a variety of free programs for retrieving this information.
-		f.setTypefaceName("Code Pro Demo");
-		// Now get the hinted typeface.
-		tf = Typeface::createSystemTypefaceFor(BinaryData::Code_Pro_Demo_otf,
-			BinaryData::Code_Pro_Demo_otfSize);
-	}
-	*/
+	if (isButtonDown)      return baseColour.contrasting(0.2f);
+	if (isMouseOverButton) return baseColour.contrasting(0.1f);
 
-	else if (faceName == "Alte Haas Grotesk") {
-		Font f(font);
-		// You'll need to know the exact name embedded in the font. There
-		// are a variety of free programs for retrieving this information.
-		f.setTypefaceName("Alte Haas Grotesk");
-		// Now get the hinted typeface.
-		tf = Typeface::createSystemTypefaceFor(BinaryData::AlteHaasGroteskRegular_ttf,
-			BinaryData::AlteHaasGroteskRegular_ttfSize);
-	}
-	else if (faceName == "Alte Haas Grotesk Bold") {
-		Font f(font);
-		// You'll need to know the exact name embedded in the font. There
-		// are a variety of free programs for retrieving this information.
-		f.setTypefaceName("Alte Haas Grotesk Bold");
-		// Now get the hinted typeface.
-		tf = Typeface::createSystemTypefaceFor(BinaryData::AlteHaasGroteskBold_ttf,
-			BinaryData::AlteHaasGroteskBold_ttfSize);
-	}
-     
-	else if (faceName == "SF UI Display Regular") {
-		Font f(font);
-		// You'll need to know the exact name embedded in the font. There
-		// are a variety of free programs for retrieving this information.
-		f.setTypefaceName("SF UI Display Regular");
-		// Now get the hinted typeface.
-		tf = Typeface::createSystemTypefaceFor(BinaryData::SFUIDisplayRegular_ttf,
-			BinaryData::SFUIDisplayRegular_ttfSize);
-	}
-	else if (faceName == "SF UI Display Bold") {
-		Font f(font);
-		// You'll need to know the exact name embedded in the font. There
-		// are a variety of free programs for retrieving this information.
-		f.setTypefaceName("SF UI Display Bold");
-		// Now get the hinted typeface.
-		tf = Typeface::createSystemTypefaceFor(BinaryData::SFUIDisplayBold_ttf,
-			BinaryData::SFUIDisplayBold_ttfSize);
-	}
-	else if (faceName == "TradeGothic LT") {
-		Font f(font);
-		// You'll need to know the exact name embedded in the font. There
-		// are a variety of free programs for retrieving this information.
-		f.setTypefaceName("TradeGothic LT");
-		// Now get the hinted typeface.
-		tf = Typeface::createSystemTypefaceFor(BinaryData::Trade_Gothic_LT_ttf,
-			BinaryData::Trade_Gothic_LT_ttfSize);
-	}
-	else if (faceName == "TradeGothic LT Bold") {
-		Font f(font);
-		// You'll need to know the exact name embedded in the font. There
-		// are a variety of free programs for retrieving this information.
-		f.setTypefaceName("TradeGothic LT Bold");
-		// Now get the hinted typeface.
-		tf = Typeface::createSystemTypefaceFor(BinaryData::Trade_Gothic_LT_Bold_ttf,
-			BinaryData::Trade_Gothic_LT_Bold_ttfSize);
-	}
-	/*
-	else if (faceName == "Meta-Caps") {
-		Font f(font);
-		// You'll need to know the exact name embedded in the font. There
-		// are a variety of free programs for retrieving this information.
-		f.setTypefaceName("Meta-Caps");
-		// Now get the hinted typeface.
-		tf = Typeface::createSystemTypefaceFor(BinaryData::MetaCapsRegular_ttf,
-			BinaryData::MetaCapsRegular_ttfSize);
-	}
-	else if (faceName == "Meta-BoldCaps") {
-		Font f(font);
-		// You'll need to know the exact name embedded in the font. There
-		// are a variety of free programs for retrieving this information.
-		f.setTypefaceName("Meta-BoldCaps");
-		// Now get the hinted typeface.
-		tf = Typeface::createSystemTypefaceFor(BinaryData::MetaBoldCapsRegular_ttf,
-			BinaryData::MetaBoldCapsRegular_ttfSize);
-	}
-	*/
-	/*
-	else if (faceName == "Bebas Neue Book") {
-		Font f(font);
-		// You'll need to know the exact name embedded in the font. There
-		// are a variety of free programs for retrieving this information.
-		f.setTypefaceName("Bebas Neue Book");
-		// Now get the hinted typeface.
-		tf = Typeface::createSystemTypefaceFor(BinaryData::BebasNeue_Book_ttf,
-			BinaryData::BebasNeue_Book_ttfSize);
-	}
-	else if (faceName == "Bebas Neue Bold") {
-		Font f(font);
-		// You'll need to know the exact name embedded in the font. There
-		// are a variety of free programs for retrieving this information.
-		f.setTypefaceName("Bebas Neue Bold");
-		// Now get the hinted typeface.
-		tf = Typeface::createSystemTypefaceFor(BinaryData::BebasNeue_Bold_ttf,
-			BinaryData::BebasNeue_Bold_ttfSize);
-	}
-	else if (faceName == "Roboto Regular") {
-		Font f(font);
-		// You'll need to know the exact name embedded in the font. There
-		// are a variety of free programs for retrieving this information.
-		f.setTypefaceName("Roboto Regular");
-		// Now get the hinted typeface.
-		tf = Typeface::createSystemTypefaceFor(BinaryData::RobotoRegular_ttf,
-			BinaryData::RobotoRegular_ttfSize);
-	}
-	else if (faceName == "Roboto Bold") {
-		Font f(font);
-		// You'll need to know the exact name embedded in the font. There
-		// are a variety of free programs for retrieving this information.
-		f.setTypefaceName("Roboto Bold");
-		// Now get the hinted typeface.
-		tf = Typeface::createSystemTypefaceFor(BinaryData::RobotoBold_ttf,
-			BinaryData::RobotoBold_ttfSize);
-	}
-	*/
-	/*
-	else if (faceName == "Stylus ITC TT") {
-		Font f(font);
-		// You'll need to know the exact name embedded in the font. There
-		// are a variety of free programs for retrieving this information.
-		f.setTypefaceName("Stylus ITC TT");
-		// Now get the hinted typeface.
-		tf = Typeface::createSystemTypefaceFor(BinaryData::STYLI___TTF,
-			BinaryData::STYLI___TTFSize);
-	}
-	else if (faceName == "Stylus ITC TT Bold") {
-		Font f(font);
-		// You'll need to know the exact name embedded in the font. There
-		// are a variety of free programs for retrieving this information.
-		f.setTypefaceName("Stylus ITC TT Bold");
-		// Now get the hinted typeface.
-		tf = Typeface::createSystemTypefaceFor(BinaryData::STYLIB__TTF,
-			BinaryData::STYLIB__TTFSize);
-	}
-	*/
-	// If we got here without creating a new typeface
-	// then just use the default LookAndFeel behavior.
-	if (tf == nullptr)
-	{
-        tf = LookAndFeel::getTypefaceForFont(font);
-        jassertfalse;
-    }
-	return tf;
+	return baseColour;
 }
 
 void VASTLookAndFeel::setUIFontSize(int size) {
@@ -216,10 +39,6 @@ void VASTLookAndFeel::setUIFontSize(int size) {
 Font VASTLookAndFeel::getTabButtonFont(TabBarButton &, float height) {
 	return myDefaultFontRegular;
 }
-
-//Font VASTLookAndFeel::getComboBoxFont(ComboBox& cb) {
-//	return myDefaultFontBold;
-//}
 
 Font VASTLookAndFeel::getPopupMenuFont() {
 	return myDefaultFontRegular; //make larger
@@ -310,7 +129,7 @@ Font VASTLookAndFeel::getTextButtonFont(TextButton& textButton, int buttonHeight
 		newheight = textButton.getHeight() * 0.75f;
 	newheight *= mFontSize;
 	newFont.setSizeAndStyle(newheight, newFont.getStyleFlags(), 1.0f, 0.0f);
-	vassert(newFont.getTypeface() != nullptr);
+	vassert(newFont.getTypefacePtr() != nullptr);
 	return newFont;
 };
 
@@ -572,16 +391,6 @@ void VASTLookAndFeel::drawComboBox(Graphics& g, int width, int height, const boo
 	else 
 		g.setColour(findVASTColour(VASTColours::colBoxArrow).withAlpha((box.isEnabled() ? 0.5f : 0.1f)));
 	
-/*
-	float strokeSize = 2.0f;
-	VASTAudioProcessor* myProcessor = nullptr;
-	if (VASTComboBox* cbox = dynamic_cast<VASTComboBox*>(&box)) {
-		myProcessor = cbox->getAudioProcessor();
-		if (myProcessor != nullptr)
-			strokeSize = myProcessor->getPluginScaleHeightFactor() * 2.f;
-	}
-	*/
-
 	//g.strokePath(path, PathStrokeType(strokeSize)); 
 	g.fillPath(path); 
 
@@ -603,241 +412,6 @@ void VASTLookAndFeel::positionComboBoxText(ComboBox& box, Label& label)
 	label.setColour(Label::textWhenEditingColourId, findVASTColour(VASTColours::colBoxText));	
 }
 
-
-
-/*
-void VASTLookAndFeel::drawLinearSliderThumb(Graphics& g, int x, int y, int width, int height,
-	float sliderPos, float minSliderPos, float maxSliderPos,
-	const Slider::SliderStyle style, Slider& slider)
-{
-	const bool isMouseOver = slider.isMouseOverOrDragging() && slider.isEnabled();
-
-	const float sliderRadius = (float)(getSliderThumbRadius(slider) - 2);
-
-Colour knobColour(findVASTColour(VASTColours::colLinearSliderThumbKnob));
-
-const float outlineThickness = slider.isEnabled() ? 0.8f : 0.3f;
-
-if (style == Slider::LinearHorizontal || style == Slider::LinearVertical)
-{
-	float kx, ky;
-
-	if (style == Slider::LinearVertical)
-	{
-		kx = x + width * 0.5f;
-		ky = sliderPos;
-	}
-	else
-	{
-		kx = sliderPos;
-		ky = y + height * 0.5f;
-	}
-
-	if (isMouseOver) {
-		knobColour = findVASTColour(VASTColours::colLinearSliderThumbKnobMouseOver);
-	}
-
-	drawGlassLozenge(g,
-		kx - sliderRadius * 1.f,
-		ky - sliderRadius,
-		sliderRadius * 2.f, 12.0f,
-		knobColour, outlineThickness, 8, true, true, true, true);
-}
-else
-{
-	if (style == Slider::ThreeValueVertical)
-	{
-		drawGlassSphere(g, x + width * 0.5f - sliderRadius,
-			sliderPos - sliderRadius,
-			sliderRadius * 2.0f,
-			knobColour, outlineThickness);
-	}
-	else if (style == Slider::ThreeValueHorizontal)
-	{
-		drawGlassSphere(g, sliderPos - sliderRadius,
-			y + height * 0.5f - sliderRadius,
-			sliderRadius * 2.0f,
-			knobColour, outlineThickness);
-	}
-
-	if (style == Slider::TwoValueVertical || style == Slider::ThreeValueVertical)
-	{
-		const float sr = jmin(sliderRadius, width * 0.4f);
-
-		drawGlassPointer(g, jmax(0.0f, x + width * 0.5f - sliderRadius * 2.0f),
-			minSliderPos - sliderRadius,
-			sliderRadius * 2.0f, knobColour, outlineThickness, 1);
-
-		drawGlassPointer(g, jmin(x + width - sliderRadius * 2.0f, x + width * 0.5f), maxSliderPos - sr,
-			sliderRadius * 2.0f, knobColour, outlineThickness, 3);
-	}
-	else if (style == Slider::TwoValueHorizontal || style == Slider::ThreeValueHorizontal)
-	{
-		const float sr = jmin(sliderRadius, height * 0.4f);
-
-		drawGlassPointer(g, minSliderPos - sr,
-			jmax(0.0f, y + height * 0.5f - sliderRadius * 2.0f),
-			sliderRadius * 2.0f, knobColour, outlineThickness, 2);
-
-		drawGlassPointer(g, maxSliderPos - sliderRadius,
-			jmin(y + height - sliderRadius * 2.0f, y + height * 0.5f),
-			sliderRadius * 2.0f, knobColour, outlineThickness, 4);
-	}
-}
-}
-*/
-
-/*
-void VASTLookAndFeel::drawLinearSlider(Graphics& g, int x, int y, int width, int height,
-	float sliderPos, float minSliderPos, float maxSliderPos,
-	const Slider::SliderStyle style, Slider& slider)
-{
-	g.fillAll(slider.findColour(Slider::backgroundColourId));
-
-	VASTAudioProcessor* myProcessor = NULL;
-	if (VASTParameterSlider* _slider = dynamic_cast<VASTParameterSlider*>(&slider)) {
-		myProcessor = _slider->getAudioProcessor();
-		if (myProcessor != NULL) {
-			if (slider.getName().equalsIgnoreCase(myProcessor->m_iNowLearningMidiParameterVariableName)) { //MidiLearn
-				g.fillAll(findVASTColour(VASTColours::colMidiLearn));
-			}
-		}
-	}
-
-	if (style == Slider::LinearBar || style == Slider::LinearBarVertical)
-	{
-		const float fx = (float)x, fy = (float)y, fw = (float)width, fh = (float)height;
-
-		Path p;
-
-		if (style == Slider::LinearBarVertical)
-			p.addRectangle(fx, sliderPos, fw, 1.0f + fh - sliderPos);
-		else
-			p.addRectangle(fx, fy, sliderPos - fx, fh);
-
-		Colour baseColour(slider.findColour(Slider::thumbColourId)
-			.withMultipliedSaturation(slider.isEnabled() ? 1.0f : 0.5f)
-			.withMultipliedAlpha(0.8f));
-
-		g.setGradientFill(ColourGradient(baseColour.brighter(0.08f), 0.0f, 0.0f,
-			baseColour.darker(0.08f), 0.0f, (float)height, false));
-		g.fillPath(p);
-
-		g.setColour(baseColour.darker(0.2f));
-
-		if (style == Slider::LinearBarVertical)
-			g.fillRect(fx, sliderPos, fw, 1.0f);
-		else
-			g.fillRect(sliderPos, fy, 1.0f, fh);
-	}
-	else
-	{
-		drawLinearSliderBackground(g, x, y, width, height, sliderPos, minSliderPos, maxSliderPos, style, slider);
-		drawLinearSliderThumb(g, x, y, width, height, sliderPos, minSliderPos, maxSliderPos, style, slider);
-	}
-
-}
-
-void VASTLookAndFeel::drawLinearSliderBackground(Graphics& g, int x, int y, int width, int height,
-	float sliderPos,
-	float minSliderPos,
-	float maxSliderPos,
-	const Slider::SliderStyle style, Slider& slider)
-{
-	const float sliderRadius = (float)(getSliderThumbRadius(slider) - 2);
-	slider.setColour(Slider::trackColourId, findVASTColour(VASTColours::colAlmostBlack)); //CHTS
-	const Colour trackColour(slider.findColour(Slider::trackColourId));
-	const Colour gradCol1(trackColour.overlaidWith(Colour(slider.isEnabled() ? 0x13000000 : 0x09000000)));
-	const Colour gradCol2(trackColour.overlaidWith(Colour(0x06000000)));
-	Path indent;
-
-	if (slider.isHorizontal())
-	{
-		const float iy = y + height * 0.5f - sliderRadius * 0.5f;
-
-		g.setGradientFill(ColourGradient(gradCol1, 0.0f, iy,
-			gradCol2, 0.0f, iy + sliderRadius, false));
-
-		indent.addRoundedRectangle(x - sliderRadius * 0.5f, iy, width + sliderRadius, sliderRadius, 5.0f);
-	}
-	else
-	{
-		const float ix = x + width * 0.5f - sliderRadius * 0.5f;
-
-		g.setGradientFill(ColourGradient(gradCol1, ix, 0.0f,
-			gradCol2, ix + sliderRadius, 0.0f, false));
-
-		indent.addRoundedRectangle(ix, y - sliderRadius * 0.5f, sliderRadius, height + sliderRadius, 5.0f);
-	}
-
-	g.fillPath(indent);
-
-	g.setColour(trackColour.contrasting(0.5f));
-	g.strokePath(indent, PathStrokeType(0.5f));
-}
-*/
-
-
-/* //nice for Juno lf
-void VASTLookAndFeel::drawLinearSlider(Graphics& g, int x, int y, int width, int height,
-	float sliderPos, float minSliderPos, float maxSliderPos,
-	const Slider::SliderStyle style, Slider& slider) 
-{
-	//g.fillAll (slider.findColour (Slider::backgroundColourId));
-
-	if (style == Slider::LinearBar || style == Slider::LinearBarVertical)
-	{
-		Path p;
-
-		p.addRectangle((float)x, sliderPos, (float)width * 0.5f, 1.0f + height - sliderPos);
-
-		auto baseColour = slider.findColour(Slider::rotarySliderFillColourId)
-			.withMultipliedSaturation(slider.isEnabled() ? 1.0f : 0.5f)
-			.withMultipliedAlpha(0.8f);
-
-		g.setColour(baseColour);
-		g.fillPath(p);
-
-		auto lineThickness = 5.0f;
-		g.drawRect(slider.getLocalBounds().toFloat(), lineThickness);
-	}
-	else
-	{
-		drawLinearSliderBackground(g, x, y, width, height, sliderPos, minSliderPos, maxSliderPos, style, slider);
-		drawLinearSliderThumb(g, x, y, width, height, sliderPos, minSliderPos, maxSliderPos, style, slider);
-	}
-}
-
-void VASTLookAndFeel::drawLinearSliderBackground(Graphics& g, int x, int y, int width, int height,
-	float sliderPos,
-	float minSliderPos,
-	float maxSliderPos,
-	const Slider::SliderStyle style, Slider& slider) 
-{
-	auto sliderRadius = getSliderThumbRadius(slider) - 7.5f;
-	Path on, off;
-	auto ix = x + width * 0.5f - sliderRadius * 0.5f;
-	Rectangle<float> r(ix, y - sliderRadius * 0.5f, sliderRadius, height + sliderRadius);
-	auto onH = r.getHeight() * ((float)slider.valueToProportionOfLength(slider.getValue()));
-
-	on.addRectangle(r.removeFromBottom(onH));
-	off.addRectangle(r);
-	g.setColour(slider.findColour(Slider::rotarySliderFillColourId));
-	g.fillPath(on);
-
-	g.setColour(slider.findColour(Slider::trackColourId));
-	g.fillPath(off);
-
-	float spacing = height / 10.0f;
-	g.setColour(Colours::whitesmoke);
-	for (int i = 0; i < 11; i++) {
-		float thickness = i % 5 ? 0.25f : 1.0f;
-		g.fillRect(Rectangle<float>(x, y + spacing * i, width / 2 - sliderRadius, thickness));
-		g.fillRect(Rectangle<float>(x + width / 2 + sliderRadius, y + spacing * i, width / 2 - sliderRadius, thickness));
-	}
-}
-*/
-
 //pitchbend and modwheel
 void VASTLookAndFeel::drawLinearSlider(Graphics& g, int x, int y, int width, int height,
 	float sliderPos, float minSliderPos, float maxSliderPos,
@@ -848,18 +422,12 @@ void VASTLookAndFeel::drawLinearSlider(Graphics& g, int x, int y, int width, int
 	drawLinearSliderThumb(g, x, y, width, height, sliderPos, minSliderPos, maxSliderPos, style, slider);
 }
 
-
 void VASTLookAndFeel::drawLinearSliderThumb(Graphics& g, int x, int y, int width, int height,
 	float sliderPos, float minSliderPos, float maxSliderPos,
 	const Slider::SliderStyle style, Slider& slider)
 {
 	auto sliderRadius = (float)getSliderThumbRadius(slider);
 	auto grey = Colour(0xff2b2e33);
-	auto knobColour = slider.findColour(Slider::rotarySliderFillColourId)
-		.withMultipliedSaturation((slider.hasKeyboardFocus(false)) ? 1.3f : 0.9f)
-		.withMultipliedAlpha(slider.isEnabled() ? 1.0f : 0.7f);
-
-
 	g.setColour(Colour(grey).withMultipliedSaturation(0.8f));
 
 	if (style == Slider::LinearHorizontal)
@@ -888,9 +456,7 @@ void VASTLookAndFeel::drawLinearSliderThumb(Graphics& g, int x, int y, int width
 
 		float ky;
 		ky = sliderPos;
-		int outlineThickness = 0.f;
 		auto grey = Colour(0xff444951);
-
 
 		float sliderWidth = width * 0.7f; //smaller due to shadow;
 		drawRoundShape(g,
@@ -1448,15 +1014,12 @@ void VASTLookAndFeel::drawImageButton(Graphics& g, Image* image,
 		g.setColour(overlayColour);
 		g.drawImageTransformed(*image, t, true);
 	}
-
-	VASTAudioProcessor* myProcessor = NULL;
-	if (VASTParameterButton* _slider = dynamic_cast<VASTParameterButton*>(&button)) {
-		myProcessor = _slider->getAudioProcessor();
-		if (myProcessor != NULL) {
+	
+	if (myProcessor != NULL) {
+		if (myProcessor->m_iNowLearningMidiParameterVariableName != "")
 			if (button.getComponentID().equalsIgnoreCase(myProcessor->m_iNowLearningMidiParameterVariableName)) { //MidiLearn
 				g.fillAll(findVASTColour(VASTColours::colMidiLearn));
 			}
-		}
 	}
 }
 
@@ -1517,13 +1080,10 @@ void VASTLookAndFeel::drawToggleButton(Graphics& g, ToggleButton& button,
 	}
 	*/
 
-	VASTAudioProcessor* myProcessor = NULL;
-	if (VASTParameterButton* _button = dynamic_cast<VASTParameterButton*>(&button)) {
-		myProcessor = _button->getAudioProcessor();
-		if (myProcessor != NULL) {
+	if (myProcessor != NULL) {
+		if (myProcessor->m_iNowLearningMidiParameterVariableName != "")
 			if (button.getComponentID().equalsIgnoreCase(myProcessor->m_iNowLearningMidiParameterVariableName)) { //MidiLearn
 				g.fillAll(findVASTColour(VASTColours::colMidiLearn));
-			}
 		}
 	}
 
@@ -1716,7 +1276,6 @@ void VASTLookAndFeel::drawRotarySlider(Graphics& g, int x, int y, int width, int
 	const float rw = radius * 2.0f;
 	const bool isMouseOver = slider.isMouseOverOrDragging() && slider.isEnabled();
 
-	VASTAudioProcessor* myProcessor = NULL;
 	bool hasModMatrixSource = false;
 	bool isDDTarget = false;
 	double modStartPercentage = 0.0;
@@ -1725,7 +1284,7 @@ void VASTLookAndFeel::drawRotarySlider(Graphics& g, int x, int y, int width, int
 	double modEndPercentageUI = 0.0;
 	double valStartPercentage = 0.0;
 	double valEndPercentage = 0.0;
-	float lastSrceVals[C_MAX_POLY] = { 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f };
+	float lastSrceVals[C_MAX_POLY] {};
 
 	if (slider.getValue() != slider.getDoubleClickReturnValue()) {
 		//not the default value
@@ -1753,9 +1312,8 @@ void VASTLookAndFeel::drawRotarySlider(Graphics& g, int x, int y, int width, int
 
 	bool isParameterSlider = false;
 	VASTParameterSlider* _parameterslider = nullptr;
-	if (_parameterslider = dynamic_cast<VASTParameterSlider*>(&slider)) {
+    if ((_parameterslider = dynamic_cast<VASTParameterSlider*>(&slider))) {
 		isParameterSlider = true;
-		myProcessor = _parameterslider->getAudioProcessor();
 		if (myProcessor != NULL) {
 			String cid = _parameterslider->getComponentID();
 
@@ -1804,14 +1362,12 @@ void VASTLookAndFeel::drawRotarySlider(Graphics& g, int x, int y, int width, int
 				isDDTarget = false;
 		}
 	}
-	else if (VASTSlider* _slider = dynamic_cast<VASTSlider*>(&slider)) {
-		myProcessor = _slider->getAudioProcessor();
-	}
 
 	if (myProcessor != NULL) {
-		if (slider.getComponentID().equalsIgnoreCase(myProcessor->m_iNowLearningMidiParameterVariableName)) { //MidiLearn
-			g.fillAll(findVASTColour(VASTColours::colMidiLearn));
-		}
+		if (myProcessor->m_iNowLearningMidiParameterVariableName != "")
+			if (slider.getComponentID().equalsIgnoreCase(myProcessor->m_iNowLearningMidiParameterVariableName)) { //MidiLearn
+				g.fillAll(findVASTColour(VASTColours::colMidiLearn));
+			}
 	}
 
 	//draw rotary self
@@ -1823,14 +1379,8 @@ void VASTLookAndFeel::drawRotarySlider(Graphics& g, int x, int y, int width, int
 	if (radius30perc <= 1.f) radius30perc = 1;
 	float radius40perc = radius * 0.4f;
 	if (radius40perc <= 1.f) radius40perc = 1;
-	float radius50perc = radius * 0.5f;
-	if (radius50perc <= 1.f) radius50perc = 1;
-	//int radius60perc = radius * 0.6f;
-	//if (radius60perc == 0) radius60perc = 1;
 	int radius70perc = radius * 0.7f;
 	if (radius70perc <= 1.f) radius70perc = 1;
-	//int radius80perc = radius * 0.8f;
-	//if (radius80perc == 0) radius80perc = 1;
 
 	//g.setColour(Colour(90,90,90));
 	//g.fillEllipse(rx, ry, rw, rw);
@@ -1839,13 +1389,13 @@ void VASTLookAndFeel::drawRotarySlider(Graphics& g, int x, int y, int width, int
 	// outer arc	
 	if ((isParameterSlider) && (isDDTarget)) {
 		Path pArc;
-		pArc.addCentredArc(centreX, centreY, radius*1.3f, radius*1.3f, 0.0f, 1.2f * M_PI, 2.8f  * M_PI, true);
+		pArc.addCentredArc(centreX, centreY, radius*1.3f, radius*1.3f, 0.0f, 1.2f * float(M_PI), 2.8f  * float(M_PI), true);
 		g.setColour(findVASTColour(VASTColours::colRotarySliderOuterArcBackground));
 		g.strokePath(pArc, PathStrokeType(radius30perc));
 
 		if (hasModMatrixSource == false) {
 			Path pArc2;
-			pArc2.addCentredArc(centreX, centreY, radius*1.3f, radius*1.3f, 0.0f, (1.2f * M_PI) + valStartPercentage * (2.8f - 1.2f) * M_PI, (1.2f * M_PI) + valEndPercentage *  (2.8f - 1.2f) * M_PI, true);
+			pArc2.addCentredArc(centreX, centreY, radius*1.3f, radius*1.3f, 0.0f, (1.2f * float(M_PI)) + valStartPercentage * (2.8f - 1.2f) * float(M_PI), (1.2f * float(M_PI)) + valEndPercentage *  (2.8f - 1.2f) * float(M_PI), true);
 			g.setColour(findVASTColour(VASTColours::colRotarySliderOuterArcValueIndicator));
 			g.strokePath(pArc2, PathStrokeType(radius40perc));
 			g.setColour(findVASTColour(VASTColours::colRotarySliderOuterArcValueIndicatorInner));
@@ -1863,23 +1413,36 @@ void VASTLookAndFeel::drawRotarySlider(Graphics& g, int x, int y, int width, int
 
 			//actual indicator
 			if (!myProcessor->m_disableOpenGLGFX) {				
+                /*
 				for (int voice = 0; voice < C_MAX_POLY; voice++) {
-					if (myProcessor->m_pVASTXperience.m_Poly.m_singleNote[voice]->isPlayingCalledFromUI()) {
+					if (myProcessor->m_pVASTXperience.m_Poly.isVoicePlaying(voice)) {
 						float lastSrceValPercentage = modStartPercentage + ((lastSrceVals[voice] + 1.f) * 0.5f)  * (modEndPercentage - modStartPercentage);
 						float lastSrceValPercentageUI = std::pow(lastSrceValPercentage, _parameterslider->getSkewFactor());
 						//store for animation
 						float lastDrawnSrceValPercentageUI = _parameterslider->m_lastDrawnValPercentageUI[voice];
-						_parameterslider->m_lastDrawnValPercentageUI[voice] = lastSrceValPercentageUI;
-
-						Path pArcIndicator;
-						//pArcIndicator.addCentredArc(centreX, centreY, radius*1.3f, radius*1.3f, 0.0f, (1.2f * M_PI) + jlimit<float>(0.f, 1.f ,lastSrceValPercentageUI - 0.05f) * (2.8f - 1.2f) * M_PI, (1.2f * M_PI) + jlimit<float>(0.f, 1.f, lastSrceValPercentageUI + 0.05f) * (2.8f - 1.2f) * M_PI, true);			
-						pArcIndicator.addCentredArc(centreX, centreY, radius*1.3f, radius*1.3f, 0.0f, (1.2f * M_PI) + jlimit<float>(0.f, 1.f, lastSrceValPercentageUI) * (2.8f - 1.2f) * M_PI, (1.2f * M_PI) + jlimit<float>(0.f, 1.f, lastDrawnSrceValPercentageUI) * (2.8f - 1.2f) * M_PI, true);
-
-						g.setGradientFill(ColourGradient(Colours::white, pArcIndicator.getPointAlongPath(0.f), Colours::transparentBlack, pArcIndicator.getPointAlongPath(pArcIndicator.getLength()), false));
-						//g.setColour(Colours::white);
-						g.strokePath(pArcIndicator, PathStrokeType(radius40perc));
+                        
+                        if (abs(lastDrawnSrceValPercentageUI - lastSrceValPercentageUI) < 0.4f) {
+                            _parameterslider->m_lastDrawnValPercentageUI[voice] = lastSrceValPercentageUI;
+                            Path pArcIndicator;
+                            pArcIndicator.addCentredArc(centreX, centreY, radius*1.3f, radius*1.3f, 0.0f, (1.2f * M_PI) + jlimit<float>(0.f, 1.f, lastSrceValPercentageUI) * (2.8f - 1.2f) * M_PI, (1.2f * M_PI) + jlimit<float>(0.f, 1.f, lastDrawnSrceValPercentageUI) * (2.8f - 1.2f) * M_PI, true);
+                            
+                            g.setGradientFill(ColourGradient(Colour(Colours::magenta).withAlpha(0.5f), pArcIndicator.getPointAlongPath(0.f), Colour(Colours::magenta).withAlpha(0.5f), pArcIndicator.getPointAlongPath(pArcIndicator.getLength()), false));
+                            //g.setColour(Colours::white);
+                            //g.strokePath(pArcIndicator, PathStrokeType(radius40perc));
+                        }
 					}
 				}
+                 */
+                for (int voice = 0; voice < C_MAX_POLY; voice++) { //magenta indicators
+                    if (myProcessor->m_pVASTXperience.m_Poly.isVoicePlaying(voice)) {
+                        float lastSrceValPercentage = modStartPercentage + ((lastSrceVals[voice] + 1.f) * 0.5f)  * (modEndPercentage - modStartPercentage);
+                        float lastSrceValPercentageUI = std::pow(lastSrceValPercentage, _parameterslider->getSkewFactor());
+                        g.setColour(Colours::white);
+                        Path pInid;
+                        pInid.addCentredArc(centreX, centreY, radius*1.3f, radius*1.3f, 0.0f, -0.2f + (1.2f * M_PI) + jlimit<float>(0.f, 1.f, lastSrceValPercentageUI) * (2.8f - 1.2f) * M_PI, 0.2f + (1.2f * M_PI) + jlimit<float>(0.f, 1.f, lastSrceValPercentageUI) * (2.8f - 1.2f) * M_PI, true);
+                        g.strokePath(pInid, PathStrokeType(radius40perc));
+                    }
+                }
 			}
 		}
 	}
@@ -2104,61 +1667,6 @@ void VASTLookAndFeel::drawTextEditorOutline(Graphics& g, int width, int height, 
 	textEditor.setColour(TextEditor::textColourId, findVASTColour(VASTColours::colBoxText));
 	textEditor.setColour(TextEditor::backgroundColourId, findVASTColour(VASTColours::colBoxTextBackground));
 }
-
-/*
-void VASTLookAndFeel::drawTextEditorOutline(Graphics& g, int width, int height, TextEditor& textEditor)
-{
-//Same code as in drawlabel
-
-String oldFontFace = textEditor.getFont().getTypefaceName();
-bool bChanged = false;
-Font newFont = Font(myDefaultFontRegular);
-int style = myDefaultFontRegular.getStyleFlags();
-String sText = textEditor.getText();
-float oldheight = textEditor.getFont().getHeight();
-float newheight = myDefaultFontRegular.getHeight();
-if (VASTComboBox* _comboBox = dynamic_cast<VASTComboBox*>(textEditor.getParentComponent())) 
-//myProcessor = _comboBox->getAudioProcessor();
-newFont.setSizeAndStyle(newheight, style, 1.0f, 0.0f);
-}
-else {
-// shrink fontsize to fit
-newheight = myDefaultFontRegular.getHeight() * 4; // let it be big if it fits
-newFont.setSizeAndStyle(newheight, style, 1.0f, 0.0f);
-while (((newFont.getStringWidthFloat(sText) >= (textEditor.getWidth()*0.9f) || (newFont.getHeight() >= (textEditor.getHeight())))) && newheight > 5.0f) { // is it to wide or to big?
-newheight -= .5f;
-newFont.setSizeAndStyle(newheight, style, 1.0f, 0.0f);
-bChanged = true;
-}
-}
-if (oldheight == newheight) bChanged = false;
-if (oldFontFace != newFont.getTypefaceName()) bChanged = true;
-if (bChanged)
-textEditor.applyFontToAllText(newFont, true);
-
-if (textEditor.isEnabled())
-{
-if (textEditor.hasKeyboardFocus(true) && !textEditor.isReadOnly())
-{
-const int border = 2;
-
-g.setColour(VASTColours::lightgrey);
-g.drawRect(0, 0, width, height, border);
-
-g.setOpacity(1.0f);
-drawBevel(g, 0, 0, width, height, 1, VASTColours::darkgrey, VASTColours::grey);
-}
-else
-{
-//g.setColour(VASTColours::grey);
-//g.drawRect(0, 0, width, height);
-
-g.setOpacity(1.0f);
-drawBevel(g, 0, 0, width, height, 1, VASTColours::darkgrey, VASTColours::grey);
-}
-}
-}
-*/
 
 int VASTLookAndFeel::getDefaultScrollbarWidth() {
 	return 12.f; //also used in Viewoports > c_viewportFreqDomain

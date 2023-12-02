@@ -17,7 +17,7 @@ public:
 	virtual ~CDDLModule(void);
 
 	// 3. The Prepare For Play Function is called just before audio streams
-	bool prepareForPlay();
+	bool prepareForPlay(int iSampleRate, bool bOversampling);
 
 	// 4. processAudioFrame() processes an audio input to create an audio output
 	bool processAudioFrame(float* pInputBuffer, float* pOutputBuffer, MYUINT uNumInputChannels, MYUINT uNumOutputChannels);
@@ -33,7 +33,7 @@ public:
 	void cookVariables();
 	void resetDelay(int nDelayLength);
 	
-	juce::ScopedPointer<AudioSampleBuffer> m_pBuffer;
+    std::unique_ptr<AudioSampleBuffer> m_pBuffer;
 
 	int m_nReadIndex;
 	int m_nWriteIndex;
@@ -42,16 +42,18 @@ public:
 	float m_fFeedbackIn;		// the user supplied feedback sample value
 
 	// current FB is fb*output
-	float getCurrentFeedbackOutput(){ return m_fFeedback * m_pBuffer->getReadPointer(0)[m_nReadIndex]; }
+	float getCurrentFeedbackOutput();
 
 	// set the feedback sample
-	void  setCurrentFeedbackInput(float f){ m_fFeedbackIn = f; }
+	void  setCurrentFeedbackInput(float f);
 
 	// enable/disable external FB source
-	void  setUsesExternalFeedback(bool b){ m_bUseExternalFeedback = false; }
+	void  setUsesExternalFeedback(bool);
 
 	float m_fDelay_ms;
 	float m_fFeedback_pct;
 	float m_fWetLevel_pct;
 	CVASTSettings *m_Set;
+    bool m_bOversampling = false;
+    int m_iSampleRate = 44100;
 };

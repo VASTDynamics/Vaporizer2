@@ -42,7 +42,7 @@ VASTFreqDomainViewport::VASTFreqDomainViewport()
 	//maxRe = sqrtf(C_WAVE_TABLE_SIZE / 2.0f); //normalize with n/2
 	maxRe = 0.707f;
 	maxReDisp = 0.6f;
-	maxIm = M_PI; 
+	maxIm = float(M_PI); 
 }
 
 VASTFreqDomainViewport::~VASTFreqDomainViewport() {
@@ -117,14 +117,16 @@ void VASTFreqDomainViewport::updateContent(bool force) {
 	}
 
 	std::shared_ptr<CVASTWaveTable> wavetable = myWtEditor->getBankWavetable();
-	if (wavetable->getNumPositions() == 0) 
+    if (wavetable->m_isBeingUpdated.load() == true) //safety
+        return;
+    if (wavetable->getNumPositions() == 0)
 		return;
 
-	//DBG("VASTFreqDomainViewport::updateContent");
+	//VDBG("VASTFreqDomainViewport::updateContent");
 
 	juce::Rectangle<int> lVisibleArea = myWtEditor->getFreqDomainViewport()->getViewArea();
 	AffineTransform af;
-	lVisibleArea = lVisibleArea.transformed(af.scaled(m_screenWidthScale, m_screenHeightScale));
+	lVisibleArea = lVisibleArea.transformedBy(af.scaled(m_screenWidthScale, m_screenHeightScale));
 
 	waveformImage = Image(Image::RGB, jmax(1, lVisibleArea.getWidth()), jmax(1, lVisibleArea.getHeight()), false);
 	waveformImage.clear(waveformImage.getBounds(), myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colFreqDomainBinBackground));
@@ -229,45 +231,6 @@ void VASTFreqDomainViewport::updateContentAsync() {
 	m_dirty = true;
 }
 
-void VASTFreqDomainViewport::mouseDrag(const MouseEvent &e) { // show value
-	ModifierKeys modifiers = ModifierKeys::getCurrentModifiersRealtime();
-	if (modifiers.isLeftButtonDown()) { //draw bins
-		int starty = e.getMouseDownY();
-		int start = e.getMouseDownX();
-		int end = start + e.getDistanceFromDragStartX();
-		int endy = starty + e.getDistanceFromDragStartY();
-		if (end < 0) end = 0;
-		if (end > getWidth() - 1)
-			end = getWidth() - 1;
-		if (endy < 0) endy = 0;
-		if (endy > getHeight() - 1)
-			endy = getHeight() - 1;
-
-		int arrayidx = mouseXGetBinArrayIdx(end);
-		if (endy < m_reSliderBottomY / m_screenHeightScale) { //real slider
-			if (starty < m_reSliderBottomY / m_screenHeightScale) {
-				float percentage = (m_reSliderBottomY / m_screenHeightScale - endy) / (m_reSliderBottomY / m_screenHeightScale);
-				if (percentage < 0.08) percentage = 0.f;
-				jassert((percentage >= 0.f) && (percentage <= 1.f));
-				adjustFreqDomainReal(arrayidx, percentage);
-			}
-		}
-		else if (endy > m_imSliderTopY / m_screenHeightScale) { //imag slider
-			if (starty > m_imSliderTopY / m_screenHeightScale) {
-				float percentage = (m_imSliderBottomY / m_screenHeightScale - endy) / (m_imSliderBottomY / m_screenHeightScale) * (1 - reToImSliderRatio);
-				if (percentage > 0.99) percentage = 1.f;
-				if (percentage < 0.08) percentage = 0.f;
-				jassert((percentage >= 0.f) && (percentage <= 1.f));
-				adjustFreqDomainImag(arrayidx, percentage);
-			}
-		}
-	}
-}
-
-void VASTFreqDomainViewport::mouseDoubleClick(const MouseEvent &e) {
-	
-}
-
 int VASTFreqDomainViewport::mouseXGetBinArrayIdx(int posX) {
 	juce::Rectangle<int> lVisibleArea = myWtEditor->getFreqDomainViewport()->getViewArea();
 	int pos = posX - (lVisibleArea.getX() - int(lVisibleArea.getX() / m_sliderWidth) * m_sliderWidth);
@@ -296,9 +259,9 @@ void VASTFreqDomainViewport::mouseExit(const MouseEvent& event) {
 
 void VASTFreqDomainViewport::adjustFreqDomainInternalThreaded(std::vector<sFreqDomainBuffer> domainBuffer, bool clipBins, VASTWaveTableEditorComponent* myWtEditor, VASTAudioProcessor* myProcessor) {
     
-    if (myWtEditor->numFreqThreads > 0) return; //just ignore if other thread is running
+    if (myWtEditor->numFreqThreads.load() > 0) return; //just ignore if other thread is running
     
-    myWtEditor->numFreqThreads++;
+    myWtEditor->numFreqThreads+=1;
 	myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->addSoftFadeEditor();
 	std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->getSoftOrCopyWavetable(); //check!
 
@@ -313,7 +276,7 @@ void VASTFreqDomainViewport::adjustFreqDomainInternalThreaded(std::vector<sFreqD
 
 	myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->getOscBank()]->setWavetableSoftFade(wavetable);
 	myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->removeSoftFadeEditor();
-    myWtEditor->numFreqThreads--;
+    myWtEditor->numFreqThreads-=1;
 }
 
 static const double c_freqbin_maxdb = -16.f;
@@ -345,6 +308,12 @@ double VASTFreqDomainViewport::getDomainBufferSlotImagPercentage(dsp::Complex<fl
 	return percentageIm;
 }
 
+void VASTFreqDomainViewport::setEditor(VASTAudioProcessorEditor* editor) { myEditor = editor; }
+
+void VASTFreqDomainViewport::setProcessor(VASTAudioProcessor* processor) { myProcessor = processor; }
+
+void VASTFreqDomainViewport::setWTEditor(VASTWaveTableEditorComponent* wtEditor) { myWtEditor = wtEditor; }
+
 dsp::Complex<float> VASTFreqDomainViewport::setDomainBufferSlotRealPercentage(double percentage, dsp::Complex<float> currentSlotVal) {
 	//https://www.rohde-schwarz.com/us/faq/converting-the-real-and-imaginary-numbers-to-magnitude-in-db-and-phase-in-degrees.-faq_78704-30465.html
 	//The formulas for calculating the magnitude and the phase from the real(Re) and imaginary(Im) numbers are :
@@ -359,17 +328,17 @@ dsp::Complex<float> VASTFreqDomainViewport::setDomainBufferSlotRealPercentage(do
 	if (percentage > 1.0) percentage = 1.0;
 	if (percentage < 0.0) percentage = 0.0;
 
-	double logarithmicRe = powf(percentage, 1.0 / 3.0);
-	double magnitudeDB = jmap(logarithmicRe, 0.0, 1.0, c_freqbin_mindb, c_freqbin_maxdb); //chek 0 to 1?
+	double logarithmicRe = double(powf(percentage, 1.0f / 3.0f));
+	double magnitudeDB = jmap(logarithmicRe, 0.0, 1.0, c_freqbin_mindb, c_freqbin_maxdb); //check 0 to 1?
 
-	double magnitude = abs(exp(magnitudeDB / 20.0)); //clean
+	double magnitude = abs(exp(magnitudeDB / 20.0f)); //clean
 	if (magnitudeDB == c_freqbin_mindb)
 		magnitude = 0.f;
 	
 	//https://www.researchgate.net/post/How_do_I_convert_a_magnitude_and_phase_into_a_complex_number
 
 	float phase = arg(currentSlotVal);
-	if (oldPerc < 0.001f) phase = M_PI;
+	if (oldPerc < 0.001f) phase = float(M_PI);
 	return std::polar(float(magnitude), phase);
 }
 
@@ -490,6 +459,7 @@ void VASTFreqDomainViewport::adjustFreqDomainImag(int slot, double percentage) {
 		domainBufferPos.domainBuffer = *wavetable->getFreqDomainBuffer(wtPos);		
 		if (myProcessor->getBinEditMode() == FreqEditMode::SingleBin) {
 			domainBufferPos.domainBuffer[slot] = setDomainBufferSlotImagPercentage(percentage, domainBufferPos.domainBuffer[slot]);
+			VDBG("Percentage: " << percentage);
 		}
 		else if (myProcessor->getBinEditMode() == FreqEditMode::EverySecond) {
 			for (int i = 0; i < C_WAVE_TABLE_SIZE / 2 - slot; i++) {
@@ -622,7 +592,8 @@ void VASTFreqDomainViewport::mouseDown(const MouseEvent &e) {
 		subMenuFilter.addItem(21, TRANS("Clear on right (low pass filter)"), true, false);		
 		mainMenu.addSubMenu(TRANS("Filter types"), subMenuFilter, true);
 		
-		mainMenu.showMenuAsync(PopupMenu::Options(), juce::ModalCallbackFunction::create([this, arrayidx, lPartialNo, lCurMagnitudeValue, lCurPhaseValue, y](int result) {
+		mainMenu.showMenuAsync(PopupMenu::Options().withTargetComponent(this).withTargetScreenArea(juce::Rectangle<int>{}.withPosition(Desktop::getMousePosition())),
+			juce::ModalCallbackFunction::create([this, arrayidx, lPartialNo, lCurMagnitudeValue, lCurPhaseValue, y](int result) {
 			if (result == 0) {
 				// user dismissed the menu without picking anything
 			}
@@ -639,7 +610,7 @@ void VASTFreqDomainViewport::mouseDown(const MouseEvent &e) {
 				l_veditor->setTextPhase(String(lCurPhaseValue));
 
 				//CallOutBox &cb =
-				juce::CallOutBox::launchAsynchronously(std::move(l_veditor), newBounds, myEditor->vaporizerComponent);
+				juce::CallOutBox::launchAsynchronously(std::move(l_veditor), newBounds, myEditor->vaporizerComponent.get());
 			}
 			else if (result == 11) {
 				myWtEditor->setBinMode(BinMode::ClipBin);
@@ -751,12 +722,56 @@ void VASTFreqDomainViewport::mouseDown(const MouseEvent &e) {
 			adjustFreqDomainReal(arrayidx, percentage);
 		}
 		else if (y > m_imSliderTopY / m_screenHeightScale) { //imag slider
-
 			float percentage = (m_imSliderBottomY / m_screenHeightScale - y) / (m_imSliderBottomY / m_screenHeightScale * (1 - reToImSliderRatio));
-			if (percentage > 0.99) percentage = 1.f;
-			if (percentage < 0.08) percentage = 0.f;
+			if (percentage > 0.94) percentage = 0.94f;
+			if (percentage < 0.06) percentage = 0.f;
 			jassert((percentage >= 0.f) && (percentage <= 1.f));
 			adjustFreqDomainImag(arrayidx, percentage);
 		}
+	}
+}
+
+void VASTFreqDomainViewport::mouseDrag(const MouseEvent& e) { // show value
+	ModifierKeys modifiers = ModifierKeys::getCurrentModifiersRealtime();
+	if (modifiers.isLeftButtonDown()) { //draw bins
+		int starty = e.getMouseDownY();
+		int start = e.getMouseDownX();
+		int end = start + e.getDistanceFromDragStartX();
+		int endy = starty + e.getDistanceFromDragStartY();
+		if (end < 0) end = 0;
+		if (end > getWidth() - 1)
+			end = getWidth() - 1;
+		if (endy < 0) endy = 0;
+		if (endy > getHeight() - 1)
+			endy = getHeight() - 1;
+
+		int arrayidx = mouseXGetBinArrayIdx(end);
+		if (starty < m_reSliderBottomY / m_screenHeightScale) { //real slider
+			float percentage = (m_reSliderBottomY / m_screenHeightScale - endy) / (m_reSliderBottomY / m_screenHeightScale);
+			if (percentage < 0.08) percentage = 0.f;
+			jassert((percentage >= 0.f) && (percentage <= 1.f));
+			adjustFreqDomainReal(arrayidx, percentage);
+		}
+		else if (starty > m_imSliderTopY / m_screenHeightScale) { //imag slider
+			float percentage = (m_imSliderBottomY / m_screenHeightScale - endy) / (m_imSliderBottomY / m_screenHeightScale * (1 - reToImSliderRatio));
+			if (percentage > 0.94) percentage = 0.94f;
+			if (percentage < 0.06) percentage = 0.f;
+			jassert((percentage >= 0.f) && (percentage <= 1.f));
+			adjustFreqDomainImag(arrayidx, percentage);
+		}
+	}
+}
+
+void VASTFreqDomainViewport::mouseDoubleClick(const MouseEvent& e) {
+	int x = e.getMouseDownX();
+	int y = e.getMouseDownY();
+	int arrayidx = mouseXGetBinArrayIdx(x);
+	if (y < m_reSliderBottomY / m_screenHeightScale) { //real slider
+		float percentage = 0.f;
+		adjustFreqDomainReal(arrayidx, percentage);
+	}
+	else if (y > m_imSliderTopY / m_screenHeightScale) { //imag slider
+		float percentage = 0.f;
+		adjustFreqDomainImag(arrayidx, percentage);
 	}
 }

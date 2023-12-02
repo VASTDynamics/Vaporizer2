@@ -35,24 +35,24 @@ public:
 private: 
 	CVASTSettings *m_Set;
 
-	bool m_bAttack;
-	bool m_bDecay;
-	bool m_bSustain;
-	bool m_bRelease;
+	bool m_bAttack{};
+	bool m_bDecay{};
+	bool m_bSustain{};
+	bool m_bRelease{};
 	
-	bool m_bIsNoteOff;
+	bool m_bIsNoteOff{};
 	
-	float m_fEnvelope;
-	bool m_bIsActive;
-	bool m_bHardStop; 
-	bool m_bHardStopNoteOff;
+	float m_fEnvelope{};
+	bool m_bIsActive{};
+	bool m_bHardStop{};
+	bool m_bHardStopNoteOff{};
 
-	float m_fAttackTime;
-	float m_fDecayTime;
-	float m_fSustainLevel;
-	float m_fReleaseTime;
+	float m_fAttackTime{};
+	float m_fDecayTime{};
+	float m_fSustainLevel{};
+	float m_fReleaseTime{};
 
-	float m_fSustainTime;
+	float m_fSustainTime{};
 	MYUINT m_voiceNo = 0;
 	bool m_isVCA = false;
 	bool m_isVCF = false;

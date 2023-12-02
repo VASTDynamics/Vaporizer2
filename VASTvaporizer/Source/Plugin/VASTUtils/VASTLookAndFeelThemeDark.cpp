@@ -11,8 +11,11 @@ VAST Dynamics
 
 #include <sstream>
 
-VASTLookAndFeelThemeDark::VASTLookAndFeelThemeDark()
+VASTLookAndFeelThemeDark::VASTLookAndFeelThemeDark(CVASTSettings & set, VASTAudioProcessor * processor)
 {
+	m_Set = &set;
+	myProcessor = processor;
+
 	setColour(Label::textColourId, findVASTColour(colLabelText));
 
 	setColour(FileSearchPathListComponent::backgroundColourId, findVASTColour(colFileSearchPathListComponentBackground));
@@ -23,13 +26,12 @@ VASTLookAndFeelThemeDark::VASTLookAndFeelThemeDark()
 
 	mFontSizeFactor = 0.85f;	
 	setUIFontSize(0);
-	myDefaultFontRegular.setTypefaceName("TradeGothic LT");
-	myDefaultFontRegular = Font(getTypefaceForFont(myDefaultFontRegular));
+
+	myDefaultFontRegular = m_Set->getCustomFont(CVASTSettings::customFonts::TradeGothicLT);
 	myDefaultFontRegular.setDefaultMinimumHorizontalScaleFactor(1.0);
 	myDefaultFontRegular.setSizeAndStyle(12.f, myDefaultFontBold.getStyleFlags(), 1.0f, 0.0f); // no squashing, no kerning
 
-	myDefaultFontBold.setTypefaceName("TradeGothic LT Bold");
-	myDefaultFontBold = Font(getTypefaceForFont(myDefaultFontBold));
+	myDefaultFontBold = m_Set->getCustomFont(CVASTSettings::customFonts::TradeGothicLTBold);
 	myDefaultFontBold.setDefaultMinimumHorizontalScaleFactor(1.0);
 	myDefaultFontBold.setSizeAndStyle(12.f, myDefaultFontBold.getStyleFlags(), 1.0f, 0.0f); // no squashing, no kerning
 	
@@ -189,7 +191,7 @@ Colour VASTLookAndFeelThemeDark::findVASTColour(int colourID) {
 		return Colour::fromFloatRGBA(0.5f, 0.5f, 0.5f, 1.0f); //transparent
 		break;
 	case colToggleButtonOuter:
-		return Colour::fromFloatRGBA(0.15f, 0.15, 0.15f, 1.0f); //transparent
+		return Colour::fromFloatRGBA(0.15f, 0.15f, 0.15f, 1.0f); //transparent
 		break;
 	case colToggleButtonShadeOn:
 		return Colour::fromFloatRGBA(0.7f, 0.9f, 1.0f, 0.35f);

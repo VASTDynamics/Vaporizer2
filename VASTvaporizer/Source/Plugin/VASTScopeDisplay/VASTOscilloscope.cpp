@@ -64,6 +64,26 @@ void VASTOscilloscope::setToStandardRender() {
 	//mOpenGLContext.detach();
 }
 
+void VASTOscilloscope::setEditor(VASTAudioProcessorEditor* editor) { 
+	myEditor = editor; 
+}
+
+void VASTOscilloscope::setProcessor(VASTAudioProcessor* processor) {
+	myProcessor = processor;
+}
+
+void VASTOscilloscope::setWTEditor(VASTWaveTableEditorComponent* wtEditor) { 
+	myWtEditor = wtEditor;
+}
+
+String VASTOscilloscope::getTooltip()
+{
+	if (myWtEditor == nullptr)
+		return TRANS("Use right mouse click to toggle single cycle versus perspective wavetable display.");
+	else
+		return TRANS("Click and drag to change selected area / draw. Doubleclick toggles selection. Rightclick for menu.");
+}
+
 void VASTOscilloscope::setToOpenGLRender() {
 	/*
 	if (((myProcessor != nullptr) && !myProcessor->m_disableOpenGLGFX) || (myProcessor == nullptr)) {
@@ -100,7 +120,7 @@ void VASTOscilloscope::renderOpenGL() {
 			if (waveformImageWithBorder.isNull())
 				waveformImageWithBorder = waveformImage.createCopy();
 
-			if (!m_dirty) {
+			if (!m_dirty.load()) {
 				//g.drawImageWithin(waveformImageWithBorder, 0, 0, getWidth(), getHeight(), juce::RectanglePlacement::stretchToFit);
 				mBackgroundTexture.loadImage(waveformImageWithBorder);
 			}
@@ -126,7 +146,6 @@ void VASTOscilloscope::renderOpenGL() {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); //GL_LINEAR?
 
 		// Draw a textured quad
-		/*
 		glBegin(GL_QUADS);
 		float w = getWidth();
 		float h = getHeight();
@@ -147,7 +166,7 @@ void VASTOscilloscope::renderOpenGL() {
 void VASTOscilloscope::lookAndFeelChanged() {
 	waveformImageBufferOff = Image(Image::RGB, 400, 500, true);
 	waveformImageBufferOff.clear(waveformImageBufferOff.getBounds(), myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeOff));
-	m_dirty = true;
+    m_dirty.store(true);
 	m_hasWaveformImagePerspectiveBuffer = false;
 }
 
@@ -156,7 +175,6 @@ void VASTOscilloscope::resized()
 	float scale = 1.f;
 	if (myProcessor != nullptr) {
 		m_screenWidthScale = float(getScreenBounds().getWidth()) / float(getWidth());
-		float scale = Desktop::getInstance().getGlobalScaleFactor() * m_screenWidthScale;
 	}
 	waveformImageBufferOff = waveformImageBufferOff.rescaled(jmax(1, int(getScreenBounds().getWidth() * scale)), jmax(1, int(getScreenBounds().getHeight() * scale)), juce::Graphics::ResamplingQuality::lowResamplingQuality);
 	waveformImageWithBorder = waveformImageWithBorder.rescaled(jmax(1, int(getScreenBounds().getWidth() * scale)), jmax(1, int(getScreenBounds().getHeight() * scale)), juce::Graphics::ResamplingQuality::highResamplingQuality);
@@ -174,7 +192,7 @@ void VASTOscilloscope::paint(Graphics& g)
 	if (waveformImageWithBorder.isNull())
 		waveformImageWithBorder = waveformImage.createCopy();
 
-	if (!m_dirty) {
+	if (!m_dirty.load()) {
 		g.drawImageWithin(waveformImageWithBorder, 0, 0, getWidth(), getHeight(), juce::RectanglePlacement::stretchToFit);
 	}
 	else {
@@ -190,7 +208,7 @@ void VASTOscilloscope::paint(Graphics& g)
 }
 
 void VASTOscilloscope::updateContentAsync() {
-	m_dirty = true;
+    m_dirty.store(true);
 }
 
 void VASTOscilloscope::updateContent(bool force) {
@@ -246,30 +264,35 @@ void VASTOscilloscope::updateContent(bool force) {
 		return;
 	}
 
-	bool editorSelectedOscBank = false;
+	/*
+    bool editorSelectedOscBank = false;
 	if ((myWtEditor == NULL) && (myEditor != nullptr) && (myEditor->vaporizerComponent != nullptr) && (myEditor->vaporizerComponent->getWaveTableEditorComponent() != nullptr) ) {
 		if (l_oscillatorBank == myEditor->vaporizerComponent->getWaveTableEditorComponent()->getOscBank())
 			editorSelectedOscBank = true;
 	}
+     */
 
 	int note = myProcessor->m_pVASTXperience.m_Poly.getLastNotePlayed();
 	if (note < 0) {
 		note = 0;
 	}
+
+	/*
 	CVASTSingleNote *m_myNote = myProcessor->m_pVASTXperience.m_Poly.m_singleNote[note];	
 	if (m_myNote == nullptr) {
 		jassertfalse; //should never be nullptr
 		return;  //CHECK
 	}
 	vassert((m_myNote->m_safePhaseFloat[l_oscillatorBank] >= 0.f) && (m_myNote->m_safePhaseFloat[l_oscillatorBank] <= 1.f)); //safetycheck
+	*/
 
 	l_display = false;
 
 	bool l_soloMode = false;
 	if (l_oscbank != "WTEditorView") {
-		if (m_soloMode != m_myNote->m_Poly->m_OscBank[l_oscillatorBank]->getSoloMode())
+		if (m_soloMode != myProcessor->m_pVASTXperience.m_Poly.m_OscBank[l_oscillatorBank]->getSoloMode())
 			m_hasWaveformImagePerspectiveBuffer = false;
-		l_soloMode = m_myNote->m_Poly->m_OscBank[l_oscillatorBank]->getSoloMode();
+		l_soloMode = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[l_oscillatorBank]->getSoloMode();
 		m_soloMode = l_soloMode;
 	}
 
@@ -307,46 +330,44 @@ void VASTOscilloscope::updateContent(bool force) {
 	
 		l_display = true;
 
-		if (
-			(m_myNote->m_Poly->m_OscBank[l_oscillatorBank]->getAndClearSoftChangedFlagOscEditor() == false)) {
-			if (!(force || m_dirty))
+		if (myProcessor->m_pVASTXperience.m_Poly.m_OscBank[l_oscillatorBank]->getAndClearSoftChangedFlagOscEditor() == false) {
+			if (!(force || m_dirty.load()))
 				return;
 		}
 	}
 	else {
-		wavetable = m_myNote->m_Poly->m_OscBank[l_oscillatorBank]->getWavetablePointer();
+		wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[l_oscillatorBank]->getWavetablePointer();
 
 		if (wavetable->m_isBeingUpdated.load() == true) //safety
 			return;
 
 		if (wavetable->getNumPositions() > 0) {
 			if (l_oscillatorBank == 0) {
-				phase = *m_myNote->m_Set->m_State->m_fOscPhase_OscA * 0.01f;
-				wtPerc = *m_myNote->m_Set->m_State->m_fOscWTPos_OscA * 0.01f;
-				wtfxType = *m_myNote->m_Set->m_State->m_uWTFX_OscA;
-				wtfxVal = *m_myNote->m_Set->m_State->m_fWTFXVal_OscA;
+				phase = *myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_fOscPhase_OscA * 0.01f;
+				wtPerc = *myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_fOscWTPos_OscA * 0.01f;
+				wtfxType = *myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_uWTFX_OscA;
+				wtfxVal = *myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_fWTFXVal_OscA;
 			}
 			else {
 				if (l_oscillatorBank == 1) {
-					phase = *m_myNote->m_Set->m_State->m_fOscPhase_OscB * 0.01f;
-					wtPerc = *m_myNote->m_Set->m_State->m_fOscWTPos_OscB * 0.01f;
-					wtfxType = *m_myNote->m_Set->m_State->m_uWTFX_OscB;
-					wtfxVal = *m_myNote->m_Set->m_State->m_fWTFXVal_OscB;
+					phase = *myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_fOscPhase_OscB * 0.01f;
+					wtPerc = *myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_fOscWTPos_OscB * 0.01f;
+					wtfxType = *myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_uWTFX_OscB;
+					wtfxVal = *myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_fWTFXVal_OscB;
 				}
 				else {
 					if (l_oscillatorBank == 2) {
-						phase = *m_myNote->m_Set->m_State->m_fOscPhase_OscC * 0.01f;
-						wtPerc = *m_myNote->m_Set->m_State->m_fOscWTPos_OscC * 0.01f;
-						wtfxType = *m_myNote->m_Set->m_State->m_uWTFX_OscC;
-						wtfxVal = *m_myNote->m_Set->m_State->m_fWTFXVal_OscC;
+						phase = *myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_fOscPhase_OscC * 0.01f;
+						wtPerc = *myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_fOscWTPos_OscC * 0.01f;
+						wtfxType = *myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_uWTFX_OscC;
+						wtfxVal = *myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_fWTFXVal_OscC;
 					}
 					else {
 						if (l_oscillatorBank == 3) {
-							//morph = *m_myNote->m_Set->m_State->m_fOscMorph_OscD * 0.01f;
-							phase = *m_myNote->m_Set->m_State->m_fOscPhase_OscD * 0.01f;
-							wtPerc = *m_myNote->m_Set->m_State->m_fOscWTPos_OscD * 0.01f;
-							wtfxType = *m_myNote->m_Set->m_State->m_uWTFX_OscD;
-							wtfxVal = *m_myNote->m_Set->m_State->m_fWTFXVal_OscD;
+							phase = *myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_fOscPhase_OscD * 0.01f;
+							wtPerc = *myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_fOscWTPos_OscD * 0.01f;
+							wtfxType = *myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_uWTFX_OscD;
+							wtfxVal = *myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_fWTFXVal_OscD;
 						}
 					}
 				}
@@ -354,22 +375,22 @@ void VASTOscilloscope::updateContent(bool force) {
 		}
 
 		//knobs tweaked but not playing?
-		if (m_myNote->isPlayingCalledFromUI()) {
+		if (myProcessor->m_pVASTXperience.m_Poly.isVoicePlaying(note)) {
 			//played again after reset
 			if (!m_bLast_update_was_with_voice_playing)
-				m_dirty = true;
+				m_dirty.store(true);
 
-			if (m_safeWtPosFloat != m_myNote->m_currentWTPosFloatPercentage[l_oscillatorBank] * (wavetable->getNumPositions() - 1))
-				m_dirty = true;
+			if (m_safeWtPosFloat.load() != myProcessor->m_pVASTXperience.m_Poly.m_currentWTPosFloatPercentage[l_oscillatorBank][note].load() * (wavetable->getNumPositions() - 1))
+                m_dirty.store(true);
 		}
 		else {
 			if (!l_soloMode) {
 				if (m_safeWtPosFloat != wtPerc * (wavetable->getNumPositions() - 1))
-					m_dirty = true;
+                    m_dirty.store(true);
 			}
 			else {
 				if (m_safeWtPosFloat != wavetable->getMultiSelectBegin() + wtPerc * (wavetable->getMultiSelectEnd() - wavetable->getMultiSelectBegin()))
-					m_dirty = true;
+                    m_dirty.store(true);
 			}
 		}
 
@@ -383,12 +404,12 @@ void VASTOscilloscope::updateContent(bool force) {
 		m_safeWTFXVal = wtfxVal;
 
 		//check for buffer refresh
-		if (m_myNote->m_Poly->m_OscBank[l_oscillatorBank]->getAndClearSoftChangedFlagStructure())
+		if (myProcessor->m_pVASTXperience.m_Poly.m_OscBank[l_oscillatorBank]->getAndClearSoftChangedFlagStructure())
 			m_hasWaveformImagePerspectiveBuffer = false;
 
 		//check if dirty
-		if ((m_myNote->m_Poly->m_OscBank[l_oscillatorBank]->getAndClearSoftChangedFlagOsc() == false)) {
-			if (!(force || m_dirty)) {
+		if ((myProcessor->m_pVASTXperience.m_Poly.m_OscBank[l_oscillatorBank]->getAndClearSoftChangedFlagOsc() == false)) {
+			if (!(force || m_dirty.load())) {
 				return;
 			}
 		}
@@ -397,7 +418,7 @@ void VASTOscilloscope::updateContent(bool force) {
 			m_screenWidthScale = float(getScreenBounds().getWidth()) / float(getWidth());
 			float scale = Desktop::getInstance().getGlobalScaleFactor() * m_screenWidthScale;
 			if (l_oscillatorBank == 0) {
-				if ((*m_myNote->m_Set->m_State->m_iNumOscs_OscA > 0) && (*myProcessor->m_pVASTXperience.m_Set.m_State->m_bOscOnOff_OscA == SWITCH::SWITCH_ON)) {
+				if ((*myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_iNumOscs_OscA > 0) && (*myProcessor->m_pVASTXperience.m_Set.m_State->m_bOscOnOff_OscA == static_cast<int>(SWITCH::SWITCH_ON))) {
 					l_display = true;
 				}
 				else {
@@ -408,7 +429,7 @@ void VASTOscilloscope::updateContent(bool force) {
 			}
 			else {
 				if (l_oscillatorBank == 1) {
-					if ((*m_myNote->m_Set->m_State->m_iNumOscs_OscB > 0) && (*myProcessor->m_pVASTXperience.m_Set.m_State->m_bOscOnOff_OscB == SWITCH::SWITCH_ON)) {
+					if ((*myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_iNumOscs_OscB > 0) && (*myProcessor->m_pVASTXperience.m_Set.m_State->m_bOscOnOff_OscB == static_cast<int>(SWITCH::SWITCH_ON))) {
 						l_display = true;
 					}
 					else {
@@ -419,7 +440,7 @@ void VASTOscilloscope::updateContent(bool force) {
 				}
 				else {
 					if (l_oscillatorBank == 2) {
-						if ((*m_myNote->m_Set->m_State->m_iNumOscs_OscC > 0) && (*myProcessor->m_pVASTXperience.m_Set.m_State->m_bOscOnOff_OscC == SWITCH::SWITCH_ON)) {
+						if ((*myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_iNumOscs_OscC > 0) && (*myProcessor->m_pVASTXperience.m_Set.m_State->m_bOscOnOff_OscC == static_cast<int>(SWITCH::SWITCH_ON))) {
 							l_display = true;
 						}
 						else {
@@ -430,7 +451,7 @@ void VASTOscilloscope::updateContent(bool force) {
 					}
 					else {
 						if (l_oscillatorBank == 3) {
-							if ((*m_myNote->m_Set->m_State->m_iNumOscs_OscD > 0) && (*myProcessor->m_pVASTXperience.m_Set.m_State->m_bOscOnOff_OscD == SWITCH::SWITCH_ON)) {
+							if ((*myProcessor->m_pVASTXperience.m_Poly.m_Set->m_State->m_iNumOscs_OscD > 0) && (*myProcessor->m_pVASTXperience.m_Set.m_State->m_bOscOnOff_OscD == static_cast<int>(SWITCH::SWITCH_ON))) {
 								l_display = true;
 							}
 							else {
@@ -442,8 +463,8 @@ void VASTOscilloscope::updateContent(bool force) {
 					}
 				}
 			}
-			if (m_myNote->isPlayingCalledFromUI()) {
-				m_last_active_voice = m_myNote->getVoiceNo();
+			if (myProcessor->m_pVASTXperience.m_Poly.isVoicePlaying(note)) {
+				m_last_active_voice = note;
 				m_last_active_counter = C_MAX_UI_STEPS_AFTER_NOTEOFF;
 			}
 			else {
@@ -457,12 +478,12 @@ void VASTOscilloscope::updateContent(bool force) {
 			//if (m_last_active_voice != -1) {
 			if (m_last_active_counter == C_MAX_UI_STEPS_AFTER_NOTEOFF) {
 				if (!l_soloMode)
-					m_safeWtPosFloat = m_myNote->m_currentWTPosFloatPercentage[l_oscillatorBank] * (wavetable->getNumPositions() - 1);
+					m_safeWtPosFloat = myProcessor->m_pVASTXperience.m_Poly.m_currentWTPosFloatPercentage[l_oscillatorBank][note].load() * (wavetable->getNumPositions() - 1);
 				else
-					m_safeWtPosFloat = wavetable->getMultiSelectBegin() + m_myNote->m_currentWTPosFloatPercentage[l_oscillatorBank] * (wavetable->getMultiSelectEnd() - wavetable->getMultiSelectBegin());
-				m_last_active_voice = m_myNote->getVoiceNo();
+					m_safeWtPosFloat = wavetable->getMultiSelectBegin() + myProcessor->m_pVASTXperience.m_Poly.m_currentWTPosFloatPercentage[l_oscillatorBank][note].load() * (wavetable->getMultiSelectEnd() - wavetable->getMultiSelectBegin());
+				m_last_active_voice = note;
 				m_bLast_update_was_with_voice_playing = true;
-				m_safePhaseFloat = m_myNote->m_safePhaseFloat[l_oscillatorBank];
+				m_safePhaseFloat = myProcessor->m_pVASTXperience.m_Poly.m_safePhaseFloat[l_oscillatorBank][note].load();
 				vassert((m_safePhaseFloat >= 0.f) && (m_safePhaseFloat <= 1.f));
 			}
 			else {				
@@ -483,30 +504,34 @@ void VASTOscilloscope::updateContent(bool force) {
 				l_waveBuffer = wavetable->getNaiveTableWithFXForDisplay(int(m_safeWtPosFloat), wtfxType, wtfxVal, (!m_bLast_update_was_with_voice_playing || (m_last_active_counter != C_MAX_UI_STEPS_AFTER_NOTEOFF)));
 		}
 	}
-	m_dirty = true; //prevent image painting
+    m_dirty.store(true); //prevent image painting
 	if (exitWithRepaint) {
 		handleBorderDisplay();
 		repaint();
 		waveformImageLastSafe = waveformImageWithBorder.createCopy();
-		m_dirty = false;
+        m_dirty.store(false);
 		return;
 	}
 
-	if (!bPerspectiveDisplay)
+    if (wavetable->m_isBeingUpdated.load() == true) //safety
+        return;
+    
+    if (!bPerspectiveDisplay) {
 		if (l_waveBuffer != nullptr) {
 			if (l_waveBuffer->empty()) {
 				l_display = false;
 			}
 		} else 
 			l_display = false;
+    } 
 	
 	if (l_display == false) {
 		//repaint();
-		m_dirty = false;
+        m_dirty.store(false);
 		return;
 	}
 
-	//DBG("VASTOscilloscope::updateContent - " + l_oscbank);
+	//VDBG("VASTOscilloscope::updateContent - " + l_oscbank);
 
 	m_screenWidthScale = float(getScreenBounds().getWidth()) / float(getWidth());
 	m_screenHeightScale = float(getScreenBounds().getHeight()) / float(getHeight());
@@ -555,7 +580,7 @@ void VASTOscilloscope::updateContent(bool force) {
 			l_waveBufferNext = wavetable->getNaiveTableWithFXForDisplay(int(m_safeWtPosFloat) + 1, wtfxType, wtfxVal, (!m_bLast_update_was_with_voice_playing || (m_last_active_counter != C_MAX_UI_STEPS_AFTER_NOTEOFF)));
 			l_waveBufferNextCopy = *l_waveBufferNext; //copy it for safety
 			if (l_waveBufferNext == nullptr) {
-				m_dirty = false;
+                m_dirty.store(false);
 				return;
 			}
 		}
@@ -575,7 +600,7 @@ void VASTOscilloscope::updateContent(bool force) {
 		float step = float(l_waveBuffer->size()) / float(waveformImage.getWidth());
 		if (b_hasNext) {
 			if (l_waveBufferNextCopy.size() != C_WAVE_TABLE_SIZE) {
-				m_dirty = false;
+                m_dirty.store(false);
 				return;
 			}
 		}
@@ -622,7 +647,7 @@ void VASTOscilloscope::updateContent(bool force) {
 	}
 	else { //perspective display		
 		//**lock
-		m_myNote->m_Poly->m_OscBank[l_oscillatorBank]->mSharedPtrSoftFadeLock.enter();
+		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[l_oscillatorBank]->mSharedPtrSoftFadeLock.enter();
 		int numWTPos = wavetable->getNumPositions();
 		std::vector<float> wtcopy[C_MAX_NUM_POSITIONS];
 		for (int pos = 0; pos < numWTPos; pos++)
@@ -636,7 +661,7 @@ void VASTOscilloscope::updateContent(bool force) {
 			wtposto = wavetable->getMultiSelectBegin();
 			numPos = wtposfrom - wtposto + 1;
 		}
-		m_myNote->m_Poly->m_OscBank[l_oscillatorBank]->mSharedPtrSoftFadeLock.exit();
+		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[l_oscillatorBank]->mSharedPtrSoftFadeLock.exit();
 		//**lock
 
 		float xoffset = 0.f;
@@ -655,12 +680,6 @@ void VASTOscilloscope::updateContent(bool force) {
 		Path myCurrentWtposWave;
 		float lastyoffset = -99999999.f;
 		int lastwtposint = C_MAX_NUM_POSITIONS;
-
-		bool b_hasNext = false;
-		if (safeWtPosInt < (numWTPos - 1)) { //has next? //check numpos or numwtpos??
-			b_hasNext = true;
-		}
-
 		float interpol = m_safeWtPosFloat - safeWtPosInt;
 
 		if (waveformImagePerspectiveBuffer.isNull() || !m_hasWaveformImagePerspectiveBuffer) {
@@ -700,9 +719,9 @@ void VASTOscilloscope::updateContent(bool force) {
 					lastwtposint = wtpos;
 
 					if (!l_soloMode)
-						g.setColour(myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeArea).withMultipliedAlpha(0.3));
+						g.setColour(myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeArea).withMultipliedAlpha(0.3f));
 					else
-						g.setColour(myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeAreaSolo).withMultipliedAlpha(0.3));
+						g.setColour(myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeAreaSolo).withMultipliedAlpha(0.3f));
 
 					g.strokePath(myWave, PathStrokeType(1.8f * scale)); //was 1.3f
 				}
@@ -720,16 +739,14 @@ void VASTOscilloscope::updateContent(bool force) {
 			//}
 		}
 		
-		int voice = C_MAX_POLY - 1;
+		int voice = myProcessor->m_pVASTXperience.m_Set.m_uMaxPoly - 1;
 		bool drawn = false;
-		while (voice >= -1) {
-			CVASTSingleNote *m_myNote = myProcessor->m_pVASTXperience.m_Poly.m_singleNote[voice];
+		while (voice >= -1) { //voice >= -1??
 			float lwtPos = m_safeWtPosFloat - wtposto; //wtposto for solomode
-			if (voice >= 0)
-				//lwtPos = m_myNote->m_currentWTPosFloatPercentage[l_oscillatorBank] * (numWTPos - 1);
-				lwtPos = m_myNote->m_currentWTPosFloatPercentage[l_oscillatorBank] * (numPos - 1);
-			
-			if ((voice == -1) || (myProcessor->m_pVASTXperience.m_Poly.m_singleNote[voice]->isPlayingCalledFromUI())) { //-1 is always drawn
+            if (voice >= 0) {
+                lwtPos = myProcessor->m_pVASTXperience.m_Poly.m_currentWTPosFloatPercentage[l_oscillatorBank][voice].load() * (numPos - 1);
+            }
+			if ((voice == -1) || (myProcessor->m_pVASTXperience.m_Poly.isVoicePlaying(voice))) { //-1 is always drawn
 				if (voice > -1)
 					drawn = true;
 				else
@@ -768,7 +785,7 @@ void VASTOscilloscope::updateContent(bool force) {
 					if (voice == -1)
 						g.setColour(myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeLine));
 					else 
-						g.setColour(myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeLine).contrasting(voice / float(C_MAX_POLY)).darker(voice / float(C_MAX_POLY)));
+						g.setColour(myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeLine).contrasting(voice / float(myProcessor->m_pVASTXperience.m_Set.m_uMaxPoly)).darker(voice / float(myProcessor->m_pVASTXperience.m_Set.m_uMaxPoly)));
 				else {
 					g.setColour(myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeLineSolo));
 				}
@@ -785,7 +802,7 @@ void VASTOscilloscope::updateContent(bool force) {
 
 	waveformImageLastSafe = waveformImageWithBorder.createCopy();
 
-	m_dirty = false;
+    m_dirty.store(false);
 	m_newImageForRepaint = true;
 	repaint();
 }
@@ -824,7 +841,7 @@ void VASTOscilloscope::mouseDrag(const MouseEvent &e) { // show value
 	if (myWtEditor == nullptr) return;
 	ModifierKeys modifiers = ModifierKeys::getCurrentModifiersRealtime();
 	int numGridlines = pow(2, myProcessor->m_iWTEditorGridMode + 1);
-	float stepx = (C_WAVE_TABLE_SIZE / numGridlines);
+	float stepx = (static_cast<float>(C_WAVE_TABLE_SIZE) / numGridlines);
 	float stepy = (1.0f / numGridlines);
 	if (myProcessor->m_iWTEditorDrawMode == OscillatorEditMode::SelectMode) {
 		if (modifiers.isShiftDown()) { //adjust selection
@@ -912,7 +929,7 @@ void VASTOscilloscope::mouseDrag(const MouseEvent &e) { // show value
 			if (myProcessor->m_iWTEditorGridMode != OscillatorGridMode::NoGrid) {
 				m_wtselstart = int(float(m_wtselstart) / stepx + 0.5f)  * stepx;
 				m_wtselend = int(float(m_wtselend) / stepx + 0.5f)  * stepx;
-				//DBG("start: " + String(m_wtselstart) + " end: " + String(m_wtselend) + " " + String(ScreenSelectionStart) + " " + String(ScreenSelectionEnd));
+				//VDBG("start: " + String(m_wtselstart) + " end: " + String(m_wtselend) + " " + String(ScreenSelectionStart) + " " + String(ScreenSelectionEnd));
 				if (m_wtselend == m_wtselstart) {
 					std::shared_ptr<CVASTWaveTable> wavetable = myWtEditor->getCurWavetable();
 					if (start < end) {
@@ -955,10 +972,6 @@ void VASTOscilloscope::mouseDrag(const MouseEvent &e) { // show value
 		edit_thread.detach();
 	}
 	else { //draw mode free
-		bool right = false;
-		if (modifiers.isPopupMenu()) {
-			right = true;
-		}
 		int start = e.getMouseDownX();
 		int starty = e.getMouseDownY();
 		int endy = starty + e.getDistanceFromDragStartY();
@@ -978,7 +991,7 @@ void VASTOscilloscope::mouseDrag(const MouseEvent &e) { // show value
 }
 
 
-void VASTOscilloscope::mouseDoubleClick(const MouseEvent &e) {
+void VASTOscilloscope::mouseDoubleClick(const MouseEvent&) {
 	if (myWtEditor == nullptr) {
 		if (myEditor != nullptr) {			
 			auto* cTabbedComponent = myEditor->vaporizerComponent->getTabbedComponent();
@@ -1028,11 +1041,11 @@ bool VASTOscilloscope::isInterestedInFileDrag(const StringArray& files) {
 			l_interested = true;
 	}
 	//if (l_interested)
-		//DBG("Interested in drag and drop");
+		//VDBG("Interested in drag and drop");
 	return l_interested;
 };
 
-void VASTOscilloscope::filesDropped(const StringArray& files, int x, int y) {
+void VASTOscilloscope::filesDropped(const StringArray& files, int , int ) {
 	if (myWtEditor == nullptr) return;
 	myWtEditor->loadWTFile(files[0]); //only one
 }
@@ -1043,7 +1056,7 @@ void VASTOscilloscope::fileDragExit(const StringArray& files) {
 }
 */
 
-void VASTOscilloscope::mouseUp(const MouseEvent &e) {
+void VASTOscilloscope::mouseUp(const MouseEvent &) {
 	m_rightDownY = -1;
 	if (myWtEditor == nullptr) return;
 	ModifierKeys modifiers = ModifierKeys::getCurrentModifiersRealtime();
@@ -1051,15 +1064,14 @@ void VASTOscilloscope::mouseUp(const MouseEvent &e) {
 		m_isBeingDragged = false;
 }
 
-void VASTOscilloscope::mouseWheelMove(const MouseEvent &event, const MouseWheelDetails &wheel) {
+void VASTOscilloscope::mouseWheelMove(const MouseEvent &, const MouseWheelDetails &wheel) {
 	if (myWtEditor == nullptr) return;
 	if (myProcessor->m_iWTEditorDrawMode != OscillatorEditMode::SelectMode) return;
 	bool lExtend = (wheel.deltaY > 0.f);
 
 	ModifierKeys modifiers = ModifierKeys::getCurrentModifiersRealtime();
 	int numGridlines = pow(2, myProcessor->m_iWTEditorGridMode + 1);
-	float stepx = (C_WAVE_TABLE_SIZE / numGridlines);
-	float stepy = (1.0f / numGridlines);
+	float stepx = (static_cast<float>(C_WAVE_TABLE_SIZE) / numGridlines);
 
 	myWtEditor->copySelectionToLocalBuffer();
 
@@ -1112,7 +1124,7 @@ void VASTOscilloscope::mouseWheelMove(const MouseEvent &event, const MouseWheelD
 			std::shared_ptr<CVASTWaveTable> wavetable = myWtEditor->getCurWavetable();
 			if (lExtend) {
 				while (m_selection.iWTSelectionStart > 0) {					
-					if ((*wavetable->getNaiveTable(myWtEditor->getWtPos()))[m_selection.iWTSelectionStart] * (*wavetable->getNaiveTable(myWtEditor->getWtPos()))[m_selection.iWTSelectionStart - 1] > 0.f)
+					if ((*wavetable->getNaiveTable(myWtEditor->getWtPos()))[m_selection.iWTSelectionStart] * (*wavetable->getNaiveTable(myWtEditor->getWtPos()))[static_cast<std::vector<float, std::allocator<float>>::size_type>(m_selection.iWTSelectionStart) - 1] > 0.f)
 						m_selection.iWTSelectionStart--;
 					else {
 						m_selection.iWTSelectionStart--;
@@ -1120,7 +1132,7 @@ void VASTOscilloscope::mouseWheelMove(const MouseEvent &event, const MouseWheelD
 					}
 				}
 				while (m_selection.iWTSelectionEnd < C_WAVE_TABLE_SIZE - 1) {
-					if ((*wavetable->getNaiveTable(myWtEditor->getWtPos()))[m_selection.iWTSelectionEnd] * (*wavetable->getNaiveTable(myWtEditor->getWtPos()))[m_selection.iWTSelectionEnd + 1] > 0.f)
+					if ((*wavetable->getNaiveTable(myWtEditor->getWtPos()))[m_selection.iWTSelectionEnd] * (*wavetable->getNaiveTable(myWtEditor->getWtPos()))[static_cast<std::vector<float, std::allocator<float>>::size_type>(m_selection.iWTSelectionEnd) + 1] > 0.f)
 						m_selection.iWTSelectionEnd++;
 					else {
 						m_selection.iWTSelectionEnd++;
@@ -1130,7 +1142,7 @@ void VASTOscilloscope::mouseWheelMove(const MouseEvent &event, const MouseWheelD
 			}
 			else {
 				while (m_selection.iWTSelectionStart < m_selection.iWTSelectionEnd) {
-					if ((*wavetable->getNaiveTable(myWtEditor->getWtPos()))[m_selection.iWTSelectionStart] * (*wavetable->getNaiveTable(myWtEditor->getWtPos()))[m_selection.iWTSelectionStart + 1] > 0.f)
+					if ((*wavetable->getNaiveTable(myWtEditor->getWtPos()))[m_selection.iWTSelectionStart] * (*wavetable->getNaiveTable(myWtEditor->getWtPos()))[static_cast<std::vector<float, std::allocator<float>>::size_type>(m_selection.iWTSelectionStart) + 1] > 0.f)
 						m_selection.iWTSelectionStart++;
 					else {
 						m_selection.iWTSelectionStart++;
@@ -1138,7 +1150,7 @@ void VASTOscilloscope::mouseWheelMove(const MouseEvent &event, const MouseWheelD
 					}
 				}
 				while (m_selection.iWTSelectionEnd > m_selection.iWTSelectionStart) {
-					if ((*wavetable->getNaiveTable(myWtEditor->getWtPos()))[m_selection.iWTSelectionEnd] * (*wavetable->getNaiveTable(myWtEditor->getWtPos()))[m_selection.iWTSelectionEnd - 1] > 0.f)
+					if ((*wavetable->getNaiveTable(myWtEditor->getWtPos()))[m_selection.iWTSelectionEnd] * (*wavetable->getNaiveTable(myWtEditor->getWtPos()))[static_cast<std::vector<float, std::allocator<float>>::size_type>(m_selection.iWTSelectionEnd) - 1] > 0.f)
 						m_selection.iWTSelectionEnd--;
 					else {
 						m_selection.iWTSelectionEnd--;
@@ -1178,9 +1190,6 @@ void VASTOscilloscope::handleBorderDisplay() {
 
 	int l_oscillatorBank = 0;
 
-	const int width = waveformImage.getWidth();
-	const float halfHeight = waveformImage.getHeight() * 0.5f;
-
 	String l_oscbank = getParentComponent()->getComponentID();
 	//int bank = 0;
 	if (l_oscbank == "OscA") {
@@ -1214,13 +1223,16 @@ void VASTOscilloscope::handleBorderDisplay() {
 			editorSelectedOscBank = true;
 	}
 	if (editorSelectedOscBank) {
-		g.setColour(myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeSelection));
+        if (myEditor!=nullptr)
+            g.setColour(myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeSelection));
 	}
 	else if (m_bMouseover) {
-		g.setColour(myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeSelection).darker(0.6f));
+        if (myEditor!=nullptr)
+            g.setColour(myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeSelection).darker(0.6f));
 	}
 	else {
-		g.setColour(myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeSelection).darker(1.0f));
+        if (myEditor!=nullptr)
+            g.setColour(myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeSelection).darker(1.0f));
 	}
 	g.drawRect(0.f, 0.f, float(waveformImage.getWidth() - 1), float(waveformImage.getHeight() - 1), 1.f * scale);
 
@@ -1234,10 +1246,10 @@ void VASTOscilloscope::handleBorderDisplay() {
 	}
 
 	m_newImageForRepaint = true;
-	//DBG("handleBorderDisplay " + l_oscbank + " " + String(editorSelectedOscBank == true ? "true" : "false") + " " + String(m_bMouseover == true ? "true" : "false"));
+	//VDBG("handleBorderDisplay " + l_oscbank + " " + String(editorSelectedOscBank == true ? "true" : "false") + " " + String(m_bMouseover == true ? "true" : "false"));
 }
 
-void VASTOscilloscope::mouseDown(const MouseEvent &e) {
+void VASTOscilloscope::mouseDown(const MouseEvent &) {
 	ModifierKeys modifiers = ModifierKeys::getCurrentModifiersRealtime();
 	if (myWtEditor == nullptr) {
 		//click on bank osci
@@ -1356,7 +1368,8 @@ void VASTOscilloscope::mouseDown(const MouseEvent &e) {
 		subMenuUseMSEG.addItem(44, TRANS("Use MSEG5 as single cycle waveform"), true);
 		mainMenu.addSubMenu(TRANS("Use MSEG as single cycle waveform"), subMenuUseMSEG, true);
 
-		mainMenu.showMenuAsync(PopupMenu::Options(), juce::ModalCallbackFunction::create([this, wavetable](int result) {
+		mainMenu.showMenuAsync(PopupMenu::Options().withTargetComponent(this).withTargetScreenArea(juce::Rectangle<int>{}.withPosition(Desktop::getMousePosition())),
+			juce::ModalCallbackFunction::create([this, wavetable](int result) {
 
 			if (result == 0) {
 				// user dismissed the menu without picking anything
@@ -1433,7 +1446,7 @@ void VASTOscilloscope::mouseDown(const MouseEvent &e) {
 				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[0]->addSoftFadeEditor();
 				std::shared_ptr<CVASTWaveTable> wt = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[0]->getWavetablePointer();
 				wt->addPosition();
-				wt->setNaiveTable((wt->getNumPositions() - 1), wavetable->getNaiveTable(myWtEditor->getWtPos()), true, myProcessor->getWTmode());
+				wt->setNaiveTable((wt->getNumPositions() - 1), *wavetable->getNaiveTable(myWtEditor->getWtPos()), true, myProcessor->getWTmode());
 				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[0]->setWavetableSoftFade(wt);
 				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[0]->removeSoftFadeEditor();
 				myWtEditor->updateAll(false);
@@ -1442,7 +1455,7 @@ void VASTOscilloscope::mouseDown(const MouseEvent &e) {
 				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[1]->addSoftFadeEditor();
 				std::shared_ptr<CVASTWaveTable> wt = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[1]->getWavetablePointer();
 				wt->addPosition();
-				wt->setNaiveTable((wt->getNumPositions() - 1), wavetable->getNaiveTable(myWtEditor->getWtPos()), true, myProcessor->getWTmode());
+				wt->setNaiveTable((wt->getNumPositions() - 1), *wavetable->getNaiveTable(myWtEditor->getWtPos()), true, myProcessor->getWTmode());
 				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[1]->setWavetableSoftFade(wt);
 				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[1]->removeSoftFadeEditor();
 				myWtEditor->updateAll(false);
@@ -1451,7 +1464,7 @@ void VASTOscilloscope::mouseDown(const MouseEvent &e) {
 				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[2]->addSoftFadeEditor();
 				std::shared_ptr<CVASTWaveTable> wt = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[2]->getWavetablePointer();
 				wt->addPosition();
-				wt->setNaiveTable((wt->getNumPositions() - 1), wavetable->getNaiveTable(myWtEditor->getWtPos()), true, myProcessor->getWTmode());
+				wt->setNaiveTable((wt->getNumPositions() - 1), *wavetable->getNaiveTable(myWtEditor->getWtPos()), true, myProcessor->getWTmode());
 				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[2]->setWavetableSoftFade(wt);
 				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[2]->removeSoftFadeEditor();
 				myWtEditor->updateAll(false);
@@ -1460,7 +1473,7 @@ void VASTOscilloscope::mouseDown(const MouseEvent &e) {
 				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[3]->addSoftFadeEditor();
 				std::shared_ptr<CVASTWaveTable> wt = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[3]->getWavetablePointer();
 				wt->addPosition();
-				wt->setNaiveTable((wt->getNumPositions() - 1), wavetable->getNaiveTable(myWtEditor->getWtPos()), true, myProcessor->getWTmode());
+				wt->setNaiveTable((wt->getNumPositions() - 1), *wavetable->getNaiveTable(myWtEditor->getWtPos()), true, myProcessor->getWTmode());
 				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[3]->setWavetableSoftFade(wt);
 				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[3]->removeSoftFadeEditor();
 				myWtEditor->updateAll(false);
@@ -1487,10 +1500,10 @@ void VASTOscilloscope::mouseDown(const MouseEvent &e) {
 							samples[i] = (*myWtEditor->getBankWavetable()->getNaiveTable(myWtEditor->getWtPos()))[newPos];
 							int intpart = newPos;
 							float fracpart = newPos - intpart;
-							samples[i] = (1 - fracpart) * (*myWtEditor->getBankWavetable()->getNaiveTable(myWtEditor->getWtPos()))[intpart] + fracpart * ((*myWtEditor->getBankWavetable()->getNaiveTable(myWtEditor->getWtPos()))[((intpart + 1) < C_WAVE_TABLE_SIZE - 1) ? intpart + 1 : intpart]);
+							samples[i] = (1 - fracpart) * (*myWtEditor->getBankWavetable()->getNaiveTable(myWtEditor->getWtPos()))[intpart] + fracpart * ((*myWtEditor->getBankWavetable()->getNaiveTable(myWtEditor->getWtPos()))[((intpart + 1) < C_WAVE_TABLE_SIZE - 1) ? static_cast<std::vector<float, std::allocator<float>>::size_type>(intpart) + 1 : intpart]);
 						}
 					}
-					wt->setNaiveTable(myWtEditor->getWtPos(), &samples, false, myProcessor->getWTmode());
+					wt->setNaiveTable(myWtEditor->getWtPos(), samples, false, myProcessor->getWTmode());
 					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->setWavetableSoftFade(wt);
 					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->removeSoftFadeEditor();
 					selectAll(false); //UI update later
@@ -1512,9 +1525,9 @@ void VASTOscilloscope::mouseDown(const MouseEvent &e) {
 						newPos = (m_selection.iWTSelectionStart / step + i) * step;
 						int intpart = newPos;
 						float fracpart = newPos - intpart;
-						samples[i] = (1 - fracpart) * (*myWtEditor->getBankWavetable()->getNaiveTable(myWtEditor->getWtPos()))[intpart] + fracpart * ((*myWtEditor->getBankWavetable()->getNaiveTable(myWtEditor->getWtPos()))[((intpart + 1) < C_WAVE_TABLE_SIZE - 1) ? intpart + 1 : intpart]);
+						samples[i] = (1 - fracpart) * (*myWtEditor->getBankWavetable()->getNaiveTable(myWtEditor->getWtPos()))[intpart] + fracpart * ((*myWtEditor->getBankWavetable()->getNaiveTable(myWtEditor->getWtPos()))[((intpart + 1) < C_WAVE_TABLE_SIZE - 1) ? static_cast<std::vector<float, std::allocator<float>>::size_type>(intpart) + 1 : intpart]);
 					}
-					wt->setNaiveTable(myWtEditor->getWtPos(), &samples, false, myProcessor->getWTmode());
+					wt->setNaiveTable(myWtEditor->getWtPos(), samples, false, myProcessor->getWTmode());
 					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->setWavetableSoftFade(wt);
 					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->removeSoftFadeEditor();
 					selectAll(false); //UI Update later
@@ -1649,13 +1662,13 @@ void VASTOscilloscope::mouseDown(const MouseEvent &e) {
 	}
 }
 
-void VASTOscilloscope::mouseMove(const MouseEvent& event) {
+void VASTOscilloscope::mouseMove(const MouseEvent& ) {
 	m_bMouseover = true;	
 	handleBorderDisplay();
 	repaint();
 }
 
-void VASTOscilloscope::mouseExit(const MouseEvent& event) {
+void VASTOscilloscope::mouseExit(const MouseEvent& ) {
 	m_bMouseover = false;
 	handleBorderDisplay();
 	repaint();
@@ -1668,7 +1681,7 @@ void VASTOscilloscope::singleCycleFromMSEG(int msegNo) {
 
 	VASTMSEGData myData = VASTMSEGData(myProcessor->m_pVASTXperience.m_Set.m_MSEGData[msegNo]);
 	VASTMSEGData myDataLive = VASTMSEGData(myProcessor->m_pVASTXperience.m_Set.m_MSEGData_changed[msegNo]);
-	float totDur = myData.getTotalDuration(); //ms
+	float totDur = myData.calcTotalDuration(); //ms
 	for (int i = 0; i < myData.controlPoints.size(); i++) {
 		//myData.controlPoints[i].isDecay = false;
 		//myData.controlPoints[i].isSustain = false;
@@ -1681,8 +1694,6 @@ void VASTOscilloscope::singleCycleFromMSEG(int msegNo) {
 	
 	float numSamples = (totDur / 1000) * myProcessor->m_pVASTXperience.m_Set.m_nSampleRate;
 	float skips = numSamples / float(C_WAVE_TABLE_SIZE);
-	float lastval = 0.f;
-
 	float* envptr;
 	int arraySize = static_cast<int>(ceil(skips) * C_WAVE_TABLE_SIZE);
 	envptr = new float[arraySize];
@@ -1715,9 +1726,9 @@ void VASTOscilloscope::singleCycleFromMSEG(int msegNo) {
 	delete[] envptr;
 	envptr = NULL;
 
-	wt->setNaiveTable(myWtEditor->getWtPos(), &samples, false, myProcessor->getWTmode());
+	wt->setNaiveTable(myWtEditor->getWtPos(), samples, false, myProcessor->getWTmode());
 	myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->setWavetableSoftFade(wt);
 	myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->removeSoftFadeEditor();
 	myWtEditor->updateAll(false);
-	m_dirty = true;
+    m_dirty.store(true);
 }

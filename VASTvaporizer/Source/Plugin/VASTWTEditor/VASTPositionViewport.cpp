@@ -48,8 +48,12 @@ void VASTPositionViewport::setZoomFactor(int zoom) {
 	m_scaling = zoom;
 	m_dirty = true;
 
-	m_screenWidthScale = float(myWtEditor->getEditorView()->c_viewportPositions->getScreenBounds().getWidth()) / float(myWtEditor->getEditorView()->c_viewportPositions->getWidth());
-	m_screenHeightScale = float(myWtEditor->getEditorView()->c_viewportPositions->getScreenBounds().getHeight()) / float(myWtEditor->getEditorView()->c_viewportPositions->getHeight());
+    m_screenWidthScale = 1.f;
+    m_screenHeightScale = 1.f;
+    if (myWtEditor->getEditorView()->c_viewportPositions->getWidth() > 0)
+        m_screenWidthScale = float(myWtEditor->getEditorView()->c_viewportPositions->getScreenBounds().getWidth()) / float(myWtEditor->getEditorView()->c_viewportPositions->getWidth());
+    if (myWtEditor->getEditorView()->c_viewportPositions->getHeight() > 0)
+        m_screenHeightScale = float(myWtEditor->getEditorView()->c_viewportPositions->getScreenBounds().getHeight()) / float(myWtEditor->getEditorView()->c_viewportPositions->getHeight());
 
 	juce::Rectangle<int> lVisibleArea = myWtEditor->getEditorView()->c_viewportPositions->getViewArea();
 	m_wtImageWidth = (lVisibleArea.getHeight() * m_screenHeightScale - 2.0f) / 6.f * m_scaling;
@@ -58,6 +62,12 @@ void VASTPositionViewport::setZoomFactor(int zoom) {
 	int width = (m_ImageTotalWidth + m_Offset) * (C_MAX_NUM_POSITIONS + 5);
 	setSize(width / m_screenWidthScale, lVisibleArea.getHeight());
 }
+
+void VASTPositionViewport::setEditor(VASTAudioProcessorEditor* editor) { myEditor = editor; }
+
+void VASTPositionViewport::setProcessor(VASTAudioProcessor* processor) { myProcessor = processor; }
+
+void VASTPositionViewport::setWTEditor(VASTWaveTableEditorComponent* wtEditor) { myWtEditor = wtEditor; }
 
 void VASTPositionViewport::resized()
 {	
@@ -109,20 +119,22 @@ void VASTPositionViewport::updateContent(bool force) {
 			return;
 	m_dirty = false;
 	
-	//DBG("VASTPositionViewport::updateContent");
+	//VDBG("VASTPositionViewport::updateContent");
 	if (!approximatelyEqual(m_screenWidthScale, float(myWtEditor->getEditorView()->c_viewportPositions->getScreenBounds().getWidth()) / float(myWtEditor->getEditorView()->c_viewportPositions->getWidth())))
 		setZoomFactor(m_scaling);
 
 	myWtEditor->updateHeaderSelectionLabel(); //right place here?
 
 	std::shared_ptr<CVASTWaveTable> wavetable = myWtEditor->getBankWavetable();
-
+    if (wavetable->m_isBeingUpdated.load() == true) //safety
+        return;
+    
 	//int newWidth = (m_ImageTotalWidth + m_Offset) * (wavetable->getNumPositions() + 1);
 	//setSize(newWidth, getHeight());
 
 	juce::Rectangle<int> lVisibleArea = myWtEditor->getEditorView()->c_viewportPositions->getViewArea();
 	AffineTransform af;
-	lVisibleArea = lVisibleArea.transformed(af.scaled(m_screenWidthScale, m_screenHeightScale));
+	lVisibleArea = lVisibleArea.transformedBy(af.scaled(m_screenWidthScale, m_screenHeightScale));
 
 	waveformImage = Image(Image::RGB, jmax(1, lVisibleArea.getWidth()), jmax(1, lVisibleArea.getHeight()), false);
 	waveformImage.clear(waveformImage.getBounds(), myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeOff));
@@ -301,12 +313,12 @@ void VASTPositionViewport::mouseDoubleClick(const MouseEvent &e) {
 	
 }
 
-int VASTPositionViewport::getArrayIdx(float logicalX) {
+int VASTPositionViewport::getArrayIdx(float logicalX) const {
 	juce::Rectangle<int> lVisibleArea = myWtEditor->getEditorView()->c_viewportPositions->getViewArea();
 	float x = logicalX - lVisibleArea.getX();
 
 	AffineTransform af;
-	lVisibleArea = lVisibleArea.transformed(af.scaled(m_screenWidthScale, m_screenHeightScale));
+	lVisibleArea = lVisibleArea.transformedBy(af.scaled(m_screenWidthScale, m_screenHeightScale));
 	int visiStart = int(lVisibleArea.getBottomLeft().getX() / (m_ImageTotalWidth + m_Offset)) * (m_ImageTotalWidth + m_Offset);
 	int startPos = (visiStart) / (m_ImageTotalWidth + m_Offset);
 	int pos = startPos + (x * m_screenWidthScale) / (m_ImageTotalWidth + m_Offset);
@@ -317,7 +329,6 @@ void VASTPositionViewport::mouseMove(const MouseEvent &e) {
 	if (myWtEditor == nullptr) return;
 	std::shared_ptr<CVASTWaveTable> wavetable = myWtEditor->getBankWavetable();
 	int x = e.getMouseDownX();
-	int posY = e.getPosition().getY();
 	int arrayidx = getArrayIdx(x);
 	if (arrayidx > wavetable->getNumPositions()) arrayidx = wavetable->getNumPositions(); //+ sign
 	if (arrayidx < 0) arrayidx = 0;
@@ -415,7 +426,8 @@ void VASTPositionViewport::mouseDown(const MouseEvent &e) {
 		subMenuNormalize.addItem(41, TRANS("Normalize inidividually"), true);
 		mainMenu.addSubMenu(TRANS("Normalize selected cycles"), subMenuNormalize, true);
 
-		mainMenu.showMenuAsync(PopupMenu::Options(), juce::ModalCallbackFunction::create([this, wavetable, arrayidx](int result) {
+		mainMenu.showMenuAsync(PopupMenu::Options().withTargetComponent(this).withTargetScreenArea(juce::Rectangle<int>{}.withPosition(Desktop::getMousePosition())),
+			juce::ModalCallbackFunction::create([this, wavetable, arrayidx](int result) {
 			if (result == 0) {
 				// user dismissed the menu without picking anything
 			}
@@ -508,13 +520,13 @@ void VASTPositionViewport::mouseDown(const MouseEvent &e) {
 					wtFile.deleteFile();
 					std::unique_ptr<FileOutputStream> outputStream(wtFile.createOutputStream());
 					StringPairArray sarray;
-					juce::ScopedPointer<AudioFormatWriter> writer = wavFormat.createWriterFor(outputStream.get(), 44100.0, 1, 32, sarray, 0); //check params 32 bit?, no metadata, quality options ignored, mono (1 channel)
+                    std::unique_ptr<AudioFormatWriter> writer(wavFormat.createWriterFor(outputStream.get(), 44100.0, 1, 32, sarray, 0)); //check params 32 bit?, no metadata, quality options ignored, mono (1 channel)
 					if (writer != nullptr)
 					{
 						outputStream.release();
 						int wtPos = arrayidx;
 
-						juce::ScopedPointer<AudioSampleBuffer> buffer = new AudioSampleBuffer(1, C_WAV_FORMAT_WT_SIZE);
+						std::unique_ptr<AudioSampleBuffer> buffer(new AudioSampleBuffer(1, C_WAV_FORMAT_WT_SIZE));
 						for (int i = 0; i < C_WAVE_TABLE_SIZE; i++) {
 							buffer->setSample(0, i, (*wavetable->getNaiveTable(wtPos))[i]);
 							//if C_WAVE_TABLE_SIZE != C_WAV_FORMAT_WT_SIZE scale here?
@@ -659,10 +671,15 @@ void VASTPositionViewport::mouseDown(const MouseEvent &e) {
 	}
 }
 
-void VASTPositionViewport::filesDropped(const StringArray& files, int x, int y) {	
+void VASTPositionViewport::filesDropped(const StringArray& files, int x, int ) {	
 	int arrayidx = getArrayIdx(x);
 	int numPos = myWtEditor->getBankWavetable()->getNumPositions();
 	if (arrayidx > numPos) arrayidx = numPos;
 	if (arrayidx < 0) arrayidx = 0;
 	myWtEditor->importFilesAsCycles(files, arrayidx);
+}
+
+String VASTPositionViewport::getTooltip()
+{
+	return TRANS("Hold shift key to multiselect. Click and drag to rearrange sequence. Click and drag plus symbol to add cycles. Rightclick for menu.");
 }

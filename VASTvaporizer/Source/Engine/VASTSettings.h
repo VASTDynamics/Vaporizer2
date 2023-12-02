@@ -26,9 +26,9 @@ public:
 	int m_numSamples = 0;
 	int m_numSamplesReal = 0;
 	int m_currentMaxSamplesInit = 0;
-	bool msegUsed[5] = { false, false, false, false, false };
-	bool lfoUsed[5] = { false, false, false };
-	bool stepSeqUsed[3] = { false, false, false };
+    std::atomic<bool> msegUsed[5] = { false, false, false, false, false };
+	std::atomic<bool> lfoUsed[5] = { false, false, false };
+    std::atomic<bool> stepSeqUsed[3] = { false, false, false };
 	ReadWriteLock mReadWriteLock; // the central mutex that shall prevent reads during buffer resize
 
 	//per voice
@@ -45,23 +45,19 @@ public:
 	OwnedArray<AudioSampleBuffer> FilterVoices[3]; // Filter 1..3 [voice]
 	
 	//global
-	juce::ScopedPointer<AudioSampleBuffer> OscBuffer[4]; //A, B, C, D 
-	juce::ScopedPointer<AudioSampleBuffer> NoiseBuffer;
-	juce::ScopedPointer<AudioSampleBuffer> SamplerBuffer;
-	juce::ScopedPointer<AudioSampleBuffer> FilterBuffer[3]; //Filter 1,2,3
-	juce::ScopedPointer<AudioSampleBuffer> FxBusBuffer[3]; //FxBus 1,2,3
-	juce::ScopedPointer<AudioSampleBuffer> MasterOutBuffer;
-	juce::ScopedPointer<AudioSampleBuffer> LFOGlobalBuffer[5];
-	juce::ScopedPointer<AudioSampleBuffer> StepSeqBuffer[3]; 
-	juce::ScopedPointer<AudioSampleBuffer> CustomModulatorBuffer[4];
+	std::unique_ptr<AudioSampleBuffer> OscBuffer[4]; //A, B, C, D 
+	std::unique_ptr<AudioSampleBuffer> NoiseBuffer;
+	std::unique_ptr<AudioSampleBuffer> SamplerBuffer;
+	std::unique_ptr<AudioSampleBuffer> FilterBuffer[3]; //Filter 1,2,3
+	std::unique_ptr<AudioSampleBuffer> FxBusBuffer[3]; //FxBus 1,2,3
+	std::unique_ptr<AudioSampleBuffer> MasterOutBuffer;
+	std::unique_ptr<AudioSampleBuffer> LFOGlobalBuffer[5];
+	std::unique_ptr<AudioSampleBuffer> StepSeqBuffer[3];
+	std::unique_ptr<AudioSampleBuffer> CustomModulatorBuffer[4];
 	
 	// the buffers
-	juce::ScopedPointer<AudioSampleBuffer> fAudioInputBuffer;
-	juce::ScopedPointer<AudioSampleBuffer> fInputEnvelopeBuffer;
-
-	//juce::ScopedPointer<AudioSampleBuffer> CircularFilterOutput;
-	//int m_circularFilterOutputPos = 0;
-	//int m_circularFilterOutputLen = 2048 * multiplier;
+	std::unique_ptr<AudioSampleBuffer> fAudioInputBuffer;
+	std::unique_ptr<AudioSampleBuffer> fInputEnvelopeBuffer;
 
 	~sRoutingBuffers() {
 		OscBuffer[0] = nullptr; OscBuffer[1] = nullptr; OscBuffer[2] = nullptr; OscBuffer[3] = nullptr;
@@ -126,39 +122,39 @@ public:
 
 		//stereos
 		for (int bank = 0; bank < 4; bank++) {
-			OscBuffer[bank] = new AudioSampleBuffer(2, initSize);
+			OscBuffer[bank].reset(new AudioSampleBuffer(2, initSize));
 		}
 
-		NoiseBuffer = new AudioSampleBuffer(2, initSize);
-		SamplerBuffer = new AudioSampleBuffer(2, initSize);
+		NoiseBuffer.reset(new AudioSampleBuffer(2, initSize));
+		SamplerBuffer.reset(new AudioSampleBuffer(2, initSize));
         
 		for (int filter = 0; filter < 3; filter++) {
-            FilterBuffer[filter] = new AudioSampleBuffer(2, initSize);
+            FilterBuffer[filter].reset(new AudioSampleBuffer(2, initSize));
 		}
 
 		for (int fxbus = 0; fxbus < 3; fxbus++) {
-			FxBusBuffer[fxbus] = new AudioSampleBuffer(2, initSize);
+			FxBusBuffer[fxbus].reset(new AudioSampleBuffer(2, initSize));
 		}
 
-		MasterOutBuffer = new AudioSampleBuffer(2, initSize);
+		MasterOutBuffer.reset(new AudioSampleBuffer(2, initSize));
 
 		//LFO global
 		for (int lfo = 0; lfo < 5; lfo++) {
-			LFOGlobalBuffer[lfo] = new AudioSampleBuffer(1, initSize);
+			LFOGlobalBuffer[lfo].reset(new AudioSampleBuffer(1, initSize));
 		}
 
 		//stepseq
 		for (int stepseq = 0; stepseq < 3; stepseq++) {
-			StepSeqBuffer[stepseq] = new AudioSampleBuffer(1, initSize);
+			StepSeqBuffer[stepseq].reset(new AudioSampleBuffer(1, initSize));
 		}
 
 		//custom modulators
 		for (int custmod = 0; custmod < 4; custmod++) {
-			CustomModulatorBuffer[custmod] = new AudioSampleBuffer(1, initSize);
+			CustomModulatorBuffer[custmod].reset(new AudioSampleBuffer(1, initSize));
 		}
 
-		fAudioInputBuffer = new AudioSampleBuffer(1, initSize);
-		fInputEnvelopeBuffer = new AudioSampleBuffer(1, initSize);
+		fAudioInputBuffer.reset(new AudioSampleBuffer(1, initSize));
+		fInputEnvelopeBuffer.reset(new AudioSampleBuffer(1, initSize));
 
 		//CircularFilterOutput = new AudioSampleBuffer(1, m_circularFilterOutputLen);
 		//CircularFilterOutput->clear();
@@ -266,7 +262,7 @@ public:
 		SamplerBuffer->clear(0, numSamples);  //needs clearing
 	}
 
-	int getNumSamples() {
+	int getNumSamples() const {
 		return m_numSamples;
 	};
 
@@ -297,11 +293,13 @@ public:
 	- LFO5Buffer - clear
 	*/
 
-} sRoutingBuffers;
+} sRoutingBuffers;;
 
 typedef struct {
-	uint64_t voiceNo; //to avoid error C2338
-	uint64_t currentFrame; //to avoid error C2338
+//	uint64_t voiceNo; //to avoid error C2338
+//	uint64_t currentFrame; //to avoid error C2338
+	int voiceNo; //to avoid error C2338
+	int currentFrame; //to avoid error C2338
 } modMatrixInputState;
 
 typedef struct {
@@ -359,84 +357,9 @@ public:
 
 	float midiNoteGetBaseFreq(MYUINT uMIDINote, float oscMasterTune);
 
-	double getMillisecondsPerBeat() {
-		double dawbpm = m_dPpqBpm;
-		if (dawbpm < 3.0) 
-			dawbpm = 120.0; //standard value
-		double millisecondsPerBeat = (1.0 / dawbpm) * 60.0 * 1000.0;
-		return millisecondsPerBeat;
-	}
-
-	double getIntervalRatio(int beatindex) {
-		double l_dRatio = 0.0;
-		switch (beatindex) {
-		case TIMEBEATS::BEATS1_256:
-			l_dRatio = (1.0 / 256.0);
-			break;
-		case TIMEBEATS::BEATS1_128:
-			l_dRatio = (1.0 / 128.0);
-			break;
-		case TIMEBEATS::BEATS1_64:
-			l_dRatio = (1.0 / 64.0);
-			break;
-		case TIMEBEATS::BEATS1_32:
-			l_dRatio = (1.0 / 32.0);
-			break;
-		case TIMEBEATS::BEATS1_16:
-			l_dRatio = (1.0 / 16.0);
-			break;
-		case TIMEBEATS::BEATS1_9:
-			l_dRatio = (1.0 / 9.0);
-			break;
-		case TIMEBEATS::BEATS1_8:
-			l_dRatio = (1.0 / 8.0);
-			break;
-		case TIMEBEATS::BEATS1_4:
-			l_dRatio = (1.0 / 4.0);
-			break;
-		case TIMEBEATS::BEATS1_3:
-			l_dRatio = (1.0 / 3.0);
-			break;
-		case TIMEBEATS::BEATS1_2:
-			l_dRatio = (1.0 / 2.0);
-			break;
-		case TIMEBEATS::BEATS1:
-			l_dRatio = 1.0;
-			break;
-		case TIMEBEATS::BEATS3_2:
-			l_dRatio = 1.5;
-			break;
-		case TIMEBEATS::BEATS2:
-			l_dRatio = 2.0;
-			break;
-		case TIMEBEATS::BEATS3:
-			l_dRatio = 3.0;
-			break;
-		case TIMEBEATS::BEATS4:
-			l_dRatio = 4.0;
-			break;
-		case TIMEBEATS::BEATS8:
-			l_dRatio = 8.0;
-			break;
-		case TIMEBEATS::BEATS16:
-			l_dRatio = 16.0;
-			break;
-		case TIMEBEATS::BEATS32:
-			l_dRatio = 32.0;
-			break;
-		case TIMEBEATS::BEATS64:
-			l_dRatio = 64.0;
-			break;
-		}
-		return l_dRatio;
-	}
-
-	double getIntervalTimeFromDAWBeats(int beatindex) {
-		double l_dIntervalTime = 0.f;
-		double millisecondsPerBeat = getMillisecondsPerBeat();
-		l_dIntervalTime = millisecondsPerBeat * getIntervalRatio(beatindex);
-		return l_dIntervalTime;
-	}
+	double getMillisecondsPerBeat();
+	double getIntervalRatio(int beatindex);
+	double getIntervalTimeFromDAWBeats(int beatindex);
 
 	int64 m_cUnderruns = 0; 
 
@@ -448,9 +371,9 @@ public:
 	int _gettimeofday(struct timeval *tv); //for note stealing
 	
 	// Global 
-	int m_nSampleRate = 44100; //standard
-	int m_nExpectedSamplesPerBlock = 0;
-	juce::Atomic<float> m_fMasterTune = 440; //Kammerton a
+	std::atomic<int> m_nSampleRate = 44100; //standard
+    std::atomic<int> m_nExpectedSamplesPerBlock = 0;
+    std::atomic<float> m_fMasterTune = 440; //Kammerton a
 
 	//int m_nOversamplingRatio = 4;
 	//int m_nSampleRateOversampled = m_nSampleRate * m_nOversamplingRatio;
@@ -475,16 +398,14 @@ public:
 	float m_fMasterVolume = 1.f;
 	LinearSmoothedValue<float> m_fMasterVolume_smoothed;	
 
-	double m_dPpqPosition = 0;
-	double m_dPpqBpm = 0;
-	double m_dPpqLoopStart = 0;
-	double m_dPpqLoopEnd = 0;
-	bool m_bPpqIsPlaying = false;
-	bool m_bPpqIsLooping = false;
-	double m_dPpqPositionOfLastBarStart = 0;
+    std::atomic<double> m_dPpqPosition = 0;
+    std::atomic<double> m_dPpqBpm = 0;
+    std::atomic<bool> m_bPpqIsPlaying = false;
+    std::atomic<bool> m_bPpqIsLooping = false;
+    std::atomic<double> m_dPpqPositionOfLastBarStart = 0;
 	
 	//Mod Wheel
-	MYUINT m_uModWheel = 0;
+    std::atomic<MYUINT> m_uModWheel = 0;
 
 	std::shared_ptr<CVASTParamState> m_State;	  //the active state
 	
@@ -499,9 +420,9 @@ public:
 	std::atomic<modMatrixInputState> bufferInputState;
 
 	bool modMatrixDestSet[M_MODMATRIX_MAX_DESTINATIONS];
-	bool modMatrixSrceSet[M_MODMATRIX_MAX_SOURCES];
-	bool modMatrixSlotUsed[M_MODMATRIX_MAX_SLOTS];
-	int  modMatrixSlotDest[M_MODMATRIX_MAX_SLOTS];
+    bool modMatrixSrceSet[M_MODMATRIX_MAX_SOURCES];
+    bool modMatrixSlotUsed[M_MODMATRIX_MAX_SLOTS];
+    int modMatrixSlotDest[M_MODMATRIX_MAX_SLOTS];
 	float lastModMatrixSourceVal[M_MODMATRIX_MAX_SLOTS][M_MODMATRIX_MAX_SOURCES][C_MAX_POLY];
 	modMatrixValueLookup modMatrixValueLookupTable[M_MODMATRIX_MAX_SLOTS];
 
@@ -524,8 +445,16 @@ public:
 
 	float getFrequencyFactorFromLUT(float octave);
 
+	void setTuning(String tuningFile);
 	TUN::CSingleScale m_scale;
+    
+    float m_whiteNoiseBuffer[C_MAX_SAMPLE_RATE * 3]; //3 seconds at highest rate
 	
+	enum class customFonts{ OpenSans, OpenSansBold, AlteHaasGrotesk, AlteHaasGroteskBold, SFUIDisplayRegular, SFUIDisplayBold, TradeGothicLT, TradeGothicLTBold };
+	Font customFontBuffer[8];
+	void loadCustomFonts();
+	Font getCustomFont(CVASTSettings::customFonts customFont);
+
 	private:	
 		bool modMatrixDestinationSet(MYUINT destination); //use fast instead
 		bool modMatrixSourceSet(MYUINT source); //use fast instead

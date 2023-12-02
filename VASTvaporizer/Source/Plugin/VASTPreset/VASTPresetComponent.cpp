@@ -33,7 +33,7 @@
 //[MiscUserDefs] You can add your own user definitions and misc code here...
 
 VASTValueTreeItem::VASTValueTreeItem(const ValueTree& v, VASTAudioProcessor* proc, VASTPresetComponent* presetCompopnent)
-	: tree(v), _processor(proc), _presetComponent(presetCompopnent)
+	: _processor(proc), _presetComponent(presetCompopnent), tree(v)
 {
 	tree.addListener(this);
 	lookAndFeelChanged();
@@ -67,7 +67,8 @@ void VASTValueTreeItem::itemClicked(const MouseEvent &e) {
 			mainMenu.setLookAndFeel(_processor->getCurrentVASTLookAndFeel());
 			mainMenu.addItem(1, "Remove all favorites", true);
 			mainMenu.addSeparator();
-			mainMenu.showMenuAsync(PopupMenu::Options(), juce::ModalCallbackFunction::create([this](int result) {
+			mainMenu.showMenuAsync(PopupMenu::Options().withTargetComponent(e.eventComponent).withTargetScreenArea(juce::Rectangle<int>{}.withPosition(Desktop::getMousePosition())),
+				juce::ModalCallbackFunction::create([this](int result) {
 				if (result == 0) {
 				}
 				else if (result == 1) {
@@ -94,7 +95,8 @@ void VASTValueTreeItem::itemClicked(const MouseEvent &e) {
 			mainMenu.addItem(1, "Delete MIDI program change mapping", true);
 			mainMenu.addSeparator();
 
-			mainMenu.showMenuAsync(PopupMenu::Options(), juce::ModalCallbackFunction::create([this](int result) {
+			mainMenu.showMenuAsync(PopupMenu::Options().withTargetComponent(e.eventComponent).withTargetScreenArea(juce::Rectangle<int>{}.withPosition(Desktop::getMousePosition())),
+				juce::ModalCallbackFunction::create([this](int result) {
 
 				if (result == 0) {
 				}
@@ -165,7 +167,8 @@ void VASTValueTreeItem::itemClicked(const MouseEvent &e) {
 			mainMenu.setLookAndFeel(_processor->getCurrentVASTLookAndFeel());
 			mainMenu.addItem(1, "Manage preset files and folders", true);
 			mainMenu.addSeparator();
-			mainMenu.showMenuAsync(PopupMenu::Options(), juce::ModalCallbackFunction::create([this](int result) {
+			mainMenu.showMenuAsync(PopupMenu::Options().withTargetComponent(e.eventComponent).withTargetScreenArea(juce::Rectangle<int>{}.withPosition(Desktop::getMousePosition())),
+				juce::ModalCallbackFunction::create([this](int result) {
 				if (result == 0) {
 				}
 				else if (result == 1) {
@@ -188,7 +191,7 @@ void VASTValueTreeItem::itemClicked(const MouseEvent &e) {
 	}
 }
 
-void VASTValueTreeItem::itemDoubleClicked(const MouseEvent &e) {
+void VASTValueTreeItem::itemDoubleClicked(const MouseEvent &) {
 	this->setSelected(false, false, NotificationType::sendNotification);
 }
 
@@ -207,8 +210,8 @@ void VASTValueTreeItem::paintItem(Graphics& g, int width, int height)
 		g.setColour(Colours::black);
 	}
 	else if ((tree["id"].toString() == "presetfolder") || (tree["id"].toString() == "folder")) {
-		std::unique_ptr<Drawable> img = Drawable::createFromImageData(_presetComponent->folder_fill_svg, _presetComponent->folder_fill_svgSize);
-		img->drawWithin(g, juce::Rectangle<float>(0, 0, 10 * wf, height), RectanglePlacement::centred, 0.6f);
+        if (_presetComponent->m_folderImg != nullptr)
+            _presetComponent->m_folderImg->drawWithin(g, juce::Rectangle<float>(0, 0, 10 * wf, height), RectanglePlacement::centred, 0.6f);
 		g.setColour(vComboTextColor);
 		g.setFont(_presetComponent->m_font);
 		if (isSelected())
@@ -280,7 +283,6 @@ void VASTValueTreeItem::paintItem(Graphics& g, int width, int height)
 	}
 	else if (tree["id"].toString() == "newest") {
 		g.setColour(Colours::darkcyan.darker(0.4f).withAlpha(0.7f));
-		numFavs = _presetComponent->myProcessor->m_presetData.getNumFavorites(4);
 	}
 	else if (tree["id"].toString() == "stars") {
 		textindent = 10 * wf;
@@ -339,16 +341,14 @@ bool VASTValueTreeItem::isInterestedInDragSource(const DragAndDropTarget::Source
 
 void VASTValueTreeItem::itemDropped(const DragAndDropTarget::SourceDetails &dragSourceDetails, int insertIndex)
 {
-	if (this == nullptr)
-		return;
 	if (this->getParentItem() == nullptr)
 		return;
 	if (dragSourceDetails.description.toString().startsWith("midimappreset")) {
-		DBG(dragSourceDetails.description.toString());
+		VDBG(dragSourceDetails.description.toString());
 		int pos = dragSourceDetails.description.toString().substring(14).getIntValue();
 		int idx = -1;
 		for (int i = 0; i < this->getParentItem()->getNumSubItems(); i++) {
-			DBG(((VASTValueTreeItem*)this->getParentItem())->getID());
+			VDBG(((VASTValueTreeItem*)this->getParentItem())->getID());
 			if (((VASTValueTreeItem*)this->getParentItem())->getID() == "midimapping") //"MIDI Prog. Mapping" item
 				break;
 			if (this->getParentItem()->getSubItem(i) == this) {
@@ -418,7 +418,7 @@ void VASTValueTreeItem::itemDropped(const DragAndDropTarget::SourceDetails &drag
 		return;
 	}
 
-	DBG(this->getID());
+	VDBG(this->getID());
 
 	String internalid = dragSourceDetails.description.toString().substring(6);
 
@@ -552,7 +552,7 @@ void VASTValueTreeItem::getSelectedTreeViewItems(TreeView& treeView, OwnedArray<
 			items.add(new ValueTree(vti->tree));
 }
 
-void VASTValueTreeItem::itemSelectionChanged(bool isNowSelected) {
+void VASTValueTreeItem::itemSelectionChanged(bool ) {
 	_presetComponent->setSearchVector();
 }
 
@@ -572,6 +572,12 @@ void VASTValueTreeItem::valueTreePropertyChanged(ValueTree&, const Identifier&)
 {
 	repaintItem();
 }
+
+void VASTValueTreeItem::valueTreeChildAdded(ValueTree& parentTree, ValueTree&) { treeChildrenChanged(parentTree); }
+
+void VASTValueTreeItem::valueTreeChildRemoved(ValueTree& parentTree, ValueTree&, int) { treeChildrenChanged(parentTree); }
+
+void VASTValueTreeItem::valueTreeChildOrderChanged(ValueTree& parentTree, int, int) { treeChildrenChanged(parentTree); }
 
 void VASTValueTreeItem::treeChildrenChanged(const ValueTree& parentTree)
 {
@@ -682,7 +688,14 @@ VASTPresetComponent::VASTPresetComponent (VASTAudioProcessor* proc, ComboBox* bo
     addAndMakeVisible (c_treeheader4.get());
     c_treeheader4->setName ("c_treeheader4");
 
-
+    auto asyncImageLoad = [p = juce::Component::SafePointer<VASTPresetComponent> (this)]()
+    {
+        if (p) {
+            p->m_folderImg = Drawable::createFromImageData(p->folder_fill_svg, p->folder_fill_svgSize);
+        }
+    };
+    Timer::callAfterDelay (200, asyncImageLoad);
+    
     //[UserPreSize]
 	m_searchText->addListener(this);
 	getTopLevelComponent()->addKeyListener(this);
@@ -841,6 +854,8 @@ void VASTPresetComponent::reloadPresets() {
 	myProcessor->m_presetData.reloadPresetArray();
 	setSearchVector();
 }
+
+juce::TreeView* VASTPresetComponent::getTreeViewFiles() { return treeViewFiles.get(); }
 
 void VASTPresetComponent::buildTreeContent() {
 
@@ -1070,6 +1085,8 @@ bool VASTPresetComponent::keyPressed(const KeyPress& key, Component* originating
 	return true;
 }
 
+TextEditor* VASTPresetComponent::getSearchTextEditor() { return m_searchText.get(); }
+
 void VASTPresetComponent::setSearchVector() {
 	myProcessor->m_presetData.mSearchVector.clear();
 	for (int j = 0; j < treeViewFiles->getNumSelectedItems(); j++) { //search depths all
@@ -1270,7 +1287,7 @@ void VASTPresetComponent::PresetTableComponent::updateContent(bool clearFilterIf
 	table.updateContent();
 }
 
-Component* VASTPresetComponent::PresetTableComponent::refreshComponentForCell(int rowNumber, int columnId, bool isRowSelected, Component* existingComponentToUpdate) {
+Component* VASTPresetComponent::PresetTableComponent::refreshComponentForCell(int rowNumber, int columnId, bool , Component* existingComponentToUpdate) {
 	if (columnId != 8) return nullptr; //only for ranking
 	VASTPresetStars *star = static_cast<VASTPresetStars*>(existingComponentToUpdate);
 
@@ -1307,7 +1324,7 @@ void VASTPresetComponent::PresetTableComponent::selectedRowsChanged(int lastRowS
 	_box->setText(presetdisplay, juce::NotificationType::dontSendNotification);
 }
 
-void VASTPresetComponent::PresetTableComponent::cellClicked(int rowNumber, int columnId, const MouseEvent &e)  {
+void VASTPresetComponent::PresetTableComponent::cellClicked(int rowNumber, int , const MouseEvent &e)  {
 	ModifierKeys modifiers = e.mods; //ModifierKeys::getCurrentModifiersRealtime();
 	if (modifiers.isPopupMenu() || modifiers.isCtrlDown()) {
 		int sel = table.getSelectedRow(0);
@@ -1325,7 +1342,8 @@ void VASTPresetComponent::PresetTableComponent::cellClicked(int rowNumber, int c
 		mainMenu.addItem(13, "Add to favorites 4", true);
 		mainMenu.addItem(14, "Add to favorites 5", true);
 		mainMenu.addItem(15, "Remove from favorites", true);
-		mainMenu.showMenuAsync(PopupMenu::Options(), juce::ModalCallbackFunction::create([this, internalid](int result) {
+		mainMenu.showMenuAsync(PopupMenu::Options().withTargetComponent(this).withTargetScreenArea(juce::Rectangle<int>{}.withPosition(Desktop::getMousePosition())),
+			juce::ModalCallbackFunction::create([this, internalid](int result) {
 			if (result == 0) {
 			}
 			else if (result == 1) {
@@ -1379,13 +1397,13 @@ void VASTPresetComponent::PresetTableComponent::cellClicked(int rowNumber, int c
 			}
 		}));
 	}
-	else {
-		if (rowNumber == table.getSelectedRow())
-			selectedRowsChanged(rowNumber);
-	}
+	//else {
+	//	if (rowNumber == table.getSelectedRow())
+	//		selectedRowsChanged(rowNumber);
+	//}
 }
 
-void VASTPresetComponent::PresetTableComponent::cellDoubleClicked(int rowNumber, int columnId, const MouseEvent &)  {
+void VASTPresetComponent::PresetTableComponent::cellDoubleClicked(int , int , const MouseEvent &)  {
 	((VASTComboPreset*)_box)->removePopup();
 }
 

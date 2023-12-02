@@ -12,12 +12,19 @@ VAST Dynamics Audio Software (TM)
 #include <cmath>
 #include <string>
 #include <stdio.h>
+#ifdef __aarch64__ //arm64
+    #include "../../sse2neon.h"
+#else
+    #include "immintrin.h"
+#endif
 
 #define CONVEX_LIMIT 0.00398107
 #define CONCAVE_LIMIT 0.99601893
 #define ARC4RANDOMMAX 4294967295 // (2^32 - 1)
-
 #define EXTRACT_BITS(the_val, bits_start, bits_len) ((the_val >> (bits_start - 1)) & ((1 << bits_len) - 1))
+
+JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE("-Wconversion")
+JUCE_BEGIN_IGNORE_WARNINGS_MSVC(4244 4267) //C4244 conversion from 'type1' to 'type2', possible loss of data //C4267 conversion from 'size_t' to 'type', possible loss of data
 
 enum fu_type
 {
@@ -447,10 +454,6 @@ inline float megapanR(float pos)
 }
 
 //portable_instrinsics.h
-#if LINUX
-#include <immintrin.h>
-#endif
-
 #define vFloat __m128
 
 #define vZero _mm_setzero_ps()
@@ -500,9 +503,6 @@ inline float get1f(__m128 m, int i)
 {
 	return *((float*)&m + i);
 }
-
-//CHVAST SURGE
-
 
 //VAST for chunk save files
 /*
@@ -988,12 +988,13 @@ inline double calcInverseValueVoltOctaveExp(double dLowLimit, double dHighLimit,
 	return fastlog2(dControlValue / dLowLimit) / dOctaves;
 }
 
+/* use std::log2 instead
 inline double log2(double n)
 {
 	// log(n)/log(2) is log2.  
 	return log(n) / log((double)2);
 }
-
+*/
 
 /* calcModulatedValueExp()
 
@@ -1059,7 +1060,7 @@ inline double doWhiteNoise()
 {
 	float fNoise = 0.0;
 
-#if defined _WINDOWS || defined _WINDLL || defined JUCE_LINUX
+#if defined _WINDOWS || defined _WINDLL || (__GLIBC__ == 2 && __GLIBC_MINOR__ < 36)
 	// fNoise is 0 -> 32767.0
 	fNoise = (float)rand();
 
@@ -1687,100 +1688,6 @@ inline void cexp(float x, float y, float *zx, float *zy)
 	*zy = expx * sinf(y);
 }
 
-// Compute Real Cepstrum Of Signal
-inline void RealCepstrum(int n, float *signal, float *realCepstrum)
-{
-	float *realTime, *imagTime, *realFreq, *imagFreq;
-	int i;
-
-	realTime = new float[n];
-	imagTime = new float[n];
-	realFreq = new float[n];
-	imagFreq = new float[n];
-
-	// Compose Complex FFT Input
-
-	for (i = 0; i < n; i++)
-	{
-		realTime[i] = signal[i];
-		imagTime[i] = 0.0f;
-	}
-
-	// Perform DFT
-
-	DFT(n, realTime, imagTime, realFreq, imagFreq);
-
-	// Calculate Log Of Absolute Value
-
-	for (i = 0; i < n; i++)
-	{
-		realFreq[i] = logf(cabs(realFreq[i], imagFreq[i]));
-		imagFreq[i] = 0.0f;
-	}
-
-	// Perform Inverse FFT
-
-	InverseDFT(n, realTime, imagTime, realFreq, imagFreq);
-
-	// Output Real Part Of FFT
-	for (i = 0; i < n; i++)
-		realCepstrum[i] = realTime[i];
-
-	delete realTime;
-	delete imagTime;
-	delete realFreq;
-	delete imagFreq;
-}
-
-// Compute Minimum Phase Reconstruction Of Signal
-inline void MinimumPhase(int n, float *realCepstrum, float *minimumPhase)
-{
-	int i, nd2;
-	float *realTime, *imagTime, *realFreq, *imagFreq;
-
-	nd2 = n / 2;
-	realTime = new float[n];
-	imagTime = new float[n];
-	realFreq = new float[n];
-	imagFreq = new float[n];
-
-	if ((n % 2) == 1)
-	{
-		realTime[0] = realCepstrum[0];
-		for (i = 1; i < nd2; i++)
-			realTime[i] = 2.0f * realCepstrum[i];
-		for (i = nd2; i < n; i++)
-			realTime[i] = 0.0f;
-	}
-	else
-	{
-		realTime[0] = realCepstrum[0];
-		for (i = 1; i < nd2; i++)
-			realTime[i] = 2.0f * realCepstrum[i];
-		realTime[nd2] = realCepstrum[nd2];
-		for (i = nd2 + 1; i < n; i++)
-			realTime[i] = 0.0f;
-	}
-
-	for (i = 0; i < n; i++)
-		imagTime[i] = 0.0f;
-
-	DFT(n, realTime, imagTime, realFreq, imagFreq);
-
-	for (i = 0; i < n; i++)
-		cexp(realFreq[i], imagFreq[i], &realFreq[i], &imagFreq[i]);
-
-	InverseDFT(n, realTime, imagTime, realFreq, imagFreq);
-
-	for (i = 0; i < n; i++)
-		minimumPhase[i] = realTime[i];
-
-	delete realTime;
-	delete imagTime;
-	delete realFreq;
-	delete imagFreq;
-}
-
 /*
 Function:	lagrpol() implements n-order Lagrange Interpolation
 
@@ -1888,7 +1795,7 @@ inline float calcLogControl(float fVar)
 */
 inline float calcAntiLogControl(float fVar)
 {
-	return fVar = (pow((float)10.0, fVar) - 1.0) / 9.0;
+	return (pow((float)10.0, fVar) - 1.0) / 9.0;
 }
 // ----------------------------------------------------------------------------- //
 
@@ -1945,39 +1852,6 @@ inline float calcSliderVariable(float fMin, float fMax, float fVar)
 	return fCookedData;
 }
 
-//
-// String Helpers: these convert to and from strings
-//
-// user must delete char array when done!
-inline char* MYUINTToString(long value)
-{
-//#pragma clang diagnostic push
-//#pragma clang diagnostic ignored "-Wformat"
-	char* text = new char[33];
-	ltoa(value, text, 10);
-	return text;
-//#pragma clang diagnostic pop
-}
-
-inline MYUINT stringToMYUINT(char* p)
-{
-//#pragma clang diagnostic push
-//#pragma clang diagnostic ignored "-Wformat"
-	return atol(p);
-//#pragma clang diagnostic pop
-}
-
-// user must delete char array when done!
-inline char* intToString(long value)
-{
-//#pragma clang diagnostic push
-//#pragma clang diagnostic ignored "-Wformat"
-	char* text = new char[33];
-	itoa(value, text, 10);
-	return text;
-//#pragma clang diagnostic pop
-}
-
 inline double stringToDouble(char* p)
 {
 	return atof(p);
@@ -1993,38 +1867,5 @@ inline int stringToInt(char* p)
 	return atol(p);
 }
 
-// user must delete char array when done!
-inline char* floatToString(float value, int nSigDigits)
-{
-	char* text = new char[64];
-	if (nSigDigits > 32)
-		nSigDigits = 32;
-	// gcvt (value, nSigDigits, text);
-	sprintf(text, "%.*f", nSigDigits, value);
-
-	return text;
-}
-
-// user must delete char array when done!
-inline char* doubleToString(double value, int nSigDigits)
-{
-	char* text = new char[64];
-	if (nSigDigits > 32)
-		nSigDigits = 32;
-	// gcvt (value, nSigDigits, text);
-	sprintf(text, "%.*f", nSigDigits, value);
-	return text;
-}
-
-
-inline char* addStrings(char* pString1, char* pString2)
-{
-	int n = strlen(pString1);
-	int m = strlen(pString2);
-
-	char* p = new char[n + m + 1];
-	strcpy(p, pString1);
-
-	return strncat(p, pString2, m);
-}
-
+JUCE_END_IGNORE_WARNINGS_MSVC
+JUCE_END_IGNORE_WARNINGS_GCC_LIKE

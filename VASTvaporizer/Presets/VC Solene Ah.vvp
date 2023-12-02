@@ -2,8 +2,9 @@
 
 <VASTvaporizer2 PatchVersion="VASTVaporizerParamsV2.20000" PatchName="Solene Ah"
                 PatchCategory="VC" PatchTag="Factory" PatchAuthor="Trupiano Thomas"
-                PatchComments="" CustomModulator1Text="" CustomModulator2Text=""
-                CustomModulator3Text="" CustomModulator4Text="">
+                PatchComments="" CustomModulator1Text="Reverb feedback" CustomModulator2Text="Custom2"
+                CustomModulator3Text="Custom3" CustomModulator4Text="Custom4"
+                PatchMPEPreset="" PatchMPEBendRange="0">
   <PARAM id="m_fMasterVolumedB" text="-5.12"/>
   <PARAM id="m_fPortamento" text="0"/>
   <PARAM id="m_fMasterTune" text="440"/>
@@ -12,7 +13,7 @@
   <PARAM id="m_fVoiceGain" text="100"/>
   <PARAM id="m_uPolyMode" text="Poly16"/>
   <PARAM id="m_bLegatoMode" text="On"/>
-  <PARAM id="m_fCustomModulator1" text="0"/>
+  <PARAM id="m_fCustomModulator1" text="73.92"/>
   <PARAM id="m_fCustomModulator2" text="0"/>
   <PARAM id="m_fCustomModulator3" text="0"/>
   <PARAM id="m_fCustomModulator4" text="0"/>
@@ -234,7 +235,7 @@
   <PARAM id="m_uARPTimeBeats" text="1"/>
   <PARAM id="m_bARPOnOff" text="Off"/>
   <PARAM id="m_bARPSynch" text="Off"/>
-  <PARAM id="m_uModMatSrce1" text="---"/>
+  <PARAM id="m_uModMatSrce1" text="CustomModulator1"/>
   <PARAM id="m_uModMatSrce2" text="---"/>
   <PARAM id="m_uModMatSrce3" text="---"/>
   <PARAM id="m_uModMatSrce4" text="---"/>
@@ -250,7 +251,7 @@
   <PARAM id="m_uModMatSrce14" text="---"/>
   <PARAM id="m_uModMatSrce15" text="---"/>
   <PARAM id="m_uModMatSrce16" text="---"/>
-  <PARAM id="m_uModMatDest1" text="---"/>
+  <PARAM id="m_uModMatDest1" text="ReverbFeedback"/>
   <PARAM id="m_uModMatDest2" text="---"/>
   <PARAM id="m_uModMatDest3" text="---"/>
   <PARAM id="m_uModMatDest4" text="---"/>
@@ -266,7 +267,7 @@
   <PARAM id="m_uModMatDest14" text="---"/>
   <PARAM id="m_uModMatDest15" text="---"/>
   <PARAM id="m_uModMatDest16" text="---"/>
-  <PARAM id="m_fModMatVal1" text="0"/>
+  <PARAM id="m_fModMatVal1" text="100"/>
   <PARAM id="m_fModMatVal2" text="0"/>
   <PARAM id="m_fModMatVal3" text="0"/>
   <PARAM id="m_fModMatVal4" text="0"/>
@@ -382,24 +383,24 @@
   <PARAM id="m_fFormantVowelTwo" text="0"/>
   <PARAM id="m_fFormantVowelMix" text="0"/>
   <PARAM id="m_fFormantGain" text="100"/>
-  <PARAM id="m_bMultibandCompressorOffOn" text="Off"/>
-  <PARAM id="m_fMultibandCompressorFcLow" text="1500"/>
-  <PARAM id="m_fMultibandCompressorFcHigh" text="6700"/>
-  <PARAM id="m_fMultibandCompressorThresholdLB" text="-40"/>
-  <PARAM id="m_fMultibandCompressorRatioLB" text="40"/>
-  <PARAM id="m_fMultibandCompressorAttackLB" text="4"/>
-  <PARAM id="m_fMultibandCompressorReleaseLB" text="4"/>
-  <PARAM id="m_fMultibandCompressorGainLB" text="14"/>
-  <PARAM id="m_fMultibandCompressorThresholdMB" text="-10"/>
-  <PARAM id="m_fMultibandCompressorRatioMB" text="25"/>
-  <PARAM id="m_fMultibandCompressorAttackMB" text="4"/>
-  <PARAM id="m_fMultibandCompressorReleaseMB" text="4"/>
-  <PARAM id="m_fMultibandCompressorGainMB" text="8"/>
-  <PARAM id="m_fMultibandCompressorThresholdHB" text="-40"/>
-  <PARAM id="m_fMultibandCompressorRatioHB" text="55"/>
-  <PARAM id="m_fMultibandCompressorAttackHB" text="4"/>
-  <PARAM id="m_fMultibandCompressorReleaseHB" text="4"/>
-  <PARAM id="m_fMultibandCompressorGainHB" text="10"/>
+  <PARAM id="m_bMBCompOffOn" text="Off"/>
+  <PARAM id="m_fMBCompFcLow" text="1500"/>
+  <PARAM id="m_fMBCompFcHigh" text="6700"/>
+  <PARAM id="m_fMBCompThresholdLB" text="-40"/>
+  <PARAM id="m_fMBCompRatioLB" text="40"/>
+  <PARAM id="m_fMBCompAttackLB" text="4"/>
+  <PARAM id="m_fMBCompReleaseLB" text="4"/>
+  <PARAM id="m_fMBCompGainLB" text="14"/>
+  <PARAM id="m_fMBCompThresholdMB" text="-10"/>
+  <PARAM id="m_fMBCompRatioMB" text="25"/>
+  <PARAM id="m_fMBCompAttackMB" text="4"/>
+  <PARAM id="m_fMBCompReleaseMB" text="4"/>
+  <PARAM id="m_fMBCompGainMB" text="8"/>
+  <PARAM id="m_fMBCompThresholdHB" text="-40"/>
+  <PARAM id="m_fMBCompRatioHB" text="55"/>
+  <PARAM id="m_fMBCompAttackHB" text="4"/>
+  <PARAM id="m_fMBCompReleaseHB" text="4"/>
+  <PARAM id="m_fMBCompGainHB" text="10"/>
   <PARAM id="m_bLimiterOffOn" text="Off"/>
   <PARAM id="m_fLimiterDryWet" text="100"/>
   <PARAM id="m_uLimiterMode" text="Limiter"/>
@@ -501,24 +502,24 @@
   <PARAM id="m_fFormantVowelTwo_bus2" text="0"/>
   <PARAM id="m_fFormantVowelMix_bus2" text="0"/>
   <PARAM id="m_fFormantGain_bus2" text="100"/>
-  <PARAM id="m_bMultibandCompressorOffOn_bus2" text="Off"/>
-  <PARAM id="m_fMultibandCompressorFcLow_bus2" text="1500"/>
-  <PARAM id="m_fMultibandCompressorFcHigh_bus2" text="6700"/>
-  <PARAM id="m_fMultibandCompressorThresholdLB_bus2" text="-40"/>
-  <PARAM id="m_fMultibandCompressorRatioLB_bus2" text="40"/>
-  <PARAM id="m_fMultibandCompressorAttackLB_bus2" text="4"/>
-  <PARAM id="m_fMultibandCompressorReleaseLB_bus2" text="4"/>
-  <PARAM id="m_fMultibandCompressorGainLB_bus2" text="14"/>
-  <PARAM id="m_fMultibandCompressorThresholdMB_bus2" text="-10"/>
-  <PARAM id="m_fMultibandCompressorRatioMB_bus2" text="25"/>
-  <PARAM id="m_fMultibandCompressorAttackMB_bus2" text="4"/>
-  <PARAM id="m_fMultibandCompressorReleaseMB_bus2" text="4"/>
-  <PARAM id="m_fMultibandCompressorGainMB_bus2" text="8"/>
-  <PARAM id="m_fMultibandCompressorThresholdHB_bus2" text="-40"/>
-  <PARAM id="m_fMultibandCompressorRatioHB_bus2" text="55"/>
-  <PARAM id="m_fMultibandCompressorAttackHB_bus2" text="4"/>
-  <PARAM id="m_fMultibandCompressorReleaseHB_bus2" text="4"/>
-  <PARAM id="m_fMultibandCompressorGainHB_bus2" text="10"/>
+  <PARAM id="m_bMBCompOffOn_bus2" text="Off"/>
+  <PARAM id="m_fMBCompFcLow_bus2" text="1500"/>
+  <PARAM id="m_fMBCompFcHigh_bus2" text="6700"/>
+  <PARAM id="m_fMBCompThresholdLB_bus2" text="-40"/>
+  <PARAM id="m_fMBCompRatioLB_bus2" text="40"/>
+  <PARAM id="m_fMBCompAttackLB_bus2" text="4"/>
+  <PARAM id="m_fMBCompReleaseLB_bus2" text="4"/>
+  <PARAM id="m_fMBCompGainLB_bus2" text="14"/>
+  <PARAM id="m_fMBCompThresholdMB_bus2" text="-10"/>
+  <PARAM id="m_fMBCompRatioMB_bus2" text="25"/>
+  <PARAM id="m_fMBCompAttackMB_bus2" text="4"/>
+  <PARAM id="m_fMBCompReleaseMB_bus2" text="4"/>
+  <PARAM id="m_fMBCompGainMB_bus2" text="8"/>
+  <PARAM id="m_fMBCompThresholdHB_bus2" text="-40"/>
+  <PARAM id="m_fMBCompRatioHB_bus2" text="55"/>
+  <PARAM id="m_fMBCompAttackHB_bus2" text="4"/>
+  <PARAM id="m_fMBCompReleaseHB_bus2" text="4"/>
+  <PARAM id="m_fMBCompGainHB_bus2" text="10"/>
   <PARAM id="m_bLimiterOffOn_bus2" text="Off"/>
   <PARAM id="m_fLimiterDryWet_bus2" text="100"/>
   <PARAM id="m_uLimiterMode_bus2" text="Limiter"/>
@@ -620,24 +621,24 @@
   <PARAM id="m_fFormantVowelTwo_bus3" text="0"/>
   <PARAM id="m_fFormantVowelMix_bus3" text="0"/>
   <PARAM id="m_fFormantGain_bus3" text="100"/>
-  <PARAM id="m_bMultibandCompressorOffOn_bus3" text="Off"/>
-  <PARAM id="m_fMultibandCompressorFcLow_bus3" text="1500"/>
-  <PARAM id="m_fMultibandCompressorFcHigh_bus3" text="6700"/>
-  <PARAM id="m_fMultibandCompressorThresholdLB_bus3" text="-40"/>
-  <PARAM id="m_fMultibandCompressorRatioLB_bus3" text="40"/>
-  <PARAM id="m_fMultibandCompressorAttackLB_bus3" text="4"/>
-  <PARAM id="m_fMultibandCompressorReleaseLB_bus3" text="4"/>
-  <PARAM id="m_fMultibandCompressorGainLB_bus3" text="14"/>
-  <PARAM id="m_fMultibandCompressorThresholdMB_bus3" text="-10"/>
-  <PARAM id="m_fMultibandCompressorRatioMB_bus3" text="25"/>
-  <PARAM id="m_fMultibandCompressorAttackMB_bus3" text="4"/>
-  <PARAM id="m_fMultibandCompressorReleaseMB_bus3" text="4"/>
-  <PARAM id="m_fMultibandCompressorGainMB_bus3" text="8"/>
-  <PARAM id="m_fMultibandCompressorThresholdHB_bus3" text="-40"/>
-  <PARAM id="m_fMultibandCompressorRatioHB_bus3" text="55"/>
-  <PARAM id="m_fMultibandCompressorAttackHB_bus3" text="4"/>
-  <PARAM id="m_fMultibandCompressorReleaseHB_bus3" text="4"/>
-  <PARAM id="m_fMultibandCompressorGainHB_bus3" text="10"/>
+  <PARAM id="m_bMBCompOffOn_bus3" text="Off"/>
+  <PARAM id="m_fMBCompFcLow_bus3" text="1500"/>
+  <PARAM id="m_fMBCompFcHigh_bus3" text="6700"/>
+  <PARAM id="m_fMBCompThresholdLB_bus3" text="-40"/>
+  <PARAM id="m_fMBCompRatioLB_bus3" text="40"/>
+  <PARAM id="m_fMBCompAttackLB_bus3" text="4"/>
+  <PARAM id="m_fMBCompReleaseLB_bus3" text="4"/>
+  <PARAM id="m_fMBCompGainLB_bus3" text="14"/>
+  <PARAM id="m_fMBCompThresholdMB_bus3" text="-10"/>
+  <PARAM id="m_fMBCompRatioMB_bus3" text="25"/>
+  <PARAM id="m_fMBCompAttackMB_bus3" text="4"/>
+  <PARAM id="m_fMBCompReleaseMB_bus3" text="4"/>
+  <PARAM id="m_fMBCompGainMB_bus3" text="8"/>
+  <PARAM id="m_fMBCompThresholdHB_bus3" text="-40"/>
+  <PARAM id="m_fMBCompRatioHB_bus3" text="55"/>
+  <PARAM id="m_fMBCompAttackHB_bus3" text="4"/>
+  <PARAM id="m_fMBCompReleaseHB_bus3" text="4"/>
+  <PARAM id="m_fMBCompGainHB_bus3" text="10"/>
   <PARAM id="m_bLimiterOffOn_bus3" text="Off"/>
   <PARAM id="m_fLimiterDryWet_bus3" text="100"/>
   <PARAM id="m_uLimiterMode_bus3" text="Limiter"/>
@@ -785,70 +786,70 @@
                m_fDecayTimeExternalSet="989.1000070350918" m_fReleaseTimeExternalSet="111.3000323805799"
                m_fAttackSteps="0.0" m_fDecaySteps="0.0" m_fReleaseSteps="0.0"
                numControlPoints="4">
-      <msegPoint0 isDecay="0" isSustain="0" isLoopStart="0" xVal="0.0" yVal="0.0"
-                  curvy="0.5" curveStyle="1"/>
-      <msegPoint1 isDecay="1" isSustain="0" isLoopStart="0" xVal="0.02134471665810589"
+      <msegPoint0 isDecay="0" isSustain="0" isLoopStart="0" isMPELift="0" xVal="0.0"
+                  yVal="0.0" curvy="0.5" curveStyle="1"/>
+      <msegPoint1 isDecay="1" isSustain="0" isLoopStart="0" isMPELift="0" xVal="0.02134471665810589"
                   yVal="1.0" curvy="0.800000011920929" curveStyle="1"/>
-      <msegPoint2 isDecay="0" isSustain="1" isLoopStart="0" xVal="0.9010138487606573"
+      <msegPoint2 isDecay="0" isSustain="1" isLoopStart="0" isMPELift="0" xVal="0.9010138487606573"
                   yVal="1.0" curvy="0.2000000029802322" curveStyle="1"/>
-      <msegPoint3 isDecay="0" isSustain="0" isLoopStart="0" xVal="1.0" yVal="0.0"
-                  curvy="0.2000000029802322" curveStyle="1"/>
+      <msegPoint3 isDecay="0" isSustain="0" isLoopStart="0" isMPELift="0" xVal="1.0"
+                  yVal="0.0" curvy="0.2000000029802322" curveStyle="1"/>
     </msegData0>
     <msegData1 patternName="ADSR" env_mode="0" m_bSynch="0" m_uTimeBeats="0"
                m_fSustainLevelExternalSet="1.0" m_fAttackTimeExternalSet="24.00000025718004"
                m_fDecayTimeExternalSet="989.1000070350918" m_fReleaseTimeExternalSet="111.3000323805799"
                m_fAttackSteps="0.0" m_fDecaySteps="0.0" m_fReleaseSteps="0.0"
                numControlPoints="4">
-      <msegPoint0 isDecay="0" isSustain="0" isLoopStart="0" xVal="0.0" yVal="0.0"
-                  curvy="0.5" curveStyle="1"/>
-      <msegPoint1 isDecay="1" isSustain="0" isLoopStart="0" xVal="0.02134471665810589"
+      <msegPoint0 isDecay="0" isSustain="0" isLoopStart="0" isMPELift="0" xVal="0.0"
+                  yVal="0.0" curvy="0.5" curveStyle="1"/>
+      <msegPoint1 isDecay="1" isSustain="0" isLoopStart="0" isMPELift="0" xVal="0.02134471665810589"
                   yVal="1.0" curvy="0.800000011920929" curveStyle="1"/>
-      <msegPoint2 isDecay="0" isSustain="1" isLoopStart="0" xVal="0.9010138487606573"
+      <msegPoint2 isDecay="0" isSustain="1" isLoopStart="0" isMPELift="0" xVal="0.9010138487606573"
                   yVal="1.0" curvy="0.2000000029802322" curveStyle="1"/>
-      <msegPoint3 isDecay="0" isSustain="0" isLoopStart="0" xVal="1.0" yVal="0.0"
-                  curvy="0.2000000029802322" curveStyle="1"/>
+      <msegPoint3 isDecay="0" isSustain="0" isLoopStart="0" isMPELift="0" xVal="1.0"
+                  yVal="0.0" curvy="0.2000000029802322" curveStyle="1"/>
     </msegData1>
     <msegData2 patternName="ADSR" env_mode="0" m_bSynch="0" m_uTimeBeats="0"
                m_fSustainLevelExternalSet="1.0" m_fAttackTimeExternalSet="24.00000025718004"
                m_fDecayTimeExternalSet="989.1000070350918" m_fReleaseTimeExternalSet="111.3000323805799"
                m_fAttackSteps="0.0" m_fDecaySteps="0.0" m_fReleaseSteps="0.0"
                numControlPoints="4">
-      <msegPoint0 isDecay="0" isSustain="0" isLoopStart="0" xVal="0.0" yVal="0.0"
-                  curvy="0.5" curveStyle="1"/>
-      <msegPoint1 isDecay="1" isSustain="0" isLoopStart="0" xVal="0.02134471665810589"
+      <msegPoint0 isDecay="0" isSustain="0" isLoopStart="0" isMPELift="0" xVal="0.0"
+                  yVal="0.0" curvy="0.5" curveStyle="1"/>
+      <msegPoint1 isDecay="1" isSustain="0" isLoopStart="0" isMPELift="0" xVal="0.02134471665810589"
                   yVal="1.0" curvy="0.800000011920929" curveStyle="1"/>
-      <msegPoint2 isDecay="0" isSustain="1" isLoopStart="0" xVal="0.9010138487606573"
+      <msegPoint2 isDecay="0" isSustain="1" isLoopStart="0" isMPELift="0" xVal="0.9010138487606573"
                   yVal="1.0" curvy="0.2000000029802322" curveStyle="1"/>
-      <msegPoint3 isDecay="0" isSustain="0" isLoopStart="0" xVal="1.0" yVal="0.0"
-                  curvy="0.2000000029802322" curveStyle="1"/>
+      <msegPoint3 isDecay="0" isSustain="0" isLoopStart="0" isMPELift="0" xVal="1.0"
+                  yVal="0.0" curvy="0.2000000029802322" curveStyle="1"/>
     </msegData2>
     <msegData3 patternName="ADSR" env_mode="0" m_bSynch="0" m_uTimeBeats="0"
                m_fSustainLevelExternalSet="1.0" m_fAttackTimeExternalSet="24.00000025718004"
                m_fDecayTimeExternalSet="989.1000070350918" m_fReleaseTimeExternalSet="111.3000323805799"
                m_fAttackSteps="0.0" m_fDecaySteps="0.0" m_fReleaseSteps="0.0"
                numControlPoints="4">
-      <msegPoint0 isDecay="0" isSustain="0" isLoopStart="0" xVal="0.0" yVal="0.0"
-                  curvy="0.5" curveStyle="1"/>
-      <msegPoint1 isDecay="1" isSustain="0" isLoopStart="0" xVal="0.02134471665810589"
+      <msegPoint0 isDecay="0" isSustain="0" isLoopStart="0" isMPELift="0" xVal="0.0"
+                  yVal="0.0" curvy="0.5" curveStyle="1"/>
+      <msegPoint1 isDecay="1" isSustain="0" isLoopStart="0" isMPELift="0" xVal="0.02134471665810589"
                   yVal="1.0" curvy="0.800000011920929" curveStyle="1"/>
-      <msegPoint2 isDecay="0" isSustain="1" isLoopStart="0" xVal="0.9010138487606573"
+      <msegPoint2 isDecay="0" isSustain="1" isLoopStart="0" isMPELift="0" xVal="0.9010138487606573"
                   yVal="1.0" curvy="0.2000000029802322" curveStyle="1"/>
-      <msegPoint3 isDecay="0" isSustain="0" isLoopStart="0" xVal="1.0" yVal="0.0"
-                  curvy="0.2000000029802322" curveStyle="1"/>
+      <msegPoint3 isDecay="0" isSustain="0" isLoopStart="0" isMPELift="0" xVal="1.0"
+                  yVal="0.0" curvy="0.2000000029802322" curveStyle="1"/>
     </msegData3>
     <msegData4 patternName="ADSR" env_mode="0" m_bSynch="0" m_uTimeBeats="0"
                m_fSustainLevelExternalSet="1.0" m_fAttackTimeExternalSet="24.00000025718004"
                m_fDecayTimeExternalSet="989.1000070350918" m_fReleaseTimeExternalSet="111.3000323805799"
                m_fAttackSteps="0.0" m_fDecaySteps="0.0" m_fReleaseSteps="0.0"
                numControlPoints="4">
-      <msegPoint0 isDecay="0" isSustain="0" isLoopStart="0" xVal="0.0" yVal="0.0"
-                  curvy="0.5" curveStyle="1"/>
-      <msegPoint1 isDecay="1" isSustain="0" isLoopStart="0" xVal="0.02134471665810589"
+      <msegPoint0 isDecay="0" isSustain="0" isLoopStart="0" isMPELift="0" xVal="0.0"
+                  yVal="0.0" curvy="0.5" curveStyle="1"/>
+      <msegPoint1 isDecay="1" isSustain="0" isLoopStart="0" isMPELift="0" xVal="0.02134471665810589"
                   yVal="1.0" curvy="0.800000011920929" curveStyle="1"/>
-      <msegPoint2 isDecay="0" isSustain="1" isLoopStart="0" xVal="0.9010138487606573"
+      <msegPoint2 isDecay="0" isSustain="1" isLoopStart="0" isMPELift="0" xVal="0.9010138487606573"
                   yVal="1.0" curvy="0.2000000029802322" curveStyle="1"/>
-      <msegPoint3 isDecay="0" isSustain="0" isLoopStart="0" xVal="1.0" yVal="0.0"
-                  curvy="0.2000000029802322" curveStyle="1"/>
+      <msegPoint3 isDecay="0" isSustain="0" isLoopStart="0" isMPELift="0" xVal="1.0"
+                  yVal="0.0" curvy="0.2000000029802322" curveStyle="1"/>
     </msegData4>
     <stepSeqData0 patternName="Default pattern" invert="0" numSteps="4">
       <stepSeqStep0 barHeight="1.0"/>

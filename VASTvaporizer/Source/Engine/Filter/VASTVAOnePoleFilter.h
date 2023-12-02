@@ -25,10 +25,10 @@ public:
 	double m_dBeta;			// Feed Back coeff
 
 	// provide access to our feedback output
-	double getFeedbackOutput(){return m_dZ1*m_dBeta;}
+	double getFeedbackOutput();
 
 	// -- CFilter Overrides --
-	virtual void reset(){m_dZ1 = 0;}
+	virtual void reset();
 
 	// recalc the coeff -- NOTE: not used for Korg35 Filter
 	virtual void updateFilter();

@@ -27,7 +27,7 @@ protected:
 	// member variables
 	//
 	// --- pointer to our circular buffer
-	juce::ScopedPointer<AudioSampleBuffer> m_pBuffer;
+    std::unique_ptr<AudioSampleBuffer> m_pBuffer;
 	
 	// --- delay in mSec, set by Parent Plug In
 	double m_dDelay_ms;

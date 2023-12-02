@@ -16,7 +16,11 @@ VAST Dynamics Audio Software (TM)
 #include "VASTEngineHeader.h"
 
 /**************************/
-#include "emmintrin.h"
+#ifdef __aarch64__ //arm64
+	#include "../sse2neon.h"
+#else
+	#include "emmintrin.h"
+#endif
 #include "Filter/VASTQFilterCoefficients.h" 
 #include "Utils/VASTSynthfunctions.h" 
 #include "Filter/VASTQFilter.h" 
@@ -112,7 +116,7 @@ public:
 
 	CVASTVCFCombFilter m_combFilter;
 	CVASTOversampler m_Oversampler;
-	ScopedPointer<AudioSampleBuffer> inBufferUp;
+    std::unique_ptr<AudioSampleBuffer> inBufferUp;
 	dsp::LadderFilter<float> m_ladderFilter1;
 
 private:

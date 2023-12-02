@@ -10,14 +10,14 @@ CDelay::CDelay(void)
 {
 	//m_pBuffer = NULL;
 
-	m_fOutputAttenuation_dB = 0;
-	m_fDelay_ms = 0.0;
+	m_fOutputAttenuation_dB = 0.f;
+	m_fDelay_ms = 0.f;
 
-	m_fOutputAttenuation = 0.0;
-	m_fDelayInSamples = 0.0;
+	m_fOutputAttenuation = 0.f;
+	m_fDelayInSamples = 0.f;
 	m_nSampleRate = 0;
 
-	m_pBuffer = new AudioSampleBuffer(1, 44100 * 2); // inital value
+	m_pBuffer = std::make_unique<AudioSampleBuffer>(1, 44100 * 2); // inital value
 
 	resetDelay();
 }
@@ -59,7 +59,7 @@ void CDelay::cookVariables()
 {
 	m_fOutputAttenuation = pow((float)10.0, (float)m_fOutputAttenuation_dB/(float)20.0);
 
-	m_fDelayInSamples = m_fDelay_ms*((float)m_nSampleRate/1000.0);
+	m_fDelayInSamples = m_fDelay_ms*((float)m_nSampleRate/1000.f);
 
 	// subtract to make read index
 	m_nReadIndex = m_nWriteIndex - (int)m_fDelayInSamples;
@@ -96,7 +96,7 @@ float CDelay::readDelay()
 	/*
 	vassert((yn > -10.0f) && (yn<= 10.0));
 	if (!((yn > -10.0f) && (yn <= 10.0))) {
-		DBG("CDelay::readDelay() overflow > 10.f");
+		VDBG("CDelay::readDelay() overflow > 10.f");
 		yn = 0.0;
 		resetDelay(); // try auto correct! BUT THIS IS NOT A SOLUTION!
 	}
@@ -114,7 +114,7 @@ float CDelay::readDelay()
 	/*
 	vassert((yn_1 > -10.0f) && (yn_1 <= 10.0));
 	if (!((yn_1 > -10.0f) && (yn_1 <= 10.0))) {
-		DBG("CDelay::readDelay() overflow > 10.f");
+		VDBG("CDelay::readDelay() overflow > 10.f");
 		yn_1 = 0.0;
 		resetDelay(); // try auto correct! BUT THIS IS NOT A SOLUTION!
 	}
@@ -128,7 +128,7 @@ float CDelay::readDelay()
 
 float CDelay::readDelayAt(float fmSec)
 {
-	float fDelayInSamples = fmSec*((float)m_nSampleRate)/1000.0;
+	float fDelayInSamples = fmSec*((float)m_nSampleRate)/1000.f;
 
 	// subtract to make read index
 	int nReadIndex = m_nWriteIndex - (int)fDelayInSamples;
@@ -169,8 +169,7 @@ float CDelay::readDelayAt(float fmSec)
 	// interpolate: (0, yn) and (1, yn_1) by the amount fracDelay
 	float fFracDelay = fDelayInSamples - (int)fDelayInSamples;
 
-	return dLinTerp(0, 1, yn, yn_1, fFracDelay); // interp frac between them
-
+	return dLinTerp(0.f, 1.f, yn, yn_1, fFracDelay); // interp frac between them
 }
 
 bool CDelay::processAudio(float* pInput, float* pOutput)

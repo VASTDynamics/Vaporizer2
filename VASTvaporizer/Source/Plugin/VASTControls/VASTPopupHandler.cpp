@@ -30,12 +30,12 @@ void VASTPopupHandler::drawValueBubble(Component* slider) {
 
 		VASTAudioProcessorEditor* myEditor = (VASTAudioProcessorEditor*)_slider->getAudioProcessor()->getActiveEditor();
 		if (m_valueWindow == NULL) {
-			m_valueWindow = new BubbleMessageComponent();
+			m_valueWindow = std::make_unique<BubbleMessageComponent>();
 			m_valueWindow->setLookAndFeel(myEditor->getCurrentVASTLookAndFeel());
 			m_valueWindow->setRepaintsOnMouseActivity(false);
 			//m_valueWindow->setBounds(0, 0, 100 * myEditor->getProcessor()->getPluginScaleWidthFactor(), 10 * myEditor->getProcessor()->getPluginScaleHeightFactor());
 			//slider->getParentComponent()->addChildComponent(m_valueWindow);
-			myEditor->vaporizerComponent->addChildComponent(m_valueWindow);
+			myEditor->vaporizerComponent->addChildComponent(m_valueWindow.get());
 		}
 		juce::AttributedString sText(lCurValue);
 		sText.setJustification(Justification::centred);
@@ -54,10 +54,10 @@ void VASTPopupHandler::drawValueBubble(Component* slider) {
 
 			VASTAudioProcessorEditor* myEditor = (VASTAudioProcessorEditor*)_slider->getAudioProcessor()->getActiveEditor();
 			if (m_valueWindow == NULL) {
-				m_valueWindow = new BubbleMessageComponent();
+				m_valueWindow = std::make_unique<BubbleMessageComponent>();
 				m_valueWindow->setLookAndFeel(myEditor->getCurrentVASTLookAndFeel());
 				m_valueWindow->setRepaintsOnMouseActivity(false);
-				myEditor->vaporizerComponent->addChildComponent(m_valueWindow);
+				myEditor->vaporizerComponent->addChildComponent(m_valueWindow.get());
 			}
 			juce::AttributedString sText(lCurValue);
 			sText.setJustification(Justification::centred);
@@ -93,7 +93,7 @@ void VASTPopupHandler::mouseDrag(const MouseEvent &e) { // show value
 	e.eventComponent->mouseDrag(e);   // do the usual thing .... drag the slider
 	
 	//if ((e.eventTime.toMilliseconds() - m_lastEventTime.toMilliseconds()) >= 100) { //every x ms repainted
-	//	DBG("MouseDrag Paint");
+	//	VDBG("MouseDrag Paint");
 	//	drawValueBubble(e, modifiers);
 	//}
 }
@@ -243,12 +243,11 @@ void VASTPopupHandler::mouseDown(const MouseEvent &e) {
 				String cid = _parameterslider->getComponentID();
 				int modmatdest = myProcessor->autoParamGetDestination(cid);
 				if (modmatdest > 0) { //-1 and 0 are not wanted
-					isDDTarget = true;
 					if (myProcessor->m_pVASTXperience.m_Set.modMatrixDestinationSetFast(modmatdest)) {
 						int slot = myProcessor->m_pVASTXperience.m_Set.modMatrixGetFirstSlotWithDestination(modmatdest);
 						float modVal = 0.f;
 						double curvy = 0.f;
-						float lastSrceVals[C_MAX_POLY] = { 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f };
+						float lastSrceVals[C_MAX_POLY] {};
 						int polarity = 0;
 						int source = 0;
 						int destination = 0;
@@ -298,7 +297,8 @@ void VASTPopupHandler::mouseDown(const MouseEvent &e) {
 		mainMenu.addItem(28, "Reset all MIDI mappings to not-mapped");
 		
 		//const int result = mainMenu.showAt(_comp);
-		mainMenu.showMenuAsync(PopupMenu::Options(), juce::ModalCallbackFunction::create([this, param, myProcessor, myEditor, _comp, modStart, modEnd, modPolarity, lCurValue, e, mainMenu](int result) {
+		mainMenu.showMenuAsync(PopupMenu::Options().withTargetComponent(_comp).withTargetScreenArea(juce::Rectangle<int>{}.withPosition(Desktop::getMousePosition())),
+			juce::ModalCallbackFunction::create([this, param, myProcessor, myEditor, _comp, modStart, modEnd, modPolarity, lCurValue, e, mainMenu](int result) {
 			if (result == 0)
 			{
 				// user dismissed the menu without picking anything
@@ -319,7 +319,7 @@ void VASTPopupHandler::mouseDown(const MouseEvent &e) {
 				l_veditor->setTextEnd(String(modEnd));
 				l_veditor->setPolarity(modPolarity);
 
-				juce::CallOutBox::launchAsynchronously(std::move(l_veditor), newBounds, myEditor->vaporizerComponent);
+				juce::CallOutBox::launchAsynchronously(std::move(l_veditor), newBounds, myEditor->vaporizerComponent.get());
 
 			}
 			else if (result == 21)
@@ -337,7 +337,7 @@ void VASTPopupHandler::mouseDown(const MouseEvent &e) {
 				l_veditor->setText(lCurValue);
 
 				//CallOutBox &cb =
-				juce::CallOutBox::launchAsynchronously(std::move(l_veditor), newBounds, myEditor->vaporizerComponent);
+				juce::CallOutBox::launchAsynchronously(std::move(l_veditor), newBounds, myEditor->vaporizerComponent.get());
 
 			}
 			else if (result == 22)

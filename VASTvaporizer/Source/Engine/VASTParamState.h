@@ -71,8 +71,8 @@ enum POLARITY { Unipolar, Bipolar };
 const StringArray SWITCH_Array = StringArray("Off", "On");
 enum SWITCH { SWITCH_OFF, SWITCH_ON };
 
-const StringArray POLYMODE_Array = StringArray("Mono", "Poly4", "Poly16");
-enum POLYMODE { MONO, POLY4, POLY16 };
+const StringArray POLYMODE_Array = StringArray("Mono", "Poly4", "Poly16", "Poly32");
+enum POLYMODE { MONO, POLY4, POLY16, POLY32 };
 
 const StringArray MIDINOTES_Array = StringArray(	"c-2", "c#-2", "d-2", "d#-2", "e-2", "f-2", "f#-2", "g-2", "g#-2", "a-2", "a#-2", "b/h-2", 
 													"c-1", "c#-1", "d-1", "d#-1", "e-1", "f-1", "f#-1", "g-1", "g#-1", "a-1", "a#-1", "b/h-1",

@@ -8,80 +8,30 @@ VAST Dynamics Audio Software (TM)
 #include "VASTSettings.h"
 #include "VASTSampler.h"
 
-
-//class VASTSamplerSound; //forward declaration
+class VASTAudioProcessor; //forward declaration
 class VASTSynthesiserSound : public juce::SynthesiserSound {
 public:
-	VASTSynthesiserSound() {
-		m_samplerSound.clear();
-		m_samplerSound_changed.clear();
-	};
+	VASTSynthesiserSound();
 
-	bool appliesToNote(int midiNoteNumber) {
-		return true;
-	};
-	bool appliesToChannel(int midiChannel) {
-		return true;
-	};
+	bool appliesToNote(int);
+	bool appliesToChannel(int);
 
-	bool hasSamplerSound() { 
-		return m_samplerSound.size() > 0; 
-	};
-	VASTSamplerSound* getSamplerSound() { 
-		if (hasSamplerSound()) return m_samplerSound[0];
-		else return nullptr; 
-	};
+	bool hasSamplerSound();
+	VASTSamplerSound* getSamplerSound();
 
-	void addSamplerSound(VASTSamplerSound* samplerSound) { //only for load preset
-		VASTSamplerSound* newSound = new VASTSamplerSound(samplerSound);
-		m_samplerSound.clear();
-		m_samplerSound.add(samplerSound);
-		addSamplerSoundChanged(newSound); //add a copy to the changed
-		m_changedFlag = true;
-	};
-	void clearSamplerSound() { 
-		m_samplerSound.clear();
-	};
+	void addSamplerSound(VASTSamplerSound* samplerSound);
+
+	void clearSamplerSound();
 	
-	void softFadeExchangeSample() {
-		VASTSamplerSound* sound = getSamplerSoundChanged();
-		if (sound != nullptr)
-			m_changedFlag = sound->softFadeExchangeSample();
-		
-		//copy change to live here!!
-		if (m_changedFlag) {
-			VASTSamplerSound* oldSound = getSamplerSoundChanged();
-			if (oldSound != nullptr) {
-				VASTSamplerSound* newSound = new VASTSamplerSound(getSamplerSoundChanged()); //do safety here
-				m_samplerSound.clear();
-				m_samplerSound.add(newSound);
-			}
-			else {
-				m_samplerSound.clear();
-			}
-			m_changedFlag = false;
-		}
-	}
+	void softFadeExchangeSample();
 
-	bool hasSamplerSoundChanged() {
-		return m_samplerSound_changed.size() > 0;
-	};
-	VASTSamplerSound* getSamplerSoundChanged() {
-		if (hasSamplerSoundChanged()) return m_samplerSound_changed[0];
-		else return nullptr;
-	};
-	void clearSamplerSoundChanged() {
-		m_samplerSound_changed.clear();
-		m_changedFlag = true;
-	};
-	void addSamplerSoundChanged(VASTSamplerSound* samplerSound) {
-		m_samplerSound_changed.clear();
-		m_samplerSound_changed.add(samplerSound);
-		m_changedFlag = true;
-	};
+	bool hasSamplerSoundChanged();
+	VASTSamplerSound* getSamplerSoundChanged();
+	void clearSamplerSoundChanged();
+	void addSamplerSoundChanged(VASTSamplerSound* samplerSound);
 
-	OwnedArray<VASTSamplerSound> m_samplerSound;
-	OwnedArray<VASTSamplerSound> m_samplerSound_changed;
+	OwnedArray<VASTSamplerSound> m_samplerSound{};
+	OwnedArray<VASTSamplerSound> m_samplerSound_changed{};
 	bool m_changedFlag = true;
 };
 
@@ -251,7 +201,7 @@ public:
 	/** Returns true if this voice started playing its current note before the other voice did. */
 	bool wasStartedBefore(const VASTSynthesiserVoice& other) const noexcept;
 
-	int getVoiceNo() { return mVoiceNo; };
+	int getVoiceNo() const { return mVoiceNo; };
 
 	virtual void clearCurrentNote() = 0;
 
@@ -268,8 +218,8 @@ protected:
 	It can also be called at any time during the render callback if the sound happens
 	to have finished, e.g. if it's playing a sample and the sample finishes.
 	*/
-	int mVoiceNo = 0;
-	int currentlyPlayingNote = -1, currentPlayingMidiChannel = 0;
+    std::atomic<int> mVoiceNo = 0;
+	std::atomic<int> currentlyPlayingNote = -1, currentPlayingMidiChannel = 0;
 	juce::SynthesiserSound::Ptr currentlyPlayingSound;
 
 private:
@@ -325,7 +275,7 @@ public:
 	/** Creates a new synthesiser.
 	You'll need to add some sounds and voices before it'll make any sound.
 	*/
-	VASTSynthesiser();
+	VASTSynthesiser(VASTAudioProcessor* processor);
 
 	/** Destructor. */
 	virtual ~VASTSynthesiser();
@@ -334,6 +284,7 @@ public:
 	void init(CVASTSettings* set, CVASTPoly* poly) {
 		m_Poly = poly;
 		m_Set = set;
+		initValues();
 	}
 
 	void initValues();
@@ -585,17 +536,23 @@ public:
 	void setMinimumRenderingSubdivisionSize(int numSamples, bool shouldBeStrict = false) noexcept;
 
 	//CHVAST
-	int getLastPlayedVoiceNo() { 
-		return m_newestPlaying; 
+	int getLastPlayedVoiceNo() const {
+		return m_newestPlaying;
 	};
-	int getOldestPlayedVoiceNo() { 
-		return m_oldestPlaying; 
+	int getOldestPlayedVoiceNo() const {
+		return m_oldestPlaying;
 	};
-	int getNumMidiNotesKeyDown() { 
+	int getNumMidiNotesKeyDown() const { 
 		return m_midiNotesNumKeyDown; 
 	};
-	
+
+	atomic<int> m_numVoicesPlaying = 0;
+	atomic<int> m_numOscsPlaying = 0;
+	atomic<bool> m_voicePlaying[C_MAX_POLY];
+
 	int m_MPEMasterChannel = 1; //TODO MPE config messages
+		/** The last pitch-wheel values for each midi channel. */
+	atomic<int> lastPitchWheelValues[16];
 
 protected:
 	//==============================================================================
@@ -604,9 +561,6 @@ protected:
 
 	OwnedArray<VASTSynthesiserVoice> voices;
 	ReferenceCountedArray<juce::SynthesiserSound> sounds;
-
-	/** The last pitch-wheel values for each midi channel. */
-	int lastPitchWheelValues[16];
 
 	/** Renders the voices for the given range.
 	By default this just calls renderNextBlock() on each voice, but you may need
@@ -678,9 +632,9 @@ private:
 	BigInteger sustainPedalsDown;
 
 	AudioSampleBuffer qfilterbuffer;
-	int m_newestPlaying = -1;
-	int m_oldestPlaying = -1;
-	int m_oldestPlayingKeyDown = -1;
+	std::atomic<int> m_newestPlaying = -1;
+    std::atomic<int> m_oldestPlaying = -1;
+    std::atomic<int> m_oldestPlayingKeyDown = -1;
 	bool m_midiNotesKeyDown[256];
 	ULong64_t m_midiNotesKeyDownTime[256];
 
@@ -693,8 +647,9 @@ private:
 	int m_iGlissandoCollectSamples = 0; 
 	CVASTSettings* m_Set = nullptr;
 	CVASTPoly* m_Poly = nullptr;
+	VASTAudioProcessor* myProcessor = nullptr;
 	uint8 lastPressureLowerBitReceivedOnChannel[16];
-	MPEValue lastTimbreReceivedOnChannel[16];
+	MPEValue lastTimbreReceivedOnChannel[16];	
 
 #if JUCE_CATCH_DEPRECATED_CODE_MISUSE
 	// Note the new parameters for these methods.

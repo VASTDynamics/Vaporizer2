@@ -21,19 +21,19 @@ public:
 
 	void setAudioProcessor(VASTAudioProcessor &processor);
 	VASTAudioProcessor* getAudioProcessor();
-	void setModString(const juce::String &dragText) {
-		ddLabel->setText(dragText, NotificationType::dontSendNotification);
-	}
+	void setModString(const juce::String& dragText);
 	void lookAndFeelChanged() override;
 	void editorShown(Label *, TextEditor &) override;
 	void labelTextChanged(Label* labelThatHasChanged) override;
+	void setLabelDefaultText(String defaultText);
 
 private:
-	ScopedPointer<VASTImageButton> ddImageButton;
-	ScopedPointer<Label> ddLabel;
+    std::unique_ptr<VASTImageButton> ddImageButton;
+    std::unique_ptr<Label> ddLabel;
 	bool m_noLabel = false;
 
 	VASTAudioProcessor *m_processor;
+    Colour m_bufferc1{};
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(VASTDragSource)
 };
 #endif

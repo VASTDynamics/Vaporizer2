@@ -16,7 +16,7 @@ CDelayLineAPF::~CDelayLineAPF(void)
 bool CDelayLineAPF::processAudio(float* pInput, float* pOutput)
 {
 	// read the delay line to get w(n-D); call base class
-	float fw_n_D = this->readDelay();
+	float fw_n_D = float(this->readDelay());
 
 	// for the APF if the delay is 0.0
 	// need to pass input -> output

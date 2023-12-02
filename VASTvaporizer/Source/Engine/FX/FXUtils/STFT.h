@@ -107,7 +107,7 @@ private:
     void updateFftSize (const int newFftSize)
     {
         fftSize = newFftSize;
-        fft = new dsp::FFT (log2 (fftSize));
+        fft = std::unique_ptr<dsp::FFT>(new dsp::FFT(static_cast<int>(log2(fftSize))));
 
         inputBufferLength = fftSize;
         inputBuffer.clear();
@@ -156,12 +156,12 @@ private:
             }
             case windowTypeHann: {
                 for (int sample = 0; sample < fftSize; ++sample)
-                    fftWindow[sample] = 0.5f - 0.5f * cosf (2.0f * M_PI * (float)sample / (float)(fftSize - 1));
+                    fftWindow[sample] = 0.5f - 0.5f * cosf (2.0f * float(M_PI) * (float)sample / (float)(fftSize - 1));
                 break;
             }
             case windowTypeHamming: {
                 for (int sample = 0; sample < fftSize; ++sample)
-                    fftWindow[sample] = 0.54f - 0.46f * cosf (2.0f * M_PI * (float)sample / (float)(fftSize - 1));
+                    fftWindow[sample] = 0.54f - 0.46f * cosf (2.0f * float(M_PI) * (float)sample / (float)(fftSize - 1));
                 break;
             }
         }
@@ -234,7 +234,7 @@ protected:
     int numSamples;
 
     int fftSize;
-    ScopedPointer<dsp::FFT> fft;
+    std::unique_ptr<dsp::FFT> fft;
 
     int inputBufferLength;
     AudioSampleBuffer inputBuffer;

@@ -34,7 +34,7 @@ CVASTAtomizer::~CVASTAtomizer(void) {
 void CVASTAtomizer::initParameters() {
 	AudioProcessorValueTreeState& parameters = my_processor->getParameterTree();
 
-	createAndAddParameter(&m_bAtomizerOnOff, parameters, "m_bAtomizerOnOff", "Atomizer effect on / off", "On", 0,
+	createAndAddParameter(&m_bAtomizerOnOff, parameters, 1, "m_bAtomizerOnOff", "Atomizer effect on / off", "On", 0,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		CVASTParamState::toggleButtonValueToTextFunction,
@@ -42,7 +42,7 @@ void CVASTAtomizer::initParameters() {
 		false, true, true, true,
 		true);
 
-	createAndAddParameter(&m_fAtomizerDryWet, parameters, "m_fAtomizerDryWet", "Atomizer filter mix in (dry - wet)", "DryWet", 1,
+	createAndAddParameter(&m_fAtomizerDryWet, parameters, 1, "m_fAtomizerDryWet", "Atomizer filter mix in (dry - wet)", "DryWet", 1,
 		MODMATDEST::AtomizerDryWet,
 		NormalisableRange<float>(0, 100), 100,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -50,7 +50,7 @@ void CVASTAtomizer::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_fAtomizerLowcut, parameters, "m_fAtomizerLowcut", "Atomizer lowcut", "Lowcut", 2,
+	createAndAddParameter(&m_fAtomizerLowcut, parameters, 1, "m_fAtomizerLowcut", "Atomizer lowcut", "Lowcut", 2,
 		MODMATDEST::AtomizerLowCut,
 		NormalisableRange<float>(0, 100), 0.f,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -58,7 +58,7 @@ void CVASTAtomizer::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_fAtomizerHighcut, parameters, "m_fAtomizerHighcut", "Atomizer highcut", "Hicut", 3,
+	createAndAddParameter(&m_fAtomizerHighcut, parameters, 1, "m_fAtomizerHighcut", "Atomizer highcut", "Hicut", 3,
 		MODMATDEST::AtomizerHighCut,
 		NormalisableRange<float>(0, 100), 100.f,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -66,7 +66,7 @@ void CVASTAtomizer::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_fAtomizerHarmonics, parameters, "m_fAtomizerHarmonics", "Atomizer harmonics", "Harmonics", 4,
+	createAndAddParameter(&m_fAtomizerHarmonics, parameters, 1, "m_fAtomizerHarmonics", "Atomizer harmonics", "Harmonics", 4,
 		MODMATDEST::AtomizerHarmonics,
 		NormalisableRange<float>(0, 100), 0.f,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -74,7 +74,7 @@ void CVASTAtomizer::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_fAtomizerEmphasis, parameters, "m_fAtomizerEmphasis", "Atomizer emphasis", "Emphasis", 5,
+	createAndAddParameter(&m_fAtomizerEmphasis, parameters, 1, "m_fAtomizerEmphasis", "Atomizer emphasis", "Emphasis", 5,
 		MODMATDEST::AtomizerEmphasis,
 		NormalisableRange<float>(0, 100), 0.f,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -82,7 +82,7 @@ void CVASTAtomizer::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_fAtomizerDephase, parameters, "m_fAtomizerDephase", "Atomizer dephase", "Dephase", 6,
+	createAndAddParameter(&m_fAtomizerDephase, parameters, 1, "m_fAtomizerDephase", "Atomizer dephase", "Dephase", 6,
 		MODMATDEST::AtomizerDephase,
 		NormalisableRange<float>(0, 100), 0.f,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -90,7 +90,7 @@ void CVASTAtomizer::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_uAtomizerLFOWave, parameters, "m_uAtomizerLFOWave", "Atomizer LFO waveform", "LFOwave", 7,
+	createAndAddParameter(&m_uAtomizerLFOWave, parameters, 1, "m_uAtomizerLFOWave", "Atomizer LFO waveform", "LFOwave", 7,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, LFOWAVE_Array.size() - 1, 1.0f), 0.0f,
 		CVASTParamState::comboBoxValueToTextFunction_LFOWAVE,
@@ -98,7 +98,7 @@ void CVASTAtomizer::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_bAtomizerSynch, parameters, "m_bAtomizerSynch", "Atomizer sync to DAW", "Sync", 8,
+	createAndAddParameter(&m_bAtomizerSynch, parameters, 1, "m_bAtomizerSynch", "Atomizer sync to DAW", "Sync", 8,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, 1.0f, 1.0f), 0.0f,
 		CVASTParamState::toggleButtonValueToTextFunction,
@@ -106,7 +106,7 @@ void CVASTAtomizer::initParameters() {
 		false, true, true, false,
 		true);
 
-	createAndAddParameter(&m_uAtomizerTimeBeats, parameters, "m_uAtomizerTimeBeats", "Atomizer time in beats when synced to DAW", "DAW", 9,
+	createAndAddParameter(&m_uAtomizerTimeBeats, parameters, 1, "m_uAtomizerTimeBeats", "Atomizer time in beats when synced to DAW", "DAW", 9,
 		MODMATDEST::NoDestination,
 		NormalisableRange<float>(0.0f, TIMEBEATS_Array.size() - 1, 1.0f), TIMEBEATS::BEATS1,
 		CVASTParamState::comboBoxValueToTextFunction_TIMEBEATS,
@@ -114,7 +114,7 @@ void CVASTAtomizer::initParameters() {
 		false, true, true, false,
 		true);
 
-	createAndAddParameter(&m_fAtomizerLFOFreq, parameters, "m_fAtomizerLFOFreq", "Atomizer LFO frequency (Hz)", "Frequency", 10,
+	createAndAddParameter(&m_fAtomizerLFOFreq, parameters, 1, "m_fAtomizerLFOFreq", "Atomizer LFO frequency (Hz)", "Frequency", 10,
 		MODMATDEST::AtomizerLFOFrequency,
 		NormalisableRange<float>(0.0f, 20.0f), 1.00f,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -122,7 +122,7 @@ void CVASTAtomizer::initParameters() {
 		false, true, false, false,
 		true);
 
-	createAndAddParameter(&m_fAtomizerGain, parameters, "m_fAtomizerGain", "Atomizer output gain", "Gain", 11,
+	createAndAddParameter(&m_fAtomizerGain, parameters, 1, "m_fAtomizerGain", "Atomizer output gain", "Gain", 11,
 		MODMATDEST::AtomizerGain,
 		NormalisableRange<float>(0, 200), 100,
 		CVASTParamState::floatSliderValueToTextFunction,
@@ -140,41 +140,41 @@ void CVASTAtomizer::releaseResources() {
 
 void CVASTAtomizer::parameterChanged(const String& parameterID, float newValue) {
 	if (parameterID.startsWith("m_bAtomizerOnOff")) {
-		if (newValue == SWITCH::SWITCH_ON)
+		if (newValue == static_cast<int>(SWITCH::SWITCH_ON))
 			switchOn();
 		else
 			switchOff();
 		return;
 	}
 	else if (parameterID.startsWith("m_fAtomizerDryWet")) {
-		m_fAtomizerDryWet_smoothed.setValue(newValue);
+		m_fAtomizerDryWet_smoothed.setTargetValue(newValue);
 	}
 	else if (parameterID.startsWith("m_fAtomizerHarmonics")) {
-		m_fAtomizerHarmonics_smoothed.setValue(newValue);
+		m_fAtomizerHarmonics_smoothed.setTargetValue(newValue);
 		setHarmonics(m_fAtomizerHarmonics_smoothed.getNextValue());
 	}
 	else if (parameterID.startsWith("m_fAtomizerGain")) {
-		m_fAtomizerGain_smoothed.setValue(newValue);
+		m_fAtomizerGain_smoothed.setTargetValue(newValue);
 		setGain(m_fAtomizerGain_smoothed.getNextValue());
 	}
 	else if (parameterID.startsWith("m_fAtomizerEmphasis")) {
-		m_fAtomizerEmphasis_smoothed.setValue(newValue);
+		m_fAtomizerEmphasis_smoothed.setTargetValue(newValue);
 		setEmphasis(m_fAtomizerEmphasis_smoothed.getNextValue());
 	}
 	else if (parameterID.startsWith("m_fAtomizerLowcut")) {
-		m_fAtomizerLowCut_smoothed.setValue(newValue);
+		m_fAtomizerLowCut_smoothed.setTargetValue(newValue);
 		setLowcut(m_fAtomizerLowCut_smoothed.getNextValue());
 	}
 	else if (parameterID.startsWith("m_fAtomizerHighcut")) {
-		m_fAtomizerHighCut_smoothed.setValue(newValue);
+		m_fAtomizerHighCut_smoothed.setTargetValue(newValue);
 		setHighcut(m_fAtomizerHighCut_smoothed.getNextValue());
 	}
 	else if (parameterID.startsWith("m_fAtomizerDephase")) {
-		m_fAtomizerDephase_smoothed.setValue(newValue);
+		m_fAtomizerDephase_smoothed.setTargetValue(newValue);
 		setDephase(m_fAtomizerDephase_smoothed.getNextValue());
 	}
 	else if (parameterID.startsWith("m_fAtomizerLFOFreq")) {
-		m_fAtomizerLFOFreq_smoothed.setValue(newValue);
+		m_fAtomizerLFOFreq_smoothed.setTargetValue(newValue);
 		updateLFOFreq();
 	}
 	else if (parameterID.startsWith("m_bAtomizerSynch")) {
@@ -189,13 +189,25 @@ void CVASTAtomizer::parameterChanged(const String& parameterID, float newValue) 
 	}
 }
 
+inline void CVASTAtomizer::setHarmonics(float harmonics) { m_harmonics = harmonics; }
+
+inline void CVASTAtomizer::setDephase(float dephase) { m_dephase = dephase; }
+
+inline void CVASTAtomizer::setLowcut(float lowcut) { m_lowcut = lowcut; }
+
+inline void CVASTAtomizer::setHighcut(float highcut) { m_highcut = highcut; }
+
+inline void CVASTAtomizer::setEmphasis(float emphasis) { m_emphasis = emphasis; }
+
+inline void CVASTAtomizer::setGain(float gain) { m_gain = gain; }
+
 void CVASTAtomizer::updateTiming() {
 	updateLFOFreq();
 }
 
 void CVASTAtomizer::updateLFOFreq() {
-	if (*m_bAtomizerSynch == SWITCH::SWITCH_OFF) {
-		m_fAtomizerLFOFreq_smoothed.setValue(*m_fAtomizerLFOFreq); //  *m_fTimeMod;
+	if (*m_bAtomizerSynch == static_cast<int>(SWITCH::SWITCH_OFF)) {
+		m_fAtomizerLFOFreq_smoothed.setTargetValue(*m_fAtomizerLFOFreq); //  *m_fTimeMod;
 	}
 	else { //bpm synch
 		float l_fIntervalTime = 0.f;
@@ -205,12 +217,12 @@ void CVASTAtomizer::updateLFOFreq() {
 		//if (l_fIntervalTime > 5000.0f) l_fIntervalTime = 5000.f; // maximum
 		if (l_fIntervalTime > 100000.0f) l_fIntervalTime = 100000.0f; // maximum  //CHTS 3.0.1
 
-		m_fAtomizerLFOFreq_smoothed.setValue(1, true); //reset it
-		m_fAtomizerLFOFreq_smoothed.setValue(1.0f / (l_fIntervalTime / 1000.f));
+		m_fAtomizerLFOFreq_smoothed.setCurrentAndTargetValue(1); //reset it
+		m_fAtomizerLFOFreq_smoothed.setTargetValue(1.0f / (l_fIntervalTime / 1000.f));
 	}
 }
 
-void CVASTAtomizer::prepareToPlay(double sampleRate, int samplesPerBlock) {
+void CVASTAtomizer::prepareToPlay(double , int samplesPerBlock) {
 	//m_iSampleRate is set in useOversampling
 	m_iExpectedSamplesPerBlock = samplesPerBlock;
 	setup(2);
@@ -262,7 +274,7 @@ void CVASTAtomizer::init(CVASTSettings &set) {
 	m_LFO.startLFOFrequency(*m_fAtomizerLFOFreq, -1);
 }
 
-void CVASTAtomizer::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages, const int numSamples) {
+void CVASTAtomizer::processBlock(AudioSampleBuffer& buffer, MidiBuffer& , const int numSamples) {
 	if (isOffAndShallBeOff() == true) return;
 
 	ScopedNoDenormals noDenormals;
@@ -295,29 +307,29 @@ void CVASTAtomizer::processSTFTBlock(AudioSampleBuffer& block, const int numSamp
 	for (int sample = 0; sample < numSamples; ++sample) {
 		checkSoftFade();
 		inputState.currentFrame = sample;
-		m_fAtomizerDryWet_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fAtomizerDryWet, MODMATDEST::AtomizerDryWet, &inputState));
+		m_fAtomizerDryWet_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fAtomizerDryWet, MODMATDEST::AtomizerDryWet, &inputState));
 		float lAtomizerDryWet = m_fAtomizerDryWet_smoothed.getNextValue();
 
-		m_fAtomizerDephase_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fAtomizerDephase, MODMATDEST::AtomizerDephase, &inputState));
+		m_fAtomizerDephase_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fAtomizerDephase, MODMATDEST::AtomizerDephase, &inputState));
 		setDephase(m_fAtomizerDephase_smoothed.getNextValue());
 
-		m_fAtomizerEmphasis_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fAtomizerEmphasis, MODMATDEST::AtomizerEmphasis, &inputState));
+		m_fAtomizerEmphasis_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fAtomizerEmphasis, MODMATDEST::AtomizerEmphasis, &inputState));
 		setEmphasis(m_fAtomizerEmphasis_smoothed.getNextValue());
 
-		m_fAtomizerHarmonics_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fAtomizerHarmonics, MODMATDEST::AtomizerHarmonics, &inputState));
+		m_fAtomizerHarmonics_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fAtomizerHarmonics, MODMATDEST::AtomizerHarmonics, &inputState));
 		setHarmonics(m_fAtomizerHarmonics_smoothed.getNextValue());
 
-		m_fAtomizerHighCut_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fAtomizerHighcut, MODMATDEST::AtomizerHighCut, &inputState));
+		m_fAtomizerHighCut_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fAtomizerHighcut, MODMATDEST::AtomizerHighCut, &inputState));
 		setHighcut(m_fAtomizerHighCut_smoothed.getNextValue());
 
-		m_fAtomizerLowCut_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fAtomizerLowcut, MODMATDEST::AtomizerLowCut, &inputState));
+		m_fAtomizerLowCut_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fAtomizerLowcut, MODMATDEST::AtomizerLowCut, &inputState));
 		setLowcut(m_fAtomizerLowCut_smoothed.getNextValue());
 
-		m_fAtomizerGain_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fAtomizerGain, MODMATDEST::AtomizerGain, &inputState));
+		m_fAtomizerGain_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fAtomizerGain, MODMATDEST::AtomizerGain, &inputState));
 		setGain(m_fAtomizerGain_smoothed.getNextValue());
 
-		if (*m_bAtomizerSynch == SWITCH::SWITCH_OFF)
-			m_fAtomizerLFOFreq_smoothed.setValue(m_Set->getParameterValueWithMatrixModulation(m_fAtomizerLFOFreq, MODMATDEST::AtomizerLFOFrequency, &inputState));
+		if (*m_bAtomizerSynch == static_cast<int>(SWITCH::SWITCH_OFF))
+			m_fAtomizerLFOFreq_smoothed.setTargetValue(m_Set->getParameterValueWithMatrixModulation(m_fAtomizerLFOFreq, MODMATDEST::AtomizerLFOFrequency, &inputState));
 		if (m_fAtomizerLFOFreq_smoothed.isSmoothing())
 			m_LFO.startLFOFrequency(m_fAtomizerLFOFreq_smoothed.getNextValue(), -1);
 
@@ -369,6 +381,8 @@ void CVASTAtomizer::processSTFTBlock(AudioSampleBuffer& block, const int numSamp
 	samplesSinceLastFFT = currentSamplesSinceLastFFT;
 }
 
+inline void CVASTAtomizer::setLFO(float lfo) { m_lfo = lfo; }
+
 void CVASTAtomizer::modification() {
 #ifdef _DEBUG
 	std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
@@ -379,7 +393,7 @@ void CVASTAtomizer::modification() {
 #ifdef _DEBUG
 	std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
 	auto duration = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
-	DBG("Juce fft: "+ String(duration));
+	VDBG("Juce fft: " << duration);
 	//200 - 500 microseconds (5 times faster than own implementation) 
 #endif
 
@@ -479,15 +493,15 @@ void CVASTAtomizer::modification() {
 	fft->perform(frequencyDomainBuffer, timeDomainBuffer, true);
 }
 
-void CVASTAtomizer::getStateInformation(MemoryBlock& destData)
+void CVASTAtomizer::getStateInformation(MemoryBlock& )
 {
-	//ScopedPointer<XmlElement> xml (parameters.valueTreeState.state.createXml());
+	//std::unique_ptr<XmlElement> xml (parameters.valueTreeState.state.createXml());
 	//copyXmlToBinary (*xml, destData);
 }
 
-void CVASTAtomizer::setStateInformation(const void* data, int sizeInBytes)
+void CVASTAtomizer::setStateInformation(const void* , int )
 {
-	//ScopedPointer<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
+	//std::unique_ptr<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
 	//if (xmlState != nullptr)
 	//  if (xmlState->hasTagName (parameters.valueTreeState.state.getType()))
 	//    parameters.valueTreeState.state = ValueTree::fromXml (*xmlState);

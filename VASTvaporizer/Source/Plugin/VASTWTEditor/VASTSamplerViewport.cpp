@@ -54,6 +54,12 @@ void VASTSamplerViewport::setZoomFactor(int zoom) {
 	setSize(width, myWtEditor->getSamplerViewport()->getHeight());
 }
 
+void VASTSamplerViewport::setEditor(VASTAudioProcessorEditor* editor) { myEditor = editor; }
+
+void VASTSamplerViewport::setProcessor(VASTAudioProcessor* processor) { myProcessor = processor; }
+
+void VASTSamplerViewport::setWTEditor(VASTWaveTableEditorComponent* wtEditor) { myWtEditor = wtEditor; }
+
 void VASTSamplerViewport::resized()
 {
 	//waveformImage = waveformImage.rescaled(jmax(1, getWidth()), jmax(1, getHeight()), juce::Graphics::ResamplingQuality::highResamplingQuality);
@@ -122,7 +128,7 @@ void VASTSamplerViewport::paint(Graphics& g)
 	//g.drawImageAt(waveformImageWithBorder, lVisibleArea.getBottomLeft().getX(), 0);
 }
 
-void VASTSamplerViewport::visibleAreaChanged(const juce::Rectangle<int>& newVisibleArea) {
+void VASTSamplerViewport::visibleAreaChanged(const juce::Rectangle<int>& ) {
 	if (this->isVisible()) { //skip on close
 		updateContentAsync();
 	}
@@ -158,7 +164,7 @@ void VASTSamplerViewport::updateContent(bool force) {
 		waveformImageBufferOff.clear(waveformImageBufferOff.getBounds(), myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colOscilloscopeOff));
 	}
 
-	//DBG("VASTSamplerViewport::updateContent");
+	//VDBG("VASTSamplerViewport::updateContent");
 
 	m_needsUpdate = false;
 
@@ -182,7 +188,7 @@ void VASTSamplerViewport::updateContent(bool force) {
 	setSelectionFromSound();
 
 	AffineTransform af;
-	lVisibleArea = lVisibleArea.transformed(af.scaled(m_screenWidthScale, m_screenHeightScale));
+	lVisibleArea = lVisibleArea.transformedBy(af.scaled(m_screenWidthScale, m_screenHeightScale));
 
 	double iViewPortwidth = getScreenBounds().getWidth() * scale;
 	double iImageBottom = lVisibleArea.getHeight();
@@ -306,7 +312,20 @@ void VASTSamplerViewport::setSelectionFromSound() {
 		m_selection.iWavSelectionStartSample = samplerSound->getLoopStartChanged();
 		m_selection.iWavSelectionEndSample = samplerSound->getLoopEndChanged();
 	}
-};
+}
+sSelectionWav* VASTSamplerViewport::getSelection() {
+	return &m_selection;
+}
+
+bool VASTSamplerViewport::isInterestedInFileDrag(const StringArray& files) {
+	for (int i = 0; i < files.size(); i++) {
+		if (files[i].endsWithIgnoreCase(".wav")) return true;
+		if (files[i].endsWithIgnoreCase(".aif")) return true;
+		if (files[i].endsWithIgnoreCase(".flac")) return true;
+		if (files[i].endsWithIgnoreCase(".mp3")) return true;
+	}
+	return false;
+}
 
 void VASTSamplerViewport::setSelectionFromWavSamples(int startSample, int endSample) {
 	VASTSamplerSound* samplerSound = myWtEditor->getCurSamplerSound();
@@ -315,7 +334,7 @@ void VASTSamplerViewport::setSelectionFromWavSamples(int startSample, int endSam
 	m_selection.iWavSelectionStartSample = startSample;
 	m_selection.iWavSelectionEndSample = endSample; //can be the same as startSample
 	notifySelectionChanged();
-};
+}
 
 void VASTSamplerViewport::mouseDrag(const MouseEvent &e) { // show value
 	if (myWtEditor == nullptr) return;
@@ -386,7 +405,6 @@ void VASTSamplerViewport::mouseDrag(const MouseEvent &e) { // show value
 			else
 				start = lZeroCrossings[lZeroCrossings.size() - 1] / step;
 			
-			i = 0;
 			for (i = 0; i < lZeroCrossings.size(); i++)
 				if (lZeroCrossings[i] > end * step)
 					break;
@@ -446,8 +464,6 @@ void VASTSamplerViewport::notifySelectionChanged() {
 		while ((counter < numSamples - 1) && (lz < numlz)) {
 			counter++;
 			int sPos = m_selection.iWavSelectionStartSample + counter;
-			float val = samplerSound->getAudioDataChanged()->getSample(0, sPos);
-			float valp1 = samplerSound->getAudioDataChanged()->getSample(0, sPos + 1);
 			while ((lz < numlz) && (lZeroCrossings[lz] < sPos)) {
 				lz++;
 			}
@@ -473,7 +489,7 @@ void VASTSamplerViewport::notifySelectionChanged() {
 	}
 }
 
-void VASTSamplerViewport::mouseDoubleClick(const MouseEvent &e) {
+void VASTSamplerViewport::mouseDoubleClick(const MouseEvent &) {
 	VASTSamplerSound* samplerSound = myWtEditor->getCurSamplerSound();
 	if (samplerSound == nullptr) return;
 
@@ -485,7 +501,7 @@ void VASTSamplerViewport::mouseDoubleClick(const MouseEvent &e) {
 	updateContent(false);
 }
 
-void VASTSamplerViewport::mouseMove(const MouseEvent& event) {
+void VASTSamplerViewport::mouseMove(const MouseEvent& ) {
 	m_bMouseover = true;
 	handleBorderDisplay();
 	repaint();
@@ -502,7 +518,7 @@ void VASTSamplerViewport::handleBorderDisplay() {
 
 	juce::Rectangle<int> lVisibleArea = myWtEditor->getSamplerViewport()->getViewArea();
 	AffineTransform af;
-	lVisibleArea = lVisibleArea.transformed(af.scaled(m_screenWidthScale, m_screenHeightScale));
+	lVisibleArea = lVisibleArea.transformedBy(af.scaled(m_screenWidthScale, m_screenHeightScale));
 
 	float lDrawheight = lVisibleArea.getHeight();
 	if (m_bMouseover) {
@@ -525,19 +541,14 @@ void VASTSamplerViewport::handleBorderDisplay() {
 
 		//current pos marker
 		g.setColour(myProcessor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colMSEGEditorPosMarker));
-		for (int voice = 0; voice < C_MAX_POLY; voice++) {
-			CVASTSingleNote* note = myProcessor->m_pVASTXperience.m_Poly.m_singleNote[voice];
-			if (note->isPlayingCalledFromUI()) {
-				for (int grain = 0; grain < note->m_grainTable.size(); grain++) {
-					sGrainTable sgrain = note->m_grainTable[grain];
-					double posx = sgrain.realPos / step;
-					if ((posx - visiStart > 0) && (posx - visiStart < lVisibleArea.getWidth()))
-						g.drawLine(posx - visiStart, 0.f, posx - visiStart, float(lDrawheight - 1.0 * scale), 1.f * scale);
-					m_lastPostMarker = posx - visiStart;
-				}
-			}
-		}
 
+		for (int i = 0; i < sizeof(myProcessor->m_pVASTXperience.m_Poly.m_samplerViewportPosMarker) / sizeof(double); i++) {
+			double posx = myProcessor->m_pVASTXperience.m_Poly.m_samplerViewportPosMarker [i] / step;
+			if ((posx - visiStart > 0) && (posx - visiStart < lVisibleArea.getWidth()))
+				g.drawLine(posx - visiStart, 0.f, posx - visiStart, float(lDrawheight - 1.0 * scale), 1.f * scale);
+			m_lastPostMarker = posx - visiStart;
+		}
+			
 		//selection
 		if (m_selection.iWavSelectionStartSample >= 0) {
 			g.setColour(juce::Colour::fromFloatRGBA(1.f, 1.0f, 1.0f, 1.0f));
@@ -604,7 +615,7 @@ void VASTSamplerViewport::mouseWheelMove(const MouseEvent& event, const MouseWhe
 	}	
 }
 
-void VASTSamplerViewport::mouseDown(const MouseEvent &e) {
+void VASTSamplerViewport::mouseDown(const MouseEvent &) {
 	ModifierKeys modifiers = ModifierKeys::getCurrentModifiersRealtime();
 	//int x = e.getMouseDownX();
 	//int y = e.getMouseDownY();
@@ -648,7 +659,8 @@ void VASTSamplerViewport::mouseDown(const MouseEvent &e) {
 		subMenuResamplePatch.addItem(23, TRANS("Create stereo wavetable patch from sample selection (with freerunning LFO)"), true);
 		mainMenu.addSubMenu(TRANS("Create patch types"), subMenuResamplePatch, true);
 
-		mainMenu.showMenuAsync(PopupMenu::Options(), juce::ModalCallbackFunction::create([this](int result) {
+		mainMenu.showMenuAsync(PopupMenu::Options().withTargetComponent(this).withTargetScreenArea(juce::Rectangle<int>{}.withPosition(Desktop::getMousePosition())),
+			juce::ModalCallbackFunction::create([this](int result) {
 
 			if (result == 0) {
 				// user dismissed the menu without picking anything
@@ -838,14 +850,17 @@ void VASTSamplerViewport::sampleDetermineFreq() {
 	
 	//estimatedZeroCrossingsPerCycle 
 	if (m_selection.dDeterminedFreq > 0.f) {
-		double zeroCycleFreq = 1.f / ((double(m_selection.iWavSelectionEndSample - m_selection.iWavSelectionStartSample) / double((m_selection.iZeroCrossings - 1.0))) / samplerSound->getSourceSampleRate());
-		m_selection.estimatedZeroCrossingsPerCycle = round(zeroCycleFreq / m_selection.dDeterminedFreq);
-		if (m_selection.estimatedZeroCrossingsPerCycle == 0)
+        m_selection.estimatedZeroCrossingsPerCycle = 0;
+        if (((m_selection.iWavSelectionEndSample - m_selection.iWavSelectionStartSample) > 0) && (m_selection.iZeroCrossings > 0)) {
+                double zeroCycleFreq = 1.f / ((double(m_selection.iWavSelectionEndSample - m_selection.iWavSelectionStartSample) / double((m_selection.iZeroCrossings - 1.0))) / samplerSound->getSourceSampleRate());
+                m_selection.estimatedZeroCrossingsPerCycle = round(zeroCycleFreq / m_selection.dDeterminedFreq);
+        }
+        if (m_selection.estimatedZeroCrossingsPerCycle == 0)
 			m_selection.dDeterminedFreq = 0.f;
 	}
 }
 
-void VASTSamplerViewport::filesDropped(const StringArray& files, int x, int y) {
+void VASTSamplerViewport::filesDropped(const StringArray& files, int x, int ) {
 	VASTSamplerSound* lVASTSamplerSound = myWtEditor->loadWavFile(files[0]); //only one
 	if (lVASTSamplerSound != nullptr) {
 		VASTSynthesiserSound* lSynthSound = (VASTSynthesiserSound*)(myProcessor->m_pVASTXperience.m_Poly.getSynthesizer()->getSound(0));
@@ -853,4 +868,9 @@ void VASTSamplerViewport::filesDropped(const StringArray& files, int x, int y) {
 	}
 	selectAll();
 	myWtEditor->updateAll(false);
+}
+
+String VASTSamplerViewport::getTooltip()
+{
+	return TRANS("Click and drag to change selected area. Rightclick for menu.");
 }
