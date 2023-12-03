@@ -144,8 +144,10 @@ endmacro (set_xcode_property)
 if(APPLE)
   message(STATUS "Building on Apple macOS ${CMAKE_GENERATOR_PLATFORM} with AVX flags: ${BUILD_AVX}")
   list(APPEND MY_PUBLIC_COMPILE_OPTIONS "-ffast-math")
-  target_compile_definitions(${PROJECT_NAME} PUBLIC JUCE_SILENCE_XCODE_15_LINKER_WARNING) #temporarily due to xcode 15 issue
-  target_link_options(${PROJECT_NAME} PUBLIC -ld_classic) #temporarily due to xcode 15 issue  
+  if(XCODE_OSX_SYSROOT MATCHES "Xcode-1[01234]")
+    target_compile_definitions(${PROJECT_NAME} PUBLIC JUCE_SILENCE_XCODE_15_LINKER_WARNING) #temporarily due to xcode 15 issue
+    target_link_options(${PROJECT_NAME} PUBLIC -ld_classic) #temporarily due to xcode 15 issue
+  endif()
   if(VASTBUILD) 
     set_xcode_property(${PROJECT_NAME} CODE_SIGN_STYLE "Manual")
     set_xcode_property(${PROJECT_NAME} DEVELOPMENT_TEAM "PK93HYD6ZN") 
