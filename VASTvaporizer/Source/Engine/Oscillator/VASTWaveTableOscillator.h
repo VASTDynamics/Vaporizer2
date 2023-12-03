@@ -20,7 +20,7 @@ struct sWaveTableHeader; //forward declaration
 class CVASTOscillatorBank; //forward declaration
 class CVASTWaveTableOscillator {
 public:
-	CVASTWaveTableOscillator(void);
+	CVASTWaveTableOscillator(CVASTSettings& set, CVASTOscillatorBank* oscBank); //oscBank can be nullptr
 	~CVASTWaveTableOscillator(void);
 
 	void syncPhasor(int unisonOsci);
@@ -30,8 +30,7 @@ public:
 	void prepareForPlay(int expectedSamplesPerBlock);
 
 	bool m_bNoteOn;
-	void init(CVASTSettings &set, CVASTOscillatorBank* oscBank);
-	void init(CVASTSettings &set);
+	void init();
 	bool getOscillation(float* pOutput);
 
 	void doWavetableBufferInit(int unisonOsci, sRoutingBuffers& routingBuffers, modMatrixInputState& inputState);

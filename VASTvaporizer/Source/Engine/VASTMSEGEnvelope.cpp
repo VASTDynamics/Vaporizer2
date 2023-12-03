@@ -14,16 +14,16 @@ http://slideplayer.com/slide/6554987/
 #include "VASTMSEGData.h"
 #include "../Plugin/VASTAudioProcessor.h"
 
-CVASTMSEGEnvelope::CVASTMSEGEnvelope() {
+CVASTMSEGEnvelope::CVASTMSEGEnvelope(CVASTSettings& set, VASTMSEGData& data, VASTMSEGData& datalive, MYUINT voiceNo, int mseg, int stepSeq) :
+								m_Set(&set), myData(&data), myDataLive(&datalive)
+{
+	m_voiceNo.store(voiceNo);
+	m_mseg.store(mseg);
+	m_stepSeq.store(stepSeq);
+	m_dEnvelope.store(0);
 }
 
-void CVASTMSEGEnvelope::init(CVASTSettings &set, VASTMSEGData &data, VASTMSEGData &datalive, MYUINT voiceNo, int mseg, int stepSeq) {
-	m_Set = &set;
-	myData = &data;
-	myDataLive = &datalive;
-	m_voiceNo.store(voiceNo);
-    m_mseg.store(mseg);
-    m_stepSeq.store(stepSeq);
+void CVASTMSEGEnvelope::init() {
 	m_dEnvelope.store(0);
 	reset();
 }

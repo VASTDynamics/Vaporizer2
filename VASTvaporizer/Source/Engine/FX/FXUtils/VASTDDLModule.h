@@ -11,7 +11,7 @@ VAST Dynamics Audio Software (TM)
 class CDDLModule
 {
 public:
-	CDDLModule(void);
+	CDDLModule(CVASTSettings& set);
 
 	// 2. One Time Destruction
 	virtual ~CDDLModule(void);
@@ -22,7 +22,7 @@ public:
 	// 4. processAudioFrame() processes an audio input to create an audio output
 	bool processAudioFrame(float* pInputBuffer, float* pOutputBuffer, MYUINT uNumInputChannels, MYUINT uNumOutputChannels);
 
-	void init(CVASTSettings &set);
+	void init();
 
 	float m_fDelayInSamples;
 	float m_fFeedback;

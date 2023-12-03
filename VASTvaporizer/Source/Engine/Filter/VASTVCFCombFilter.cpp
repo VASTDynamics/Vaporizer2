@@ -11,7 +11,7 @@ All modulators tested: OK
 JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE("-Wconversion")
 JUCE_BEGIN_IGNORE_WARNINGS_MSVC(4244 4267) //C4244 conversion from 'type1' to 'type2', possible loss of data //C4267 conversion
 
-CVASTVCFCombFilter::CVASTVCFCombFilter() {
+CVASTVCFCombFilter::CVASTVCFCombFilter(CVASTSettings& set) : m_Set(&set) {
 }
 
 void CVASTVCFCombFilter::parameterChanged(const String& parameterID, float newValue, bool takeNext, int skips) {
@@ -62,9 +62,8 @@ void CVASTVCFCombFilter::reset() {
 	mDelayRight.resetDelay();
 }
 
-void CVASTVCFCombFilter::init(CVASTSettings &set) {
-	m_Set = &set;
-	m_iSampleRate = set.m_nSampleRate;
+void CVASTVCFCombFilter::init() {
+	m_iSampleRate = m_Set->m_nSampleRate;
 	mDelayLeft.init(1 * (m_iSampleRate)); //TESTING  1 sec
 	mDelayRight.init(1 * (m_iSampleRate)); //TESTING  1 sec
 

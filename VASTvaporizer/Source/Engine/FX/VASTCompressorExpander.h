@@ -14,12 +14,12 @@ class CVASTCompressorExpander : public CVASTEffect
 public:
     //==============================================================================
 
-	CVASTCompressorExpander(VASTAudioProcessor* processor, int busnr);
+	CVASTCompressorExpander(VASTAudioProcessor* processor, CVASTSettings& set, int busnr);
 	~CVASTCompressorExpander();
 
     //==============================================================================
 
-	void init(CVASTSettings &set) override;
+	void init() override;
 	void initParameters(); //must not add parameters here anymore - will change sequence
 	void initCompatibilityParameters() override; //new parameters go here
 	void initCompatibilityParameters5() override {}; //new parameters go here
@@ -71,5 +71,7 @@ private:
 	LinearSmoothedValue<float> m_fLimiterGain_smoothed;
 	LinearSmoothedValue<float> m_fLimiterRatio_smoothed;
 	
+	CVASTSettings* m_Set;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CVASTCompressorExpander)
 };

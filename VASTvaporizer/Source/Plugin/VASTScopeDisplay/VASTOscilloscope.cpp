@@ -1688,8 +1688,8 @@ void VASTOscilloscope::singleCycleFromMSEG(int msegNo) {
 		myData.controlPoints[i].isLoopStart = false;
 	}
 
-	CVASTMSEGEnvelope envelope;
-	envelope.init(myProcessor->m_pVASTXperience.m_Set, myData, myDataLive, -1, -1, -1);
+	CVASTMSEGEnvelope envelope(myProcessor->m_pVASTXperience.m_Set, myData, myDataLive, -1, -1, -1);
+	envelope.init();
 	envelope.noteOn(0, false);
 	
 	float numSamples = (totDur / 1000) * myProcessor->m_pVASTXperience.m_Set.m_nSampleRate;

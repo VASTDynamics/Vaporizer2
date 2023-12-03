@@ -11,7 +11,7 @@ All modulators tested: OK
 #include "VASTEffect.h"
 #include <math.h>
 
-CVASTDistortion::CVASTDistortion(VASTAudioProcessor* processor, int busnr) {
+CVASTDistortion::CVASTDistortion(VASTAudioProcessor* processor, CVASTSettings& set, int busnr) : m_Set(&set) {
 	my_processor = processor;
 	myBusnr = busnr;
 	setEffectName("DISTORTION");
@@ -117,8 +117,7 @@ void CVASTDistortion::parameterChanged(const String& parameterID, float newValue
 	}
 }
 
-void CVASTDistortion::init(CVASTSettings &set) {
-	m_Set = &set;
+void CVASTDistortion::init() {
 	initParameters();
 
 	m_biQuadPreL.flushDelays();

@@ -13,7 +13,7 @@ VAST Dynamics Audio Software (TM)
 class CVASTOversampler
 {
 public:
-	CVASTOversampler();
+	CVASTOversampler(CVASTSettings& set);
 
 	~CVASTOversampler(void);
 
@@ -22,7 +22,7 @@ public:
 	void upsampleAudioBuffer4(dsp::AudioBlock<float> inBlock, dsp::AudioBlock<float> outBlock, const int numSamples);
 	void downsampleAudioBuffer4(dsp::AudioBlock<float> inBlock, dsp::AudioBlock<float> outBlock, const int numSamples);
 
-	bool init(CVASTSettings &set);
+	bool init();
 
 	int m_nIRLength;
 	

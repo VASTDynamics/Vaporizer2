@@ -17,17 +17,21 @@ VAST Dynamics Audio Software (TM)
 #include <fstream>
 #include <string>
 CVASTPoly::CVASTPoly(CVASTSettings& set, VASTAudioProcessor* processor) :
-	m_Set(&set), myProcessor(processor)
+	m_Set(&set), myProcessor(processor), 
+	m_StepSeq_Envelope{ {set, set.m_StepSeqData[0], set.m_StepSeqData_changed[0], 0, 0, 0},
+						{set, set.m_StepSeqData[1], set.m_StepSeqData_changed[1], 0, 0, 1},
+						{set, set.m_StepSeqData[2], set.m_StepSeqData_changed[2], 0, 0, 2} },
+	m_global_LFO_Osc{ {set, nullptr}, {set, nullptr}, {set, nullptr}, {set, nullptr}, {set, nullptr} }
 {
 	for (int i = 0; i < 4; i++) {
 		CVASTOscillatorBank* bank = new CVASTOscillatorBank(m_Set, myProcessor, i);
-		//m_OscBank.push_back(std::make_shared<CVASTOscillatorBank>(bank));
 		m_OscBank.add(bank);
 	}
 
 	//qfilter  init only once due to memory allocation
 	m_QFilter.initQuadFilter(m_Set);
 }
+
 /* destructor()
 Destroy variables allocated in the contructor()
 */
@@ -55,8 +59,8 @@ void CVASTPoly::init() {
 
     if (m_lastInitPoly.load() < m_Set->m_uMaxPoly) {
         for (int i = m_lastInitPoly.load(); i < m_Set->m_uMaxPoly; i++) {
-            m_singleNote[i] = new CVASTSingleNote(); //new is OK - will be stored in owned array as voices
-            m_singleNote[i]->init(*m_Set, this, i); //voice->mVoiceNo
+            m_singleNote[i] = new CVASTSingleNote(*m_Set, this, i); //new is OK - will be stored in owned array as voices
+            m_singleNote[i]->init(); //voice->mVoiceNo
             m_OscillatorSynthesizer.addVoice((VASTSynthesiserVoice*)m_singleNote[i]);
         }
     }
@@ -65,19 +69,19 @@ void CVASTPoly::init() {
 		m_singleNote[i]->prepareForPlay();
 	}
 
-	m_global_LFO_Osc[0].init(*m_Set);
+	m_global_LFO_Osc[0].init();
 	m_global_LFO_Osc[0].updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO1), 1, 0, 0, 0);
 
-	m_global_LFO_Osc[1].init(*m_Set);
+	m_global_LFO_Osc[1].init();
 	m_global_LFO_Osc[1].updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO2), 1, 0, 0, 0);
 
-	m_global_LFO_Osc[2].init(*m_Set);
+	m_global_LFO_Osc[2].init();
 	m_global_LFO_Osc[2].updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO3), 1, 0, 0, 0);
 
-	m_global_LFO_Osc[3].init(*m_Set);
+	m_global_LFO_Osc[3].init();
 	m_global_LFO_Osc[3].updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO4), 1, 0, 0, 0);
 
-	m_global_LFO_Osc[4].init(*m_Set);
+	m_global_LFO_Osc[4].init();
 	m_global_LFO_Osc[4].updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO5), 1, 0, 0, 0);
 
 	updateLFO(0);
@@ -98,7 +102,7 @@ void CVASTPoly::init() {
 			m_Set->m_StepSeqData_changed[stepSeq].setStepSeqTime(*m_Set->m_State->m_fStepSeqSpeed_STEPSEQ3); //is in ms
 		}
 
-		m_StepSeq_Envelope[stepSeq].init(*m_Set, m_Set->m_StepSeqData[stepSeq], m_Set->m_StepSeqData_changed[stepSeq], 0, 0, stepSeq); //voiceno 0??
+		m_StepSeq_Envelope[stepSeq].init(); //voiceno 0??
 		struct timeval tp;
 		m_Set->_gettimeofday(&tp);
 		m_StepSeq_Envelope[stepSeq].noteOn(static_cast<ULong64_t>(tp.tv_sec) * 1000 + tp.tv_usec / 1000, false);
@@ -138,19 +142,19 @@ void CVASTPoly::prepareForPlay() {
 	initArp();
 	m_ppq_playing = false;
 	
-	m_global_LFO_Osc[0].init(*m_Set);
+	m_global_LFO_Osc[0].init();
 	m_global_LFO_Osc[0].updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO1), 1, 0, 0, 0);
 
-	m_global_LFO_Osc[1].init(*m_Set);
+	m_global_LFO_Osc[1].init();
 	m_global_LFO_Osc[1].updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO2), 1, 0, 0, 0);
 
-	m_global_LFO_Osc[2].init(*m_Set);
+	m_global_LFO_Osc[2].init();
 	m_global_LFO_Osc[2].updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO3), 1, 0, 0, 0);
 
-	m_global_LFO_Osc[3].init(*m_Set);
+	m_global_LFO_Osc[3].init();
 	m_global_LFO_Osc[3].updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO4), 1, 0, 0, 0);
 
-	m_global_LFO_Osc[4].init(*m_Set);
+	m_global_LFO_Osc[4].init();
 	m_global_LFO_Osc[4].updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO5), 1, 0, 0, 0);
 
 	updateLFO(0);

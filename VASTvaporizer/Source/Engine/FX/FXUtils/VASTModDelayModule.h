@@ -17,7 +17,7 @@ public:	// Plug-In API Functions
 	// The followung 5 methods must be impelemented for a meaningful Plug-In
 	//
 	// 1. One Time Initialization
-	CModDelayModule();
+	CModDelayModule(CVASTSettings& set);
 
 	// 2. One Time Destruction
 	virtual ~CModDelayModule(void);
@@ -28,7 +28,7 @@ public:	// Plug-In API Functions
 	// 4. processAudioFrame() processes an audio input to create an audio output
 	bool processAudioFrame(float* pInputBuffer, float* pOutputBuffer, MYUINT uNumInputChannels, MYUINT uNumOutputChannels);
 	
-	void init(CVASTSettings &set);
+	void init();
 
 	CVASTWaveTableOscillator m_LFO; 	// our LFO
 	CDDLModule m_DDL;	// our delay line module

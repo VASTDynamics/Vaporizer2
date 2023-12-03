@@ -17,7 +17,12 @@ VAST Dynamics Audio Software (TM)
 #define C_FILTER_BLOCKSIZE 16
 #define C_FILTER_OVERSAMPLINGFACTOR 4
 
-CVASTVcf::CVASTVcf() {
+CVASTVcf::CVASTVcf(CVASTSettings& set, MYUINT voiceNo, MYUINT filterNo, bool isUI) :
+	m_Set(&set), m_Oversampler(set), m_combFilter(set)
+{
+	m_voiceNo = voiceNo;
+	m_filterNo = filterNo;
+
 	inBufferUp = std::make_unique<AudioSampleBuffer>(2, C_FILTER_BLOCKSIZE * C_FILTER_OVERSAMPLINGFACTOR);
 }
 
@@ -28,10 +33,7 @@ Destroy variables allocated in the contructor()
 CVASTVcf::~CVASTVcf(void) {
 }
 
-void CVASTVcf::init(CVASTSettings &set, MYUINT voiceNo, MYUINT filterNo, bool isUI) { //once
-	m_Set = &set;
-	m_voiceNo = voiceNo;
-	m_filterNo = filterNo;
+void CVASTVcf::init() { //once
 
 	// init
 	//LPFReset();
@@ -145,8 +147,8 @@ void CVASTVcf::init(CVASTSettings &set, MYUINT voiceNo, MYUINT filterNo, bool is
 	//TEST SIMD
 
 	//COMB
-	m_combFilter.init(*m_Set);
-	m_Oversampler.init(*m_Set);
+	m_combFilter.init();
+	m_Oversampler.init();
 
 	//m_bqFilterL1.setCoefficients(coeff.makeLowPass(m_Set->m_nSampleRate, 100.f));
 	//m_bqFilterR1.setCoefficients(coeff.makeLowPass(m_Set->m_nSampleRate, 100.f));

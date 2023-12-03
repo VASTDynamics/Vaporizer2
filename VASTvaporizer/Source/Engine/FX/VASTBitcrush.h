@@ -14,12 +14,12 @@ class CVASTBitcrush : public CVASTEffect
 public:
 	//==============================================================================
 
-	CVASTBitcrush(VASTAudioProcessor* processor, int busnr);
+	CVASTBitcrush(VASTAudioProcessor* processor, CVASTSettings& set, int busnr);
 	~CVASTBitcrush();
 
 	//==============================================================================
 
-	void init(CVASTSettings &set) override;
+	void init() override;
 	void initParameters(); //must not add parameters here anymore - will change sequence
 	void initCompatibilityParameters() override; //new parameters go here
 	void initCompatibilityParameters5() override {}; //new parameters go here
@@ -63,6 +63,9 @@ private:
 	int m_repeatLength = 0;
 	float m_leftFirstSample = 0.0f;
 	float m_rightFirstSample = 0.0f;
+
+	CVASTSettings* m_Set;
+
 
 	JUCE_LEAK_DETECTOR(CVASTBitcrush)
 };

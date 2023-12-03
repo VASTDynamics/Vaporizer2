@@ -12,7 +12,7 @@ All modulators tested: OK
 
 const int c_paramNumFilters = 4; // 2, 4 , 6, 8, 10
 
-CVASTPhaser::CVASTPhaser(VASTAudioProcessor* processor, int busnr) {
+CVASTPhaser::CVASTPhaser(VASTAudioProcessor* processor, CVASTSettings& set, int busnr) : m_Set(&set) , m_LFO(set, nullptr) {
 	my_processor = processor;
 	myBusnr = busnr;
 
@@ -114,12 +114,11 @@ CVASTPhaser::~CVASTPhaser(void) {
 	}
 }
 
-void CVASTPhaser::init(CVASTSettings &set) {
-	m_Set = &set;
+void CVASTPhaser::init() {
 	initParameters();
 	reset();
 
-	m_LFO.init(*m_Set);
+	m_LFO.init();
 	m_LFO.m_uPolarity = 0; //unipolar
 	m_LFO.updateMainVariables(m_iSampleRate, WAVE::tri, 1, 1.0, 0, 0); //TODO CHECK
 	m_LFO.startLFOFrequency(*m_fPhaserLFOFreq, -1);

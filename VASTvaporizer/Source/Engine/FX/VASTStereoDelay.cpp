@@ -11,7 +11,7 @@ All modulators tested: OK
 #include "../../Plugin/VASTAudioProcessor.h"
 #include "VASTEffect.h"
 
-CVASTStereoDelay::CVASTStereoDelay(VASTAudioProcessor* processor, int busnr) {
+CVASTStereoDelay::CVASTStereoDelay(VASTAudioProcessor* processor, CVASTSettings& set, int busnr) : m_Set(&set) {
 	my_processor = processor;
 	myBusnr = busnr;
 
@@ -176,8 +176,7 @@ void CVASTStereoDelay::releaseResources() {
 
 }
 
-void CVASTStereoDelay::init(CVASTSettings &set) {
-	m_Set = &set;
+void CVASTStereoDelay::init() {
 	initParameters();
 
 	m_LeftDelay.setSampleRate(m_iSampleRate);

@@ -13,7 +13,7 @@ All modulators tested: OK
 //==============================================================================
 
 
-CVASTCompressorExpander::CVASTCompressorExpander(VASTAudioProcessor* processor, int busnr) {
+CVASTCompressorExpander::CVASTCompressorExpander(VASTAudioProcessor* processor, CVASTSettings& set, int busnr) : m_Set(&set) {
 	my_processor = processor;
 	myBusnr = busnr;
 	setEffectName("LIMITER / GATE");
@@ -116,8 +116,7 @@ void CVASTCompressorExpander::parameterChanged(const String& parameterID, float 
 	}
 }
 
-void CVASTCompressorExpander::init(CVASTSettings &set) {
-	m_Set = &set;
+void CVASTCompressorExpander::init() {
 	initParameters();
 	reset();
 }

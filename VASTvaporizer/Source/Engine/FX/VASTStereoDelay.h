@@ -18,12 +18,12 @@ class CVASTStereoDelay : public CVASTEffect
 public:
 	//==============================================================================
 
-	CVASTStereoDelay(VASTAudioProcessor* processor, int busnr);
+	CVASTStereoDelay(VASTAudioProcessor* processor, CVASTSettings& set, int busnr);
 	~CVASTStereoDelay();
 
 	//==============================================================================
 
-	void init(CVASTSettings &set) override;
+	void init() override;
 	void initParameters(); //must not add parameters here anymore - will change sequence
 	void initCompatibilityParameters() override; //new parameters go here
 	void initCompatibilityParameters5() override {}; //new parameters go here

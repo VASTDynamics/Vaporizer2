@@ -17,12 +17,12 @@ class CVASTMultibandCompressor : public CVASTEffect
 public:
     //==============================================================================
 
-	CVASTMultibandCompressor(VASTAudioProcessor* processor, int busnr);
+	CVASTMultibandCompressor(VASTAudioProcessor* processor, CVASTSettings& set, int busnr);
 	~CVASTMultibandCompressor();
 
     //==============================================================================
 
-	void init(CVASTSettings &set) override;
+	void init() override;
 	void initParameters();
 	void initCompatibilityParameters() override; //new parameters go here
 	void initCompatibilityParameters5() override {}; //new parameters go here
@@ -107,6 +107,7 @@ private:
 	float HCF;
 
 	int m_iNumChannels = 2;
+	CVASTSettings* m_Set;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CVASTMultibandCompressor)
 };

@@ -7,22 +7,26 @@ VAST Dynamics
 #include "VASTEngineHeader.h"
 #include "../Plugin/VASTAudioProcessor.h"
 
-CVASTFXBus::CVASTFXBus(VASTAudioProcessor* processor, int busnr) :
+CVASTFXBus::CVASTFXBus(VASTAudioProcessor* processor, CVASTSettings& set, int busnr) :
 			myProcessor(processor),
-			m_Eq(processor, busnr),
-            m_Chorus(processor, busnr),
-            m_Distortion(processor, busnr),
-            m_CombFilter(processor, busnr),
-            m_CompressorExpander(processor, busnr),
-            m_MultibandCompressor(processor, busnr),
-            m_Bitcrush(processor, busnr),
-            m_FormantFilter(processor, busnr),
-            m_Phaser(processor, busnr),
-            m_Flanger(processor, busnr),
-            m_Atomizer(processor, busnr),
-            m_StereoDelay(processor, busnr),
-            m_Reverb(processor, busnr),
-			m_Waveshaper(processor, busnr)
+			m_Set(&set),
+			m_Oversampler(set),
+			m_Oversampler2(set),
+			m_Oversampler3(set),
+			m_Eq(processor, set, busnr),
+            m_Chorus(processor, set, busnr),
+            m_Distortion(processor, set, busnr),
+            m_CombFilter(processor, set, busnr),
+            m_CompressorExpander(processor, set, busnr),
+            m_MultibandCompressor(processor, set, busnr),
+            m_Bitcrush(processor, set, busnr),
+            m_FormantFilter(processor, set, busnr),
+            m_Phaser(processor, set, busnr),
+            m_Flanger(processor, set, busnr),
+            m_Atomizer(processor, set, busnr),
+            m_StereoDelay(processor, set, busnr),
+            m_Reverb(processor, set, busnr),
+			m_Waveshaper(processor, set, busnr)
 {
 	myProcessor = processor; 	
 	myBusnr = busnr;
@@ -157,11 +161,10 @@ CVASTFXBus::~CVASTFXBus() { //destructor
 	*/
 }
 
-void CVASTFXBus::init(CVASTSettings &set) {
-	m_Set = &set;
-	m_Oversampler.init(*m_Set);
-	m_Oversampler2.init(*m_Set);
-	m_Oversampler3.init(*m_Set);
+void CVASTFXBus::init() {
+	m_Oversampler.init();
+	m_Oversampler2.init();
+	m_Oversampler3.init();
 	int initSize = 16;
 	
 	m_inBufferOversampled = std::make_unique<AudioSampleBuffer>(2, initSize);
@@ -171,7 +174,7 @@ void CVASTFXBus::init(CVASTSettings &set) {
 	m_chainProc = std::make_unique<AudioSampleBuffer>(2, initSize);
 	mFXBusSequence.clear();
 	for (int i = 0; i < effectBus.size(); i++) {
-		effectBus[i]->effectPlugin->init(set);
+		effectBus[i]->effectPlugin->init();
 		mFXBusSequence.add(i); //initial sequence
 	}
 }

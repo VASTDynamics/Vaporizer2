@@ -16,7 +16,7 @@ class CVASTSettings; //forward declaration
 class CVASTEffect : public AudioProcessorValueTreeState::Listener {
 public:
 	//interface
-	virtual void init(CVASTSettings &set) = 0;
+	virtual void init() = 0;
 	virtual void initCompatibilityParameters() = 0; //new parameters go here
 	virtual void initCompatibilityParameters5() = 0; //new parameters go here
 	virtual void prepareToPlay(double sampleRate, int expedtedSamplesPerBlock) = 0;

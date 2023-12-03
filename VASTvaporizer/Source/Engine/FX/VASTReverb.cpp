@@ -10,7 +10,7 @@ All modulators tested: OK
 #include "../../Plugin/VASTAudioProcessor.h"
 #include "VASTEffect.h"
 
-CVASTReverb::CVASTReverb(VASTAudioProcessor* processor, int busnr){
+CVASTReverb::CVASTReverb(VASTAudioProcessor* processor, CVASTSettings& set, int busnr) : m_Set(&set) {
 	my_processor = processor;
 	myBusnr = busnr;
 
@@ -148,8 +148,7 @@ void CVASTReverb::releaseResources() {
 
 }
 
-void CVASTReverb::init(CVASTSettings &set) {
-	m_Set = &set;
+void CVASTReverb::init() {
 	initParameters();
 
 	// up to 2 seconds predelay

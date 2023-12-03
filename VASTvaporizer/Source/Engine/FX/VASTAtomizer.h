@@ -13,12 +13,12 @@ class CVASTAtomizer : public CVASTEffect, public STFT
 public:
 	//==============================================================================
 
-	CVASTAtomizer(VASTAudioProcessor* processor, int busnr);
+	CVASTAtomizer(VASTAudioProcessor* processor, CVASTSettings& set, int busnr);
 	~CVASTAtomizer();
 
 	//==============================================================================
 
-	void init(CVASTSettings &set) override;
+	void init() override;
 	void initParameters(); //must not add parameters here anymore - will change sequence
 	void initCompatibilityParameters() override; //new parameters go here
 	void initCompatibilityParameters5() override {}; //new parameters go here

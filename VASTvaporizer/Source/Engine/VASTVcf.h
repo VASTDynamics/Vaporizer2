@@ -31,9 +31,9 @@ struct VASTQFilterProcessState; //forward declaration
 class alignas(16) CVASTVcf
 {
 public:
-	CVASTVcf();
-	virtual ~CVASTVcf(void);
-	void init(CVASTSettings &set, MYUINT voiceNo, MYUINT filterNo, bool isUI);
+	CVASTVcf(CVASTSettings& set, MYUINT voiceNo, MYUINT filterNo, bool isUI);
+	virtual ~CVASTVcf();
+	void init();
 	void prepareForPlay();
 
 	//void processBlock(dsp::AudioBlock<float> filterBlock, modMatrixInputState* matrixInputState, sRoutingBuffers& routingBuffers, int startSample, int numSamples, bool isUI);

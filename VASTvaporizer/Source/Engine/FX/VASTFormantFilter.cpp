@@ -10,7 +10,7 @@ All modulators tested: OK
 #include "../../Plugin/VASTAudioProcessor.h"
 #include "VASTEffect.h"
 
-CVASTFormantFilter::CVASTFormantFilter(VASTAudioProcessor* processor, int busnr) {
+CVASTFormantFilter::CVASTFormantFilter(VASTAudioProcessor* processor, CVASTSettings& set, int busnr) : m_Set(&set) {
 	my_processor = processor;
 	myBusnr = busnr;
 
@@ -160,8 +160,7 @@ void CVASTFormantFilter::reset() {
 	}
 }
 
-void CVASTFormantFilter::init(CVASTSettings &set) {
-	m_Set = &set;
+void CVASTFormantFilter::init() {
 	initParameters();
 	reset();
 }
