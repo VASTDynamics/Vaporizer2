@@ -18,7 +18,7 @@ Joshua D. Reiss and Andrew P. McPherson
 //==============================================================================
 
 
-CVASTMultibandCompressor::CVASTMultibandCompressor(VASTAudioProcessor* processor, int busnr) {
+CVASTMultibandCompressor::CVASTMultibandCompressor(VASTAudioProcessor* processor, CVASTSettings& set, int busnr) : m_Set(&set) {
 	my_processor = processor;
 	myBusnr = busnr;
 	setEffectName("COMPRESSOR");
@@ -223,9 +223,7 @@ void CVASTMultibandCompressor::parameterChanged(const String& parameterID, float
 	}
 }
 
-void CVASTMultibandCompressor::init(CVASTSettings &set) {
-	m_Set = &set;
-
+void CVASTMultibandCompressor::init() {
 	initParameters();
 }
 

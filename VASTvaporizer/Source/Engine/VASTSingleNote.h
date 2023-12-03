@@ -44,13 +44,13 @@ typedef struct sGrainTable {
 class CVASTSingleNote : public VASTSynthesiserVoice
 {
 public:
-	CVASTSingleNote();
+	CVASTSingleNote(CVASTSettings& set, CVASTPoly* poly, MYUINT voiceNo);
 	virtual ~CVASTSingleNote(void);
 
 	CVASTSettings* m_Set; //public due to oscilloscope test
 	CVASTPoly* m_Poly; 
 
-	void init(CVASTSettings &set, CVASTPoly* poly, MYUINT voiceNo);
+	void init();
 
 	void prepareForPlay();
 	void updateVariables();

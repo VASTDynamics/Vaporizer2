@@ -13,11 +13,11 @@ class CVASTVCFCombFilter
 public:
 	//==============================================================================
 
-	CVASTVCFCombFilter();
+	CVASTVCFCombFilter(CVASTSettings& set);
 
 	//==============================================================================
 
-	void init(CVASTSettings &set);
+	void init();
 	void prepareToPlay(double sampleRate, int samplesPerBlock);
 	void reset(); //called when switch toggled
 	void processBlock(dsp::AudioBlock<float> filterBlock, const int numSamples);

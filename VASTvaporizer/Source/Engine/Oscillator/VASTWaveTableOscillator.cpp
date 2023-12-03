@@ -18,7 +18,7 @@
 #include "../VASTOscillatorBank.h"
 #include <vector>
 
-CVASTWaveTableOscillator::CVASTWaveTableOscillator(void) {
+CVASTWaveTableOscillator::CVASTWaveTableOscillator(CVASTSettings& set, CVASTOscillatorBank* oscBank) : m_Set (&set), m_oscBank(oscBank) {
     //from VASTOscillator
     //NOISE /* Generate a new random seed from system time - do this once in your constructor */
     srand(int(time(0)));
@@ -60,20 +60,13 @@ CVASTWaveTableOscillator::CVASTWaveTableOscillator(void) {
     
     m_fFMFreq = 0.f;
     m_unisonOscis = -1;
-    m_oscBank = nullptr;
 }
 
 CVASTWaveTableOscillator::~CVASTWaveTableOscillator(void) {
 }
 
-void CVASTWaveTableOscillator::init(CVASTSettings &set, CVASTOscillatorBank* oscBank) {
-    m_oscBank = oscBank;
-    init(set);
-}
-
-void CVASTWaveTableOscillator::init(CVASTSettings &set) {
-    m_Set = &set;
-    
+void CVASTWaveTableOscillator::init() {
+   
     m_bNoteOn = false;
     m_bIsPlaying = false;
     m_fBaseFrequency_Hz = 0.0f;

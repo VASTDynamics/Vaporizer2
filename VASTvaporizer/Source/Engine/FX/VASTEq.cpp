@@ -12,7 +12,7 @@ All modulators tested: OK
 #include "VASTMultibandCompressor.h" //IIR Filter!
 #include "VASTEffect.h"
 
-CVASTEq::CVASTEq(VASTAudioProcessor* processor, int busnr) {
+CVASTEq::CVASTEq(VASTAudioProcessor* processor, CVASTSettings& set, int busnr) : m_Set(&set) {
 	my_processor = processor;
 	myBusnr = busnr;
 
@@ -116,8 +116,7 @@ void CVASTEq::releaseResources() {
 
 }
 
-void CVASTEq::init(CVASTSettings &set) {
-	m_Set = &set;
+void CVASTEq::init() {
 	initParameters();
 	
 	reset();

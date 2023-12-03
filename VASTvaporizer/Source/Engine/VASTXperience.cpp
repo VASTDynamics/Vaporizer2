@@ -17,9 +17,9 @@ CVASTXperience::CVASTXperience(VASTAudioProcessor* processor) :
 	m_Set(processor),
     myProcessor(processor),
     m_Poly(m_Set, processor),
-	m_fxBus1(processor, 0),
-	m_fxBus2(processor, 1), //why does this increase heapmemory so much? (100 MB)
-	m_fxBus3(processor, 2)
+	m_fxBus1(processor, m_Set, 0),
+	m_fxBus2(processor, m_Set, 1),
+	m_fxBus3(processor, m_Set, 2)
 {
 
 #if defined(_DEBUG)
@@ -78,9 +78,9 @@ bool CVASTXperience::initializeEngine()
 
 	m_Poly.init();
 
-	m_fxBus1.init(m_Set);
-	m_fxBus2.init(m_Set);
-	m_fxBus3.init(m_Set);
+	m_fxBus1.init();
+	m_fxBus2.init();
+	m_fxBus3.init();
 	//end of standard parameters that will never get changed anymore
 	//--------------------------------------------------------------------------------
 

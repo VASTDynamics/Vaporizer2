@@ -12,7 +12,7 @@ All modulators tested: OK
 #include "VASTEffect.h"
 #include <math.h>
 
-CVASTFlanger::CVASTFlanger(VASTAudioProcessor* processor, int busnr) {
+CVASTFlanger::CVASTFlanger(VASTAudioProcessor* processor, CVASTSettings& set, int busnr) : m_Set(&set), m_LFO(set, nullptr) {
 	my_processor = processor;
 	myBusnr = busnr;
 
@@ -224,12 +224,11 @@ void CVASTFlanger::reset() {
 	}
 }
 
-void CVASTFlanger::init(CVASTSettings &set) {
-	m_Set = &set;
+void CVASTFlanger::init() {
 	initParameters();
 	reset();
 
-	m_LFO.init(*m_Set);
+	m_LFO.init();
 	m_LFO.m_uPolarity = 0; //unipolar
 	m_LFO.updateMainVariables(m_iSampleRate, WAVE::tri, 1, 1.0, 0, 0); //TODO CHECK
 	m_LFO.startLFOFrequency(*m_fFlangerLFOFreq, -1);

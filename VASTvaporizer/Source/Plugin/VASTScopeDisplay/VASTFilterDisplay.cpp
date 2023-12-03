@@ -282,12 +282,12 @@ void VASTFilterDisplay::updateThread(VASTFilterDisplay* display, bool force) {
 		display->m_QFilter.initQuadFilter(&display->myProcessor->m_pVASTXperience.m_Set);
 		display->fft = std::make_unique<dsp::FFT>(c_fftOrder); //scoped pointer
 		for (int filter = 0; filter < 3; filter++) {
-			display->m_VCF[filter] = std::make_unique<CVASTVcf>();
+			display->m_VCF[filter] = std::make_unique<CVASTVcf>(*l_Set, 0, filter, true);
 		}
 		display->mb_init = true;
 	}
 	for (int filter = 0; filter < 3; filter++) {
-		display->m_VCF[filter]->init(*l_Set, 0, filter, true); //isUI
+		display->m_VCF[filter]->init(); //isUI
 		display->m_VCF[filter]->prepareForPlay();
 	}
 

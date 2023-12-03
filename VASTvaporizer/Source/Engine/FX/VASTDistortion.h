@@ -14,12 +14,12 @@ class CVASTDistortion : public CVASTEffect
 public:
 	//==============================================================================
 
-	CVASTDistortion(VASTAudioProcessor* processor, int busnr);
+	CVASTDistortion(VASTAudioProcessor* processor, CVASTSettings& set, int busnr);
 	~CVASTDistortion();
 
 	//==============================================================================
 
-	void init(CVASTSettings &set) override;
+	void init() override;
 	void initParameters(); //must not add parameters here anymore - will change sequence
 	void initCompatibilityParameters() override; //new parameters go here
 	void initCompatibilityParameters5() override {}; //new parameters go here
@@ -66,6 +66,7 @@ private:
 	LinearSmoothedValue<float> m_fDistLowcut_smoothed;
 	LinearSmoothedValue<float> m_fDistGain_smoothed;
 	LinearSmoothedValue<float> m_fDistPreGain_smoothed;
+	CVASTSettings* m_Set;
 
 	//Lowcut biquad
 	CVASTBiQuad m_lowCutBiquadL;

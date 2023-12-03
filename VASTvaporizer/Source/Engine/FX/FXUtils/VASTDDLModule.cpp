@@ -11,7 +11,7 @@ VAST Dynamics Audio Software (TM)
 	require the plugin to be fully instantiated. If so, allocate in init()
 
 */
-CDDLModule::CDDLModule() {
+CDDLModule::CDDLModule(CVASTSettings& set) : m_Set(&set) {
 	// built in initialization
 	m_fDelayInSamples = 0;
 	m_fFeedback = 0;
@@ -31,9 +31,7 @@ CDDLModule::CDDLModule() {
 JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE("-Wconversion")
 JUCE_BEGIN_IGNORE_WARNINGS_MSVC(4244 4267)
 
-void CDDLModule::init(CVASTSettings &set) {
-	m_Set = &set;
-
+void CDDLModule::init() {
 	// cook
 	cookVariables();
 }

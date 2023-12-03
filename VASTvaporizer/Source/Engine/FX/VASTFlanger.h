@@ -12,12 +12,12 @@ class CVASTFlanger : public CVASTEffect
 public:
 	//==============================================================================
 
-	CVASTFlanger(VASTAudioProcessor* processor, int busnr);
+	CVASTFlanger(VASTAudioProcessor* processor, CVASTSettings& set, int busnr);
 	~CVASTFlanger();
 
 	//==============================================================================
 
-	void init(CVASTSettings &set) override;
+	void init() override;
 	void initParameters(); //must not add parameters here anymore - will change sequence
 	void initCompatibilityParameters() override; //new parameters go here
 	void initCompatibilityParameters5() override {}; //new parameters go here
@@ -67,6 +67,7 @@ private:
 	int delayWritePosition;
 
 	CVASTWaveTableOscillator m_LFO; 	
+	CVASTSettings* m_Set;
 	
 	enum interpolationIndex {
 		interpolationNearestNeighbour = 0,

@@ -10,11 +10,11 @@ VAST Dynamics
 
 class alignas(16) CVASTMSEGEnvelope {
 public:
-	CVASTMSEGEnvelope();
+	CVASTMSEGEnvelope(CVASTSettings& set, VASTMSEGData& data, VASTMSEGData& datalive, int voiceNo, int mseg, int stepSeq);
 	~CVASTMSEGEnvelope() {}
 
 	// run time interface
-	void init(CVASTSettings &set, VASTMSEGData &data, VASTMSEGData &datalive, int voiceNo, int mseg, int stepSeq);
+	void init();
 
 	void copyStateFrom(CVASTMSEGEnvelope &copyEnvelope);
 

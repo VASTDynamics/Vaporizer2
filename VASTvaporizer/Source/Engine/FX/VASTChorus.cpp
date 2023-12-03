@@ -10,7 +10,11 @@ All modulators tested: OK
 #include "../../Plugin/VASTAudioProcessor.h"
 #include "VASTEffect.h"
 
-CVASTChorus::CVASTChorus(VASTAudioProcessor* processor, int busnr) {
+CVASTChorus::CVASTChorus(VASTAudioProcessor* processor, CVASTSettings& set, int busnr) : m_Set(&set),
+		m_ModDelayLeft(set),
+		m_ModDelayCenter(set),
+		m_ModDelayRight(set)
+{
 	my_processor = processor;
 	myBusnr = busnr;
 	setEffectName("CHORUS");
@@ -88,16 +92,15 @@ void CVASTChorus::initCompatibilityParameters() {
 	// all new parameters go here
 }
 
-void CVASTChorus::init(CVASTSettings &set) {
-	m_Set = &set;
+void CVASTChorus::init() {
 	initParameters();
 
 	m_fCrossMix = 45.000000; //not per UI?
 	m_fHPF_Fc = 2000.000000; //not per UI?
 
-	m_ModDelayLeft.init(*m_Set);
-	m_ModDelayCenter.init(*m_Set);
-	m_ModDelayRight.init(*m_Set);
+	m_ModDelayLeft.init();
+	m_ModDelayCenter.init();
+	m_ModDelayRight.init();
 
 	updateLFOFreq();
 

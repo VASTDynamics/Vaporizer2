@@ -43,7 +43,7 @@ public:
 		double ppqPosition, bool isLooping, double ppqPositionOfLastBarStart, double bpm);
 
 	//VASTEffectInterface
-	void init(CVASTSettings &) override {};
+	void init() override {};
 	void initCompatibilityParameters() override {}; //implemented in state
 	void initCompatibilityParameters5() override {}; //new parameters go here
 	void prepareToPlay(double, int) override {};

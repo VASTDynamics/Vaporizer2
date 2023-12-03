@@ -8,7 +8,7 @@ VAST Dynamics Audio Software (TM)
 	#define _CRTDBG_MAP_ALLOC
 #endif
 
-CModDelayModule::CModDelayModule()
+CModDelayModule::CModDelayModule(CVASTSettings& set) : m_LFO( set, nullptr ), m_DDL(set)
 {
 	// Finish initializations here
 	m_fMinDelay_mSec = 0.0f;
@@ -20,10 +20,9 @@ CModDelayModule::CModDelayModule()
 	m_fModFrequency_Hz = 1.0f; //CHECK for start
 }
 
-void CModDelayModule::init(CVASTSettings &set) {
-	m_Set = &set;
-	m_DDL.init(set);
-	m_LFO.init(*m_Set);	
+void CModDelayModule::init() {
+	m_DDL.init();
+	m_LFO.init();	
 	m_LFO.m_uPolarity = 0; //unipolar
 	m_LFO.updateMainVariables(m_iSampleRate, WAVE::tri, 1, 1.0f, 0, 0.f); //TODO CHECK
 	m_LFO.startLFOFrequency(m_fModFrequency_Hz, -1);

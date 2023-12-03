@@ -10,7 +10,7 @@ All modulators tested: OK
 #include "../../Plugin/VASTAudioProcessor.h"
 #include "VASTEffect.h"
 
-CVASTCombFilterEffect::CVASTCombFilterEffect(VASTAudioProcessor* processor, int busnr) {
+CVASTCombFilterEffect::CVASTCombFilterEffect(VASTAudioProcessor* processor, CVASTSettings& set, int busnr) : m_Set(&set) {
 	my_processor = processor;
 	myBusnr = busnr;
 	setEffectName("COMB FILTER");
@@ -144,8 +144,7 @@ void CVASTCombFilterEffect::reset() {
 	}
 }
 
-void CVASTCombFilterEffect::init(CVASTSettings &set) {
-	m_Set = &set;
+void CVASTCombFilterEffect::init() {
 	initParameters();
 	
 	mDelayLeft.init(5 * (m_iSampleRate)); //TESTING  5 sec

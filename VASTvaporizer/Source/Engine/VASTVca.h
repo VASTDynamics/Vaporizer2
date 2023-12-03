@@ -11,9 +11,9 @@ VAST Dynamics Audio Software (TM)
 class CVASTVca
 {
 public:
-	CVASTVca();
+	CVASTVca(CVASTSettings& set, MYUINT voiceNo);
 	virtual ~CVASTVca(void);
-	void init(CVASTSettings &set, MYUINT voiceNo);
+	void init();
 
 	void noteOn(ULong64_t startPlayTimestamp, bool legatoStartSustain);
 	void noteOff(float releaseVelocity);
@@ -25,7 +25,7 @@ public:
 	bool isHardStop();
 	bool isNoteOff();
 
-	CVASTMSEGEnvelope m_MSEG_Envelope[5]; 
+	CVASTMSEGEnvelope m_MSEG_Envelope[5];
 
 private:
 	

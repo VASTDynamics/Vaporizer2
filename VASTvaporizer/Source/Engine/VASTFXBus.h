@@ -25,7 +25,7 @@ VAST Dynamics
 class VASTAudioProcessor; //forward declaration
 class CVASTFXBus {
 public:
-	CVASTFXBus(VASTAudioProcessor* processor, int busnr);
+	CVASTFXBus(VASTAudioProcessor* processor, CVASTSettings& set, int busnr);
 	~CVASTFXBus();
 
 	//enum EnvelopeMode { unipolar, biploar };
@@ -37,7 +37,7 @@ public:
 		CVASTEffect* effectPlugin = nullptr;
 	};
 
-	void init(CVASTSettings &set);
+	void init();
 	void initCompatibilityParameters();
 	void initCompatibilityParameters5();
 

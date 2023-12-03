@@ -16,7 +16,7 @@ All modulators tested: OK
 	#include "emmintrin.h"
 #endif
 
-CVASTWaveshaper::CVASTWaveshaper(VASTAudioProcessor* processor, int busnr) {
+CVASTWaveshaper::CVASTWaveshaper(VASTAudioProcessor* processor, CVASTSettings& set, int busnr) : m_Set(&set) {
 	my_processor = processor;
 	myBusnr = busnr;
 	setEffectName("WAVESHAPER");
@@ -144,8 +144,7 @@ void CVASTWaveshaper::parameterChanged(const String& parameterID, float newValue
 	}
 }
 
-void CVASTWaveshaper::init(CVASTSettings &set) {
-	m_Set = &set;
+void CVASTWaveshaper::init() {
 	initParameters();
 
 	m_biQuadPreL.flushDelays();

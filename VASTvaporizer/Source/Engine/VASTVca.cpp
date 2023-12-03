@@ -10,7 +10,14 @@ Controls VCA and Mod Envelope
 #include "VASTPluginConstants.h"
 //#include "VASTMSEGEnvelope.h"
 
-CVASTVca::CVASTVca(){
+CVASTVca::CVASTVca(CVASTSettings& set, MYUINT voiceNo) : m_Set(&set), 
+		m_MSEG_Envelope{	{set, set.m_MSEGData[0], set.m_MSEGData_changed[0], voiceNo, 0, -1},
+							{set, set.m_MSEGData[1], set.m_MSEGData_changed[1], voiceNo, 1, -1},
+							{set, set.m_MSEGData[2], set.m_MSEGData_changed[2], voiceNo, 2, -1},
+							{set, set.m_MSEGData[3], set.m_MSEGData_changed[3], voiceNo, 3, -1},
+							{set, set.m_MSEGData[4], set.m_MSEGData_changed[4], voiceNo, 4, -1} }
+{
+	m_voiceNo = voiceNo;
 }
 
 /* destructor()
@@ -21,12 +28,10 @@ CVASTVca::~CVASTVca(void) {
 	m_bNoteOff.store(true);
 }
 
-void CVASTVca::init(CVASTSettings &set, MYUINT voiceNo) {
-	m_Set = &set;
-	m_voiceNo = voiceNo;
+void CVASTVca::init() {
 
 	for (int mseg = 0; mseg < 5; mseg++) {
-		m_MSEG_Envelope[mseg].init(*m_Set, m_Set->m_MSEGData[mseg], m_Set->m_MSEGData_changed[mseg], m_voiceNo, mseg, -1);
+		m_MSEG_Envelope[mseg].init();
 	}
 
 	m_bNoteOff.store(true);

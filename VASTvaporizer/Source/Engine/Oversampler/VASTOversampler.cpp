@@ -6,7 +6,8 @@ VAST Dynamics Audio Software (TM)
 #include "../VASTEngineHeader.h"
 #include "../Utils/VASTSynthfunctions.h"
 
-CVASTOversampler::CVASTOversampler()
+CVASTOversampler::CVASTOversampler(CVASTSettings& set) :
+	m_Set(&set)
 {
 	// NOTE: Both Interpolation and Decimation filters are 
 	// Optimal Method Filters designed at 176400Hz; fpass = 20kHz, fstop = 22kHz
@@ -537,8 +538,7 @@ CVASTOversampler::~CVASTOversampler(void)
 {
 }
 
-bool CVASTOversampler::init(CVASTSettings &set) {
-	m_Set = &set;
+bool CVASTOversampler::init() {
 	
 	m_nOversamplingRatioLocal = 1;
 

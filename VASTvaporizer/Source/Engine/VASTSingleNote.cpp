@@ -28,38 +28,37 @@ Has:
 #include <fstream>
 #include <string>
 
-CVASTSingleNote::CVASTSingleNote() {
+CVASTSingleNote::CVASTSingleNote(CVASTSettings& set, CVASTPoly* poly, MYUINT voiceNo):
+	m_Set(&set), m_Poly(poly), m_OscillatorNoise(std::make_unique<CVASTWaveTableOscillator>(set, nullptr))
+{
+	mVoiceNo.store(voiceNo);
+	for (int bank = 0; bank < 4; bank++) {
+		m_Oscillator.add(new CVASTWaveTableOscillator(*m_Set, m_Poly->m_OscBank.getUnchecked(bank)));
+		m_Oscillator.getUnchecked(bank)->init();
+	}
+	m_OscillatorNoise = std::make_unique<CVASTWaveTableOscillator>(*m_Set, nullptr);
+	m_OscillatorNoise->init();
+
+	m_VCA = std::make_unique<CVASTVca>(*m_Set, mVoiceNo);
+	m_VCA->init();
+	for (int filter = 0; filter < 3; filter++) {
+		m_VCF.add(new CVASTVcf(*m_Set, mVoiceNo, filter, false)); //not UI
+		m_VCF[filter]->init();
+	}
 }
 
 /* destructor()
 Destroy variables allocated in the contructor()
 
 */
-CVASTSingleNote::~CVASTSingleNote(void) {
+CVASTSingleNote::~CVASTSingleNote()
+{
 	m_centerBuffer = nullptr;
 	m_velocityBuffer = nullptr;
 }
 
-void CVASTSingleNote::init(CVASTSettings &set, CVASTPoly* poly, MYUINT voiceNo) { //called once
-	m_Set = &set;
-	m_Poly = poly; //only for sampler voice delete
-
-	mVoiceNo = voiceNo;
-
-	for (int bank = 0; bank < 4; bank++) {
-		m_Oscillator.add(new CVASTWaveTableOscillator());
-		m_Oscillator.getUnchecked(bank)->init(*m_Set, poly->m_OscBank.getUnchecked(bank));
-	}
-	m_OscillatorNoise = std::make_unique<CVASTWaveTableOscillator>();
-	m_OscillatorNoise->init(*m_Set);
-
-	m_VCA = std::make_unique<CVASTVca>();
-	m_VCA->init(*m_Set, mVoiceNo);
-	for (int filter = 0; filter < 3; filter++) {
-		m_VCF.add(new CVASTVcf());
-		m_VCF[filter]->init(*m_Set, mVoiceNo, filter, false); //not UI
-	}
-
+void CVASTSingleNote::init() { //called once
+	
 	m_iNumParallelOsc = 0;
 
 	m_uChannel = 0;
@@ -76,20 +75,20 @@ void CVASTSingleNote::init(CVASTSettings &set, CVASTPoly* poly, MYUINT voiceNo) 
 
 	resetSmoothers();
 
-	m_LFO_Osc.add(new CVASTWaveTableOscillator());
-	m_LFO_Osc.add(new CVASTWaveTableOscillator());
-	m_LFO_Osc.add(new CVASTWaveTableOscillator());
-	m_LFO_Osc.add(new CVASTWaveTableOscillator());
-	m_LFO_Osc.add(new CVASTWaveTableOscillator());
-	m_LFO_Osc[0]->init(*m_Set);
+	m_LFO_Osc.add(new CVASTWaveTableOscillator(*m_Set, nullptr));
+	m_LFO_Osc.add(new CVASTWaveTableOscillator(*m_Set, nullptr));
+	m_LFO_Osc.add(new CVASTWaveTableOscillator(*m_Set, nullptr));
+	m_LFO_Osc.add(new CVASTWaveTableOscillator(*m_Set, nullptr));
+	m_LFO_Osc.add(new CVASTWaveTableOscillator(*m_Set, nullptr));
+	m_LFO_Osc[0]->init();
 	m_LFO_Osc[0]->updateMainVariables(m_Set->m_nSampleRate, *m_Set->m_State->m_uLFOWave_LFO1, 1, 0, 0, 0);
-	m_LFO_Osc[1]->init(*m_Set);
+	m_LFO_Osc[1]->init();
 	m_LFO_Osc[1]->updateMainVariables(m_Set->m_nSampleRate, *m_Set->m_State->m_uLFOWave_LFO2, 1, 0, 0, 0);
-	m_LFO_Osc[2]->init(*m_Set);
+	m_LFO_Osc[2]->init();
 	m_LFO_Osc[2]->updateMainVariables(m_Set->m_nSampleRate, *m_Set->m_State->m_uLFOWave_LFO3, 1, 0, 0, 0);
-	m_LFO_Osc[3]->init(*m_Set);
+	m_LFO_Osc[3]->init();
 	m_LFO_Osc[3]->updateMainVariables(m_Set->m_nSampleRate, *m_Set->m_State->m_uLFOWave_LFO4, 1, 0, 0, 0);
-	m_LFO_Osc[4]->init(*m_Set);
+	m_LFO_Osc[4]->init();
 	m_LFO_Osc[4]->updateMainVariables(m_Set->m_nSampleRate, *m_Set->m_State->m_uLFOWave_LFO5, 1, 0, 0, 0);
 
 	int initSize = 16;
@@ -186,7 +185,7 @@ void CVASTSingleNote::prepareForPlay() {
 		m_VCF[filter]->prepareForPlay();
 	}
 	for (int bank = 0; bank < 4; bank++) {
-		m_Oscillator.getUnchecked(bank)->init(*m_Set, m_Poly->m_OscBank.getUnchecked(bank));
+		m_Oscillator.getUnchecked(bank)->init();
 		m_Oscillator.getUnchecked(bank)->prepareForPlay(m_Set->m_nExpectedSamplesPerBlock);
 		//m_lastSectionWtPos[bank] = 0.f; //needed?
 	}
@@ -197,18 +196,18 @@ void CVASTSingleNote::prepareForPlay() {
 	m_centerBuffer->setSize(1, m_Set->m_nExpectedSamplesPerBlock, false, false, false); //free  memory
 	m_velocityBuffer->setSize(1, m_Set->m_nExpectedSamplesPerBlock, false, false, false); //free  memory
 
-	m_OscillatorNoise->init(*m_Set);
+	m_OscillatorNoise->init();
 	updateVariables();
 	
-	m_LFO_Osc[0]->init(*m_Set);
+	m_LFO_Osc[0]->init();
 	m_LFO_Osc[0]->updateMainVariables(m_Set->m_nSampleRate, *m_Set->m_State->m_uLFOWave_LFO1, 1, 0, 0, 0);	
-	m_LFO_Osc[1]->init(*m_Set);
+	m_LFO_Osc[1]->init();
 	m_LFO_Osc[1]->updateMainVariables(m_Set->m_nSampleRate, *m_Set->m_State->m_uLFOWave_LFO2, 1, 0, 0, 0);	
-	m_LFO_Osc[2]->init(*m_Set);
+	m_LFO_Osc[2]->init();
 	m_LFO_Osc[2]->updateMainVariables(m_Set->m_nSampleRate, *m_Set->m_State->m_uLFOWave_LFO3, 1, 0, 0, 0);
-	m_LFO_Osc[3]->init(*m_Set);
+	m_LFO_Osc[3]->init();
 	m_LFO_Osc[3]->updateMainVariables(m_Set->m_nSampleRate, *m_Set->m_State->m_uLFOWave_LFO4, 1, 0, 0, 0);
-	m_LFO_Osc[4]->init(*m_Set);
+	m_LFO_Osc[4]->init();
 	m_LFO_Osc[4]->updateMainVariables(m_Set->m_nSampleRate, *m_Set->m_State->m_uLFOWave_LFO5, 1, 0, 0, 0);
 
 	resetSmoothers();
@@ -1263,11 +1262,12 @@ bool CVASTSingleNote::prepareFrequency(int bank, int skips, int startSample, boo
 	float fDetuneMod = 1.0;
 	bool bHasToBeDoneForEachSample = false;
 	bool isModulating = false;
-	float fPitchMod = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fPitchMod, MODMATDEST::Pitch, &l_inputState, &isModulating) * 0.01f;
+	float fPitchMod = 0.f; //-1 .. 1 center 0	
+	if (m_Set->modMatrixDestinationSetFast(MODMATDEST::Pitch))
+		fPitchMod = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fPitchMod, MODMATDEST::Pitch, &l_inputState, &isModulating) * 0.01f;
 	if (!isModulating)
 		fPitchMod = 0.f;
-    bTakeNextValue ? m_fPitchMod_smoothed.setCurrentAndTargetValue(fPitchMod) :
-        m_fPitchMod_smoothed.setTargetValue(fPitchMod);
+    bTakeNextValue ? m_fPitchMod_smoothed.setCurrentAndTargetValue(fPitchMod) : m_fPitchMod_smoothed.setTargetValue(fPitchMod);
 	bHasToBeDoneForEachSample = isModulating;
 
 	switch (bank) {
@@ -1353,6 +1353,8 @@ bool CVASTSingleNote::prepareFrequency(int bank, int skips, int startSample, boo
 
 	if (fPitchMod != 0.0f) //check for accuracy?
 		m_Oscillator.getUnchecked(bank)->updatePitchMod(m_fPitchMod_smoothed.getNextValue()); // -1 .. 1 center 0
+	else
+		m_Oscillator.getUnchecked(bank)->updatePitchMod(0.0f);
 	m_fPitchMod_smoothed.skip(skips - 1);
 
 	return bHasToBeDoneForEachSample;
@@ -1826,7 +1828,7 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 
 		if (m_bLastFilterOutputZero[0] && m_bLastFilterOutputZero[1] && m_bLastFilterOutputZero[2]) { //check 
 			if (m_VCA->isActive())
-				m_VCA->init(*m_Set, mVoiceNo); //to reset envelopes
+				m_VCA->init(); //to reset envelopes
 			return;
 		}
 	}

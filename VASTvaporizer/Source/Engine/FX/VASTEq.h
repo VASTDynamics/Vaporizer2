@@ -20,12 +20,12 @@ class CVASTEq : public CVASTEffect
 public:
 	//==============================================================================
 
-	CVASTEq(VASTAudioProcessor* processor, int busnr);
+	CVASTEq(VASTAudioProcessor* processor, CVASTSettings& set, int busnr);
 	~CVASTEq();
 
 	//==============================================================================
 
-	void init(CVASTSettings &set) override;
+	void init() override;
 	void initParameters(); //must not add parameters here anymore - will change sequence
 	void initCompatibilityParameters() override; //new parameters go here
 	void initCompatibilityParameters5() override {}; //new parameters go here

@@ -12,7 +12,7 @@ All modulators tested: OK
 #include <ctime>
 #include <cmath>
 
-CVASTBitcrush::CVASTBitcrush(VASTAudioProcessor* processor, int busnr) {
+CVASTBitcrush::CVASTBitcrush(VASTAudioProcessor* processor, CVASTSettings& set, int busnr) : m_Set(&set) {
 	my_processor = processor;
 	myBusnr = busnr;
 	setEffectName("BITCRUSH");
@@ -113,8 +113,7 @@ void CVASTBitcrush::parameterChanged(const String& parameterID, float newValue) 
 	}
 }
 
-void CVASTBitcrush::init(CVASTSettings &set) {
-	m_Set = &set;
+void CVASTBitcrush::init() {
 	initParameters();
 
 	reset();
