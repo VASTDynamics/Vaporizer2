@@ -7,3 +7,6 @@
 [submodule "VASTvaporizer/Source/AnaMark-Tuning-Library"]
 	path = VASTvaporizer/Source/AnaMark-Tuning-Library
 	url = https://github.com/zardini123/AnaMark-Tuning-Library
+[submodule "clap-juce-extensions"]
+	path = clap-juce-extensions
+	url = https://github.com/free-audio/clap-juce-extensions.git
