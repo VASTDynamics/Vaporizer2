@@ -153,41 +153,41 @@ void VASTQFilter::filterTypeChanged(OwnedArray<VASTSynthesiserVoice>* voices, in
 
 			//Filter A
 			if (ftype != fut_none) {
-				memset(&((CVASTSingleNote*)voice)->m_VCF[filter].FBP.FU[0], 0, sizeof(((CVASTSingleNote*)voice)->m_VCF[filter].FBP.FU[0]));
-				memset(&((CVASTSingleNote*)voice)->m_VCF[filter].FBP.FU[1], 0, sizeof(((CVASTSingleNote*)voice)->m_VCF[filter].FBP.FU[1]));
-				((CVASTSingleNote*)voice)->m_VCF[filter].FBP.FU[0].type = ftype;
-				((CVASTSingleNote*)voice)->m_VCF[filter].FBP.FU[0].subtype = fsubtype;
-				((CVASTSingleNote*)voice)->m_VCF[filter].FBP.FU[1].type = ftype;
-				((CVASTSingleNote*)voice)->m_VCF[filter].FBP.FU[1].subtype = fsubtype;
-				((CVASTSingleNote*)voice)->m_VCF[filter].m_filterCoefficientMaker[0].Reset();
-				((CVASTSingleNote*)voice)->m_VCF[filter].m_filterCoefficientMaker[0].prepareForPlay(m_Set->m_nSampleRate, osFactor, m_Set->m_fMasterTune.load());
+				memset(&((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[0], 0, sizeof(((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[0]));
+				memset(&((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[1], 0, sizeof(((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[1]));
+				((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[0].type = ftype;
+				((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[0].subtype = fsubtype;
+				((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[1].type = ftype;
+				((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[1].subtype = fsubtype;
+				((CVASTSingleNote*)voice)->m_VCF[filter]->m_filterCoefficientMaker[0].Reset();
+				((CVASTSingleNote*)voice)->m_VCF[filter]->m_filterCoefficientMaker[0].prepareForPlay(m_Set->m_nSampleRate, osFactor, m_Set->m_fMasterTune.load());
 			}
 			//Filter B
 			if (ftype2 != fut_none) {
-				memset(&((CVASTSingleNote*)voice)->m_VCF[filter].FBP.FU[2], 0, sizeof(((CVASTSingleNote*)voice)->m_VCF[filter].FBP.FU[2]));
-				memset(&((CVASTSingleNote*)voice)->m_VCF[filter].FBP.FU[3], 0, sizeof(((CVASTSingleNote*)voice)->m_VCF[filter].FBP.FU[3]));
-				((CVASTSingleNote*)voice)->m_VCF[filter].FBP.FU[2].type = ftype2;
-				((CVASTSingleNote*)voice)->m_VCF[filter].FBP.FU[2].subtype = fsubtype2;
-				((CVASTSingleNote*)voice)->m_VCF[filter].FBP.FU[3].type = ftype2;
-				((CVASTSingleNote*)voice)->m_VCF[filter].FBP.FU[3].subtype = fsubtype2;
-				((CVASTSingleNote*)voice)->m_VCF[filter].m_filterCoefficientMaker[1].Reset();
-				((CVASTSingleNote*)voice)->m_VCF[filter].m_filterCoefficientMaker[1].prepareForPlay(m_Set->m_nSampleRate, osFactor, m_Set->m_fMasterTune.load());
+				memset(&((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[2], 0, sizeof(((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[2]));
+				memset(&((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[3], 0, sizeof(((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[3]));
+				((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[2].type = ftype2;
+				((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[2].subtype = fsubtype2;
+				((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[3].type = ftype2;
+				((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[3].subtype = fsubtype2;
+				((CVASTSingleNote*)voice)->m_VCF[filter]->m_filterCoefficientMaker[1].Reset();
+				((CVASTSingleNote*)voice)->m_VCF[filter]->m_filterCoefficientMaker[1].prepareForPlay(m_Set->m_nSampleRate, osFactor, m_Set->m_fMasterTune.load());
 			}
 
 			//Filter C
 			if (ftype3 != fut_none) {
-				memset(&((CVASTSingleNote*)voice)->m_VCF[filter].FBP.FU[4], 0, sizeof(((CVASTSingleNote*)voice)->m_VCF[filter].FBP.FU[4]));
-				memset(&((CVASTSingleNote*)voice)->m_VCF[filter].FBP.FU[5], 0, sizeof(((CVASTSingleNote*)voice)->m_VCF[filter].FBP.FU[5]));
-				((CVASTSingleNote*)voice)->m_VCF[filter].FBP.FU[4].type = ftype3;
-				((CVASTSingleNote*)voice)->m_VCF[filter].FBP.FU[4].subtype = fsubtype3;
-				((CVASTSingleNote*)voice)->m_VCF[filter].FBP.FU[5].type = ftype3;
-				((CVASTSingleNote*)voice)->m_VCF[filter].FBP.FU[5].subtype = fsubtype3;
-				((CVASTSingleNote*)voice)->m_VCF[filter].m_filterCoefficientMaker[2].Reset();
-				((CVASTSingleNote*)voice)->m_VCF[filter].m_filterCoefficientMaker[2].prepareForPlay(m_Set->m_nSampleRate, osFactor, m_Set->m_fMasterTune.load());
+				memset(&((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[4], 0, sizeof(((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[4]));
+				memset(&((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[5], 0, sizeof(((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[5]));
+				((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[4].type = ftype3;
+				((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[4].subtype = fsubtype3;
+				((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[5].type = ftype3;
+				((CVASTSingleNote*)voice)->m_VCF[filter]->FBP.FU[5].subtype = fsubtype3;
+				((CVASTSingleNote*)voice)->m_VCF[filter]->m_filterCoefficientMaker[2].Reset();
+				((CVASTSingleNote*)voice)->m_VCF[filter]->m_filterCoefficientMaker[2].prepareForPlay(m_Set->m_nSampleRate, osFactor, m_Set->m_fMasterTune.load());
 			}
 
 			if (ftype == fut_vastscream)
-				((CVASTSingleNote*)voice)->m_VCF[filter].m_ladderFilter1.setMode(dsp::LadderFilter<float>::Mode::LPF12);
+				((CVASTSingleNote*)voice)->m_VCF[filter]->m_ladderFilter1.setMode(dsp::LadderFilter<float>::Mode::LPF12);
 		}
 	}
 	else { //UI!
@@ -345,7 +345,7 @@ int VASTQFilter::processBlock(OwnedArray<VASTSynthesiserVoice>* voices, modMatri
 			else {
 				voiceNo++;
 				voice = (*voices)[voiceNo];
-				vcf = &((CVASTSingleNote*)voice)->m_VCF[filter];
+				vcf = ((CVASTSingleNote*)voice)->m_VCF[filter];
 				bool bPlayiningInRange = ((CVASTSingleNote*)voice)->isPlayingInRange(startSample, numSamples); //requires that mseg is processed before!
 				doit = (bPlayiningInRange || (((CVASTSingleNote*)voice)->m_bLastFilterOutputZero[filter] == false));
 				if (voiceNo == m_Set->m_uMaxPoly - 1)
@@ -473,7 +473,7 @@ int VASTQFilter::processBlock(OwnedArray<VASTSynthesiserVoice>* voices, modMatri
 
 		if (!isUI) {
 			for (auto* voice : *voices) {
-				vcf = &((CVASTSingleNote*)voice)->m_VCF[filter];
+				vcf = ((CVASTSingleNote*)voice)->m_VCF[filter];
 				vcf->m_bSmoothersTakeNextValue = false;
 			}
 		}
@@ -1405,7 +1405,7 @@ int VASTQFilter::processQFilter(dsp::AudioBlock<float> filterBlock, sRoutingBuff
 			else {
 				voiceNo++;
 				voice = (*voices)[voiceNo];
-				vcf = &((CVASTSingleNote*)voice)->m_VCF[filter];
+				vcf = ((CVASTSingleNote*)voice)->m_VCF[filter];
 				bool bPlayiningInRange = ((CVASTSingleNote*)voice)->isPlayingInRange(startSample, numSamples); //requires that mseg is processed before!
 				doit = (bPlayiningInRange || (((CVASTSingleNote*)voice)->m_bLastFilterOutputZero[filter] == false));				
 				if (voiceNo == ((CVASTSingleNote*)voice)->m_Set->m_uMaxPoly - 1)
@@ -1556,7 +1556,7 @@ int VASTQFilter::processQFilter(dsp::AudioBlock<float> filterBlock, sRoutingBuff
 
 					if (bPlayiningInRange || (((CVASTSingleNote*)voice)->m_bLastFilterOutputZero[filter] == false)) {
 						
-						myNote->m_VCF[filter].GetQFB();
+						myNote->m_VCF[filter]->GetQFB();
 
 					}
 				}
@@ -1590,7 +1590,7 @@ void VASTQFilter::ProcessLegacy(dsp::AudioBlock<float> filterBlock, sRoutingBuff
 		else {
 			voiceNo++;
 			voice = (*voices)[voiceNo];
-			vcf = &((CVASTSingleNote*)voice)->m_VCF[filter];
+			vcf = ((CVASTSingleNote*)voice)->m_VCF[filter];
 			bool bPlayiningInRange = ((CVASTSingleNote*)voice)->isPlayingInRange(startSample, numSamples); //requires that mseg is processed before!
 			doit = (bPlayiningInRange || (((CVASTSingleNote*)voice)->m_bLastFilterOutputZero[filter] == false));
 			if (voiceNo == ((CVASTSingleNote*)voice)->m_Set->m_uMaxPoly - 1)

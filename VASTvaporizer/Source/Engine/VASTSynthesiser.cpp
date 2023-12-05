@@ -539,15 +539,15 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 							float fMod = 0.0f;
 							inputState.currentFrame = startSample;
 							fMod = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fLFOFreq_LFO1, MODMATDEST::LFO1Frequency, &inputState);
-							((CVASTSingleNote*)voice)->m_LFO_Osc[0]->updatePitchMod(fMod);
-							((CVASTSingleNote*)voice)->m_LFO_Osc[0]->setFrequency(0, false);
+							((CVASTSingleNote*)voice)->m_LFO_Osc[0].updatePitchMod(fMod);
+							((CVASTSingleNote*)voice)->m_LFO_Osc[0].setFrequency(0, false);
 						}
 
 						if (*m_Set->m_State->m_bLFOPerVoice_LFO1 == static_cast<int>(SWITCH::SWITCH_ON)) {
 							for (int currentFrame = startSample; currentFrame < startSample + numSamples; currentFrame++) {
 								float lfoval = 0.0f;
 								inputState.currentFrame = startSample;
-								((CVASTSingleNote*)voice)->m_LFO_Osc[0]->getOscillation(&lfoval);
+								((CVASTSingleNote*)voice)->m_LFO_Osc[0].getOscillation(&lfoval);
 								//routingBuffers.LFOBuffer[0][voice->mVoiceNo]->setSample(0, currentFrame, lfoval);
 								routingBuffers.LFOBuffer[0][voice->mVoiceNo]->getWritePointer(0)[currentFrame] = lfoval;
 							}
@@ -563,14 +563,14 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 							float fMod = 0.0f;
 							inputState.currentFrame = startSample;
 							fMod = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fLFOFreq_LFO2, MODMATDEST::LFO2Frequency, &inputState);
-							((CVASTSingleNote*)voice)->m_LFO_Osc[1]->updatePitchMod(fMod);
-							((CVASTSingleNote*)voice)->m_LFO_Osc[1]->setFrequency(0, false);
+							((CVASTSingleNote*)voice)->m_LFO_Osc[1].updatePitchMod(fMod);
+							((CVASTSingleNote*)voice)->m_LFO_Osc[1].setFrequency(0, false);
 						}
 
 						if (*m_Set->m_State->m_bLFOPerVoice_LFO2 == static_cast<int>(SWITCH::SWITCH_ON)) {
 							for (int currentFrame = startSample; currentFrame < startSample + numSamples; currentFrame++) {
 								float lfoval = 0.0f;
-								((CVASTSingleNote*)voice)->m_LFO_Osc[1]->getOscillation(&lfoval);
+								((CVASTSingleNote*)voice)->m_LFO_Osc[1].getOscillation(&lfoval);
 								//routingBuffers.LFOBuffer[1][voice->mVoiceNo]->setSample(0, currentFrame, lfoval);
 								routingBuffers.LFOBuffer[1][voice->mVoiceNo]->getWritePointer(0)[currentFrame] = lfoval;
 							}
@@ -586,14 +586,14 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 							float fMod = 0.0f;
 							inputState.currentFrame = startSample;
 							fMod = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fLFOFreq_LFO3, MODMATDEST::LFO3Frequency, &inputState);
-							((CVASTSingleNote*)voice)->m_LFO_Osc[2]->updatePitchMod(fMod);
-							((CVASTSingleNote*)voice)->m_LFO_Osc[2]->setFrequency(0, false);
+							((CVASTSingleNote*)voice)->m_LFO_Osc[2].updatePitchMod(fMod);
+							((CVASTSingleNote*)voice)->m_LFO_Osc[2].setFrequency(0, false);
 						}
 
 						if (*m_Set->m_State->m_bLFOPerVoice_LFO3 == static_cast<int>(SWITCH::SWITCH_ON)) {
 							for (int currentFrame = startSample; currentFrame < startSample + numSamples; currentFrame++) {
 								float lfoval = 0.0f;
-								((CVASTSingleNote*)voice)->m_LFO_Osc[2]->getOscillation(&lfoval);
+								((CVASTSingleNote*)voice)->m_LFO_Osc[2].getOscillation(&lfoval);
 								//routingBuffers.LFOBuffer[2][voice->mVoiceNo]->setSample(0, currentFrame, lfoval);
 								routingBuffers.LFOBuffer[2][voice->mVoiceNo]->getWritePointer(0)[currentFrame] = lfoval;
 							}
@@ -609,14 +609,14 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 							float fMod = 0.0f;
 							inputState.currentFrame = startSample;
 							fMod = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fLFOFreq_LFO4, MODMATDEST::LFO4Frequency, &inputState);
-							((CVASTSingleNote*)voice)->m_LFO_Osc[3]->updatePitchMod(fMod);
-							((CVASTSingleNote*)voice)->m_LFO_Osc[3]->setFrequency(0, false);
+							((CVASTSingleNote*)voice)->m_LFO_Osc[3].updatePitchMod(fMod);
+							((CVASTSingleNote*)voice)->m_LFO_Osc[3].setFrequency(0, false);
 						}
 
 						if (*m_Set->m_State->m_bLFOPerVoice_LFO4 == static_cast<int>(SWITCH::SWITCH_ON)) {
 							for (int currentFrame = startSample; currentFrame < startSample + numSamples; currentFrame++) {
 								float lfoval = 0.0f;
-								((CVASTSingleNote*)voice)->m_LFO_Osc[3]->getOscillation(&lfoval);
+								((CVASTSingleNote*)voice)->m_LFO_Osc[3].getOscillation(&lfoval);
 								//routingBuffers.LFOBuffer[3][voice->mVoiceNo]->setSample(0, currentFrame, lfoval);
 								routingBuffers.LFOBuffer[3][voice->mVoiceNo]->getWritePointer(0)[currentFrame] = lfoval;
 							}
@@ -632,14 +632,14 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 							float fMod = 0.0f;
 							inputState.currentFrame = startSample;
 							fMod = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fLFOFreq_LFO5, MODMATDEST::LFO5Frequency, &inputState);
-							((CVASTSingleNote*)voice)->m_LFO_Osc[4]->updatePitchMod(fMod);
-							((CVASTSingleNote*)voice)->m_LFO_Osc[4]->setFrequency(0, false);
+							((CVASTSingleNote*)voice)->m_LFO_Osc[4].updatePitchMod(fMod);
+							((CVASTSingleNote*)voice)->m_LFO_Osc[4].setFrequency(0, false);
 						}
 
 						if (*m_Set->m_State->m_bLFOPerVoice_LFO5 == static_cast<int>(SWITCH::SWITCH_ON)) {
 							for (int currentFrame = startSample; currentFrame < startSample + numSamples; currentFrame++) {
 								float lfoval = 0.0f;
-								((CVASTSingleNote*)voice)->m_LFO_Osc[4]->getOscillation(&lfoval);
+								((CVASTSingleNote*)voice)->m_LFO_Osc[4].getOscillation(&lfoval);
 								//routingBuffers.LFOBuffer[4][voice->mVoiceNo]->setSample(0, currentFrame, lfoval);
 								routingBuffers.LFOBuffer[4][voice->mVoiceNo]->getWritePointer(0)[currentFrame] = lfoval;
 							}
@@ -782,8 +782,8 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 						float fMod = 0.0f;
 						inputState.currentFrame = startSample;
 						fMod = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fLFOFreq_LFO1, MODMATDEST::LFO1Frequency, &inputState);
-						((CVASTSingleNote*)voice)->m_LFO_Osc[0]->updatePitchMod(fMod);
-						((CVASTSingleNote*)voice)->m_LFO_Osc[0]->setFrequency(0, false);
+						((CVASTSingleNote*)voice)->m_LFO_Osc[0].updatePitchMod(fMod);
+						((CVASTSingleNote*)voice)->m_LFO_Osc[0].setFrequency(0, false);
 					}
 
 					if (*m_Set->m_State->m_bLFOPerVoice_LFO1 == static_cast<int>(SWITCH::SWITCH_ON)) {
@@ -791,7 +791,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 						for (int currentFrame = startSample; currentFrame < startSample + numSamples; currentFrame++) {
 							float lfoval = 0.0f;
 							inputState.currentFrame = startSample;
-							((CVASTSingleNote*)voice)->m_LFO_Osc[0]->getOscillation(&lfoval);
+							((CVASTSingleNote*)voice)->m_LFO_Osc[0].getOscillation(&lfoval);
 
 							float msegmult = 1.f;
 							if (*m_Set->m_State->m_uLFOMSEG_LFO1 != static_cast<int>(MSEGLFONONE)) {
@@ -810,15 +810,15 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 						float fMod = 0.0f;
 						inputState.currentFrame = startSample;
 						fMod = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fLFOFreq_LFO2, MODMATDEST::LFO2Frequency, &inputState);
-						((CVASTSingleNote*)voice)->m_LFO_Osc[1]->updatePitchMod(fMod);
-						((CVASTSingleNote*)voice)->m_LFO_Osc[1]->setFrequency(0, false);
+						((CVASTSingleNote*)voice)->m_LFO_Osc[1].updatePitchMod(fMod);
+						((CVASTSingleNote*)voice)->m_LFO_Osc[1].setFrequency(0, false);
 					}
 
 					if (*m_Set->m_State->m_bLFOPerVoice_LFO2 == static_cast<int>(SWITCH::SWITCH_ON)) {
 						float* lfoWriteBuffer = routingBuffers.LFOBuffer[1][voice->mVoiceNo]->getWritePointer(0);
 						for (int currentFrame = startSample; currentFrame < startSample + numSamples; currentFrame++) {
 							float lfoval = 0.0f;
-							((CVASTSingleNote*)voice)->m_LFO_Osc[1]->getOscillation(&lfoval);
+							((CVASTSingleNote*)voice)->m_LFO_Osc[1].getOscillation(&lfoval);
 
 							float msegmult = 1.f;
 							if (*m_Set->m_State->m_uLFOMSEG_LFO2 != static_cast<int>(MSEGLFONONE)) {
@@ -837,15 +837,15 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 						float fMod = 0.0f;
 						inputState.currentFrame = startSample;
 						fMod = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fLFOFreq_LFO3, MODMATDEST::LFO3Frequency, &inputState);
-						((CVASTSingleNote*)voice)->m_LFO_Osc[2]->updatePitchMod(fMod);
-						((CVASTSingleNote*)voice)->m_LFO_Osc[2]->setFrequency(0, false);
+						((CVASTSingleNote*)voice)->m_LFO_Osc[2].updatePitchMod(fMod);
+						((CVASTSingleNote*)voice)->m_LFO_Osc[2].setFrequency(0, false);
 					}
 
 					if (*m_Set->m_State->m_bLFOPerVoice_LFO3 == static_cast<int>(SWITCH::SWITCH_ON)) {
 						float* lfoWriteBuffer = routingBuffers.LFOBuffer[2][voice->mVoiceNo]->getWritePointer(0);
 						for (int currentFrame = startSample; currentFrame < startSample + numSamples; currentFrame++) {
 							float lfoval = 0.0f;
-							((CVASTSingleNote*)voice)->m_LFO_Osc[2]->getOscillation(&lfoval);
+							((CVASTSingleNote*)voice)->m_LFO_Osc[2].getOscillation(&lfoval);
 
 							float msegmult = 1.f;
 							if (*m_Set->m_State->m_uLFOMSEG_LFO3 != static_cast<int>(MSEGLFONONE)) {
@@ -864,15 +864,15 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 						float fMod = 0.0f;
 						inputState.currentFrame = startSample;
 						fMod = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fLFOFreq_LFO4, MODMATDEST::LFO4Frequency, &inputState);
-						((CVASTSingleNote*)voice)->m_LFO_Osc[3]->updatePitchMod(fMod);
-						((CVASTSingleNote*)voice)->m_LFO_Osc[3]->setFrequency(0, false);
+						((CVASTSingleNote*)voice)->m_LFO_Osc[3].updatePitchMod(fMod);
+						((CVASTSingleNote*)voice)->m_LFO_Osc[3].setFrequency(0, false);
 					}
 
 					if (*m_Set->m_State->m_bLFOPerVoice_LFO4 == static_cast<int>(SWITCH::SWITCH_ON)) {
 						float* lfoWriteBuffer = routingBuffers.LFOBuffer[3][voice->mVoiceNo]->getWritePointer(0);
 						for (int currentFrame = startSample; currentFrame < startSample + numSamples; currentFrame++) {
 							float lfoval = 0.0f;
-							((CVASTSingleNote*)voice)->m_LFO_Osc[3]->getOscillation(&lfoval);
+							((CVASTSingleNote*)voice)->m_LFO_Osc[3].getOscillation(&lfoval);
 
 							float msegmult = 1.f;
 							if (static_cast<int>(*m_Set->m_State->m_uLFOMSEG_LFO4) != MSEGLFONONE) {
@@ -891,15 +891,15 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 						float fMod = 0.0f;
 						inputState.currentFrame = startSample;
 						fMod = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fLFOFreq_LFO5, MODMATDEST::LFO5Frequency, &inputState);
-						((CVASTSingleNote*)voice)->m_LFO_Osc[4]->updatePitchMod(fMod);
-						((CVASTSingleNote*)voice)->m_LFO_Osc[4]->setFrequency(0, false);
+						((CVASTSingleNote*)voice)->m_LFO_Osc[4].updatePitchMod(fMod);
+						((CVASTSingleNote*)voice)->m_LFO_Osc[4].setFrequency(0, false);
 					}
 
 					if (*m_Set->m_State->m_bLFOPerVoice_LFO5 == static_cast<int>(SWITCH::SWITCH_ON)) {
 						float* lfoWriteBuffer = routingBuffers.LFOBuffer[4][voice->mVoiceNo]->getWritePointer(0);
 						for (int currentFrame = startSample; currentFrame < startSample + numSamples; currentFrame++) {
 							float lfoval = 0.0f;
-							((CVASTSingleNote*)voice)->m_LFO_Osc[4]->getOscillation(&lfoval);
+							((CVASTSingleNote*)voice)->m_LFO_Osc[4].getOscillation(&lfoval);
 
 							float msegmult = 1.f;
 							if (*m_Set->m_State->m_uLFOMSEG_LFO5 != static_cast<int>(MSEGLFONONE)) {
@@ -948,7 +948,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 			m_Poly->m_safePhaseFloat[bank][((CVASTSingleNote*)voice)->getVoiceNo()].store(((CVASTSingleNote*)voice)->m_safePhaseFloat[bank].load());
 		}
 		for (int lfo = 0; lfo < 5; lfo++) {
-			m_Poly->m_fLastLFOOscValue[lfo][((CVASTSingleNote*)voice)->getVoiceNo()].store(((CVASTSingleNote*)voice)->m_LFO_Osc[lfo]->m_fLastValue);
+			m_Poly->m_fLastLFOOscValue[lfo][((CVASTSingleNote*)voice)->getVoiceNo()].store(((CVASTSingleNote*)voice)->m_LFO_Osc[lfo].m_fLastValue);
 		}
 	} //voices
 

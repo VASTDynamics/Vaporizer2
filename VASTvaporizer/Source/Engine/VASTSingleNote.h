@@ -18,6 +18,7 @@ Has:
 #include <vector>
 
 class CVASTPoly; //forward declaration
+class CVASTVcf; //forward declaration
 
 typedef struct sGrainTable {
 	double samplePitchRatio = 0;
@@ -47,12 +48,15 @@ public:
 	virtual ~CVASTSingleNote(void);
 
 	// public instances
-	CVASTVcf m_VCF[3];
+    CVASTSettings* m_Set; //public due to oscilloscope test
+    CVASTPoly* m_Poly; 
+    OwnedArray<CVASTVcf> m_VCF; //need to be newed due to alignas(16)
 	CVASTVca m_VCA;
 
-	CVASTSettings* m_Set; //public due to oscilloscope test
-	CVASTPoly* m_Poly; 
-
+    CVASTWaveTableOscillator m_Oscillator[4]; //bank 1-4
+    CVASTWaveTableOscillator m_OscillatorNoise;
+    CVASTWaveTableOscillator m_LFO_Osc[5]; // LFOs 1-5
+    
 	void init();
 
 	void prepareForPlay();
@@ -104,11 +108,6 @@ public:
 	void setWTPosSmooth(int bank);
 	void setWTPosSmooth(int bank, float morph);
 	void resetSmoothers();
-	
-	// instances
-	OwnedArray<CVASTWaveTableOscillator> m_Oscillator;
-    std::unique_ptr<CVASTWaveTableOscillator> m_OscillatorNoise;
-	OwnedArray<CVASTWaveTableOscillator> m_LFO_Osc; // LFOs 1-5
 
 	MYUINT m_uChannel = 0;
 	MYUINT m_uMIDINote = 0;
@@ -187,7 +186,7 @@ private:
 
 	void updateDetune(int bank, float detuneValue, bool updateFrequency);
 	bool prepareNextPhaseCycle(int bank, int skips, int startSample, bool bTakeNextValue, bool wtfxFXTypeChanged);
-	bool prepareEachSample(int bank, int currentFrame, bool &freqsHaveToBeDoneForEachSample, bool bTakeNextValue, CVASTWaveTableOscillator* l_Oscillator[]);
+	bool prepareEachSample(int bank, int currentFrame, bool &freqsHaveToBeDoneForEachSample, bool bTakeNextValue, CVASTWaveTableOscillator l_Oscillator[]);
 	bool prepareFrequency(int bank, int skips, int startSample, bool bTakeNextValue, bool bIsStartOfCycle);
 	void initWavetableProcessing(int bank, sRoutingBuffers& routingBuffers, modMatrixInputState& inputState);
 	void setTargetWTPos(int bank, float targetWTPosPercentage, bool takeNext);

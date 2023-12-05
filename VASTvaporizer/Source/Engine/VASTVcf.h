@@ -23,13 +23,15 @@ VAST Dynamics Audio Software (TM)
 #endif
 #include "Filter/VASTQFilterCoefficients.h" 
 #include "Utils/VASTSynthfunctions.h" 
-#include "Filter/VASTQFilter.h" 
-//#include "Filter/VASTQFilterStep.h" 
-//#include "Filter/VASTQFilterProcess.h" 
+#include "Filter/VASTQFilter.h"
 
 struct VASTQFilterProcessState; //forward declaration
 class alignas(16) CVASTVcf
 {
+    
+private:
+    CVASTSettings* m_Set; //on top due to initializers list
+    
 public:
 	CVASTVcf(CVASTSettings& set, MYUINT voiceNo, MYUINT filterNo, bool isUI);
 	virtual ~CVASTVcf();
@@ -120,9 +122,6 @@ public:
 	dsp::LadderFilter<float> m_ladderFilter1;
 
 private:
-	CVASTSettings* m_Set;
-
-	//float m_LFOMod = 0.0;
 	MYUINT m_voiceNo = 0;
 	MYUINT m_filterNo = 0;
 
