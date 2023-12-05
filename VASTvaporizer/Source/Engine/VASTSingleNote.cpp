@@ -12,6 +12,7 @@ Has:
 #include "VASTSettings.h"
 #include "VASTSampler.h"
 #include "VASTPoly.h"
+#include "VASTVcf.h"
 #include "VASTSynthesiser.h"
 #include "VASTOscillatorBank.h"
 #include "Utils/VASTSynthfunctions.h"
@@ -29,21 +30,21 @@ Has:
 #include <string>
 
 CVASTSingleNote::CVASTSingleNote(CVASTSettings& set, CVASTPoly* poly, MYUINT voiceNo):
-	m_Set(&set), m_Poly(poly), m_OscillatorNoise(std::make_unique<CVASTWaveTableOscillator>(set, nullptr))
+	m_Set(&set), m_Poly(poly), m_OscillatorNoise(std::make_unique<CVASTWaveTableOscillator>(set, nullptr)),
+	m_VCF{ {set, voiceNo, 0, false}, {set, voiceNo, 1, false }, {set, voiceNo, 2, false} }, //3 filter
+	m_VCA{ set, voiceNo }
 {
 	mVoiceNo.store(voiceNo);
 	for (int bank = 0; bank < 4; bank++) {
-		m_Oscillator.add(new CVASTWaveTableOscillator(*m_Set, m_Poly->m_OscBank.getUnchecked(bank)));
+		m_Oscillator.add(new CVASTWaveTableOscillator(*m_Set, &m_Poly->m_OscBank[bank]));
 		m_Oscillator.getUnchecked(bank)->init();
 	}
 	m_OscillatorNoise = std::make_unique<CVASTWaveTableOscillator>(*m_Set, nullptr);
 	m_OscillatorNoise->init();
-
-	m_VCA = std::make_unique<CVASTVca>(*m_Set, mVoiceNo);
-	m_VCA->init();
+	
+	m_VCA.init();
 	for (int filter = 0; filter < 3; filter++) {
-		m_VCF.add(new CVASTVcf(*m_Set, mVoiceNo, filter, false)); //not UI
-		m_VCF[filter]->init();
+		m_VCF[filter].init();
 	}
 }
 
@@ -182,7 +183,7 @@ void CVASTSingleNote::setWTPosSmooth(int bank) {
 
 void CVASTSingleNote::prepareForPlay() {
 	for (int filter = 0; filter < 3; filter++) {
-		m_VCF[filter]->prepareForPlay();
+		m_VCF[filter].prepareForPlay();
 	}
 	for (int bank = 0; bank < 4; bank++) {
 		m_Oscillator.getUnchecked(bank)->init();
@@ -190,7 +191,7 @@ void CVASTSingleNote::prepareForPlay() {
 		//m_lastSectionWtPos[bank] = 0.f; //needed?
 	}
 	for (int mseg = 0; mseg < 5; mseg++) {
-		m_VCA->m_MSEG_Envelope[mseg].reset();
+		m_VCA.m_MSEG_Envelope[mseg].reset();
 	}
 
 	m_centerBuffer->setSize(1, m_Set->m_nExpectedSamplesPerBlock, false, false, false); //free  memory
@@ -226,7 +227,7 @@ void CVASTSingleNote::clearCurrentNote()
 
 		//remove oscbank softfade
 		for (int bank = 0; bank < 4; bank++) {
-			m_Poly->m_OscBank.getUnchecked(bank)->removeSingleNoteSoftFadeCycle(mVoiceNo);
+			m_Poly->m_OscBank[bank].removeSingleNoteSoftFadeCycle(mVoiceNo);
 		}
 		resetSoftFadeState();
 	}
@@ -246,7 +247,7 @@ bool CVASTSingleNote::canPlaySound(SynthesiserSound*)
 }
 
 bool CVASTSingleNote::isPlayingButReleased() {
-	bool isOff = m_VCA->isNoteOff();
+	bool isOff = m_VCA.isNoteOff();
 	return (isVoiceActive() &&
 		isOff);
 	//return isVoiceActive() && !(isKeyDown() || isSostenutoPedalDown() || isSustainPedalDown());
@@ -340,9 +341,9 @@ void CVASTSingleNote::stopNote(float velocity, bool allowTailOff)
 	//allowtailoff means release is still done. if false it stops immediately --> clicks, dont use
 	if (allowTailOff == false)
 		if (this->isVoiceActive()) {
-			m_VCA->hardStop();
+			m_VCA.hardStop();
 			for (int bank = 0; bank < 4; bank++) {
-				m_Poly->m_OscBank.getUnchecked(bank)->removeSingleNoteSoftFadeCycle(mVoiceNo);
+				m_Poly->m_OscBank[bank].removeSingleNoteSoftFadeCycle(mVoiceNo);
 			}
 		}
 
@@ -947,7 +948,7 @@ void CVASTSingleNote::updateVariables() { //called once on prepareForPlay and on
 		m_OscillatorNoise->updateMainVariables(m_Set->m_nSampleRate, WAVE::noise, 1, *m_Set->m_State->m_fMasterTune, 0, 0);
 	}
 
-	m_VCA->updateVariables();
+	m_VCA.updateVariables();
 }
 
 void CVASTSingleNote::setPortamentoTime(float time) {
@@ -1049,17 +1050,17 @@ MYUINT CVASTSingleNote::getMIDINote() const {
 }
 
 bool CVASTSingleNote::noteOn(MYUINT uChannel, MYUINT uMIDINote, MYUINT uVelocity, bool legato) {
-	bool hardStop = m_VCA->isHardStop();
-	bool noteOff = m_VCA->isNoteOff();
+	bool hardStop = m_VCA.isHardStop();
+	bool noteOff = m_VCA.isNoteOff();
 	if (hardStop && !noteOff) { //wait for hardstop tailoff
-		VDBG("voice " << getVoiceNo() << " noteOn but m_VCA->isHardStop() and running!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		VDBG("voice " << getVoiceNo() << " noteOn but m_VCA.isHardStop() and running!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		if (m_Set->m_uMaxPoly == 1)
 			legato = false;
 			//return false;
 	}
 #ifdef _DEBUG
 	if (hardStop)
-		VDBG("voice " << getVoiceNo() << " m_VCA->isHardStop() and new noteOn");
+		VDBG("voice " << getVoiceNo() << " m_VCA.isHardStop() and new noteOn");
 #endif
 
 	m_uChannelNext = uChannel;
@@ -1088,13 +1089,13 @@ void CVASTSingleNote::nextNote(bool legato) {
 			m_Oscillator.getUnchecked(bank)->noteOn(m_uChannel, m_uMIDINote, m_uVelocity);
 				
 		m_OscillatorNoise->noteOn(m_uChannel, m_uMIDINote, m_uVelocity);
-		m_VCA->noteOn(m_startPlayTimestamp, true); //but in sustain phase!!		
+		m_VCA.noteOn(m_startPlayTimestamp, true); //but in sustain phase!!		
 	}
 	else {
 		resetSmoothers();
-		m_VCF[0]->resetSmoothers();
-		m_VCF[1]->resetSmoothers();
-		m_VCF[2]->resetSmoothers();
+		m_VCF[0].resetSmoothers();
+		m_VCF[1].resetSmoothers();
+		m_VCF[2].resetSmoothers();
          
 		for (int bank = 0; bank < 4; bank++) {
 			//New start all oscs!
@@ -1107,7 +1108,7 @@ void CVASTSingleNote::nextNote(bool legato) {
 			}
 
 			//CHECK
-			///m_Poly->m_OscBank.getUnchecked(bank)->setChangedFlagOsc(); //redraw on new note??
+			///m_Poly->m_OscBank[bank].setChangedFlagOsc(); //redraw on new note??
 
 			m_iCurCycleSamples[bank] = 0;
 			m_iLastCycleSamples[bank] = 0;
@@ -1125,13 +1126,13 @@ void CVASTSingleNote::nextNote(bool legato) {
 		m_fOscDMaxPeak = 1.0;
 		m_fNoiseDivisor = *m_Set->m_State->m_bNoiseOnOff; //bool but ok!
 		m_fNoiseMaxPeak = 1.0;
-		m_VCA->noteOn(m_startPlayTimestamp, false);
+		m_VCA.noteOn(m_startPlayTimestamp, false);
 	}
 }
 
 void CVASTSingleNote::noteOff(float releaseVelocity) {
 	//m_Set->m_State->sendStatusMessage("------CVASTSingleNote::noteOff voice#, osci#", mVoiceNo, i);
-	m_VCA->noteOff(releaseVelocity);
+	m_VCA.noteOff(releaseVelocity);
 }
 
 void CVASTSingleNote::syncOscToMaster(int bank, int i) { //to align phases
@@ -1184,7 +1185,7 @@ void CVASTSingleNote::doWavetableStep(const int bank, const int currentFrame, co
 	//if (m_currentWTPosFloatPercentage[bank] > 1.f) m_currentWTPosFloatPercentage[bank] = 1.f; //safety - unclear where it comes from // TODO
 
 	//float curWtPosFloat = m_currentWTPosFloatPercentage[bank] * (m_localVoiceBankWavetable[bank]->getNumPositions() - 1);
-	//if (m_Poly->m_OscBank.getUnchecked(bank)->getSoloMode()) {
+	//if (m_Poly->m_OscBank[bank].getSoloMode()) {
 		//curWtPosFloat = m_localVoiceBankWavetable[bank]->m_iBeginSelectionPosition + m_currentWTPosFloatPercentage[bank] * (m_localVoiceBankWavetable[bank]->m_iEndSelectionPosition - m_localVoiceBankWavetable[bank]->m_iBeginSelectionPosition);
 	//}
 
@@ -1193,7 +1194,7 @@ void CVASTSingleNote::doWavetableStep(const int bank, const int currentFrame, co
 	float lPhaseOffsetNext = m_fPhaseOffset_smoothed[bank].getNextValue() * 0.01f; //to singlenote
 	if (m_safePhaseFloat[bank] != lPhaseOffsetNext) {
 		m_safePhaseFloat[bank] = lPhaseOffsetNext;
-		m_Poly->m_OscBank.getUnchecked(bank)->setChangedFlagOsc();
+		m_Poly->m_OscBank[bank].setChangedFlagOsc();
 	}
 	*/
 
@@ -1211,23 +1212,23 @@ void CVASTSingleNote::doWavetableStep(const int bank, const int currentFrame, co
 		m_safeWtPosFloat[bank] = curWtPosFloat;
 
 		//CHECK TODO
-		m_Poly->m_OscBank.getUnchecked(bank)->setChangedFlagOsc();
+		m_Poly->m_OscBank[bank].setChangedFlagOsc();
 		//setChangedFlag(bank); //for oscilloscope only
 	}
 
 	if (m_safePhaseFloat[bank] != lPhaseOffsetNext) {
 		m_safePhaseFloat[bank] = lPhaseOffsetNext;
 		
-		m_Poly->m_OscBank.getUnchecked(bank)->setChangedFlagOsc();
+		m_Poly->m_OscBank[bank].setChangedFlagOsc();
 	}
 
 	m_wtPosBufferPointer[bank][currentFrame] = curWtPosFloat;  //to singlenote
 	//m_morphBuffer[bank]->setSample(0, currentFrame, lmorph); //to singlenote
 
-	//CVASTWaveTable* l_wavetableSoftFade = m_Poly->m_OscBank.getUnchecked(bank)->getSoftFadeWavetablePointer();
+	//CVASTWaveTable* l_wavetableSoftFade = m_Poly->m_OscBank[bank].getSoftFadeWavetablePointer();
 	if (m_localVoiceBankWavetableSoftfade[bank] != nullptr) {
 		float curWtPosFloatNext = m_currentWTPosFloatPercentage[bank] * (m_localVoiceBankWavetableSoftfade[bank]->getNumPositions() - 1); //positions prepared?
-		if (m_Poly->m_OscBank.getUnchecked(bank)->getSoloMode()) {
+		if (m_Poly->m_OscBank[bank].getSoloMode()) {
 			curWtPosFloatNext = m_localVoiceBankWavetableSoftfade[bank]->m_iBeginSelectionPosition + m_currentWTPosFloatPercentage[bank] * (m_localVoiceBankWavetableSoftfade[bank]->m_iEndSelectionPosition - m_localVoiceBankWavetableSoftfade[bank]->m_iBeginSelectionPosition);
 		}
 		//m_wtPosBufferNext[bank]->setSample(0, currentFrame, curWtPosFloatNext);
@@ -1262,6 +1263,7 @@ bool CVASTSingleNote::prepareFrequency(int bank, int skips, int startSample, boo
 	float fDetuneMod = 1.0;
 	bool bHasToBeDoneForEachSample = false;
 	bool isModulating = false;
+	
 	float fPitchMod = 0.f; //-1 .. 1 center 0	
 	if (m_Set->modMatrixDestinationSetFast(MODMATDEST::Pitch))
 		fPitchMod = m_Set->getParameterValueWithMatrixModulation(m_Set->m_State->m_fPitchMod, MODMATDEST::Pitch, &l_inputState, &isModulating) * 0.01f;
@@ -1400,9 +1402,9 @@ bool CVASTSingleNote::prepareNextPhaseCycle(int bank, int skips, int startSample
 	if (!isPlayingAtSamplePosition(startSample)) {
 		clearCurrentNote();
 		resetSmoothers();
-		m_VCF[0]->resetSmoothers();
-		m_VCF[1]->resetSmoothers();
-		m_VCF[2]->resetSmoothers();
+		m_VCF[0].resetSmoothers();
+		m_VCF[1].resetSmoothers();
+		m_VCF[2].resetSmoothers();
 	}
 
 	if (!bHasToBeDoneForEachSample || wtfxFXTypeChanged) {
@@ -1530,7 +1532,7 @@ bool CVASTSingleNote::prepareEachSample(int bank, int currentFrame, bool &freqsH
 
 	if (m_safePhaseFloat[bank] != l_phaseOffset) {
 		m_safePhaseFloat[bank] = l_phaseOffset;
-		m_Poly->m_OscBank.getUnchecked(bank)->setChangedFlagOsc();
+		m_Poly->m_OscBank[bank].setChangedFlagOsc();
 	}
 	
 	if (wrap) {
@@ -1547,16 +1549,15 @@ bool CVASTSingleNote::prepareEachSample(int bank, int currentFrame, bool &freqsH
 
 void CVASTSingleNote::doWavetableBufferGet(const int bank, CVASTWaveTableOscillator* mOscillator, const int osciCount, AudioSampleBuffer* lOscBuffer, const int startSample, const int numSamples) {
 	//VDBG("doWavetableBufferGet voice " + String(mVoiceNo) + " startSample " + String(startSample) + " numSamples " + String(numSamples));
-	vassert(m_Poly->m_OscBank.getUnchecked(bank) != nullptr); //otherwise must not be called
 	if (osciCount == 0) return;
 	m_Poly->m_iLastSingleNoteCycleCalls++;
 
 	// grab the appropriate wavetable
 	if (m_bSoftFadeCycleStarted[bank] && m_bSoftFadeCycleEnded[bank]) {
-		if ((m_localVoiceBankWavetableSoftfade[bank] != nullptr) && ((m_localVoiceBankWavetableSoftfade[bank]->getID() == m_Poly->m_OscBank.getUnchecked(bank)->m_iSingleNoteSoftFadeID.load()))) {
+		if ((m_localVoiceBankWavetableSoftfade[bank] != nullptr) && ((m_localVoiceBankWavetableSoftfade[bank]->getID() == m_Poly->m_OscBank[bank].m_iSingleNoteSoftFadeID.load()))) {
 			//cycle already completed for this voice // all done
-			m_localVoiceBankWavetable[bank] = m_Poly->m_OscBank.getUnchecked(bank)->getNewSharedSoftFadeWavetable(); //continue with soft fade wavetable
-			m_localVoiceBankWavetableSoftfade[bank] = m_Poly->m_OscBank.getUnchecked(bank)->getNewSharedSoftFadeWavetable();
+			m_localVoiceBankWavetable[bank] = m_Poly->m_OscBank[bank].getNewSharedSoftFadeWavetable(); //continue with soft fade wavetable
+			m_localVoiceBankWavetableSoftfade[bank] = m_Poly->m_OscBank[bank].getNewSharedSoftFadeWavetable();
 		}
 		else {
 			m_bSoftFadeCycleStarted[bank] = false;
@@ -1565,12 +1566,12 @@ void CVASTSingleNote::doWavetableBufferGet(const int bank, CVASTWaveTableOscilla
 	}
 	else {
 		if (m_localVoiceBankWavetable[bank] == nullptr) {//get current template from bank
-			m_localVoiceBankWavetable[bank] = m_Poly->m_OscBank.getUnchecked(bank)->getNewSharedWavetable(); //new shared instance, can live longer
-			m_localVoiceBankWavetableSoftfade[bank] = m_Poly->m_OscBank.getUnchecked(bank)->getNewSharedSoftFadeWavetable(); //new shared instance per bank and voice, can live longer
+			m_localVoiceBankWavetable[bank] = m_Poly->m_OscBank[bank].getNewSharedWavetable(); //new shared instance, can live longer
+			m_localVoiceBankWavetableSoftfade[bank] = m_Poly->m_OscBank[bank].getNewSharedSoftFadeWavetable(); //new shared instance per bank and voice, can live longer
 		}
 		else {
-			if ((m_localVoiceBankWavetableSoftfade[bank] == nullptr) && m_Poly->m_OscBank.getUnchecked(bank)->m_bWavetableSoftfadeStillRendered.load()) {
-				m_localVoiceBankWavetableSoftfade[bank] = m_Poly->m_OscBank.getUnchecked(bank)->getNewSharedSoftFadeWavetable(); //new shared instance per bank and voice, can live longer
+			if ((m_localVoiceBankWavetableSoftfade[bank] == nullptr) && m_Poly->m_OscBank[bank].m_bWavetableSoftfadeStillRendered.load()) {
+				m_localVoiceBankWavetableSoftfade[bank] = m_Poly->m_OscBank[bank].getNewSharedSoftFadeWavetable(); //new shared instance per bank and voice, can live longer
 			}
 		}
 	}
@@ -1614,15 +1615,15 @@ void CVASTSingleNote::doWavetableBufferGet(const int bank, CVASTWaveTableOscilla
 		m_fOscWTPos_atNoteOn[bank] = m_fOscWTPos_smoothed[bank].getTargetValue();
 
 		//if a note is started new while softfade cyle is still active this note shall start with softfade wt right away and not add a softfade counter
-		if (m_Poly->m_OscBank.getUnchecked(bank)->isInSingleNoteSoftFadeCycle() || m_Poly->m_OscBank.getUnchecked(bank)->m_bWavetableSoftfadeStillRendered.load()) {
+		if (m_Poly->m_OscBank[bank].isInSingleNoteSoftFadeCycle() || m_Poly->m_OscBank[bank].m_bWavetableSoftfadeStillRendered.load()) {
 			//all done
-			m_localVoiceBankWavetable[bank] = m_Poly->m_OscBank.getUnchecked(bank)->getNewSharedSoftFadeWavetable(); //continue with soft fade wavetable
-			m_localVoiceBankWavetableSoftfade[bank] = m_Poly->m_OscBank.getUnchecked(bank)->getNewSharedSoftFadeWavetable();
+			m_localVoiceBankWavetable[bank] = m_Poly->m_OscBank[bank].getNewSharedSoftFadeWavetable(); //continue with soft fade wavetable
+			m_localVoiceBankWavetableSoftfade[bank] = m_Poly->m_OscBank[bank].getNewSharedSoftFadeWavetable();
 			m_bSoftFadeCycleStarted[bank] = true;
 			m_bSoftFadeCycleEnded[bank] = true;
             VDBG("Softfade - note is started new while softfade cyle is still active this note shall start with softfade wt right away and not add a softfade counter");
             VDBG("CHECK removeSingleNoteSoftFadeCycle " << bank << " " << mVoiceNo);
-            m_Poly->m_OscBank.getUnchecked(bank)->removeSingleNoteSoftFadeCycle(mVoiceNo);
+            m_Poly->m_OscBank[bank].removeSingleNoteSoftFadeCycle(mVoiceNo);
 		}
 
 		m_iLastFreqUpdate[bank] = 999999;
@@ -1653,7 +1654,7 @@ void CVASTSingleNote::doWavetableBufferGet(const int bank, CVASTWaveTableOscilla
             bool lUpdated = false;
 			if (sectionlength > 0) {
 				//VDBG("doWavetableBufferGet  getWavetableInterpolateBuffer m_localVoiceBankWavetable voice " + String(mVoiceNo) + " startSample " + String(nextStart) + " numSamples " + String(sectionlength) + " wtPosPerc " + String(m_currentWTPosFloatPercentage[bank]));
-				m_localVoiceBankWavetable[bank]->getWavetableInterpolateBuffer(mOscillator, osciCount, lOscBuffer, nextStart, sectionlength, bInverter, m_Set->m_WTmode, mVoiceNo, bank, &m_Poly->m_OscBank, m_bIsFirstCycle[bank], m_bIsStartOfCycle[bank], m_currentWTPosFloatPercentage[bank], m_wtFXVal[bank], m_wtFXType[bank], m_iLastCycleSamples[bank], m_iCurCycleSamples[bank], nullptr, lUpdated, m_Poly->m_OscBank.getUnchecked(bank)->getSoloMode());
+				m_localVoiceBankWavetable[bank]->getWavetableInterpolateBuffer(mOscillator, osciCount, lOscBuffer, nextStart, sectionlength, bInverter, m_Set->m_WTmode, mVoiceNo, bank, m_bIsFirstCycle[bank], m_bIsStartOfCycle[bank], m_currentWTPosFloatPercentage[bank], m_wtFXVal[bank], m_wtFXType[bank], m_iLastCycleSamples[bank], m_iCurCycleSamples[bank], nullptr, lUpdated, m_Poly->m_OscBank[bank].getSoloMode());
 				//=====================================================================
 				//next interpolate buffer call will be start of new cycle -> set values for next phasec cycle
 #ifdef _DEBUG
@@ -1662,7 +1663,7 @@ void CVASTSingleNote::doWavetableBufferGet(const int bank, CVASTWaveTableOscilla
 				m_bLastRenderedWTID[bank] = m_localVoiceBankWavetable[bank]->getID();
 #endif
 				if (lUpdated)
-					m_Poly->m_OscBank.getUnchecked(bank)->setChangedFlagOsc();
+					m_Poly->m_OscBank[bank].setChangedFlagOsc();
 			}
 			//do also for zero section!
 			m_bFreqsHaveToBeDoneForEachSample[bank] = prepareNextPhaseCycle(bank, m_iLastCycleSamples[bank], startSample, bTakeNextValue, false);
@@ -1671,16 +1672,16 @@ void CVASTSingleNote::doWavetableBufferGet(const int bank, CVASTWaveTableOscilla
 
 			//Softfade------------------------------------------
 			if (m_bSoftFadeCycleStarted[bank] && !m_bSoftFadeCycleEnded[bank]) { //end softfade here
-				//vassert(m_localVoiceBankWavetableSoftfade[bank]->getID() == m_Poly->m_OscBank.getUnchecked(bank)->m_iSingleNoteSoftFadeID.load()); //must not be changed in meantime //is changed by dynamic generation??
+				//vassert(m_localVoiceBankWavetableSoftfade[bank]->getID() == m_Poly->m_OscBank[bank].m_iSingleNoteSoftFadeID.load()); //must not be changed in meantime //is changed by dynamic generation??
 				if (m_localVoiceBankWavetableSoftfade[bank] != nullptr) { //check why??
                     std::unique_ptr<AudioSampleBuffer> softFadeBuffer(new AudioSampleBuffer(2, lOscBuffer->getNumSamples()));
 					softFadeBuffer->clear();
 					bool lUpdated = false;
 					if (sectionlength > 0) {
 						//VDBG("doWavetableBufferGet  getWavetableInterpolateBuffer m_localVoiceBankWavetableSoftfade voice " + String(mVoiceNo) + " startSample " + String(nextStart) + " numSamples " + String(sectionlength) + " wtPosPerc " + String(m_currentWTPosFloatPercentage[bank]));
-						m_localVoiceBankWavetableSoftfade[bank]->getWavetableInterpolateBuffer(mOscillator, osciCount, softFadeBuffer.get(), nextStart, sectionlength, bInverter, m_Set->m_WTmode, mVoiceNo, bank, &m_Poly->m_OscBank, m_bIsFirstCycle[bank], m_bIsStartOfCycle[bank], m_currentWTPosFloatPercentage[bank], m_wtFXVal[bank], m_wtFXType[bank], m_iLastCycleSamples[bank], m_iCurCycleSamples[bank], m_localVoiceBankWavetable[bank].get(), lUpdated, m_Poly->m_OscBank.getUnchecked(bank)->getSoloMode());
+						m_localVoiceBankWavetableSoftfade[bank]->getWavetableInterpolateBuffer(mOscillator, osciCount, softFadeBuffer.get(), nextStart, sectionlength, bInverter, m_Set->m_WTmode, mVoiceNo, bank, m_bIsFirstCycle[bank], m_bIsStartOfCycle[bank], m_currentWTPosFloatPercentage[bank], m_wtFXVal[bank], m_wtFXType[bank], m_iLastCycleSamples[bank], m_iCurCycleSamples[bank], m_localVoiceBankWavetable[bank].get(), lUpdated, m_Poly->m_OscBank[bank].getSoloMode());
 						if (lUpdated)
-							m_Poly->m_OscBank.getUnchecked(bank)->setChangedFlagOsc();
+							m_Poly->m_OscBank[bank].setChangedFlagOsc();
 					}
 					//interpolate
 					float startFracVal = float(m_iCurCycleSamples[bank] - sectionlength) / float(m_iLastCycleSamples[bank]);
@@ -1696,28 +1697,28 @@ void CVASTSingleNote::doWavetableBufferGet(const int bank, CVASTWaveTableOscilla
 				}
 
 #ifdef _DEBUG
-				//VDBG("Ending softfade cycle - doWavetableBufferGet Voice " + String(mVoiceNo) + " SoftFadeWTID " + String(m_Poly->m_OscBank.getUnchecked(bank)->m_iSingleNoteSoftFadeID.load()) + " wtPosPerc " + String(m_currentWTPosFloatPercentage[bank]) + " bank " + String(bank));
+				//VDBG("Ending softfade cycle - doWavetableBufferGet Voice " + String(mVoiceNo) + " SoftFadeWTID " + String(m_Poly->m_OscBank[bank].m_iSingleNoteSoftFadeID.load()) + " wtPosPerc " + String(m_currentWTPosFloatPercentage[bank]) + " bank " + String(bank));
 				m_bLastRenderedWTID[bank] = m_localVoiceBankWavetableSoftfade[bank]->getID();
 #endif
-				m_localVoiceBankWavetable[bank] = m_Poly->m_OscBank.getUnchecked(bank)->getNewSharedSoftFadeWavetable(); //continue with soft fade wavetable
+				m_localVoiceBankWavetable[bank] = m_Poly->m_OscBank[bank].getNewSharedSoftFadeWavetable(); //continue with soft fade wavetable
 				//m_localVoiceBankWavetableSoftfade[bank] = nullptr; leave soft fade wt for reference
 				vassert(m_localVoiceBankWavetable[bank] != nullptr);
 
 				m_bSoftFadeCycleEnded[bank] = true;
                 VDBG("CHECK removeSingleNoteSoftFadeCycle " << bank << " " << mVoiceNo);
-				m_Poly->m_OscBank.getUnchecked(bank)->removeSingleNoteSoftFadeCycle(mVoiceNo);
+				m_Poly->m_OscBank[bank].removeSingleNoteSoftFadeCycle(mVoiceNo);
 
 			}
 			else if (!m_bSoftFadeCycleStarted[bank] && !m_bSoftFadeCycleEnded[bank]) { //reset ended when all has ended! todo
-				if (m_Poly->m_OscBank.getUnchecked(bank)->m_bWavetableSoftfadeStillRendered.load()) { //cycling but not started
-					m_Poly->m_OscBank.getUnchecked(bank)->m_bWavetableSoftfadePickedUp.store(true);
+				if (m_Poly->m_OscBank[bank].m_bWavetableSoftfadeStillRendered.load()) { //cycling but not started
+					m_Poly->m_OscBank[bank].m_bWavetableSoftfadePickedUp.store(true);
 					//VDBG("m_bWavetableSoftfadePickedUp true");
-					m_localVoiceBankWavetableSoftfade[bank] = m_Poly->m_OscBank.getUnchecked(bank)->getNewSharedSoftFadeWavetable();
+					m_localVoiceBankWavetableSoftfade[bank] = m_Poly->m_OscBank[bank].getNewSharedSoftFadeWavetable();
 					if (m_localVoiceBankWavetableSoftfade[bank] != nullptr) { //fade to nullptr???
 						m_bSoftFadeCycleStarted[bank] = true; //other voice has started the cycle! pick up next zero loop
-						m_Poly->m_OscBank.getUnchecked(bank)->m_iSingleNoteSoftFadeID.store(m_localVoiceBankWavetableSoftfade[bank]->getID());
+						m_Poly->m_OscBank[bank].m_iSingleNoteSoftFadeID.store(m_localVoiceBankWavetableSoftfade[bank]->getID());
                         VDBG("CHECK addSingleNoteSoftFadeCycle " << bank << " " << mVoiceNo);
-						m_Poly->m_OscBank.getUnchecked(bank)->addSingleNoteSoftFadeCycle(mVoiceNo); //one more cycling voice
+						m_Poly->m_OscBank[bank].addSingleNoteSoftFadeCycle(mVoiceNo); //one more cycling voice
 					}
 				}
 			}
@@ -1750,7 +1751,7 @@ void CVASTSingleNote::doWavetableBufferGet(const int bank, CVASTWaveTableOscilla
 			m_currentWTPosFloatPercentage[bank] = m_fOscWTPos_atNoteOn[bank];
 		}
 
-		m_localVoiceBankWavetable[bank]->getWavetableInterpolateBuffer(mOscillator, osciCount, lOscBuffer, nextStart, restlength, bInverter, m_Set->m_WTmode, mVoiceNo, bank, &m_Poly->m_OscBank, m_bIsFirstCycle[bank], m_bIsStartOfCycle[bank], m_currentWTPosFloatPercentage[bank], m_wtFXVal[bank], m_wtFXType[bank], m_iLastCycleSamples[bank], m_iCurCycleSamples[bank], nullptr, lUpdated, m_Poly->m_OscBank.getUnchecked(bank)->getSoloMode());
+		m_localVoiceBankWavetable[bank]->getWavetableInterpolateBuffer(mOscillator, osciCount, lOscBuffer, nextStart, restlength, bInverter, m_Set->m_WTmode, mVoiceNo, bank, m_bIsFirstCycle[bank], m_bIsStartOfCycle[bank], m_currentWTPosFloatPercentage[bank], m_wtFXVal[bank], m_wtFXType[bank], m_iLastCycleSamples[bank], m_iCurCycleSamples[bank], nullptr, lUpdated, m_Poly->m_OscBank[bank].getSoloMode());
 		m_bIsFirstCycle[bank] = false; //for next
 		m_bIsStartOfCycle[bank] = false; //for next
 #ifdef _DEBUG
@@ -1759,20 +1760,20 @@ void CVASTSingleNote::doWavetableBufferGet(const int bank, CVASTWaveTableOscilla
 		m_bLastRenderedWTID[bank] = m_localVoiceBankWavetable[bank]->getID();
 #endif
 		if (lUpdated)
-			m_Poly->m_OscBank.getUnchecked(bank)->setChangedFlagOsc();
+			m_Poly->m_OscBank[bank].setChangedFlagOsc();
 	}
 
 	if (m_bSoftFadeCycleStarted[bank] && !m_bSoftFadeCycleEnded[bank]) {
-		//vassert(m_localVoiceBankWavetableSoftfade[bank]->getID() == m_Poly->m_OscBank.getUnchecked(bank)->m_iSingleNoteSoftFadeID.load()); //must not be changed in meantime //is changed by dynamic generation??
+		//vassert(m_localVoiceBankWavetableSoftfade[bank]->getID() == m_Poly->m_OscBank[bank].m_iSingleNoteSoftFadeID.load()); //must not be changed in meantime //is changed by dynamic generation??
 		if (m_localVoiceBankWavetableSoftfade[bank] != nullptr) { //check why??		
             std::unique_ptr<AudioSampleBuffer> softFadeBuffer(new AudioSampleBuffer(2, lOscBuffer->getNumSamples()));
 			softFadeBuffer->clear();
 			bool lUpdated = false;
 			if (restlength > 0) {
 				//VDBG("doWavetableBufferGet  getWavetableInterpolateBuffer m_localVoiceBankWavetableSoftfade restlength voice " + String(mVoiceNo) + " startSample " + String(nextStart) + " numSamples " + String(restlength) + " wtPosPerc " + String(m_currentWTPosFloatPercentage[bank]));
-				m_localVoiceBankWavetableSoftfade[bank]->getWavetableInterpolateBuffer(mOscillator, osciCount, softFadeBuffer.get(), nextStart, restlength, bInverter, m_Set->m_WTmode, mVoiceNo, bank, &m_Poly->m_OscBank, m_bIsFirstCycle[bank], m_bIsStartOfCycle[bank], m_currentWTPosFloatPercentage[bank], m_wtFXVal[bank], m_wtFXType[bank], m_iLastCycleSamples[bank], m_iCurCycleSamples[bank], m_localVoiceBankWavetable[bank].get(), lUpdated, m_Poly->m_OscBank.getUnchecked(bank)->getSoloMode());
+				m_localVoiceBankWavetableSoftfade[bank]->getWavetableInterpolateBuffer(mOscillator, osciCount, softFadeBuffer.get(), nextStart, restlength, bInverter, m_Set->m_WTmode, mVoiceNo, bank,  m_bIsFirstCycle[bank], m_bIsStartOfCycle[bank], m_currentWTPosFloatPercentage[bank], m_wtFXVal[bank], m_wtFXType[bank], m_iLastCycleSamples[bank], m_iCurCycleSamples[bank], m_localVoiceBankWavetable[bank].get(), lUpdated, m_Poly->m_OscBank[bank].getSoloMode());
 				if (lUpdated)
-					m_Poly->m_OscBank.getUnchecked(bank)->setChangedFlagOsc();
+					m_Poly->m_OscBank[bank].setChangedFlagOsc();
 			}
 			//interpolate
 			float startFracVal = float(m_iCurCycleSamples[bank] - restlength) / float(m_iLastCycleSamples[bank]);
@@ -1788,7 +1789,7 @@ void CVASTSingleNote::doWavetableBufferGet(const int bank, CVASTWaveTableOscilla
 		}
 	}
 #ifdef _DEBUG
-    if (m_Poly->m_OscBank.getUnchecked(bank)->m_iSingleNoteSoftFadeCycle[mVoiceNo].load())
+    if (m_Poly->m_OscBank[bank].m_iSingleNoteSoftFadeCycle[mVoiceNo].load())
         VDBG("Voice will take softFade to next buffer: " << mVoiceNo);
 #endif
     
@@ -1827,8 +1828,8 @@ void CVASTSingleNote::processBuffer(sRoutingBuffers& routingBuffers, int startSa
 		resetSoftFadeState();
 
 		if (m_bLastFilterOutputZero[0] && m_bLastFilterOutputZero[1] && m_bLastFilterOutputZero[2]) { //check 
-			if (m_VCA->isActive())
-				m_VCA->init(); //to reset envelopes
+			if (m_VCA.isActive())
+				m_VCA.init(); //to reset envelopes
 			return;
 		}
 	}
@@ -2437,7 +2438,7 @@ void CVASTSingleNote::writeDebugInfo() {
 			debugfile << "  m_fOscAMaxPeak ";
 			debugfile << m_fOscAMaxPeak;
 			*/
-			//debugfile << m_VCA->m_VCA_Envelope.getValue();
+			//debugfile << m_VCA.m_VCA_Envelope.getValue();
 			//debugfile << std::endl;
 		}
 		debugfile.close();

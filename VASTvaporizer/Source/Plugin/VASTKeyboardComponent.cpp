@@ -344,7 +344,7 @@ void VASTKeyboardComponent::updateAll() {
 
 void VASTKeyboardComponent::timerCallback() {
     if (!c_pitchBend->isMouseOverOrDragging()) {
-        float wheelpos = myProcessor->m_pVASTXperience.m_Poly.getSynthesizer()->lastPitchWheelValues[0].load() - 8192.f; //check channel 0!
+        float wheelpos = myProcessor->m_pVASTXperience.m_Poly.getSynthesizer()->lastPitchWheelUIValue.load() - 8192.f; //all channels
         c_pitchBend->setValue(wheelpos, NotificationType::dontSendNotification); //send only on
     }
 

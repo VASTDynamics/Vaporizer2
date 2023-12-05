@@ -133,7 +133,7 @@ bool CVASTVCFCombFilter::processAudioFrame(float* pInputBuffer, float* pOutputBu
 	// write the output sample (could be combined with above line)
 	if (mDelayLeft.m_nReadIndex == mDelayLeft.m_nWriteIndex)
 		ynL = pInputBuffer[0];
-	if (mDelayRight.m_nReadIndex == mDelayLeft.m_nWriteIndex)
+	if (mDelayRight.m_nReadIndex == mDelayRight.m_nWriteIndex)
 		ynR = pInputBuffer[1];
 	
 	//mix filter in 

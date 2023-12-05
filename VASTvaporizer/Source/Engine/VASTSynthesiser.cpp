@@ -52,6 +52,7 @@ VASTSynthesiser::~VASTSynthesiser()
 void VASTSynthesiser::initValues() {
 	for (int i = 0; i < numElementsInArray(lastPitchWheelValues); ++i)
 		lastPitchWheelValues[i] = 0x2000;
+	lastPitchWheelUIValue = 0x2000;
 
 	for (int i = 0; i < numElementsInArray(m_midiNotesKeyDown); ++i) {
 		m_midiNotesKeyDown[i] = false;
@@ -665,11 +666,11 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
             */
 
 			if (routingBuffers.msegUsed[mseg].load()) { //performance optimization
-				//if (((CVASTSingleNote*)voice)->m_VCA->m_MSEG_Envelope[mseg].isActive() == true) { //This is not valid here!! leads to many issues!!
+				//if (((CVASTSingleNote*)voice)->m_VCA.m_MSEG_Envelope[mseg].isActive() == true) { //This is not valid here!! leads to many issues!!
 
 				float* msegWritePointer = routingBuffers.MSEGBuffer[mseg][voice->mVoiceNo]->getWritePointer(0);
 				bool* msegActivePointer = routingBuffers.MSEGActiveBuffer[mseg][voice->mVoiceNo];
-				bool bIsActive = ((CVASTSingleNote*)voice)->m_VCA->m_MSEG_Envelope[mseg].isActive();
+				bool bIsActive = ((CVASTSingleNote*)voice)->m_VCA.m_MSEG_Envelope[mseg].isActive();
 			
 				int stepsize = 16;
 				int currentFrame = 0;
@@ -747,7 +748,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 						}				
                         
                         //* expensive */ //per voice per MSEG
-						((CVASTSingleNote*)voice)->m_VCA->m_MSEG_Envelope[mseg].getEnvelopeRange(msegWritePointer, currentFrame, numFrames);
+						((CVASTSingleNote*)voice)->m_VCA.m_MSEG_Envelope[mseg].getEnvelopeRange(msegWritePointer, currentFrame, numFrames);
                         //* expensive */
 					}
 				} 
@@ -761,7 +762,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 						inputState.currentFrame = currentFrame;
                         
                         //* expensive */
-						((CVASTSingleNote*)voice)->m_VCA->m_MSEG_Envelope[mseg].getEnvelopeRange(msegWritePointer, currentFrame, numFrames);
+						((CVASTSingleNote*)voice)->m_VCA.m_MSEG_Envelope[mseg].getEnvelopeRange(msegWritePointer, currentFrame, numFrames);
                         //* expensive */
 					}
 				}
@@ -1301,6 +1302,10 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 	m_numOscsPlaying = l_numOscsPlaying;
 }
 
+//void VASTSynthesiser::handleMidiEventSmoothed(const MidiMessage& m) {
+	//OwnedArray<LinearSmoothedValue<float>> midiEventSmoother;
+//}
+
 void VASTSynthesiser::handleMidiEvent(const MidiMessage& m)
 {
 	VDBG("handleMidiEvent: " << m.getDescription());
@@ -1413,12 +1418,12 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 
 				//check for hard stop
 				//CHECK IF THIS IS NEEDED!
-				//if (((CVASTSingleNote*)voice)->m_VCA->isNoteOff() && !((CVASTSingleNote*)voice)->m_VCA->isHardStop())
+				//if (((CVASTSingleNote*)voice)->m_VCA.isNoteOff() && !((CVASTSingleNote*)voice)->m_VCA.isHardStop())
 				//	voice->clearCurrentNote();
 
 				if (voice->getCurrentlyPlayingNote() == midiNoteNumber && voice->isPlayingChannel(midiChannel)) {				
 					VDBG("Start same midi note");
-					((CVASTSingleNote*)voice)->m_VCA->hardStop();
+					((CVASTSingleNote*)voice)->m_VCA.hardStop();
 					//stopVoice(voice, 1.0f, true); //can be immediate here
 				}
 			}
@@ -1433,7 +1438,7 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 				if (*m_Set->m_State->m_bLegatoMode == static_cast<int>(SWITCH::SWITCH_OFF)) {
 					for (auto* voice : voices) {
 						if (voice->isVoiceActive()) {
-							((CVASTSingleNote*)voice)->m_VCA->hardStop(); //TODO Sampler???
+							((CVASTSingleNote*)voice)->m_VCA.hardStop(); //TODO Sampler???
 						}
 					}
 					shallSteal = true; //check!! naming
@@ -1470,7 +1475,7 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 								}
 							}
 							else {
-								bool bHardStop = ((CVASTSingleNote*)myvoice)->m_VCA->isHardStop();
+								bool bHardStop = ((CVASTSingleNote*)myvoice)->m_VCA.isHardStop();
 								if (!bHardStop) {
 									voice = myvoice;
 									break;
@@ -1493,7 +1498,7 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 
 					for (auto* myvoice : voices) {
 						if (voice != myvoice)
-							if (myvoice->isVoiceActive() && !((CVASTSingleNote*)myvoice)->m_VCA->isHardStop())
+							if (myvoice->isVoiceActive() && !((CVASTSingleNote*)myvoice)->m_VCA.isHardStop())
 								myvoice->stopNote(0, false); //hard stop it
 					}
 
@@ -1549,7 +1554,7 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 				}
 				while (active > 3) {
 					VASTSynthesiserVoice* stealVoice = findActiveVoiceToSteal(sound, midiChannel, midiNoteNumber);
-					((CVASTSingleNote*)stealVoice)->m_VCA->hardStop();		
+					((CVASTSingleNote*)stealVoice)->m_VCA.hardStop();		
 					stealVoice->currentlyPlayingNote = -1; 
 					active--;
 				}
@@ -1583,7 +1588,7 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 				}
 				while (active > m_Set->m_uMaxPoly - 1) { //no voice left
 					VASTSynthesiserVoice* stealVoice = findActiveVoiceToSteal(sound, midiChannel, midiNoteNumber);
-					((CVASTSingleNote*)stealVoice)->m_VCA->hardStop();
+					((CVASTSingleNote*)stealVoice)->m_VCA.hardStop();
 					stealVoice->currentlyPlayingNote = -1; //not playing
 					active--;
 				}
@@ -1670,7 +1675,7 @@ void VASTSynthesiser::startVoice(VASTSynthesiserVoice* const voice,
 			if (!msegpervoice) {
 				if ((m_oldestPlayingKeyDown >= 0) && voices[m_oldestPlayingKeyDown]->isKeyDown()) { 
 					VDBG("Single MSEG Copy m_oldestPlayingKeyDown: " << m_oldestPlayingKeyDown << " -> " << voice->mVoiceNo << " keyDown: " << (voices[m_oldestPlayingKeyDown]->isKeyDown() ? "true" : "false"));
-					((CVASTSingleNote*)voice)->m_VCA->m_MSEG_Envelope[mseg].copyStateFrom(((CVASTSingleNote*)voices[m_oldestPlayingKeyDown])->m_VCA->m_MSEG_Envelope[mseg]);
+					((CVASTSingleNote*)voice)->m_VCA.m_MSEG_Envelope[mseg].copyStateFrom(((CVASTSingleNote*)voices[m_oldestPlayingKeyDown])->m_VCA.m_MSEG_Envelope[mseg]);
 				}
 			}
 		}
@@ -1772,7 +1777,7 @@ void VASTSynthesiser::allNotesOff(const int midiChannel, const bool allowTailOff
 void VASTSynthesiser::handlePitchWheel(const int midiChannel, const int wheelValue) ////0..16384
 {
 	const ScopedLock sl(lock);
-	
+	lastPitchWheelUIValue.store(wheelValue);
 	lastPitchWheelValues[midiChannel].store(wheelValue);
 	for (auto* voice : voices) {
 		//if (midiChannel <= 0 || voice->isPlayingChannel(midiChannel))		
@@ -1792,7 +1797,8 @@ void VASTSynthesiser::handleController(const int midiChannel,
 {	
 	const uint8 noLSBValueReceived = 0xff;
 	switch (controllerNumber)
-	{
+	{		
+	case 0x00: /*00*/ handleProgramChange(midiChannel, controllerValue); break; //CC00 is bank change
 	case 0x40: /*64*/ handleSustainPedal(midiChannel, controllerValue >= 64); break;
 	case 0x42: /*66*/ handleSostenutoPedal(midiChannel, controllerValue >= 64); break;
 	case 0x43: /*67*/ handleSoftPedal(midiChannel, controllerValue >= 64); break;
@@ -1930,8 +1936,13 @@ void VASTSynthesiser::handleSoftPedal(int midiChannel, bool /*isDown*/)
 
 void VASTSynthesiser::handleProgramChange(int midiChannel, int programNumber)
 {
-	ignoreUnused(midiChannel, programNumber);
 	jassert(midiChannel > 0 && midiChannel <= 16);
+
+	int presetindex = myProcessor->m_presetData.bankProgramGetPresetIndex(myProcessor->m_pVASTXperience.getMidiBank() , programNumber);
+	if (presetindex >= 0) {
+		myProcessor->setCurrentProgram(presetindex); //will set block process
+		VDBG("Program Change " << presetindex);
+	}
 }
 
 //==============================================================================

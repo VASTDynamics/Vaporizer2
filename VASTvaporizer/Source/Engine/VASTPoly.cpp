@@ -17,17 +17,13 @@ VAST Dynamics Audio Software (TM)
 #include <fstream>
 #include <string>
 CVASTPoly::CVASTPoly(CVASTSettings& set, VASTAudioProcessor* processor) :
-	m_Set(&set), myProcessor(processor), 
+	m_Set(&set), myProcessor(processor),
 	m_StepSeq_Envelope{ {set, set.m_StepSeqData[0], set.m_StepSeqData_changed[0], 0, 0, 0},
 						{set, set.m_StepSeqData[1], set.m_StepSeqData_changed[1], 0, 0, 1},
 						{set, set.m_StepSeqData[2], set.m_StepSeqData_changed[2], 0, 0, 2} },
-	m_global_LFO_Osc{ {set, nullptr}, {set, nullptr}, {set, nullptr}, {set, nullptr}, {set, nullptr} }
+	m_global_LFO_Osc{ {set, nullptr}, {set, nullptr}, {set, nullptr}, {set, nullptr}, {set, nullptr} },
+	m_OscBank{ {&set, processor, 0}, {&set, processor, 1}, {&set, processor, 2}, {&set, processor, 3} }
 {
-	for (int i = 0; i < 4; i++) {
-		CVASTOscillatorBank* bank = new CVASTOscillatorBank(m_Set, myProcessor, i);
-		m_OscBank.add(bank);
-	}
-
 	//qfilter  init only once due to memory allocation
 	m_QFilter.initQuadFilter(m_Set);
 }
@@ -131,7 +127,7 @@ void CVASTPoly::releaseResources() {
 void CVASTPoly::prepareForPlay() {
 	//executed multiple
 	for (int bank = 0; bank < 4; bank++) {
-		m_OscBank[bank]->prepareForPlay(m_Set->m_nExpectedSamplesPerBlock);
+		m_OscBank[bank].prepareForPlay(m_Set->m_nExpectedSamplesPerBlock);
 	}
 	for (int i = 0; i < m_Set->m_uMaxPoly; i++) { //check if things duplicated here
 		if (m_singleNote[i] != nullptr) { //can happen when thread is updating
@@ -248,7 +244,7 @@ void CVASTPoly::stopAllNotes(bool allowTailOff) {
 bool CVASTPoly::voicesMSEGStillActive() {
 	for (int i = 0; i < m_Set->m_uMaxPoly; i++) {
         if (m_singleNote[i]!=nullptr) //can happen when thread is updating
-            if (m_singleNote[i]->m_VCA->isActive()) return true;
+            if (m_singleNote[i]->m_VCA.isActive()) return true;
 	}
 	return false;
 }

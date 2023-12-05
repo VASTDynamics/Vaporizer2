@@ -143,32 +143,9 @@ const String VASTAudioProcessor::getName() const
 	return JucePlugin_Name;
 }
 
-/*
-const String VASTAudioProcessor::getInputChannelName(int channelIndex) const
-{
-	return String(channelIndex + 1);
-}
-
-const String VASTAudioProcessor::getOutputChannelName(int channelIndex) const
-{
-	return String(channelIndex + 1);
-}
-
-bool VASTAudioProcessor::isInputChannelStereoPair(int index) const
-{
-	return true;
-}
-
-bool VASTAudioProcessor::isOutputChannelStereoPair(int index) const
-{
-	return true;
-}
-*/
-
 bool VASTAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) const
 {
 	//can take any layout, the main bus needs to be the same on the input and output
-	//added due to Steinberg VST3 test tool
 	int inSize = layouts.getMainInputChannelSet().size();
 	int outSize = layouts.getMainOutputChannelSet().size();
 
@@ -179,7 +156,13 @@ bool VASTAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) cons
 	VDBG("layouts.getMainInputChannelSet().getSpeakerArrangementAsString():" << (layouts.getMainInputChannelSet().getSpeakerArrangementAsString()));
 	VDBG("layouts.getMainOutputChannelSet().getSpeakerArrangementAsString():" << (layouts.getMainOutputChannelSet().getSpeakerArrangementAsString()));
 	
-	return (((inSize == 2) && (outSize == 2)) || ((inSize == 0) && (outSize == 2)));	
+	return (
+		((layouts.getMainInputChannelSet() == juce::AudioChannelSet::stereo()) && (layouts.getMainOutputChannelSet() == juce::AudioChannelSet::stereo())) || //stereo layouts
+		((layouts.getMainInputChannelSet() == juce::AudioChannelSet::disabled()) && (layouts.getMainOutputChannelSet() == juce::AudioChannelSet::stereo())) ||
+		((layouts.getMainInputChannelSet() == juce::AudioChannelSet::mono()) && (layouts.getMainOutputChannelSet() == juce::AudioChannelSet::mono())) || //mono layouts
+		((layouts.getMainInputChannelSet() == juce::AudioChannelSet::disabled()) && (layouts.getMainOutputChannelSet() == juce::AudioChannelSet::mono())) ||
+		((layouts.getMainInputChannelSet() == juce::AudioChannelSet::disabled()) && (layouts.getMainOutputChannelSet() == juce::AudioChannelSet::disabled())) //all disabled is OK but not very useful
+		);	
 }
 
 void VASTAudioProcessor::clearErrorState() {
@@ -356,7 +339,7 @@ void VASTAudioProcessor::initializeToDefaults() {
 	//reset wts and wav here
 	for (int bank = 0; bank < 4; bank++) {
 		//m_pVASTXperience.m_Poly.m_OscBank[i]->init();
-		m_pVASTXperience.m_Poly.m_OscBank[bank]->recalcWavetable();
+		m_pVASTXperience.m_Poly.m_OscBank[bank].recalcWavetable();
 		std::shared_ptr<CVASTWaveTable> wavetable = std::make_shared<CVASTWaveTable>(m_pVASTXperience.m_Set);
 		wavetable->addPosition();
 		if (bank == 0) {
@@ -367,9 +350,9 @@ void VASTAudioProcessor::initializeToDefaults() {
 			wavetable->setNaiveTableFast(0, true, getWTmode());
 		}
 		if (m_bAudioThreadRunning)
-			m_pVASTXperience.m_Poly.m_OscBank[bank]->setWavetableSoftFade(wavetable);		
+			m_pVASTXperience.m_Poly.m_OscBank[bank].setWavetableSoftFade(wavetable);		
 		else 
-			m_pVASTXperience.m_Poly.m_OscBank[bank]->setWavetable(wavetable);
+			m_pVASTXperience.m_Poly.m_OscBank[bank].setWavetable(wavetable);
 	}
 	
 	//WAV File
@@ -682,7 +665,7 @@ void VASTAudioProcessor::processBlockBypassed(AudioBuffer<float>& buffer,
         loadPreset(m_presetToLoad);
     
 	for (int bank = 0; bank < 4; bank++)
-		m_pVASTXperience.m_Poly.m_OscBank[bank]->m_bWavetableSoftfadeStillRendered.store(false);
+		m_pVASTXperience.m_Poly.m_OscBank[bank].m_bWavetableSoftfadeStillRendered.store(false);
 	m_pVASTXperience.beginSoftFade(); //CHECKTS
 	m_pVASTXperience.endSoftFade(); //CHECKTS
     
@@ -784,7 +767,7 @@ void VASTAudioProcessor::addChunkTreeState(ValueTree* treeState) { //for save
 	for (int i = 0; i < 4; i++) {
 		childName = "oscBank" + String(i);
 		l_tree = ValueTree(Identifier(childName));
-		std::shared_ptr<CVASTWaveTable> wavetable = m_pVASTXperience.m_Poly.m_OscBank[i]->getWavetablePointer();
+		std::shared_ptr<CVASTWaveTable> wavetable = m_pVASTXperience.m_Poly.m_OscBank[i].getWavetablePointer();
 		if (wavetable->bufferedValueTree.hasProperty("waveTableName")) {
 			l_tree.copyPropertiesAndChildrenFrom(wavetable->bufferedValueTree, nullptr);
 		}
@@ -1202,10 +1185,10 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 	}
 	
     /*
-	std::shared_ptr<CVASTWaveTable> m_bank_wavetableToUpdate[4] = { processor->m_pVASTXperience.m_Poly.m_OscBank[0]->getSoftOrCopyWavetable(false),
-        processor->m_pVASTXperience.m_Poly.m_OscBank[1]->getSoftOrCopyWavetable(false),
-        processor->m_pVASTXperience.m_Poly.m_OscBank[2]->getSoftOrCopyWavetable(false),
-        processor->m_pVASTXperience.m_Poly.m_OscBank[3]->getSoftOrCopyWavetable(false) };
+	std::shared_ptr<CVASTWaveTable> m_bank_wavetableToUpdate[4] = { processor->m_pVASTXperience.m_Poly.m_OscBank[0].getSoftOrCopyWavetable(false),
+        processor->m_pVASTXperience.m_Poly.m_OscBank[1].getSoftOrCopyWavetable(false),
+        processor->m_pVASTXperience.m_Poly.m_OscBank[2].getSoftOrCopyWavetable(false),
+        processor->m_pVASTXperience.m_Poly.m_OscBank[3].getSoftOrCopyWavetable(false) };
      */
     
     std::shared_ptr<CVASTWaveTable> m_bank_wavetableToUpdate[4] = { 
@@ -1424,9 +1407,9 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 				//Expensive and optional
 
 				if (processor->m_bAudioThreadRunning) 
-					processor->m_pVASTXperience.m_Poly.m_OscBank[bank]->setWavetableSoftFade(m_bank_wavetableToUpdate[bank]);
+					processor->m_pVASTXperience.m_Poly.m_OscBank[bank].setWavetableSoftFade(m_bank_wavetableToUpdate[bank]);
 				else
-					processor->m_pVASTXperience.m_Poly.m_OscBank[bank]->setWavetable(m_bank_wavetableToUpdate[bank]); //save from state, audio process not running				
+					processor->m_pVASTXperience.m_Poly.m_OscBank[bank].setWavetable(m_bank_wavetableToUpdate[bank]); //save from state, audio process not running				
 			}
 		}
 		else
@@ -1462,10 +1445,10 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 	processor->m_parameterState.undoManager->clearUndoHistory();
 	processor->m_parameterState.undoManager->beginNewTransaction(); //start new transcation only here?
 
-	processor->m_pVASTXperience.m_Poly.m_OscBank[0]->setChangedFlag();
-	processor->m_pVASTXperience.m_Poly.m_OscBank[1]->setChangedFlag();
-	processor->m_pVASTXperience.m_Poly.m_OscBank[2]->setChangedFlag();
-	processor->m_pVASTXperience.m_Poly.m_OscBank[3]->setChangedFlag();
+	processor->m_pVASTXperience.m_Poly.m_OscBank[0].setChangedFlag();
+	processor->m_pVASTXperience.m_Poly.m_OscBank[1].setChangedFlag();
+	processor->m_pVASTXperience.m_Poly.m_OscBank[2].setChangedFlag();
+	processor->m_pVASTXperience.m_Poly.m_OscBank[3].setChangedFlag();
 
 	if (b_success == false) {
 		processor->setErrorState(vastErrorState::errorState11_loadPresetUnsuccessful);
@@ -1576,7 +1559,7 @@ void VASTAudioProcessor::setWTmode(int wtMode) {
 		m_pVASTXperience.m_Set.m_WTmode = wtMode;
 		//recalc WT
 		for (int bank = 0; bank < 4; bank++)
-			m_pVASTXperience.m_Poly.m_OscBank[bank]->recalcWavetable();
+			m_pVASTXperience.m_Poly.m_OscBank[bank].recalcWavetable();
 	}
 }
 

@@ -34,7 +34,7 @@ CVASTXperience::CVASTXperience(VASTAudioProcessor* processor) :
 	m_isPreparingForPlay.store(false);
 	my_processor = processor; //in CVASTEffect
 	setEffectName(JucePlugin_Name);
-	m_midiBank = 0;
+	m_midiBank.store(0);
 }
 
 /* destructor()
@@ -130,7 +130,7 @@ void CVASTXperience::audioProcessLock()
 
 	const ScopedLock sl(myProcessor->getCallbackLock()); //this is required here but why
 	for (int bank = 0; bank < 4; bank ++)
-		m_Poly.m_OscBank[bank]->m_bWavetableSoftfadeStillRendered.store(false);
+		m_Poly.m_OscBank[bank].m_bWavetableSoftfadeStillRendered.store(false);
 	m_BlockProcessing.store(true);
 	m_BlockProcessingIsBlockedSuccessfully.store(false);
 }
@@ -223,13 +223,13 @@ bool CVASTXperience::prepareForPlay(double sampleRate, int expectedSamplesPerBlo
 void CVASTXperience::beginSoftFade() {
 	//check osc bank soft fade
 	for (int bank = 0; bank < 4; bank++) {
-		m_Poly.m_OscBank[bank]->beginSoftFade();
+		m_Poly.m_OscBank[bank].beginSoftFade();
 	}
 }
 
 void CVASTXperience::endSoftFade() {
 	for (int bank = 0; bank < 4; bank++) {
-		if (!m_Poly.m_OscBank[bank]->endSoftFade()) {
+		if (!m_Poly.m_OscBank[bank].endSoftFade()) {
 			vassertfalse; //dont treat as error for now
 			//myProcessor->setErrorState(VASTAudioProcessor::vastErrorState::errorState17_internalWavetableEngineError);
 		}
@@ -255,6 +255,11 @@ void CVASTXperience::endSoftFade() {
 	}
 
 	m_Poly.softFadeExchangeSample();
+}
+
+int CVASTXperience::getMidiBank()
+{
+	return m_midiBank.load();
 }
 
 //==========================================================================================================================
@@ -371,7 +376,7 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
          )) {
         
         for (int bank = 0; bank < 4; bank++)
-            m_Poly.m_OscBank[bank]->m_bWavetableSoftfadeStillRendered.store(false);
+            m_Poly.m_OscBank[bank].m_bWavetableSoftfadeStillRendered.store(false);
         
         if (m_bBufferZeroMilliSeconds > 2000.f) { //2s silence?
             buffer.clear();
@@ -386,9 +391,9 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
         if (myProcessor->isEditorCurrentlyProbablyVisible()) {
             for (int bank = 0; bank < 4; bank++) {
                 std::shared_ptr<CVASTWaveTable> l_wavetable;
-                l_wavetable = m_Poly.m_OscBank[bank]->getNewSharedSoftFadeWavetable();
+                l_wavetable = m_Poly.m_OscBank[bank].getNewSharedSoftFadeWavetable();
                 if (l_wavetable == nullptr) {
-                    l_wavetable = m_Poly.m_OscBank[bank]->getWavetablePointer();
+                    l_wavetable = m_Poly.m_OscBank[bank].getWavetablePointer();
                 }
                 if (l_wavetable != nullptr)
                     l_wavetable->copyUIFXUpdates();
@@ -397,73 +402,35 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
     }
     
     //===========================================================================================
-    //MIDI processing
-    int samplePosition = 0;
-    
+    //MIDI learn processing
+    int samplePosition = 0;    
     auto midiIterator = midiMessages.findNextSamplePosition(samplePosition);
     std::for_each(midiIterator,
                   midiMessages.cend(),
-                  [&](const MidiMessageMetadata& metadata)
-                  {
-        if (metadata.getMessage().isPitchWheel()) {
-            if (!myProcessor->isMPEenabled() || (metadata.getMessage().getChannel() == m_Poly.getSynthesizer()->m_MPEMasterChannel)) {
-                float wheelPos = (limit_range(metadata.getMessage().getPitchWheelValue(), 0.f, 16384.f));
-                VASTSynthesiser* synth = m_Poly.getSynthesizer();
-                if (synth != nullptr) {
-                    for (int i = 0; i < 16; i++) //all midichannels?
-                        synth->handlePitchWheel(i, wheelPos);
-                }
-            }
-        }
-        else if (metadata.getMessage().isController()) {
-            //Check for MIDI learn
-            if (metadata.getMessage().getControllerNumber() == 0) { //CC00 bank change
-                VDBG("Bank Change " << metadata.getMessage().getControllerValue());
-                m_midiBank = metadata.getMessage().getControllerValue();
-            }
-            else if (metadata.getMessage().getControllerNumber() == 1) { //CC01 mod wheel
-                int wheelPos = metadata.getMessage().getControllerValue();
-                wheelPos = limit_range(wheelPos, 0.f, 127.f);
-                
-                VASTSynthesiser* synth = m_Poly.getSynthesizer();
-                if (synth != nullptr) {
-                    for (int i = 0; i < 16; i++) //all midichannels?
-                        synth->handleController(i, 1, wheelPos); //controlle# 1 is modwheel
-                }
-            }
-            
-            //midi CC 1 (MSB) and midi CC 2
-            //CC02 mod wheel high precision?
-            else
-                if (myProcessor->m_iNowLearningMidiParameter >= 0) {
-                    myProcessor->midiParameterLearned(metadata.getMessage().getControllerNumber());
-                    myProcessor->requestUIUpdate();
-                }
-                else {
-                    //check for mapped parameters
-                    int lParamInternal = 0;
-                    lParamInternal = myProcessor->midiMappingGetParameterIndex(metadata.getMessage().getControllerNumber());
-                    if (lParamInternal >= 0) {
-                        float lValue = metadata.getMessage().getControllerValue() / 127.0f;
-                        if (lParamInternal == 9999) { //UI
-                            String uiComponentName = myProcessor->midiMappingComponentVariableName(metadata.getMessage().getControllerNumber());
-                            myProcessor->registerComponentValueUpdate(uiComponentName, lValue); //UI only parameter that is not in parameter state, e.g. WT functions
-                        }
-                        else if (lParamInternal < getParameters().size()) {
-                            getParameters()[lParamInternal]->setValueNotifyingHost(lValue);
-                        }
-                    }
-                }
-        }
-        else if (metadata.getMessage().isProgramChange()) {
-            int presetindex = myProcessor->m_presetData.bankProgramGetPresetIndex(m_midiBank, metadata.getMessage().getProgramChangeNumber());
-            if (presetindex >= 0) {
-                myProcessor->setCurrentProgram(presetindex); //will set block process
-                VDBG("Program Change " << presetindex);
-            }
-        }
-    });
-    
+		[&](const MidiMessageMetadata& metadata)
+		{
+			if (metadata.getMessage().isController()) {
+				if (myProcessor->m_iNowLearningMidiParameter >= 0) {
+					myProcessor->midiParameterLearned(metadata.getMessage().getControllerNumber());
+					myProcessor->requestUIUpdate();
+				}
+				else {
+					//check for mapped parameters
+					int lParamInternal = 0;
+					lParamInternal = myProcessor->midiMappingGetParameterIndex(metadata.getMessage().getControllerNumber());
+					if (lParamInternal >= 0) {
+						float lValue = metadata.getMessage().getControllerValue() / 127.0f;
+						if (lParamInternal == 9999) { //UI
+							String uiComponentName = myProcessor->midiMappingComponentVariableName(metadata.getMessage().getControllerNumber());
+							myProcessor->registerComponentValueUpdate(uiComponentName, lValue); //UI only parameter that is not in parameter state, e.g. WT functions
+						}
+						else if (lParamInternal < getParameters().size()) {
+							getParameters()[lParamInternal]->setValueNotifyingHost(lValue);
+						}
+					}
+				}
+			}			
+		});
     //===========================================================================================
     
     //resize buffers
@@ -1039,48 +1006,48 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 	}
 	
 	if ((0 == parameterID.compare("m_fOscWTPos_OscA"))) {
-		m_Poly.m_OscBank[0]->setChangedFlag(); 
+		m_Poly.m_OscBank[0].setChangedFlag(); 
 		return;
 	}
 
 	if ((0 == parameterID.compare("m_fOscWTPos_OscB"))) {
-		m_Poly.m_OscBank[1]->setChangedFlag();
+		m_Poly.m_OscBank[1].setChangedFlag();
 		return;
 	}
 
 	if ((0 == parameterID.compare("m_fOscWTPos_OscC"))) {
-		m_Poly.m_OscBank[2]->setChangedFlag();
+		m_Poly.m_OscBank[2].setChangedFlag();
 		return;
 	}
 
 	if ((0 == parameterID.compare("m_fOscWTPos_OscD"))) {
-		m_Poly.m_OscBank[3]->setChangedFlag();
+		m_Poly.m_OscBank[3].setChangedFlag();
 		return;
 	}
 
 	if ((0 == parameterID.compare("m_bOscOnOff_OscA"))) {
-		m_Poly.m_OscBank[0]->setChangedFlag();
+		m_Poly.m_OscBank[0].setChangedFlag();
 		if (!l_isBlocked)
 			m_Poly.updateVariables();
 		return;
 	}
 	
 	if ((0 == parameterID.compare("m_bOscOnOff_OscB"))) {
-		m_Poly.m_OscBank[1]->setChangedFlag();
+		m_Poly.m_OscBank[1].setChangedFlag();
 		if (!l_isBlocked)
 			m_Poly.updateVariables();
 		return;
 	}
 	
 	if ((0 == parameterID.compare("m_bOscOnOff_OscC"))) {
-		m_Poly.m_OscBank[2]->setChangedFlag();
+		m_Poly.m_OscBank[2].setChangedFlag();
 		if (!l_isBlocked)
 			m_Poly.updateVariables();
 		return;
 	}
 	
 	if ((0 == parameterID.compare("m_bOscOnOff_OscD"))) {
-		m_Poly.m_OscBank[3]->setChangedFlag();
+		m_Poly.m_OscBank[3].setChangedFlag();
 		if (!l_isBlocked)
 			m_Poly.updateVariables();
 		return;

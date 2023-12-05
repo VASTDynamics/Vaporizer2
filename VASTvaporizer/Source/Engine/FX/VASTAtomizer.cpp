@@ -392,8 +392,6 @@ void CVASTAtomizer::modification() {
 #ifdef _DEBUG
 	std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
 	auto duration = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
-	VDBG("Juce fft: " << duration);
-	//200 - 500 microseconds (5 times faster than own implementation) 
 #endif
 
 	switch (3) {

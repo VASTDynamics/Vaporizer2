@@ -552,7 +552,8 @@ public:
 
 	int m_MPEMasterChannel = 1; //TODO MPE config messages
 		/** The last pitch-wheel values for each midi channel. */
-	atomic<int> lastPitchWheelValues[16];
+	atomic<int> lastPitchWheelValues[16]{};
+	atomic<int> lastPitchWheelUIValue = 0x2000;
 
 protected:
 	//==============================================================================

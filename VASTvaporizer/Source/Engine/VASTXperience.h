@@ -109,9 +109,10 @@ public:
 
 	// Audio & GL Audio Buffer
 	std::unique_ptr<VASTRingBuffer<GLfloat>> oscilloscopeRingBuffer;
+	int getMidiBank();
 
 private:
-	int m_midiBank = 0;
+	std::atomic<int> m_midiBank = 0;
 
 
 	JUCE_HEAVYWEIGHT_LEAK_DETECTOR(CVASTXperience)

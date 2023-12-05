@@ -114,8 +114,8 @@ void VASTPositionViewport::updateContent(bool force) {
 	if (!myWtEditor->getEditorView()->c_viewportPositions) return;
 
 	if (!(force || m_dirty))
-		//if (!(myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->getOscBank()]->getAndClearSoftChangedFlagPos() || myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->getOscBank()]->isChanged())) 
-		if (!(myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->getOscBank()]->getAndClearSoftChangedFlagPos()) )
+		//if (!(myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->getOscBank()].getAndClearSoftChangedFlagPos() || myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->getOscBank()].isChanged())) 
+		if (!(myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->getOscBank()].getAndClearSoftChangedFlagPos()) )
 			return;
 	m_dirty = false;
 	
@@ -158,7 +158,7 @@ void VASTPositionViewport::updateContent(bool force) {
 	g.setFont(myFont);
 
 	bool l_soloMode = false;
-	l_soloMode = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->getSoloMode();	
+	l_soloMode = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].getSoloMode();	
 
 	for (int wtPos = posStart; wtPos < posEnd; wtPos++) { //+1 due to add pos area					
 		
@@ -271,8 +271,8 @@ void VASTPositionViewport::mouseDrag(const MouseEvent &e) { // show value
 
 	if (modifiers.isLeftButtonDown()) { 
 		if (m_dragging_addnew) { //add new multi
-			myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->addSoftFadeEditor();
-			std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->getSoftOrCopyWavetable(true, true); //need a copy as wtpos structure will be changed - selection only - keep freqs
+			myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].addSoftFadeEditor();
+			std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].getSoftOrCopyWavetable(true, true); //need a copy as wtpos structure will be changed - selection only - keep freqs
 			juce::Rectangle<int> lVisibleArea = myWtEditor->getEditorView()->c_viewportPositions->getViewArea();
 			int targetWTPosNum = int((x + dragx) / ((m_ImageTotalWidth + m_Offset) / m_screenWidthScale));
 			int wTPosNum = wavetable->getNumPositions();
@@ -281,18 +281,18 @@ void VASTPositionViewport::mouseDrag(const MouseEvent &e) { // show value
 			int posStart = visiStart / (m_ImageTotalWidth + m_Offset);
 			if (targetWTPosNum > wTPosNum) {
 				wavetable->addPosition();
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->setWavetableSoftFade(wavetable);
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].setWavetableSoftFade(wavetable);
 				myWtEditor->getPositionViewport()->setViewPosition((wTPosNum - posStart)* ((m_ImageTotalWidth + m_Offset) / m_screenWidthScale) - lVisibleArea.getWidth() * 0.5f, 0.f);
 			} 
 			else if (targetWTPosNum < wTPosNum) {
 				if (wTPosNum > 1) {
 					wavetable->deletePosition(wTPosNum - 1);
-					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->setWavetableSoftFade(wavetable);
+					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].setWavetableSoftFade(wavetable);
 					myWtEditor->getPositionViewport()->setViewPosition((wTPosNum - posStart) * ((m_ImageTotalWidth  + m_Offset) / m_screenWidthScale) - lVisibleArea.getWidth() * 0.5f, 0.f);
 				}
 			}
 			wavetable->setSelectedWtPos(wavetable->getNumPositions() - 1);
-			myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->removeSoftFadeEditor();
+			myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].removeSoftFadeEditor();
 			//myWtEditor->setCurWavetable(wavetable); //make a copy
 			//myWtEditor->setWtPos(wavetable->getNumPositions() - 1);
 			//myWtEditor->setWtPos(arrayidx);
@@ -342,8 +342,8 @@ void VASTPositionViewport::mouseExit(const MouseEvent &e) {
 
 void VASTPositionViewport::mouseUp(const MouseEvent &e) {
 	if ((m_dragging) && (m_arrayidxdragfrom >= 0) && (m_arrayidxdragto >= 0) && (m_arrayidxdragfrom != m_arrayidxdragto)) {
-		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->addSoftFadeEditor();
-		std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->getSoftOrCopyWavetable();			
+		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].addSoftFadeEditor();
+		std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].getSoftOrCopyWavetable();			
 		int frompos = m_arrayidxdragfrom;
 		int topos = m_arrayidxdragto;
 		if (frompos > topos) {
@@ -357,8 +357,8 @@ void VASTPositionViewport::mouseUp(const MouseEvent &e) {
 
 		m_dragging = false;
 		m_dragging_addnew = false;
-		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->setWavetableSoftFade(wavetable);
-		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->removeSoftFadeEditor();
+		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].setWavetableSoftFade(wavetable);
+		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].removeSoftFadeEditor();
 		myWtEditor->updateAll(false);
 	}
 
@@ -635,11 +635,11 @@ void VASTPositionViewport::mouseDown(const MouseEvent &e) {
 	}
 	else if (modifiers.isLeftButtonDown()) { //select it or add
 		if (arrayidx == wavetable->getNumPositions()) { //add new
-			myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->addSoftFadeEditor();
-			std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->getSoftOrCopyWavetable(true, true); //need a copy as wtpos structure will be changed - selection only - keep freqs
+			myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].addSoftFadeEditor();
+			std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].getSoftOrCopyWavetable(true, true); //need a copy as wtpos structure will be changed - selection only - keep freqs
 			wavetable->addPosition();
-			myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->setWavetableSoftFade(wavetable);
-			myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->removeSoftFadeEditor();
+			myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].setWavetableSoftFade(wavetable);
+			myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].removeSoftFadeEditor();
 			//myWtEditor->setCurWavetable(wavetable); //make a copy
 			wavetable->setSelectedWtPos(arrayidx);
 			//myWtEditor->setWtPos(arrayidx);
@@ -648,21 +648,21 @@ void VASTPositionViewport::mouseDown(const MouseEvent &e) {
 		else
 			if (modifiers.isLeftButtonDown() && !modifiers.isShiftDown()) { //singleselect
 				if (arrayidx < wavetable->getNumPositions()) {
-					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->addSoftFadeEditor();
-					std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->getSoftOrCopyWavetable(true, true); //need a copy as wtpos structure will be changed - selection only - keep freqs
+					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].addSoftFadeEditor();
+					std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].getSoftOrCopyWavetable(true, true); //need a copy as wtpos structure will be changed - selection only - keep freqs
 					wavetable->setSelectedWtPos(arrayidx);
-					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->setWavetableSoftFade(wavetable);
-					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->removeSoftFadeEditor();
+					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].setWavetableSoftFade(wavetable);
+					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].removeSoftFadeEditor();
 				}
 			}
 			else
 				if (modifiers.isLeftButtonDown() && modifiers.isShiftDown()) { //multiselect
 					if (arrayidx < wavetable->getNumPositions()) {
-						myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->addSoftFadeEditor();
-						std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->getSoftOrCopyWavetable(true, true); //need a copy as wtpos structure will be changed - selection only - keep freqs
+						myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].addSoftFadeEditor();
+						std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].getSoftOrCopyWavetable(true, true); //need a copy as wtpos structure will be changed - selection only - keep freqs
 						wavetable->setMultiSelect(arrayidx);
-						myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->setWavetableSoftFade(wavetable);
-						myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->removeSoftFadeEditor();
+						myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].setWavetableSoftFade(wavetable);
+						myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].removeSoftFadeEditor();
 					}
 				}
 

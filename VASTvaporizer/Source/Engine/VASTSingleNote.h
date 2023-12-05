@@ -18,7 +18,6 @@ Has:
 #include <vector>
 
 class CVASTPoly; //forward declaration
-class CVASTVcf; //forward declaration
 
 typedef struct sGrainTable {
 	double samplePitchRatio = 0;
@@ -46,6 +45,10 @@ class CVASTSingleNote : public VASTSynthesiserVoice
 public:
 	CVASTSingleNote(CVASTSettings& set, CVASTPoly* poly, MYUINT voiceNo);
 	virtual ~CVASTSingleNote(void);
+
+	// public instances
+	CVASTVcf m_VCF[3];
+	CVASTVca m_VCA;
 
 	CVASTSettings* m_Set; //public due to oscilloscope test
 	CVASTPoly* m_Poly; 
@@ -102,10 +105,6 @@ public:
 	void setWTPosSmooth(int bank, float morph);
 	void resetSmoothers();
 	
-	// public instances
-    std::unique_ptr<CVASTVca> m_VCA;
-	OwnedArray<CVASTVcf> m_VCF;
-
 	// instances
 	OwnedArray<CVASTWaveTableOscillator> m_Oscillator;
     std::unique_ptr<CVASTWaveTableOscillator> m_OscillatorNoise;

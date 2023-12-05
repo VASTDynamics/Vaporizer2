@@ -53,8 +53,7 @@ public:
 
 	VASTQFilter m_QFilter;
 
-	//std::vector<std::shared_ptr<CVASTOscillatorBank>> m_OscBank;
-	OwnedArray<CVASTOscillatorBank> m_OscBank;
+	CVASTOscillatorBank m_OscBank[4];
 
 	VASTSynthesiser* getSynthesizer();
 	VASTSynthesiserSound* getSynthSound();
