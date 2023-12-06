@@ -336,6 +336,8 @@ void VASTKeyboardComponent::sliderValueChanged(Slider* sliderThatWasMoved)
 
 void VASTKeyboardComponent::updateAll() {
     c_iBendRange->setValue(myProcessor->getBendRange(), NotificationType::dontSendNotification);
+    updateMidiKeyboardCharLayout();
+    updateMidiKeyboardBaseOctave();
 }
 
 void VASTKeyboardComponent::timerCallback() {

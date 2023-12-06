@@ -60,7 +60,7 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     label4.reset (new juce::Label ("new label",
                                    TRANS ("AUTHOR")));
     addAndMakeVisible (label4.get());
-    label4->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label4->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label4->setJustificationType (juce::Justification::centredRight);
     label4->setEditable (false, false, false);
     label4->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -93,7 +93,7 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     label3.reset (new juce::Label ("new label",
                                    TRANS ("TAG")));
     addAndMakeVisible (label3.get());
-    label3->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label3->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label3->setJustificationType (juce::Justification::centredRight);
     label3->setEditable (false, false, false);
     label3->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -103,7 +103,7 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     label2.reset (new juce::Label ("new label",
                                    TRANS ("CATEGORY")));
     addAndMakeVisible (label2.get());
-    label2->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label2->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label2->setJustificationType (juce::Justification::centredRight);
     label2->setEditable (false, false, false);
     label2->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -113,7 +113,7 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     label13.reset (new juce::Label ("new label",
                                     TRANS ("PRESET NAME")));
     addAndMakeVisible (label13.get());
-    label13->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label13->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label13->setJustificationType (juce::Justification::centredRight);
     label13->setEditable (false, false, false);
     label13->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -133,7 +133,7 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     label7.reset (new juce::Label ("new label",
                                    TRANS ("PRESETS")));
     addAndMakeVisible (label7.get());
-    label7->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label7->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label7->setJustificationType (juce::Justification::centredRight);
     label7->setEditable (false, false, false);
     label7->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -159,7 +159,7 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     label8.reset (new juce::Label ("new label",
                                    TRANS ("WIDTH")));
     addAndMakeVisible (label8.get());
-    label8->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label8->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label8->setJustificationType (juce::Justification::centredRight);
     label8->setEditable (false, false, false);
     label8->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -179,7 +179,7 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     label9.reset (new juce::Label ("new label",
                                    TRANS ("HEIGHT")));
     addAndMakeVisible (label9.get());
-    label9->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label9->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label9->setJustificationType (juce::Justification::centredRight);
     label9->setEditable (false, false, false);
     label9->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -211,7 +211,7 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     label5.reset (new juce::Label ("new label",
                                    TRANS ("WAVETABLES")));
     addAndMakeVisible (label5.get());
-    label5->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label5->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label5->setJustificationType (juce::Justification::centredRight);
     label5->setEditable (false, false, false);
     label5->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -237,7 +237,7 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     label6.reset (new juce::Label ("new label",
                                    TRANS ("SAMPLES")));
     addAndMakeVisible (label6.get());
-    label6->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label6->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label6->setJustificationType (juce::Justification::centredRight);
     label6->setEditable (false, false, false);
     label6->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -264,7 +264,7 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     label10.reset (new juce::Label ("new label",
                                     TRANS ("COMMENTS")));
     addAndMakeVisible (label10.get());
-    label10->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label10->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label10->setJustificationType (juce::Justification::centredRight);
     label10->setEditable (false, false, false);
     label10->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -311,7 +311,7 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     label11.reset (new juce::Label ("new label",
                                     TRANS ("SKIN")));
     addAndMakeVisible (label11.get());
-    label11->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label11->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label11->setJustificationType (juce::Justification::centredRight);
     label11->setEditable (false, false, false);
     label11->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -335,7 +335,7 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     label12.reset (new juce::Label ("new label",
                                     TRANS ("WAVET. MODE")));
     addAndMakeVisible (label12.get());
-    label12->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label12->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label12->setJustificationType (juce::Justification::centredRight);
     label12->setEditable (false, false, false);
     label12->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -362,7 +362,7 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     label14.reset (new juce::Label ("new label",
                                     TRANS ("DISABLE GFX")));
     addAndMakeVisible (label14.get());
-    label14->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label14->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label14->setJustificationType (juce::Justification::centredRight);
     label14->setEditable (false, false, false);
     label14->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -379,7 +379,7 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     label15.reset (new juce::Label ("new label",
                                     TRANS ("MPE MODE")));
     addAndMakeVisible (label15.get());
-    label15->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label15->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label15->setJustificationType (juce::Justification::centredRight);
     label15->setEditable (false, false, false);
     label15->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -389,7 +389,7 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     label16.reset (new juce::Label ("new label",
                                     TRANS ("FONT SIZE")));
     addAndMakeVisible (label16.get());
-    label16->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label16->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label16->setJustificationType (juce::Justification::centredRight);
     label16->setEditable (false, false, false);
     label16->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -412,7 +412,7 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     label17.reset (new juce::Label ("new label",
                                     TRANS ("MPE PRESET")));
     addAndMakeVisible (label17.get());
-    label17->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label17->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label17->setJustificationType (juce::Justification::centredRight);
     label17->setEditable (false, false, false);
     label17->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -451,7 +451,7 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     label18.reset (new juce::Label ("new label",
                                     TRANS ("MPE BEND RANGE")));
     addAndMakeVisible (label18.get());
-    label18->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label18->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label18->setJustificationType (juce::Justification::centredRight);
     label18->setEditable (false, false, false);
     label18->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -472,7 +472,7 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     label19.reset (new juce::Label ("new label",
                                     TRANS ("TUNING")));
     addAndMakeVisible (label19.get());
-    label19->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label19->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label19->setJustificationType (juce::Justification::centredRight);
     label19->setEditable (false, false, false);
     label19->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -509,7 +509,7 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     label20.reset (new juce::Label ("new label",
                                     TRANS ("MOD.WHEEL PERM.\n")));
     addAndMakeVisible (label20.get());
-    label20->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label20->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label20->setJustificationType (juce::Justification::centredRight);
     label20->setEditable (false, false, false);
     label20->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -531,7 +531,7 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     label21.reset (new juce::Label ("new label",
                                     TRANS ("KEY LAYOUT")));
     addAndMakeVisible (label21.get());
-    label21->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label21->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label21->setJustificationType (juce::Justification::centredRight);
     label21->setEditable (false, false, false);
     label21->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -541,7 +541,7 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     label22.reset (new juce::Label ("new label",
                                     TRANS ("KEY BASE OCTAVE")));
     addAndMakeVisible (label22.get());
-    label22->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label22->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label22->setJustificationType (juce::Justification::centredRight);
     label22->setEditable (false, false, false);
     label22->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -551,7 +551,7 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     c_midiKeyboardBaseOctave.reset (new VASTSlider ("c_midiKeyboardBaseOctave"));
     addAndMakeVisible (c_midiKeyboardBaseOctave.get());
     c_midiKeyboardBaseOctave->setTooltip (TRANS ("Plugin keyboard key mapping base octave - first char i c0, c1 ... c6"));
-    c_midiKeyboardBaseOctave->setExplicitFocusOrder (7);
+    c_midiKeyboardBaseOctave->setExplicitFocusOrder (22);
     c_midiKeyboardBaseOctave->setRange (-2, 8, 1);
     c_midiKeyboardBaseOctave->setSliderStyle (juce::Slider::IncDecButtons);
     c_midiKeyboardBaseOctave->setTextBoxStyle (juce::Slider::TextBoxLeft, false, 28, 20);
@@ -559,7 +559,7 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
 
     c_midiKeyboardReset.reset (new juce::TextButton ("c_midiKeyboardReset"));
     addAndMakeVisible (c_midiKeyboardReset.get());
-    c_midiKeyboardReset->setExplicitFocusOrder (18);
+    c_midiKeyboardReset->setExplicitFocusOrder (23);
     c_midiKeyboardReset->setButtonText (TRANS ("Use Default Mapping"));
     c_midiKeyboardReset->addListener (this);
 
@@ -759,7 +759,7 @@ void VASTPresetEditorComponent::resized()
     label21->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.8991f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
     label22->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.9391f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
     c_midiKeyboardBaseOctave->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.9339f), proportionOfWidth (0.0750f), proportionOfHeight (0.0313f));
-    c_midiKeyboardReset->setBounds (proportionOfWidth (0.7900f), proportionOfHeight (0.9043f), proportionOfWidth (0.1275f), proportionOfHeight (0.0191f));
+    c_midiKeyboardReset->setBounds (proportionOfWidth (0.7900f), proportionOfHeight (0.8974f), proportionOfWidth (0.1600f), proportionOfHeight (0.0244f));
     //[UserResized] Add your own custom resize handling here..
 	updateAll();
     //[/UserResized]
@@ -940,7 +940,7 @@ void VASTPresetEditorComponent::buttonClicked (juce::Button* buttonThatWasClicke
         myProcessor->writeSettingsToFile();
         c_midiKeyboardLayoutString->setText(myProcessor->getMidiKeyboardCharLayout(), false);
         c_midiKeyboardBaseOctave->setValue(myProcessor->getMidiKeyboardBaseOctave());
-        
+
         //[/UserButtonCode_c_midiKeyboardReset]
     }
 
@@ -1425,13 +1425,13 @@ BEGIN_JUCER_METADATA
          fontname="Code Pro Demo" fontsize="11.0" kerning="0.0" bold="0"
          italic="0" justification="34"/>
   <SLIDER name="c_midiKeyboardBaseOctave" id="a9346c3f240ff960" memberName="c_midiKeyboardBaseOctave"
-          virtualName="VASTSlider" explicitFocusOrder="7" pos="16.875% 93.391% 7.5% 3.13%"
+          virtualName="VASTSlider" explicitFocusOrder="22" pos="16.875% 93.391% 7.5% 3.13%"
           tooltip="Plugin keyboard key mapping base octave - first char i c0, c1 ... c6"
           min="-2.0" max="8.0" int="1.0" style="IncDecButtons" textBoxPos="TextBoxLeft"
           textBoxEditable="1" textBoxWidth="28" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <TEXTBUTTON name="c_midiKeyboardReset" id="e92f00152d4fb412" memberName="c_midiKeyboardReset"
-              virtualName="" explicitFocusOrder="18" pos="79% 90.435% 12.75% 1.913%"
+              virtualName="" explicitFocusOrder="23" pos="79% 89.739% 16% 2.435%"
               buttonText="Use Default Mapping" connectedEdges="0" needsCallback="1"
               radioGroupId="0"/>
 </JUCER_COMPONENT>
