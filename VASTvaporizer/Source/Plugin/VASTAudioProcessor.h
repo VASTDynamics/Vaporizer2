@@ -313,6 +313,11 @@ public:
 	int getBinMode() const;
 	int getBinEditMode() const;
 
+	String getMidiKeyboardCharLayout();
+	int getMidiKeyboardBaseOctave();
+	void setMidiKeyboardCharLayout(String charLayout);
+	void setMidiKeyboardBaseOctave(int baseOctave);
+
 	//--------------------------------------------------------------------------------------------------------------------
 
 	const int m_iDefaultPluginWidth = 1420; //default size from projucer
@@ -426,6 +431,9 @@ private:
 
 	int m_MPEmode = 0; // settings
 	int m_ModWheelPermaLink = 0;
+
+	String m_MidiKeyboardCharLayout = "ysxdcvgbhnjq2w3er5t6z7"; //FL Studio setup			
+	int m_iMidiKeyboardBaseOctave = 4; //FL Studio setup
 
     std::atomic<bool> m_wasBypassed = false;
     std::atomic<bool> bIsInErrorState = false;

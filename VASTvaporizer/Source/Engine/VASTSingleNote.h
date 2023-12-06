@@ -165,6 +165,8 @@ private:
 	float m_fOscWTPos_atNoteOn[4] = { 0.f, 0.f, 0.f, 0.f };
 	LinearSmoothedValue<float> m_fPhaseOffset_smoothed[4]; //bank
 
+	LinearSmoothedValue<float> m_fPitchBendNote_smoothed;
+
 	void resetSoftFadeState();
 	bool m_bSoftFadeCycleStarted[4] = {false, false, false, false};
 	bool m_bSoftFadeCycleEnded[4] = { false, false, false, false };

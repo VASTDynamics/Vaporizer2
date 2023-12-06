@@ -100,7 +100,7 @@ void CVASTWaveTableOscillator::init() {
     m_fNoiseLowCut_smoothed.reset(m_iSampleRate, 0.2f);
     m_fNoiseHighCut_smoothed.reset(m_iSampleRate, 0.1f);
     m_fNoiseResonance_smoothed.reset(m_iSampleRate, 0.1f);
-    
+      
     for (int i = 0; i < C_MAX_PARALLEL_OSC; i++) {
         reset(i);
         m_fOscDetune[i] = 1.0f;
@@ -163,7 +163,6 @@ float CVASTWaveTableOscillator::drift_noise(float& lastval)
 
 // note: if you don't keep this in the range of 0-1, you'll need to make changes elsewhere
 void CVASTWaveTableOscillator::setFrequency(int unisonOsci, bool restart) {
-    
     //new drift
     float driftAmount = 0.f;
     if (m_oscBank != nullptr) {
@@ -665,22 +664,16 @@ void CVASTWaveTableOscillator::setDetune(int unisonOsci, float OscDetune, bool u
     }
 }
 
-/*
- void CVASTWaveTableOscillator::setDetuneMod(float OscDetuneMod) { //for all unison oscis
- m_fOscDetuneMod = OscDetuneMod;
- }
- */
-
 void CVASTWaveTableOscillator::setCents(float OscCents) {
     m_fOscCents = OscCents;
 }
 
 void CVASTWaveTableOscillator::setPitchBendZone(float pitchbend) { //multiplier
-    m_fPitchBendZone = pitchbend;
+    m_fPitchBendZone = pitchbend; //is expected to be smoothed before
 }
 
 void CVASTWaveTableOscillator::setPitchBendNote(float pitchbend) { //multiplier
-    m_fPitchBendNote = pitchbend;
+    m_fPitchBendNote = pitchbend; //is expected to be smoothed before
 }
 
 MYUINT CVASTWaveTableOscillator::getOscType() const {

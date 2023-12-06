@@ -735,10 +735,12 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 	// normal post procs
 
 	bool l_isBlocked = nonThreadsafeIsBlockedProcessingInfo();
+	const ScopedLock sl(paramChangeLock);
 
 	if (0 == parameterID.compare("m_uPolyMode")) {
 		for (int i = 0; i < m_Set.m_uMaxPoly; i++)
-			m_Poly.m_singleNote[i]->stopNote(0, false); //hard stop
+			if (m_Poly.m_singleNote[i] != nullptr) //safety check for multiple host threads editing simultaneously
+				m_Poly.m_singleNote[i]->stopNote(0, false); //hard stop
 
 		bool bWasLocked = nonThreadsafeIsBlockedProcessingInfo();
 		if (!bWasLocked) 
@@ -795,7 +797,8 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 
 	if (0 == parameterID.compare("m_fPortamento")) {
 		for (int i = 0; i < m_Set.m_uMaxPoly; i++) {
-			m_Poly.m_singleNote[i]->setPortamentoTime(*m_Set.m_State->m_fPortamento);
+			if (m_Poly.m_singleNote[i] != nullptr) //safety check for multiple host threads editing simultaneously
+				m_Poly.m_singleNote[i]->setPortamentoTime(*m_Set.m_State->m_fPortamento);
 		}
 		if (!l_isBlocked) 
 			m_Poly.updateVariables();
@@ -1109,22 +1112,26 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 	
 	if (0 == parameterID.compare("m_fOscMorph_OscA")) {
 		for (int i=0; i < m_Set.m_uMaxPoly; i++)
-			m_Poly.m_singleNote[i]->setWTPosSmooth(0); //bank 0
+			if (m_Poly.m_singleNote[i] != nullptr) //safety check for multiple host threads editing simultaneously
+				m_Poly.m_singleNote[i]->setWTPosSmooth(0); //bank 0
 		return;
 	}
 	if (0 == parameterID.compare("m_fOscMorph_OscB")) {
 		for (int i = 0; i < m_Set.m_uMaxPoly; i++)
-			m_Poly.m_singleNote[i]->setWTPosSmooth(1); //bank 1
+			if (m_Poly.m_singleNote[i] != nullptr) //safety check for multiple host threads editing simultaneously
+				m_Poly.m_singleNote[i]->setWTPosSmooth(1); //bank 1
 		return;
 	}
 	if (0 == parameterID.compare("m_fOscMorph_OscC")) {
 		for (int i = 0; i < m_Set.m_uMaxPoly; i++)
-			m_Poly.m_singleNote[i]->setWTPosSmooth(3); //bank 2
+			if (m_Poly.m_singleNote[i] != nullptr) //safety check for multiple host threads editing simultaneously
+				m_Poly.m_singleNote[i]->setWTPosSmooth(3); //bank 2
 		return;
 	}
 	if (0 == parameterID.compare("m_fOscMorph_OscD")) {
 		for (int i = 0; i < m_Set.m_uMaxPoly; i++)
-			m_Poly.m_singleNote[i]->setWTPosSmooth(4); //bank 3
+			if (m_Poly.m_singleNote[i] != nullptr) //safety check for multiple host threads editing simultaneously
+				m_Poly.m_singleNote[i]->setWTPosSmooth(4); //bank 3
 		return;
 	}
 	
@@ -1166,7 +1173,8 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 		if (sound != nullptr) {
 			sound->setMidiRootNode(*m_Set.m_State->m_uSamplerRootKey);
 			for (int i = 0; i < m_Set.m_uMaxPoly; i++) {
-				m_Poly.m_singleNote[i]->samplerUpdatePitch(sound, true);
+				if (m_Poly.m_singleNote[i] != nullptr) //safety check for multiple host threads editing simultaneously
+					m_Poly.m_singleNote[i]->samplerUpdatePitch(sound, true);
 			}
 		}
 		return;
@@ -1176,7 +1184,8 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 		VASTSamplerSound* sound = (VASTSamplerSound*)m_Poly.getSamplerSound();
 		if (sound != nullptr) {
 			for (int i = 0; i < m_Set.m_uMaxPoly; i++) {
-				m_Poly.m_singleNote[i]->samplerUpdatePitch(sound, true);
+				if (m_Poly.m_singleNote[i] != nullptr) //safety check for multiple host threads editing simultaneously
+					m_Poly.m_singleNote[i]->samplerUpdatePitch(sound, true);
 			}
 		}
 		return;

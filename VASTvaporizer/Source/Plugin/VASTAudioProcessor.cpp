@@ -1622,6 +1622,37 @@ int VASTAudioProcessor::getBinMode() const { return m_iWTEditorBinMode; }
 
 int VASTAudioProcessor::getBinEditMode() const { return m_iWTEditorBinEditMode; }
 
+String VASTAudioProcessor::getMidiKeyboardCharLayout()
+{
+	return m_MidiKeyboardCharLayout;
+}
+
+int VASTAudioProcessor::getMidiKeyboardBaseOctave()
+{
+	return m_iMidiKeyboardBaseOctave;
+}
+
+void VASTAudioProcessor::setMidiKeyboardCharLayout(String charLayout)
+{
+	m_MidiKeyboardCharLayout = charLayout;
+	VASTAudioProcessorEditor* editor = (VASTAudioProcessorEditor*)getActiveEditor();
+	if (editor != nullptr) {
+		if (editor->vaporizerComponent != nullptr) {
+			editor->vaporizerComponent->getKeyboardComponent()->updateMidiKeyboardCharLayout();
+		}
+	}
+}
+
+void VASTAudioProcessor::setMidiKeyboardBaseOctave(int baseOctave)
+{
+	m_iMidiKeyboardBaseOctave = baseOctave;
+	VASTAudioProcessorEditor* editor = (VASTAudioProcessorEditor*)getActiveEditor();
+	if (editor != nullptr) {
+		if (editor->vaporizerComponent != nullptr)
+			editor->vaporizerComponent->getKeyboardComponent()->updateMidiKeyboardBaseOctave();
+	}	
+}
+
 int VASTAudioProcessor::autoParamGetDestination(String parametername) {
 	std::unordered_map<String, int>::iterator it;
 	it = m_mapParameterNameToModdest.find(parametername);
@@ -2216,6 +2247,9 @@ void VASTAudioProcessor::initSettings() {
 
 		m_ModWheelPermaLink = 1; //default now CustomModulator1
 
+		m_MidiKeyboardCharLayout = "ysxdcvgbhnjq2w3er5t6z7"; //FL Studio setup			
+		m_iMidiKeyboardBaseOctave = 2; //FL Studio setup
+
         writeSettingsToFile();
     }
 }
@@ -2285,6 +2319,9 @@ bool VASTAudioProcessor::writeSettingsToFile() {
 	settings->setAttribute("WavRootFolder", m_UserWavRootFolder);
 	settings->setAttribute("TuningFile", m_UserTuningFile);
 	settings->setAttribute("ModWheelPermaLink", String(m_ModWheelPermaLink));
+
+	settings->setAttribute("MidiKeyboardCharLayout", String(m_MidiKeyboardCharLayout));
+	settings->setAttribute("MidiKeyboardBaseOctave", String(m_iMidiKeyboardBaseOctave));
 
 	settings->setAttribute("PluginWidth", String(m_iUserTargetPluginWidth));
 	settings->setAttribute("PluginHeight", String(m_iUserTargetPluginHeight));
@@ -2513,6 +2550,14 @@ bool VASTAudioProcessor::readSettingsFromFile() {
 							}										
 							else if (pChild->getAttributeName(i).equalsIgnoreCase("ModWheelPermaLink") == true) {
 								m_ModWheelPermaLink = pChild->getAttributeValue(i).getIntValue();
+							}
+							else if (pChild->getAttributeName(i).equalsIgnoreCase("MidiKeyboardCharLayout") == true) {
+								m_MidiKeyboardCharLayout = pChild->getAttributeValue(i);
+								setMidiKeyboardCharLayout(m_MidiKeyboardCharLayout);
+							}
+							else if (pChild->getAttributeName(i).equalsIgnoreCase("MidiKeyboardBaseOctave") == true) {
+								m_iMidiKeyboardBaseOctave = pChild->getAttributeValue(i).getIntValue();
+								setMidiKeyboardBaseOctave(m_iMidiKeyboardBaseOctave);
 							}
 							else if (pChild->getAttributeName(i).equalsIgnoreCase("PluginWidth") == true) {
 								m_iUserTargetPluginWidth = pChild->getAttributeValue(i).getIntValue();

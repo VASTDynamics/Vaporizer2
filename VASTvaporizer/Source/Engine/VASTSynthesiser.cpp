@@ -38,6 +38,8 @@ bool VASTSynthesiserVoice::wasStartedBefore(const VASTSynthesiserVoice& other) c
 //==============================================================================
 VASTSynthesiser::VASTSynthesiser(VASTAudioProcessor* processor) : myProcessor(processor)
 {
+	m_Set = &processor->m_pVASTXperience.m_Set;
+	m_Poly = &processor->m_pVASTXperience.m_Poly;
 	clearVoices();
 	clearSounds();
 	VASTSynthesiserSound* l_vastSound = new VASTSynthesiserSound();
@@ -72,6 +74,11 @@ void VASTSynthesiser::initValues() {
 
 	const uint8 noLSBValueReceived = 0xff;
 	std::fill_n(lastPressureLowerBitReceivedOnChannel, 16, noLSBValueReceived);
+
+	for (int midiChannel = 0; midiChannel < 16; midiChannel++) { //16 midi channels
+		m_fPitchBendZone_smoothed[midiChannel].reset(m_Set->m_nSampleRate, 0.1f);
+		m_fModWheel_smoothed[midiChannel].reset(m_Set->m_nSampleRate, 0.1f);
+	}
 }
 
 //==============================================================================
@@ -359,11 +366,12 @@ void VASTSynthesiser::processNextBlock(sRoutingBuffers& routingBuffers,
 
 void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSample, int numSamples)
 {
-	VASTSynthesiserVoice* newestVoice = voices[0]; //just initialize with one
-	VASTSynthesiserVoice* oldestVoice = voices[0]; //just initialize with one
-	VASTSynthesiserVoice* oldestVoiceKeyDown = voices[0]; //just initialize with one
-	CVASTPoly* m_Poly = ((CVASTSingleNote*)newestVoice)->m_Poly; //just to get Poly
-
+	VASTSynthesiserVoice* newestVoice = dynamic_cast<VASTSynthesiserVoice*>(voices[0]); //just initialize with one
+	VASTSynthesiserVoice* oldestVoice = dynamic_cast<VASTSynthesiserVoice*>(voices[0]); //just initialize with one
+	VASTSynthesiserVoice* oldestVoiceKeyDown = dynamic_cast<VASTSynthesiserVoice*>(voices[0]); //just initialize with one
+	if ((newestVoice == nullptr) || (oldestVoice == nullptr) || (oldestVoiceKeyDown == nullptr))
+		return; //error state!
+	
 	float* custModBuffer0 = routingBuffers.CustomModulatorBuffer[0]->getWritePointer(0);
 	float* custModBuffer1 = routingBuffers.CustomModulatorBuffer[1]->getWritePointer(0);
 	float* custModBuffer2 = routingBuffers.CustomModulatorBuffer[2]->getWritePointer(0);
@@ -372,6 +380,63 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 	int l_numOscsPlaying = 0;
 
 	for (int i = startSample; i < startSample + numSamples; i++) {
+		//do pitch bend
+		for (int midiChannel = 0; midiChannel < 16; midiChannel++) {
+			if (m_fPitchBendZone_smoothed[midiChannel].isSmoothing()) {
+				float l_zoneWheelValueSmoothed = m_fPitchBendZone_smoothed[midiChannel].getNextValue();
+				for (auto* voice : voices) {
+					//if (midiChannel <= 0 || voice->isPlayingChannel(midiChannel))		
+					if (myProcessor->isMPEenabled()) {
+						if (midiChannel == m_MPEMasterChannel)
+							voice->pitchWheelMoved(l_zoneWheelValueSmoothed, true); //zone
+						else if (voice->isPlayingChannel(midiChannel))
+							voice->pitchWheelMoved(l_zoneWheelValueSmoothed, false);
+					}
+					else
+						voice->pitchWheelMoved(l_zoneWheelValueSmoothed, true);
+				}
+			}
+		}
+		
+		for (int midiChannel = 0; midiChannel < 16; midiChannel++) {
+			if (m_fModWheel_smoothed[midiChannel].isSmoothing()) { //do mod wheel, nor midi channel sensitive	
+				float l_modWheelPos = m_fModWheel_smoothed[midiChannel].getNextValue();
+				//check for permalink
+				int permalink = myProcessor->getModWheelPermaLink();
+				if (permalink != 0) {
+
+					Array<AudioProcessorParameter*> params = myProcessor->getParameters();
+					for (int i = 0; i < params.size(); i++) {
+						if ((permalink == 1) && (params[i]->getName(18).equalsIgnoreCase("Custom modulator 1"))) {
+							params[i]->setValueNotifyingHost(l_modWheelPos / 127.f);
+							break;
+						}
+						if ((permalink == 2) && (params[i]->getName(18).equalsIgnoreCase("Custom modulator 2"))) {
+							params[i]->setValueNotifyingHost(l_modWheelPos / 127.f);
+							break;
+						}
+						if ((permalink == 3) && (params[i]->getName(18).equalsIgnoreCase("Custom modulator 3"))) {
+							params[i]->setValueNotifyingHost(l_modWheelPos / 127.f);
+							break;
+						}
+						if ((permalink == 4) && (params[i]->getName(18).equalsIgnoreCase("Custom modulator 4"))) {
+							params[i]->setValueNotifyingHost(l_modWheelPos / 127.f);
+							break;
+						}
+					}
+				}
+
+				for (auto* voice : voices)
+					//if (midiChannel <= 0 || voice->isPlayingChannel(midiChannel))		
+					if (myProcessor->isMPEenabled()) {
+						if (voice->isPlayingChannel(midiChannel))
+							voice->controllerMoved(01, l_modWheelPos);
+					}
+					else
+						voice->controllerMoved(01, l_modWheelPos);
+			}
+		}
+
 		//custom modulators - first depends on nothing
 		if (m_Set->modMatrixSourceSetFast(MODMATSRCE::CustomModulator1)) {
 			custModBuffer0[i] = m_Poly->m_fCustomModulator1_smoothed.getNextValue();
@@ -1408,9 +1473,7 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 		if (sound->appliesToNote(midiNoteNumber) && sound->appliesToChannel(midiChannel))
 		{
 			//LFO retrigger
-			((CVASTSingleNote*)voices[0])->m_Poly->resynchLFO();
-
-
+			m_Poly->resynchLFO();
 
 			// If hitting a note that's still ringing, stop it first (it could be
 			// still playing because of the sustain or sostenuto pedal).
@@ -1483,8 +1546,11 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 							}
 						}
 
-						if (voice == nullptr) //steal it
+						if (voice == nullptr) { //steal it 
 							voice = voices[0];
+							if (voice == nullptr)
+								return; //error state
+						}
 
 					}
 					else {
@@ -1503,8 +1569,11 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 					}
 
 					//CHECK
-					if (voice == nullptr) //steal it
+					if (voice == nullptr) { //steal it
 						voice = voices[0];
+						if (voice == nullptr)
+							return; //error state
+					}
 
 					shallSteal = true;
 					startVoice(voice, sound, midiChannel, midiNoteNumber, velocity);
@@ -1675,7 +1744,10 @@ void VASTSynthesiser::startVoice(VASTSynthesiserVoice* const voice,
 			if (!msegpervoice) {
 				if ((m_oldestPlayingKeyDown >= 0) && voices[m_oldestPlayingKeyDown]->isKeyDown()) { 
 					VDBG("Single MSEG Copy m_oldestPlayingKeyDown: " << m_oldestPlayingKeyDown << " -> " << voice->mVoiceNo << " keyDown: " << (voices[m_oldestPlayingKeyDown]->isKeyDown() ? "true" : "false"));
-					((CVASTSingleNote*)voice)->m_VCA.m_MSEG_Envelope[mseg].copyStateFrom(((CVASTSingleNote*)voices[m_oldestPlayingKeyDown])->m_VCA.m_MSEG_Envelope[mseg]);
+					if (!(m_oldestPlayingKeyDown >= voices.size())) //safety check
+						((CVASTSingleNote*)voice)->m_VCA.m_MSEG_Envelope[mseg].copyStateFrom(((CVASTSingleNote*)voices[m_oldestPlayingKeyDown])->m_VCA.m_MSEG_Envelope[mseg]);
+					else
+						vassertfalse; //errorstate
 				}
 			}
 		}
@@ -1779,22 +1851,17 @@ void VASTSynthesiser::handlePitchWheel(const int midiChannel, const int wheelVal
 	const ScopedLock sl(lock);
 	lastPitchWheelUIValue.store(wheelValue);
 	lastPitchWheelValues[midiChannel].store(wheelValue);
-	for (auto* voice : voices) {
-		//if (midiChannel <= 0 || voice->isPlayingChannel(midiChannel))		
-		if (myProcessor->isMPEenabled()) {
-			if (midiChannel == m_MPEMasterChannel)
-				voice->pitchWheelMoved(wheelValue, true); //zone
-			else if (voice->isPlayingChannel(midiChannel))
-				voice->pitchWheelMoved(wheelValue, false);
-		} else 		
-			voice->pitchWheelMoved(wheelValue, true);
-	}
+
+	m_fPitchBendZone_smoothed[midiChannel].setTargetValue(wheelValue);
 }
 
 void VASTSynthesiser::handleController(const int midiChannel,
 	const int controllerNumber,
 	const int controllerValue)
 {	
+	if (midiChannel > C_MAX_POLY) //safety check for MPE
+		return; 
+
 	const uint8 noLSBValueReceived = 0xff;
 	switch (controllerNumber)
 	{		
@@ -1814,41 +1881,20 @@ void VASTSynthesiser::handleController(const int midiChannel,
 	}
 
 	if (controllerNumber == 1) { // MIDI CC 1 Modulation, e.g. VSTHost
-	//check for permalink
-		int permalink = myProcessor->getModWheelPermaLink();
-		if (permalink != 0) {
-			Array<AudioProcessorParameter*> params = myProcessor->getParameters();
-			float wheelPos = controllerValue;
-			for (int i = 0; i < params.size(); i++) {
-				if ((permalink == 1) && (params[i]->getName(18).equalsIgnoreCase("Custom modulator 1"))) {
-					params[i]->setValueNotifyingHost(wheelPos / 127.f);
-					break;
-				}
-				if ((permalink == 2) && (params[i]->getName(18).equalsIgnoreCase("Custom modulator 2"))) {
-					params[i]->setValueNotifyingHost(wheelPos / 127.f);
-					break;
-				}
-				if ((permalink == 3) && (params[i]->getName(18).equalsIgnoreCase("Custom modulator 3"))) {
-					params[i]->setValueNotifyingHost(wheelPos / 127.f);
-					break;
-				}
-				if ((permalink == 4) && (params[i]->getName(18).equalsIgnoreCase("Custom modulator 4"))) {
-					params[i]->setValueNotifyingHost(wheelPos / 127.f);
-					break;
-				}
-			}
-		}
+		m_fModWheel_smoothed[midiChannel].setTargetValue(controllerValue);
 	}
+	else {
+		const ScopedLock sl(lock);
 
-	const ScopedLock sl(lock);
-
-	for (auto* voice : voices)
-		//if (midiChannel <= 0 || voice->isPlayingChannel(midiChannel))		
-		if (myProcessor->isMPEenabled()) {
-			if (voice->isPlayingChannel(midiChannel))
+		for (auto* voice : voices)
+			//if (midiChannel <= 0 || voice->isPlayingChannel(midiChannel))		
+			if (myProcessor->isMPEenabled()) {
+				if (voice->isPlayingChannel(midiChannel))
+					voice->controllerMoved(controllerNumber, controllerValue);
+			}
+			else
 				voice->controllerMoved(controllerNumber, controllerValue);
-		} else 
-			voice->controllerMoved(controllerNumber, controllerValue);
+	}
 }
 
 void VASTSynthesiser::handleAftertouch(int midiChannel, int midiNoteNumber, int aftertouchValue)

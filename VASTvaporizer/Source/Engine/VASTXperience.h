@@ -113,7 +113,7 @@ public:
 
 private:
 	std::atomic<int> m_midiBank = 0;
-
+	CriticalSection paramChangeLock;
 
 	JUCE_HEAVYWEIGHT_LEAK_DETECTOR(CVASTXperience)
 	//JUCE_LEAK_DETECTOR(CVASTXperience)

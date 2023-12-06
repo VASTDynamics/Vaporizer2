@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 7.0.7
+  Created with Projucer version: 7.0.9
 
   ------------------------------------------------------------------------------
 
@@ -51,7 +51,7 @@ VASTOscillatorComponent::VASTOscillatorComponent (AudioProcessorEditor *editor, 
 
     m_fOscDetune.reset (new VASTParameterSlider ("m_fOscDetune"));
     addAndMakeVisible (m_fOscDetune.get());
-    m_fOscDetune->setTooltip (TRANS("Normalized detune with bank oscillators"));
+    m_fOscDetune->setTooltip (TRANS ("Normalized detune with bank oscillators"));
     m_fOscDetune->setRange (0, 100, 0.001);
     m_fOscDetune->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     m_fOscDetune->setTextBoxStyle (juce::Slider::NoTextBox, false, 30, 14);
@@ -62,7 +62,7 @@ VASTOscillatorComponent::VASTOscillatorComponent (AudioProcessorEditor *editor, 
 
     m_fOscGain.reset (new VASTParameterSlider ("m_fOscGain"));
     addAndMakeVisible (m_fOscGain.get());
-    m_fOscGain->setTooltip (TRANS("Bank gain (100 full, >100 overdrive)"));
+    m_fOscGain->setTooltip (TRANS ("Bank gain (100 full, >100 overdrive)"));
     m_fOscGain->setRange (0, 200, 0.01);
     m_fOscGain->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     m_fOscGain->setTextBoxStyle (juce::Slider::NoTextBox, false, 30, 14);
@@ -73,7 +73,7 @@ VASTOscillatorComponent::VASTOscillatorComponent (AudioProcessorEditor *editor, 
 
     m_fOscCents.reset (new VASTParameterSlider ("m_fOscCents"));
     addAndMakeVisible (m_fOscCents.get());
-    m_fOscCents->setTooltip (TRANS("Bank cents (+/- 1 octave and half tones)"));
+    m_fOscCents->setTooltip (TRANS ("Bank cents (+/- 1 octave and half tones)"));
     m_fOscCents->setRange (-1200, 1200, 0.01);
     m_fOscCents->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     m_fOscCents->setTextBoxStyle (juce::Slider::NoTextBox, false, 30, 14);
@@ -84,7 +84,7 @@ VASTOscillatorComponent::VASTOscillatorComponent (AudioProcessorEditor *editor, 
 
     m_fOscWTPos.reset (new VASTParameterSlider ("m_fOscWTPos"));
     addAndMakeVisible (m_fOscWTPos.get());
-    m_fOscWTPos->setTooltip (TRANS("Oscillator wavetable position"));
+    m_fOscWTPos->setTooltip (TRANS ("Oscillator wavetable position"));
     m_fOscWTPos->setRange (0, 100, 0.01);
     m_fOscWTPos->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     m_fOscWTPos->setTextBoxStyle (juce::Slider::NoTextBox, false, 30, 14);
@@ -95,7 +95,7 @@ VASTOscillatorComponent::VASTOscillatorComponent (AudioProcessorEditor *editor, 
 
     m_fOscMorph.reset (new VASTParameterSlider ("m_fOscMorph"));
     addAndMakeVisible (m_fOscMorph.get());
-    m_fOscMorph->setTooltip (TRANS("Oscillator morphing"));
+    m_fOscMorph->setTooltip (TRANS ("Oscillator morphing"));
     m_fOscMorph->setRange (0, 100, 0.01);
     m_fOscMorph->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     m_fOscMorph->setTextBoxStyle (juce::Slider::NoTextBox, false, 30, 14);
@@ -106,7 +106,7 @@ VASTOscillatorComponent::VASTOscillatorComponent (AudioProcessorEditor *editor, 
 
     m_fSpread.reset (new VASTParameterSlider ("m_fSpread"));
     addAndMakeVisible (m_fSpread.get());
-    m_fSpread->setTooltip (TRANS("Stereo spread within bank oscillators"));
+    m_fSpread->setTooltip (TRANS ("Stereo spread within bank oscillators"));
     m_fSpread->setRange (0, 100, 0.01);
     m_fSpread->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     m_fSpread->setTextBoxStyle (juce::Slider::NoTextBox, false, 30, 14);
@@ -116,7 +116,7 @@ VASTOscillatorComponent::VASTOscillatorComponent (AudioProcessorEditor *editor, 
     m_fSpread->addListener (this);
 
     headerLabel.reset (new juce::Label ("new label",
-                                        TRANS("OSC A")));
+                                        TRANS ("OSC A")));
     addAndMakeVisible (headerLabel.get());
     headerLabel->setFont (juce::Font ("Syntax", 13.00f, juce::Font::plain).withTypefaceStyle ("Bold"));
     headerLabel->setJustificationType (juce::Justification::centredLeft);
@@ -126,9 +126,9 @@ VASTOscillatorComponent::VASTOscillatorComponent (AudioProcessorEditor *editor, 
     headerLabel->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label18.reset (new juce::Label ("new label",
-                                    TRANS("WTPOS")));
+                                    TRANS ("WTPOS")));
     addAndMakeVisible (label18.get());
-    label18->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain));
+    label18->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label18->setJustificationType (juce::Justification::centred);
     label18->setEditable (false, false, false);
     label18->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -136,9 +136,9 @@ VASTOscillatorComponent::VASTOscillatorComponent (AudioProcessorEditor *editor, 
     label18->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label108.reset (new juce::Label ("new label",
-                                     TRANS("SPREAD")));
+                                     TRANS ("SPREAD")));
     addAndMakeVisible (label108.get());
-    label108->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain));
+    label108->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label108->setJustificationType (juce::Justification::centred);
     label108->setEditable (false, false, false);
     label108->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -146,9 +146,9 @@ VASTOscillatorComponent::VASTOscillatorComponent (AudioProcessorEditor *editor, 
     label108->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label134.reset (new juce::Label ("new label",
-                                     TRANS("MORPH")));
+                                     TRANS ("MORPH")));
     addAndMakeVisible (label134.get());
-    label134->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain));
+    label134->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label134->setJustificationType (juce::Justification::centred);
     label134->setEditable (false, false, false);
     label134->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -156,9 +156,9 @@ VASTOscillatorComponent::VASTOscillatorComponent (AudioProcessorEditor *editor, 
     label134->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label135.reset (new juce::Label ("new label",
-                                     TRANS("DETUNE")));
+                                     TRANS ("DETUNE")));
     addAndMakeVisible (label135.get());
-    label135->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain));
+    label135->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label135->setJustificationType (juce::Justification::centred);
     label135->setEditable (false, false, false);
     label135->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -166,9 +166,9 @@ VASTOscillatorComponent::VASTOscillatorComponent (AudioProcessorEditor *editor, 
     label135->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label2.reset (new juce::Label ("new label",
-                                   TRANS("GAIN")));
+                                   TRANS ("GAIN")));
     addAndMakeVisible (label2.get());
-    label2->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain));
+    label2->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label2->setJustificationType (juce::Justification::centred);
     label2->setEditable (false, false, false);
     label2->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -176,9 +176,9 @@ VASTOscillatorComponent::VASTOscillatorComponent (AudioProcessorEditor *editor, 
     label2->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label3.reset (new juce::Label ("new label",
-                                   TRANS("CENTS")));
+                                   TRANS ("CENTS")));
     addAndMakeVisible (label3.get());
-    label3->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain));
+    label3->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label3->setJustificationType (juce::Justification::centred);
     label3->setEditable (false, false, false);
     label3->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -187,7 +187,7 @@ VASTOscillatorComponent::VASTOscillatorComponent (AudioProcessorEditor *editor, 
 
     m_fOscPan.reset (new VASTParameterSlider ("m_fOscPan"));
     addAndMakeVisible (m_fOscPan.get());
-    m_fOscPan->setTooltip (TRANS("Stereo panning of oscillator"));
+    m_fOscPan->setTooltip (TRANS ("Stereo panning of oscillator"));
     m_fOscPan->setRange (-100, 100, 0.01);
     m_fOscPan->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     m_fOscPan->setTextBoxStyle (juce::Slider::NoTextBox, false, 30, 14);
@@ -198,7 +198,7 @@ VASTOscillatorComponent::VASTOscillatorComponent (AudioProcessorEditor *editor, 
 
     m_fOscPhase.reset (new VASTParameterSlider ("m_fOscPhase"));
     addAndMakeVisible (m_fOscPhase.get());
-    m_fOscPhase->setTooltip (TRANS("Phase of oscillator"));
+    m_fOscPhase->setTooltip (TRANS ("Phase of oscillator"));
     m_fOscPhase->setRange (0, 100, 0.01);
     m_fOscPhase->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     m_fOscPhase->setTextBoxStyle (juce::Slider::NoTextBox, false, 30, 14);
@@ -208,9 +208,9 @@ VASTOscillatorComponent::VASTOscillatorComponent (AudioProcessorEditor *editor, 
     m_fOscPhase->addListener (this);
 
     label4.reset (new juce::Label ("new label",
-                                   TRANS("PAN")));
+                                   TRANS ("PAN")));
     addAndMakeVisible (label4.get());
-    label4->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain));
+    label4->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label4->setJustificationType (juce::Justification::centred);
     label4->setEditable (false, false, false);
     label4->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -218,9 +218,9 @@ VASTOscillatorComponent::VASTOscillatorComponent (AudioProcessorEditor *editor, 
     label4->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label5.reset (new juce::Label ("new label",
-                                   TRANS("PHASE")));
+                                   TRANS ("PHASE")));
     addAndMakeVisible (label5.get());
-    label5->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain));
+    label5->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label5->setJustificationType (juce::Justification::centred);
     label5->setEditable (false, false, false);
     label5->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -228,9 +228,9 @@ VASTOscillatorComponent::VASTOscillatorComponent (AudioProcessorEditor *editor, 
     label5->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label6.reset (new juce::Label ("new label",
-                                   TRANS("OCT")));
+                                   TRANS ("OCT")));
     addAndMakeVisible (label6.get());
-    label6->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain));
+    label6->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label6->setJustificationType (juce::Justification::centredRight);
     label6->setEditable (false, false, false);
     label6->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -238,9 +238,9 @@ VASTOscillatorComponent::VASTOscillatorComponent (AudioProcessorEditor *editor, 
     label6->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label7.reset (new juce::Label ("new label",
-                                   TRANS("UNISON")));
+                                   TRANS ("UNISON")));
     addAndMakeVisible (label7.get());
-    label7->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain));
+    label7->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label7->setJustificationType (juce::Justification::centredRight);
     label7->setEditable (false, false, false);
     label7->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -248,9 +248,9 @@ VASTOscillatorComponent::VASTOscillatorComponent (AudioProcessorEditor *editor, 
     label7->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label8.reset (new juce::Label ("new label",
-                                   TRANS("EXCITER")));
+                                   TRANS ("EXCITER")));
     addAndMakeVisible (label8.get());
-    label8->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain));
+    label8->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label8->setJustificationType (juce::Justification::centredLeft);
     label8->setEditable (false, false, false);
     label8->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -258,9 +258,9 @@ VASTOscillatorComponent::VASTOscillatorComponent (AudioProcessorEditor *editor, 
     label8->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label9.reset (new juce::Label ("new label",
-                                   TRANS("RETRIG")));
+                                   TRANS ("RETRIG")));
     addAndMakeVisible (label9.get());
-    label9->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain));
+    label9->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label9->setJustificationType (juce::Justification::centredLeft);
     label9->setEditable (false, false, false);
     label9->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -268,9 +268,9 @@ VASTOscillatorComponent::VASTOscillatorComponent (AudioProcessorEditor *editor, 
     label9->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label13.reset (new juce::Label ("new label",
-                                    TRANS("ENV")));
+                                    TRANS ("ENV")));
     addAndMakeVisible (label13.get());
-    label13->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain));
+    label13->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label13->setJustificationType (juce::Justification::centredRight);
     label13->setEditable (false, false, false);
     label13->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -278,9 +278,9 @@ VASTOscillatorComponent::VASTOscillatorComponent (AudioProcessorEditor *editor, 
     label13->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label14.reset (new juce::Label ("new label",
-                                    TRANS("ROUTING")));
+                                    TRANS ("ROUTING")));
     addAndMakeVisible (label14.get());
-    label14->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain));
+    label14->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label14->setJustificationType (juce::Justification::centredRight);
     label14->setEditable (false, false, false);
     label14->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -288,9 +288,9 @@ VASTOscillatorComponent::VASTOscillatorComponent (AudioProcessorEditor *editor, 
     label14->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label15.reset (new juce::Label ("new label",
-                                    TRANS("2")));
+                                    TRANS ("2")));
     addAndMakeVisible (label15.get());
-    label15->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain));
+    label15->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label15->setJustificationType (juce::Justification::centredRight);
     label15->setEditable (false, false, false);
     label15->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -298,9 +298,9 @@ VASTOscillatorComponent::VASTOscillatorComponent (AudioProcessorEditor *editor, 
     label15->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label12.reset (new juce::Label ("new label",
-                                    TRANS("INVERT")));
+                                    TRANS ("INVERT")));
     addAndMakeVisible (label12.get());
-    label12->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain));
+    label12->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label12->setJustificationType (juce::Justification::centredLeft);
     label12->setEditable (false, false, false);
     label12->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -309,35 +309,35 @@ VASTOscillatorComponent::VASTOscillatorComponent (AudioProcessorEditor *editor, 
 
     m_uOscRouting2.reset (new VASTParameterComboBox ("m_uOscRouting2"));
     addAndMakeVisible (m_uOscRouting2.get());
-    m_uOscRouting2->setTooltip (TRANS("Oscillator routing 2"));
+    m_uOscRouting2->setTooltip (TRANS ("Oscillator routing 2"));
     m_uOscRouting2->setEditableText (false);
     m_uOscRouting2->setJustificationType (juce::Justification::centredLeft);
     m_uOscRouting2->setTextWhenNothingSelected (juce::String());
-    m_uOscRouting2->setTextWhenNoChoicesAvailable (TRANS("---"));
-    m_uOscRouting2->addItem (TRANS("MSEG1"), 1);
-    m_uOscRouting2->addItem (TRANS("MSEG2"), 2);
-    m_uOscRouting2->addItem (TRANS("MSEG3"), 3);
-    m_uOscRouting2->addItem (TRANS("MSEG4"), 4);
-    m_uOscRouting2->addItem (TRANS("MSEG5"), 5);
+    m_uOscRouting2->setTextWhenNoChoicesAvailable (TRANS ("---"));
+    m_uOscRouting2->addItem (TRANS ("MSEG1"), 1);
+    m_uOscRouting2->addItem (TRANS ("MSEG2"), 2);
+    m_uOscRouting2->addItem (TRANS ("MSEG3"), 3);
+    m_uOscRouting2->addItem (TRANS ("MSEG4"), 4);
+    m_uOscRouting2->addItem (TRANS ("MSEG5"), 5);
     m_uOscRouting2->addListener (this);
 
     m_uOscRouting1.reset (new VASTParameterComboBox ("m_uOscRouting1"));
     addAndMakeVisible (m_uOscRouting1.get());
-    m_uOscRouting1->setTooltip (TRANS("Oscillator routing 1"));
+    m_uOscRouting1->setTooltip (TRANS ("Oscillator routing 1"));
     m_uOscRouting1->setEditableText (false);
     m_uOscRouting1->setJustificationType (juce::Justification::centredLeft);
     m_uOscRouting1->setTextWhenNothingSelected (juce::String());
-    m_uOscRouting1->setTextWhenNoChoicesAvailable (TRANS("---"));
-    m_uOscRouting1->addItem (TRANS("MSEG1"), 1);
-    m_uOscRouting1->addItem (TRANS("MSEG2"), 2);
-    m_uOscRouting1->addItem (TRANS("MSEG3"), 3);
-    m_uOscRouting1->addItem (TRANS("MSEG4"), 4);
-    m_uOscRouting1->addItem (TRANS("MSEG5"), 5);
+    m_uOscRouting1->setTextWhenNoChoicesAvailable (TRANS ("---"));
+    m_uOscRouting1->addItem (TRANS ("MSEG1"), 1);
+    m_uOscRouting1->addItem (TRANS ("MSEG2"), 2);
+    m_uOscRouting1->addItem (TRANS ("MSEG3"), 3);
+    m_uOscRouting1->addItem (TRANS ("MSEG4"), 4);
+    m_uOscRouting1->addItem (TRANS ("MSEG5"), 5);
     m_uOscRouting1->addListener (this);
 
     m_iOscOct.reset (new VASTParameterSlider ("m_iOscOct"));
     addAndMakeVisible (m_iOscOct.get());
-    m_iOscOct->setTooltip (TRANS("Bank oscillators octave"));
+    m_iOscOct->setTooltip (TRANS ("Bank oscillators octave"));
     m_iOscOct->setRange (-2, 2, 1);
     m_iOscOct->setSliderStyle (juce::Slider::IncDecButtons);
     m_iOscOct->setTextBoxStyle (juce::Slider::TextBoxLeft, false, 26, 20);
@@ -352,7 +352,7 @@ VASTOscillatorComponent::VASTOscillatorComponent (AudioProcessorEditor *editor, 
 
     m_iNumOscs.reset (new VASTParameterSlider ("m_iNumOscs"));
     addAndMakeVisible (m_iNumOscs.get());
-    m_iNumOscs->setTooltip (TRANS("Number of bank oscillators"));
+    m_iNumOscs->setTooltip (TRANS ("Number of bank oscillators"));
     m_iNumOscs->setRange (1, 24, 1);
     m_iNumOscs->setSliderStyle (juce::Slider::IncDecButtons);
     m_iNumOscs->setTextBoxStyle (juce::Slider::TextBoxLeft, false, 30, 20);
@@ -367,46 +367,46 @@ VASTOscillatorComponent::VASTOscillatorComponent (AudioProcessorEditor *editor, 
 
     m_bOscOnOff.reset (new VASTParameterButton ("m_bOscOnOff"));
     addAndMakeVisible (m_bOscOnOff.get());
-    m_bOscOnOff->setTooltip (TRANS("Switch oscillator bank on / off"));
+    m_bOscOnOff->setTooltip (TRANS ("Switch oscillator bank on / off"));
     m_bOscOnOff->setButtonText (juce::String());
     m_bOscOnOff->addListener (this);
 
     m_uVCAEnv.reset (new VASTParameterComboBox ("m_uVCAEnv"));
     addAndMakeVisible (m_uVCAEnv.get());
-    m_uVCAEnv->setTooltip (TRANS("Envelope used as VCA envelope"));
+    m_uVCAEnv->setTooltip (TRANS ("Envelope used as VCA envelope"));
     m_uVCAEnv->setEditableText (false);
     m_uVCAEnv->setJustificationType (juce::Justification::centredLeft);
     m_uVCAEnv->setTextWhenNothingSelected (juce::String());
-    m_uVCAEnv->setTextWhenNoChoicesAvailable (TRANS("---"));
-    m_uVCAEnv->addItem (TRANS("MSEG1"), 1);
-    m_uVCAEnv->addItem (TRANS("MSEG2"), 2);
-    m_uVCAEnv->addItem (TRANS("MSEG3"), 3);
-    m_uVCAEnv->addItem (TRANS("MSEG4"), 4);
-    m_uVCAEnv->addItem (TRANS("MSEG5"), 5);
+    m_uVCAEnv->setTextWhenNoChoicesAvailable (TRANS ("---"));
+    m_uVCAEnv->addItem (TRANS ("MSEG1"), 1);
+    m_uVCAEnv->addItem (TRANS ("MSEG2"), 2);
+    m_uVCAEnv->addItem (TRANS ("MSEG3"), 3);
+    m_uVCAEnv->addItem (TRANS ("MSEG4"), 4);
+    m_uVCAEnv->addItem (TRANS ("MSEG5"), 5);
     m_uVCAEnv->addListener (this);
 
     m_bOscInverterOnOff.reset (new VASTParameterButton ("m_bOscInverterOnOff"));
     addAndMakeVisible (m_bOscInverterOnOff.get());
-    m_bOscInverterOnOff->setTooltip (TRANS("Invert all voices not in the center (might cancel sound when not detuned)"));
+    m_bOscInverterOnOff->setTooltip (TRANS ("Invert all voices not in the center (might cancel sound when not detuned)"));
     m_bOscInverterOnOff->setButtonText (juce::String());
     m_bOscInverterOnOff->addListener (this);
 
     m_bExciterOnOff.reset (new VASTParameterButton ("m_bExciterOnOff"));
     addAndMakeVisible (m_bExciterOnOff.get());
-    m_bExciterOnOff->setTooltip (TRANS("Exciter adds random detune by may +- 0.25hz per oscillator and played note"));
+    m_bExciterOnOff->setTooltip (TRANS ("Exciter adds random detune by may +- 0.25hz per oscillator and played note"));
     m_bExciterOnOff->setButtonText (juce::String());
     m_bExciterOnOff->addListener (this);
 
     m_bOscRetrigOnOff.reset (new VASTParameterButton ("m_bOscRetrigOnOff"));
     addAndMakeVisible (m_bOscRetrigOnOff.get());
-    m_bOscRetrigOnOff->setTooltip (TRANS("Random phase offeset for each oscillator for each new note or sync at beginning of phase"));
+    m_bOscRetrigOnOff->setTooltip (TRANS ("Random phase offeset for each oscillator for each new note or sync at beginning of phase"));
     m_bOscRetrigOnOff->setButtonText (juce::String());
     m_bOscRetrigOnOff->addListener (this);
 
     label10.reset (new juce::Label ("new label",
-                                    TRANS("WTFX")));
+                                    TRANS ("WTFX")));
     addAndMakeVisible (label10.get());
-    label10->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain));
+    label10->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label10->setJustificationType (juce::Justification::centredRight);
     label10->setEditable (false, false, false);
     label10->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -415,16 +415,16 @@ VASTOscillatorComponent::VASTOscillatorComponent (AudioProcessorEditor *editor, 
 
     m_uWTFX.reset (new VASTParameterComboBox ("m_uWTFX"));
     addAndMakeVisible (m_uWTFX.get());
-    m_uWTFX->setTooltip (TRANS("Wavetable Effect"));
+    m_uWTFX->setTooltip (TRANS ("Wavetable Effect"));
     m_uWTFX->setEditableText (false);
     m_uWTFX->setJustificationType (juce::Justification::centredLeft);
     m_uWTFX->setTextWhenNothingSelected (juce::String());
-    m_uWTFX->setTextWhenNoChoicesAvailable (TRANS("---"));
+    m_uWTFX->setTextWhenNoChoicesAvailable (TRANS ("---"));
     m_uWTFX->addListener (this);
 
     m_fWTFXVal.reset (new VASTParameterSlider ("m_fWTFXVal"));
     addAndMakeVisible (m_fWTFXVal.get());
-    m_fWTFXVal->setTooltip (TRANS("Wavetable effect parameter value"));
+    m_fWTFXVal->setTooltip (TRANS ("Wavetable effect parameter value"));
     m_fWTFXVal->setRange (0, 100, 0.01);
     m_fWTFXVal->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     m_fWTFXVal->setTextBoxStyle (juce::Slider::NoTextBox, false, 30, 14);

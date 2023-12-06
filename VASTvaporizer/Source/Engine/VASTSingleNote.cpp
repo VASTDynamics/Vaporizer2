@@ -279,7 +279,7 @@ void CVASTSingleNote::startNote(int midiNoteNumber, float velocity, SynthesiserS
 	}
 	
 	noteOn(0, midiNoteNumber, velocity, legato);
-	pitchWheelMoved(currentPitchWheelPosition, true);
+	pitchWheelMoved(currentPitchWheelPosition, true);  //zone
 
 	//sampler
 	if (auto* mySound = dynamic_cast<VASTSynthesiserSound*> (sound))
@@ -358,7 +358,7 @@ void CVASTSingleNote::pitchWheelMoved(int newPitchWheelValue, bool zone)
 	if (!zone) {
 		m_pitchBendNote = 1.f; //for sampler
 		if (!pbCenter)
-			m_pitchBendNote = powf(2.f, (48.f * (m_Poly->getProcessor()->m_presetData.getCurPatchData().mpebendrange / 96.f) * (newPitchWheelValue / 8192.f - 1.f)) / 12.0); //full bend range means full slide effect
+			m_pitchBendNote = powf(2.f, (48.f * (m_Poly->getProcessor()->m_presetData.getCurPatchData().mpebendrange / 48.f) * (newPitchWheelValue / 8192.f - 1.f)) / 12.0); //full bend range means full slide effect
 		for (int bank = 0; bank < 4; bank++) {
 			// do pitch bender
 			m_Oscillator[bank].setPitchBendNote(m_pitchBendNote); 

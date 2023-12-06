@@ -45,7 +45,7 @@ void CVASTPoly::init() {
         m_QFilter.m_bInitFilterAfterMaxPolyChange[2].store(true);
     }
     
-	m_OscillatorSynthesizer.init(m_Set, this);
+	m_OscillatorSynthesizer.init();
     if (m_lastInitPoly.load() > m_Set->m_uMaxPoly) {
         for (int i = C_MAX_POLY - 1; i >= m_Set->m_uMaxPoly; i--) {
             m_OscillatorSynthesizer.removeVoice(i);
