@@ -1352,6 +1352,20 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 								}
 							}
 						}
+#ifdef _DEBUG
+						float lastSampleL = 0.f;
+						float lastSampleR = 0.f;
+						for (int i = 0; i < numSamples; i++) {
+							float sampleL = routingBuffers.FilterVoices[filter][mVoiceNo]->getSample(0, startSample + i);
+							float sampleR = routingBuffers.FilterVoices[filter][mVoiceNo]->getSample(1, startSample + i);
+							if (i > 0) {
+								//vassert(abs(lastSampleL - sampleL) < 0.05f); //click 
+								//vassert(abs(lastSampleR - sampleR) < 0.05f); //click 
+							}
+							lastSampleL = sampleL;
+							lastSampleR = sampleR;
+						}
+#endif
 					}
 				}
 			}

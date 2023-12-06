@@ -1159,6 +1159,9 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 		if ((processor->m_bAudioThreadStarted) && (!processor->m_wasBypassed)) {
 			while (processor->m_pVASTXperience.getBlockProcessingIsBlockedSuccessfully() == false) {
 				VDBG("getBlockProcessingIsBlockedSuccessfully() is false - suspending load process!");
+				
+				processor->m_pVASTXperience.m_BlockProcessing.store(true); //test
+				
 				std::this_thread::sleep_for(std::chrono::milliseconds(250));
 				waitstate += 50;
 				if (waitstate > 25000) {

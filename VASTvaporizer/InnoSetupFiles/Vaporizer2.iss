@@ -66,7 +66,7 @@ Name: "wavetables"; Description: "Wavetables"; Types: full compact compatibility
 Name: "noises"; Description: "Noises"; Types: full compact compatibility
 Name: "documentation"; Description: "Documentation File"; Types: full compact compatibility
 Name: "license"; Description: "License Text"; Types: full compact; Flags: fixed
-Name: "old_cpu"; Description: "SSE2 versions for older CPUs"; Types: compatibility
+Name: "old_cpu"; Description: "SSE2 versions for systems / hosts that do not support AVX"; Types: compatibility
 Name: "compatibility"; Description: "Install old plugin names for compatibility (_64./_64_SSE.)"; Types: compatibility
 
 [Dirs]

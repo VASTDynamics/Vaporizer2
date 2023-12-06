@@ -186,6 +186,7 @@ bool CVASTXperience::prepareForPlay(double sampleRate, int expectedSamplesPerBlo
 	//audiprocesslock should be set outside
 	m_Set.m_nSampleRate.store(sampleRate);
 	m_Set.m_nExpectedSamplesPerBlock = samplesPerBlock;
+	m_iMaxFadeSamples = m_Set.m_nSampleRate * 0.05f; //50ms
 
 	m_bOversampleBus1_changed = false;
 	m_bOversampleBus2_changed = false;
@@ -357,15 +358,17 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
     
     //=================================================================================================
     // Is prepare for play running?
-    if (m_BlockProcessing == true) {
-        const ScopedLock sl(myProcessor->getCallbackLock());
-        m_BlockProcessingIsBlockedSuccessfully = true;
-        VDBG("BlockProcessingIsBlockedSuccessfully is true!");
-        buffer.clear();
-        m_iFadeOutSamples = 0;
-        m_iFadeInSamples = 0;
-        return false;
-    }
+	if ((m_iFadeOutSamples <= 0) || (m_BlockProcessingIsBlockedSuccessfully)) { //check new - wait for fadeout to complete
+		if (m_BlockProcessing == true) {
+			const ScopedLock sl(myProcessor->getCallbackLock());
+			m_BlockProcessingIsBlockedSuccessfully = true;
+			VDBG("BlockProcessingIsBlockedSuccessfully is true!");
+			buffer.clear();
+			m_iFadeOutSamples = 0;
+			m_iFadeInSamples = 0;
+			return false;
+		}
+	}
     
     beginSoftFade();
     

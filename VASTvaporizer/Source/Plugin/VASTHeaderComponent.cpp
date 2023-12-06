@@ -267,8 +267,8 @@ void VASTHeaderComponent::buttonClicked (juce::Button* buttonThatWasClicked)
 
 		String lid = myProcessor->m_presetData.getCurPatchData().internalid;
 
-		myProcessor->m_presetData.reloadPresetArray();
 		myProcessor->m_pVASTXperience.audioProcessUnlock(); //CHECKTS
+        myProcessor->m_presetData.reloadPresetArray();
 
 		int lindnex = myProcessor->m_presetData.getIndexInPresetArray(lid);
 		if (lindnex >= 0)
