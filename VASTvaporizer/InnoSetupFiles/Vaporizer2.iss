@@ -72,7 +72,7 @@ Name: "compatibility"; Description: "Install old plugin names for compatibility 
 [Dirs]
 ;Name: "{app}"; Permissions: everyone-full                     
 Name: "{app}"; Permissions: users-readexec
-Name: "{code:GetPluginDir|2}\VASTvaporizer2_64.aaxplugin"; Check: Is64BitInstallMode; Components:aax_win64; Attribs: system;
+;Name: "{code:GetPluginDir|2}\VASTvaporizer2_64.aaxplugin"; Check: Is64BitInstallMode; Components:aax_win64; Attribs: system;
 //;user presets
 Name: "{code:GetPluginDir|4}"; Permissions: everyone-full 
 //;user tables
@@ -86,14 +86,14 @@ Type: files; Name: "{group}\Vaporizer2*"
 Type: files; Name: "{app}\unins*.dat"
 Type: files; Name: "{app}\unins*.exe"   
 ;delete legacy files that are replaced by folder bundles
-Type: files; Name: "{app}\VASTvaporizer2_64.vst3" 
-Type: files; Name: "{code:GetPluginDir|1}\VASTvaporizer2_64.vst3" 
-Type: files; Name: "{app}\VASTvaporizer2.vst3"
-Type: files; Name: "{code:GetPluginDir|1}\VASTvaporizer2.vst3"
-Type: files; Name: "{app}\VASTvaporizer2_SSE_64.vst3"
-Type: files; Name: "{code:GetPluginDir|1}\VASTvaporizer2_64_SSE2.vst3"
-Type: files; Name: "{app}\VASTvaporizer2_SSE.vst3"
-Type: files; Name: "{code:GetPluginDir|1}\VASTvaporizer2_SSE2.vst3"
+;Type: files; Name: "{app}\VASTvaporizer2_64.vst3" 
+;Type: files; Name: "{code:GetPluginDir|1}\VASTvaporizer2_64.vst3" 
+;Type: files; Name: "{app}\VASTvaporizer2.vst3"
+;Type: files; Name: "{code:GetPluginDir|1}\VASTvaporizer2.vst3"
+;Type: files; Name: "{app}\VASTvaporizer2_SSE_64.vst3"
+;Type: files; Name: "{code:GetPluginDir|1}\VASTvaporizer2_64_SSE2.vst3"
+;Type: files; Name: "{app}\VASTvaporizer2_SSE.vst3"
+;Type: files; Name: "{code:GetPluginDir|1}\VASTvaporizer2_SSE2.vst3"
 
 [Files]
 ;Intrinsics Detector
@@ -129,7 +129,7 @@ Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_artefacts\Release\VST3\VASTvap
 ;STANDALONE
 Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_artefacts\Release\Standalone\VASTvaporizer2.exe"; DestDir: "{app}"; DestName: "VASTvaporizer2_SSE2.exe"; Components: compatibility and old_cpu; Flags: ignoreversion overwritereadonly
 ;AAX
-Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_artefacts\Release\AAX\VASTvaporizer2.aaxplugin\*"; DestDir: "{code:GetPluginDir|2}\VASTvaporizer2_SSE2.aaxplugin"; Components: compatibility and not old_cpu; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly 
+Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_artefacts\Release\AAX\VASTvaporizer2.aaxplugin\*"; DestDir: "{code:GetPluginDir|2}\VASTvaporizer2_SSE2.aaxplugin"; Components: compatibility and old_cpu; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly 
 
 ;*OLDCPU* and !*COMPATIBILITY*
 ;VST
@@ -139,7 +139,7 @@ Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_artefacts\Release\VST3\VASTvap
 ;STANDALONE
 Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_artefacts\Release\Standalone\VASTvaporizer2.exe"; DestDir: "{app}"; Components: old_cpu and not compatibility; Flags: ignoreversion overwritereadonly
 ;AAX
-Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_artefacts\Release\AAX\VASTvaporizer2.aaxplugin\*"; DestDir: "{code:GetPluginDir|2}\VASTvaporizer2.aaxplugin"; Components: compatibility and not old_cpu; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly 
+Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_artefacts\Release\AAX\VASTvaporizer2.aaxplugin\*"; DestDir: "{code:GetPluginDir|2}\VASTvaporizer2.aaxplugin"; Components: old_cpu and not compatibility; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly 
 
 
 ;Old Win32 that are nor longer part of installer but can be build via Cmake
@@ -454,7 +454,7 @@ begin
   //If (PluginDirPage.Buttons[3].Enabled) Then
     //SetPreviousData(PreviousDataKey, 'VST3_32', PluginDirPage.Values[3]);
   If (PluginDirPage.Buttons[2].Enabled) Then
-    SetPreviousData(PreviousDataKey, 'AAX64', PluginDirPage.Values[3]);
+    SetPreviousData(PreviousDataKey, 'AAX64', PluginDirPage.Values[2]);
   If (PluginDirPage.Buttons[3].Enabled) Then
     SetPreviousData(PreviousDataKey, 'LV264', PluginDirPage.Values[3]);
   If (PluginDirPage.Buttons[4].Enabled) Then
