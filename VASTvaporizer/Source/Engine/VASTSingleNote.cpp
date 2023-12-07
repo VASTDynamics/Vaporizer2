@@ -47,7 +47,7 @@ CVASTSingleNote::CVASTSingleNote(CVASTSettings& set, CVASTPoly* poly, MYUINT voi
     for (int filter = 0; filter < 3; filter++) {
         m_VCF.add(new CVASTVcf(*m_Set, mVoiceNo, filter, false)); //has to be new alloacated due to alignas(16)
         m_VCF[filter]->init(); //not UI
-    }
+    }	
 
     m_LFO_Osc[0].init();
     m_LFO_Osc[0].updateMainVariables(m_Set->m_nSampleRate, *m_Set->m_State->m_uLFOWave_LFO1, 1, 0, 0, 0);
@@ -206,6 +206,8 @@ void CVASTSingleNote::prepareForPlay() {
 	m_LFO_Osc[3].updateMainVariables(m_Set->m_nSampleRate, *m_Set->m_State->m_uLFOWave_LFO4, 1, 0, 0, 0);
 	m_LFO_Osc[4].init();
 	m_LFO_Osc[4].updateMainVariables(m_Set->m_nSampleRate, *m_Set->m_State->m_uLFOWave_LFO5, 1, 0, 0, 0);
+
+	m_bLastFilterOutputZero[0] = false; m_bLastFilterOutputZero[1] = false; m_bLastFilterOutputZero[2] = false;
 
 	resetSmoothers();
 }
