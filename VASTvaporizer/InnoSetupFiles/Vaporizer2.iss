@@ -2,7 +2,7 @@
 
 #define PluginBaseName = "Vaporizer2"
 #ifndef AppVer
-#define AppVer "3.3.5"
+#define AppVer "3.4.2"
 #endif
 
 [Setup]
@@ -86,14 +86,14 @@ Type: files; Name: "{group}\Vaporizer2*"
 Type: files; Name: "{app}\unins*.dat"
 Type: files; Name: "{app}\unins*.exe"   
 ;delete legacy files that are replaced by folder bundles
-;Type: files; Name: "{app}\VASTvaporizer2_64.vst3" 
-;Type: files; Name: "{code:GetPluginDir|1}\VASTvaporizer2_64.vst3" 
-;Type: files; Name: "{app}\VASTvaporizer2.vst3"
-;Type: files; Name: "{code:GetPluginDir|1}\VASTvaporizer2.vst3"
-;Type: files; Name: "{app}\VASTvaporizer2_SSE_64.vst3"
-;Type: files; Name: "{code:GetPluginDir|1}\VASTvaporizer2_64_SSE2.vst3"
-;Type: files; Name: "{app}\VASTvaporizer2_SSE.vst3"
-;Type: files; Name: "{code:GetPluginDir|1}\VASTvaporizer2_SSE2.vst3"
+Type: filesandordirs; Name: "{app}\VASTvaporizer2_64.vst3" 
+Type: filesandordirs; Name: "{code:GetPluginDir|1}\VASTvaporizer2_64.vst3" 
+Type: filesandordirs; Name: "{app}\VASTvaporizer2.vst3"
+Type: filesandordirs; Name: "{code:GetPluginDir|1}\VASTvaporizer2.vst3"
+Type: filesandordirs; Name: "{app}\VASTvaporizer2_SSE_64.vst3"
+Type: filesandordirs; Name: "{code:GetPluginDir|1}\VASTvaporizer2_64_SSE2.vst3"
+Type: filesandordirs; Name: "{app}\VASTvaporizer2_SSE.vst3"
+Type: filesandordirs; Name: "{code:GetPluginDir|1}\VASTvaporizer2_SSE2.vst3"
 
 [Files]
 ;Intrinsics Detector
@@ -103,7 +103,11 @@ Source: "..\InstallerFiles\DetectIntrinsicsWin32.exe"; DestDir: "{app}";
 ;VST
 Source: "..\..\cmake-build\x64\VASTvaporizer2_artefacts\Release\VST\VASTvaporizer2.dll"; DestDir: "{code:GetPluginDir|0}"; Components: vst_win64; Flags: ignoreversion overwritereadonly
 ;VST3
-Source: "..\..\cmake-build\x64\VASTvaporizer2_artefacts\Release\VST3\VASTvaporizer2.vst3\*"; DestDir: "{code:GetPluginDir|1}\VASTvaporizer2.vst3"; Components: vst3_win64; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly
+;Dont deliver mousleinfo.json for now! ;Source: "..\..\cmake-build\x64\VASTvaporizer2_artefacts\Release\VST3\VASTvaporizer2.vst3\*"; DestDir: "{code:GetPluginDir|1}\VASTvaporizer2.vst3"; Components: vst3_win64; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly
+Source: "..\..\cmake-build\x64\VASTvaporizer2_artefacts\Release\VST3\VASTvaporizer2.vst3\desktop.ini"; DestDir: "{code:GetPluginDir|1}\VASTvaporizer2.vst3"; Components: vst3_win64; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly
+Source: "..\..\cmake-build\x64\VASTvaporizer2_artefacts\Release\VST3\VASTvaporizer2.vst3\Plugin.ico"; DestDir: "{code:GetPluginDir|1}\VASTvaporizer2.vst3"; Components: vst3_win64; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly
+Source: "..\..\cmake-build\x64\VASTvaporizer2_artefacts\Release\VST3\VASTvaporizer2.vst3\Contents\x86_64-win\*"; DestDir: "{code:GetPluginDir|1}\VASTvaporizer2.vst3\Contents\x86_64-win"; Components: vst3_win64; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly
+
 ;STANDALONE
 Source: "..\..\cmake-build\x64\VASTvaporizer2_artefacts\Release\Standalone\VASTvaporizer2.exe"; DestDir: "{app}"; Components: standalone_win64; Flags: ignoreversion overwritereadonly
 ;AAX
@@ -115,7 +119,11 @@ Source: "..\..\cmake-build\x64\VASTvaporizer2_artefacts\Release\LV2\VASTvaporize
 ;VST
 Source: "..\..\cmake-build\x64\VASTvaporizer2_artefacts\Release\VST\VASTvaporizer2.dll"; DestDir: "{code:GetPluginDir|0}"; DestName: "VASTvaporizer2_64.dll"; Components: compatibility and not old_cpu; Flags: ignoreversion overwritereadonly
 ;VST3
-Source: "..\..\cmake-build\x64\VASTvaporizer2_artefacts\Release\VST3\VASTvaporizer2.vst3\*"; DestDir: "{code:GetPluginDir|1}\VASTvaporizer2_64.vst3"; Components: compatibility and not old_cpu; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly
+;Dont deliver mousleinfo.json for now! Source: "..\..\cmake-build\x64\VASTvaporizer2_artefacts\Release\VST3\VASTvaporizer2.vst3\*"; DestDir: "{code:GetPluginDir|1}\VASTvaporizer2_64.vst3"; Components: compatibility and not old_cpu; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly
+Source: "..\..\cmake-build\x64\VASTvaporizer2_artefacts\Release\VST3\VASTvaporizer2.vst3\desktop.ini"; DestDir: "{code:GetPluginDir|1}\VASTvaporizer2_64.vst3"; Components: compatibility and not old_cpu; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly
+Source: "..\..\cmake-build\x64\VASTvaporizer2_artefacts\Release\VST3\VASTvaporizer2.vst3\Plugin.ico"; DestDir: "{code:GetPluginDir|1}\VASTvaporizer2_64.vst3"; Components: compatibility and not old_cpu; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly
+Source: "..\..\cmake-build\x64\VASTvaporizer2_artefacts\Release\VST3\VASTvaporizer2.vst3\Contents\x86_64-win\*"; DestDir: "{code:GetPluginDir|1}\VASTvaporizer2_64.vst3\Contents\x86_64-win"; Components: compatibility and not old_cpu; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly
+
 ;STANDALONE
 Source: "..\..\cmake-build\x64\VASTvaporizer2_artefacts\Release\Standalone\VASTvaporizer2.exe"; DestDir: "{app}"; DestName: "VASTvaporizer2_64.exe"; Components: compatibility and not old_cpu; Flags: ignoreversion overwritereadonly
 ;AAX
@@ -125,7 +133,10 @@ Source: "..\..\cmake-build\x64\VASTvaporizer2_artefacts\Release\AAX\VASTvaporize
 ;VST
 Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_artefacts\Release\VST\VASTvaporizer2.dll"; DestDir: "{code:GetPluginDir|0}"; DestName: "VASTvaporizer2_SSE2.dll"; Components: compatibility and old_cpu; Flags: ignoreversion overwritereadonly
 ;VST3
-Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_artefacts\Release\VST3\VASTvaporizer2.vst3\*"; DestDir: "{code:GetPluginDir|1}\VASTvaporizer2_SSE2.vst3"; Components: compatibility and old_cpu; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly
+;Dont deliver mousleinfo.json for now! Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_artefacts\Release\VST3\VASTvaporizer2.vst3\*"; DestDir: "{code:GetPluginDir|1}\VASTvaporizer2_SSE2.vst3"; Components: compatibility and old_cpu; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly
+Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_artefacts\Release\VST3\VASTvaporizer2.vst3\desktop.ini"; DestDir: "{code:GetPluginDir|1}\VASTvaporizer2_SSE2.vst3"; Components: compatibility and old_cpu; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly
+Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_artefacts\Release\VST3\VASTvaporizer2.vst3\Plugin.ico"; DestDir: "{code:GetPluginDir|1}\VASTvaporizer2_SSE2.vst3"; Components: compatibility and old_cpu; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly
+Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_artefacts\Release\VST3\VASTvaporizer2.vst3\Contents\x86_64-win\*"; DestDir: "{code:GetPluginDir|1}\VASTvaporizer2_SSE2.vst3\Contents\x86_64-win"; Components: compatibility and old_cpu; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly
 ;STANDALONE
 Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_artefacts\Release\Standalone\VASTvaporizer2.exe"; DestDir: "{app}"; DestName: "VASTvaporizer2_SSE2.exe"; Components: compatibility and old_cpu; Flags: ignoreversion overwritereadonly
 ;AAX
@@ -135,7 +146,10 @@ Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_artefacts\Release\AAX\VASTvapo
 ;VST
 Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_artefacts\Release\VST\VASTvaporizer2.dll"; DestDir: "{code:GetPluginDir|0}"; Components: old_cpu and not compatibility; Flags: ignoreversion overwritereadonly
 ;VST3
-Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_artefacts\Release\VST3\VASTvaporizer2.vst3\*"; DestDir: "{code:GetPluginDir|1}"; Components: old_cpu and not compatibility; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly
+;Dont deliver mousleinfo.json for now! Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_artefacts\Release\VST3\VASTvaporizer2.vst3\*"; DestDir: "{code:GetPluginDir|1}\VASTvaporizer2.vst3"; Components: old_cpu and not compatibility; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly
+Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_artefacts\Release\VST3\VASTvaporizer2.vst3\desktop.ini"; DestDir: "{code:GetPluginDir|1}\VASTvaporizer2.vst3"; Components: old_cpu and not compatibility; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly
+Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_artefacts\Release\VST3\VASTvaporizer2.vst3\Plugin.ico"; DestDir: "{code:GetPluginDir|1}\VASTvaporizer2.vst3"; Components: old_cpu and not compatibility; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly
+Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_artefacts\Release\VST3\VASTvaporizer2.vst3\Contents\x86_64-win\*"; DestDir: "{code:GetPluginDir|1}\VASTvaporizer2.vst3\Contents\x86_64-win"; Components: old_cpu and not compatibility; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly
 ;STANDALONE
 Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_artefacts\Release\Standalone\VASTvaporizer2.exe"; DestDir: "{app}"; Components: old_cpu and not compatibility; Flags: ignoreversion overwritereadonly
 ;AAX
