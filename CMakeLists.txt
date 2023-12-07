@@ -25,7 +25,7 @@ message(STATUS "Building VAST Dynamics Vaporizer2 plugin, version ${PLUGIN_VERSI
 
 #new: all targets are build with project name "VASTvaporizer2" compatibility with old filenames will be guaranteed by installer if needed
 project("VASTvaporizer2")
-message(STATUS "Project name" ${PROJECT_NAME})
+message(STATUS "Project name " ${PROJECT_NAME})
 
 if(NOT USE_SYSTEM_JUCE)
   message(STATUS "Using JUCE from source tree")
@@ -150,11 +150,12 @@ endmacro (set_xcode_property)
 
 if(APPLE)
   message(STATUS "Building on Apple macOS ${CMAKE_GENERATOR_PLATFORM} with AVX flags: ${BUILD_AVX}")
+  message(STATUS "XCODE_VERSION: ${XCODE_VERSION}" )
   list(APPEND MY_PUBLIC_COMPILE_OPTIONS "-ffast-math")
-  #if(XCODE_OSX_SYSROOT MATCHES "Xcode-15")
+  if(XCODE_VERSION MATCHES "15.0")
     target_compile_definitions(${PROJECT_NAME} PUBLIC JUCE_SILENCE_XCODE_15_LINKER_WARNING) #temporarily due to xcode 15 issue
     target_link_options(${PROJECT_NAME} PUBLIC -ld_classic) #temporarily due to xcode 15 issue
-  #endif()
+  endif()
   if(VASTBUILD) 
     set_xcode_property(${PROJECT_NAME} CODE_SIGN_STYLE "Manual")
     set_xcode_property(${PROJECT_NAME} DEVELOPMENT_TEAM "PK93HYD6ZN") 
