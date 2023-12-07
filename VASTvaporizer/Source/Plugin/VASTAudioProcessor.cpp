@@ -3603,7 +3603,8 @@ String VASTAudioProcessor::getVersionString() {
 	String pluginType = "";
 	switch (PluginHostType::getPluginLoadedAs())
 	{
-		case AudioProcessor::wrapperType_Undefined:     pluginType = "undefined"; break;
+		//case AudioProcessor::wrapperType_Undefined:     pluginType = "undefined"; break;
+		case AudioProcessor::wrapperType_Undefined:     pluginType = "CLAP"; break; //this is CLAP for now
 		case AudioProcessor::wrapperType_VST:           pluginType = "VST"; break;
 		case AudioProcessor::wrapperType_VST3:          pluginType = "VST3"; break;
 		case AudioProcessor::wrapperType_AudioUnit:     pluginType = "AU"; break;
