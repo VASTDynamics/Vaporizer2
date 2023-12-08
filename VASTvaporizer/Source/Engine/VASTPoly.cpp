@@ -11,6 +11,7 @@ VAST Dynamics Audio Software (TM)
 #include "VASTEngineHeader.h"
 #include "VASTSampler.h"
 #include "VASTSynthesiser.h"
+#include "../Plugin/VASTAudioProcessor.h"
 
 //for debug info
 #include <iostream>
@@ -48,8 +49,15 @@ void CVASTPoly::init() {
 	m_OscillatorSynthesizer.init();
     if (m_lastInitPoly.load() > m_Set->m_uMaxPoly) {
         for (int i = C_MAX_POLY - 1; i >= m_Set->m_uMaxPoly; i--) {
-            m_OscillatorSynthesizer.removeVoice(i);
-            m_singleNote[i] = nullptr; //release old voices
+			if ((!myProcessor->m_bAudioThreadStarted) || (myProcessor->m_pVASTXperience.getBlockProcessingIsBlockedSuccessfully())) { //safety check
+				m_OscillatorSynthesizer.removeVoice(i);
+				m_singleNote[i] = nullptr; //release old voices
+				VDBG("CVASTPoly::init Old voice released " << i);
+			}
+			else {
+				myProcessor->setErrorState(myProcessor->vastErrorState::errorState26_maxPolyNotSet); //when this happens, there will be more voices than max poly im synthesizer
+				vassertfalse;
+			}
         }
     }
 
@@ -479,15 +487,7 @@ void CVASTPoly::resynchLFO() {
 	#define FREERUN_LFO_RETRIGGER_RESET 1000 //1s
 
 	if (*m_Set->m_State->m_bLFORetrigOnOff_LFO1 == static_cast<int>(SWITCH::SWITCH_ON)) {
-		if (*m_Set->m_State->m_bLFOPerVoice_LFO1 == static_cast<int>(SWITCH::SWITCH_ON)) {
-			/*
-			for (int i = 0; i < m_Set->m_uMaxPoly; i++) {
-				m_singleNote[i]->m_LFO_Osc[0].resynch(true);
-			}
-			*/
-			//done in single note note on now
-		}
-		else {
+		if (!(*m_Set->m_State->m_bLFOPerVoice_LFO1 == static_cast<int>(SWITCH::SWITCH_ON))) {
 			m_global_LFO_Osc[0].resynchWithFade(true);
 		}
 	}
@@ -507,15 +507,7 @@ void CVASTPoly::resynchLFO() {
 	}
 
 	if (*m_Set->m_State->m_bLFORetrigOnOff_LFO2 == static_cast<int>(SWITCH::SWITCH_ON)) {
-		if (*m_Set->m_State->m_bLFOPerVoice_LFO2 == static_cast<int>(SWITCH::SWITCH_ON)) {
-			/*
-			for (int i = 0; i < m_Set->m_uMaxPoly; i++) {
-				m_singleNote[i]->m_LFO_Osc[1].resynch(true);
-			}
-			*/
-			//done in single note note on now
-		}
-		else {
+		if (!(*m_Set->m_State->m_bLFOPerVoice_LFO2 == static_cast<int>(SWITCH::SWITCH_ON))) {
 			m_global_LFO_Osc[1].resynchWithFade(true);
 		}
 	}
@@ -535,16 +527,7 @@ void CVASTPoly::resynchLFO() {
 	}
 
 	if (*m_Set->m_State->m_bLFORetrigOnOff_LFO3 == static_cast<int>(SWITCH::SWITCH_ON)) {
-		if (*m_Set->m_State->m_bLFOPerVoice_LFO3 == static_cast<int>(SWITCH::SWITCH_ON)) {
-			/*
-			for (int i = 0; i < m_Set->m_uMaxPoly; i++) {
-				m_singleNote[i]->m_LFO_Osc[2].resynch(true);
-			}
-			*/
-			//done in single note note on now
-
-		}
-		else {
+		if (!(*m_Set->m_State->m_bLFOPerVoice_LFO3 == static_cast<int>(SWITCH::SWITCH_ON))) {
 			m_global_LFO_Osc[2].resynchWithFade(true);
 		}
 	}
@@ -564,16 +547,7 @@ void CVASTPoly::resynchLFO() {
 	}
 
 	if (*m_Set->m_State->m_bLFORetrigOnOff_LFO4 == static_cast<int>(SWITCH::SWITCH_ON)) {
-		if (*m_Set->m_State->m_bLFOPerVoice_LFO4 == static_cast<int>(SWITCH::SWITCH_ON)) {
-			/*
-			for (int i = 0; i < m_Set->m_uMaxPoly; i++) {
-			m_singleNote[i]->m_LFO_Osc[3].resynch(true);
-			}
-			*/
-			//done in single note note on now
-
-		}
-		else {
+		if (!(*m_Set->m_State->m_bLFOPerVoice_LFO4 == static_cast<int>(SWITCH::SWITCH_ON))) {
 			m_global_LFO_Osc[3].resynchWithFade(true);
 		}
 	}
@@ -593,16 +567,7 @@ void CVASTPoly::resynchLFO() {
 	}
 
 	if (*m_Set->m_State->m_bLFORetrigOnOff_LFO5 == static_cast<int>(SWITCH::SWITCH_ON)) {
-		if (*m_Set->m_State->m_bLFOPerVoice_LFO5 == static_cast<int>(SWITCH::SWITCH_ON)) {
-			/*
-			for (int i = 0; i < m_Set->m_uMaxPoly; i++) {
-			m_singleNote[i]->m_LFO_Osc[4].resynch(true);
-			}
-			*/
-			//done in single note note on now
-
-		}
-		else {
+		if (!(*m_Set->m_State->m_bLFOPerVoice_LFO5 == static_cast<int>(SWITCH::SWITCH_ON))) {
 			m_global_LFO_Osc[4].resynchWithFade(true);
 		}
 	}

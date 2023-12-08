@@ -123,8 +123,13 @@ bool CVASTXperience::initializeEngine()
 	return true;
 }
 
-void CVASTXperience::audioProcessLock()
+bool CVASTXperience::audioProcessLock()
 {
+	if (m_BlockProcessing.load()) { //it should not be locked already by another task!
+		vassertfalse;
+		return false;
+	}
+		
 	VDBG("Audio process suspended / locked!");
 	//myProcessor->suspendProcessing(true);
 
@@ -133,16 +138,22 @@ void CVASTXperience::audioProcessLock()
 		m_Poly.m_OscBank[bank].m_bWavetableSoftfadeStillRendered.store(false);
 	m_BlockProcessing.store(true);
 	m_BlockProcessingIsBlockedSuccessfully.store(false);
+	return true;
 }
 
-void CVASTXperience::audioProcessUnlock()
+bool CVASTXperience::audioProcessUnlock()
 {
+	if (!m_BlockProcessing.load()) { //error if not locked!
+		vassertfalse;
+		return false;
+	}
 	//myProcessor->suspendProcessing(false);
 
 	const ScopedLock sl(myProcessor->getCallbackLock()); //this is required here but why
 	m_BlockProcessing.store(false);
 	m_BlockProcessingIsBlockedSuccessfully.store(false);
 	VDBG("Audio process no longer suspended / unlocked!");
+	return true;
 }
 
 bool CVASTXperience::getBlockProcessingIsBlockedSuccessfully() {
@@ -743,15 +754,20 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 	if (0 == parameterID.compare("m_uPolyMode")) {
 		for (int i = 0; i < m_Set.m_uMaxPoly; i++)
 			if (m_Poly.m_singleNote[i] != nullptr) //safety check for multiple host threads editing simultaneously
-				m_Poly.m_singleNote[i]->stopNote(0, false); //hard stop
+				m_Poly.m_singleNote[i]->stopNote(0, true); //allow tail off
+			else
+				return;
 
 		bool bWasLocked = nonThreadsafeIsBlockedProcessingInfo();
 		if (!bWasLocked) 
-			audioProcessLock();
+			if (!audioProcessLock()) {
+				myProcessor->setErrorState(myProcessor->vastErrorState::errorState26_maxPolyNotSet);
+				return; 
+			}
 		bool done = false;
 		int counter = 0;
 		while (!done) {
-			if ((counter<30) && (myProcessor->m_bAudioThreadRunning && (!getBlockProcessingIsBlockedSuccessfully()))) {
+			if ((counter<30) && (myProcessor->m_bAudioThreadStarted && (!getBlockProcessingIsBlockedSuccessfully()))) {
 				VDBG("PolyMode - sleep");
 				Thread::sleep(100);
 				counter++;
@@ -783,7 +799,9 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 			if (olduMaxPoly != m_Set.m_uMaxPoly)
 				m_Poly.releaseResources();
 			if (!bWasLocked)
-				audioProcessUnlock();
+				if (!audioProcessUnlock()) {
+					myProcessor->setErrorState(myProcessor->vastErrorState::errorState26_maxPolyNotSet);
+				}
 			done = true;
 		}
 		return;		

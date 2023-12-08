@@ -61,7 +61,7 @@ VASTAudioProcessor::VASTAudioProcessor() :
 #endif
 	VDBG("Start AudioProcesor constructor.");
 	m_initCompleted.store(false);
-    m_bAudioThreadRunning.store(false);
+    m_bAudioThreadCurrentlyRunning.store(false);
     m_wasBypassed.store(false);
 
 	initLookAndFeels();
@@ -121,6 +121,7 @@ VASTAudioProcessor::~VASTAudioProcessor()
 	Logger::setCurrentLogger(nullptr);
 #endif
 
+	m_bAudioThreadStarted.store(false);
 /*
 #if defined(_DEBUG) && defined JUCE_WINDOWS
 	_CrtDumpMemoryLeaks();
@@ -349,7 +350,7 @@ void VASTAudioProcessor::initializeToDefaults() {
 			wavetable->setWaveTableName(TRANS("Basic Saw"));
 			wavetable->setNaiveTableFast(0, true, getWTmode());
 		}
-		if (m_bAudioThreadRunning)
+		if (m_bAudioThreadCurrentlyRunning)
 			m_pVASTXperience.m_Poly.m_OscBank[bank].setWavetableSoftFade(wavetable);		
 		else 
 			m_pVASTXperience.m_Poly.m_OscBank[bank].setWavetable(wavetable);
@@ -615,10 +616,14 @@ void VASTAudioProcessor::prepareToPlay(double sampleRate, int expectedSamplesPer
 	}
 
 	//if (!b_wasLocked) 
-	m_pVASTXperience.audioProcessLock();
+	if (!m_pVASTXperience.audioProcessLock()) {
+		setErrorState(vastErrorState::errorState18_prepareToPlayFailed);
+	}
 	m_pVASTXperience.prepareForPlay(sampleRate, expectedSamplesPerBlock);
 	//if (!b_wasLocked) 
-	m_pVASTXperience.audioProcessUnlock();
+	if (!m_pVASTXperience.audioProcessUnlock()) {
+		setErrorState(vastErrorState::errorState18_prepareToPlayFailed);
+	}
 
 	// Use this method as the place to do any pre-playback
 	// initialisation that you need..
@@ -626,27 +631,32 @@ void VASTAudioProcessor::prepareToPlay(double sampleRate, int expectedSamplesPer
 
 void VASTAudioProcessor::releaseResources()
 {
-	if (!m_bAudioThreadStarted)
-		return;
-	
 	// When playback stops, you can use this as an opportunity to free up any
 	VDBG("VASTAudioProcessor:Releaseresources()");
-	m_pVASTXperience.audioProcessLock();
+	if (!m_bAudioThreadStarted)
+		return;
+	if (!m_pVASTXperience.audioProcessLock()) {
+		vassertfalse;
+		return; //some other task has already blocked it
+	}
 	bool done = false;
 	int counter = 0;
 	while (!done) {
-		if ((counter<30) && (m_bAudioThreadRunning && (!m_pVASTXperience.getBlockProcessingIsBlockedSuccessfully()))) {		
+		if ((counter<30) && (m_bAudioThreadCurrentlyRunning.load() && (!m_pVASTXperience.getBlockProcessingIsBlockedSuccessfully()))) {
 			VDBG("VASTAudioProcessor:Releaseresources() - sleep");
 			Thread::sleep(100);
 			counter++;
 			continue;
 		}
-        vassert(counter<30);
-        if (counter==30)
-            return; //dont unlock what is not locked
+		if (counter == 30) {
+			vassertfalse;
+			return; //dont unlock what is not locked
+		}
         if (counter<30) {
 			m_pVASTXperience.m_Poly.releaseResources();
-            m_pVASTXperience.audioProcessUnlock();
+			if (!m_pVASTXperience.audioProcessUnlock()) {
+				vassertfalse;
+			}
         }
 		done = true;
 	}
@@ -678,7 +688,7 @@ void VASTAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mid
 	if (isSuspended())
 		return;
 	m_bAudioThreadStarted.store(true);
-	m_bAudioThreadRunning.store(true);
+	m_bAudioThreadCurrentlyRunning.store(true);
 
 	if (m_wasBypassed) {
 		prepareToPlay(getSampleRate(), getBlockSize()); //this takes long and does somthing with cubase
@@ -736,7 +746,7 @@ void VASTAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mid
 	}
 #endif
     
-    m_bAudioThreadRunning.store(false); //CHECK
+	m_bAudioThreadCurrentlyRunning.store(false); //CHECK
 }
 
 //==============================================================================
@@ -990,6 +1000,10 @@ void VASTAudioProcessor::loadPreset(int index) {
 	m_pVASTXperience.m_iFadeOutSamples.store(m_pVASTXperience.m_iMaxFadeSamples);
 
 	//array defines index!
+	if (index >= m_presetData.getNumPresets()) {
+		vassertfalse;
+		return;
+	}
 	if (m_presetData.getPreset(index)->isFactory == true) { //init patch
 		//m_curPatchData = *m_PresetArray[index];
 		ValueTree emptytree;
@@ -1154,14 +1168,16 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 	}	
 	
 	waitstate = 0;
-	processor->m_pVASTXperience.audioProcessLock(); //CHECKTS
+	if (!processor->m_pVASTXperience.audioProcessLock()) {
+		processor->unregisterThread();
+		//This is not an error state. The current load thread is just not executed. Another load will return. 
+		vassertfalse;
+		return; //some other task has already blocked it
+	}
 	if (isSeparateThread) {
 		if ((processor->m_bAudioThreadStarted) && (!processor->m_wasBypassed)) {
 			while (processor->m_pVASTXperience.getBlockProcessingIsBlockedSuccessfully() == false) {
-				VDBG("getBlockProcessingIsBlockedSuccessfully() is false - suspending load process!");
-				
-				processor->m_pVASTXperience.m_BlockProcessing.store(true); //test
-				
+				VDBG("getBlockProcessingIsBlockedSuccessfully() is false - suspending load process!");				
 				std::this_thread::sleep_for(std::chrono::milliseconds(250));
 				waitstate += 50;
 				if (waitstate > 25000) {
@@ -1180,7 +1196,9 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 			if (!processor->m_pVASTXperience.getBlockProcessingIsBlockedSuccessfully()) {
 				vassertfalse;
 				processor->unregisterThread();
-				processor->m_pVASTXperience.audioProcessUnlock();
+				if (!processor->m_pVASTXperience.audioProcessUnlock()) {
+					//already in error state
+				}
 				processor->setErrorState(vastErrorState::errorState16_loadPresetLockUnsuccessful);
 				return;
 			}
@@ -1273,13 +1291,17 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 				if (!l_tree.isValid()) {
 					processor->setErrorState(vastErrorState::errorState8_loadPresetOscillatorTreeInvalid);
 					processor->unregisterThread();
-					processor->m_pVASTXperience.audioProcessUnlock();
+					if (!processor->m_pVASTXperience.audioProcessUnlock()) {
+						//already in error state
+					}
 					return; //error handling
 				}
 				if (!m_bank_wavetableToUpdate[bank]->setValueTreeState(&l_tree, processor->getWTmode())) {
 					processor->setErrorState(vastErrorState::errorState9_loadPresetWavetableDataInvalid);
 					processor->unregisterThread();
-					processor->m_pVASTXperience.audioProcessUnlock();
+					if (!processor->m_pVASTXperience.audioProcessUnlock()) {
+						//already in error state
+					}
 					return; //error handling
 				}
 			}
@@ -1409,7 +1431,7 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 				//m_bank_wavetableToUpdate[bank]->pregenerateWithWTFX(wtFxType, wtFxVal, processor->getWTmode());
 				//Expensive and optional
 
-				if (processor->m_bAudioThreadRunning) 
+				if (processor->m_bAudioThreadCurrentlyRunning)
 					processor->m_pVASTXperience.m_Poly.m_OscBank[bank].setWavetableSoftFade(m_bank_wavetableToUpdate[bank]);
 				else
 					processor->m_pVASTXperience.m_Poly.m_OscBank[bank].setWavetable(m_bank_wavetableToUpdate[bank]); //save from state, audio process not running				
@@ -1463,12 +1485,17 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 		if (isSeparateThread) {
 			if ((processor->m_bAudioThreadStarted) && (!processor->m_wasBypassed)) {
 				if (!processor->m_pVASTXperience.nonThreadsafeIsBlockedProcessingInfo()) {
-					processor->m_pVASTXperience.audioProcessLock();
-					if ((processor->m_bAudioThreadRunning) && (!(processor->m_pVASTXperience.getBlockProcessingIsBlockedSuccessfully()))) {
+					if (!processor->m_pVASTXperience.audioProcessLock()) {
+						//already locked by other process
+						processor->setErrorState(vastErrorState::errorState16_loadPresetLockUnsuccessful);
+						processor->unregisterThread();
+						return; //dont unlock what is not locked
+					}
+					if ((processor->m_bAudioThreadStarted) && (!(processor->m_pVASTXperience.getBlockProcessingIsBlockedSuccessfully()))) {
 						bool done = false;
 						int counter = 30;						
 						while (!done) {
-							if ((counter < 30) && ((processor->m_bAudioThreadRunning) && (!(processor->m_pVASTXperience.getBlockProcessingIsBlockedSuccessfully())))) {
+							if ((counter < 30) && ((processor->m_bAudioThreadStarted) && (!(processor->m_pVASTXperience.getBlockProcessingIsBlockedSuccessfully())))) {
 								VDBG("PassTree - sleep");
 								Thread::sleep(100);
 								counter++;

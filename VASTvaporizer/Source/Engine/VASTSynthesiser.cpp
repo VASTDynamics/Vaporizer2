@@ -16,7 +16,7 @@ VASTSynthesiserVoice::~VASTSynthesiserVoice() {}
 
 bool VASTSynthesiserVoice::isPlayingChannel(const int midiChannel) const
 {
-	return currentPlayingMidiChannel == midiChannel;
+	return currentPlayingMidiChannel == midiChannel; 
 }
 
 void VASTSynthesiserVoice::setCurrentPlaybackSampleRate(const double newRate)
@@ -146,8 +146,12 @@ void VASTSynthesiser::setCurrentPlaybackSampleRate(const double newRate)
 		allNotesOff(0, false);
 		sampleRate = newRate;
 
-		for (auto* voice : voices)
+		for (auto* voice : voices) {
+			if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+				continue; //safety
+			}
 			voice->setCurrentPlaybackSampleRate(newRate);
+		}
 	}
 }
 
@@ -214,6 +218,9 @@ void VASTSynthesiser::renderNextBlock(sRoutingBuffers& routingBuffers,
 				VDBG(outstr);
 #endif			
 				for (auto* voice : voices) {
+					if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+						continue; //safety
+					}
                     if (voice->getCurrentlyPlayingNote()<0)
                         continue;
 					if (m_newChordStack[voice->getCurrentlyPlayingNote()] == true) {
@@ -317,6 +324,9 @@ void VASTSynthesiser::processNextBlock(sRoutingBuffers& routingBuffers,
     {
 		//CHVAST
 		for (auto* voice : voices) {
+			if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+				continue; //safety
+			}
 			CVASTSingleNote* singleNote = (CVASTSingleNote*)voice;			
 			FloatVectorOperations::fill(routingBuffers.MidiNoteBuffer[voice->mVoiceNo]->getWritePointer(0, startSample), singleNote->m_uMIDINote, numSamples);
 			FloatVectorOperations::fill(routingBuffers.VelocityBuffer[voice->mVoiceNo]->getWritePointer(0, startSample), singleNote->m_uVelocity, numSamples);
@@ -385,6 +395,9 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 			if (m_fPitchBendZone_smoothed[midiChannel].isSmoothing()) {
 				float l_zoneWheelValueSmoothed = m_fPitchBendZone_smoothed[midiChannel].getNextValue();
 				for (auto* voice : voices) {
+					if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+						continue; //safety
+					}
 					//if (midiChannel <= 0 || voice->isPlayingChannel(midiChannel))		
 					if (myProcessor->isMPEenabled()) {
 						if (midiChannel == m_MPEMasterChannel)
@@ -426,7 +439,11 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 					}
 				}
 
-				for (auto* voice : voices)
+				for (auto* voice : voices) {
+					if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+						continue; //safety
+					}
+
 					//if (midiChannel <= 0 || voice->isPlayingChannel(midiChannel))		
 					if (myProcessor->isMPEenabled()) {
 						if (voice->isPlayingChannel(midiChannel))
@@ -434,6 +451,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 					}
 					else
 						voice->controllerMoved(01, l_modWheelPos);
+				}
 			}
 		}
 
@@ -584,6 +602,9 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 
 	m_oldestPlayingKeyDown = -1;
 	for (auto* voice : voices) {
+		if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+			continue; //safety
+		}
 		modMatrixInputState inputState{ ((CVASTSingleNote*)voice)->getVoiceNo(), 0};
 
 		//per voice LFO modulating mseg?
@@ -1028,6 +1049,9 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 	//=========================================================================================
 	
 	for (auto* voice : voices) {
+		if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+			continue; //safety
+		}
 		voice->renderNextBlock(routingBuffers, startSample, numSamples);
 	}
 	
@@ -1095,6 +1119,9 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 					hasNextFilter = true;
 
 			for (auto* voice : voices) {
+				if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+					continue; //safety
+				}
 				int mVoiceNo = voice->getVoiceNo();
 				l_inputState.voiceNo = mVoiceNo;
 				if (((CVASTSingleNote*)voice)->m_bLastFilterOutputZero[filter] == false)
@@ -1214,6 +1241,9 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 
 				//post drywet
 				for (auto* voice : voices) {
+					if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+						continue; //safety
+					}
 					int mVoiceNo = voice->getVoiceNo();
 					l_inputState.currentFrame = startSample;
 					l_inputState.voiceNo = mVoiceNo;
@@ -1371,11 +1401,15 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 			}
 		}
 
-		for (auto* voice : voices)
+		for (auto* voice : voices) {
+			if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+				continue; //safety
+			}
 			if (anyFilterContent[filter][voice->getVoiceNo()] == true)
 				((CVASTSingleNote*)voice)->m_bLastFilterOutputZero[filter] = false;
 			else
 				((CVASTSingleNote*)voice)->m_bLastFilterOutputZero[filter] = true;
+		}
 	}
 	m_numVoicesPlaying = l_numVoicesPlaying;
 	m_numOscsPlaying = l_numOscsPlaying;
@@ -1401,9 +1435,13 @@ void VASTSynthesiser::handleMidiEvent(const MidiMessage& m)
 
 			//set initial values for note: timbre
 			if (myProcessor->isMPEenabled()) {
-				for (auto* voice : voices)
+				for (auto* voice : voices) {
+					if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+						continue; //safety
+					}
 					if (voice->isPlayingChannel(channel))
-						voice->controllerMoved(74 /*timbre MSB*/, lastTimbreReceivedOnChannel[channel-1].as7BitInt()); //7bit??
+						voice->controllerMoved(74 /*timbre MSB*/, lastTimbreReceivedOnChannel[channel - 1].as7BitInt()); //7bit??
+				}
 			}
 		}
 	}
@@ -1492,6 +1530,9 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 			// If hitting a note that's still ringing, stop it first (it could be
 			// still playing because of the sustain or sostenuto pedal).
 			for (auto* voice : voices) {
+				if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+					continue; //safety
+				}
 
 				//check for hard stop
 				//CHECK IF THIS IS NEEDED!
@@ -1514,6 +1555,9 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 				bool shallSteal = false;
 				if (*m_Set->m_State->m_bLegatoMode == static_cast<int>(SWITCH::SWITCH_OFF)) {
 					for (auto* voice : voices) {
+						if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+							continue; //safety
+						}
 						if (voice->isVoiceActive()) {
 							((CVASTSingleNote*)voice)->m_VCA.hardStop(); //TODO Sampler???
 						}
@@ -1535,6 +1579,9 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 					bool activeVoiceinReleaseExist = false;
 					bool activeVoiceExist = false;
 					for (auto* myvoice : voices) {
+						if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+							continue; //safety
+						}
 						if (myvoice->isPlayingButReleased()) {
 							activeVoiceinReleaseExist = true;
 						}
@@ -1545,6 +1592,9 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 
 					if (!activeVoiceinReleaseExist) {
 						for (auto* myvoice : voices) {
+							if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+								continue; //safety
+							}
 							if (activeVoiceExist) {
 								if (myvoice->isVoiceActive()) {
 									voice = myvoice;
@@ -1569,6 +1619,9 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 					}
 					else {
 						for (auto* myvoice : voices) {
+							if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+								continue; //safety
+							}
 							if (!myvoice->isVoiceActive()) {
 								voice = myvoice;
 								break;
@@ -1577,6 +1630,9 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 					}
 
 					for (auto* myvoice : voices) {
+						if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+							continue; //safety
+						}
 						if (voice != myvoice)
 							if (myvoice->isVoiceActive() && !((CVASTSingleNote*)myvoice)->m_VCA.isHardStop())
 								myvoice->stopNote(0, false); //hard stop it
@@ -1631,6 +1687,9 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 				int active = 0;
 				bool shallSteal = false;
 				for (auto* voice : voices) {
+					if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+						continue; //safety
+					}
 					if (voice->isVoiceActive()) {
 						active++;
 					}
@@ -1665,6 +1724,9 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 				int active = 0;
 				bool shallSteal = false;
 				for (auto* voice : voices) {
+					if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+						continue; //safety
+					}
 					if (voice->isVoiceActive()) {
 						active++;
 					}
@@ -1758,7 +1820,7 @@ void VASTSynthesiser::startVoice(VASTSynthesiserVoice* const voice,
 			if (!msegpervoice) {
 				if ((m_oldestPlayingKeyDown >= 0) && voices[m_oldestPlayingKeyDown]->isKeyDown()) { 
 					VDBG("Single MSEG Copy m_oldestPlayingKeyDown: " << m_oldestPlayingKeyDown << " -> " << voice->mVoiceNo << " keyDown: " << (voices[m_oldestPlayingKeyDown]->isKeyDown() ? "true" : "false"));
-					if (!(m_oldestPlayingKeyDown >= voices.size())) //safety check
+					if (!(m_oldestPlayingKeyDown >= m_Set->m_uMaxPoly)) //safety check
 						((CVASTSingleNote*)voice)->m_VCA.m_MSEG_Envelope[mseg].copyStateFrom(((CVASTSingleNote*)voices[m_oldestPlayingKeyDown])->m_VCA.m_MSEG_Envelope[mseg]);
 					else
 						vassertfalse; //errorstate
@@ -1825,6 +1887,9 @@ void VASTSynthesiser::noteOff(const int midiChannel,
 
 	for (auto* voice : voices)
 	{
+		if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+			continue; //safety
+		}
 		if (voice->getCurrentlyPlayingNote() == midiNoteNumber
 			//&& voice->isPlayingChannel(midiChannel))
 			)
@@ -1852,10 +1917,14 @@ void VASTSynthesiser::allNotesOff(const int midiChannel, const bool allowTailOff
 {
 	const ScopedLock sl(lock);
 
-	for (auto* voice : voices)
+	for (auto* voice : voices) {
+		if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+			continue; //safety
+		}
 		//if (midiChannel <= 0 || voice->isPlayingChannel(midiChannel))
 		//if (voice->isPlayingChannel(midiChannel))
-			voice->stopNote(1.0f, allowTailOff);
+		voice->stopNote(1.0f, allowTailOff);
+	}
 
 	sustainPedalsDown.clear();
 }
@@ -1900,7 +1969,10 @@ void VASTSynthesiser::handleController(const int midiChannel,
 	else {
 		const ScopedLock sl(lock);
 
-		for (auto* voice : voices)
+		for (auto* voice : voices) {
+			if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+				continue; //safety
+			}
 			//if (midiChannel <= 0 || voice->isPlayingChannel(midiChannel))		
 			if (myProcessor->isMPEenabled()) {
 				if (voice->isPlayingChannel(midiChannel))
@@ -1908,6 +1980,7 @@ void VASTSynthesiser::handleController(const int midiChannel,
 			}
 			else
 				voice->controllerMoved(controllerNumber, controllerValue);
+		}
 	}
 }
 
@@ -1915,29 +1988,40 @@ void VASTSynthesiser::handleAftertouch(int midiChannel, int midiNoteNumber, int 
 {
 	const ScopedLock sl(lock);
 
-	for (auto* voice : voices) //polyphonic
+	for (auto* voice : voices) { //polyphonic
+		if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+			continue; //safety
+		}
+
 		if (myProcessor->isMPEenabled()) {
 			if (voice->isPlayingChannel(midiChannel))
 				voice->aftertouchChanged(aftertouchValue);
 		}
 		else {
-			if (voice->getCurrentlyPlayingNote() == midiNoteNumber) 
+			if (voice->getCurrentlyPlayingNote() == midiNoteNumber)
 				voice->aftertouchChanged(aftertouchValue);
 		}
+	}
 }
 
 void VASTSynthesiser::handleChannelPressure(int midiChannel, int channelPressureValue)
 {
 	const ScopedLock sl(lock);
 
-	for (auto* voice : voices)
+	for (auto* voice : voices) {
+		if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+			continue; //safety
+		}
+
 		//if (midiChannel <= 0 || voice->isPlayingChannel(midiChannel))
 
 		if (myProcessor->isMPEenabled()) {
 			if (voice->isPlayingChannel(midiChannel))
 				voice->channelPressureChanged(channelPressureValue);
-		} else 
+		}
+		else
 			voice->channelPressureChanged(channelPressureValue);
+	}
 }
 
 void VASTSynthesiser::handleSustainPedal(int midiChannel, bool isDown)
@@ -1949,15 +2033,24 @@ void VASTSynthesiser::handleSustainPedal(int midiChannel, bool isDown)
 	{
 		sustainPedalsDown.setBit(midiChannel);
 
-		for (auto* voice : voices)
+		for (auto* voice : voices) {
+			if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+				continue; //safety
+			}
+
 			//if (voice->isPlayingChannel(midiChannel) && voice->isKeyDown())
 			if (voice->isKeyDown())
 				voice->setSustainPedalDown(true);
+		}
 	}
 	else
 	{
 		for (auto* voice : voices)
 		{
+			if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+				continue; //safety
+			}
+
 			if (voice->isPlayingChannel(midiChannel))
 			{
 				voice->setSustainPedalDown(false);
@@ -1978,6 +2071,10 @@ void VASTSynthesiser::handleSostenutoPedal(int midiChannel, bool isDown)
 
 	for (auto* voice : voices)
 	{
+		if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+			continue; //safety
+		}
+
 		if (voice->isPlayingChannel(midiChannel))
 		{
 			if (isDown)
@@ -2013,6 +2110,9 @@ VASTSynthesiserVoice* VASTSynthesiser::findFreeVoice(juce::SynthesiserSound* sou
 	const ScopedLock sl(lock);
 
 	for (auto* voice : voices) {
+		if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+			continue; //safety
+		}
 		if ((!voice->isVoiceActive()) && voice->canPlaySound(soundToPlay))
 			return voice;
 	}
@@ -2043,6 +2143,9 @@ VASTSynthesiserVoice* VASTSynthesiser::findVoiceToSteal(juce::SynthesiserSound* 
 
 	for (auto* voice : voices)
 	{
+		if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+			continue; //safety
+		}
 		if (voice->canPlaySound(soundToPlay))
 		{
 			jassert(voice->isVoiceActive()); // We wouldn't be here otherwise
@@ -2126,6 +2229,10 @@ VASTSynthesiserVoice* VASTSynthesiser::findActiveVoiceToSteal(juce::SynthesiserS
 
 	for (auto* voice : voices)
 	{
+		if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+			continue; //safety
+		}
+
 		if (voice->canPlaySound(soundToPlay) && voice->isVoiceActive())
 		{
 			usableVoices.add(voice);

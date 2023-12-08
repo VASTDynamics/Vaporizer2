@@ -72,8 +72,8 @@ public:
 	float fOutRLast = 0;
 	float fOutLLast = 0;
 
-	void audioProcessLock();
-	void audioProcessUnlock();
+	bool audioProcessLock();
+	bool audioProcessUnlock();
 	std::atomic<bool> m_BlockProcessing = false;
 	std::atomic<bool> m_BlockProcessingIsBlockedSuccessfully = false;
 	bool getBlockProcessingIsBlockedSuccessfully();

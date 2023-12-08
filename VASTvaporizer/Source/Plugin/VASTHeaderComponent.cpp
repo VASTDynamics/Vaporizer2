@@ -245,12 +245,14 @@ void VASTHeaderComponent::buttonClicked (juce::Button* buttonThatWasClicked)
     if (buttonThatWasClicked == c_ReloadPresets.get())
     {
         //[UserButtonCode_c_ReloadPresets] -- add your button handler code here..
-		myProcessor->m_pVASTXperience.audioProcessLock(); //CHECKTS
+        if (!myProcessor->m_pVASTXperience.audioProcessLock()) {
+            return; //dont unlock what is not locked
+        }
         
         bool done = false;
         int counter = 0;
         while (!done) {
-            if ((counter<30) && (myProcessor->m_bAudioThreadRunning.load() && (!myProcessor->m_pVASTXperience.getBlockProcessingIsBlockedSuccessfully()))) {
+            if ((counter<30) && (myProcessor->m_bAudioThreadCurrentlyRunning.load() && (!myProcessor->m_pVASTXperience.getBlockProcessingIsBlockedSuccessfully()))) {
                 VDBG("VASTHeaderComponent::buttonClicked - sleep");
                 Thread::sleep(100);
                 counter++;
@@ -267,8 +269,11 @@ void VASTHeaderComponent::buttonClicked (juce::Button* buttonThatWasClicked)
 
 		String lid = myProcessor->m_presetData.getCurPatchData().internalid;
 
-		myProcessor->m_pVASTXperience.audioProcessUnlock(); //CHECKTS
         myProcessor->m_presetData.reloadPresetArray();
+
+        if (!myProcessor->m_pVASTXperience.audioProcessUnlock()) {
+            vassertfalse;
+        }
 
 		int lindnex = myProcessor->m_presetData.getIndexInPresetArray(lid);
 		if (lindnex >= 0)

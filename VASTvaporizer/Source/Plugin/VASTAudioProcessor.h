@@ -118,7 +118,7 @@ public:
 		case vastErrorState::errorState20_loadPresetInvalidTree: return (TRANS("Loading the preset resulted in an invalid parameter tree. Please reload the plugin."));
 		case vastErrorState::errorState24_invalidFXBusData: return (TRANS("The FX bus data is invalid."));
 		case vastErrorState::errorState25_maxBufferSizeExceeded: return (TRANS("The maximum supported buffer size is exceeded."));
-		case vastErrorState::errorState26_maxPolyNotSet: return (TRANS("The maximum polypony value could not be set. Please reload the plugin."));
+		case vastErrorState::errorState26_maxPolyNotSet: return (TRANS("The maximum polyphony value could not be set. Please reload the plugin."));
 		case vastErrorState::errorState30_invalidLicense: return (TRANS("Invalid license issue.Contact support@vast-dynamics.com."));
 		case vastErrorState::errorState31_blockedLicense: return (TRANS("License issue.Contact support@vast-dynamics.com."));		
 		default: return (TRANS("Error state - reload plugin"));
@@ -329,7 +329,7 @@ public:
 	
 	static void passTreeToAudioThread(ValueTree tree, bool externalRepresentation, VASTPresetElement preset, int index, VASTAudioProcessor* processor, bool isSeparateThread, bool initOnly);
 	std::atomic<bool> m_bAudioThreadStarted = false;
-	std::atomic<bool> m_bAudioThreadRunning = false;
+	std::atomic<bool> m_bAudioThreadCurrentlyRunning = false;
 	//std::atomic<bool> m_bCreateCachedVASTEditorDelayed = false;
 
 	void registerThread();

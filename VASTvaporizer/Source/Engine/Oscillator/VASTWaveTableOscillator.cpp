@@ -558,7 +558,7 @@ void CVASTWaveTableOscillator::updateMainVariables(int samplerate, MYUINT OscTyp
 {
     m_iSampleRate = samplerate;
     if ((m_uOscType == OscType) && (m_fOscMasterTune == OscMasterTune) && (m_fOscCents == OscCents) && (m_iOscOctave == OscOctave) &&
-        (m_iPolyMode == static_cast<int>(*m_Set->m_State->m_uPolyMode)) &&
+        (m_iPolyMode == static_cast<int>(m_Set->m_uMaxPoly)) &&
         (m_fPortamento == *m_Set->m_State->m_fPortamento) &&
         (m_unisonOscis == unisonOscis)
         ) { // unchanged?
@@ -572,7 +572,7 @@ void CVASTWaveTableOscillator::updateMainVariables(int samplerate, MYUINT OscTyp
     m_fOscMasterTune = OscMasterTune;
     m_fOscCents = OscCents;
     m_iOscOctave = OscOctave;
-    m_iPolyMode = static_cast<int>(*m_Set->m_State->m_uPolyMode);
+    m_iPolyMode = static_cast<int>(m_Set->m_uMaxPoly);
     m_fPortamento = *m_Set->m_State->m_fPortamento;
     
     signed int key = m_uMIDINote;
