@@ -162,7 +162,7 @@ public:
 	std::atomic<float>* m_fWheelSensitivity = nullptr; //obsolete
 	std::atomic<float>* m_fPitchMod = nullptr;
 	std::atomic<float>* m_fVoiceGain = nullptr;
-	std::atomic<float>* m_uPolyMode = nullptr;
+	std::atomic<float>* m_uPolyMode = nullptr; //dont use directly - only use m_Set.m_uMaxPoly
 	std::atomic<float>* m_bLegatoMode = nullptr;
 	std::atomic<float>* m_fOscDetune_OscA = nullptr;
 	std::atomic<float>* m_fOscGain_OscA = nullptr;

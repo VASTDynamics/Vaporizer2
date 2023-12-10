@@ -599,8 +599,8 @@ bool VASTVaporizerComponent::keyPressed(const KeyPress& key, Component* originat
 				edit_thread.detach();
 			}
 			else if (key.isKeyCode(KeyPress::leftKey)) {//CTRL + Cursor left
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->addSoftFadeEditor();
-				std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->getSoftOrCopyWavetable(true); //need a copy as wtpos structure will be changed
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].addSoftFadeEditor();
+				std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].getSoftOrCopyWavetable(true); //need a copy as wtpos structure will be changed
 				int fromwtPos = wavetable->getMultiSelectBegin();
 				int lastwtPos = wavetable->getMultiSelectEnd();
 				if ((fromwtPos > 0) && (lastwtPos < wavetable->getNumPositions())) {
@@ -608,14 +608,14 @@ bool VASTVaporizerComponent::keyPressed(const KeyPress& key, Component* originat
 					wavetable->deletePosition(fromwtPos - 1);
 					wavetable->setSelection(fromwtPos - 1, lastwtPos - 1);
 				}
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->setWavetableSoftFade(wavetable);
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->removeSoftFadeEditor();
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].setWavetableSoftFade(wavetable);
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].removeSoftFadeEditor();
 				myWtEditor->initSliders();
 				myWtEditor->updateAll(false);
 			}
 			else if (key.isKeyCode(KeyPress::rightKey)) {//CTRL + Cursor right
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->addSoftFadeEditor();
-				std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->getSoftOrCopyWavetable(true); //need a copy as wtpos structure will be changed
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].addSoftFadeEditor();
+				std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].getSoftOrCopyWavetable(true); //need a copy as wtpos structure will be changed
 				int fromwtPos = wavetable->getMultiSelectBegin();
 				int lastwtPos = wavetable->getMultiSelectEnd();
 				if ((fromwtPos >= 0) && (lastwtPos < wavetable->getNumPositions() - 1)) {
@@ -623,58 +623,58 @@ bool VASTVaporizerComponent::keyPressed(const KeyPress& key, Component* originat
 					wavetable->deletePosition(lastwtPos + 2);
 					wavetable->setSelection(fromwtPos + 1, lastwtPos + 1);
 				}
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->setWavetableSoftFade(wavetable);
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->removeSoftFadeEditor();
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].setWavetableSoftFade(wavetable);
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].removeSoftFadeEditor();
 				myWtEditor->initSliders();
 				myWtEditor->updateAll(false);
 			}
 		}
 		else if (mod.isShiftDown()) {
 			if (key.isKeyCode(KeyPress::leftKey)) {//Shift + Cursor left
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->addSoftFadeEditor();
-				std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->getSoftOrCopyWavetable(true, true); //need a copy as wtpos structure will be changed - selection only - keep freqs
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].addSoftFadeEditor();
+				std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].getSoftOrCopyWavetable(true, true); //need a copy as wtpos structure will be changed - selection only - keep freqs
 				int wtPos = wavetable->getSelectedWtPos();
 				if (wavetable->isMultiSelected())
 					wtPos = wavetable->getMultiSelectBegin();
 				wtPos--;
 				if (wtPos < 0) wtPos = 0;
 				wavetable->setMultiSelect(wtPos);
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->setWavetableSoftFade(wavetable);
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->removeSoftFadeEditor();
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].setWavetableSoftFade(wavetable);
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].removeSoftFadeEditor();
 				myWtEditor->initSliders();
 				myWtEditor->updateAll(false);
 			}
 			else if (key.isKeyCode(KeyPress::rightKey)) {//Shift + Cursor right
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->addSoftFadeEditor();
-				std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->getSoftOrCopyWavetable(true, true); //need a copy as wtpos structure will be changed - selection only - keep freqs
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].addSoftFadeEditor();
+				std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].getSoftOrCopyWavetable(true, true); //need a copy as wtpos structure will be changed - selection only - keep freqs
 				int wtPos = wavetable->getSelectedWtPos();
 				if (wavetable->isMultiSelected())
 					wtPos = wavetable->getMultiSelectEnd();
 				wtPos++;
 				if (wtPos < 0) wtPos = 0;
 				wavetable->setMultiSelect(wtPos);
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->setWavetableSoftFade(wavetable);
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->removeSoftFadeEditor();
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].setWavetableSoftFade(wavetable);
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].removeSoftFadeEditor();
 				myWtEditor->initSliders();
 				myWtEditor->updateAll(false);
 			}
 			else if (key.isKeyCode(KeyPress::endKey)) {//Shift + end
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->addSoftFadeEditor();
-				std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->getSoftOrCopyWavetable(true, true); //need a copy as wtpos structure will be changed - selection only - keep freqs
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].addSoftFadeEditor();
+				std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].getSoftOrCopyWavetable(true, true); //need a copy as wtpos structure will be changed - selection only - keep freqs
 				int wtPos = wavetable->getNumPositions() - 1;
 				wavetable->setMultiSelect(wtPos);
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->setWavetableSoftFade(wavetable);
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->removeSoftFadeEditor();
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].setWavetableSoftFade(wavetable);
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].removeSoftFadeEditor();
 				myWtEditor->initSliders();
 				myWtEditor->updateAll(false);
 			}
 			else if (key.isKeyCode(KeyPress::homeKey)) {//Shift + pos1/home
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->addSoftFadeEditor();
-				std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->getSoftOrCopyWavetable(true, true); //need a copy as wtpos structure will be changed - selection only - keep freqs
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].addSoftFadeEditor();
+				std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].getSoftOrCopyWavetable(true, true); //need a copy as wtpos structure will be changed - selection only - keep freqs
 				int wtPos = 0;
 				wavetable->setMultiSelect(wtPos);
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->setWavetableSoftFade(wavetable);
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->removeSoftFadeEditor();
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].setWavetableSoftFade(wavetable);
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].removeSoftFadeEditor();
 				myWtEditor->initSliders();
 				myWtEditor->updateAll(false);
 			}
@@ -695,46 +695,46 @@ bool VASTVaporizerComponent::keyPressed(const KeyPress& key, Component* originat
 				myWtEditor->updateAll(false);
 			}
 			else if (key.isKeyCode(KeyPress::leftKey)) {//Cursor left
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->addSoftFadeEditor();
-				std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->getSoftOrCopyWavetable(true, true); //need a copy as wtpos structure will be changed - selection only - keep freqs
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].addSoftFadeEditor();
+				std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].getSoftOrCopyWavetable(true, true); //need a copy as wtpos structure will be changed - selection only - keep freqs
 				int wtPos = wavetable->getSelectedWtPos();
 				wtPos--;
 				if (wtPos < 0) wtPos = 0;
 				wavetable->setSelectedWtPos(wtPos);
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->setWavetableSoftFade(wavetable);
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->removeSoftFadeEditor();
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].setWavetableSoftFade(wavetable);
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].removeSoftFadeEditor();
 				myWtEditor->initSliders();
 				myWtEditor->updateAll(false);
 			}
 			else if (key.isKeyCode(KeyPress::rightKey)) {//Cursor right
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->addSoftFadeEditor();
-				std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->getSoftOrCopyWavetable(true, true); //need a copy as wtpos structure will be changed - selection only - keep freqs
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].addSoftFadeEditor();
+				std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].getSoftOrCopyWavetable(true, true); //need a copy as wtpos structure will be changed - selection only - keep freqs
 				int wtPos = wavetable->getSelectedWtPos();
 				wtPos++;
 				if (wtPos < 0) wtPos = 0;
 				wavetable->setSelectedWtPos(wtPos);
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->setWavetableSoftFade(wavetable);
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->removeSoftFadeEditor();
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].setWavetableSoftFade(wavetable);
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].removeSoftFadeEditor();
 				myWtEditor->initSliders();
 				myWtEditor->updateAll(false);
 			}
 			else if (key.isKeyCode(KeyPress::homeKey)) {//pos1/home
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->addSoftFadeEditor();
-				std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->getSoftOrCopyWavetable(true, true); //need a copy as wtpos structure will be changed - selection only - keep freqs
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].addSoftFadeEditor();
+				std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].getSoftOrCopyWavetable(true, true); //need a copy as wtpos structure will be changed - selection only - keep freqs
 				int wtPos = 0;
 				wavetable->setSelectedWtPos(wtPos);
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->setWavetableSoftFade(wavetable);
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->removeSoftFadeEditor();
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].setWavetableSoftFade(wavetable);
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].removeSoftFadeEditor();
 				myWtEditor->initSliders();
 				myWtEditor->updateAll(false);
 			}
 			else if (key.isKeyCode(KeyPress::endKey)) {//end
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->addSoftFadeEditor();
-				std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->getSoftOrCopyWavetable(true, true); //need a copy as wtpos structure will be changed - selection only - keep freqs
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].addSoftFadeEditor();
+				std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].getSoftOrCopyWavetable(true, true); //need a copy as wtpos structure will be changed - selection only - keep freqs
 				int wtPos = wavetable->getNumPositions() - 1;
 				wavetable->setSelectedWtPos(wtPos);
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->setWavetableSoftFade(wavetable);
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->removeSoftFadeEditor();
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].setWavetableSoftFade(wavetable);
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].removeSoftFadeEditor();
 				myWtEditor->initSliders();
 				myWtEditor->updateAll(false);
 			}

@@ -92,9 +92,9 @@ public:
 	int getOscBank()  const { return m_bank; };
 	void setOscBank(int bank);
 	std::shared_ptr<CVASTWaveTable> getBankWavetable() const {
-		return myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank]->getNewSharedWavetable(); };
+		return myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank].getNewSharedWavetable(); };
 	std::shared_ptr<CVASTWaveTable> getBankWavetable(int bank) {
-		return myProcessor->m_pVASTXperience.m_Poly.m_OscBank[bank]->getNewSharedWavetable(); };
+		return myProcessor->m_pVASTXperience.m_Poly.m_OscBank[bank].getNewSharedWavetable(); };
 	void setCurWavetable(const std::shared_ptr<CVASTWaveTable> &wavetable) { //const is faster https://stackoverflow.com/questions/3310737/should-we-pass-a-shared-ptr-by-reference-or-by-value#:~:text=Most%20of%20the%20time%20passing,by%20const%20reference%2C%20would%20do.&text=An%20example%20of%20when%20passing,the%20callee%20completes%20its%20job.
 		//m_cur_wavetable = std::make_shared<CVASTWaveTable>(*wavetable); //copies it
 		std::atomic_store(&m_cur_wavetable, std::make_shared<CVASTWaveTable>(*wavetable)); //copies it //assigning a new instance to a shared pointer make thread safe: https://www.modernescpp.com/index.php/atomic-smart-pointers
@@ -133,7 +133,7 @@ public:
         if (getBankWavetable()->m_isBeingUpdated)
             return;
 		getBankWavetable()->setSelectedWtPos(wtpos);
-		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank]->setChangedFlag();
+		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank].setChangedFlag();
 		//m_wtPos = wtpos;
 		//clearMultiSelect();
 		//scroll viewport
@@ -146,11 +146,11 @@ public:
 			c_waveTableEditorView->getViewportPositions()->setViewPosition(left5 / m_positionviewport->getScreenWidthScale(), 0);
 	};
 	void clearMultiSelect() {
-		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank]->addSoftFadeEditor();
-		std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank]->getSoftOrCopyWavetable();
+		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank].addSoftFadeEditor();
+		std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank].getSoftOrCopyWavetable();
 		wavetable->clearMultiSelect();
-		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank]->setWavetableSoftFade(wavetable);
-		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank]->removeSoftFadeEditor();
+		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank].setWavetableSoftFade(wavetable);
+		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank].removeSoftFadeEditor();
 
 
 		//m_multiSelect = false;
@@ -159,11 +159,11 @@ public:
 		//wavetableNotifySelection();
 	};
 	void multiSelectAll() {
-		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank]->addSoftFadeEditor();
-		std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank]->getSoftOrCopyWavetable(false, true); //keep freqs when selecting only
+		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank].addSoftFadeEditor();
+		std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank].getSoftOrCopyWavetable(false, true); //keep freqs when selecting only
 		wavetable->multiSelectAll();
-		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank]->setWavetableSoftFade(wavetable);
-		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank]->removeSoftFadeEditor();
+		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank].setWavetableSoftFade(wavetable);
+		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank].removeSoftFadeEditor();
 
 
 		//m_multiSelect = true;
@@ -221,8 +221,8 @@ public:
 		else {
 			wavetable->setSelection(getWtPos(), getWtPos());
 		}
-		if (myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank]->getSoftFadeWavetablePointerNext() != nullptr) {
-			wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank]->getNewSharedSoftFadeWavetableNext(); //CHECK if new share
+		if (myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank].getSoftFadeWavetablePointerNext() != nullptr) {
+			wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank].getNewSharedSoftFadeWavetableNext(); //CHECK if new share
 			if (isMultiSelected()) {
 				wavetable->setSelection(getMultiSelectBegin(), getMultiSelectEnd());
 			}
@@ -231,7 +231,7 @@ public:
 			}
 		}
 		*/
-		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank]->setChangedFlag(); //CHECK!!!!
+		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[m_bank].setChangedFlag(); //CHECK!!!!
 	}
 
 	static void loadWTFileThread(juce::File file, VASTWaveTableEditorComponent* editor);

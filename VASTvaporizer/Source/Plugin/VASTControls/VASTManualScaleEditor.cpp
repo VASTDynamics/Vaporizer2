@@ -173,13 +173,13 @@ void VASTManualScaleEditor::buttonClicked (juce::Button* buttonThatWasClicked)
 		int fixedSamplesPerCycle = lSamples;
 
 		if ((lCycles >= 1) && (lCycles <= C_MAX_NUM_POSITIONS)) {
-			myProcessor->m_pVASTXperience.m_Poly.m_OscBank[mWTEditor->m_bank]->addSoftFadeEditor();
-			std::shared_ptr<CVASTWaveTable> wavetableupdate = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[mWTEditor->m_bank]->getSoftOrCopyWavetable();
+			myProcessor->m_pVASTXperience.m_Poly.m_OscBank[mWTEditor->m_bank].addSoftFadeEditor();
+			std::shared_ptr<CVASTWaveTable> wavetableupdate = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[mWTEditor->m_bank].getSoftOrCopyWavetable();
 			wavetableupdate->clear(); //delete all positions
 			mWTEditor->scaleAudioBufferToWTPos(wavetableupdate.get(), mWTEditor->getWtPos(), lCycles, subBufferTarget, selectionLength, fixedSamplesPerCycle);
 			mWTEditor->updateAll(false);
-			myProcessor->m_pVASTXperience.m_Poly.m_OscBank[mWTEditor->m_bank]->setWavetableSoftFade(wavetableupdate);
-			myProcessor->m_pVASTXperience.m_Poly.m_OscBank[mWTEditor->m_bank]->removeSoftFadeEditor();
+			myProcessor->m_pVASTXperience.m_Poly.m_OscBank[mWTEditor->m_bank].setWavetableSoftFade(wavetableupdate);
+			myProcessor->m_pVASTXperience.m_Poly.m_OscBank[mWTEditor->m_bank].removeSoftFadeEditor();
 		}
 
 		getParentComponent()->exitModalState(0);

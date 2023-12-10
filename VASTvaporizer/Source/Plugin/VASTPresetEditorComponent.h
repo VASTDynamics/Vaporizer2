@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 7.0.7
+  Created with Projucer version: 7.0.9
 
   ------------------------------------------------------------------------------
 
@@ -35,15 +35,15 @@
     Describe your class and how it works here!
                                                                     //[/Comments]
 */
-class VASTPresetEditorComponent : public Component,
-    public TextEditor::Listener,
-    public juce::Button::Listener,
-    public juce::ComboBox::Listener,
-    public juce::Slider::Listener
+class VASTPresetEditorComponent  : public Component,
+                                   public TextEditor::Listener,
+                                   public juce::Button::Listener,
+                                   public juce::ComboBox::Listener,
+                                   public juce::Slider::Listener
 {
 public:
     //==============================================================================
-    VASTPresetEditorComponent(AudioProcessorEditor* editor, AudioProcessor* processor);
+    VASTPresetEditorComponent (AudioProcessorEditor *editor, AudioProcessor* processor);
     ~VASTPresetEditorComponent() override;
 
     //==============================================================================
@@ -71,11 +71,12 @@ public:
     static const char* arrow_right_corner_svg;
     static const int arrow_right_corner_svgSize;
 
+
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
 	VASTAudioProcessorEditor * myEditor = nullptr;
 	VASTAudioProcessor* myProcessor = nullptr;
-#ifdef VASTLOG    
+#ifdef VASTLOG
     std::unique_ptr<CodeEditorComponent> logEditorComponent;
 #endif
 
@@ -133,6 +134,11 @@ private:
     std::unique_ptr<juce::TextButton> c_tuningRemove;
     std::unique_ptr<VASTComboBox> c_permaLink;
     std::unique_ptr<juce::Label> label20;
+    std::unique_ptr<juce::TextEditor> c_midiKeyboardLayoutString;
+    std::unique_ptr<juce::Label> label21;
+    std::unique_ptr<juce::Label> label22;
+    std::unique_ptr<VASTSlider> c_midiKeyboardBaseOctave;
+    std::unique_ptr<juce::TextButton> c_midiKeyboardReset;
 
 
     //==============================================================================

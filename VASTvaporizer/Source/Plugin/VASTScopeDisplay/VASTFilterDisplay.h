@@ -5,10 +5,11 @@ VAST Dynamics
 #define VASTFILTERDISPLAY_H_INCLUDED
 
 #include "../../Engine/VASTEngineHeader.h"
-#include "../../Engine/VASTVcf.h"
+//#include "../../Engine/VASTVcf.h"
 #include "../../Engine/Filter/VASTQFilter.h"
 #include <thread>
 
+class CVASTVcf; //forward declaration
 class VASTAudioProcessorEditor; //forward declaration
 class VASTAudioProcessor; //forward declaration
 class VASTFilterDisplay : public Component, public Timer
@@ -50,7 +51,7 @@ private:
 	std::unique_ptr<Image> waveformImage;
 	std::unique_ptr<Image> waveformImageNext;
 	std::unique_ptr<Image> waveformImageBuffer;
-    std::unique_ptr<CVASTVcf> m_VCF[3];
+    CVASTVcf m_VCF[3];
 	VASTQFilter m_QFilter;
 	bool mb_init = false;
 

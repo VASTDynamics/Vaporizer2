@@ -757,8 +757,8 @@ void VASTSamplerViewport::mouseDown(const MouseEvent &) {
 				//scale selection to selected position 
 				VASTSamplerSound* samplerSound = myWtEditor->getCurSamplerSound();
 				if (samplerSound == nullptr) return;
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->addSoftFadeEditor();
-				std::shared_ptr<CVASTWaveTable> wavetableupdate = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->getSoftOrCopyWavetable();
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].addSoftFadeEditor();
+				std::shared_ptr<CVASTWaveTable> wavetableupdate = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].getSoftOrCopyWavetable();
 				if ((m_selection.iWavSelectionStartSample < 0) || (m_selection.iWavSelectionEndSample < 0)) selectAll();
 				int lChannel = 0; //left only?
 				auto* subBufferTarget = samplerSound->getAudioDataChanged()->getReadPointer(lChannel, m_selection.iWavSelectionStartSample);
@@ -773,16 +773,16 @@ void VASTSamplerViewport::mouseDown(const MouseEvent &) {
 				myWtEditor->scaleAudioBufferToWTPos(wavetableupdate.get(), wtPosStart, wtPosEnd - wtPosStart + 1, subBufferTarget, selectionLength);
 				myWtEditor->updateAll(false);
 
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->setWavetableSoftFade(wavetableupdate);
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->removeSoftFadeEditor();
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].setWavetableSoftFade(wavetableupdate);
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].removeSoftFadeEditor();
 			}
 			else if (result == 17) {
 				//scale selection to exact number of selected position 
 				int targetPosNo = myWtEditor->getSamplerEditor()->getHeader()->getWAVWTPosSlider()->getValue();
 				VASTSamplerSound* samplerSound = myWtEditor->getCurSamplerSound();
 				if (samplerSound == nullptr) return;
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->addSoftFadeEditor();
-				std::shared_ptr<CVASTWaveTable> wavetableupdate = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->getSoftOrCopyWavetable();
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].addSoftFadeEditor();
+				std::shared_ptr<CVASTWaveTable> wavetableupdate = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].getSoftOrCopyWavetable();
 				wavetableupdate->clear(); //delet all positions
 				if ((m_selection.iWavSelectionStartSample < 0) || (m_selection.iWavSelectionEndSample < 0)) selectAll();
 				int lChannel = 0; //left only?
@@ -790,8 +790,8 @@ void VASTSamplerViewport::mouseDown(const MouseEvent &) {
 				int selectionLength = m_selection.iWavSelectionEndSample - m_selection.iWavSelectionStartSample + 1;
 				myWtEditor->scaleAudioBufferToWTPos(wavetableupdate.get(), 0, targetPosNo, subBufferTarget, selectionLength);
 				wavetableupdate->setSelectedWtPos(0);
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->setWavetableSoftFade(wavetableupdate);
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->removeSoftFadeEditor();
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].setWavetableSoftFade(wavetableupdate);
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].removeSoftFadeEditor();
 				myWtEditor->updateAll(false);
 			}
 			else if (result == 18) {

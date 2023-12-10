@@ -92,7 +92,7 @@ VASTKeyboardComponent::VASTKeyboardComponent (AudioProcessorEditor *editor, Audi
 	c_midiKeyboard->setVelocity(1.0, true); // use mouse position for velocity
 	c_midiKeyboard->setMidiChannelsToDisplay(3); // display channel 1 & 2
 	c_midiKeyboard->setMidiChannel(2); // own channel 2
-	c_midiKeyboard->setKeyPressBaseOctave(4); //checked
+	c_midiKeyboard->setKeyPressBaseOctave(2); //checked
 	c_midiKeyboard->setOpaque(true);
 
 	c_pitchBend->setRange(Range<double>(-8192.f, 8192.f), 0.f);
@@ -102,14 +102,10 @@ VASTKeyboardComponent::VASTKeyboardComponent (AudioProcessorEditor *editor, Audi
 	c_modWheel->setDefaultValue(0.f);
 	c_modWheel->addListener(this);
 
-	// FL Studio layout
-	int note = 0;
-	for (char c : "ysxdcvgbhnj")
-		c_midiKeyboard->setKeyPressForNote(KeyPress(c, 0, 0), note++);
-	for (char c : "q2w3er5t6z7")
-		c_midiKeyboard->setKeyPressForNote(KeyPress(c, 0, 0), note++);
-
-	c_iBendRange->setDefaultValue(12);
+    updateMidiKeyboardCharLayout(); //initialize it
+    updateMidiKeyboardBaseOctave();
+    
+    c_iBendRange->setDefaultValue(12);
 	c_iBendRange->setValue(12);
 	c_iBendRange->setIncDecButtonsMode(Slider::incDecButtonsDraggable_Vertical);
 	c_iBendRange->setAudioProcessor(*myProcessor);
@@ -340,11 +336,13 @@ void VASTKeyboardComponent::sliderValueChanged(Slider* sliderThatWasMoved)
 
 void VASTKeyboardComponent::updateAll() {
     c_iBendRange->setValue(myProcessor->getBendRange(), NotificationType::dontSendNotification);
+    updateMidiKeyboardCharLayout();
+    updateMidiKeyboardBaseOctave();
 }
 
 void VASTKeyboardComponent::timerCallback() {
     if (!c_pitchBend->isMouseOverOrDragging()) {
-        float wheelpos = myProcessor->m_pVASTXperience.m_Poly.getSynthesizer()->lastPitchWheelValues[0].load() - 8192.f; //check channel 0!
+        float wheelpos = myProcessor->m_pVASTXperience.m_Poly.getSynthesizer()->lastPitchWheelUIValue.load() - 8192.f; //all channels
         c_pitchBend->setValue(wheelpos, NotificationType::dontSendNotification); //send only on
     }
 
@@ -364,6 +362,19 @@ void VASTKeyboardComponent::mouseDown (const MouseEvent &) {
 
 String VASTKeyboardComponent::getTooltip() {
     return (TRANS("Right click to toggle keyboard hold mode"));
+}
+
+void VASTKeyboardComponent::updateMidiKeyboardCharLayout()
+{
+    getMidiKeyboard()->clearKeyMappings();
+    int note = 0;
+    for (char c : myProcessor->getMidiKeyboardCharLayout())
+        getMidiKeyboard()->setKeyPressForNote(KeyPress(c, 0, 0), note++);
+}
+
+void VASTKeyboardComponent::updateMidiKeyboardBaseOctave()
+{
+    getMidiKeyboard()->setKeyPressBaseOctave(myProcessor->getMidiKeyboardBaseOctave() + 2); //off by two?
 }
 
 //[/MiscUserCode]

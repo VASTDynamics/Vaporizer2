@@ -15,8 +15,6 @@ VAST Dynamics Audio Software (TM)
 #include <string.h>
 #include "../VASTSettings.h"
 
-//#define float float      /* float or float, to set the resolution of the FFT, etc. (the resulting wavetables are always float) */
-
 //no std::vector - is not trivially copyable!
 typedef struct sWaveTableFreq {
 	bool invalid;
@@ -130,7 +128,8 @@ public:
 	void setFreqDomainTables(int wtPos, std::vector<dsp::Complex<float>>* domainBuffer, bool preGenerate, bool clipBins, int wtMode);
 	void deletePosition(int numPos);
 	bool isPositionDirty(int wtPos) { return wtheader.waveTablePositions[wtPos].dirty; };
-	bool getWavetableInterpolateBuffer(CVASTWaveTableOscillator* mOscillator, const int osciCount, AudioSampleBuffer* buffer, const int startSample, const int numSamples, const bool bInverter, int wtMode, int voiceNo, int bank, OwnedArray<CVASTOscillatorBank>* oscBank, bool isFirstCycle, bool isStartOfCycle, float wtPosPercTarget, float wtFxVal, int wtFxType, int lastCycleSamples, int curCycleSamples, const CVASTWaveTable* masterWTForSync, bool &updated, bool soloMode);
+	
+	bool getWavetableInterpolateBuffer(CVASTWaveTableOscillator* mOscillator, const int osciCount, AudioSampleBuffer* buffer, const int startSample, const int numSamples, const bool bInverter, int wtMode, int voiceNo, int bank, bool isFirstCycle, bool isStartOfCycle, float wtPosPercTarget, float wtFxVal, int wtFxType, int lastCycleSamples, int curCycleSamples, const CVASTWaveTable* masterWTForSync, bool &updated, bool soloMode);
 	
 	void getValueTreeState(ValueTree* tree, UndoManager* undoManager);
 	bool setValueTreeState(ValueTree* tree, int wtMode);
@@ -197,7 +196,7 @@ private:
 	int getNumWaveTableFreqs(int wtPos); //not const
 	bool getWavetableFreq(int wtPos, int freqindex, float* bottomFreq, float* topFreq);
 	sWaveTablePosition emptyPosition();	
-	bool fillInterpolateBuffersRange(const bool next, sWaveTablePosition* wtp, float* xo, float* y0, float* y1, CVASTWaveTableOscillator* mOscillator, const int osciCount, const int startSample, const int numSamples, AudioSampleBuffer* posBuffer, const bool bInverter, int wtMode, float wtFxVal, int wtFxType, int voiceNo, int bank, OwnedArray<CVASTOscillatorBank>* oscBank, bool updateUI, bool &updated);
+	bool fillInterpolateBuffersRange(const bool next, sWaveTablePosition* wtp, float* xo, float* y0, float* y1, CVASTWaveTableOscillator* mOscillator, const int osciCount, const int startSample, const int numSamples, AudioSampleBuffer* posBuffer, const bool bInverter, int wtMode, float wtFxVal, int wtFxType, int voiceNo, int bank, bool updateUI, bool &updated);
 
 	std::vector<float> naiveWaveFromWavFile(wavFile* wavfile, int wtPos);
 	bool validate();

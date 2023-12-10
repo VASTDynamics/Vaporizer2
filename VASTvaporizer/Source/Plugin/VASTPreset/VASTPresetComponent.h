@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 6.0.1
+  Created with Projucer version: 7.0.9
 
   ------------------------------------------------------------------------------
 
@@ -55,7 +55,7 @@ public:
 	void itemDropped(const DragAndDropTarget::SourceDetails&, int insertIndex) override;
 	static void moveItems(TreeView& treeView, const OwnedArray<ValueTree>& items, ValueTree newParent, int insertIndex);
 	static void getSelectedTreeViewItems(TreeView& treeView, OwnedArray<ValueTree>& items);
-    
+
 private:
 	ValueTree tree;
 	std::unique_ptr<FileChooser> myChooser;
@@ -113,7 +113,7 @@ public:
 
 	juce::TreeView* getTreeViewFiles();
     std::unique_ptr<Drawable> m_folderImg;
-    
+
     //[/UserMethods]
 
     void paint (juce::Graphics& g) override;

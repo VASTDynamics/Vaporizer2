@@ -159,7 +159,6 @@ public:
 
 	void startPaintingToImage();
 	void endPaintingToImage();
-
     //[/UserMethods]
 
     void paint (juce::Graphics& g) override;
