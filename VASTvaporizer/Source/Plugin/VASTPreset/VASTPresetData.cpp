@@ -5,15 +5,43 @@ VAST Dynamics Audio Software (TM)
 #include "../../Engine/VASTEngineHeader.h"
 #include "VASTPresetData.h"
 #include "../VASTAudioProcessor.h"
+#include <thread>
+#include <fstream>
+#include <iostream>
 
 //Prefix Category AR Arpeggio AT Atmosphere BA Bass BR Brass BL Bell CH Chord DK Drum kit DR Drum DL Drum loop FX Effect GT Guitar IN Instrument KB Keyboard LD Lead MA Mallet OR Organ OC Orchestral PN Piano PL Plucked RD Reed ST String SY Synth SQ Sequence / Split TG Trancegate VC Vocal / Voice WW Woodwind
+
+bool VASTPresetData::isLoadThreadRunning; //static
+
+VASTPresetData::VASTPresetData(VASTAudioProcessor* proc) : myProcessor(proc) {
+	m_numFavorites[0] = 0;
+	m_numFavorites[1] = 0;
+	m_numFavorites[2] = 0;
+	m_numFavorites[3] = 0;
+	m_numFavorites[4] = 0;
+
+	swap_PresetArray.clear();
+	swap_usedAuthors.clear();
+	swap_usedCategories.clear();
+	swap_usedTags.clear();
+	VASTPresetData::isLoadThreadRunning = false;
+	m_presetsloaded.store(false);
+}
+
+VASTPresetData::~VASTPresetData()
+{
+	VASTPresetData::isLoadThreadRunning = false;
+}
 
 int VASTPresetData::getNumPresets() const {
 	return m_numUserPresets;
 }
 
 VASTPresetElement* VASTPresetData::getPreset(int index) {
-	return m_PresetArray[index];
+	if (index < m_PresetArray.size())
+		return m_PresetArray[index];
+	else
+		return nullptr;
 }
 
 OwnedArray<VASTPresetElement>& VASTPresetData::getSearchArray() {
@@ -41,13 +69,120 @@ void VASTPresetData::loadFromSettings() {
 	calcNumFavorites();	
 }
 
-void VASTPresetData::reloadPresetArray() {
+void VASTPresetData::reloadPresetArrayThreaded(Component::SafePointer<VASTPresetData> presetData, VASTAudioProcessor* myProcessor) {
+	VDBG("Start reloadPresetArrayThreaded");
+	if (presetData == nullptr)
+		return;
+	if (presetData->m_swapNeeded.load())
+		return; //only one process
+	if (VASTPresetData::isLoadThreadRunning)
+		return;
+	VASTPresetData::isLoadThreadRunning = true;
+	OwnedArray<VASTPresetElement> l_thread_PresetArray;
+	if (presetData == nullptr)
+		return;
+	else 
+		l_thread_PresetArray.addCopiesOf(presetData->m_PresetArray);
+
+
+	StringArray l_thread_usedAuthors;
+	StringArray l_thread_usedCategories;
+
+	StringArray l_thread_usedTags;
+
+	l_thread_usedAuthors.clear();
+	l_thread_usedCategories.clear();
+	l_thread_usedTags.clear();
+
+	for (int i = 1; i < l_thread_PresetArray.size(); i++) { //0 is factory init preset
+		VASTPresetElement* l_PresetArray = new VASTPresetElement(); //new OK because of owned Array
+		const String filename = l_thread_PresetArray[i]->internalid;
+		bool successfullyLoaded = myProcessor->loadUserPatchMetaData(File(filename), *l_PresetArray);
+
+		if (!successfullyLoaded) {
+			l_thread_PresetArray[i]->invalid = true;
+			VDBG("PresetArray invalid: " << l_thread_PresetArray[i]->internalid);
+			l_thread_PresetArray[i]->authorname = "Invalid preset XML data!";
+			continue;
+		}
+		l_thread_PresetArray[i]->invalid = false;
+		l_thread_PresetArray[i]->presetname = l_PresetArray->presetname;
+		l_thread_PresetArray[i]->category = l_PresetArray->category;
+		l_thread_PresetArray[i]->freetag = l_PresetArray->freetag;
+		l_thread_PresetArray[i]->mpepreset = l_PresetArray->mpepreset;
+		l_thread_PresetArray[i]->mpebendrange = l_PresetArray->mpebendrange;
+		l_thread_PresetArray[i]->authorname = l_PresetArray->authorname;
+		l_thread_PresetArray[i]->comments = l_PresetArray->comments;
+		l_thread_PresetArray[i]->customModulator1Text = l_PresetArray->customModulator1Text;
+		l_thread_PresetArray[i]->customModulator2Text = l_PresetArray->customModulator2Text;
+		l_thread_PresetArray[i]->customModulator3Text = l_PresetArray->customModulator3Text;
+		l_thread_PresetArray[i]->customModulator4Text = l_PresetArray->customModulator4Text;
+
+		if (l_PresetArray->category.trim() != "")
+			l_thread_usedCategories.addIfNotAlreadyThere(l_PresetArray->category.trim(), true);
+		if (l_PresetArray->authorname.trim() != "")
+			l_thread_usedTags.addIfNotAlreadyThere(l_PresetArray->authorname.trim(), true);
+
+		StringArray tags;
+		tags.addTokens(l_PresetArray->freetag, " ,#", "\"");
+		for (int j = 0; j < tags.size(); j++)
+			if (tags[j].trim() != "")
+				l_thread_usedTags.addIfNotAlreadyThere(tags[j].trim(), true);
+		VDBG("Added to PresetArray: " << l_thread_PresetArray[i]->internalid);
+	}
+	VDBG("End reloadPresetArrayThreaded");
+	
+	if (presetData == nullptr)
+		return;
+
+	if (VASTPresetData::isLoadThreadRunning) {
+		const ScopedLock sl(presetData->m_arraySwapLock);
+		presetData->swap_PresetArray.swapWith(l_thread_PresetArray);
+		presetData->swap_usedAuthors.swapWith(l_thread_usedAuthors);
+		presetData->swap_usedCategories.swapWith(l_thread_usedCategories);
+		presetData->swap_usedTags.swapWith(l_thread_usedTags);
+		presetData->m_swapNeeded.store(true);
+		VASTPresetData::isLoadThreadRunning = false;
+	//} else {
+		//vassertfalse; //it was destroyed in the meantime
+	}
+}
+
+void VASTPresetData::swapPresetArraysIfNeeded() {
+	if (!m_swapNeeded.load())
+		return;
+	m_swapNeeded.store(false);
+
+	const ScopedLock sl(m_arraySwapLock);
+	m_PresetArray.swapWith(swap_PresetArray);
+	m_usedAuthors.swapWith(swap_usedAuthors);
+	m_usedCategories.swapWith(swap_usedCategories);
+	m_usedTags.swapWith(swap_usedTags);
+
+	swap_PresetArray.clear();
+	swap_usedAuthors.clear();
+	swap_usedCategories.clear();
+	swap_usedTags.clear();
+	
+	loadFromSettings();
+	m_numUserPresets = m_PresetArray.size() - 1; //factory is 1
+	doSearchWithVector();
+	myProcessor->requestUIPresetUpdate();
+	m_needsTreeUpdate = true;
+	m_presetsloaded.store(true);
+}
+
+void VASTPresetData::reloadPresetArray(bool synchronous) {
 	VDBG("Start reloadPresetArray");
+	if (VASTPresetData::isLoadThreadRunning)
+		return;
+
 	m_PresetArray.clear();
 	m_usedAuthors.clear();
 	m_usedTags.clear();
 	m_usedCategories.clear();
-	
+	m_presetsloaded.store(false);
+
 	//Factory
 	int lNum = 1; //starts with 1 due to init preset - which is VST factory
 	for (int i = 0; i < lNum; i++) {
@@ -66,46 +201,37 @@ void VASTPresetData::reloadPresetArray() {
 		l_PresetArray->calcID();
 		m_PresetArray.add(l_PresetArray);
 	}
-
-	FileSearchPath sPath = FileSearchPath(myProcessor->m_UserPresetRootFolder);
-	sPath.addIfNotAlreadyThere(File(myProcessor->getVSTPath()).getChildFile("Presets").getFullPathName()); //add search path for factory presets in app folder (not configurable) //not needed with symlink solution
-
-	Array<File> presetFiles;
-	sPath.findChildFiles(presetFiles, File::findFiles, true, "*.vvp");
+	int l_numUserPresets = 0; //factory is 1
 	
-	m_numUserPresets = 0;
-	for (int i = 0; i < presetFiles.size(); i++) {
+	Array<File> l_presetFiles;
+	FileSearchPath sPath = FileSearchPath(myProcessor->m_UserPresetRootFolder);
+	sPath.addIfNotAlreadyThere(File(myProcessor->getVSTPath()).getChildFile("Presets").getFullPathName()); //add search path for factory presets in app folder (not configurable) //not needed with symlink solution	
+	sPath.findChildFiles(l_presetFiles, File::findFiles, true, "*.vvp");
+	
+	for (int i = 0; i < l_presetFiles.size(); i++) {
 		VASTPresetElement* l_PresetArray = new VASTPresetElement(); //new OK because of owned Array
-		if (myProcessor->loadUserPatchMetaData(presetFiles[i], *l_PresetArray) == true) {
-			m_numUserPresets++;
-			l_PresetArray->internalid = String(presetFiles[i].getFullPathName()); //this is unique
-			l_PresetArray->foldername = String(presetFiles[i].getParentDirectory().getFileName());
-			l_PresetArray->filename = String(presetFiles[i].getFileNameWithoutExtension());
-			l_PresetArray->presetdate = String(presetFiles[i].getLastModificationTime().formatted("%Y-%m-%d"));
-			l_PresetArray->presetarrayindex = i + lNum;
+			l_numUserPresets++;			
+			l_PresetArray->internalid = String(l_presetFiles[i].getFullPathName()); //this is unique
+			l_PresetArray->foldername = String(l_presetFiles[i].getParentDirectory().getFileName());
+			l_PresetArray->filename = String(l_presetFiles[i].getFileNameWithoutExtension());
+			l_PresetArray->presetdate = String(l_presetFiles[i].getLastModificationTime().formatted("%Y-%m-%d"));
+			l_PresetArray->presetarrayindex = i + 1; //init preset
 			l_PresetArray->userpatchindex = i;
 			l_PresetArray->isFactory = false;
+			l_PresetArray->presetname = l_PresetArray->filename; //temporarily until loaded
 			l_PresetArray->calcID();
 			m_PresetArray.add(l_PresetArray);
-
-			if (l_PresetArray->category.trim() != "")
-				m_usedCategories.addIfNotAlreadyThere(l_PresetArray->category.trim(), true);
-			if (l_PresetArray->authorname.trim()!= "")
-				m_usedAuthors.addIfNotAlreadyThere(l_PresetArray->authorname.trim(), true);
-
-			StringArray tags;
-			tags.addTokens(l_PresetArray->freetag, " ,#", "\"");
-			for (int j=0; j<tags.size(); j++)
-				if (tags[j].trim() != "")
-					m_usedTags.addIfNotAlreadyThere(tags[j].trim(), true);
 		}
-		VDBG("Added to PresetArray: " + presetFiles[i].getFullPathName());
+	m_numUserPresets = l_numUserPresets;
+
+	if (synchronous) {
+		reloadPresetArrayThreaded(SafePointer<VASTPresetData>(this), myProcessor);
+		swapPresetArraysIfNeeded();
 	}
-	loadFromSettings();
-	doSearchWithVector();
-	myProcessor->requestUIPresetUpdate();
-	m_needsTreeUpdate = true;
-	VDBG("End reloadPresetArray");
+	else {
+		std::thread reloadPresetthread(&VASTPresetData::reloadPresetArrayThreaded, SafePointer<VASTPresetData>(this), myProcessor);
+		reloadPresetthread.detach();
+	}
 }
 
 void VASTPresetData::doSearchWithVector() {
@@ -303,7 +429,8 @@ void VASTPresetData::loadSearchData() {
 	for (int i = 0; i < getNumPresets(); i++) {
 		VASTPresetElement* lElement = new VASTPresetElement(); //new OK because of owned array
 		*lElement = *getPreset(i); //copy it
-		m_SearchArray.add(lElement);
+		if (lElement != nullptr)
+			m_SearchArray.add(lElement);
 	}
 }
 

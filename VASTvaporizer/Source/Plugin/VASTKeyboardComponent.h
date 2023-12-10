@@ -56,7 +56,8 @@ public:
     void timerCallback() override;
     void mouseDown (const MouseEvent &) override;
     String getTooltip() override;
-    
+    void updateMidiKeyboardCharLayout();
+    void updateMidiKeyboardBaseOctave();
     //[/UserMethods]
 
     void paint (juce::Graphics& g) override;

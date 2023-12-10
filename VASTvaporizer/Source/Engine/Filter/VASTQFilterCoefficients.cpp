@@ -272,21 +272,21 @@ double VASTQFilterCoefficients::resoscale4Pole(double reso, int subtype)
 void VASTQFilterCoefficients::Coeff_VASTIIR(float Freq, float Reso, float Scale, int SubType) {
 	IIRCoefficients coeff; //Coefficient variable
 	if (SubType == st_iir_bp)
-		coeff = IIRCoefficients::makeBandPass(dsamplerate_os, Freq, Reso);
+		coeff = IIRCoefficients::makeBandPass(dsamplerate_os, (Freq <= dsamplerate_os * 0.5 ? Freq : dsamplerate_os * 0.5), Reso);   
 	else if (SubType == st_iir_lp)
-		coeff = IIRCoefficients::makeLowPass(dsamplerate_os, Freq, Reso);
+		coeff = IIRCoefficients::makeLowPass(dsamplerate_os, (Freq <= dsamplerate_os * 0.5 ? Freq : dsamplerate_os * 0.5), Reso);
 	else if (SubType == st_iir_ap)
-		coeff = IIRCoefficients::makeAllPass(dsamplerate_os, Freq, Reso);
+		coeff = IIRCoefficients::makeAllPass(dsamplerate_os, (Freq <= dsamplerate_os * 0.5 ? Freq : dsamplerate_os * 0.5), Reso);
 	else if (SubType == st_iir_hp)
-		coeff = IIRCoefficients::makeHighPass(dsamplerate_os, Freq, Reso);
+		coeff = IIRCoefficients::makeHighPass(dsamplerate_os, (Freq <= dsamplerate_os * 0.5 ? Freq : dsamplerate_os * 0.5), Reso);
 	else if (SubType == st_iir_no)
-		coeff = IIRCoefficients::makeNotchFilter(dsamplerate_os, Freq, Reso);
+		coeff = IIRCoefficients::makeNotchFilter(dsamplerate_os, (Freq <= dsamplerate_os * 0.5 ? Freq : dsamplerate_os * 0.5), Reso);
 	else if (SubType == st_iir_hs)
-		coeff = IIRCoefficients::makeHighShelf(dsamplerate_os, Freq, Reso, Scale);
+		coeff = IIRCoefficients::makeHighShelf(dsamplerate_os, (Freq <= dsamplerate_os * 0.5 ? Freq : dsamplerate_os * 0.5), Reso, Scale);
 	else if (SubType == st_iir_ls)
-		coeff = IIRCoefficients::makeLowShelf(dsamplerate_os, Freq, Reso, Scale);
+		coeff = IIRCoefficients::makeLowShelf(dsamplerate_os, (Freq <= dsamplerate_os * 0.5 ? Freq : dsamplerate_os * 0.5), Reso, Scale);
 	else if (SubType == st_iir_pk)
-		coeff = IIRCoefficients::makePeakFilter(dsamplerate_os, Freq, Reso, Scale);
+		coeff = IIRCoefficients::makePeakFilter(dsamplerate_os, (Freq <= dsamplerate_os * 0.5 ? Freq : dsamplerate_os * 0.5), Reso, Scale);
 
 	float c[n_cm_coeffs];
 	c[0] = coeff.coefficients[0];

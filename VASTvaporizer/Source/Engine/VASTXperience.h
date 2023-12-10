@@ -72,8 +72,8 @@ public:
 	float fOutRLast = 0;
 	float fOutLLast = 0;
 
-	void audioProcessLock();
-	void audioProcessUnlock();
+	bool audioProcessLock();
+	bool audioProcessUnlock();
 	std::atomic<bool> m_BlockProcessing = false;
 	std::atomic<bool> m_BlockProcessingIsBlockedSuccessfully = false;
 	bool getBlockProcessingIsBlockedSuccessfully();
@@ -109,10 +109,11 @@ public:
 
 	// Audio & GL Audio Buffer
 	std::unique_ptr<VASTRingBuffer<GLfloat>> oscilloscopeRingBuffer;
+	int getMidiBank();
 
 private:
-	int m_midiBank = 0;
-
+	std::atomic<int> m_midiBank = 0;
+	CriticalSection paramChangeLock;
 
 	JUCE_HEAVYWEIGHT_LEAK_DETECTOR(CVASTXperience)
 	//JUCE_LEAK_DETECTOR(CVASTXperience)

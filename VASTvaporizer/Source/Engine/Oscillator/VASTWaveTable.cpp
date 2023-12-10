@@ -1836,7 +1836,7 @@ void CVASTWaveTable::putWaveTableFreqToBuffer(sWaveTablePosition* wtp, int table
 	vassert(wtp->waveTableFreqsBuffer[wtp->numWaveTableFreqsBuffer - 1].waveTableSamples.size() == C_WAVE_TABLE_SIZE);
 }
 
-bool CVASTWaveTable::getWavetableInterpolateBuffer(CVASTWaveTableOscillator* mOscillator, const int osciCount, AudioSampleBuffer* buffer, const int startSample, const int numSamples, const bool bInverter, int wtMode, int voiceNo, int bank, OwnedArray<CVASTOscillatorBank>* oscBank, bool isFirstCycle, bool isStartOfCycle, float wtPosPercTarget, float wtFxVal, int wtFxType, int lastCycleSamples, int curCycleSamples, const CVASTWaveTable* masterWTForSync, bool &updated, bool soloMode) {
+bool CVASTWaveTable::getWavetableInterpolateBuffer(CVASTWaveTableOscillator* mOscillator, const int osciCount, AudioSampleBuffer* buffer, const int startSample, const int numSamples, const bool bInverter, int wtMode, int voiceNo, int bank, bool isFirstCycle, bool isStartOfCycle, float wtPosPercTarget, float wtFxVal, int wtFxType, int lastCycleSamples, int curCycleSamples, const CVASTWaveTable* masterWTForSync, bool &updated, bool soloMode) {
 	//take from last
 	float wtFxVal_begin = m_fLastWtFXVal_begin[voiceNo];
 	int wtFxType_begin = m_iLastWtFXType_begin[voiceNo];
@@ -1984,13 +1984,13 @@ bool CVASTWaveTable::getWavetableInterpolateBuffer(CVASTWaveTableOscillator* mOs
 	// begin position	
 	m_begin_curPosBuffer->setSize(2, bufferNumSamples, false, false, !releaseMemory); //stereo!
 	m_begin_curPosBuffer->clear(startSample, numSamples);
-	bool ok = fillInterpolateBuffersRange(false, wtpbegin, m_x0_curPos_writePointer, m_y0_curPos_writePointer, m_y1_curPos_writePointer, mOscillator, osciCount, startSample, numSamples, m_begin_curPosBuffer.get(), bInverter, wtMode, wtFxVal_begin, wtFxType_begin, voiceNo, bank, oscBank, !doPosFade && !hasNextWtfxtype && !wtPosint_begin_hasNextPos, updated);
+	bool ok = fillInterpolateBuffersRange(false, wtpbegin, m_x0_curPos_writePointer, m_y0_curPos_writePointer, m_y1_curPos_writePointer, mOscillator, osciCount, startSample, numSamples, m_begin_curPosBuffer.get(), bInverter, wtMode, wtFxVal_begin, wtFxType_begin, voiceNo, bank, !doPosFade && !hasNextWtfxtype && !wtPosint_begin_hasNextPos, updated);
 	if (!ok) doExit = true;
 
 	if (hasNextWtfxtype) {
 		m_begin_curPosBufferNextWtfxtype->setSize(2, bufferNumSamples, false, false, !releaseMemory); //stereo!
 		m_begin_curPosBufferNextWtfxtype->clear(startSample, numSamples);
-		bool ok = fillInterpolateBuffersRange(false, wtpbegin, m_x0_curPos_writePointer, m_y0_curPos_writePointer, m_y1_curPos_writePointer, mOscillator, osciCount, startSample, numSamples, m_begin_curPosBufferNextWtfxtype.get(), bInverter, wtMode, wtFxVal_end, wtFxType_end, voiceNo, bank, oscBank, !doPosFade && !wtPosint_begin_hasNextPos, updated);
+		bool ok = fillInterpolateBuffersRange(false, wtpbegin, m_x0_curPos_writePointer, m_y0_curPos_writePointer, m_y1_curPos_writePointer, mOscillator, osciCount, startSample, numSamples, m_begin_curPosBufferNextWtfxtype.get(), bInverter, wtMode, wtFxVal_end, wtFxType_end, voiceNo, bank, !doPosFade && !wtPosint_begin_hasNextPos, updated);
 		if (!ok) doExit = true;
 	}
 
@@ -1999,13 +1999,13 @@ bool CVASTWaveTable::getWavetableInterpolateBuffer(CVASTWaveTableOscillator* mOs
 	if (wtPosint_begin_hasNextPos) { //table has positions
 		m_begin_nextPosBuffer->setSize(2, bufferNumSamples, false, false, !releaseMemory); //stereo!
 		m_begin_nextPosBuffer->clear(startSample, numSamples);
-		ok = fillInterpolateBuffersRange(true, wtpbeginnextpos, m_x0_nextPos_writePointer, m_y0_nextPos_writePointer, m_y1_nextPos_writePointer, mOscillator, osciCount, startSample, numSamples, m_begin_nextPosBuffer.get(), bInverter, wtMode, wtFxVal_begin, wtFxType_begin, voiceNo, bank, oscBank, !doPosFade && !hasNextWtfxtype, updated);
+		ok = fillInterpolateBuffersRange(true, wtpbeginnextpos, m_x0_nextPos_writePointer, m_y0_nextPos_writePointer, m_y1_nextPos_writePointer, mOscillator, osciCount, startSample, numSamples, m_begin_nextPosBuffer.get(), bInverter, wtMode, wtFxVal_begin, wtFxType_begin, voiceNo, bank, !doPosFade && !hasNextWtfxtype, updated);
 		if (!ok) doExit = true;
 
 		if (hasNextWtfxtype) {
 			m_begin_nextPosBufferNextWtfxtype->setSize(2, bufferNumSamples, false, false, !releaseMemory); //stereo!
 			m_begin_nextPosBufferNextWtfxtype->clear(startSample, numSamples);
-			ok = fillInterpolateBuffersRange(true, wtpbeginnextpos, m_x0_nextPos_writePointer, m_y0_nextPos_writePointer, m_y1_nextPos_writePointer, mOscillator, osciCount, startSample, numSamples, m_begin_nextPosBufferNextWtfxtype.get(), bInverter, wtMode, wtFxVal_end, wtFxType_end, voiceNo, bank, oscBank, !doPosFade, updated);
+			ok = fillInterpolateBuffersRange(true, wtpbeginnextpos, m_x0_nextPos_writePointer, m_y0_nextPos_writePointer, m_y1_nextPos_writePointer, mOscillator, osciCount, startSample, numSamples, m_begin_nextPosBufferNextWtfxtype.get(), bInverter, wtMode, wtFxVal_end, wtFxType_end, voiceNo, bank, !doPosFade, updated);
 			if (!ok) doExit = true;
 		}
 	}
@@ -2015,13 +2015,13 @@ bool CVASTWaveTable::getWavetableInterpolateBuffer(CVASTWaveTableOscillator* mOs
 		// end position
 		m_end_curPosBuffer->setSize(2, bufferNumSamples, false, false, !releaseMemory); //stereo!		
 		m_end_curPosBuffer->clear(startSample, numSamples);
-		bool ok = fillInterpolateBuffersRange(false, wtpend, m_x0_curPos_writePointer, m_y0_curPos_writePointer, m_y1_curPos_writePointer, mOscillator, osciCount, startSample, numSamples, m_end_curPosBuffer.get(), bInverter, wtMode, wtFxVal_begin, wtFxType_begin, voiceNo, bank, oscBank, !hasNextWtfxtype && !wtPosint_end_hasNextPos, updated);
+		bool ok = fillInterpolateBuffersRange(false, wtpend, m_x0_curPos_writePointer, m_y0_curPos_writePointer, m_y1_curPos_writePointer, mOscillator, osciCount, startSample, numSamples, m_end_curPosBuffer.get(), bInverter, wtMode, wtFxVal_begin, wtFxType_begin, voiceNo, bank, !hasNextWtfxtype && !wtPosint_end_hasNextPos, updated);
 		if (!ok) doExit = true;
 
 		if (hasNextWtfxtype) {
 			m_end_curPosBufferNextWtfxtype->setSize(2, bufferNumSamples, false, false, !releaseMemory); //stereo! 
 			m_end_curPosBufferNextWtfxtype->clear(startSample, numSamples);
-			bool ok = fillInterpolateBuffersRange(false, wtpend, m_x0_curPos_writePointer, m_y0_curPos_writePointer, m_y1_curPos_writePointer, mOscillator, osciCount, startSample, numSamples, m_end_curPosBufferNextWtfxtype.get(), bInverter, wtMode, wtFxVal_end, wtFxType_end, voiceNo, bank, oscBank, !wtPosint_end_hasNextPos, updated);
+			bool ok = fillInterpolateBuffersRange(false, wtpend, m_x0_curPos_writePointer, m_y0_curPos_writePointer, m_y1_curPos_writePointer, mOscillator, osciCount, startSample, numSamples, m_end_curPosBufferNextWtfxtype.get(), bInverter, wtMode, wtFxVal_end, wtFxType_end, voiceNo, bank, !wtPosint_end_hasNextPos, updated);
 			if (!ok) doExit = true;
 		}
 
@@ -2030,13 +2030,13 @@ bool CVASTWaveTable::getWavetableInterpolateBuffer(CVASTWaveTableOscillator* mOs
 		if (wtPosint_end_hasNextPos) { //table has positions
 			m_end_nextPosBuffer->setSize(2, bufferNumSamples, false, false, !releaseMemory); //stereo!
 			m_end_nextPosBuffer->clear(startSample, numSamples);
-			ok = fillInterpolateBuffersRange(true, wtpendnextpos, m_x0_nextPos_writePointer, m_y0_nextPos_writePointer, m_y1_nextPos_writePointer, mOscillator, osciCount, startSample, numSamples, m_end_nextPosBuffer.get(), bInverter, wtMode, wtFxVal_begin, wtFxType_begin, voiceNo, bank, oscBank, !hasNextWtfxtype, updated);
+			ok = fillInterpolateBuffersRange(true, wtpendnextpos, m_x0_nextPos_writePointer, m_y0_nextPos_writePointer, m_y1_nextPos_writePointer, mOscillator, osciCount, startSample, numSamples, m_end_nextPosBuffer.get(), bInverter, wtMode, wtFxVal_begin, wtFxType_begin, voiceNo, bank, !hasNextWtfxtype, updated);
 			if (!ok) doExit = true;
 
 			if (hasNextWtfxtype) {
 				m_end_nextPosBufferNextWtfxtype->setSize(2, bufferNumSamples, false, false, !releaseMemory); //stereo!
 				m_end_nextPosBufferNextWtfxtype->clear(startSample, numSamples);
-				ok = fillInterpolateBuffersRange(true, wtpendnextpos, m_x0_nextPos_writePointer, m_y0_nextPos_writePointer, m_y1_nextPos_writePointer, mOscillator, osciCount, startSample, numSamples, m_end_nextPosBufferNextWtfxtype.get(), bInverter, wtMode, wtFxVal_end, wtFxType_end, voiceNo, bank, oscBank, true, updated);
+				ok = fillInterpolateBuffersRange(true, wtpendnextpos, m_x0_nextPos_writePointer, m_y0_nextPos_writePointer, m_y1_nextPos_writePointer, mOscillator, osciCount, startSample, numSamples, m_end_nextPosBufferNextWtfxtype.get(), bInverter, wtMode, wtFxVal_end, wtFxType_end, voiceNo, bank, true, updated);
 				if (!ok) doExit = true;
 			}
 		}
@@ -2267,7 +2267,7 @@ bool CVASTWaveTable::getWavetableInterpolateBuffer(CVASTWaveTableOscillator* mOs
 	return true;
 }
 
-bool CVASTWaveTable::fillInterpolateBuffersRange(const bool next, sWaveTablePosition* wtp, float* x0, float* y0, float* y1, CVASTWaveTableOscillator* mOscillator, const int osciCount, const int startSample, const int numSamples, AudioSampleBuffer* posBuffer, const bool bInverter, int wtMode, float wtFxVal, int wtFxType, int voiceNo, int bank, OwnedArray<CVASTOscillatorBank>* oscBank, bool updateUI, bool &updated) {
+bool CVASTWaveTable::fillInterpolateBuffersRange(const bool next, sWaveTablePosition* wtp, float* x0, float* y0, float* y1, CVASTWaveTableOscillator* mOscillator, const int osciCount, const int startSample, const int numSamples, AudioSampleBuffer* posBuffer, const bool bInverter, int wtMode, float wtFxVal, int wtFxType, int voiceNo, int bank, bool updateUI, bool &updated) {
 	/*
 	String test = "fillInterpolateBuffersRange: " + (next == true) ? " next " : " cur ";
 	test += " start: " + String(startSample) + " end: " + String(startSample + numSamples - 1) +  " num: " + String(numSamples) + " wtPos: " + String(wtp->wtPos);

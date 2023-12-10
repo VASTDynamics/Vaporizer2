@@ -118,7 +118,7 @@ public:
 		case vastErrorState::errorState20_loadPresetInvalidTree: return (TRANS("Loading the preset resulted in an invalid parameter tree. Please reload the plugin."));
 		case vastErrorState::errorState24_invalidFXBusData: return (TRANS("The FX bus data is invalid."));
 		case vastErrorState::errorState25_maxBufferSizeExceeded: return (TRANS("The maximum supported buffer size is exceeded."));
-		case vastErrorState::errorState26_maxPolyNotSet: return (TRANS("The maximum polypony value could not be set. Please reload the plugin."));
+		case vastErrorState::errorState26_maxPolyNotSet: return (TRANS("The maximum polyphony value could not be set. Please reload the plugin."));
 		case vastErrorState::errorState30_invalidLicense: return (TRANS("Invalid license issue.Contact support@vast-dynamics.com."));
 		case vastErrorState::errorState31_blockedLicense: return (TRANS("License issue.Contact support@vast-dynamics.com."));		
 		default: return (TRANS("Error state - reload plugin"));
@@ -176,6 +176,7 @@ public:
 	void clearUIUpdateFlag();
 	void requestUIUpdate(bool tabs = true, bool matrix = true, bool sliders = true, int slider1dest = -1, int slider2dest = -1);
 	void requestUILoadAlert();
+	static thread_local bool m_threadLocalIsAudioThread;
 	
 #ifdef VASTLOG
 	//logger
@@ -201,6 +202,8 @@ public:
     bool isInputChannelStereoPair (int index) const override;
     bool isOutputChannelStereoPair (int index) const override;
 	*/
+
+	static bool isAudioThread();
 
 	bool acceptsMidi() const override;
 	bool producesMidi() const override;
@@ -313,6 +316,11 @@ public:
 	int getBinMode() const;
 	int getBinEditMode() const;
 
+	String getMidiKeyboardCharLayout();
+	int getMidiKeyboardBaseOctave();
+	void setMidiKeyboardCharLayout(String charLayout);
+	void setMidiKeyboardBaseOctave(int baseOctave);
+
 	//--------------------------------------------------------------------------------------------------------------------
 
 	const int m_iDefaultPluginWidth = 1420; //default size from projucer
@@ -324,8 +332,10 @@ public:
 	
 	static void passTreeToAudioThread(ValueTree tree, bool externalRepresentation, VASTPresetElement preset, int index, VASTAudioProcessor* processor, bool isSeparateThread, bool initOnly);
 	std::atomic<bool> m_bAudioThreadStarted = false;
-	std::atomic<bool> m_bAudioThreadRunning = false;
+	std::atomic<bool> m_bAudioThreadCurrentlyRunning = false;
 	//std::atomic<bool> m_bCreateCachedVASTEditorDelayed = false;
+
+	bool lockedAndSafeToDoDeallocatios();
 
 	void registerThread();
 	void unregisterThread();
@@ -426,6 +436,9 @@ private:
 
 	int m_MPEmode = 0; // settings
 	int m_ModWheelPermaLink = 0;
+
+	String m_MidiKeyboardCharLayout = "ysxdcvgbhnjq2w3er5t6z7"; //FL Studio setup			
+	int m_iMidiKeyboardBaseOctave = 4; //FL Studio setup
 
     std::atomic<bool> m_wasBypassed = false;
     std::atomic<bool> bIsInErrorState = false;

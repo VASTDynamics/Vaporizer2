@@ -19,7 +19,8 @@ VAST Dynamics
 #define c_minDisp float(c_fftSize / 512.f) //lower are too coarse
 #define c_maxminDisp float(c_maxDisp) / float(c_minDisp)
 
-VASTFilterDisplay::VASTFilterDisplay(VASTAudioProcessor* processor)
+VASTFilterDisplay::VASTFilterDisplay(VASTAudioProcessor* processor) :
+	m_VCF{ {processor->m_pVASTXperience.m_Set, 0, 0, true}, {processor->m_pVASTXperience.m_Set, 0, 1, true}, {processor->m_pVASTXperience.m_Set, 0, 2, true} } //filter 1-3
 {
 	myProcessor = processor;
 	myEditor = nullptr;
@@ -281,14 +282,16 @@ void VASTFilterDisplay::updateThread(VASTFilterDisplay* display, bool force) {
 	if (display->mb_init == false) {
 		display->m_QFilter.initQuadFilter(&display->myProcessor->m_pVASTXperience.m_Set);
 		display->fft = std::make_unique<dsp::FFT>(c_fftOrder); //scoped pointer
+		/*
 		for (int filter = 0; filter < 3; filter++) {
 			display->m_VCF[filter] = std::make_unique<CVASTVcf>(*l_Set, 0, filter, true);
 		}
+		*/
 		display->mb_init = true;
 	}
 	for (int filter = 0; filter < 3; filter++) {
-		display->m_VCF[filter]->init(); //isUI
-		display->m_VCF[filter]->prepareForPlay();
+		display->m_VCF[filter].init(); //isUI
+		display->m_VCF[filter].prepareForPlay();
 	}
 
 	Image waveformImage; 

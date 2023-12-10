@@ -290,9 +290,9 @@ void VASTOscilloscope::updateContent(bool force) {
 
 	bool l_soloMode = false;
 	if (l_oscbank != "WTEditorView") {
-		if (m_soloMode != myProcessor->m_pVASTXperience.m_Poly.m_OscBank[l_oscillatorBank]->getSoloMode())
+		if (m_soloMode != myProcessor->m_pVASTXperience.m_Poly.m_OscBank[l_oscillatorBank].getSoloMode())
 			m_hasWaveformImagePerspectiveBuffer = false;
-		l_soloMode = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[l_oscillatorBank]->getSoloMode();
+		l_soloMode = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[l_oscillatorBank].getSoloMode();
 		m_soloMode = l_soloMode;
 	}
 
@@ -330,13 +330,13 @@ void VASTOscilloscope::updateContent(bool force) {
 	
 		l_display = true;
 
-		if (myProcessor->m_pVASTXperience.m_Poly.m_OscBank[l_oscillatorBank]->getAndClearSoftChangedFlagOscEditor() == false) {
+		if (myProcessor->m_pVASTXperience.m_Poly.m_OscBank[l_oscillatorBank].getAndClearSoftChangedFlagOscEditor() == false) {
 			if (!(force || m_dirty.load()))
 				return;
 		}
 	}
 	else {
-		wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[l_oscillatorBank]->getWavetablePointer();
+		wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[l_oscillatorBank].getWavetablePointer();
 
 		if (wavetable->m_isBeingUpdated.load() == true) //safety
 			return;
@@ -404,11 +404,11 @@ void VASTOscilloscope::updateContent(bool force) {
 		m_safeWTFXVal = wtfxVal;
 
 		//check for buffer refresh
-		if (myProcessor->m_pVASTXperience.m_Poly.m_OscBank[l_oscillatorBank]->getAndClearSoftChangedFlagStructure())
+		if (myProcessor->m_pVASTXperience.m_Poly.m_OscBank[l_oscillatorBank].getAndClearSoftChangedFlagStructure())
 			m_hasWaveformImagePerspectiveBuffer = false;
 
 		//check if dirty
-		if ((myProcessor->m_pVASTXperience.m_Poly.m_OscBank[l_oscillatorBank]->getAndClearSoftChangedFlagOsc() == false)) {
+		if ((myProcessor->m_pVASTXperience.m_Poly.m_OscBank[l_oscillatorBank].getAndClearSoftChangedFlagOsc() == false)) {
 			if (!(force || m_dirty.load())) {
 				return;
 			}
@@ -647,7 +647,7 @@ void VASTOscilloscope::updateContent(bool force) {
 	}
 	else { //perspective display		
 		//**lock
-		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[l_oscillatorBank]->mSharedPtrSoftFadeLock.enter();
+		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[l_oscillatorBank].mSharedPtrSoftFadeLock.enter();
 		int numWTPos = wavetable->getNumPositions();
 		std::vector<float> wtcopy[C_MAX_NUM_POSITIONS];
 		for (int pos = 0; pos < numWTPos; pos++)
@@ -661,7 +661,7 @@ void VASTOscilloscope::updateContent(bool force) {
 			wtposto = wavetable->getMultiSelectBegin();
 			numPos = wtposfrom - wtposto + 1;
 		}
-		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[l_oscillatorBank]->mSharedPtrSoftFadeLock.exit();
+		myProcessor->m_pVASTXperience.m_Poly.m_OscBank[l_oscillatorBank].mSharedPtrSoftFadeLock.exit();
 		//**lock
 
 		float xoffset = 0.f;
@@ -1415,73 +1415,73 @@ void VASTOscilloscope::mouseDown(const MouseEvent &) {
 				myWtEditor->updateAll(true);
 			}
 			else if (result == 14) {
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[0]->addSoftFadeEditor();
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[0].addSoftFadeEditor();
 				std::shared_ptr<CVASTWaveTable> wavetablecopy = wavetable->getClonedInstance(true, false); //copy it, delete generated stuff
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[0]->setWavetableSoftFade(wavetablecopy);
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[0]->removeSoftFadeEditor();
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[0].setWavetableSoftFade(wavetablecopy);
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[0].removeSoftFadeEditor();
 				myWtEditor->updateAll(false);
 			}
 			else if (result == 15) {
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[1]->addSoftFadeEditor();
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[1].addSoftFadeEditor();
 				std::shared_ptr<CVASTWaveTable> wavetablecopy = wavetable->getClonedInstance(true, false); //copy it, delete generated stuff
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[1]->setWavetableSoftFade(wavetablecopy);
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[1]->removeSoftFadeEditor();
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[1].setWavetableSoftFade(wavetablecopy);
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[1].removeSoftFadeEditor();
 				myWtEditor->updateAll(false);
 			}
 			else if (result == 16) {
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[2]->addSoftFadeEditor();
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[2].addSoftFadeEditor();
 				std::shared_ptr<CVASTWaveTable> wavetablecopy = wavetable->getClonedInstance(true, false); //copy it, delete generated stuff
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[2]->setWavetableSoftFade(wavetablecopy);
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[2]->removeSoftFadeEditor();
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[2].setWavetableSoftFade(wavetablecopy);
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[2].removeSoftFadeEditor();
 				myWtEditor->updateAll(false);
 			}
 			else if (result == 17) {
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[3]->addSoftFadeEditor();
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[3].addSoftFadeEditor();
 				std::shared_ptr<CVASTWaveTable> wavetablecopy = wavetable->getClonedInstance(true, false); //copy it, delete generated stuff
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[3]->setWavetableSoftFade(wavetablecopy);
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[3]->removeSoftFadeEditor();
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[3].setWavetableSoftFade(wavetablecopy);
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[3].removeSoftFadeEditor();
 				myWtEditor->updateAll(false);
 			}
 			else if (result == 20) {
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[0]->addSoftFadeEditor();
-				std::shared_ptr<CVASTWaveTable> wt = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[0]->getWavetablePointer();
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[0].addSoftFadeEditor();
+				std::shared_ptr<CVASTWaveTable> wt = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[0].getWavetablePointer();
 				wt->addPosition();
 				wt->setNaiveTable((wt->getNumPositions() - 1), *wavetable->getNaiveTable(myWtEditor->getWtPos()), true, myProcessor->getWTmode());
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[0]->setWavetableSoftFade(wt);
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[0]->removeSoftFadeEditor();
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[0].setWavetableSoftFade(wt);
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[0].removeSoftFadeEditor();
 				myWtEditor->updateAll(false);
 			}
 			else if (result == 21) {
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[1]->addSoftFadeEditor();
-				std::shared_ptr<CVASTWaveTable> wt = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[1]->getWavetablePointer();
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[1].addSoftFadeEditor();
+				std::shared_ptr<CVASTWaveTable> wt = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[1].getWavetablePointer();
 				wt->addPosition();
 				wt->setNaiveTable((wt->getNumPositions() - 1), *wavetable->getNaiveTable(myWtEditor->getWtPos()), true, myProcessor->getWTmode());
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[1]->setWavetableSoftFade(wt);
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[1]->removeSoftFadeEditor();
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[1].setWavetableSoftFade(wt);
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[1].removeSoftFadeEditor();
 				myWtEditor->updateAll(false);
 			}
 			else if (result == 22) {
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[2]->addSoftFadeEditor();
-				std::shared_ptr<CVASTWaveTable> wt = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[2]->getWavetablePointer();
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[2].addSoftFadeEditor();
+				std::shared_ptr<CVASTWaveTable> wt = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[2].getWavetablePointer();
 				wt->addPosition();
 				wt->setNaiveTable((wt->getNumPositions() - 1), *wavetable->getNaiveTable(myWtEditor->getWtPos()), true, myProcessor->getWTmode());
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[2]->setWavetableSoftFade(wt);
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[2]->removeSoftFadeEditor();
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[2].setWavetableSoftFade(wt);
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[2].removeSoftFadeEditor();
 				myWtEditor->updateAll(false);
 			}
 			else if (result == 23) {
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[3]->addSoftFadeEditor();
-				std::shared_ptr<CVASTWaveTable> wt = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[3]->getWavetablePointer();
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[3].addSoftFadeEditor();
+				std::shared_ptr<CVASTWaveTable> wt = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[3].getWavetablePointer();
 				wt->addPosition();
 				wt->setNaiveTable((wt->getNumPositions() - 1), *wavetable->getNaiveTable(myWtEditor->getWtPos()), true, myProcessor->getWTmode());
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[3]->setWavetableSoftFade(wt);
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[3]->removeSoftFadeEditor();
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[3].setWavetableSoftFade(wt);
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[3].removeSoftFadeEditor();
 				myWtEditor->updateAll(false);
 			}
 			else if (result == 35) {
 				//cut out
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->addSoftFadeEditor();
-				std::shared_ptr<CVASTWaveTable> wt = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->getSoftOrCopyWavetable();
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].addSoftFadeEditor();
+				std::shared_ptr<CVASTWaveTable> wt = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].getSoftOrCopyWavetable();
 				std::vector<myFloat> samples = std::vector<myFloat>(C_WAVE_TABLE_SIZE);
 
 				float newLength = C_WAVE_TABLE_SIZE - (m_selection.iWTSelectionEnd - m_selection.iWTSelectionStart);
@@ -1504,8 +1504,8 @@ void VASTOscilloscope::mouseDown(const MouseEvent &) {
 						}
 					}
 					wt->setNaiveTable(myWtEditor->getWtPos(), samples, false, myProcessor->getWTmode());
-					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->setWavetableSoftFade(wt);
-					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->removeSoftFadeEditor();
+					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].setWavetableSoftFade(wt);
+					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].removeSoftFadeEditor();
 					selectAll(false); //UI update later
 					notifySelectionChanged();
 					myWtEditor->updateAll(false);
@@ -1513,8 +1513,8 @@ void VASTOscilloscope::mouseDown(const MouseEvent &) {
 			}
 			else if (result == 36) {
 				//trim to
-				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->addSoftFadeEditor();
-				std::shared_ptr<CVASTWaveTable> wt = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->getSoftOrCopyWavetable();
+				myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].addSoftFadeEditor();
+				std::shared_ptr<CVASTWaveTable> wt = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].getSoftOrCopyWavetable();
 				std::vector<myFloat> samples = std::vector<myFloat>(C_WAVE_TABLE_SIZE);
 
 				float newLength = m_selection.iWTSelectionEnd - m_selection.iWTSelectionStart;
@@ -1528,8 +1528,8 @@ void VASTOscilloscope::mouseDown(const MouseEvent &) {
 						samples[i] = (1 - fracpart) * (*myWtEditor->getBankWavetable()->getNaiveTable(myWtEditor->getWtPos()))[intpart] + fracpart * ((*myWtEditor->getBankWavetable()->getNaiveTable(myWtEditor->getWtPos()))[((intpart + 1) < C_WAVE_TABLE_SIZE - 1) ? static_cast<std::vector<float, std::allocator<float>>::size_type>(intpart) + 1 : intpart]);
 					}
 					wt->setNaiveTable(myWtEditor->getWtPos(), samples, false, myProcessor->getWTmode());
-					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->setWavetableSoftFade(wt);
-					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->removeSoftFadeEditor();
+					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].setWavetableSoftFade(wt);
+					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].removeSoftFadeEditor();
 					selectAll(false); //UI Update later
 					notifySelectionChanged();
 					myWtEditor->updateAll(false);
@@ -1562,9 +1562,9 @@ void VASTOscilloscope::mouseDown(const MouseEvent &) {
 					oscFrom = "_OscD";
 				String oscTo = "_OscA";
 				if (oscFrom != oscTo) {
-					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[0]->addSoftFadeEditor();
+					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[0].addSoftFadeEditor();
 					std::shared_ptr<CVASTWaveTable> wavetablecopy = wavetable->getClonedInstance(true, false); //copy it, delete generated stuff
-					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[0]->setWavetableSoftFade(wavetablecopy);
+					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[0].setWavetableSoftFade(wavetablecopy);
 					StringArray oscparams = { "m_fOscDetune" , "m_fOscGain" , "m_fOscCents", "m_fOscWTPos" , "m_fOscMorph" , "m_fSpread" , "m_iNumOscs" , "m_fOscPan",
 						"m_iOscOct", "m_fOscPhase" , "m_bExciterOnOff" , "m_bOscInverterOnOff" , "m_bOscRetrigOnOff" , "m_bOscOnOff", "m_uVCAEnv", "m_uWTFX", "m_fWTFXVal",
 						"m_uOscRouting1", "m_uOscRouting2" };
@@ -1573,7 +1573,7 @@ void VASTOscilloscope::mouseDown(const MouseEvent &) {
 						AudioProcessorParameterWithID* paramTo = myProcessor->m_parameterState.getParameter(oscparams[i] + oscTo);
 						paramTo->setValueNotifyingHost(paramFrom->getValue());
 					}
-					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[0]->removeSoftFadeEditor();
+					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[0].removeSoftFadeEditor();
 					myWtEditor->updateAll(false);
 				}
 			}
@@ -1589,9 +1589,9 @@ void VASTOscilloscope::mouseDown(const MouseEvent &) {
 					oscFrom = "_OscD";
 				String oscTo = "_OscB";
 				if (oscFrom != oscTo) {
-					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[1]->addSoftFadeEditor();
+					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[1].addSoftFadeEditor();
 					std::shared_ptr<CVASTWaveTable> wavetablecopy = wavetable->getClonedInstance(true, false); //copy it, delete generated stuff
-					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[1]->setWavetableSoftFade(wavetablecopy);
+					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[1].setWavetableSoftFade(wavetablecopy);
 					StringArray oscparams = { "m_fOscDetune" , "m_fOscGain" , "m_fOscCents", "m_fOscWTPos" , "m_fOscMorph" , "m_fSpread" , "m_iNumOscs" , "m_fOscPan",
 						"m_iOscOct", "m_fOscPhase" , "m_bExciterOnOff" , "m_bOscInverterOnOff" , "m_bOscRetrigOnOff" , "m_bOscOnOff", "m_uVCAEnv", "m_uWTFX", "m_fWTFXVal",
 						"m_uOscRouting1", "m_uOscRouting2" };
@@ -1600,7 +1600,7 @@ void VASTOscilloscope::mouseDown(const MouseEvent &) {
 						AudioProcessorParameterWithID* paramTo = myProcessor->m_parameterState.getParameter(oscparams[i] + oscTo);
 						paramTo->setValueNotifyingHost(paramFrom->getValue());
 					}
-					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[1]->removeSoftFadeEditor();
+					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[1].removeSoftFadeEditor();
 					myWtEditor->updateAll(false);
 				}
 			}
@@ -1616,9 +1616,9 @@ void VASTOscilloscope::mouseDown(const MouseEvent &) {
 					oscFrom = "_OscD";
 				String oscTo = "_OscC";
 				if (oscFrom != oscTo) {
-					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[2]->addSoftFadeEditor();
+					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[2].addSoftFadeEditor();
 					std::shared_ptr<CVASTWaveTable> wavetablecopy = wavetable->getClonedInstance(true, false); //copy it, delete generated stuff
-					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[2]->setWavetableSoftFade(wavetablecopy);
+					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[2].setWavetableSoftFade(wavetablecopy);
 					StringArray oscparams = { "m_fOscDetune" , "m_fOscGain" , "m_fOscCents", "m_fOscWTPos" , "m_fOscMorph" , "m_fSpread" , "m_iNumOscs" , "m_fOscPan",
 						"m_iOscOct", "m_fOscPhase" , "m_bExciterOnOff" , "m_bOscInverterOnOff" , "m_bOscRetrigOnOff" , "m_bOscOnOff", "m_uVCAEnv", "m_uWTFX", "m_fWTFXVal",
 						"m_uOscRouting1", "m_uOscRouting2" };
@@ -1627,7 +1627,7 @@ void VASTOscilloscope::mouseDown(const MouseEvent &) {
 						AudioProcessorParameterWithID* paramTo = myProcessor->m_parameterState.getParameter(oscparams[i] + oscTo);
 						paramTo->setValueNotifyingHost(paramFrom->getValue());
 					}
-					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[2]->removeSoftFadeEditor();
+					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[2].removeSoftFadeEditor();
 					myWtEditor->updateAll(false);
 				}
 			}
@@ -1643,9 +1643,9 @@ void VASTOscilloscope::mouseDown(const MouseEvent &) {
 					oscFrom = "_OscD";
 				String oscTo = "_OscD";
 				if (oscFrom != oscTo) {
-					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[3]->addSoftFadeEditor();
+					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[3].addSoftFadeEditor();
 					std::shared_ptr<CVASTWaveTable> wavetablecopy = wavetable->getClonedInstance(true, false); //copy it, delete generated stuff
-					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[3]->setWavetableSoftFade(wavetablecopy);
+					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[3].setWavetableSoftFade(wavetablecopy);
 					StringArray oscparams = { "m_fOscDetune" , "m_fOscGain" , "m_fOscCents", "m_fOscWTPos" , "m_fOscMorph" , "m_fSpread" , "m_iNumOscs" , "m_fOscPan",
 						"m_iOscOct", "m_fOscPhase" , "m_bExciterOnOff" , "m_bOscInverterOnOff" , "m_bOscRetrigOnOff" , "m_bOscOnOff", "m_uVCAEnv", "m_uWTFX", "m_fWTFXVal",
 						"m_uOscRouting1", "m_uOscRouting2" };
@@ -1654,7 +1654,7 @@ void VASTOscilloscope::mouseDown(const MouseEvent &) {
 						AudioProcessorParameterWithID* paramTo = myProcessor->m_parameterState.getParameter(oscparams[i] + oscTo);
 						paramTo->setValueNotifyingHost(paramFrom->getValue());
 					}
-					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[3]->removeSoftFadeEditor();
+					myProcessor->m_pVASTXperience.m_Poly.m_OscBank[3].removeSoftFadeEditor();
 					myWtEditor->updateAll(false);
 				}
 			}
@@ -1675,8 +1675,8 @@ void VASTOscilloscope::mouseExit(const MouseEvent& ) {
 }
 
 void VASTOscilloscope::singleCycleFromMSEG(int msegNo) {
-	myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->addSoftFadeEditor();
-	std::shared_ptr<CVASTWaveTable> wt = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->getSoftOrCopyWavetable();
+	myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].addSoftFadeEditor();
+	std::shared_ptr<CVASTWaveTable> wt = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].getSoftOrCopyWavetable();
 	std::vector<myFloat> samples = std::vector<myFloat>(C_WAVE_TABLE_SIZE);
 
 	VASTMSEGData myData = VASTMSEGData(myProcessor->m_pVASTXperience.m_Set.m_MSEGData[msegNo]);
@@ -1727,8 +1727,8 @@ void VASTOscilloscope::singleCycleFromMSEG(int msegNo) {
 	envptr = NULL;
 
 	wt->setNaiveTable(myWtEditor->getWtPos(), samples, false, myProcessor->getWTmode());
-	myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->setWavetableSoftFade(wt);
-	myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->removeSoftFadeEditor();
+	myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].setWavetableSoftFade(wt);
+	myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].removeSoftFadeEditor();
 	myWtEditor->updateAll(false);
     m_dirty.store(true);
 }

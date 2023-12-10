@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 7.0.7
+  Created with Projucer version: 7.0.9
 
   ------------------------------------------------------------------------------
 
@@ -37,12 +37,12 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     //[/Constructor_pre]
 
     groupComponent2.reset (new juce::GroupComponent ("new group",
-                                                     TRANS("SETTINGS")));
+                                                     TRANS ("SETTINGS")));
     addAndMakeVisible (groupComponent2.get());
     groupComponent2->setTextLabelPosition (juce::Justification::centredLeft);
 
     groupComponent.reset (new juce::GroupComponent ("new group",
-                                                    TRANS("PRESET DATA")));
+                                                    TRANS ("PRESET DATA")));
     addAndMakeVisible (groupComponent.get());
     groupComponent->setTextLabelPosition (juce::Justification::centredLeft);
 
@@ -58,9 +58,9 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     c_presetAuthor->setText (juce::String());
 
     label4.reset (new juce::Label ("new label",
-                                   TRANS("AUTHOR")));
+                                   TRANS ("AUTHOR")));
     addAndMakeVisible (label4.get());
-    label4->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label4->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label4->setJustificationType (juce::Justification::centredRight);
     label4->setEditable (false, false, false);
     label4->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -80,7 +80,7 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
 
     c_presetTag.reset (new juce::TextEditor ("c_presetTag"));
     addAndMakeVisible (c_presetTag.get());
-    c_presetTag->setTooltip (TRANS("Add several tags separated by space ( ) or comma (,) or hashtag (#). Tags can be used to filter in the preset browser."));
+    c_presetTag->setTooltip (TRANS ("Add several tags separated by space ( ) or comma (,) or hashtag (#). Tags can be used to filter in the preset browser."));
     c_presetTag->setExplicitFocusOrder (3);
     c_presetTag->setMultiLine (false);
     c_presetTag->setReturnKeyStartsNewLine (false);
@@ -91,9 +91,9 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     c_presetTag->setText (juce::String());
 
     label3.reset (new juce::Label ("new label",
-                                   TRANS("TAG")));
+                                   TRANS ("TAG")));
     addAndMakeVisible (label3.get());
-    label3->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label3->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label3->setJustificationType (juce::Justification::centredRight);
     label3->setEditable (false, false, false);
     label3->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -101,9 +101,9 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     label3->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label2.reset (new juce::Label ("new label",
-                                   TRANS("CATEGORY")));
+                                   TRANS ("CATEGORY")));
     addAndMakeVisible (label2.get());
-    label2->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label2->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label2->setJustificationType (juce::Justification::centredRight);
     label2->setEditable (false, false, false);
     label2->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -111,9 +111,9 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     label2->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label13.reset (new juce::Label ("new label",
-                                    TRANS("PRESET NAME")));
+                                    TRANS ("PRESET NAME")));
     addAndMakeVisible (label13.get());
-    label13->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label13->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label13->setJustificationType (juce::Justification::centredRight);
     label13->setEditable (false, false, false);
     label13->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -131,9 +131,9 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     c_presetFolder->setText (juce::String());
 
     label7.reset (new juce::Label ("new label",
-                                   TRANS("PRESETS")));
+                                   TRANS ("PRESETS")));
     addAndMakeVisible (label7.get());
-    label7->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label7->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label7->setJustificationType (juce::Justification::centredRight);
     label7->setEditable (false, false, false);
     label7->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -143,7 +143,7 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     c_folderSelect.reset (new juce::TextButton ("c_folderSelect"));
     addAndMakeVisible (c_folderSelect.get());
     c_folderSelect->setExplicitFocusOrder (8);
-    c_folderSelect->setButtonText (TRANS("Select Preset Folder"));
+    c_folderSelect->setButtonText (TRANS ("Select Preset Folder"));
     c_folderSelect->addListener (this);
 
     c_pluginWidth.reset (new juce::TextEditor ("c_pluginWidth"));
@@ -157,9 +157,9 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     c_pluginWidth->setText (juce::String());
 
     label8.reset (new juce::Label ("new label",
-                                   TRANS("WIDTH")));
+                                   TRANS ("WIDTH")));
     addAndMakeVisible (label8.get());
-    label8->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label8->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label8->setJustificationType (juce::Justification::centredRight);
     label8->setEditable (false, false, false);
     label8->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -177,9 +177,9 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     c_pluginHeight->setText (juce::String());
 
     label9.reset (new juce::Label ("new label",
-                                   TRANS("HEIGHT")));
+                                   TRANS ("HEIGHT")));
     addAndMakeVisible (label9.get());
-    label9->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label9->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label9->setJustificationType (juce::Justification::centredRight);
     label9->setEditable (false, false, false);
     label9->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -189,13 +189,13 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     c_currentSize.reset (new juce::TextButton ("c_currentSize"));
     addAndMakeVisible (c_currentSize.get());
     c_currentSize->setExplicitFocusOrder (11);
-    c_currentSize->setButtonText (TRANS("Select Size"));
+    c_currentSize->setButtonText (TRANS ("Select Size"));
     c_currentSize->addListener (this);
 
     c_defaultSize.reset (new juce::TextButton ("c_defaultSize"));
     addAndMakeVisible (c_defaultSize.get());
     c_defaultSize->setExplicitFocusOrder (12);
-    c_defaultSize->setButtonText (TRANS("Use Default Size"));
+    c_defaultSize->setButtonText (TRANS ("Use Default Size"));
     c_defaultSize->addListener (this);
 
     c_wavetableFolder.reset (new juce::TextEditor ("c_wavetableFolder"));
@@ -209,9 +209,9 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     c_wavetableFolder->setText (juce::String());
 
     label5.reset (new juce::Label ("new label",
-                                   TRANS("WAVETABLES")));
+                                   TRANS ("WAVETABLES")));
     addAndMakeVisible (label5.get());
-    label5->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label5->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label5->setJustificationType (juce::Justification::centredRight);
     label5->setEditable (false, false, false);
     label5->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -221,7 +221,7 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     c_folderWTSelect.reset (new juce::TextButton ("c_folderWTSelect"));
     addAndMakeVisible (c_folderWTSelect.get());
     c_folderWTSelect->setExplicitFocusOrder (9);
-    c_folderWTSelect->setButtonText (TRANS("Select WT Folder"));
+    c_folderWTSelect->setButtonText (TRANS ("Select WT Folder"));
     c_folderWTSelect->addListener (this);
 
     c_wavFolder.reset (new juce::TextEditor ("c_wavFolder"));
@@ -235,9 +235,9 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     c_wavFolder->setText (juce::String());
 
     label6.reset (new juce::Label ("new label",
-                                   TRANS("SAMPLES")));
+                                   TRANS ("SAMPLES")));
     addAndMakeVisible (label6.get());
-    label6->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label6->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label6->setJustificationType (juce::Justification::centredRight);
     label6->setEditable (false, false, false);
     label6->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -247,7 +247,7 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     c_folderWavSelect.reset (new juce::TextButton ("c_folderWavSelect"));
     addAndMakeVisible (c_folderWavSelect.get());
     c_folderWavSelect->setExplicitFocusOrder (10);
-    c_folderWavSelect->setButtonText (TRANS("Select WAV Folder"));
+    c_folderWavSelect->setButtonText (TRANS ("Select WAV Folder"));
     c_folderWavSelect->addListener (this);
 
     c_presetComments.reset (new juce::TextEditor ("c_presetComments"));
@@ -262,9 +262,9 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     c_presetComments->setText (juce::String());
 
     label10.reset (new juce::Label ("new label",
-                                    TRANS("COMMENTS")));
+                                    TRANS ("COMMENTS")));
     addAndMakeVisible (label10.get());
-    label10->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label10->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label10->setJustificationType (juce::Justification::centredRight);
     label10->setEditable (false, false, false);
     label10->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -277,41 +277,41 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     c_presetCategoryCombo->setEditableText (false);
     c_presetCategoryCombo->setJustificationType (juce::Justification::centredLeft);
     c_presetCategoryCombo->setTextWhenNothingSelected (juce::String());
-    c_presetCategoryCombo->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
-    c_presetCategoryCombo->addItem (TRANS("AR Arpeggio "), 1);
-    c_presetCategoryCombo->addItem (TRANS("AT Atmosphere"), 2);
-    c_presetCategoryCombo->addItem (TRANS("BA Bass"), 3);
-    c_presetCategoryCombo->addItem (TRANS("BR Brass "), 4);
-    c_presetCategoryCombo->addItem (TRANS("BL Bell"), 5);
-    c_presetCategoryCombo->addItem (TRANS("CH Chord"), 6);
-    c_presetCategoryCombo->addItem (TRANS("DK Drum kit"), 7);
-    c_presetCategoryCombo->addItem (TRANS("DR Drum"), 8);
-    c_presetCategoryCombo->addItem (TRANS("DL Drum loop"), 9);
-    c_presetCategoryCombo->addItem (TRANS("FX Effect"), 10);
-    c_presetCategoryCombo->addItem (TRANS("GT Guitar"), 11);
-    c_presetCategoryCombo->addItem (TRANS("IN Instrument"), 12);
-    c_presetCategoryCombo->addItem (TRANS("KB Keyboard"), 13);
-    c_presetCategoryCombo->addItem (TRANS("LD Lead"), 14);
-    c_presetCategoryCombo->addItem (TRANS("MA Mallet"), 15);
-    c_presetCategoryCombo->addItem (TRANS("OR Organ"), 16);
-    c_presetCategoryCombo->addItem (TRANS("OC Orchestral"), 17);
-    c_presetCategoryCombo->addItem (TRANS("PD Pad"), 18);
-    c_presetCategoryCombo->addItem (TRANS("PN Piano"), 19);
-    c_presetCategoryCombo->addItem (TRANS("PL Plucked"), 20);
-    c_presetCategoryCombo->addItem (TRANS("RI Riser"), 21);
-    c_presetCategoryCombo->addItem (TRANS("RD Reed"), 22);
-    c_presetCategoryCombo->addItem (TRANS("ST String"), 23);
-    c_presetCategoryCombo->addItem (TRANS("SY Synth"), 24);
-    c_presetCategoryCombo->addItem (TRANS("SQ Sequence / Split"), 25);
-    c_presetCategoryCombo->addItem (TRANS("TG Trancegate"), 26);
-    c_presetCategoryCombo->addItem (TRANS("VC Vocal / Voice"), 27);
-    c_presetCategoryCombo->addItem (TRANS("WW Woodwind"), 28);
+    c_presetCategoryCombo->setTextWhenNoChoicesAvailable (TRANS ("(no choices)"));
+    c_presetCategoryCombo->addItem (TRANS ("AR Arpeggio "), 1);
+    c_presetCategoryCombo->addItem (TRANS ("AT Atmosphere"), 2);
+    c_presetCategoryCombo->addItem (TRANS ("BA Bass"), 3);
+    c_presetCategoryCombo->addItem (TRANS ("BR Brass "), 4);
+    c_presetCategoryCombo->addItem (TRANS ("BL Bell"), 5);
+    c_presetCategoryCombo->addItem (TRANS ("CH Chord"), 6);
+    c_presetCategoryCombo->addItem (TRANS ("DK Drum kit"), 7);
+    c_presetCategoryCombo->addItem (TRANS ("DR Drum"), 8);
+    c_presetCategoryCombo->addItem (TRANS ("DL Drum loop"), 9);
+    c_presetCategoryCombo->addItem (TRANS ("FX Effect"), 10);
+    c_presetCategoryCombo->addItem (TRANS ("GT Guitar"), 11);
+    c_presetCategoryCombo->addItem (TRANS ("IN Instrument"), 12);
+    c_presetCategoryCombo->addItem (TRANS ("KB Keyboard"), 13);
+    c_presetCategoryCombo->addItem (TRANS ("LD Lead"), 14);
+    c_presetCategoryCombo->addItem (TRANS ("MA Mallet"), 15);
+    c_presetCategoryCombo->addItem (TRANS ("OR Organ"), 16);
+    c_presetCategoryCombo->addItem (TRANS ("OC Orchestral"), 17);
+    c_presetCategoryCombo->addItem (TRANS ("PD Pad"), 18);
+    c_presetCategoryCombo->addItem (TRANS ("PN Piano"), 19);
+    c_presetCategoryCombo->addItem (TRANS ("PL Plucked"), 20);
+    c_presetCategoryCombo->addItem (TRANS ("RI Riser"), 21);
+    c_presetCategoryCombo->addItem (TRANS ("RD Reed"), 22);
+    c_presetCategoryCombo->addItem (TRANS ("ST String"), 23);
+    c_presetCategoryCombo->addItem (TRANS ("SY Synth"), 24);
+    c_presetCategoryCombo->addItem (TRANS ("SQ Sequence / Split"), 25);
+    c_presetCategoryCombo->addItem (TRANS ("TG Trancegate"), 26);
+    c_presetCategoryCombo->addItem (TRANS ("VC Vocal / Voice"), 27);
+    c_presetCategoryCombo->addItem (TRANS ("WW Woodwind"), 28);
     c_presetCategoryCombo->addListener (this);
 
     label11.reset (new juce::Label ("new label",
-                                    TRANS("SKIN")));
+                                    TRANS ("SKIN")));
     addAndMakeVisible (label11.get());
-    label11->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label11->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label11->setJustificationType (juce::Justification::centredRight);
     label11->setEditable (false, false, false);
     label11->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -320,22 +320,22 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
 
     c_uiThemeCombo.reset (new VASTComboBox ("c_uiThemeCombo"));
     addAndMakeVisible (c_uiThemeCombo.get());
-    c_uiThemeCombo->setTooltip (TRANS("Ui colour and display theme"));
+    c_uiThemeCombo->setTooltip (TRANS ("Ui colour and display theme"));
     c_uiThemeCombo->setExplicitFocusOrder (13);
     c_uiThemeCombo->setEditableText (false);
     c_uiThemeCombo->setJustificationType (juce::Justification::centredLeft);
     c_uiThemeCombo->setTextWhenNothingSelected (juce::String());
-    c_uiThemeCombo->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
-    c_uiThemeCombo->addItem (TRANS("Classic"), 1);
-    c_uiThemeCombo->addItem (TRANS("IceCubes"), 2);
-    c_uiThemeCombo->addItem (TRANS("BloodTech"), 3);
-    c_uiThemeCombo->addItem (TRANS("Dark"), 4);
+    c_uiThemeCombo->setTextWhenNoChoicesAvailable (TRANS ("(no choices)"));
+    c_uiThemeCombo->addItem (TRANS ("Classic"), 1);
+    c_uiThemeCombo->addItem (TRANS ("IceCubes"), 2);
+    c_uiThemeCombo->addItem (TRANS ("BloodTech"), 3);
+    c_uiThemeCombo->addItem (TRANS ("Dark"), 4);
     c_uiThemeCombo->addListener (this);
 
     label12.reset (new juce::Label ("new label",
-                                    TRANS("WAVET. MODE")));
+                                    TRANS ("WAVET. MODE")));
     addAndMakeVisible (label12.get());
-    label12->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label12->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label12->setJustificationType (juce::Justification::centredRight);
     label12->setEditable (false, false, false);
     label12->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -344,15 +344,15 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
 
     c_WTmode.reset (new VASTComboBox ("c_WTmode"));
     addAndMakeVisible (c_WTmode.get());
-    c_WTmode->setTooltip (TRANS("Wavetable frequency calculation mode - Sharp (ideal), Soft (butterworth), Dull (linear)"));
+    c_WTmode->setTooltip (TRANS ("Wavetable frequency calculation mode - Sharp (ideal), Soft (butterworth), Dull (linear)"));
     c_WTmode->setExplicitFocusOrder (16);
     c_WTmode->setEditableText (false);
     c_WTmode->setJustificationType (juce::Justification::centredLeft);
     c_WTmode->setTextWhenNothingSelected (juce::String());
-    c_WTmode->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
-    c_WTmode->addItem (TRANS("Sharp"), 1);
-    c_WTmode->addItem (TRANS("Soft"), 2);
-    c_WTmode->addItem (TRANS("Dull"), 3);
+    c_WTmode->setTextWhenNoChoicesAvailable (TRANS ("(no choices)"));
+    c_WTmode->addItem (TRANS ("Sharp"), 1);
+    c_WTmode->addItem (TRANS ("Soft"), 2);
+    c_WTmode->addItem (TRANS ("Dull"), 3);
     c_WTmode->addListener (this);
 
     c_iconMaximizeEditor.reset (new VASTDrawableButton ("c_iconMaximize", arrow_right_corner_svg, arrow_right_corner_svgSize, "Maximize area"));
@@ -360,9 +360,9 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     c_iconMaximizeEditor->setName ("c_iconMaximizeEditor");
 
     label14.reset (new juce::Label ("new label",
-                                    TRANS("DISABLE GFX")));
+                                    TRANS ("DISABLE GFX")));
     addAndMakeVisible (label14.get());
-    label14->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label14->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label14->setJustificationType (juce::Justification::centredRight);
     label14->setEditable (false, false, false);
     label14->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -371,15 +371,15 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
 
     c_disableGFX.reset (new juce::ToggleButton ("c_disableGFX"));
     addAndMakeVisible (c_disableGFX.get());
-    c_disableGFX->setTooltip (TRANS("Disable openGL graphics to improve performance on older systems (oscilloscope on top)"));
+    c_disableGFX->setTooltip (TRANS ("Disable openGL graphics to improve performance on older systems (oscilloscope on top)"));
     c_disableGFX->setExplicitFocusOrder (15);
     c_disableGFX->setButtonText (juce::String());
     c_disableGFX->addListener (this);
 
     label15.reset (new juce::Label ("new label",
-                                    TRANS("MPE MODE")));
+                                    TRANS ("MPE MODE")));
     addAndMakeVisible (label15.get());
-    label15->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label15->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label15->setJustificationType (juce::Justification::centredRight);
     label15->setEditable (false, false, false);
     label15->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -387,9 +387,9 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     label15->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label16.reset (new juce::Label ("new label",
-                                    TRANS("FONT SIZE")));
+                                    TRANS ("FONT SIZE")));
     addAndMakeVisible (label16.get());
-    label16->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label16->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label16->setJustificationType (juce::Justification::centredRight);
     label16->setEditable (false, false, false);
     label16->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -398,21 +398,21 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
 
     c_uiFontSize.reset (new VASTComboBox ("c_uiFontSize"));
     addAndMakeVisible (c_uiFontSize.get());
-    c_uiFontSize->setTooltip (TRANS("Font size"));
+    c_uiFontSize->setTooltip (TRANS ("Font size"));
     c_uiFontSize->setExplicitFocusOrder (14);
     c_uiFontSize->setEditableText (false);
     c_uiFontSize->setJustificationType (juce::Justification::centredLeft);
     c_uiFontSize->setTextWhenNothingSelected (juce::String());
-    c_uiFontSize->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
-    c_uiFontSize->addItem (TRANS("Normal"), 1);
-    c_uiFontSize->addItem (TRANS("Larger"), 2);
-    c_uiFontSize->addItem (TRANS("Smaller"), 3);
+    c_uiFontSize->setTextWhenNoChoicesAvailable (TRANS ("(no choices)"));
+    c_uiFontSize->addItem (TRANS ("Normal"), 1);
+    c_uiFontSize->addItem (TRANS ("Larger"), 2);
+    c_uiFontSize->addItem (TRANS ("Smaller"), 3);
     c_uiFontSize->addListener (this);
 
     label17.reset (new juce::Label ("new label",
-                                    TRANS("MPE PRESET")));
+                                    TRANS ("MPE PRESET")));
     addAndMakeVisible (label17.get());
-    label17->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label17->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label17->setJustificationType (juce::Justification::centredRight);
     label17->setEditable (false, false, false);
     label17->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -421,27 +421,27 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
 
     c_presetMPE.reset (new juce::ToggleButton ("c_presetMPE"));
     addAndMakeVisible (c_presetMPE.get());
-    c_presetMPE->setTooltip (TRANS("Enable MIDI Polyphonic Expression (MPE) mode for supported controllers for preset"));
+    c_presetMPE->setTooltip (TRANS ("Enable MIDI Polyphonic Expression (MPE) mode for supported controllers for preset"));
     c_presetMPE->setExplicitFocusOrder (6);
     c_presetMPE->setButtonText (juce::String());
     c_presetMPE->addListener (this);
 
     c_MPEmode.reset (new VASTComboBox ("c_MPEmode"));
     addAndMakeVisible (c_MPEmode.get());
-    c_MPEmode->setTooltip (TRANS("Enable MIDI Polyphonic Expression (MPE) mode for supported controllers always per default"));
+    c_MPEmode->setTooltip (TRANS ("Enable MIDI Polyphonic Expression (MPE) mode for supported controllers always per default"));
     c_MPEmode->setExplicitFocusOrder (17);
     c_MPEmode->setEditableText (false);
     c_MPEmode->setJustificationType (juce::Justification::centredLeft);
     c_MPEmode->setTextWhenNothingSelected (juce::String());
-    c_MPEmode->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
-    c_MPEmode->addItem (TRANS("From preset"), 1);
-    c_MPEmode->addItem (TRANS("Always on"), 2);
-    c_MPEmode->addItem (TRANS("Always off"), 3);
+    c_MPEmode->setTextWhenNoChoicesAvailable (TRANS ("(no choices)"));
+    c_MPEmode->addItem (TRANS ("From preset"), 1);
+    c_MPEmode->addItem (TRANS ("Always on"), 2);
+    c_MPEmode->addItem (TRANS ("Always off"), 3);
     c_MPEmode->addListener (this);
 
     c_presetBendRange.reset (new VASTSlider ("c_presetBendRange"));
     addAndMakeVisible (c_presetBendRange.get());
-    c_presetBendRange->setTooltip (TRANS("MPE pitch bend sensitivity"));
+    c_presetBendRange->setTooltip (TRANS ("MPE pitch bend sensitivity"));
     c_presetBendRange->setExplicitFocusOrder (7);
     c_presetBendRange->setRange (1, 96, 1);
     c_presetBendRange->setSliderStyle (juce::Slider::IncDecButtons);
@@ -449,9 +449,9 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     c_presetBendRange->addListener (this);
 
     label18.reset (new juce::Label ("new label",
-                                    TRANS("MPE BEND RANGE")));
+                                    TRANS ("MPE BEND RANGE")));
     addAndMakeVisible (label18.get());
-    label18->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label18->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label18->setJustificationType (juce::Justification::centredRight);
     label18->setEditable (false, false, false);
     label18->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -460,7 +460,7 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
 
     c_tuning.reset (new juce::TextEditor ("c_tuning"));
     addAndMakeVisible (c_tuning.get());
-    c_tuning->setTooltip (TRANS("AnaMark Tuning file (.TUN) for custom tuning"));
+    c_tuning->setTooltip (TRANS ("AnaMark Tuning file (.TUN) for custom tuning"));
     c_tuning->setMultiLine (false);
     c_tuning->setReturnKeyStartsNewLine (false);
     c_tuning->setReadOnly (true);
@@ -470,9 +470,9 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     c_tuning->setText (juce::String());
 
     label19.reset (new juce::Label ("new label",
-                                    TRANS("TUNING")));
+                                    TRANS ("TUNING")));
     addAndMakeVisible (label19.get());
-    label19->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label19->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label19->setJustificationType (juce::Justification::centredRight);
     label19->setEditable (false, false, false);
     label19->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -482,39 +482,86 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     c_tuningSelect.reset (new juce::TextButton ("c_tuningSelect"));
     addAndMakeVisible (c_tuningSelect.get());
     c_tuningSelect->setExplicitFocusOrder (18);
-    c_tuningSelect->setButtonText (TRANS("Select .TUN File"));
+    c_tuningSelect->setButtonText (TRANS ("Select .TUN File"));
     c_tuningSelect->addListener (this);
 
     c_tuningRemove.reset (new juce::TextButton ("c_tuningRemove"));
     addAndMakeVisible (c_tuningRemove.get());
-    c_tuningRemove->setExplicitFocusOrder (18);
-    c_tuningRemove->setButtonText (TRANS("Use Default Tuning"));
+    c_tuningRemove->setExplicitFocusOrder (19);
+    c_tuningRemove->setButtonText (TRANS ("Use Default Tuning"));
     c_tuningRemove->addListener (this);
 
     c_permaLink.reset (new VASTComboBox ("c_permaLink"));
     addAndMakeVisible (c_permaLink.get());
-    c_permaLink->setTooltip (TRANS("Permanently link Modulation Wheel to Custom Modulators"));
-    c_permaLink->setExplicitFocusOrder (16);
+    c_permaLink->setTooltip (TRANS ("Permanently link Modulation Wheel to Custom Modulators"));
+    c_permaLink->setExplicitFocusOrder (20);
     c_permaLink->setEditableText (false);
     c_permaLink->setJustificationType (juce::Justification::centredLeft);
     c_permaLink->setTextWhenNothingSelected (juce::String());
-    c_permaLink->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
-    c_permaLink->addItem (TRANS("---"), 1);
-    c_permaLink->addItem (TRANS("CUSTOM MODULATOR 1"), 2);
-    c_permaLink->addItem (TRANS("CUSTOM MODULATOR 2"), 3);
-    c_permaLink->addItem (TRANS("CUSTOM MODULATOR 3"), 4);
-    c_permaLink->addItem (TRANS("CUSTOM MODULATOR 4"), 5);
+    c_permaLink->setTextWhenNoChoicesAvailable (TRANS ("(no choices)"));
+    c_permaLink->addItem (TRANS ("---"), 1);
+    c_permaLink->addItem (TRANS ("CUSTOM MODULATOR 1"), 2);
+    c_permaLink->addItem (TRANS ("CUSTOM MODULATOR 2"), 3);
+    c_permaLink->addItem (TRANS ("CUSTOM MODULATOR 3"), 4);
+    c_permaLink->addItem (TRANS ("CUSTOM MODULATOR 4"), 5);
     c_permaLink->addListener (this);
 
     label20.reset (new juce::Label ("new label",
-                                    TRANS("MOD.WHEEL PERM.\n")));
+                                    TRANS ("MOD.WHEEL PERM.\n")));
     addAndMakeVisible (label20.get());
-    label20->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label20->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label20->setJustificationType (juce::Justification::centredRight);
     label20->setEditable (false, false, false);
     label20->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
     label20->setColour (juce::TextEditor::textColourId, juce::Colours::black);
     label20->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
+
+    c_midiKeyboardLayoutString.reset (new juce::TextEditor ("c_midiKeyboardLayoutString"));
+    addAndMakeVisible (c_midiKeyboardLayoutString.get());
+    c_midiKeyboardLayoutString->setTooltip (TRANS ("Plugin keyboard key mapping - keyboard characters starting from C, C#. D to B"));
+    c_midiKeyboardLayoutString->setExplicitFocusOrder (21);
+    c_midiKeyboardLayoutString->setMultiLine (false);
+    c_midiKeyboardLayoutString->setReturnKeyStartsNewLine (false);
+    c_midiKeyboardLayoutString->setReadOnly (false);
+    c_midiKeyboardLayoutString->setScrollbarsShown (false);
+    c_midiKeyboardLayoutString->setCaretVisible (true);
+    c_midiKeyboardLayoutString->setPopupMenuEnabled (true);
+    c_midiKeyboardLayoutString->setText (TRANS ("ysxdcvgbhnjq2w3er5t6z7"));
+
+    label21.reset (new juce::Label ("new label",
+                                    TRANS ("KEY LAYOUT")));
+    addAndMakeVisible (label21.get());
+    label21->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
+    label21->setJustificationType (juce::Justification::centredRight);
+    label21->setEditable (false, false, false);
+    label21->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
+    label21->setColour (juce::TextEditor::textColourId, juce::Colours::black);
+    label21->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
+
+    label22.reset (new juce::Label ("new label",
+                                    TRANS ("KEY BASE OCTAVE")));
+    addAndMakeVisible (label22.get());
+    label22->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
+    label22->setJustificationType (juce::Justification::centredRight);
+    label22->setEditable (false, false, false);
+    label22->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
+    label22->setColour (juce::TextEditor::textColourId, juce::Colours::black);
+    label22->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
+
+    c_midiKeyboardBaseOctave.reset (new VASTSlider ("c_midiKeyboardBaseOctave"));
+    addAndMakeVisible (c_midiKeyboardBaseOctave.get());
+    c_midiKeyboardBaseOctave->setTooltip (TRANS ("Plugin keyboard key mapping base octave - first char i c0, c1 ... c6"));
+    c_midiKeyboardBaseOctave->setExplicitFocusOrder (22);
+    c_midiKeyboardBaseOctave->setRange (-2, 8, 1);
+    c_midiKeyboardBaseOctave->setSliderStyle (juce::Slider::IncDecButtons);
+    c_midiKeyboardBaseOctave->setTextBoxStyle (juce::Slider::TextBoxLeft, false, 28, 20);
+    c_midiKeyboardBaseOctave->addListener (this);
+
+    c_midiKeyboardReset.reset (new juce::TextButton ("c_midiKeyboardReset"));
+    addAndMakeVisible (c_midiKeyboardReset.get());
+    c_midiKeyboardReset->setExplicitFocusOrder (23);
+    c_midiKeyboardReset->setButtonText (TRANS ("Use Default Mapping"));
+    c_midiKeyboardReset->addListener (this);
 
 
     //[UserPreSize]
@@ -529,6 +576,7 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
 	c_wavFolder->addListener(this);
 	c_pluginWidth->addListener(this);
 	c_pluginHeight->addListener(this);
+    c_midiKeyboardLayoutString->addListener(this);
 
     c_presetBendRange->setIncDecButtonsMode(Slider::incDecButtonsDraggable_Vertical);
     c_presetBendRange->setAudioProcessor(*myProcessor);
@@ -610,6 +658,11 @@ VASTPresetEditorComponent::~VASTPresetEditorComponent()
     c_tuningRemove = nullptr;
     c_permaLink = nullptr;
     label20 = nullptr;
+    c_midiKeyboardLayoutString = nullptr;
+    label21 = nullptr;
+    label22 = nullptr;
+    c_midiKeyboardBaseOctave = nullptr;
+    c_midiKeyboardReset = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -659,7 +712,7 @@ void VASTPresetEditorComponent::resized()
     c_presetAuthor->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.1861f), proportionOfWidth (0.3013f), proportionOfHeight (0.0244f));
     label4->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.1896f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
     c_presetName->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.0626f), proportionOfWidth (0.3038f), proportionOfHeight (0.0244f));
-    c_presetTag->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.1478f), proportionOfWidth (0.7813f), proportionOfHeight (0.0244f));
+    c_presetTag->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.1478f), proportionOfWidth (0.7812f), proportionOfHeight (0.0244f));
     label3->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.1513f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
     label2->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.1096f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
     label13->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.0661f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
@@ -678,30 +731,35 @@ void VASTPresetEditorComponent::resized()
     c_wavFolder->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.5026f), proportionOfWidth (0.3912f), proportionOfHeight (0.0244f));
     label6->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.5061f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
     c_folderWavSelect->setBounds (proportionOfWidth (0.6088f), proportionOfHeight (0.5026f), proportionOfWidth (0.1600f), proportionOfHeight (0.0244f));
-    c_presetComments->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.2243f), proportionOfWidth (0.7813f), proportionOfHeight (0.0244f));
+    c_presetComments->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.2243f), proportionOfWidth (0.7812f), proportionOfHeight (0.0244f));
     label10->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.2278f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
     c_presetCategoryCombo->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.1043f), proportionOfWidth (0.1313f), proportionOfHeight (0.0261f));
     label11->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.5965f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
     c_uiThemeCombo->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.5948f), proportionOfWidth (0.2300f), proportionOfHeight (0.0261f));
-    label12->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.7496f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
-    c_WTmode->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.7461f), proportionOfWidth (0.1313f), proportionOfHeight (0.0261f));
+    label12->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.7217f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
+    c_WTmode->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.7183f), proportionOfWidth (0.1313f), proportionOfHeight (0.0261f));
     c_iconMaximizeEditor->setBounds (getWidth() - 1 - proportionOfWidth (0.0150f), 1, proportionOfWidth (0.0150f), proportionOfHeight (0.0209f));
     label14->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.6730f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
     c_disableGFX->setBounds (proportionOfWidth (0.1650f), proportionOfHeight (0.6661f), proportionOfWidth (0.0213f), proportionOfHeight (0.0296f));
-    label15->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.7878f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
+    label15->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.7600f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
     label16->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.6348f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
     c_uiFontSize->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.6330f), proportionOfWidth (0.1313f), proportionOfHeight (0.0261f));
     label17->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.2748f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
     c_presetMPE->setBounds (proportionOfWidth (0.1650f), proportionOfHeight (0.2696f), proportionOfWidth (0.0213f), proportionOfHeight (0.0296f));
-    c_MPEmode->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.7826f), proportionOfWidth (0.1313f), proportionOfHeight (0.0261f));
+    c_MPEmode->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.7548f), proportionOfWidth (0.1313f), proportionOfHeight (0.0261f));
     c_presetBendRange->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.3078f), proportionOfWidth (0.0750f), proportionOfHeight (0.0313f));
     label18->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.3130f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
-    c_tuning->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.8522f), proportionOfWidth (0.3912f), proportionOfHeight (0.0244f));
-    label19->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.8539f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
-    c_tuningSelect->setBounds (proportionOfWidth (0.6088f), proportionOfHeight (0.8522f), proportionOfWidth (0.1600f), proportionOfHeight (0.0244f));
-    c_tuningRemove->setBounds (proportionOfWidth (0.7900f), proportionOfHeight (0.8522f), proportionOfWidth (0.1600f), proportionOfHeight (0.0244f));
-    c_permaLink->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.8904f), proportionOfWidth (0.2300f), proportionOfHeight (0.0261f));
-    label20->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.8956f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
+    c_tuning->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.8035f), proportionOfWidth (0.3912f), proportionOfHeight (0.0244f));
+    label19->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.8052f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
+    c_tuningSelect->setBounds (proportionOfWidth (0.6100f), proportionOfHeight (0.8070f), proportionOfWidth (0.1600f), proportionOfHeight (0.0244f));
+    c_tuningRemove->setBounds (proportionOfWidth (0.7900f), proportionOfHeight (0.8035f), proportionOfWidth (0.1600f), proportionOfHeight (0.0244f));
+    c_permaLink->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.8400f), proportionOfWidth (0.2300f), proportionOfHeight (0.0261f));
+    label20->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.8452f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
+    c_midiKeyboardLayoutString->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.8974f), proportionOfWidth (0.3912f), proportionOfHeight (0.0244f));
+    label21->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.8991f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
+    label22->setBounds (proportionOfWidth (0.0300f), proportionOfHeight (0.9391f), proportionOfWidth (0.1288f), proportionOfHeight (0.0191f));
+    c_midiKeyboardBaseOctave->setBounds (proportionOfWidth (0.1688f), proportionOfHeight (0.9339f), proportionOfWidth (0.0750f), proportionOfHeight (0.0313f));
+    c_midiKeyboardReset->setBounds (proportionOfWidth (0.7900f), proportionOfHeight (0.8974f), proportionOfWidth (0.1600f), proportionOfHeight (0.0244f));
     //[UserResized] Add your own custom resize handling here..
 	updateAll();
     //[/UserResized]
@@ -747,7 +805,7 @@ void VASTPresetEditorComponent::buttonClicked (juce::Button* buttonThatWasClicke
 
                 myProcessor->m_UserPresetRootFolder = chosenDirectory.getFullPathName();
                 myProcessor->writeSettingsToFile(); //not async
-                myProcessor->m_presetData.reloadPresetArray();
+                myProcessor->m_presetData.reloadPresetArray(false);
             }
 
             c_presetFolder->setText(myProcessor->m_UserPresetRootFolder, false);
@@ -874,6 +932,17 @@ void VASTPresetEditorComponent::buttonClicked (juce::Button* buttonThatWasClicke
         c_tuning->setText(myProcessor->m_UserTuningFile, false);
         //[/UserButtonCode_c_tuningRemove]
     }
+    else if (buttonThatWasClicked == c_midiKeyboardReset.get())
+    {
+        //[UserButtonCode_c_midiKeyboardReset] -- add your button handler code here..
+        myProcessor->setMidiKeyboardCharLayout("ysxdcvgbhnjq2w3er5t6z7"); //FL Studio setup
+        myProcessor->setMidiKeyboardBaseOctave(2); //FL Studio setup
+        myProcessor->writeSettingsToFile();
+        c_midiKeyboardLayoutString->setText(myProcessor->getMidiKeyboardCharLayout(), false);
+        c_midiKeyboardBaseOctave->setValue(myProcessor->getMidiKeyboardBaseOctave());
+
+        //[/UserButtonCode_c_midiKeyboardReset]
+    }
 
     //[UserbuttonClicked_Post]
     //[/UserbuttonClicked_Post]
@@ -962,8 +1031,16 @@ void VASTPresetEditorComponent::sliderValueChanged (juce::Slider* sliderThatWasM
         VASTPresetElement lElem = myProcessor->m_presetData.getCurPatchData();
         lElem.mpebendrange = c_presetBendRange->getValue();
         myProcessor->m_presetData.exchangeCurPatchData(lElem);
+        myProcessor->m_pVASTXperience.m_Poly.getSynthesizer()->initValues();
         myEditor->vaporizerComponent->updateAll();
         //[/UserSliderCode_c_presetBendRange]
+    }
+    else if (sliderThatWasMoved == c_midiKeyboardBaseOctave.get())
+    {
+        //[UserSliderCode_c_midiKeyboardBaseOctave] -- add your slider handling code here..
+        myProcessor->setMidiKeyboardBaseOctave(c_midiKeyboardBaseOctave->getValue());
+        myProcessor->writeSettingsToFile(); //not async
+        //[/UserSliderCode_c_midiKeyboardBaseOctave]
     }
 
     //[UsersliderValueChanged_Post]
@@ -1006,6 +1083,11 @@ void VASTPresetEditorComponent::textEditorTextChanged(TextEditor& textEditorThat
 	else if (&textEditorThatWasChanged == c_pluginHeight.get())
 	{
 	}
+    else if (&textEditorThatWasChanged == c_midiKeyboardLayoutString.get())
+    {
+        myProcessor->setMidiKeyboardCharLayout(c_midiKeyboardLayoutString->getText());
+        myProcessor->writeSettingsToFile(); //not async
+    }
 }
 
 void VASTPresetEditorComponent::updateAll() {
@@ -1035,6 +1117,9 @@ void VASTPresetEditorComponent::updateAll() {
 	c_presetComments->setText(myProcessor->m_presetData.getCurPatchData().comments, NotificationType::dontSendNotification);
     c_presetMPE->setToggleState(myProcessor->m_presetData.getCurPatchData().mpepreset, NotificationType::dontSendNotification);
     c_presetBendRange->setValue(myProcessor->m_presetData.getCurPatchData().mpebendrange, NotificationType::dontSendNotification);
+
+    c_midiKeyboardLayoutString->setText(myProcessor->getMidiKeyboardCharLayout(), NotificationType::dontSendNotification);
+    c_midiKeyboardBaseOctave->setValue(myProcessor->getMidiKeyboardBaseOctave(), NotificationType::dontSendNotification);
 
 	c_presetFolder->setText(myProcessor->m_UserPresetRootFolder, false);
 	c_wavetableFolder->setText(myProcessor->m_UserWavetableRootFolder, false);
@@ -1073,22 +1158,14 @@ void VASTPresetEditorComponent::updateAll() {
     c_tuning->applyFontToAllText(myEditor->getCurrentVASTLookAndFeel()->getTextEditorFont(*c_pluginHeight.get()));
     c_tuning->applyColourToAllText(myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colBoxText), true);
     c_tuning->setColour(TextEditor::backgroundColourId, myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colBoxTextBackground));
+    c_midiKeyboardLayoutString->applyFontToAllText(myEditor->getCurrentVASTLookAndFeel()->getTextEditorFont(*c_midiKeyboardLayoutString.get()));
+    c_midiKeyboardLayoutString->applyColourToAllText(myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colBoxText), true);
+    c_midiKeyboardLayoutString->setColour(TextEditor::backgroundColourId, myEditor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colBoxTextBackground));
 }
 
 void VASTPresetEditorComponent::lookAndFeelChanged() {
 	updateAll();
 	repaint();
-/*
-	c_presetTag->setLookAndFeel(myEditor->getCurrentVASTLookAndFeel());
-	c_presetAuthor->setLookAndFeel(myEditor->getCurrentVASTLookAndFeel());
-	c_presetComments->setLookAndFeel(myEditor->getCurrentVASTLookAndFeel());
-	c_presetName->setLookAndFeel(myEditor->getCurrentVASTLookAndFeel());
-	c_presetFolder->setLookAndFeel(myEditor->getCurrentVASTLookAndFeel());
-	c_wavetableFolder->setLookAndFeel(myEditor->getCurrentVASTLookAndFeel());
-	c_wavFolder->setLookAndFeel(myEditor->getCurrentVASTLookAndFeel());
-	c_pluginWidth->setLookAndFeel(myEditor->getCurrentVASTLookAndFeel());
-	c_pluginHeight->setLookAndFeel(myEditor->getCurrentVASTLookAndFeel());
-	*/
 }
 
 //[/MiscUserCode]
@@ -1241,12 +1318,12 @@ BEGIN_JUCER_METADATA
             items="Classic&#10;IceCubes&#10;BloodTech&#10;Dark" textWhenNonSelected=""
             textWhenNoItems="(no choices)"/>
   <LABEL name="new label" id="5c44d4c6bdd0b7a4" memberName="label12" virtualName=""
-         explicitFocusOrder="0" pos="3% 74.957% 12.875% 1.913%" textCol="ffe2e2e2"
+         explicitFocusOrder="0" pos="3% 72.174% 12.875% 1.913%" textCol="ffe2e2e2"
          edTextCol="ff000000" edBkgCol="0" labelText="WAVET. MODE" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Code Pro Demo"
          fontsize="11.0" kerning="0.0" bold="0" italic="0" justification="34"/>
   <COMBOBOX name="c_WTmode" id="e8666c43909ab931" memberName="c_WTmode" virtualName="VASTComboBox"
-            explicitFocusOrder="16" pos="16.875% 74.609% 13.125% 2.609%"
+            explicitFocusOrder="16" pos="16.875% 71.826% 13.125% 2.609%"
             tooltip="Wavetable frequency calculation mode - Sharp (ideal), Soft (butterworth), Dull (linear)"
             editable="0" layout="33" items="Sharp&#10;Soft&#10;Dull" textWhenNonSelected=""
             textWhenNoItems="(no choices)"/>
@@ -1264,7 +1341,7 @@ BEGIN_JUCER_METADATA
                 buttonText="" connectedEdges="0" needsCallback="1" radioGroupId="0"
                 state="0"/>
   <LABEL name="new label" id="531603d21f1ea7f2" memberName="label15" virtualName=""
-         explicitFocusOrder="0" pos="3% 78.783% 12.875% 1.913%" textCol="ffe2e2e2"
+         explicitFocusOrder="0" pos="3% 76% 12.875% 1.913%" textCol="ffe2e2e2"
          edTextCol="ff000000" edBkgCol="0" labelText="MPE MODE" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Code Pro Demo"
          fontsize="11.0" kerning="0.0" bold="0" italic="0" justification="34"/>
@@ -1288,7 +1365,7 @@ BEGIN_JUCER_METADATA
                 buttonText="" connectedEdges="0" needsCallback="1" radioGroupId="0"
                 state="0"/>
   <COMBOBOX name="c_MPEmode" id="b9dfd606cbcb0dff" memberName="c_MPEmode"
-            virtualName="VASTComboBox" explicitFocusOrder="17" pos="16.875% 78.261% 13.125% 2.609%"
+            virtualName="VASTComboBox" explicitFocusOrder="17" pos="16.875% 75.478% 13.125% 2.609%"
             tooltip="Enable MIDI Polyphonic Expression (MPE) mode for supported controllers always per default"
             editable="0" layout="33" items="From preset&#10;Always on&#10;Always off"
             textWhenNonSelected="" textWhenNoItems="(no choices)"/>
@@ -1304,33 +1381,59 @@ BEGIN_JUCER_METADATA
          fontname="Code Pro Demo" fontsize="11.0" kerning="0.0" bold="0"
          italic="0" justification="34"/>
   <TEXTEDITOR name="c_tuning" id="55645c16f0147aa6" memberName="c_tuning" virtualName=""
-              explicitFocusOrder="0" pos="16.875% 85.217% 39.125% 2.435%" tooltip="AnaMark Tuning file (.TUN) for custom tuning"
+              explicitFocusOrder="0" pos="16.875% 80.348% 39.125% 2.435%" tooltip="AnaMark Tuning file (.TUN) for custom tuning"
               initialText="" multiline="0" retKeyStartsLine="0" readonly="1"
               scrollbars="0" caret="0" popupmenu="1"/>
   <LABEL name="new label" id="639d4b3c348badbd" memberName="label19" virtualName=""
-         explicitFocusOrder="0" pos="3% 85.391% 12.875% 1.913%" textCol="ffe2e2e2"
+         explicitFocusOrder="0" pos="3% 80.522% 12.875% 1.913%" textCol="ffe2e2e2"
          edTextCol="ff000000" edBkgCol="0" labelText="TUNING" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Code Pro Demo"
          fontsize="11.0" kerning="0.0" bold="0" italic="0" justification="34"/>
   <TEXTBUTTON name="c_tuningSelect" id="226d55cecbcaa147" memberName="c_tuningSelect"
-              virtualName="" explicitFocusOrder="18" pos="60.875% 85.217% 16% 2.435%"
+              virtualName="" explicitFocusOrder="18" pos="61% 80.696% 16% 2.435%"
               buttonText="Select .TUN File" connectedEdges="0" needsCallback="1"
               radioGroupId="0"/>
   <TEXTBUTTON name="c_tuningRemove" id="2188ea1bfef98d5d" memberName="c_tuningRemove"
-              virtualName="" explicitFocusOrder="18" pos="79% 85.217% 16% 2.435%"
+              virtualName="" explicitFocusOrder="19" pos="79% 80.348% 16% 2.435%"
               buttonText="Use Default Tuning" connectedEdges="0" needsCallback="1"
               radioGroupId="0"/>
   <COMBOBOX name="c_permaLink" id="142ebf586a1b0644" memberName="c_permaLink"
-            virtualName="VASTComboBox" explicitFocusOrder="16" pos="16.875% 89.043% 23% 2.609%"
+            virtualName="VASTComboBox" explicitFocusOrder="20" pos="16.875% 84% 23% 2.609%"
             tooltip="Permanently link Modulation Wheel to Custom Modulators"
             editable="0" layout="33" items="---&#10;CUSTOM MODULATOR 1&#10;CUSTOM MODULATOR 2&#10;CUSTOM MODULATOR 3&#10;CUSTOM MODULATOR 4"
             textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <LABEL name="new label" id="9259004066f0bc20" memberName="label20" virtualName=""
-         explicitFocusOrder="0" pos="3% 89.565% 12.875% 1.913%" textCol="ffe2e2e2"
+         explicitFocusOrder="0" pos="3% 84.522% 12.875% 1.913%" textCol="ffe2e2e2"
          edTextCol="ff000000" edBkgCol="0" labelText="MOD.WHEEL PERM.&#10;"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Code Pro Demo" fontsize="11.0" kerning="0.0" bold="0"
          italic="0" justification="34"/>
+  <TEXTEDITOR name="c_midiKeyboardLayoutString" id="25b7f307c69ebaf9" memberName="c_midiKeyboardLayoutString"
+              virtualName="" explicitFocusOrder="21" pos="16.875% 89.739% 39.125% 2.435%"
+              tooltip="Plugin keyboard key mapping - keyboard characters starting from C, C#. D to B"
+              initialText="ysxdcvgbhnjq2w3er5t6z7" multiline="0" retKeyStartsLine="0"
+              readonly="0" scrollbars="0" caret="1" popupmenu="1"/>
+  <LABEL name="new label" id="4dff46d8d041bc9a" memberName="label21" virtualName=""
+         explicitFocusOrder="0" pos="3% 89.913% 12.875% 1.913%" textCol="ffe2e2e2"
+         edTextCol="ff000000" edBkgCol="0" labelText="KEY LAYOUT" editableSingleClick="0"
+         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Code Pro Demo"
+         fontsize="11.0" kerning="0.0" bold="0" italic="0" justification="34"/>
+  <LABEL name="new label" id="f2af8fec7da01aed" memberName="label22" virtualName=""
+         explicitFocusOrder="0" pos="3% 93.913% 12.875% 1.913%" textCol="ffe2e2e2"
+         edTextCol="ff000000" edBkgCol="0" labelText="KEY BASE OCTAVE"
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Code Pro Demo" fontsize="11.0" kerning="0.0" bold="0"
+         italic="0" justification="34"/>
+  <SLIDER name="c_midiKeyboardBaseOctave" id="a9346c3f240ff960" memberName="c_midiKeyboardBaseOctave"
+          virtualName="VASTSlider" explicitFocusOrder="22" pos="16.875% 93.391% 7.5% 3.13%"
+          tooltip="Plugin keyboard key mapping base octave - first char i c0, c1 ... c6"
+          min="-2.0" max="8.0" int="1.0" style="IncDecButtons" textBoxPos="TextBoxLeft"
+          textBoxEditable="1" textBoxWidth="28" textBoxHeight="20" skewFactor="1.0"
+          needsCallback="1"/>
+  <TEXTBUTTON name="c_midiKeyboardReset" id="e92f00152d4fb412" memberName="c_midiKeyboardReset"
+              virtualName="" explicitFocusOrder="23" pos="79% 89.739% 16% 2.435%"
+              buttonText="Use Default Mapping" connectedEdges="0" needsCallback="1"
+              radioGroupId="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

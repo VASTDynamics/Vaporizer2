@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 6.0.1
+  Created with Projucer version: 7.0.9
 
   ------------------------------------------------------------------------------
 
@@ -357,7 +357,7 @@ void VASTValueTreeItem::itemDropped(const DragAndDropTarget::SourceDetails &drag
 			}
 		}
 		String thisID = this->getID();
-		String parentID = ((VASTValueTreeItem*)this->getParentItem())->getID();		
+		String parentID = ((VASTValueTreeItem*)this->getParentItem())->getID();
 		if (thisID == "midimapping") {
 			int bankFrom = 0;
 			if (dragSourceDetails.description.toString().startsWith("midimappreseta"))
@@ -403,7 +403,7 @@ void VASTValueTreeItem::itemDropped(const DragAndDropTarget::SourceDetails &drag
 				bankFrom = 3;
 			if (thisID == "midibanka") {
 				_presetComponent->myProcessor->m_presetData.moveProgramChangeData(bankFrom, 0, pos, insertIndex);
-			} 
+			}
 			else if (thisID == "midibankb") {
 				_presetComponent->myProcessor->m_presetData.moveProgramChangeData(bankFrom, 1, pos, insertIndex);
 			}
@@ -604,7 +604,7 @@ VASTPresetComponent::VASTPresetComponent (VASTAudioProcessor* proc, ComboBox* bo
 
     m_searchText.reset (new juce::TextEditor ("m_searchText"));
     addAndMakeVisible (m_searchText.get());
-    m_searchText->setTooltip (TRANS("Enter search text to search all preset attributes"));
+    m_searchText->setTooltip (TRANS ("Enter search text to search all preset attributes"));
     m_searchText->setMultiLine (false);
     m_searchText->setReturnKeyStartsNewLine (false);
     m_searchText->setReadOnly (false);
@@ -619,9 +619,9 @@ VASTPresetComponent::VASTPresetComponent (VASTAudioProcessor* proc, ComboBox* bo
     m_searchText->setText (juce::String());
 
     label.reset (new juce::Label ("new label",
-                                  TRANS("PRESET BROWSER")));
+                                  TRANS ("PRESET BROWSER")));
     addAndMakeVisible (label.get());
-    label->setFont (juce::Font ("Code Pro Demo", 12.00f, juce::Font::bold));
+    label->setFont (juce::Font ("Code Pro Demo", 12.00f, juce::Font::plain).withTypefaceStyle ("Bold"));
     label->setJustificationType (juce::Justification::centredLeft);
     label->setEditable (false, false, false);
     label->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -630,16 +630,16 @@ VASTPresetComponent::VASTPresetComponent (VASTAudioProcessor* proc, ComboBox* bo
 
     c_clearFilter.reset (new juce::TextButton ("c_clearFilter"));
     addAndMakeVisible (c_clearFilter.get());
-    c_clearFilter->setButtonText (TRANS("Clear Filter"));
+    c_clearFilter->setButtonText (TRANS ("Clear Filter"));
     c_clearFilter->addListener (this);
 
     c_close.reset (new juce::TextButton ("c_close"));
     addAndMakeVisible (c_close.get());
-    c_close->setButtonText (TRANS("Close"));
+    c_close->setButtonText (TRANS ("Close"));
     c_close->addListener (this);
 
     label2.reset (new juce::Label ("new label",
-                                   TRANS("Search Filter")));
+                                   TRANS ("Search Filter")));
     addAndMakeVisible (label2.get());
     label2->setFont (juce::Font ("Code Pro Demo", 12.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label2->setJustificationType (juce::Justification::centredRight);
@@ -688,14 +688,7 @@ VASTPresetComponent::VASTPresetComponent (VASTAudioProcessor* proc, ComboBox* bo
     addAndMakeVisible (c_treeheader4.get());
     c_treeheader4->setName ("c_treeheader4");
 
-    auto asyncImageLoad = [p = juce::Component::SafePointer<VASTPresetComponent> (this)]()
-    {
-        if (p) {
-            p->m_folderImg = Drawable::createFromImageData(p->folder_fill_svg, p->folder_fill_svgSize);
-        }
-    };
-    Timer::callAfterDelay (200, asyncImageLoad);
-    
+
     //[UserPreSize]
 	m_searchText->addListener(this);
 	getTopLevelComponent()->addKeyListener(this);
@@ -851,7 +844,7 @@ void VASTPresetComponent::clearFilter() {
 }
 
 void VASTPresetComponent::reloadPresets() {
-	myProcessor->m_presetData.reloadPresetArray();
+	myProcessor->m_presetData.reloadPresetArray(false);
 	setSearchVector();
 }
 
@@ -1121,6 +1114,7 @@ void VASTPresetComponent::updateAll() {
 	lookAndFeelChanged(); //is in there: m_preset_table_component->updateContent();
 	//setSearchVector();
 	repaint();
+
 }
 
 void VASTPresetComponent::lookAndFeelChanged() {

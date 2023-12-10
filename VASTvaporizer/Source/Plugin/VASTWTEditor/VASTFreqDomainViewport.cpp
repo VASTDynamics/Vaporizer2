@@ -106,8 +106,8 @@ void VASTFreqDomainViewport::updateContent(bool force) {
 	if (!myWtEditor->getEditorView()->c_viewportFreqDomain) return;
 
 	if (!(force || m_dirty))
-		if (!(myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->getOscBank()]->getAndClearSoftChangedFlagFdv())) 
-		//		if (!(myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->getOscBank()]->getAndClearSoftChangedFlagFdv() || myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->getOscBank()]->isChanged())) 
+		if (!(myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->getOscBank()].getAndClearSoftChangedFlagFdv())) 
+		//		if (!(myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->getOscBank()].getAndClearSoftChangedFlagFdv() || myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->getOscBank()].isChanged())) 
 			return;
 	m_dirty = false;
 
@@ -262,8 +262,8 @@ void VASTFreqDomainViewport::adjustFreqDomainInternalThreaded(std::vector<sFreqD
     if (myWtEditor->numFreqThreads.load() > 0) return; //just ignore if other thread is running
     
     myWtEditor->numFreqThreads+=1;
-	myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->addSoftFadeEditor();
-	std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->getSoftOrCopyWavetable(); //check!
+	myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].addSoftFadeEditor();
+	std::shared_ptr<CVASTWaveTable> wavetable = myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].getSoftOrCopyWavetable(); //check!
 
 	//std::shared_ptr<CVASTWaveTable> wavetable = myWtEditor->getBankWavetable();
 	//myWtEditor->setCurWavetable(wavetable); //make a copy
@@ -274,8 +274,8 @@ void VASTFreqDomainViewport::adjustFreqDomainInternalThreaded(std::vector<sFreqD
 		wavetable->setFreqDomainTables(domainBufferPos.wtPos, &domainBufferPos.domainBuffer, true, clipBins, myProcessor->getWTmode());
 	}
 
-	myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->getOscBank()]->setWavetableSoftFade(wavetable);
-	myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank]->removeSoftFadeEditor();
+	myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->getOscBank()].setWavetableSoftFade(wavetable);
+	myProcessor->m_pVASTXperience.m_Poly.m_OscBank[myWtEditor->m_bank].removeSoftFadeEditor();
     myWtEditor->numFreqThreads-=1;
 }
 

@@ -11,23 +11,20 @@ VAST Dynamics Audio Software (TM)
 #include "VASTEngineHeader.h"
 #include "VASTSampler.h"
 #include "VASTSynthesiser.h"
+#include "../Plugin/VASTAudioProcessor.h"
 
 //for debug info
 #include <iostream>
 #include <fstream>
 #include <string>
 CVASTPoly::CVASTPoly(CVASTSettings& set, VASTAudioProcessor* processor) :
-	m_Set(&set), myProcessor(processor), 
+	m_Set(&set), myProcessor(processor),
 	m_StepSeq_Envelope{ {set, set.m_StepSeqData[0], set.m_StepSeqData_changed[0], 0, 0, 0},
 						{set, set.m_StepSeqData[1], set.m_StepSeqData_changed[1], 0, 0, 1},
 						{set, set.m_StepSeqData[2], set.m_StepSeqData_changed[2], 0, 0, 2} },
-	m_global_LFO_Osc{ {set, nullptr}, {set, nullptr}, {set, nullptr}, {set, nullptr}, {set, nullptr} }
+	m_global_LFO_Osc{ {set, nullptr}, {set, nullptr}, {set, nullptr}, {set, nullptr}, {set, nullptr} },
+	m_OscBank{ {&set, processor, 0}, {&set, processor, 1}, {&set, processor, 2}, {&set, processor, 3} }
 {
-	for (int i = 0; i < 4; i++) {
-		CVASTOscillatorBank* bank = new CVASTOscillatorBank(m_Set, myProcessor, i);
-		m_OscBank.add(bank);
-	}
-
 	//qfilter  init only once due to memory allocation
 	m_QFilter.initQuadFilter(m_Set);
 }
@@ -49,11 +46,18 @@ void CVASTPoly::init() {
         m_QFilter.m_bInitFilterAfterMaxPolyChange[2].store(true);
     }
     
-	m_OscillatorSynthesizer.init(m_Set, this);
+	m_OscillatorSynthesizer.init();
     if (m_lastInitPoly.load() > m_Set->m_uMaxPoly) {
         for (int i = C_MAX_POLY - 1; i >= m_Set->m_uMaxPoly; i--) {
-            m_OscillatorSynthesizer.removeVoice(i);
-            m_singleNote[i] = nullptr; //release old voices
+			if (myProcessor->lockedAndSafeToDoDeallocatios()) { //safety check
+				m_OscillatorSynthesizer.removeVoice(i);
+				m_singleNote[i] = nullptr; //release old voices
+				VDBG("CVASTPoly::init Old voice released " << i);
+			}
+			else {
+				myProcessor->setErrorState(myProcessor->vastErrorState::errorState26_maxPolyNotSet); //when this happens, there will be more voices than max poly im synthesizer
+				vassertfalse;
+			}
         }
     }
 
@@ -131,7 +135,7 @@ void CVASTPoly::releaseResources() {
 void CVASTPoly::prepareForPlay() {
 	//executed multiple
 	for (int bank = 0; bank < 4; bank++) {
-		m_OscBank[bank]->prepareForPlay(m_Set->m_nExpectedSamplesPerBlock);
+		m_OscBank[bank].prepareForPlay(m_Set->m_nExpectedSamplesPerBlock);
 	}
 	for (int i = 0; i < m_Set->m_uMaxPoly; i++) { //check if things duplicated here
 		if (m_singleNote[i] != nullptr) { //can happen when thread is updating
@@ -248,7 +252,7 @@ void CVASTPoly::stopAllNotes(bool allowTailOff) {
 bool CVASTPoly::voicesMSEGStillActive() {
 	for (int i = 0; i < m_Set->m_uMaxPoly; i++) {
         if (m_singleNote[i]!=nullptr) //can happen when thread is updating
-            if (m_singleNote[i]->m_VCA->isActive()) return true;
+            if (m_singleNote[i]->m_VCA.isActive()) return true;
 	}
 	return false;
 }
@@ -317,8 +321,8 @@ void CVASTPoly::updateLFO(int lfono) {
 			if (*m_Set->m_State->m_bLFOPerVoice_LFO1 == static_cast<int>(SWITCH::SWITCH_ON)) {
 				for (int i = 0; i < m_Set->m_uMaxPoly; i++) {
 					if (m_singleNote[i] != nullptr) { //can happen when thread is updating
-						m_singleNote[i]->m_LFO_Osc[0]->updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO1), 1, 0, 0, 0);
-						m_singleNote[i]->m_LFO_Osc[0]->startLFOFrequency(1000.f / l_fIntervalTime, 0); //lfono 0
+						m_singleNote[i]->m_LFO_Osc[0].updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO1), 1, 0, 0, 0);
+						m_singleNote[i]->m_LFO_Osc[0].startLFOFrequency(1000.f / l_fIntervalTime, 0); //lfono 0
 					}
 				}
 			}
@@ -331,8 +335,8 @@ void CVASTPoly::updateLFO(int lfono) {
 			if (*m_Set->m_State->m_bLFOPerVoice_LFO1 == static_cast<int>(SWITCH::SWITCH_ON)) {
 				for (int i = 0; i < m_Set->m_uMaxPoly; i++) {
 					if (m_singleNote[i] != nullptr) { //can happen when thread is updating
-						m_singleNote[i]->m_LFO_Osc[0]->updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO1), 1, 0, 0, 0);
-						m_singleNote[i]->m_LFO_Osc[0]->startLFOFrequency(*m_Set->m_State->m_fLFOFreq_LFO1, 0); //lfono 0
+						m_singleNote[i]->m_LFO_Osc[0].updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO1), 1, 0, 0, 0);
+						m_singleNote[i]->m_LFO_Osc[0].startLFOFrequency(*m_Set->m_State->m_fLFOFreq_LFO1, 0); //lfono 0
 					}
 				}
 			}
@@ -350,8 +354,8 @@ void CVASTPoly::updateLFO(int lfono) {
 			if (*m_Set->m_State->m_bLFOPerVoice_LFO2 == static_cast<int>(SWITCH::SWITCH_ON)) {
 				for (int i = 0; i < m_Set->m_uMaxPoly; i++) {
 					if (m_singleNote[i] != nullptr) { //can happen when thread is updating
-						m_singleNote[i]->m_LFO_Osc[1]->updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO2), 1, 0, 0, 0);
-						m_singleNote[i]->m_LFO_Osc[1]->startLFOFrequency(1000.f / l_fIntervalTime, 1); //lfono 1
+						m_singleNote[i]->m_LFO_Osc[1].updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO2), 1, 0, 0, 0);
+						m_singleNote[i]->m_LFO_Osc[1].startLFOFrequency(1000.f / l_fIntervalTime, 1); //lfono 1
 					}
 				}
 			}
@@ -364,8 +368,8 @@ void CVASTPoly::updateLFO(int lfono) {
 			if (*m_Set->m_State->m_bLFOPerVoice_LFO2 == static_cast<int>(SWITCH::SWITCH_ON)) {
 				for (int i = 0; i < m_Set->m_uMaxPoly; i++) {
 					if (m_singleNote[i] != nullptr) { //can happen when thread is updating
-						m_singleNote[i]->m_LFO_Osc[1]->updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO2), 1, 0, 0, 0);
-						m_singleNote[i]->m_LFO_Osc[1]->startLFOFrequency(*m_Set->m_State->m_fLFOFreq_LFO2, 1); //lfono 1
+						m_singleNote[i]->m_LFO_Osc[1].updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO2), 1, 0, 0, 0);
+						m_singleNote[i]->m_LFO_Osc[1].startLFOFrequency(*m_Set->m_State->m_fLFOFreq_LFO2, 1); //lfono 1
 					}
 				}
 			}
@@ -383,8 +387,8 @@ void CVASTPoly::updateLFO(int lfono) {
 			if (*m_Set->m_State->m_bLFOPerVoice_LFO3 == static_cast<int>(SWITCH::SWITCH_ON)) {
 				for (int i = 0; i < m_Set->m_uMaxPoly; i++) {
 					if (m_singleNote[i] != nullptr) { //can happen when thread is updating
-						m_singleNote[i]->m_LFO_Osc[2]->updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO3), 1, 0, 0, 0);
-						m_singleNote[i]->m_LFO_Osc[2]->startLFOFrequency(1000.f / l_fIntervalTime, 2); //lfono 2
+						m_singleNote[i]->m_LFO_Osc[2].updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO3), 1, 0, 0, 0);
+						m_singleNote[i]->m_LFO_Osc[2].startLFOFrequency(1000.f / l_fIntervalTime, 2); //lfono 2
 					}
 				}
 			}
@@ -397,8 +401,8 @@ void CVASTPoly::updateLFO(int lfono) {
 			if (*m_Set->m_State->m_bLFOPerVoice_LFO3 == static_cast<int>(SWITCH::SWITCH_ON)) {
 				for (int i = 0; i < m_Set->m_uMaxPoly; i++) {
 					if (m_singleNote[i] != nullptr) { //can happen when thread is updating
-						m_singleNote[i]->m_LFO_Osc[2]->updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO3), 1, 0, 0, 0);
-						m_singleNote[i]->m_LFO_Osc[2]->startLFOFrequency(*m_Set->m_State->m_fLFOFreq_LFO3, 2); //lfono 2
+						m_singleNote[i]->m_LFO_Osc[2].updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO3), 1, 0, 0, 0);
+						m_singleNote[i]->m_LFO_Osc[2].startLFOFrequency(*m_Set->m_State->m_fLFOFreq_LFO3, 2); //lfono 2
 					}
 				}
 			}
@@ -416,8 +420,8 @@ void CVASTPoly::updateLFO(int lfono) {
 			if (*m_Set->m_State->m_bLFOPerVoice_LFO4 == static_cast<int>(SWITCH::SWITCH_ON)) {
 				for (int i = 0; i < m_Set->m_uMaxPoly; i++) {
 					if (m_singleNote[i] != nullptr) { //can happen when thread is updating
-						m_singleNote[i]->m_LFO_Osc[3]->updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO4), 1, 0, 0, 0);
-						m_singleNote[i]->m_LFO_Osc[3]->startLFOFrequency(1000.f / l_fIntervalTime, 3); //lfono 3
+						m_singleNote[i]->m_LFO_Osc[3].updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO4), 1, 0, 0, 0);
+						m_singleNote[i]->m_LFO_Osc[3].startLFOFrequency(1000.f / l_fIntervalTime, 3); //lfono 3
 					}
 				}
 			}
@@ -430,8 +434,8 @@ void CVASTPoly::updateLFO(int lfono) {
 			if (*m_Set->m_State->m_bLFOPerVoice_LFO4 == static_cast<int>(SWITCH::SWITCH_ON)) {
 				for (int i = 0; i < m_Set->m_uMaxPoly; i++) {
 					if (m_singleNote[i] != nullptr) { //can happen when thread is updating
-						m_singleNote[i]->m_LFO_Osc[3]->updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO4), 1, 0, 0, 0);
-						m_singleNote[i]->m_LFO_Osc[3]->startLFOFrequency(*m_Set->m_State->m_fLFOFreq_LFO4, 3); //lfono 2
+						m_singleNote[i]->m_LFO_Osc[3].updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO4), 1, 0, 0, 0);
+						m_singleNote[i]->m_LFO_Osc[3].startLFOFrequency(*m_Set->m_State->m_fLFOFreq_LFO4, 3); //lfono 2
 					}
 				}
 			}
@@ -449,8 +453,8 @@ void CVASTPoly::updateLFO(int lfono) {
 			if (*m_Set->m_State->m_bLFOPerVoice_LFO5 == static_cast<int>(SWITCH::SWITCH_ON)) {
 				for (int i = 0; i < m_Set->m_uMaxPoly; i++) {
 					if (m_singleNote[i] != nullptr) { //can happen when thread is updating
-						m_singleNote[i]->m_LFO_Osc[4]->updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO5), 1, 0, 0, 0);
-						m_singleNote[i]->m_LFO_Osc[4]->startLFOFrequency(1000.f / l_fIntervalTime, 4); //lfono 4
+						m_singleNote[i]->m_LFO_Osc[4].updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO5), 1, 0, 0, 0);
+						m_singleNote[i]->m_LFO_Osc[4].startLFOFrequency(1000.f / l_fIntervalTime, 4); //lfono 4
 					}
 				}
 			}
@@ -463,8 +467,8 @@ void CVASTPoly::updateLFO(int lfono) {
 			if (*m_Set->m_State->m_bLFOPerVoice_LFO5 == static_cast<int>(SWITCH::SWITCH_ON)) {
 				for (int i = 0; i < m_Set->m_uMaxPoly; i++) {
 					if (m_singleNote[i] != nullptr) { //can happen when thread is updating
-						m_singleNote[i]->m_LFO_Osc[4]->updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO5), 1, 0, 0, 0);
-						m_singleNote[i]->m_LFO_Osc[4]->startLFOFrequency(*m_Set->m_State->m_fLFOFreq_LFO5, 2); //lfono 4
+						m_singleNote[i]->m_LFO_Osc[4].updateMainVariables(m_Set->m_nSampleRate, static_cast<int>(*m_Set->m_State->m_uLFOWave_LFO5), 1, 0, 0, 0);
+						m_singleNote[i]->m_LFO_Osc[4].startLFOFrequency(*m_Set->m_State->m_fLFOFreq_LFO5, 2); //lfono 4
 					}
 				}
 			}
@@ -483,15 +487,7 @@ void CVASTPoly::resynchLFO() {
 	#define FREERUN_LFO_RETRIGGER_RESET 1000 //1s
 
 	if (*m_Set->m_State->m_bLFORetrigOnOff_LFO1 == static_cast<int>(SWITCH::SWITCH_ON)) {
-		if (*m_Set->m_State->m_bLFOPerVoice_LFO1 == static_cast<int>(SWITCH::SWITCH_ON)) {
-			/*
-			for (int i = 0; i < m_Set->m_uMaxPoly; i++) {
-				m_singleNote[i]->m_LFO_Osc[0].resynch(true);
-			}
-			*/
-			//done in single note note on now
-		}
-		else {
+		if (!(*m_Set->m_State->m_bLFOPerVoice_LFO1 == static_cast<int>(SWITCH::SWITCH_ON))) {
 			m_global_LFO_Osc[0].resynchWithFade(true);
 		}
 	}
@@ -511,15 +507,7 @@ void CVASTPoly::resynchLFO() {
 	}
 
 	if (*m_Set->m_State->m_bLFORetrigOnOff_LFO2 == static_cast<int>(SWITCH::SWITCH_ON)) {
-		if (*m_Set->m_State->m_bLFOPerVoice_LFO2 == static_cast<int>(SWITCH::SWITCH_ON)) {
-			/*
-			for (int i = 0; i < m_Set->m_uMaxPoly; i++) {
-				m_singleNote[i]->m_LFO_Osc[1].resynch(true);
-			}
-			*/
-			//done in single note note on now
-		}
-		else {
+		if (!(*m_Set->m_State->m_bLFOPerVoice_LFO2 == static_cast<int>(SWITCH::SWITCH_ON))) {
 			m_global_LFO_Osc[1].resynchWithFade(true);
 		}
 	}
@@ -539,16 +527,7 @@ void CVASTPoly::resynchLFO() {
 	}
 
 	if (*m_Set->m_State->m_bLFORetrigOnOff_LFO3 == static_cast<int>(SWITCH::SWITCH_ON)) {
-		if (*m_Set->m_State->m_bLFOPerVoice_LFO3 == static_cast<int>(SWITCH::SWITCH_ON)) {
-			/*
-			for (int i = 0; i < m_Set->m_uMaxPoly; i++) {
-				m_singleNote[i]->m_LFO_Osc[2].resynch(true);
-			}
-			*/
-			//done in single note note on now
-
-		}
-		else {
+		if (!(*m_Set->m_State->m_bLFOPerVoice_LFO3 == static_cast<int>(SWITCH::SWITCH_ON))) {
 			m_global_LFO_Osc[2].resynchWithFade(true);
 		}
 	}
@@ -568,16 +547,7 @@ void CVASTPoly::resynchLFO() {
 	}
 
 	if (*m_Set->m_State->m_bLFORetrigOnOff_LFO4 == static_cast<int>(SWITCH::SWITCH_ON)) {
-		if (*m_Set->m_State->m_bLFOPerVoice_LFO4 == static_cast<int>(SWITCH::SWITCH_ON)) {
-			/*
-			for (int i = 0; i < m_Set->m_uMaxPoly; i++) {
-			m_singleNote[i]->m_LFO_Osc[3].resynch(true);
-			}
-			*/
-			//done in single note note on now
-
-		}
-		else {
+		if (!(*m_Set->m_State->m_bLFOPerVoice_LFO4 == static_cast<int>(SWITCH::SWITCH_ON))) {
 			m_global_LFO_Osc[3].resynchWithFade(true);
 		}
 	}
@@ -597,16 +567,7 @@ void CVASTPoly::resynchLFO() {
 	}
 
 	if (*m_Set->m_State->m_bLFORetrigOnOff_LFO5 == static_cast<int>(SWITCH::SWITCH_ON)) {
-		if (*m_Set->m_State->m_bLFOPerVoice_LFO5 == static_cast<int>(SWITCH::SWITCH_ON)) {
-			/*
-			for (int i = 0; i < m_Set->m_uMaxPoly; i++) {
-			m_singleNote[i]->m_LFO_Osc[4].resynch(true);
-			}
-			*/
-			//done in single note note on now
-
-		}
-		else {
+		if (!(*m_Set->m_State->m_bLFOPerVoice_LFO5 == static_cast<int>(SWITCH::SWITCH_ON))) {
 			m_global_LFO_Osc[4].resynchWithFade(true);
 		}
 	}

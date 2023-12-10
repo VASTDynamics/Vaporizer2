@@ -22,6 +22,9 @@ class CVASTPoly
 	friend class CVASTXperience;
 	friend class CVASTSingleNote;
 
+private:
+    VASTAudioProcessor* myProcessor; //at top due to initializers list
+    
 public:
 	CVASTPoly(CVASTSettings& set, VASTAudioProcessor* processor);
 
@@ -53,8 +56,7 @@ public:
 
 	VASTQFilter m_QFilter;
 
-	//std::vector<std::shared_ptr<CVASTOscillatorBank>> m_OscBank;
-	OwnedArray<CVASTOscillatorBank> m_OscBank;
+	CVASTOscillatorBank m_OscBank[4];
 
 	VASTSynthesiser* getSynthesizer();
 	VASTSynthesiserSound* getSynthSound();
@@ -88,8 +90,6 @@ public:
 	SortedSet<int> m_ARP_midiInNotes;
 
 private:
-	VASTAudioProcessor* myProcessor;
-
 	CVASTSingleNote* m_singleNote[C_MAX_POLY]; //pointer since it will be stored as voices in synthesiers ownned array // must not be accessed directly from the UI, not thread safe
 
 	/** This is used to control access to the rendering callback and the note trigger methods. */

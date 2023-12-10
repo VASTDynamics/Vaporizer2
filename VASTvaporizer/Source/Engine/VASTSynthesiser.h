@@ -281,9 +281,7 @@ public:
 	virtual ~VASTSynthesiser();
 
 	//CHVAST
-	void init(CVASTSettings* set, CVASTPoly* poly) {
-		m_Poly = poly;
-		m_Set = set;
+	void init() {
 		initValues();
 	}
 
@@ -546,13 +544,17 @@ public:
 		return m_midiNotesNumKeyDown; 
 	};
 
+	LinearSmoothedValue<float> m_fPitchBendZone_smoothed[C_MAX_POLY]; //have to be 32 midi channels for MPE voices
+	LinearSmoothedValue<float> m_fModWheel_smoothed[C_MAX_POLY]; //have to be 32 midi channels for MPE voices
+
 	atomic<int> m_numVoicesPlaying = 0;
 	atomic<int> m_numOscsPlaying = 0;
 	atomic<bool> m_voicePlaying[C_MAX_POLY];
 
 	int m_MPEMasterChannel = 1; //TODO MPE config messages
 		/** The last pitch-wheel values for each midi channel. */
-	atomic<int> lastPitchWheelValues[16];
+	atomic<int> lastPitchWheelValues[C_MAX_POLY]{}; //have to be 32 midi channels for MPE voices
+	atomic<int> lastPitchWheelUIValue = 0x2000;
 
 protected:
 	//==============================================================================
@@ -648,8 +650,8 @@ private:
 	CVASTSettings* m_Set = nullptr;
 	CVASTPoly* m_Poly = nullptr;
 	VASTAudioProcessor* myProcessor = nullptr;
-	uint8 lastPressureLowerBitReceivedOnChannel[16];
-	MPEValue lastTimbreReceivedOnChannel[16];	
+	uint8 lastPressureLowerBitReceivedOnChannel[C_MAX_POLY]; //have to be 32 midi channels for MPE voices
+	MPEValue lastTimbreReceivedOnChannel[C_MAX_POLY]; //have to be 32 midi channels for MPE voices
 
 #if JUCE_CATCH_DEPRECATED_CODE_MISUSE
 	// Note the new parameters for these methods.

@@ -27,7 +27,6 @@ CVASTSettings::CVASTSettings(VASTAudioProcessor* processor) : my_processor(proce
 	m_bWriteDebug = false;
 	m_bShallDump = false;
 	m_fPitchBend = 1.0f; //middle
-
 	CVASTSettings::loadCustomFonts();
 	
 	modMatrixInputState l_inputState{ 0, 0 };
