@@ -147,6 +147,10 @@ void VASTSynthesiser::setCurrentPlaybackSampleRate(const double newRate)
 		sampleRate = newRate;
 
 		for (auto* voice : voices) {
+            if (voice == nullptr) {
+                vassertfalse;
+                continue;
+            }
 			if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
 				continue; //safety
 			}
@@ -218,6 +222,10 @@ void VASTSynthesiser::renderNextBlock(sRoutingBuffers& routingBuffers,
 				VDBG(outstr);
 #endif			
 				for (auto* voice : voices) {
+                    if (voice == nullptr) {
+                        vassertfalse;
+                        continue;
+                    }
 					if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
 						continue; //safety
 					}
@@ -324,6 +332,10 @@ void VASTSynthesiser::processNextBlock(sRoutingBuffers& routingBuffers,
     {
 		//CHVAST
 		for (auto* voice : voices) {
+            if (voice == nullptr) {
+                vassertfalse;
+                continue;
+            }
 			if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
 				continue; //safety
 			}
@@ -395,6 +407,10 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 			if (m_fPitchBendZone_smoothed[midiChannel].isSmoothing()) {
 				float l_zoneWheelValueSmoothed = m_fPitchBendZone_smoothed[midiChannel].getNextValue();
 				for (auto* voice : voices) {
+                    if (voice == nullptr) {
+                        vassertfalse;
+                        continue;
+                    }
 					if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
 						continue; //safety
 					}
@@ -440,6 +456,10 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 				}
 
 				for (auto* voice : voices) {
+                    if (voice == nullptr) {
+                        vassertfalse;
+                        continue;
+                    }
 					if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
 						continue; //safety
 					}
@@ -602,6 +622,10 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 
 	m_oldestPlayingKeyDown = -1;
 	for (auto* voice : voices) {
+        if (voice == nullptr) {
+            vassertfalse;
+            continue;
+        }
 		if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
 			continue; //safety
 		}
@@ -1049,6 +1073,10 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 	//=========================================================================================
 	
 	for (auto* voice : voices) {
+        if (voice == nullptr) {
+            vassertfalse;
+            continue;
+        }
 		if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
 			continue; //safety
 		}
@@ -1119,6 +1147,10 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 					hasNextFilter = true;
 
 			for (auto* voice : voices) {
+                if (voice == nullptr) {
+                    vassertfalse;
+                    continue;
+                }
 				if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
 					continue; //safety
 				}
@@ -1241,6 +1273,10 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 
 				//post drywet
 				for (auto* voice : voices) {
+                    if (voice == nullptr) {
+                        vassertfalse;
+                        continue;
+                    }
 					if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
 						continue; //safety
 					}
@@ -1402,6 +1438,10 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 		}
 
 		for (auto* voice : voices) {
+            if (voice == nullptr) {
+                vassertfalse;
+                continue;
+            }
 			if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
 				continue; //safety
 			}
@@ -1436,6 +1476,10 @@ void VASTSynthesiser::handleMidiEvent(const MidiMessage& m)
 			//set initial values for note: timbre
 			if (myProcessor->isMPEenabled()) {
 				for (auto* voice : voices) {
+                    if (voice == nullptr) {
+                        vassertfalse;
+                        continue;
+                    }
 					if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
 						continue; //safety
 					}
@@ -1530,6 +1574,10 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 			// If hitting a note that's still ringing, stop it first (it could be
 			// still playing because of the sustain or sostenuto pedal).
 			for (auto* voice : voices) {
+                if (voice == nullptr) {
+                    vassertfalse;
+                    continue;
+                }
 				if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
 					continue; //safety
 				}
@@ -1555,6 +1603,10 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 				bool shallSteal = false;
 				if (*m_Set->m_State->m_bLegatoMode == static_cast<int>(SWITCH::SWITCH_OFF)) {
 					for (auto* voice : voices) {
+                        if (voice == nullptr) {
+                            vassertfalse;
+                            continue;
+                        }
 						if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
 							continue; //safety
 						}
@@ -1579,7 +1631,11 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 					bool activeVoiceinReleaseExist = false;
 					bool activeVoiceExist = false;
 					for (auto* myvoice : voices) {
-						if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+                        if (myvoice == nullptr) {
+                            vassertfalse;
+                            continue;
+                        }
+						if (myvoice->mVoiceNo >= m_Set->m_uMaxPoly) {
 							continue; //safety
 						}
 						if (myvoice->isPlayingButReleased()) {
@@ -1592,6 +1648,10 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 
 					if (!activeVoiceinReleaseExist) {
 						for (auto* myvoice : voices) {
+                            if (myvoice == nullptr) {
+                                vassertfalse;
+                                continue;
+                            }
 							if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
 								continue; //safety
 							}
@@ -1619,6 +1679,10 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 					}
 					else {
 						for (auto* myvoice : voices) {
+                            if (myvoice == nullptr) {
+                                vassertfalse;
+                                continue;
+                            }
 							if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
 								continue; //safety
 							}
@@ -1630,6 +1694,10 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 					}
 
 					for (auto* myvoice : voices) {
+                        if (myvoice == nullptr) {
+                            vassertfalse;
+                            continue;
+                        }
 						if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
 							continue; //safety
 						}
@@ -1687,6 +1755,10 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 				int active = 0;
 				bool shallSteal = false;
 				for (auto* voice : voices) {
+                    if (voice == nullptr) {
+                        vassertfalse;
+                        continue;
+                    }
 					if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
 						continue; //safety
 					}
@@ -1724,6 +1796,10 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 				int active = 0;
 				bool shallSteal = false;
 				for (auto* voice : voices) {
+                    if (voice == nullptr) {
+                        vassertfalse;
+                        continue;
+                    }
 					if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
 						continue; //safety
 					}
@@ -1887,6 +1963,10 @@ void VASTSynthesiser::noteOff(const int midiChannel,
 
 	for (auto* voice : voices)
 	{
+        if (voice == nullptr) {
+            vassertfalse;
+            continue;
+        }
 		if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
 			continue; //safety
 		}
@@ -1918,6 +1998,10 @@ void VASTSynthesiser::allNotesOff(const int midiChannel, const bool allowTailOff
 	const ScopedLock sl(lock);
 
 	for (auto* voice : voices) {
+        if (voice == nullptr) {
+            vassertfalse;
+            continue;
+        }
 		if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
 			continue; //safety
 		}
@@ -1970,6 +2054,10 @@ void VASTSynthesiser::handleController(const int midiChannel,
 		const ScopedLock sl(lock);
 
 		for (auto* voice : voices) {
+            if (voice == nullptr) {
+                vassertfalse;
+                continue;
+            }
 			if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
 				continue; //safety
 			}
@@ -1989,6 +2077,10 @@ void VASTSynthesiser::handleAftertouch(int midiChannel, int midiNoteNumber, int 
 	const ScopedLock sl(lock);
 
 	for (auto* voice : voices) { //polyphonic
+        if (voice == nullptr) {
+            vassertfalse;
+            continue;
+        }
 		if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
 			continue; //safety
 		}
@@ -2009,6 +2101,10 @@ void VASTSynthesiser::handleChannelPressure(int midiChannel, int channelPressure
 	const ScopedLock sl(lock);
 
 	for (auto* voice : voices) {
+        if (voice == nullptr) {
+            vassertfalse;
+            continue;
+        }
 		if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
 			continue; //safety
 		}
@@ -2034,6 +2130,10 @@ void VASTSynthesiser::handleSustainPedal(int midiChannel, bool isDown)
 		sustainPedalsDown.setBit(midiChannel);
 
 		for (auto* voice : voices) {
+            if (voice == nullptr) {
+                vassertfalse;
+                continue;
+            }
 			if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
 				continue; //safety
 			}
@@ -2047,6 +2147,10 @@ void VASTSynthesiser::handleSustainPedal(int midiChannel, bool isDown)
 	{
 		for (auto* voice : voices)
 		{
+            if (voice == nullptr) {
+                vassertfalse;
+                continue;
+            }
 			if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
 				continue; //safety
 			}
@@ -2071,6 +2175,10 @@ void VASTSynthesiser::handleSostenutoPedal(int midiChannel, bool isDown)
 
 	for (auto* voice : voices)
 	{
+        if (voice == nullptr) {
+            vassertfalse;
+            continue;
+        }
 		if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
 			continue; //safety
 		}
@@ -2110,6 +2218,10 @@ VASTSynthesiserVoice* VASTSynthesiser::findFreeVoice(juce::SynthesiserSound* sou
 	const ScopedLock sl(lock);
 
 	for (auto* voice : voices) {
+        if (voice == nullptr) {
+            vassertfalse;
+            continue;
+        }
 		if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
 			continue; //safety
 		}
@@ -2143,6 +2255,10 @@ VASTSynthesiserVoice* VASTSynthesiser::findVoiceToSteal(juce::SynthesiserSound* 
 
 	for (auto* voice : voices)
 	{
+        if (voice == nullptr) {
+            vassertfalse;
+            continue;
+        }
 		if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
 			continue; //safety
 		}
@@ -2229,6 +2345,10 @@ VASTSynthesiserVoice* VASTSynthesiser::findActiveVoiceToSteal(juce::SynthesiserS
 
 	for (auto* voice : voices)
 	{
+        if (voice == nullptr) {
+            vassertfalse;
+            continue;
+        }
 		if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
 			continue; //safety
 		}
