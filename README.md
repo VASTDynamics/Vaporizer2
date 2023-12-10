@@ -26,19 +26,38 @@ Available formats: VST2 / VST3 / AU / AAX / LV2 plugins and a standalone version
    
 [![QR-Code](Artwork/QR-Code.png)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5H8QH4AU6UWWC)
 
-## Preparation
+## Preparation for a CMAKE build (Projcuer .jucer file is distributed but not recommended)
+Create a suitable local project folder and cd into it.
+```
+git clone https://github.com/VASTDynamics/Vaporizer2.git
+cd Vaporizer2
+git submodule update --init --recursive
+```
+
 ### 1. Windows
-  - The project expects to find the repository structure in c:\Vaporizer2\
-    Use
-    `mklink /h /J "C:\Vaporizer2" [lokal repository path]`
-    to symlink if needed.   
-  - Run Projucer.exe as admininistrator.
-    
+```
+build_win.bat
+```
+   
 ### 2. macOS
-  - Build Projucer from JUCE/extras/Projucer/Builds/MacOSX/Projucer.xcodeproj
-  - Run Projucer
-  - Set Global Paths from Menu Projucer>Global Paths.
-  - Set path to JUCE, JUCE modules, VST SDK, AAX SDK
+```
+./build_macos.sh
+```
+
+### 3. Linux
+```
+./build_linux.sh
+```
+
+### System-wide JUCE installed
+If you have JUCE installed system-wide than you can pass 
+```
+-DUSE_SYSTEM_JUCE=ON
+```
+ to cmake. If JUCE's cmake modules are placed in some non-standard directory add 
+```
+-DCMAKE_PREFIX_PATH=/path/to/juce/cmake_dir
+```
 
 ## Screenshot
 
@@ -49,6 +68,7 @@ Find more about the plug-in [here](https://www.vast-dynamics.com/?q=Vaporizer2).
 ## Download installers
 
 You can download installers for Windows and macOS with the built and packaged plug-ins [here](https://vast-dynamics.com/?q=products).
+Prebuild packages and installers are also available [here on GitHub] (https://github.com/VASTDynamics/Vaporizer2/releases).
 
 ## Plug-in features
 - Includes 780+ wavetables and single cycles and 450+ factory presets.
