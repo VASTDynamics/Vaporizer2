@@ -75,19 +75,14 @@ void VASTPresetData::reloadPresetArrayThreaded(Component::SafePointer<VASTPreset
 		return;
 	if (presetData->m_swapNeeded.load())
 		return; //only one process
-	if (VASTPresetData::isLoadThreadRunning)
-		return;
-	VASTPresetData::isLoadThreadRunning = true;
 	OwnedArray<VASTPresetElement> l_thread_PresetArray;
 	if (presetData == nullptr)
 		return;
 	else 
 		l_thread_PresetArray.addCopiesOf(presetData->m_PresetArray);
 
-
 	StringArray l_thread_usedAuthors;
 	StringArray l_thread_usedCategories;
-
 	StringArray l_thread_usedTags;
 
 	l_thread_usedAuthors.clear();
@@ -103,6 +98,7 @@ void VASTPresetData::reloadPresetArrayThreaded(Component::SafePointer<VASTPreset
 			l_thread_PresetArray[i]->invalid = true;
 			VDBG("PresetArray invalid: " << l_thread_PresetArray[i]->internalid);
 			l_thread_PresetArray[i]->authorname = "Invalid preset XML data!";
+			delete l_PresetArray;
 			continue;
 		}
 		l_thread_PresetArray[i]->invalid = false;
@@ -129,6 +125,7 @@ void VASTPresetData::reloadPresetArrayThreaded(Component::SafePointer<VASTPreset
 			if (tags[j].trim() != "")
 				l_thread_usedTags.addIfNotAlreadyThere(tags[j].trim(), true);
 		VDBG("Added to PresetArray: " << l_thread_PresetArray[i]->internalid);
+		delete l_PresetArray;
 	}
 	VDBG("End reloadPresetArrayThreaded");
 	
@@ -141,8 +138,13 @@ void VASTPresetData::reloadPresetArrayThreaded(Component::SafePointer<VASTPreset
 		presetData->swap_usedAuthors.swapWith(l_thread_usedAuthors);
 		presetData->swap_usedCategories.swapWith(l_thread_usedCategories);
 		presetData->swap_usedTags.swapWith(l_thread_usedTags);
+
+		l_thread_PresetArray.clear();
+		l_thread_usedAuthors.clear();
+		l_thread_usedCategories.clear();
+		l_thread_usedTags.clear();
+
 		presetData->m_swapNeeded.store(true);
-		VASTPresetData::isLoadThreadRunning = false;
 	//} else {
 		//vassertfalse; //it was destroyed in the meantime
 	}
@@ -170,12 +172,15 @@ void VASTPresetData::swapPresetArraysIfNeeded() {
 	myProcessor->requestUIPresetUpdate();
 	m_needsTreeUpdate = true;
 	m_presetsloaded.store(true);
+
+	VASTPresetData::isLoadThreadRunning = false;
 }
 
 void VASTPresetData::reloadPresetArray(bool synchronous) {
 	VDBG("Start reloadPresetArray");
 	if (VASTPresetData::isLoadThreadRunning)
 		return;
+	VASTPresetData::isLoadThreadRunning = true;
 
 	m_PresetArray.clear();
 	m_usedAuthors.clear();

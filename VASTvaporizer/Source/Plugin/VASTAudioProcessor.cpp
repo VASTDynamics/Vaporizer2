@@ -1027,7 +1027,7 @@ void VASTAudioProcessor::loadPreset(int index) {
 	m_pVASTXperience.m_iFadeOutSamples.store(m_pVASTXperience.m_iMaxFadeSamples);
 
 	//array defines index!
-	if (!m_presetData.m_presetsloaded)
+	if ((index != 0) && (!m_presetData.m_presetsloaded.load()))
 		return;
 	if (index >= getNumPrograms()) {
 		vassertfalse;
