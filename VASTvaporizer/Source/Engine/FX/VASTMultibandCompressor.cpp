@@ -318,15 +318,15 @@ void CVASTMultibandCompressor::releaseResources() {
 
 void CVASTMultibandCompressor::adjustLowband() {
 	float fcLow = m_fMBCompFcLow_smoothed.getNextValue();
-	lowPassL1.setCoefficients(coeff.makeLowPass(m_iSampleRate, fcLow));
-	lowPassL2.setCoefficients(coeff.makeLowPass(m_iSampleRate, fcLow));
-	lowPassR1.setCoefficients(coeff.makeLowPass(m_iSampleRate, fcLow));
-	lowPassR2.setCoefficients(coeff.makeLowPass(m_iSampleRate, fcLow));
+	lowPassL1.setCoefficients(coeff.makeLowPass(m_iSampleRate, (fcLow <= m_iSampleRate * 0.5 ? fcLow : m_iSampleRate * 0.5)));
+	lowPassL2.setCoefficients(coeff.makeLowPass(m_iSampleRate, (fcLow <= m_iSampleRate * 0.5 ? fcLow : m_iSampleRate * 0.5)));
+	lowPassR1.setCoefficients(coeff.makeLowPass(m_iSampleRate, (fcLow <= m_iSampleRate * 0.5 ? fcLow : m_iSampleRate * 0.5)));
+	lowPassR2.setCoefficients(coeff.makeLowPass(m_iSampleRate, (fcLow <= m_iSampleRate * 0.5 ? fcLow : m_iSampleRate * 0.5)));
 
-	lowBandPassL1.setCoefficients(coeff.makeHighPass(m_iSampleRate, fcLow));
-	lowBandPassL2.setCoefficients(coeff.makeHighPass(m_iSampleRate, fcLow));
-	lowBandPassR1.setCoefficients(coeff.makeHighPass(m_iSampleRate, fcLow));
-	lowBandPassR2.setCoefficients(coeff.makeHighPass(m_iSampleRate, fcLow));
+	lowBandPassL1.setCoefficients(coeff.makeHighPass(m_iSampleRate, (fcLow <= m_iSampleRate * 0.5 ? fcLow : m_iSampleRate * 0.5)));
+	lowBandPassL2.setCoefficients(coeff.makeHighPass(m_iSampleRate, (fcLow <= m_iSampleRate * 0.5 ? fcLow : m_iSampleRate * 0.5)));
+	lowBandPassR1.setCoefficients(coeff.makeHighPass(m_iSampleRate, (fcLow <= m_iSampleRate * 0.5 ? fcLow : m_iSampleRate * 0.5)));
+	lowBandPassR2.setCoefficients(coeff.makeHighPass(m_iSampleRate, (fcLow <= m_iSampleRate * 0.5 ? fcLow : m_iSampleRate * 0.5)));
 }
 
 void CVASTMultibandCompressor::adjustHighband() {

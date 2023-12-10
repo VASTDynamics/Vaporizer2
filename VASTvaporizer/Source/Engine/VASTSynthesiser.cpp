@@ -1297,7 +1297,7 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 							anyFilterContent[filter][mVoiceNo] = true;
 						}
 						else
-							VDBG("No filter content anymore!");
+							VDBG("No filter content anymore! Filter " << filter << " voice " << mVoiceNo);
 
 						//post drywet
 						if (dryWet != 1.f) {

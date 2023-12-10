@@ -176,6 +176,7 @@ public:
 	void clearUIUpdateFlag();
 	void requestUIUpdate(bool tabs = true, bool matrix = true, bool sliders = true, int slider1dest = -1, int slider2dest = -1);
 	void requestUILoadAlert();
+	static thread_local bool m_threadLocalIsAudioThread;
 	
 #ifdef VASTLOG
 	//logger
@@ -201,6 +202,8 @@ public:
     bool isInputChannelStereoPair (int index) const override;
     bool isOutputChannelStereoPair (int index) const override;
 	*/
+
+	static bool isAudioThread();
 
 	bool acceptsMidi() const override;
 	bool producesMidi() const override;
@@ -331,6 +334,8 @@ public:
 	std::atomic<bool> m_bAudioThreadStarted = false;
 	std::atomic<bool> m_bAudioThreadCurrentlyRunning = false;
 	//std::atomic<bool> m_bCreateCachedVASTEditorDelayed = false;
+
+	bool lockedAndSafeToDoDeallocatios();
 
 	void registerThread();
 	void unregisterThread();

@@ -237,7 +237,8 @@ void VASTHeaderComponent::comboBoxChanged (juce::ComboBox* comboBoxThatHasChange
     //[/UsercomboBoxChanged_Post]
 }
 
-void VASTHeaderComponent::buttonClicked (juce::Button* buttonThatWasClicked)
+
+void VASTHeaderComponent::buttonClicked(juce::Button* buttonThatWasClicked)
 {
     //[UserbuttonClicked_Pre]
     //[/UserbuttonClicked_Pre]
@@ -246,41 +247,42 @@ void VASTHeaderComponent::buttonClicked (juce::Button* buttonThatWasClicked)
     {
         //[UserButtonCode_c_ReloadPresets] -- add your button handler code here..
         if (!myProcessor->m_pVASTXperience.audioProcessLock()) {
-            return; //dont unlock what is not locked
+            vassertfalse;
+            return;
         }
-        
+
         bool done = false;
         int counter = 0;
         while (!done) {
-            if ((counter<30) && (myProcessor->m_bAudioThreadCurrentlyRunning.load() && (!myProcessor->m_pVASTXperience.getBlockProcessingIsBlockedSuccessfully()))) {
+            if ((counter < 30) && (myProcessor->m_bAudioThreadCurrentlyRunning.load() && (!myProcessor->m_pVASTXperience.getBlockProcessingIsBlockedSuccessfully()))) {
                 VDBG("VASTHeaderComponent::buttonClicked - sleep");
                 Thread::sleep(100);
                 counter++;
                 continue;
             }
-            vassert(counter<30);
-            if (counter==30) {
+            vassert(counter < 30);
+            if (counter == 30) {
                 return; //dont unlock what is not locked
             }
             done = true;
         }
-        
-		myEditor->vaporizerComponent->getWaveTableEditorComponent()->stopWTRecording();
 
-		String lid = myProcessor->m_presetData.getCurPatchData().internalid;
+        myEditor->vaporizerComponent->getWaveTableEditorComponent()->stopWTRecording();
 
-        myProcessor->m_presetData.reloadPresetArray();
+        String lid = myProcessor->m_presetData.getCurPatchData().internalid;
 
+        myProcessor->m_presetData.reloadPresetArray(false);
         if (!myProcessor->m_pVASTXperience.audioProcessUnlock()) {
             vassertfalse;
+            //error state
         }
 
-		int lindnex = myProcessor->m_presetData.getIndexInPresetArray(lid);
-		if (lindnex >= 0)
-			myProcessor->setCurrentProgram(lindnex);
+        int lindnex = myProcessor->m_presetData.getIndexInPresetArray(lid);
+        if (lindnex >= 0)
+            myProcessor->setCurrentProgram(lindnex);
 
-		myEditor->vaporizerComponent->updateAll();
-		myProcessor->requestUIPresetReloadUpdate();
+        myEditor->vaporizerComponent->updateAll();
+        myProcessor->requestUIPresetReloadUpdate();
         //[/UserButtonCode_c_ReloadPresets]
     }
     else if (buttonThatWasClicked == c_SavePreset.get())
@@ -317,7 +319,7 @@ void VASTHeaderComponent::buttonClicked (juce::Button* buttonThatWasClicked)
                 }
 
                 myProcessor->savePatchXML(&presetFile);
-                myProcessor->m_presetData.reloadPresetArray();
+                myProcessor->m_presetData.reloadPresetArray(true);
                 int intid = -1;
                 for (int i = 0; i < myProcessor->getNumPrograms(); i++) {
                     String fname = myProcessor->m_presetData.getPreset(i)->internalid;

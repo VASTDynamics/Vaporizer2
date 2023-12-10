@@ -14,7 +14,7 @@
 #include <unordered_map>
 
 class VASTAudioProcessor; //forward declaration
-class VASTPresetData
+class VASTPresetData : public Component
 {
 public:
 	struct sSearchVector {
@@ -32,25 +32,22 @@ public:
 		};
 	} mSearchVector;
 
-	VASTPresetData(VASTAudioProcessor* proc) : myProcessor(proc)	{
-		m_numFavorites[0] = 0;
-		m_numFavorites[1] = 0;
-		m_numFavorites[2] = 0;
-		m_numFavorites[3] = 0;
-		m_numFavorites[4] = 0;
-	};
+	VASTPresetData(VASTAudioProcessor* proc);
 
-	/*
-	~VASTPresetData() {
-	}
-	*/
+	~VASTPresetData();
 
-	void reloadPresetArray();
+	static bool isLoadThreadRunning;
+	static void reloadPresetArrayThreaded(Component::SafePointer<VASTPresetData> presetData, VASTAudioProcessor* myProcessor);
+	void swapPresetArraysIfNeeded();
+
+	void reloadPresetArray(bool synchronous);
 	int getNumPresets() const;
-	VASTPresetElement* getPreset(int index);
+	VASTPresetElement* getPreset(int index);	
 	OwnedArray<VASTPresetElement>& getSearchArray();
 	void initSearch();
 	void doSearchWithVector();
+
+	std::atomic<bool> m_presetsloaded = false;
 
 	int getIndexInSearchArray(String internalid) const;
 	int getIndexInPresetArray(String internalid) const;
@@ -103,6 +100,14 @@ private:
 	StringArray m_usedAuthors;
 	StringArray m_usedCategories;
 	StringArray m_usedTags;
+
+	OwnedArray<VASTPresetElement> swap_PresetArray;
+	StringArray swap_usedAuthors;
+	StringArray swap_usedCategories;
+	StringArray swap_usedTags;
+	std::atomic<bool> m_swapNeeded = false;
+
+	CriticalSection m_arraySwapLock;
 
 	int m_numFavorites[5];
 

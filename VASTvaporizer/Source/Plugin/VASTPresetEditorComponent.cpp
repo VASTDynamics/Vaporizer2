@@ -805,7 +805,7 @@ void VASTPresetEditorComponent::buttonClicked (juce::Button* buttonThatWasClicke
 
                 myProcessor->m_UserPresetRootFolder = chosenDirectory.getFullPathName();
                 myProcessor->writeSettingsToFile(); //not async
-                myProcessor->m_presetData.reloadPresetArray();
+                myProcessor->m_presetData.reloadPresetArray(false);
             }
 
             c_presetFolder->setText(myProcessor->m_UserPresetRootFolder, false);

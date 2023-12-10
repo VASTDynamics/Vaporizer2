@@ -49,7 +49,7 @@ void CVASTPoly::init() {
 	m_OscillatorSynthesizer.init();
     if (m_lastInitPoly.load() > m_Set->m_uMaxPoly) {
         for (int i = C_MAX_POLY - 1; i >= m_Set->m_uMaxPoly; i--) {
-			if ((!myProcessor->m_bAudioThreadStarted) || (myProcessor->m_pVASTXperience.getBlockProcessingIsBlockedSuccessfully())) { //safety check
+			if (myProcessor->lockedAndSafeToDoDeallocatios()) { //safety check
 				m_OscillatorSynthesizer.removeVoice(i);
 				m_singleNote[i] = nullptr; //release old voices
 				VDBG("CVASTPoly::init Old voice released " << i);

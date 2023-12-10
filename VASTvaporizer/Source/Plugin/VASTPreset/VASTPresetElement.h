@@ -107,6 +107,7 @@ public:
 		customModulator2Text = "Custom2";
 		customModulator3Text = "Custom3";
 		customModulator4Text = "Custom4";
+		invalid = false;
 	}
 
 	int presetarrayindex = 0;
@@ -130,6 +131,7 @@ public:
 	String customModulator3Text;
 	String customModulator4Text;
 	int ranking = 0;
+	bool invalid;
 };
 
 #endif  // VASTPRESETELEMENT_H_INCLUDED

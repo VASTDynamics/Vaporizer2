@@ -125,6 +125,10 @@ bool CVASTXperience::initializeEngine()
 
 bool CVASTXperience::audioProcessLock()
 {
+	if (myProcessor->isAudioThread()) { //no lock if called on AudioThread
+		return true;
+	}
+
 	if (m_BlockProcessing.load()) { //it should not be locked already by another task!
 		vassertfalse;
 		return false;
@@ -143,6 +147,10 @@ bool CVASTXperience::audioProcessLock()
 
 bool CVASTXperience::audioProcessUnlock()
 {
+	if (myProcessor->isAudioThread()) { //no lock if called on AudioThread
+		return true;
+	}
+
 	if (!m_BlockProcessing.load()) { //error if not locked!
 		vassertfalse;
 		return false;
@@ -369,8 +377,8 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
     
     //=================================================================================================
     // Is prepare for play running?
-	if ((m_iFadeOutSamples <= 0) || (m_BlockProcessingIsBlockedSuccessfully)) { //check new - wait for fadeout to complete
-		if (m_BlockProcessing == true) {
+	if ((m_iFadeOutSamples <= 0) || (m_BlockProcessingIsBlockedSuccessfully.load())) { //check new - wait for fadeout to complete
+		if (m_BlockProcessing.load() == true) {
 			const ScopedLock sl(myProcessor->getCallbackLock());
 			m_BlockProcessingIsBlockedSuccessfully = true;
 			VDBG("BlockProcessingIsBlockedSuccessfully is true!");
@@ -767,7 +775,7 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 		bool done = false;
 		int counter = 0;
 		while (!done) {
-			if ((counter<30) && (myProcessor->m_bAudioThreadStarted && (!getBlockProcessingIsBlockedSuccessfully()))) {
+			if ((counter<30) && (!myProcessor->lockedAndSafeToDoDeallocatios())) {
 				VDBG("PolyMode - sleep");
 				Thread::sleep(100);
 				counter++;

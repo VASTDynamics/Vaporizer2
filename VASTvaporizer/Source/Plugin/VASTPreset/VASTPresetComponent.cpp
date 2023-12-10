@@ -844,7 +844,7 @@ void VASTPresetComponent::clearFilter() {
 }
 
 void VASTPresetComponent::reloadPresets() {
-	myProcessor->m_presetData.reloadPresetArray();
+	myProcessor->m_presetData.reloadPresetArray(false);
 	setSearchVector();
 }
 
@@ -1114,6 +1114,7 @@ void VASTPresetComponent::updateAll() {
 	lookAndFeelChanged(); //is in there: m_preset_table_component->updateContent();
 	//setSearchVector();
 	repaint();
+
 }
 
 void VASTPresetComponent::lookAndFeelChanged() {
