@@ -306,8 +306,10 @@ void VASTSynthesiser::renderNextBlock(sRoutingBuffers& routingBuffers,
 					}
 				}
 
-				memcpy(m_oldChordStack, m_newChordStack, 256 * sizeof(bool)); //copy it
-				memset(m_newChordStack, false, 256 * sizeof(bool)); //init it
+				std::copy(std::begin(m_newChordStack), std::end(m_newChordStack), std::begin(m_oldChordStack));
+				//memcpy(m_oldChordStack, m_newChordStack, 256 * sizeof(bool)); //copy it
+				std::fill(std::begin(m_newChordStack), std::end(m_newChordStack), false);
+				//memset(m_newChordStack, false, 256 * sizeof(bool)); //init it
 				m_bGlissandoUsed = false;
 			}
 		}
@@ -1602,20 +1604,22 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 
 				bool shallSteal = false;
 				if (*m_Set->m_State->m_bLegatoMode == static_cast<int>(SWITCH::SWITCH_OFF)) {
-					for (auto* voice : voices) {
-                        if (voice == nullptr) {
+					for (auto* myvoice : voices) {
+                        if (myvoice == nullptr) {
                             vassertfalse;
                             continue;
                         }
-						if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+						if (myvoice->mVoiceNo >= m_Set->m_uMaxPoly) {
 							continue; //safety
 						}
-						if (voice->isVoiceActive()) {
-							((CVASTSingleNote*)voice)->m_VCA.hardStop(); //TODO Sampler???
+						if (myvoice->isVoiceActive()) {
+							((CVASTSingleNote*)myvoice)->m_VCA.hardStop(); //TODO Sampler???
 						}
 					}
 					shallSteal = true; //check!! naming
 					voice = findFreeVoice(sound, midiChannel, midiNoteNumber, shallSteal);
+					if (voice == nullptr)
+						continue;
 					startVoice(voice, sound, midiChannel, midiNoteNumber, velocity);
 				}
 				else {
@@ -1710,7 +1714,7 @@ void VASTSynthesiser::noteOn(const int midiChannel,
 					if (voice == nullptr) { //steal it
 						voice = voices[0];
 						if (voice == nullptr)
-							return; //error state
+							continue; //error state
 					}
 
 					shallSteal = true;
