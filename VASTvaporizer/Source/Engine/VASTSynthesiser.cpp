@@ -1652,7 +1652,7 @@ void VASTSynthesiser::noteOn(const int midiChannel,
                                 vassertfalse;
                                 continue;
                             }
-							if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+							if (myvoice->mVoiceNo >= m_Set->m_uMaxPoly) {
 								continue; //safety
 							}
 							if (activeVoiceExist) {
@@ -1683,7 +1683,7 @@ void VASTSynthesiser::noteOn(const int midiChannel,
                                 vassertfalse;
                                 continue;
                             }
-							if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+							if (myvoice->mVoiceNo >= m_Set->m_uMaxPoly) {
 								continue; //safety
 							}
 							if (!myvoice->isVoiceActive()) {
@@ -1698,7 +1698,7 @@ void VASTSynthesiser::noteOn(const int midiChannel,
                             vassertfalse;
                             continue;
                         }
-						if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
+						if (myvoice->mVoiceNo >= m_Set->m_uMaxPoly) {
 							continue; //safety
 						}
 						if (voice != myvoice)
