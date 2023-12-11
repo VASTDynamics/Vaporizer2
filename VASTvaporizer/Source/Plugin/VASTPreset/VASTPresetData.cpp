@@ -117,7 +117,7 @@ void VASTPresetData::reloadPresetArrayThreaded(Component::SafePointer<VASTPreset
 		if (l_PresetArray->category.trim() != "")
 			l_thread_usedCategories.addIfNotAlreadyThere(l_PresetArray->category.trim(), true);
 		if (l_PresetArray->authorname.trim() != "")
-			l_thread_usedTags.addIfNotAlreadyThere(l_PresetArray->authorname.trim(), true);
+			l_thread_usedAuthors.addIfNotAlreadyThere(l_PresetArray->authorname.trim(), true);
 
 		StringArray tags;
 		tags.addTokens(l_PresetArray->freetag, " ,#", "\"");
