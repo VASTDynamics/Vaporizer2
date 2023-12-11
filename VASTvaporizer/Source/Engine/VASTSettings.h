@@ -386,6 +386,7 @@ public:
 	int m_iBendRange = 1; //up and down in semitones
 
 	int m_uMaxPoly = C_MAX_POLY;
+	int m_uTargetMaxPoly = POLY16;
 
 	//MPE Brightness
 	MYUINT iMPETimbre[C_MAX_POLY];

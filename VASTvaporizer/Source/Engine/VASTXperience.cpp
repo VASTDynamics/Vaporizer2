@@ -409,6 +409,13 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
         }
     }
     
+	//Dealloacations
+	//===========================================================================================
+	if (m_Set.m_uTargetMaxPoly != m_Set.m_uMaxPoly) {
+		m_Set.m_uMaxPoly = m_Set.m_uTargetMaxPoly;
+		m_Poly.init();
+	}
+
     if (myProcessor->getActiveEditor() != nullptr) {
         if (myProcessor->isEditorCurrentlyProbablyVisible()) {
             for (int bank = 0; bank < 4; bank++) {
@@ -760,6 +767,25 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 	const ScopedLock sl(paramChangeLock);
 
 	if (0 == parameterID.compare("m_uPolyMode")) {
+				
+		if (*m_Set.m_State->m_uPolyMode == static_cast<int>(POLYMODE::MONO))
+			m_Set.m_uTargetMaxPoly = 1;
+		else
+			if (*m_Set.m_State->m_uPolyMode == static_cast<int>(POLYMODE::POLY4))
+				m_Set.m_uTargetMaxPoly = 4;
+			else
+				if (*m_Set.m_State->m_uPolyMode == static_cast<int>(POLYMODE::POLY16))
+					m_Set.m_uTargetMaxPoly = 16;
+				else
+					if (*m_Set.m_State->m_uPolyMode == static_cast<int>(POLYMODE::POLY32))
+						m_Set.m_uTargetMaxPoly = 32;
+					else
+					{
+						vassertfalse;
+						m_Set.m_uTargetMaxPoly = 16;
+					}
+
+		/*
 		for (int i = 0; i < m_Set.m_uMaxPoly; i++)
 			if (m_Poly.m_singleNote[i] != nullptr) //safety check for multiple host threads editing simultaneously
 				m_Poly.m_singleNote[i]->stopNote(0, true); //allow tail off
@@ -812,6 +838,7 @@ void CVASTXperience::parameterChanged(const String& parameterID, float newValue)
 				}
 			done = true;
 		}
+		*/
 		return;		
 	}
 
