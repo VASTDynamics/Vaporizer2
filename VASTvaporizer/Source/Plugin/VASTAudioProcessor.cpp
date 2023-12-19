@@ -933,14 +933,10 @@ void VASTAudioProcessor::getStateInformation(MemoryBlock& destData)
 
 	VDBG("VASTAudioProcessor::getStateInformation called from Thread " << (Thread::getCurrentThread()==nullptr ? "Main UI Thread" : Thread::getCurrentThread()->getThreadName()));
 
-	const ScopedLock sl(getCallbackLock());
-	//suspendProcessing(true);
+	//const ScopedLock sl(getCallbackLock()); //do not lock here, this causes audio process locks and CPU spikes
 
-	//XmlElement xml = createPatchXML(false); //use internal representation for state // VASTVaporizerParamsV2.00000 behavior
-	XmlElement xml = createPatchXML(true); //VASTVaporizerParamsV2.10000 bevhavior
+	XmlElement xml = createPatchXML(true); //VASTVaporizerParamsV2.10000 behavior
 	copyXmlToBinary(xml, destData);
-
-	//suspendProcessing(false);
 }
 
 //==============================================================================
