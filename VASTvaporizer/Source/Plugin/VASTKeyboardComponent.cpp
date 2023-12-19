@@ -346,7 +346,7 @@ void VASTKeyboardComponent::timerCallback() {
         c_pitchBend->setValue(wheelpos, NotificationType::dontSendNotification); //send only on
     }
 
-    if (!c_pitchBend->isMouseOverOrDragging()) {
+    if (!c_modWheel->isMouseOverOrDragging()) {
         float wheelpos = myProcessor->m_pVASTXperience.m_Set.m_uModWheel.load(); //0..127
         c_modWheel->setValue(wheelpos, NotificationType::dontSendNotification); //send only on
     }
