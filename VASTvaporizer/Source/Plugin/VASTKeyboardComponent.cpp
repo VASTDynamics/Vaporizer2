@@ -347,7 +347,8 @@ void VASTKeyboardComponent::timerCallback() {
     }
 
     if (!c_modWheel->isMouseOverOrDragging()) {
-        float wheelpos = myProcessor->m_pVASTXperience.m_Set.m_uModWheel.load(); //0..127
+        //float wheelpos = myProcessor->m_pVASTXperience.m_Set.m_uModWheel.load(); //0..127
+        float wheelpos = myProcessor->m_pVASTXperience.m_Poly.getSynthesizer()->m_fModWheel_smoothed[0].getTargetValue(); //0..127
         c_modWheel->setValue(wheelpos, NotificationType::dontSendNotification); //send only on
     }
 }
