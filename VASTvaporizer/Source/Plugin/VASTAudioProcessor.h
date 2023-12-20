@@ -437,7 +437,7 @@ private:
 	int m_MPEmode = 0; // settings
 	int m_ModWheelPermaLink = 0;
 
-	String m_MidiKeyboardCharLayout = "ysxdcvgbhnjq2w3er5t6z7"; //FL Studio setup			
+	String m_MidiKeyboardCharLayout = "ysxdcvgbhnjmq2w3er5t6z7"; //FL Studio setup			
 	int m_iMidiKeyboardBaseOctave = 4; //FL Studio setup
 
     std::atomic<bool> m_wasBypassed = false;
