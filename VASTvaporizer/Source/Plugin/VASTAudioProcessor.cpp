@@ -1560,20 +1560,20 @@ bool VASTAudioProcessor::lockedAndSafeToDoDeallocatios()
 }
 
 void VASTAudioProcessor::registerThread() {
-	const ScopedLock sl(getCallbackLock());
+	//const ScopedLock sl(getCallbackLock());
 	m_iNumPassTreeThreads++;
 	VDBG("Register Num Threads registered: " << m_iNumPassTreeThreads);
 }
 
 void VASTAudioProcessor::unregisterThread() {
-	const ScopedLock sl(getCallbackLock());
+	//const ScopedLock sl(getCallbackLock());
 	m_iNumPassTreeThreads--;
 	if (m_iNumPassTreeThreads < 0) m_iNumPassTreeThreads = 0;
 	VDBG("Unregister Num Threads registered: " << m_iNumPassTreeThreads);
 }
 
 bool VASTAudioProcessor::getTreeThreadLock() {
-	const ScopedLock sl(getCallbackLock());
+	//const ScopedLock sl(getCallbackLock());
 	return m_iNumPassTreeThreads > 1;
 }
 
