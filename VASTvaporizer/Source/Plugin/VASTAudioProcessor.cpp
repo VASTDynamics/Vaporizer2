@@ -1045,7 +1045,7 @@ void VASTAudioProcessor::loadPreset(int index) {
 			setCurrentProgram(0); //revert to init
 		}
 	}
-	requestUIInit();
+	//requestUIInit(); //too heavy!
     m_presetToLoad = -1;
 }
 
@@ -1501,7 +1501,7 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 	if (b_success == false) {
 		processor->setErrorState(vastErrorState::errorState11_loadPresetUnsuccessful);
 		processor->requestUIAlert();
-		processor->requestUIInit();
+		//processor->requestUIInit(); //too heavy!!
 		//---------------------------------------------------------------------------------------
 	}
 	else {
@@ -1538,7 +1538,7 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 		}
 		if (processor->getSampleRate() != 0)
 			processor->m_pVASTXperience.prepareForPlay(processor->getSampleRate(), processor->getBlockSize());
-		processor->requestUIInit();
+		//processor->requestUIInit(); //too heavy!!
 		//---------------------------------------------------------------------------------------
 	}
 
