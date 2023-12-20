@@ -2308,7 +2308,7 @@ void VASTAudioProcessor::initSettings() {
 
 		m_ModWheelPermaLink = 1; //default now CustomModulator1
 
-		m_MidiKeyboardCharLayout = "ysxdcvgbhnjq2w3er5t6z7"; //FL Studio setup			
+		m_MidiKeyboardCharLayout = "ysxdcvgbhnjmq2w3er5t6z7"; //FL Studio setup			
 		m_iMidiKeyboardBaseOctave = 2; //FL Studio setup
 
         writeSettingsToFile();
