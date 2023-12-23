@@ -329,7 +329,8 @@ void VASTKeyboardComponent::sliderValueChanged(Slider* sliderThatWasMoved)
 	{
 		if (c_iBendRange->getValue() != myProcessor->m_pVASTXperience.m_Set.m_iBendRange) {
 			myProcessor->m_pVASTXperience.m_Set.m_iBendRange = c_iBendRange->getValue();
-			myProcessor->writeSettingsToFileAsync();
+            if (myProcessor->m_initCompleted.load())
+			    myProcessor->writeSettingsToFileAsync();
 		}
 	}
 }

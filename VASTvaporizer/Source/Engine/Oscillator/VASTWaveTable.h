@@ -179,6 +179,8 @@ public:
 	ValueTree bufferedValueTree; //for save state performance optimization
 
 private:	
+	int m_pow16[8] = { 1, 16, 256, 4096, 65536, 1048576, 16777216, 268435456 };
+
 	sWaveTableHeader wtheader;
 	std::vector<float> mc_emptyTable = std::vector<float>(C_WAVE_TABLE_SIZE, 0.0f);
 	std::vector<dsp::Complex<float>> mc_newBuffer = std::vector<dsp::Complex<float>>(C_WAVE_TABLE_SIZE, 0.0f);

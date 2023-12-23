@@ -490,6 +490,11 @@ void VASTVaporizerComponent::updateMatrixDisplay() {
         matrix->updateAll();
 }
 
+void VASTVaporizerComponent::updateHeader() {
+	String presetdisplay = myProcessor->m_presetData.getCurPatchData().category + " " + myProcessor->m_presetData.getCurPatchData().presetname;
+	headerComponent->getComponentCPreset()->setText(presetdisplay, juce::NotificationType::dontSendNotification);
+}
+
 void VASTVaporizerComponent::updateAll() {
 	VASTWaveTableEditorComponent* tab1 = dynamic_cast<VASTWaveTableEditorComponent*>(c_tabbedComponent->getTabContentComponent(VASTTabbedComponent::TabSequence::WTEDITOR));
     if (tab1 != nullptr)
@@ -519,8 +524,7 @@ void VASTVaporizerComponent::updateAll() {
 		generators->getOscillatorDComponent()->updateAll();
 	}
 
-	String presetdisplay = myProcessor->m_presetData.getCurPatchData().category + " " + myProcessor->m_presetData.getCurPatchData().presetname;
-	headerComponent->getComponentCPreset()->setText(presetdisplay, juce::NotificationType::dontSendNotification);
+	updateHeader();
 	sidePanelComponent->getComponentCustomMod1()->setModString(myProcessor->m_presetData.getCurPatchData().customModulator1Text);
 	sidePanelComponent->getComponentCustomMod2()->setModString(myProcessor->m_presetData.getCurPatchData().customModulator2Text);
 	sidePanelComponent->getComponentCustomMod3()->setModString(myProcessor->m_presetData.getCurPatchData().customModulator3Text);

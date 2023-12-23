@@ -116,10 +116,10 @@ void CVASTCombFilterEffect::parameterChanged(const String& parameterID, float ne
 void CVASTCombFilterEffect::prepareToPlay(double , int samplesPerBlock) {
 	//m_iSampleRate is set in useOversampling
 	m_iExpectedSamplesPerBlock = samplesPerBlock;
-	mDelayLeft.resetDelay();
+	mDelayLeft.needsResetBeforUse();
 	mDelayLeft.setOutputAttenuation_dB(0);
 	mDelayLeft.setSampleRate(m_iSampleRate);
-	mDelayRight.resetDelay();
+	mDelayRight.needsResetBeforUse();
 	mDelayRight.setOutputAttenuation_dB(0);
 	mDelayRight.setSampleRate(m_iSampleRate);
 
@@ -134,8 +134,8 @@ void CVASTCombFilterEffect::prepareToPlay(double , int samplesPerBlock) {
 }
 
 void CVASTCombFilterEffect::reset() {
-	mDelayLeft.resetDelay();
-	mDelayRight.resetDelay();
+	mDelayLeft.needsResetBeforUse();
+	mDelayRight.needsResetBeforUse();
 
 	if ((m_bIsOff == false) && (m_bShallBeOff == false)) {
 		m_iSoftFade = 0;

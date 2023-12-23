@@ -1,5 +1,6 @@
 #pragma once
 #include "../Utils/VASTSynthfunctions.h"
+#include "../VASTSettings.h"
 
 class VASTQFilterCoefficients
 {
@@ -11,15 +12,15 @@ public:
 	double dsamplerate_os = 2.f * samplerate; //CHVAST
 	double dsamplerate_os_inv = 1.f / dsamplerate_os; //CHVAST
 	double samplerate_inv = 1.f / samplerate;
-	
+	int lastOsFactor = -1;
+
 	float C[n_cm_coeffs], dC[n_cm_coeffs], tC[n_cm_coeffs]; // K1,K2,Q1,Q2,V1,V2,V3,etc
 
-	VASTQFilterCoefficients();
+	VASTQFilterCoefficients(CVASTSettings* set);
 	void MakeCoeffs(float Freq, float Reso, int Type, int SubType, float Scale);
 	void Reset();
 
 	void prepareForPlay(double sampleRate, int osFactor, float masterTuneHz);
-	void initTables();
 	void note_to_omega(float x, float& sinu, float& cosi);
 	float note_to_pitch(float x);
 	float note_to_pitch_inv(float x);
@@ -33,12 +34,9 @@ public:
 	double resoscale(double reso, int subtype);
 	double resoscale4Pole(double reso, int subtype);
 
-	float table_pitch alignas(16)[512];
-	float table_note_omega alignas(16)[2][512];
-	float table_dB alignas(16)[512];
-	float table_pitch_inv alignas(16)[512];	
-	
 private:
+	CVASTSettings* m_Set = nullptr;
+
 	void FromDirect(float N[n_cm_coeffs]);
 	void
 	ToCoupledForm(double A0inv, double A1, double A2, double B0, double B1, double B2, double G);

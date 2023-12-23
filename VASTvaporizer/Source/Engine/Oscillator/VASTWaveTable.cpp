@@ -267,12 +267,31 @@ bool CVASTWaveTable::setValueTreeState(ValueTree* tree, int wtMode) { //load
 			String nTable = waveTablePositionTree.getProperty("naiveTable"); //Todo "naiveTable"			
 			std::string substring = nTable.toStdString();
 			int pos = 0;
+			unsigned int sint;
 			for (int n = 0; n < C_WAVE_TABLE_SIZE; n++) {				
 				char charstr[9] = "        ";
 				substring.copy(charstr, 8, pos);
 				//float fl = hexStrToFloat(charstr); //8 hex chars = 4 bytes per float			
 
-				unsigned int sint = (String(charstr)).getHexValue32();
+				//std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+				//sint = (String(charstr)).getHexValue32();
+				//std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
+				//int duration = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+				//VDBG("Duration: " << duration);
+
+				//std::chrono::high_resolution_clock::time_point t3 = std::chrono::high_resolution_clock::now();			
+				sint = 0;
+				for (int i = 0; i < 8; i++) {
+					if (charstr[i] >= 'a')
+						sint = sint + ((unsigned int)(charstr[i] - 'a') + 10) * m_pow16[7-i];
+					else 
+						sint = sint + (unsigned int)(charstr[i] - '0') * m_pow16[7-i];
+				}
+
+				//std::chrono::high_resolution_clock::time_point t4 = std::chrono::high_resolution_clock::now();
+				//duration = std::chrono::duration_cast<std::chrono::microseconds>(t4 - t3).count();
+				//VDBG("Duration: " << duration);
+
 				float fl = *(float*)(&sint);
 
 				wtp.naiveTable[n] = fl;

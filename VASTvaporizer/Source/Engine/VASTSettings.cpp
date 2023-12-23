@@ -1016,5 +1016,44 @@ Font CVASTSettings::getCustomFont(CVASTSettings::customFonts customFont) {
 	return customFontBuffer[static_cast<int>(customFont)];
 }
 
+void CVASTSettings::qFilterCoefficientsInitTables() {
+
+	if ((filterCoeffLastSampleRate == m_nSampleRate) &&
+		(approximatelyEqual(float(filterCoeffLastMmasterTuneHz), m_fMasterTune.load())))
+		return;
+	
+	filterCoeffLastSampleRate = m_nSampleRate;
+	filterCoeffLastMmasterTuneHz = m_fMasterTune.load();
+
+	for (int i = 0; i < 512; i++)
+	{
+		table_dB[i] = powf(10.f, 0.05f * ((float)i - 384.f));
+		table_pitch[i] = powf(2.f, ((float)i - 256.f) * (1.f / 12.f));
+		table_pitch_inv[i] = 1.f / table_pitch[i];
+
+		int osFactor = 1;
+		double dsamplerate_os = double(osFactor) * m_nSampleRate;
+		double dsamplerate_os_inv = 1.0 / dsamplerate_os;
+		table_note_omega_os1[0][i] =
+			(float)sin(2 * M_PI * min(0.5, m_fMasterTune.load() * table_pitch[i] * dsamplerate_os_inv));
+		table_note_omega_os1[1][i] =
+			(float)cos(2 * M_PI * min(0.5, m_fMasterTune.load() * table_pitch[i] * dsamplerate_os_inv));
+		osFactor = 2;
+		dsamplerate_os = double(osFactor) * m_nSampleRate;
+		dsamplerate_os_inv = 1.0 / dsamplerate_os;
+		table_note_omega_os2[0][i] =
+			(float)sin(2 * M_PI * min(0.5, m_fMasterTune.load() * table_pitch[i] * dsamplerate_os_inv));
+		table_note_omega_os2[1][i] =
+			(float)cos(2 * M_PI * min(0.5, m_fMasterTune.load() * table_pitch[i] * dsamplerate_os_inv));
+		osFactor = 4;
+		dsamplerate_os = double(osFactor) * m_nSampleRate;
+		dsamplerate_os_inv = 1.0 / dsamplerate_os;
+		table_note_omega_os4[0][i] =
+			(float)sin(2 * M_PI * min(0.5, m_fMasterTune.load() * table_pitch[i] * dsamplerate_os_inv));
+		table_note_omega_os4[1][i] =
+			(float)cos(2 * M_PI * min(0.5, m_fMasterTune.load() * table_pitch[i] * dsamplerate_os_inv));
+	}
+}
+
 JUCE_END_IGNORE_WARNINGS_GCC_LIKE
 JUCE_END_IGNORE_WARNINGS_MSVC

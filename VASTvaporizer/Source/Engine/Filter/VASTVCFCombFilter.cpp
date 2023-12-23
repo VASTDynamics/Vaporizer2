@@ -40,10 +40,10 @@ void CVASTVCFCombFilter::parameterChanged(const String& parameterID, float newVa
 void CVASTVCFCombFilter::prepareToPlay(double sampleRate, int samplesPerBlock) {
 	m_iSampleRate = sampleRate;
 	m_iExpectedSamplesPerBlock = samplesPerBlock;
-	mDelayLeft.resetDelay();
+	mDelayLeft.needsResetBeforUse();
 	mDelayLeft.setOutputAttenuation_dB(0);
 	mDelayLeft.setSampleRate(m_iSampleRate);
-	mDelayRight.resetDelay();
+	mDelayRight.needsResetBeforUse();
 	mDelayRight.setOutputAttenuation_dB(0);
 	mDelayRight.setSampleRate(m_iSampleRate);
 
@@ -54,12 +54,12 @@ void CVASTVCFCombFilter::prepareToPlay(double sampleRate, int samplesPerBlock) {
 	m_fCombDrive_smoothed.reset(m_iSampleRate, smoothTime);
 	m_fCombLevel_smoothed.reset(m_iSampleRate, smoothTime);
 
-	reset();
+	needsInitBeforUsed();
 }
 
 void CVASTVCFCombFilter::reset() {
-	mDelayLeft.resetDelay();
-	mDelayRight.resetDelay();
+	mDelayLeft.needsResetBeforUse();
+	mDelayRight.needsResetBeforUse();
 }
 
 void CVASTVCFCombFilter::init() {
@@ -71,6 +71,11 @@ void CVASTVCFCombFilter::init() {
 }
 
 void CVASTVCFCombFilter::processBlock(dsp::AudioBlock<float> filterBlock, const int numSamples) {
+
+	if (m_needsInitBeforUsed) {
+		init();
+		m_needsInitBeforUsed = false;
+	}
 
 	for (int currentFrame = 0; currentFrame <numSamples; currentFrame += 1) {
 		//int currentFrameOSAdjusted = currentFrame;
@@ -146,7 +151,7 @@ bool CVASTVCFCombFilter::processAudioFrame(float* pInputBuffer, float* pOutputBu
 	vassert((pOutputBuffer[1] > -10.0f) && (pOutputBuffer[1] <= 10.0));
 	if (((pOutputBuffer[0] < -10.0f) || (pOutputBuffer[0] >= 10.0)) ||
 		((pOutputBuffer[1] < -10.0f) || (pOutputBuffer[1] >= 10.0))) {
-		reset();
+		needsInitBeforUsed();
 	}
 
 	return true;
@@ -159,6 +164,11 @@ float CVASTVCFCombFilter::getDelay_ms() {
 void CVASTVCFCombFilter::setDelay_mSec(float fmSec) {
 	mDelayLeft.setDelay_mSec(fmSec);
 	mDelayRight.setDelay_mSec(fmSec);
+}
+
+void CVASTVCFCombFilter::needsInitBeforUsed()
+{
+	m_needsInitBeforUsed = true;
 }
 
 //==============================================================================

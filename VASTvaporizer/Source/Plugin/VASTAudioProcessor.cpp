@@ -89,6 +89,7 @@ VASTAudioProcessor::VASTAudioProcessor() :
 	mUIAlert.store(false);
     mUIUpdateFlag.store(false);
     mUIInitFlag.store(false);
+	mUIInitFlagAfterPrestLoad.store(false);
 
 	bIsInErrorState.store(false);
 	iErrorState.store(vastErrorState::noError);
@@ -217,8 +218,20 @@ void VASTAudioProcessor::clearUIPresetReloadFlag() {
 bool VASTAudioProcessor::needsUIInit() const {
     return mUIInitFlag.load(); }
 
+bool VASTAudioProcessor::needsUIInitAfterPresetLoad() const {
+	return mUIInitFlagAfterPrestLoad.load();
+}
+
 void VASTAudioProcessor::clearUIInitFlag() {
     mUIInitFlag.store(false); }
+
+void VASTAudioProcessor::clearUIInitFlagAfterPresetLoad() {
+	mUIInitFlagAfterPrestLoad.store(false);
+}
+
+void VASTAudioProcessor::requestUIInitAfterPrestLoad() {
+	mUIInitFlagAfterPrestLoad.store(true);
+}
 
 void VASTAudioProcessor::requestUIInit() {
     mUIInitFlag.store(true);
@@ -590,8 +603,6 @@ void VASTAudioProcessor::changeProgramName(int index, const String& newName)
 
 int VASTAudioProcessor::getNumPrograms()
 {
-	return 800;
-
 	int number = 0;
 	number += getNumFactoryPresets() + getNumUserPresets();
 	return number;
@@ -1042,10 +1053,10 @@ void VASTAudioProcessor::loadPreset(int index) {
 		bool success = loadPatchXML(xmlDoc.get(), false, &m_presetData.getCurPatchData(), index, lPatch);
 		if (!success) {
 			m_presetData.reloadPresetArray(false);
-			setCurrentProgram(0); //revert to init
+			setCurrentProgram(0); //revert to init			
 		}
+		requestUIInitAfterPrestLoad();
 	}
-	//requestUIInit(); //too heavy!
     m_presetToLoad = -1;
 }
 
@@ -1501,7 +1512,7 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 	if (b_success == false) {
 		processor->setErrorState(vastErrorState::errorState11_loadPresetUnsuccessful);
 		processor->requestUIAlert();
-		//processor->requestUIInit(); //too heavy!!
+		processor->requestUIInitAfterPrestLoad(); 
 		//---------------------------------------------------------------------------------------
 	}
 	else {
@@ -1538,7 +1549,7 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 		}
 		if (processor->getSampleRate() != 0)
 			processor->m_pVASTXperience.prepareForPlay(processor->getSampleRate(), processor->getBlockSize());
-		//processor->requestUIInit(); //too heavy!!
+		processor->requestUIInitAfterPrestLoad(); 
 		//---------------------------------------------------------------------------------------
 	}
 
