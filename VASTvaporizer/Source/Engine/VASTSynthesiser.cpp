@@ -1453,6 +1453,8 @@ void VASTSynthesiser::handleMidiEvent(const MidiMessage& m)
 
 			//set initial values for note: timbre
 			if (myProcessor->isMPEenabled()) {
+				m_fPitchBendZone_smoothed[channel].setCurrentAndTargetValue(m_fPitchBendZone_smoothed[channel].getTargetValue()); //force it
+
 				for (auto* voice : voices) {
                     if (voice == nullptr) {
                         vassertfalse;
@@ -1461,8 +1463,11 @@ void VASTSynthesiser::handleMidiEvent(const MidiMessage& m)
 					if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
 						continue; //safety
 					}
-					if (voice->isPlayingChannel(channel))
+
+					if (voice->isPlayingChannel(channel)) {
+						voice->pitchWheelMoved(m_fPitchBendZone_smoothed[channel].getTargetValue(), false);
 						voice->controllerMoved(74 /*timbre MSB*/, lastTimbreReceivedOnChannel[channel - 1].as7BitInt()); //7bit??
+					}
 				}
 			}
 		}
