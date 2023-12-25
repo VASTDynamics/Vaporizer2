@@ -346,6 +346,10 @@ begin
   PluginDirPage.Add('Folder LV2');
   PluginDirPage.Values[3] := GetPreviousData('LV264', ExpandConstant('{commoncf}\LV2\'));
 
+  PluginDirPage.Add('Folder CLAP');
+  PluginDirPage.Values[4] := GetPreviousData('CLAP64', ExpandConstant('{commoncf}\CLAP\'));
+
+
   //If not Is64BitInstallMode then
   //begin
     //PluginDirPage.Values[1] := GetPreviousData('VST32', ExpandConstant('{reg:HKLM\SOFTWARE\VSTPluginsPath\VST,VSTPluginsPath|{commonpf}\Steinberg\VSTPlugins}\Vaporizer2'));
@@ -356,11 +360,11 @@ begin
 
   //new logic: factory presets are always stored in app folder, user folder can be selected
   PluginDirPage.Add('User Presets Folder');
-  PluginDirPage.Values[4] := GetPreviousData('Vaporizer2PresetFolder', ExpandConstant('{code:GetOriginalUserDocumentsPath}\Vaporizer2\Presets')); //second is default value
+  PluginDirPage.Values[5] := GetPreviousData('Vaporizer2PresetFolder', ExpandConstant('{code:GetOriginalUserDocumentsPath}\Vaporizer2\Presets')); //second is default value
   PluginDirPage.Add('User Wavetables');                                                       
-  PluginDirPage.Values[5] := GetPreviousData('Vaporizer2TablesFolder', ExpandConstant('{code:GetOriginalUserDocumentsPath}\Vaporizer2\Tables')); //second is default value 
+  PluginDirPage.Values[6] := GetPreviousData('Vaporizer2TablesFolder', ExpandConstant('{code:GetOriginalUserDocumentsPath}\Vaporizer2\Tables')); //second is default value 
   PluginDirPage.Add('User Noises');
-  PluginDirPage.Values[6] := GetPreviousData('Vaporizer2NoisesFolder', ExpandConstant('{code:GetOriginalUserDocumentsPath}\Vaporizer2\Noises')); //second is default value;
+  PluginDirPage.Values[7] := GetPreviousData('Vaporizer2NoisesFolder', ExpandConstant('{code:GetOriginalUserDocumentsPath}\Vaporizer2\Noises')); //second is default value;
 
   //ReducePromptSpacing(PluginDirPage, 9, ScaleY(20));
 
