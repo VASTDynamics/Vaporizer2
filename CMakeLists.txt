@@ -35,7 +35,7 @@ else()
   find_package(JUCE CONFIG REQUIRED)
 endif(NOT USE_SYSTEM_JUCE)
 
-#add_subdirectory(clap-juce-extensions ${CMAKE_BINARY_DIR}/clap-juce-extensions EXCLUDE_FROM_ALL)
+add_subdirectory(clap-juce-extensions ${CMAKE_BINARY_DIR}/clap-juce-extensions EXCLUDE_FROM_ALL)
 
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
@@ -79,10 +79,10 @@ juce_add_plugin(${PROJECT_NAME}
   PLUGINHOST_AU FALSE
 )
 
-#clap_juce_extensions_plugin(TARGET ${PROJECT_NAME}
-#        CLAP_ID "com.vastdynamics.VAST2"
-#        CLAP_FEATURES instrument
-#)
+clap_juce_extensions_plugin(TARGET ${PROJECT_NAME}
+        CLAP_ID "com.vastdynamics.VAST2"
+        CLAP_FEATURES instrument
+)
 
 juce_generate_juce_header(${PROJECT_NAME})
 
