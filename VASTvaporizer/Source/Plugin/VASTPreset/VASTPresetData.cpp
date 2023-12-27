@@ -61,7 +61,8 @@ StringArray* VASTPresetData::getUsedTags() {
 }
 
 void VASTPresetData::writeToSettings() {
-	myProcessor->writeSettingsToFileAsync();
+	if (myProcessor->m_initCompleted.load())
+		myProcessor->writeSettingsToFileAsync();
 }
 
 void VASTPresetData::loadFromSettings() {

@@ -526,7 +526,7 @@ VASTPresetEditorComponent::VASTPresetEditorComponent (AudioProcessorEditor *edit
     c_midiKeyboardLayoutString->setScrollbarsShown (false);
     c_midiKeyboardLayoutString->setCaretVisible (true);
     c_midiKeyboardLayoutString->setPopupMenuEnabled (true);
-    c_midiKeyboardLayoutString->setText (TRANS ("ysxdcvgbhnjq2w3er5t6z7"));
+    c_midiKeyboardLayoutString->setText (TRANS ("ysxdcvgbhnjmq2w3er5t6z7"));
 
     label21.reset (new juce::Label ("new label",
                                     TRANS ("KEY LAYOUT")));
@@ -935,7 +935,7 @@ void VASTPresetEditorComponent::buttonClicked (juce::Button* buttonThatWasClicke
     else if (buttonThatWasClicked == c_midiKeyboardReset.get())
     {
         //[UserButtonCode_c_midiKeyboardReset] -- add your button handler code here..
-        myProcessor->setMidiKeyboardCharLayout("ysxdcvgbhnjq2w3er5t6z7"); //FL Studio setup
+        myProcessor->setMidiKeyboardCharLayout("ysxdcvgbhnjmq2w3er5t6z7"); //FL Studio setup
         myProcessor->setMidiKeyboardBaseOctave(2); //FL Studio setup
         myProcessor->writeSettingsToFile();
         c_midiKeyboardLayoutString->setText(myProcessor->getMidiKeyboardCharLayout(), false);
@@ -1411,7 +1411,7 @@ BEGIN_JUCER_METADATA
   <TEXTEDITOR name="c_midiKeyboardLayoutString" id="25b7f307c69ebaf9" memberName="c_midiKeyboardLayoutString"
               virtualName="" explicitFocusOrder="21" pos="16.875% 89.739% 39.125% 2.435%"
               tooltip="Plugin keyboard key mapping - keyboard characters starting from C, C#. D to B"
-              initialText="ysxdcvgbhnjq2w3er5t6z7" multiline="0" retKeyStartsLine="0"
+              initialText="ysxdcvgbhnjmq2w3er5t6z7" multiline="0" retKeyStartsLine="0"
               readonly="0" scrollbars="0" caret="1" popupmenu="1"/>
   <LABEL name="new label" id="4dff46d8d041bc9a" memberName="label21" virtualName=""
          explicitFocusOrder="0" pos="3% 89.913% 12.875% 1.913%" textCol="ffe2e2e2"

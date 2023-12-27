@@ -23,6 +23,9 @@ public:
 	CVASTDelay(void);
 	virtual ~CVASTDelay(void);  // base class MUST declare virtual destructor
 
+	void needsResetBeforUse();
+	bool m_needsResetBeforUse = false;
+
 protected:
 	// member variables
 	//

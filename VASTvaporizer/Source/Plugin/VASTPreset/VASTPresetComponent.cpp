@@ -1454,7 +1454,8 @@ void VASTPresetComponent::PresetTableComponent::sortOrderChanged(int newSortColu
 		(_processor->getCurrentVASTLookAndFeel()->presetTableSortColumnForward != isForwards)) {
 		_processor->getCurrentVASTLookAndFeel()->presetTableSortColumn = newSortColumnId;
 		_processor->getCurrentVASTLookAndFeel()->presetTableSortColumnForward = isForwards;
-		_processor->writeSettingsToFileAsync();
+		if (_processor->m_initCompleted.load())
+			_processor->writeSettingsToFileAsync();
 	}
 
 	int presetNameColumn = 7; //CAUTION - do not change

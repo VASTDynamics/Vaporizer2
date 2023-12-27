@@ -382,12 +382,14 @@ void VASTPopupHandler::mouseDown(const MouseEvent &e) {
 			else if (result == 27)
 			{
 				myProcessor->loadDefaultMidiMapping();
-				myProcessor->writeSettingsToFileAsync();
+				if (myProcessor->m_initCompleted.load())
+					myProcessor->writeSettingsToFileAsync();
 			}
 			else if (result == 28)
 			{
 				myProcessor->loadZeroMidiMapping();
-				myProcessor->writeSettingsToFileAsync();
+				if (myProcessor->m_initCompleted.load())
+					myProcessor->writeSettingsToFileAsync();
 			}
 		}));		
 	}

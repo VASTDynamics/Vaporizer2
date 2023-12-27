@@ -147,6 +147,16 @@ void VASTAudioProcessorEditor::timerCallback(int timerID) {
 			processor->clearUIInitFlag();
 		}
 
+		if (processor->needsUIInitAfterPresetLoad()) {
+			vaporizerComponent->getOscillatorComponent(0)->initAll();
+			vaporizerComponent->getOscillatorComponent(1)->initAll();
+			vaporizerComponent->getOscillatorComponent(2)->initAll();
+			vaporizerComponent->getOscillatorComponent(3)->initAll();
+			vaporizerComponent->updateMatrixDisplay();
+			vaporizerComponent->updateHeader();
+			processor->clearUIInitFlagAfterPresetLoad();
+		}
+
 		if (processor->needsUIUpdate()) {
 			if (processor->needsUIUpdate_tabs())
 				vaporizerComponent->updateAll();

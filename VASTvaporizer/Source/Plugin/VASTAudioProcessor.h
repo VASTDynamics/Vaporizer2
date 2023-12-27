@@ -162,8 +162,11 @@ public:
 	void clearUIPresetReloadFlag();
 
 	bool needsUIInit() const;
+	bool needsUIInitAfterPresetLoad() const;
+	void clearUIInitFlagAfterPresetLoad();
 	void clearUIInitFlag();
 	void requestUIInit();
+	void requestUIInitAfterPrestLoad();
 	bool isCurrentEditorInitialized();
 	void resetCurrentEditorInitialized();
 	void setCurrentEditorInitialized();
@@ -352,6 +355,7 @@ public:
 	bool isDumping();
 
 	bool doUndo();
+	std::atomic<bool> m_initCompleted = false;
 
 	//license information from regfile
 	struct {
@@ -418,8 +422,7 @@ private:
 	String FloatArrayToString(float* fData, int numFloat);
 	int StringToFloatArray(String sFloatCSV, float* fData, int maxNumFloat);
 	String StringArrayToString(String* sData, int numFloat);
-	int StringToStringArray(String sStringCSV, String* sData, int maxNumFloat);
-    std::atomic<bool> m_initCompleted = false;
+	int StringToStringArray(String sStringCSV, String* sData, int maxNumFloat);    
 
 	XmlElement createPatchXML(bool externalRepresentation);
 	void xmlParseToPatch(XmlElement *pRoot, bool bNameOnly, const VASTPresetElement* lPreset, int index, bool externalRepresentation, bool isFromState, VASTPresetElement& resultPresetData);
@@ -437,7 +440,7 @@ private:
 	int m_MPEmode = 0; // settings
 	int m_ModWheelPermaLink = 0;
 
-	String m_MidiKeyboardCharLayout = "ysxdcvgbhnjq2w3er5t6z7"; //FL Studio setup			
+	String m_MidiKeyboardCharLayout = "ysxdcvgbhnjmq2w3er5t6z7"; //FL Studio setup			
 	int m_iMidiKeyboardBaseOctave = 4; //FL Studio setup
 
     std::atomic<bool> m_wasBypassed = false;
@@ -445,6 +448,7 @@ private:
     std::atomic<vastErrorState> iErrorState = vastErrorState::noError;
 
 	std::atomic<bool> mUIInitFlag;
+	std::atomic<bool> mUIInitFlagAfterPrestLoad;
     std::atomic<bool> mUIAlert;
 
 	int mIntPpq = 0;

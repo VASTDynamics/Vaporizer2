@@ -38,8 +38,10 @@ public:
 	bool processAudioFrame(float* pInputBuffer, float* pOutputBuffer, MYUINT uNumInputChannels, MYUINT uNumOutputChannels, int currentFrame);
 	
 	void setDelay_mSec(float fmSec);
+	void needsInitBeforUsed();
 
 private:
+	bool m_needsInitBeforUsed = false;
 	int m_iExpectedSamplesPerBlock = 0;
 	int m_iSampleRate = 0;
 	float* m_bCombOnOff = nullptr;

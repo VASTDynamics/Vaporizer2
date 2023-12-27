@@ -89,6 +89,7 @@ VASTAudioProcessor::VASTAudioProcessor() :
 	mUIAlert.store(false);
     mUIUpdateFlag.store(false);
     mUIInitFlag.store(false);
+	mUIInitFlagAfterPrestLoad.store(false);
 
 	bIsInErrorState.store(false);
 	iErrorState.store(vastErrorState::noError);
@@ -217,8 +218,20 @@ void VASTAudioProcessor::clearUIPresetReloadFlag() {
 bool VASTAudioProcessor::needsUIInit() const {
     return mUIInitFlag.load(); }
 
+bool VASTAudioProcessor::needsUIInitAfterPresetLoad() const {
+	return mUIInitFlagAfterPrestLoad.load();
+}
+
 void VASTAudioProcessor::clearUIInitFlag() {
     mUIInitFlag.store(false); }
+
+void VASTAudioProcessor::clearUIInitFlagAfterPresetLoad() {
+	mUIInitFlagAfterPrestLoad.store(false);
+}
+
+void VASTAudioProcessor::requestUIInitAfterPrestLoad() {
+	mUIInitFlagAfterPrestLoad.store(true);
+}
 
 void VASTAudioProcessor::requestUIInit() {
     mUIInitFlag.store(true);
@@ -590,8 +603,6 @@ void VASTAudioProcessor::changeProgramName(int index, const String& newName)
 
 int VASTAudioProcessor::getNumPrograms()
 {
-	return 800;
-
 	int number = 0;
 	number += getNumFactoryPresets() + getNumUserPresets();
 	return number;
@@ -933,14 +944,10 @@ void VASTAudioProcessor::getStateInformation(MemoryBlock& destData)
 
 	VDBG("VASTAudioProcessor::getStateInformation called from Thread " << (Thread::getCurrentThread()==nullptr ? "Main UI Thread" : Thread::getCurrentThread()->getThreadName()));
 
-	const ScopedLock sl(getCallbackLock());
-	//suspendProcessing(true);
+	//const ScopedLock sl(getCallbackLock()); //do not lock here, this causes audio process locks and CPU spikes
 
-	//XmlElement xml = createPatchXML(false); //use internal representation for state // VASTVaporizerParamsV2.00000 behavior
-	XmlElement xml = createPatchXML(true); //VASTVaporizerParamsV2.10000 bevhavior
+	XmlElement xml = createPatchXML(true); //VASTVaporizerParamsV2.10000 behavior
 	copyXmlToBinary(xml, destData);
-
-	//suspendProcessing(false);
 }
 
 //==============================================================================
@@ -1046,10 +1053,10 @@ void VASTAudioProcessor::loadPreset(int index) {
 		bool success = loadPatchXML(xmlDoc.get(), false, &m_presetData.getCurPatchData(), index, lPatch);
 		if (!success) {
 			m_presetData.reloadPresetArray(false);
-			setCurrentProgram(0); //revert to init
+			setCurrentProgram(0); //revert to init			
 		}
+		requestUIInitAfterPrestLoad();
 	}
-	requestUIInit();
     m_presetToLoad = -1;
 }
 
@@ -1505,7 +1512,7 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 	if (b_success == false) {
 		processor->setErrorState(vastErrorState::errorState11_loadPresetUnsuccessful);
 		processor->requestUIAlert();
-		processor->requestUIInit();
+		processor->requestUIInitAfterPrestLoad(); 
 		//---------------------------------------------------------------------------------------
 	}
 	else {
@@ -1542,7 +1549,7 @@ void VASTAudioProcessor::passTreeToAudioThread(ValueTree tree, bool externalRepr
 		}
 		if (processor->getSampleRate() != 0)
 			processor->m_pVASTXperience.prepareForPlay(processor->getSampleRate(), processor->getBlockSize());
-		processor->requestUIInit();
+		processor->requestUIInitAfterPrestLoad(); 
 		//---------------------------------------------------------------------------------------
 	}
 
@@ -1564,20 +1571,20 @@ bool VASTAudioProcessor::lockedAndSafeToDoDeallocatios()
 }
 
 void VASTAudioProcessor::registerThread() {
-	const ScopedLock sl(getCallbackLock());
+	//const ScopedLock sl(getCallbackLock());
 	m_iNumPassTreeThreads++;
 	VDBG("Register Num Threads registered: " << m_iNumPassTreeThreads);
 }
 
 void VASTAudioProcessor::unregisterThread() {
-	const ScopedLock sl(getCallbackLock());
+	//const ScopedLock sl(getCallbackLock());
 	m_iNumPassTreeThreads--;
 	if (m_iNumPassTreeThreads < 0) m_iNumPassTreeThreads = 0;
 	VDBG("Unregister Num Threads registered: " << m_iNumPassTreeThreads);
 }
 
 bool VASTAudioProcessor::getTreeThreadLock() {
-	const ScopedLock sl(getCallbackLock());
+	//const ScopedLock sl(getCallbackLock());
 	return m_iNumPassTreeThreads > 1;
 }
 
@@ -2312,7 +2319,7 @@ void VASTAudioProcessor::initSettings() {
 
 		m_ModWheelPermaLink = 1; //default now CustomModulator1
 
-		m_MidiKeyboardCharLayout = "ysxdcvgbhnjq2w3er5t6z7"; //FL Studio setup			
+		m_MidiKeyboardCharLayout = "ysxdcvgbhnjmq2w3er5t6z7"; //FL Studio setup			
 		m_iMidiKeyboardBaseOctave = 2; //FL Studio setup
 
         writeSettingsToFile();

@@ -455,6 +455,18 @@ public:
 	Font customFontBuffer[8];
 	void loadCustomFonts();
 	Font getCustomFont(CVASTSettings::customFonts customFont);
+	void qFilterCoefficientsInitTables();
+
+	float table_pitch alignas(16)[512];
+	float table_note_omega_os1 alignas(16)[2][512];
+	float table_note_omega_os2 alignas(16)[2][512];
+	float table_note_omega_os4 alignas(16)[2][512];
+	float table_dB alignas(16)[512];
+	float table_pitch_inv alignas(16)[512];
+
+	int filterCoeffLastOsFactor = -1;
+	int filterCoeffLastSampleRate = -1;
+	float filterCoeffLastMmasterTuneHz = -1.f;
 
 	private:	
 		bool modMatrixDestinationSet(MYUINT destination); //use fast instead

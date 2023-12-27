@@ -432,30 +432,6 @@ void VASTSynthesiser::renderVoices(sRoutingBuffers& routingBuffers, int startSam
 		for (int midiChannel = 0; midiChannel < 16; midiChannel++) {
 			if (m_fModWheel_smoothed[midiChannel].isSmoothing()) { //do mod wheel, nor midi channel sensitive	
 				float l_modWheelPos = m_fModWheel_smoothed[midiChannel].getNextValue();
-				//check for permalink
-				int permalink = myProcessor->getModWheelPermaLink();
-				if (permalink != 0) {
-
-					Array<AudioProcessorParameter*> params = myProcessor->getParameters();
-					for (int i = 0; i < params.size(); i++) {
-						if ((permalink == 1) && (params[i]->getName(18).equalsIgnoreCase("Custom modulator 1"))) {
-							params[i]->setValueNotifyingHost(l_modWheelPos / 127.f);
-							break;
-						}
-						if ((permalink == 2) && (params[i]->getName(18).equalsIgnoreCase("Custom modulator 2"))) {
-							params[i]->setValueNotifyingHost(l_modWheelPos / 127.f);
-							break;
-						}
-						if ((permalink == 3) && (params[i]->getName(18).equalsIgnoreCase("Custom modulator 3"))) {
-							params[i]->setValueNotifyingHost(l_modWheelPos / 127.f);
-							break;
-						}
-						if ((permalink == 4) && (params[i]->getName(18).equalsIgnoreCase("Custom modulator 4"))) {
-							params[i]->setValueNotifyingHost(l_modWheelPos / 127.f);
-							break;
-						}
-					}
-				}
 
 				for (auto* voice : voices) {
                     if (voice == nullptr) {
@@ -1477,6 +1453,8 @@ void VASTSynthesiser::handleMidiEvent(const MidiMessage& m)
 
 			//set initial values for note: timbre
 			if (myProcessor->isMPEenabled()) {
+				m_fPitchBendZone_smoothed[channel].setCurrentAndTargetValue(m_fPitchBendZone_smoothed[channel].getTargetValue()); //force it
+
 				for (auto* voice : voices) {
                     if (voice == nullptr) {
                         vassertfalse;
@@ -1485,8 +1463,11 @@ void VASTSynthesiser::handleMidiEvent(const MidiMessage& m)
 					if (voice->mVoiceNo >= m_Set->m_uMaxPoly) {
 						continue; //safety
 					}
-					if (voice->isPlayingChannel(channel))
+
+					if (voice->isPlayingChannel(channel)) {
+						voice->pitchWheelMoved(m_fPitchBendZone_smoothed[channel].getTargetValue(), false);
 						voice->controllerMoved(74 /*timbre MSB*/, lastTimbreReceivedOnChannel[channel - 1].as7BitInt()); //7bit??
+					}
 				}
 			}
 		}
@@ -2053,6 +2034,52 @@ void VASTSynthesiser::handleController(const int midiChannel,
 
 	if (controllerNumber == 1) { // MIDI CC 1 Modulation, e.g. VSTHost
 		m_fModWheel_smoothed[midiChannel].setTargetValue(controllerValue);
+
+		//check for permalink
+		int permalink = myProcessor->getModWheelPermaLink();
+
+		if (permalink != 0) {
+			float l_modWheelTargetPos = m_fModWheel_smoothed[midiChannel].getTargetValue();
+
+			if (((permalink == 1) && (m_CustomMod1Param == nullptr)) ||
+				((permalink == 2) && (m_CustomMod2Param == nullptr)) ||
+				((permalink == 3) && (m_CustomMod3Param == nullptr)) ||
+				((permalink == 4) && (m_CustomMod4Param == nullptr))) {
+
+				Array<AudioProcessorParameter*> params = myProcessor->getParameters();
+				for (int i = 0; i < params.size(); i++) {
+					if ((permalink == 1) && (params[i]->getName(18).equalsIgnoreCase("Custom modulator 1"))) {
+						m_CustomMod1Param = params[i];
+						break;
+					}
+					if ((permalink == 2) && (params[i]->getName(18).equalsIgnoreCase("Custom modulator 2"))) {
+						m_CustomMod2Param = params[i];
+						break;
+					}
+					if ((permalink == 3) && (params[i]->getName(18).equalsIgnoreCase("Custom modulator 3"))) {
+						m_CustomMod3Param = params[i];
+						break;
+					}
+					if ((permalink == 4) && (params[i]->getName(18).equalsIgnoreCase("Custom modulator 4"))) {
+						m_CustomMod4Param = params[i];
+						break;
+					}
+				}
+			}
+
+			if (permalink == 1) {
+				m_CustomMod1Param->setValueNotifyingHost(l_modWheelTargetPos / 127.f);
+			}
+			else if (permalink == 2) {
+				m_CustomMod2Param->setValueNotifyingHost(l_modWheelTargetPos / 127.f);
+			}
+			else if (permalink == 3) {
+				m_CustomMod3Param->setValueNotifyingHost(l_modWheelTargetPos / 127.f);
+			}
+			else if (permalink == 4) {
+				m_CustomMod4Param->setValueNotifyingHost(l_modWheelTargetPos / 127.f);
+			}
+		}
 	}
 	else {
 		const ScopedLock sl(lock);

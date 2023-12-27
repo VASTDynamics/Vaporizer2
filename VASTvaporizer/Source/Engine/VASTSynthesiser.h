@@ -633,6 +633,11 @@ private:
 	bool shouldStealNotes = true;
 	BigInteger sustainPedalsDown;
 
+	AudioProcessorParameter* m_CustomMod1Param = nullptr;
+	AudioProcessorParameter* m_CustomMod2Param = nullptr;
+	AudioProcessorParameter* m_CustomMod3Param = nullptr;
+	AudioProcessorParameter* m_CustomMod4Param = nullptr;
+
 	AudioSampleBuffer qfilterbuffer;
 	std::atomic<int> m_newestPlaying = -1;
     std::atomic<int> m_oldestPlaying = -1;

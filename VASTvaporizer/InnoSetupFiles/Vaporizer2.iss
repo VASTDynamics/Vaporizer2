@@ -2,7 +2,7 @@
 
 #define PluginBaseName = "Vaporizer2"
 #ifndef AppVer
-#define AppVer "3.4.2"
+#define AppVer "3.4.5"
 #endif
 
 [Setup]
@@ -61,6 +61,7 @@ Name: "standalone_win64"; Description: "Standalone (64-bit)"; Types: full compac
 ;Name: "standalone_win32_SSE2"; Description: "32-bit Standalone (SSE2 compatibility version for older systems)"; Types: full
 Name: "aax_win64"; Description: "AAX Plugin (ProTools, 64-bit)"; Types: full; Check: IsWin64 
 Name: "lv2_win64"; Description: "LV2 Plugin (64-bit)"; Types: full; Check: IsWin64
+Name: "clap_win64"; Description: "CLAP Plugin (64-bit)"; Types: full; Check: IsWin64
 Name: "factorypresets"; Description: "Factory Presets"; Types: full compact compatibility
 Name: "wavetables"; Description: "Wavetables"; Types: full compact compatibility
 Name: "noises"; Description: "Noises"; Types: full compact compatibility
@@ -114,6 +115,8 @@ Source: "..\..\cmake-build\x64\VASTvaporizer2_artefacts\Release\Standalone\VASTv
 Source: "..\..\cmake-build\x64\VASTvaporizer2_artefacts\Release\AAX\VASTvaporizer2.aaxplugin\*"; DestDir: "{code:GetPluginDir|2}\VASTvaporizer2.aaxplugin"; Components: aax_win64; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly 
 ;LV2
 Source: "..\..\cmake-build\x64\VASTvaporizer2_artefacts\Release\LV2\VASTvaporizer2.lv2\*"; DestDir: "{code:GetPluginDir|3}\VASTvaporizer2.lv2"; Components: lv2_win64; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly
+;CLAP
+Source: "..\..\cmake-build\x64\VASTvaporizer2_artefacts\Release\CLAP\VASTvaporizer2.clap"; DestDir: "{code:GetPluginDir|4}"; Components: clap_win64; Flags: ignoreversion overwritereadonly
 
 ;*COMPATIBILITY* and !*OLDCPU*
 ;VST
@@ -173,9 +176,9 @@ Source: "..\..\cmake-build\x64SSE2\VASTvaporizer2_artefacts\Release\AAX\VASTvapo
 ;new logic - always in appfolder
 Source: "..\Presets\*"; DestDir: "{app}\Presets"; Components: factorypresets; Flags: recursesubdirs
 Source: "..\Tables\*"; DestDir: "{app}\Tables"; Components: wavetables; Flags: recursesubdirs
-Source: "..\Tables\*"; DestDir: "{code:GetPluginDir|5}\Factory"; Components: wavetables; Flags: recursesubdirs
+Source: "..\Tables\*"; DestDir: "{code:GetPluginDir|6}\Factory"; Components: wavetables; Flags: recursesubdirs
 Source: "..\Noises\*"; DestDir: "{app}\Noises"; Components: noises; Flags: recursesubdirs
-Source: "..\Noises\*"; DestDir: "{code:GetPluginDir|6}\Factory"; Components: noises; Flags: recursesubdirs
+Source: "..\Noises\*"; DestDir: "{code:GetPluginDir|7}\Factory"; Components: noises; Flags: recursesubdirs
 Source: "VaporizerUserManual.url"; DestDir: "{app}"; Components: documentation
 Source: "license.txt"; DestDir: "{app}"; Components: license
 
@@ -190,9 +193,9 @@ Root: HKCU; Subkey: "Software\VAST Dynamics\Vaporizer2"; Flags: uninsdeletekey
 Root: HKLM; Subkey: "Software\VAST Dynamics"; Flags: uninsdeletekeyifempty
 Root: HKLM; Subkey: "Software\VAST Dynamics\Vaporizer2"; Flags: uninsdeletekey
 Root: HKLM; Subkey: "Software\VAST Dynamics\Vaporizer2\Settings"; ValueType: string; ValueName: "InstallPath"; ValueData: "{app}"
-Root: HKLM; Subkey: "Software\VAST Dynamics\Vaporizer2\Settings"; ValueType: string; ValueName: "UserPresetFolder"; ValueData: "{code:GetPluginDir|4}"
-Root: HKLM; Subkey: "Software\VAST Dynamics\Vaporizer2\Settings"; ValueType: string; ValueName: "UserTableFolder"; ValueData: "{code:GetPluginDir|5}"
-Root: HKLM; Subkey: "Software\VAST Dynamics\Vaporizer2\Settings"; ValueType: string; ValueName: "UserNoisesFolder"; ValueData: "{code:GetPluginDir|6}"
+Root: HKLM; Subkey: "Software\VAST Dynamics\Vaporizer2\Settings"; ValueType: string; ValueName: "UserPresetFolder"; ValueData: "{code:GetPluginDir|5}"
+Root: HKLM; Subkey: "Software\VAST Dynamics\Vaporizer2\Settings"; ValueType: string; ValueName: "UserTableFolder"; ValueData: "{code:GetPluginDir|6}"
+Root: HKLM; Subkey: "Software\VAST Dynamics\Vaporizer2\Settings"; ValueType: string; ValueName: "UserNoisesFolder"; ValueData: "{code:GetPluginDir|7}"
   
 [Run]
 Filename: "{app}\VASTvaporizer2.exe"; WorkingDir: "{app}"; Description: "Run Vaporizer2 {#AppVer} Standalone"; Components: standalone_win64; Flags: postinstall runascurrentuser nowait
@@ -343,6 +346,10 @@ begin
   PluginDirPage.Add('Folder LV2');
   PluginDirPage.Values[3] := GetPreviousData('LV264', ExpandConstant('{commoncf}\LV2\'));
 
+  PluginDirPage.Add('Folder CLAP');
+  PluginDirPage.Values[4] := GetPreviousData('CLAP64', ExpandConstant('{commoncf}\CLAP\'));
+
+
   //If not Is64BitInstallMode then
   //begin
     //PluginDirPage.Values[1] := GetPreviousData('VST32', ExpandConstant('{reg:HKLM\SOFTWARE\VSTPluginsPath\VST,VSTPluginsPath|{commonpf}\Steinberg\VSTPlugins}\Vaporizer2'));
@@ -353,11 +360,11 @@ begin
 
   //new logic: factory presets are always stored in app folder, user folder can be selected
   PluginDirPage.Add('User Presets Folder');
-  PluginDirPage.Values[4] := GetPreviousData('Vaporizer2PresetFolder', ExpandConstant('{code:GetOriginalUserDocumentsPath}\Vaporizer2\Presets')); //second is default value
+  PluginDirPage.Values[5] := GetPreviousData('Vaporizer2PresetFolder', ExpandConstant('{code:GetOriginalUserDocumentsPath}\Vaporizer2\Presets')); //second is default value
   PluginDirPage.Add('User Wavetables');                                                       
-  PluginDirPage.Values[5] := GetPreviousData('Vaporizer2TablesFolder', ExpandConstant('{code:GetOriginalUserDocumentsPath}\Vaporizer2\Tables')); //second is default value 
+  PluginDirPage.Values[6] := GetPreviousData('Vaporizer2TablesFolder', ExpandConstant('{code:GetOriginalUserDocumentsPath}\Vaporizer2\Tables')); //second is default value 
   PluginDirPage.Add('User Noises');
-  PluginDirPage.Values[6] := GetPreviousData('Vaporizer2NoisesFolder', ExpandConstant('{code:GetOriginalUserDocumentsPath}\Vaporizer2\Noises')); //second is default value;
+  PluginDirPage.Values[7] := GetPreviousData('Vaporizer2NoisesFolder', ExpandConstant('{code:GetOriginalUserDocumentsPath}\Vaporizer2\Noises')); //second is default value;
 
   //ReducePromptSpacing(PluginDirPage, 9, ScaleY(20));
 
@@ -409,26 +416,33 @@ begin
     PluginDirPage.Edits[3].Enabled := PluginDirPage.Buttons[3].Enabled;
     PluginDirPage.Edits[3].Visible := PluginDirPage.Buttons[3].Enabled;
 
-    PluginDirPage.Buttons[4].Enabled := WizardIsComponentSelected('factorypresets');
+    PluginDirPage.Buttons[4].Enabled := WizardIsComponentSelected('clap_win64') 
     PluginDirPage.Buttons[4].Visible := PluginDirPage.Buttons[4].Enabled;
     PluginDirPage.PromptLabels[4].Enabled := PluginDirPage.Buttons[4].Enabled;
     PluginDirPage.PromptLabels[4].Visible := PluginDirPage.Buttons[4].Enabled;
     PluginDirPage.Edits[4].Enabled := PluginDirPage.Buttons[4].Enabled;
     PluginDirPage.Edits[4].Visible := PluginDirPage.Buttons[4].Enabled;
 
-    PluginDirPage.Buttons[5].Enabled := WizardIsComponentSelected('wavetables');
+    PluginDirPage.Buttons[5].Enabled := WizardIsComponentSelected('factorypresets');
     PluginDirPage.Buttons[5].Visible := PluginDirPage.Buttons[5].Enabled;
     PluginDirPage.PromptLabels[5].Enabled := PluginDirPage.Buttons[5].Enabled;
     PluginDirPage.PromptLabels[5].Visible := PluginDirPage.Buttons[5].Enabled;
     PluginDirPage.Edits[5].Enabled := PluginDirPage.Buttons[5].Enabled;
     PluginDirPage.Edits[5].Visible := PluginDirPage.Buttons[5].Enabled;
 
-    PluginDirPage.Buttons[6].Enabled := WizardIsComponentSelected('noises');
+    PluginDirPage.Buttons[6].Enabled := WizardIsComponentSelected('wavetables');
     PluginDirPage.Buttons[6].Visible := PluginDirPage.Buttons[6].Enabled;
     PluginDirPage.PromptLabels[6].Enabled := PluginDirPage.Buttons[6].Enabled;
     PluginDirPage.PromptLabels[6].Visible := PluginDirPage.Buttons[6].Enabled;
     PluginDirPage.Edits[6].Enabled := PluginDirPage.Buttons[6].Enabled;
     PluginDirPage.Edits[6].Visible := PluginDirPage.Buttons[6].Enabled;
+
+    PluginDirPage.Buttons[7].Enabled := WizardIsComponentSelected('noises');
+    PluginDirPage.Buttons[7].Visible := PluginDirPage.Buttons[7].Enabled;
+    PluginDirPage.PromptLabels[7].Enabled := PluginDirPage.Buttons[7].Enabled;
+    PluginDirPage.PromptLabels[7].Visible := PluginDirPage.Buttons[7].Enabled;
+    PluginDirPage.Edits[7].Enabled := PluginDirPage.Buttons[7].Enabled;
+    PluginDirPage.Edits[7].Visible := PluginDirPage.Buttons[7].Enabled;
 
   end;
 
@@ -442,7 +456,7 @@ function ShouldSkipPage(PageID: Integer): Boolean;
 begin
   if PageID = PluginDirPage.ID then
   begin
-    If ((not WizardIsComponentSelected('aax_win64')) and (not WizardIsComponentSelected('lv2_win64')) and (not WizardIsComponentSelected('vst_win32')) and (not WizardIsComponentSelected('vst_win64')) and (not WizardIsComponentSelected('vst_win32_SSE2')) and (not WizardIsComponentSelected('vst_win64_SSE2')) and (not WizardIsComponentSelected('vst3_win64')) and (not WizardIsComponentSelected('vst3_win32')) and (not WizardIsComponentSelected('vst3_win64_SSE2')) and (not WizardIsComponentSelected('vst3_win32_SSE2')) and (not WizardIsComponentSelected('old_cpu')) and (not WizardIsComponentSelected('compatibility'))) then
+    If ((not WizardIsComponentSelected('aax_win64')) and (not WizardIsComponentSelected('lv2_win64')) and (not WizardIsComponentSelected('clap_win64')) and (not WizardIsComponentSelected('vst_win32')) and (not WizardIsComponentSelected('vst_win64')) and (not WizardIsComponentSelected('vst_win32_SSE2')) and (not WizardIsComponentSelected('vst_win64_SSE2')) and (not WizardIsComponentSelected('vst3_win64')) and (not WizardIsComponentSelected('vst3_win32')) and (not WizardIsComponentSelected('vst3_win64_SSE2')) and (not WizardIsComponentSelected('vst3_win32_SSE2')) and (not WizardIsComponentSelected('old_cpu')) and (not WizardIsComponentSelected('compatibility'))) then
       begin
         Result := True
       end;
@@ -472,11 +486,13 @@ begin
   If (PluginDirPage.Buttons[3].Enabled) Then
     SetPreviousData(PreviousDataKey, 'LV264', PluginDirPage.Values[3]);
   If (PluginDirPage.Buttons[4].Enabled) Then
-    SetPreviousData(PreviousDataKey, 'Vaporizer2PresetFolder', PluginDirPage.Values[4]);
+    SetPreviousData(PreviousDataKey, 'CLAP64', PluginDirPage.Values[4]);
   If (PluginDirPage.Buttons[5].Enabled) Then
-    SetPreviousData(PreviousDataKey, 'Vaporizer2TablesFolder', PluginDirPage.Values[5]);
+    SetPreviousData(PreviousDataKey, 'Vaporizer2PresetFolder', PluginDirPage.Values[5]);
   If (PluginDirPage.Buttons[6].Enabled) Then
-    SetPreviousData(PreviousDataKey, 'Vaporizer2NoisesFolder', PluginDirPage.Values[6]);
+    SetPreviousData(PreviousDataKey, 'Vaporizer2TablesFolder', PluginDirPage.Values[6]);
+  If (PluginDirPage.Buttons[7].Enabled) Then
+    SetPreviousData(PreviousDataKey, 'Vaporizer2NoisesFolder', PluginDirPage.Values[7]);
 end;
 
 //procedure WriteInitialSettingsFile;

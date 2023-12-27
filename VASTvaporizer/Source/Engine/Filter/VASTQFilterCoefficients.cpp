@@ -26,8 +26,19 @@ void VASTQFilterCoefficients::note_to_omega(float x, float& sinu, float& cosi)
 	else if (e < 0)
 		e = 0;
 
-	sinu = (1 - a) * table_note_omega[0][e & 0x1ff] + a * table_note_omega[0][(e + 1) & 0x1ff];
-	cosi = (1 - a) * table_note_omega[1][e & 0x1ff] + a * table_note_omega[1][(e + 1) & 0x1ff];
+	if (lastOsFactor == 1) {
+		sinu = (1 - a) * m_Set->table_note_omega_os1[0][e & 0x1ff] + a * m_Set->table_note_omega_os1[0][(e + 1) & 0x1ff];
+		cosi = (1 - a) * m_Set->table_note_omega_os1[1][e & 0x1ff] + a * m_Set->table_note_omega_os1[1][(e + 1) & 0x1ff];
+	}
+	else if (lastOsFactor == 2) {
+		sinu = (1 - a) * m_Set->table_note_omega_os2[0][e & 0x1ff] + a * m_Set->table_note_omega_os2[0][(e + 1) & 0x1ff];
+		cosi = (1 - a) * m_Set->table_note_omega_os2[1][e & 0x1ff] + a * m_Set->table_note_omega_os2[1][(e + 1) & 0x1ff];
+	}
+	else if (lastOsFactor == 4) {
+		sinu = (1 - a) * m_Set->table_note_omega_os4[0][e & 0x1ff] + a * m_Set->table_note_omega_os4[0][(e + 1) & 0x1ff];
+		cosi = (1 - a) * m_Set->table_note_omega_os4[1][e & 0x1ff] + a * m_Set->table_note_omega_os4[1][(e + 1) & 0x1ff];
+	}
+	else vassertfalse;
 }
 
 float VASTQFilterCoefficients::note_to_pitch(float x)
@@ -39,7 +50,7 @@ float VASTQFilterCoefficients::note_to_pitch(float x)
 	if (e > 0x1fe)
 		e = 0x1fe;
 
-	return (1 - a) * table_pitch[e & 0x1ff] + a * table_pitch[(e + 1) & 0x1ff];
+	return (1 - a) * m_Set->table_pitch[e & 0x1ff] + a * m_Set->table_pitch[(e + 1) & 0x1ff];
 }
 
 float VASTQFilterCoefficients::pitch_to_note(float x) {
@@ -61,7 +72,7 @@ float VASTQFilterCoefficients::note_to_pitch_inv(float x)
 	if (e > 0x1fe)
 		e = 0x1fe;
 
-	return (1 - a) * table_pitch_inv[e & 0x1ff] + a * table_pitch_inv[(e + 1) & 0x1ff];
+	return (1 - a) * m_Set->table_pitch_inv[e & 0x1ff] + a * m_Set->table_pitch_inv[(e + 1) & 0x1ff];
 }
 
 float VASTQFilterCoefficients::db_to_linear(float x)
@@ -70,45 +81,27 @@ float VASTQFilterCoefficients::db_to_linear(float x)
 	int e = (int)x;
 	float a = x - (float)e;
 
-	return (1 - a) * table_dB[e & 0x1ff] + a * table_dB[(e + 1) & 0x1ff];
+	return (1 - a) * m_Set->table_dB[e & 0x1ff] + a * m_Set->table_dB[(e + 1) & 0x1ff];
 }
 
 const float smooth = 0.2f;
 
-VASTQFilterCoefficients::VASTQFilterCoefficients()
+VASTQFilterCoefficients::VASTQFilterCoefficients(CVASTSettings *set) : m_Set(set)
 {
    Reset();
 }
 
 void VASTQFilterCoefficients::prepareForPlay(double sampleRate, int osFactor, float masterTuneHz)
 {
-	bool bChanged = false;
-	if (!approximatelyEqual(float(sampleRate), samplerate) ||
-		!approximatelyEqual(float(dmasterTuneHz), masterTuneHz))
-		bChanged = true;
-
+	m_Set->qFilterCoefficientsInitTables();
+	lastOsFactor = osFactor;
 	samplerate = sampleRate;
-	dsamplerate_os = osFactor * samplerate; //2.f * samplerate; 
+	dsamplerate_os = osFactor * samplerate; 
 	dsamplerate_os_inv = 1.f / dsamplerate_os; 
 	samplerate_inv = 1.f / samplerate;
 	dmasterTuneHz = masterTuneHz;
 
-	if (bChanged) 
-		initTables();
 	Reset();
-}
-
-void VASTQFilterCoefficients::initTables() {
-	for (int i = 0; i < 512; i++)
-	{
-		table_dB[i] = powf(10.f, 0.05f * ((float)i - 384.f));
-		table_pitch[i] = powf(2.f, ((float)i - 256.f) * (1.f / 12.f));
-		table_pitch_inv[i] = 1.f / table_pitch[i];
-		table_note_omega[0][i] =
-			(float)sin(2 * M_PI * min(0.5, dmasterTuneHz * table_pitch[i] * dsamplerate_os_inv));
-		table_note_omega[1][i] =
-			(float)cos(2 * M_PI * min(0.5, dmasterTuneHz * table_pitch[i] * dsamplerate_os_inv));
-	}
 }
 
 void VASTQFilterCoefficients::MakeCoeffs(float Freq, float Reso, int Type, int SubType, float Scale)

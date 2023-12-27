@@ -18,7 +18,7 @@ VAST Dynamics Audio Software (TM)
 #define C_FILTER_OVERSAMPLINGFACTOR 4
 
 CVASTVcf::CVASTVcf(CVASTSettings& set, MYUINT voiceNo, MYUINT filterNo, bool isUI) :
-	m_Set(&set), m_Oversampler(set), m_combFilter(set)
+	m_Set(&set), m_Oversampler(set), m_combFilter(set), m_filterCoefficientMaker {{&set}, {&set}, {&set}}
 {
 	m_voiceNo = voiceNo;
 	m_filterNo = filterNo;
@@ -147,7 +147,7 @@ void CVASTVcf::init() { //once
 	//TEST SIMD
 
 	//COMB
-	m_combFilter.init();
+	m_combFilter.needsInitBeforUsed();
 	m_Oversampler.init();
 
 	//m_bqFilterL1.setCoefficients(coeff.makeLowPass(m_Set->m_nSampleRate, 100.f));

@@ -137,7 +137,7 @@ bool CVASTXperience::audioProcessLock()
 	VDBG("Audio process suspended / locked!");
 	//myProcessor->suspendProcessing(true);
 
-	const ScopedLock sl(myProcessor->getCallbackLock()); //this is required here but why
+	//const ScopedLock sl(myProcessor->getCallbackLock()); //this is required here but why
 	for (int bank = 0; bank < 4; bank ++)
 		m_Poly.m_OscBank[bank].m_bWavetableSoftfadeStillRendered.store(false);
 	m_BlockProcessing.store(true);
@@ -157,7 +157,7 @@ bool CVASTXperience::audioProcessUnlock()
 	}
 	//myProcessor->suspendProcessing(false);
 
-	const ScopedLock sl(myProcessor->getCallbackLock()); //this is required here but why
+	//const ScopedLock sl(myProcessor->getCallbackLock()); //this is required here but why
 	m_BlockProcessing.store(false);
 	m_BlockProcessingIsBlockedSuccessfully.store(false);
 	VDBG("Audio process no longer suspended / unlocked!");
@@ -165,7 +165,7 @@ bool CVASTXperience::audioProcessUnlock()
 }
 
 bool CVASTXperience::getBlockProcessingIsBlockedSuccessfully() {
-	const ScopedLock sl(myProcessor->getCallbackLock()); //this is required here but why
+	//const ScopedLock sl(myProcessor->getCallbackLock()); //this is required here but why
 	return m_BlockProcessingIsBlockedSuccessfully.load();
 }
 
@@ -174,7 +174,7 @@ bool CVASTXperience::nonThreadsafeIsBlockedProcessingInfo() {
 }
 
 bool CVASTXperience::getBlockProcessing() {
-	const ScopedLock sl(myProcessor->getCallbackLock()); //this is required here but why
+	//const ScopedLock sl(myProcessor->getCallbackLock()); //this is required here but why
 	return m_BlockProcessing.load();
 }
 
@@ -379,7 +379,7 @@ bool CVASTXperience::processAudioBuffer(AudioSampleBuffer& buffer, MidiBuffer& m
     // Is prepare for play running?
 	if ((m_iFadeOutSamples <= 0) || (m_BlockProcessingIsBlockedSuccessfully.load())) { //check new - wait for fadeout to complete
 		if (m_BlockProcessing.load() == true) {
-			const ScopedLock sl(myProcessor->getCallbackLock());
+			//const ScopedLock sl(myProcessor->getCallbackLock());
 			m_BlockProcessingIsBlockedSuccessfully = true;
 			VDBG("BlockProcessingIsBlockedSuccessfully is true!");
 			buffer.clear();

@@ -20,11 +20,15 @@ CVASTDelay::CVASTDelay(void)
 
 	m_pBuffer = std::make_unique<AudioSampleBuffer>(1, 44100 * 2); // inital value
 
-	resetDelay();
+	needsResetBeforUse();
 }
 
 CVASTDelay::~CVASTDelay(void)
 {
+}
+
+void CVASTDelay::needsResetBeforUse() {
+	m_needsResetBeforUse = true;
 }
 
 void CVASTDelay::init(int nDelayLength)
@@ -95,6 +99,10 @@ void CVASTDelay::cookVariables()
 
 void CVASTDelay::writeDelayAndInc(float fDelayInput)
 {
+	if (m_needsResetBeforUse) {
+		resetDelay();
+		m_needsResetBeforUse = false;
+	}
 	// write to the delay line
 	vassert((m_nWriteIndex >= 0) && (m_nWriteIndex <= m_pBuffer->getNumSamples())); //check out of bounds!
 	m_pBuffer->getWritePointer(0)[m_nWriteIndex] = fDelayInput; // external feedback sample
@@ -111,6 +119,10 @@ void CVASTDelay::writeDelayAndInc(float fDelayInput)
 
 float CVASTDelay::readDelay()
 {
+	if (m_needsResetBeforUse) {
+		resetDelay();
+		m_needsResetBeforUse = false;
+	}
 	softAdjustVariables();
 
 	// Read the output of the delay at m_nReadIndex
@@ -145,6 +157,10 @@ float CVASTDelay::readDelay()
 
 float CVASTDelay::readDelayAt(float fmSec)
 {
+	if (m_needsResetBeforUse) {
+		resetDelay();
+		m_needsResetBeforUse = false;
+	}
 	softAdjustVariables();
 
 	float fDelayInSamples = fmSec*((float)m_nSampleRate)/1000.0f;
@@ -188,6 +204,10 @@ float CVASTDelay::readDelayAt(float fmSec)
 
 bool CVASTDelay::processAudio(float* pInput, float* pOutput)
 {
+	if (m_needsResetBeforUse) {
+		resetDelay();
+		m_needsResetBeforUse = false;
+	}
 	softAdjustVariables();
 	
 	// Read the Input

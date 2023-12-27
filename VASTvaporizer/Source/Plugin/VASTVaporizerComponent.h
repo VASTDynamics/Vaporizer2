@@ -94,6 +94,7 @@ public:
 
 	void initAll(); //repaint all
 	void updateAll(); //repaint all
+	void updateHeader();
 	void updateMatrixDisplay(); //repaint all
 	void processBlock(AudioSampleBuffer &buffer);
 	VASTComboPreset* getComponentCPreset();
