@@ -65,6 +65,10 @@ If you have JUCE installed system-wide than you can pass
 
 Find more about the plug-in [here](https://www.vast-dynamics.com/?q=Vaporizer2).
 
+## Demo Music
+- [Demo songs of KVR One Synth Challenge 178 Vaporizer2 by VAST Dynamics (Soundcloud)](https://soundcloud.com/vast-dynamics/sets/vaporizer2-kvr-one-synth)
+- [Vaporizer2 Demo songs (Soundcloud)](https://soundcloud.com/vast-dynamics/sets/vaporizer2-demo-tracks)
+
 ## Download installers
 
 You can download installers for Windows and macOS with the built and packaged plug-ins [here](https://vast-dynamics.com/?q=products).
