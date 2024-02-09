@@ -70,9 +70,11 @@ public:
 			myEditor->resized();
 		};
 	};
+	
+	void randomizePatch();
 
 private:
-    VASTAudioProcessor* processor;
+    VASTAudioProcessor* myProcessor;
 
 	TooltipWindow tooltipWindow{ this, 200 }; //just add and leave here
     std::unique_ptr<juce::AlertWindow> m_alertWindow;

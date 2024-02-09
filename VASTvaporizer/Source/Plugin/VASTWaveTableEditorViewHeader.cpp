@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 6.1.2
+  Created with Projucer version: 7.0.9
 
   ------------------------------------------------------------------------------
 
@@ -46,7 +46,7 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
     //[/Constructor_pre]
 
     label10.reset (new juce::Label ("new label",
-                                    TRANS("OSC D\n")));
+                                    TRANS ("OSC D\n")));
     addAndMakeVisible (label10.get());
     label10->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label10->setJustificationType (juce::Justification::centredLeft);
@@ -56,7 +56,7 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
     label10->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label9.reset (new juce::Label ("new label",
-                                   TRANS("OSC C")));
+                                   TRANS ("OSC C")));
     addAndMakeVisible (label9.get());
     label9->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label9->setJustificationType (juce::Justification::centredLeft);
@@ -66,7 +66,7 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
     label9->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label7.reset (new juce::Label ("new label",
-                                   TRANS("OSC A")));
+                                   TRANS ("OSC A")));
     addAndMakeVisible (label7.get());
     label7->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label7->setJustificationType (juce::Justification::centredLeft);
@@ -76,7 +76,7 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
     label7->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label8.reset (new juce::Label ("new label",
-                                   TRANS("OSC B")));
+                                   TRANS ("OSC B")));
     addAndMakeVisible (label8.get());
     label8->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label8->setJustificationType (juce::Justification::centredLeft);
@@ -87,7 +87,7 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
 
     c_Phase.reset (new VASTSlider ("c_Phase"));
     addAndMakeVisible (c_Phase.get());
-    c_Phase->setTooltip (TRANS("Change phase of selection"));
+    c_Phase->setTooltip (TRANS ("Change phase of selection"));
     c_Phase->setRange (-100, 100, 0.001);
     c_Phase->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     c_Phase->setTextBoxStyle (juce::Slider::NoTextBox, false, 30, 14);
@@ -96,7 +96,7 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
     c_Phase->setColour (juce::Slider::textBoxOutlineColourId, juce::Colour (0x00808080));
 
     label108.reset (new juce::Label ("new label",
-                                     TRANS("LEVEL")));
+                                     TRANS ("LEVEL")));
     addAndMakeVisible (label108.get());
     label108->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label108->setJustificationType (juce::Justification::centred);
@@ -106,7 +106,7 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
     label108->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label135.reset (new juce::Label ("new label",
-                                     TRANS("PHASE")));
+                                     TRANS ("PHASE")));
     addAndMakeVisible (label135.get());
     label135->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label135->setJustificationType (juce::Justification::centred);
@@ -117,7 +117,7 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
 
     c_Freq.reset (new VASTSlider ("c_Freq"));
     addAndMakeVisible (c_Freq.get());
-    c_Freq->setTooltip (TRANS("Change frequency of selection"));
+    c_Freq->setTooltip (TRANS ("Change frequency of selection"));
     c_Freq->setRange (-4, 4, 0.001);
     c_Freq->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     c_Freq->setTextBoxStyle (juce::Slider::NoTextBox, false, 30, 14);
@@ -126,7 +126,7 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
     c_Freq->setColour (juce::Slider::textBoxOutlineColourId, juce::Colour (0x00808080));
 
     label2.reset (new juce::Label ("new label",
-                                   TRANS("FREQ")));
+                                   TRANS ("FREQ")));
     addAndMakeVisible (label2.get());
     label2->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label2->setJustificationType (juce::Justification::centred);
@@ -137,7 +137,7 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
 
     c_Offset.reset (new VASTSlider ("c_Offset"));
     addAndMakeVisible (c_Offset.get());
-    c_Offset->setTooltip (TRANS("Change DC offset of selection"));
+    c_Offset->setTooltip (TRANS ("Change DC offset of selection"));
     c_Offset->setRange (-100, 100, 0.001);
     c_Offset->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     c_Offset->setTextBoxStyle (juce::Slider::NoTextBox, false, 30, 14);
@@ -147,7 +147,7 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
 
     c_bitDepth.reset (new VASTSlider ("c_bitDepth"));
     addAndMakeVisible (c_bitDepth.get());
-    c_bitDepth->setTooltip (TRANS("Change bit depth of selection"));
+    c_bitDepth->setTooltip (TRANS ("Change bit depth of selection"));
     c_bitDepth->setRange (1, 32, 1);
     c_bitDepth->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     c_bitDepth->setTextBoxStyle (juce::Slider::NoTextBox, false, 30, 14);
@@ -156,7 +156,7 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
     c_bitDepth->setColour (juce::Slider::textBoxOutlineColourId, juce::Colour (0x00808080));
 
     label3.reset (new juce::Label ("new label",
-                                   TRANS("BITS")));
+                                   TRANS ("BITS")));
     addAndMakeVisible (label3.get());
     label3->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label3->setJustificationType (juce::Justification::centred);
@@ -166,7 +166,7 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
     label3->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label4.reset (new juce::Label ("new label",
-                                   TRANS("OFFSET")));
+                                   TRANS ("OFFSET")));
     addAndMakeVisible (label4.get());
     label4->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label4->setJustificationType (juce::Justification::centred);
@@ -177,7 +177,7 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
 
     c_Smooth.reset (new VASTSlider ("c_Smooth"));
     addAndMakeVisible (c_Smooth.get());
-    c_Smooth->setTooltip (TRANS("Smooth selection"));
+    c_Smooth->setTooltip (TRANS ("Smooth selection"));
     c_Smooth->setRange (0, 100, 0.001);
     c_Smooth->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     c_Smooth->setTextBoxStyle (juce::Slider::NoTextBox, false, 30, 14);
@@ -186,7 +186,7 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
     c_Smooth->setColour (juce::Slider::textBoxOutlineColourId, juce::Colour (0x00808080));
 
     label5.reset (new juce::Label ("new label",
-                                   TRANS("SMOOTH")));
+                                   TRANS ("SMOOTH")));
     addAndMakeVisible (label5.get());
     label5->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label5->setJustificationType (juce::Justification::centred);
@@ -197,7 +197,7 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
 
     c_Clean.reset (new VASTSlider ("c_Clean"));
     addAndMakeVisible (c_Clean.get());
-    c_Clean->setTooltip (TRANS("Clean selection (start and end of cycle)"));
+    c_Clean->setTooltip (TRANS ("Clean selection (start and end of cycle)"));
     c_Clean->setRange (0, 100, 0.001);
     c_Clean->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     c_Clean->setTextBoxStyle (juce::Slider::NoTextBox, false, 30, 14);
@@ -206,7 +206,7 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
     c_Clean->setColour (juce::Slider::textBoxOutlineColourId, juce::Colour (0x00808080));
 
     label6.reset (new juce::Label ("new label",
-                                   TRANS("CLEAN")));
+                                   TRANS ("CLEAN")));
     addAndMakeVisible (label6.get());
     label6->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label6->setJustificationType (juce::Justification::centred);
@@ -241,7 +241,7 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
 
     m_iWTEditorZoom.reset (new VASTParameterSlider ("m_iWTEditorZoom"));
     addAndMakeVisible (m_iWTEditorZoom.get());
-    m_iWTEditorZoom->setTooltip (TRANS("Zoom frequency domain display"));
+    m_iWTEditorZoom->setTooltip (TRANS ("Zoom frequency domain display"));
     m_iWTEditorZoom->setExplicitFocusOrder (1);
     m_iWTEditorZoom->setRange (1, 16, 1);
     m_iWTEditorZoom->setSliderStyle (juce::Slider::IncDecButtons);
@@ -258,7 +258,7 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
     c_wtName->setText (juce::String());
 
     label13.reset (new juce::Label ("new label",
-                                    TRANS("TABLE")));
+                                    TRANS ("TABLE")));
     addAndMakeVisible (label13.get());
     label13->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label13->setJustificationType (juce::Justification::centredRight);
@@ -269,7 +269,7 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
 
     c_FreqMod.reset (new VASTSlider ("c_FreqMod"));
     addAndMakeVisible (c_FreqMod.get());
-    c_FreqMod->setTooltip (TRANS("Frequency modulation of selection"));
+    c_FreqMod->setTooltip (TRANS ("Frequency modulation of selection"));
     c_FreqMod->setRange (0, 20, 0.001);
     c_FreqMod->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     c_FreqMod->setTextBoxStyle (juce::Slider::NoTextBox, false, 30, 14);
@@ -278,7 +278,7 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
     c_FreqMod->setColour (juce::Slider::textBoxOutlineColourId, juce::Colour (0x00808080));
 
     label15.reset (new juce::Label ("new label",
-                                    TRANS("FMOD")));
+                                    TRANS ("FMOD")));
     addAndMakeVisible (label15.get());
     label15->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label15->setJustificationType (juce::Justification::centred);
@@ -289,7 +289,7 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
 
     c_genMax.reset (new VASTSlider ("c_genMax"));
     addAndMakeVisible (c_genMax.get());
-    c_genMax->setTooltip (TRANS("Maximum modulation value of generation"));
+    c_genMax->setTooltip (TRANS ("Maximum modulation value of generation"));
     c_genMax->setRange (0, 100, 0.001);
     c_genMax->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     c_genMax->setTextBoxStyle (juce::Slider::NoTextBox, false, 30, 14);
@@ -300,7 +300,7 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
 
     c_Bend.reset (new VASTSlider ("c_Bend"));
     addAndMakeVisible (c_Bend.get());
-    c_Bend->setTooltip (TRANS("Bend selection"));
+    c_Bend->setTooltip (TRANS ("Bend selection"));
     c_Bend->setRange (-100, 100, 0.001);
     c_Bend->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     c_Bend->setTextBoxStyle (juce::Slider::NoTextBox, false, 30, 14);
@@ -309,7 +309,7 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
     c_Bend->setColour (juce::Slider::textBoxOutlineColourId, juce::Colour (0x00808080));
 
     label18.reset (new juce::Label ("new label",
-                                    TRANS("BEND")));
+                                    TRANS ("BEND")));
     addAndMakeVisible (label18.get());
     label18->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label18->setJustificationType (juce::Justification::centred);
@@ -320,7 +320,7 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
 
     c_Bloat.reset (new VASTSlider ("c_Bloat"));
     addAndMakeVisible (c_Bloat.get());
-    c_Bloat->setTooltip (TRANS("Inflate selection"));
+    c_Bloat->setTooltip (TRANS ("Inflate selection"));
     c_Bloat->setRange (-100, 100, 0.001);
     c_Bloat->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     c_Bloat->setTextBoxStyle (juce::Slider::NoTextBox, false, 30, 14);
@@ -329,7 +329,7 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
     c_Bloat->setColour (juce::Slider::textBoxOutlineColourId, juce::Colour (0x00808080));
 
     label19.reset (new juce::Label ("new label",
-                                    TRANS("BLOAT")));
+                                    TRANS ("BLOAT")));
     addAndMakeVisible (label19.get());
     label19->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label19->setJustificationType (juce::Justification::centred);
@@ -340,7 +340,7 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
 
     c_Level.reset (new VASTSlider ("c_Level"));
     addAndMakeVisible (c_Level.get());
-    c_Level->setTooltip (TRANS("Change level of selection"));
+    c_Level->setTooltip (TRANS ("Change level of selection"));
     c_Level->setRange (-100, 100, 0.01);
     c_Level->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     c_Level->setTextBoxStyle (juce::Slider::NoTextBox, false, 30, 14);
@@ -446,45 +446,45 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
 
     c_applyOptions.reset (new VASTComboBox ("c_applyOptions"));
     addAndMakeVisible (c_applyOptions.get());
-    c_applyOptions->setTooltip (TRANS("Option that shall be applied from begin to end of multi selection"));
+    c_applyOptions->setTooltip (TRANS ("Option that shall be applied from begin to end of multi selection"));
     c_applyOptions->setExplicitFocusOrder (1);
     c_applyOptions->setEditableText (false);
     c_applyOptions->setJustificationType (juce::Justification::centredLeft);
     c_applyOptions->setTextWhenNothingSelected (juce::String());
-    c_applyOptions->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
-    c_applyOptions->addItem (TRANS("Interpolation"), 1);
-    c_applyOptions->addItem (TRANS("Amplitude Modulation"), 2);
-    c_applyOptions->addItem (TRANS("Mix In"), 3);
-    c_applyOptions->addItem (TRANS("Convolution"), 4);
-    c_applyOptions->addItem (TRANS("Time > Frequency"), 5);
-    c_applyOptions->addItem (TRANS("Frequency > Time"), 6);
-    c_applyOptions->addItem (TRANS("Normalize (Table)"), 7);
-    c_applyOptions->addItem (TRANS("Normalize (Each)"), 8);
+    c_applyOptions->setTextWhenNoChoicesAvailable (TRANS ("(no choices)"));
+    c_applyOptions->addItem (TRANS ("Interpolation"), 1);
+    c_applyOptions->addItem (TRANS ("Amplitude Modulation"), 2);
+    c_applyOptions->addItem (TRANS ("Mix In"), 3);
+    c_applyOptions->addItem (TRANS ("Convolution"), 4);
+    c_applyOptions->addItem (TRANS ("Time > Frequency"), 5);
+    c_applyOptions->addItem (TRANS ("Frequency > Time"), 6);
+    c_applyOptions->addItem (TRANS ("Normalize (Table)"), 7);
+    c_applyOptions->addItem (TRANS ("Normalize (Each)"), 8);
     c_applyOptions->addListener (this);
 
     c_generationOptions.reset (new VASTComboBox ("c_generationOptions"));
     addAndMakeVisible (c_generationOptions.get());
-    c_generationOptions->setTooltip (TRANS("Option that shall be generated"));
+    c_generationOptions->setTooltip (TRANS ("Option that shall be generated"));
     c_generationOptions->setExplicitFocusOrder (1);
     c_generationOptions->setEditableText (false);
     c_generationOptions->setJustificationType (juce::Justification::centredLeft);
     c_generationOptions->setTextWhenNothingSelected (juce::String());
-    c_generationOptions->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
-    c_generationOptions->addItem (TRANS("HardSync"), 1);
-    c_generationOptions->addItem (TRANS("Pulse Mod (PWM)"), 2);
-    c_generationOptions->addItem (TRANS("Frequency Mod (FM)"), 3);
-    c_generationOptions->addItem (TRANS("Bloat"), 4);
-    c_generationOptions->addItem (TRANS("Bend"), 5);
-    c_generationOptions->addItem (TRANS("Formants (Male)"), 6);
-    c_generationOptions->addItem (TRANS("Formants (Female)"), 7);
-    c_generationOptions->addItem (TRANS("Harmonic Morph"), 8);
-    c_generationOptions->addItem (TRANS("Harmonic Reduce"), 9);
-    c_generationOptions->addItem (TRANS("Highpass Filter"), 10);
-    c_generationOptions->addItem (TRANS("Lowpass Filter"), 11);
-    c_generationOptions->addItem (TRANS("Lowpass Soft"), 12);
-    c_generationOptions->addItem (TRANS("Bandpass Filter"), 13);
-    c_generationOptions->addItem (TRANS("Pulse Filter"), 14);
-    c_generationOptions->addItem (TRANS("Comb Filter"), 15);
+    c_generationOptions->setTextWhenNoChoicesAvailable (TRANS ("(no choices)"));
+    c_generationOptions->addItem (TRANS ("HardSync"), 1);
+    c_generationOptions->addItem (TRANS ("Pulse Mod (PWM)"), 2);
+    c_generationOptions->addItem (TRANS ("Frequency Mod (FM)"), 3);
+    c_generationOptions->addItem (TRANS ("Bloat"), 4);
+    c_generationOptions->addItem (TRANS ("Bend"), 5);
+    c_generationOptions->addItem (TRANS ("Formants (Male)"), 6);
+    c_generationOptions->addItem (TRANS ("Formants (Female)"), 7);
+    c_generationOptions->addItem (TRANS ("Harmonic Morph"), 8);
+    c_generationOptions->addItem (TRANS ("Harmonic Reduce"), 9);
+    c_generationOptions->addItem (TRANS ("Highpass Filter"), 10);
+    c_generationOptions->addItem (TRANS ("Lowpass Filter"), 11);
+    c_generationOptions->addItem (TRANS ("Lowpass Soft"), 12);
+    c_generationOptions->addItem (TRANS ("Bandpass Filter"), 13);
+    c_generationOptions->addItem (TRANS ("Pulse Filter"), 14);
+    c_generationOptions->addItem (TRANS ("Comb Filter"), 15);
     c_generationOptions->addListener (this);
 
     c_iconApply.reset (new VASTDrawableButton ("c_iconApply",apply_svg, apply_svgSize, "Apply option from begin to end of multi selection"));
@@ -497,7 +497,7 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
 
     c_Connect.reset (new VASTSlider ("c_Connect"));
     addAndMakeVisible (c_Connect.get());
-    c_Connect->setTooltip (TRANS("Connect start value of selection with end value of selection with arc or ramp "));
+    c_Connect->setTooltip (TRANS ("Connect start value of selection with end value of selection with arc or ramp "));
     c_Connect->setRange (-100, 100, 0.001);
     c_Connect->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     c_Connect->setTextBoxStyle (juce::Slider::NoTextBox, false, 30, 14);
@@ -506,7 +506,7 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
     c_Connect->setColour (juce::Slider::textBoxOutlineColourId, juce::Colour (0x00808080));
 
     label11.reset (new juce::Label ("new label",
-                                    TRANS("CNECT")));
+                                    TRANS ("CNECT")));
     addAndMakeVisible (label11.get());
     label11->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label11->setJustificationType (juce::Justification::centred);
@@ -517,7 +517,7 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
 
     c_applyMax.reset (new VASTSlider ("c_applyMax"));
     addAndMakeVisible (c_applyMax.get());
-    c_applyMax->setTooltip (TRANS("Maximum modulation value for applied modulation"));
+    c_applyMax->setTooltip (TRANS ("Maximum modulation value for applied modulation"));
     c_applyMax->setRange (0, 100, 0.001);
     c_applyMax->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     c_applyMax->setTextBoxStyle (juce::Slider::NoTextBox, false, 30, 14);
@@ -528,16 +528,16 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
 
     c_WTableNext.reset (new juce::TextButton ("c_WTableNext"));
     addAndMakeVisible (c_WTableNext.get());
-    c_WTableNext->setTooltip (TRANS("Load next wavetable"));
-    c_WTableNext->setButtonText (TRANS(">"));
+    c_WTableNext->setTooltip (TRANS ("Load next wavetable"));
+    c_WTableNext->setButtonText (TRANS (">"));
 
     c_WTablePrevious.reset (new juce::TextButton ("c_WTablePrevious"));
     addAndMakeVisible (c_WTablePrevious.get());
-    c_WTablePrevious->setTooltip (TRANS("Load previous wavetable"));
-    c_WTablePrevious->setButtonText (TRANS("<"));
+    c_WTablePrevious->setTooltip (TRANS ("Load previous wavetable"));
+    c_WTablePrevious->setButtonText (TRANS ("<"));
 
     label12.reset (new juce::Label ("new label",
-                                    TRANS("SOLO")));
+                                    TRANS ("SOLO")));
     addAndMakeVisible (label12.get());
     label12->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label12->setJustificationType (juce::Justification::centredLeft);
@@ -548,65 +548,65 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
 
     c_soloSelection.reset (new juce::ToggleButton ("c_soloSelection"));
     addAndMakeVisible (c_soloSelection.get());
-    c_soloSelection->setTooltip (TRANS("Only play the selected wavetable positions in oscillator"));
+    c_soloSelection->setTooltip (TRANS ("Only play the selected wavetable positions in oscillator"));
     c_soloSelection->setButtonText (juce::String());
 
     c_gridMode.reset (new VASTComboBox ("c_gridMode"));
     addAndMakeVisible (c_gridMode.get());
-    c_gridMode->setTooltip (TRANS("Grid mode in wavetable editor"));
+    c_gridMode->setTooltip (TRANS ("Grid mode in wavetable editor"));
     c_gridMode->setExplicitFocusOrder (1);
     c_gridMode->setEditableText (false);
     c_gridMode->setJustificationType (juce::Justification::centredLeft);
     c_gridMode->setTextWhenNothingSelected (juce::String());
-    c_gridMode->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
-    c_gridMode->addItem (TRANS("No Grid"), 1);
-    c_gridMode->addItem (TRANS("4x4"), 2);
-    c_gridMode->addItem (TRANS("8x8"), 3);
-    c_gridMode->addItem (TRANS("16x16"), 4);
-    c_gridMode->addItem (TRANS("32x32"), 5);
-    c_gridMode->addItem (TRANS("64x64"), 6);
-    c_gridMode->addItem (TRANS("128x128"), 7);
+    c_gridMode->setTextWhenNoChoicesAvailable (TRANS ("(no choices)"));
+    c_gridMode->addItem (TRANS ("No Grid"), 1);
+    c_gridMode->addItem (TRANS ("4x4"), 2);
+    c_gridMode->addItem (TRANS ("8x8"), 3);
+    c_gridMode->addItem (TRANS ("16x16"), 4);
+    c_gridMode->addItem (TRANS ("32x32"), 5);
+    c_gridMode->addItem (TRANS ("64x64"), 6);
+    c_gridMode->addItem (TRANS ("128x128"), 7);
     c_gridMode->addListener (this);
 
     c_drawMode.reset (new VASTComboBox ("c_drawMode"));
     addAndMakeVisible (c_drawMode.get());
-    c_drawMode->setTooltip (TRANS("Draw mode in wavetable editor"));
+    c_drawMode->setTooltip (TRANS ("Draw mode in wavetable editor"));
     c_drawMode->setExplicitFocusOrder (1);
     c_drawMode->setEditableText (false);
     c_drawMode->setJustificationType (juce::Justification::centredLeft);
     c_drawMode->setTextWhenNothingSelected (juce::String());
-    c_drawMode->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
-    c_drawMode->addItem (TRANS("Select"), 1);
-    c_drawMode->addItem (TRANS("Line/Arc"), 2);
-    c_drawMode->addItem (TRANS("Draw"), 3);
+    c_drawMode->setTextWhenNoChoicesAvailable (TRANS ("(no choices)"));
+    c_drawMode->addItem (TRANS ("Select"), 1);
+    c_drawMode->addItem (TRANS ("Line/Arc"), 2);
+    c_drawMode->addItem (TRANS ("Draw"), 3);
     c_drawMode->addListener (this);
 
     c_binMode.reset (new VASTComboBox ("c_binMode"));
     addAndMakeVisible (c_binMode.get());
-    c_binMode->setTooltip (TRANS("Bin mode for editing frequency domain"));
+    c_binMode->setTooltip (TRANS ("Bin mode for editing frequency domain"));
     c_binMode->setExplicitFocusOrder (1);
     c_binMode->setEditableText (false);
     c_binMode->setJustificationType (juce::Justification::centredLeft);
     c_binMode->setTextWhenNothingSelected (juce::String());
-    c_binMode->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
-    c_binMode->addItem (TRANS("Clip"), 1);
-    c_binMode->addItem (TRANS("Normalize"), 2);
+    c_binMode->setTextWhenNoChoicesAvailable (TRANS ("(no choices)"));
+    c_binMode->addItem (TRANS ("Clip"), 1);
+    c_binMode->addItem (TRANS ("Normalize"), 2);
     c_binMode->addListener (this);
 
     c_binEditMode.reset (new VASTComboBox ("c_binEditMode"));
     addAndMakeVisible (c_binEditMode.get());
-    c_binEditMode->setTooltip (TRANS("Bin edit mode for editing frequency domain"));
+    c_binEditMode->setTooltip (TRANS ("Bin edit mode for editing frequency domain"));
     c_binEditMode->setExplicitFocusOrder (1);
     c_binEditMode->setEditableText (false);
     c_binEditMode->setJustificationType (juce::Justification::centredLeft);
     c_binEditMode->setTextWhenNothingSelected (juce::String());
-    c_binEditMode->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
-    c_binEditMode->addItem (TRANS("SingleBin"), 1);
-    c_binEditMode->addItem (TRANS("Every2nd"), 2);
-    c_binEditMode->addItem (TRANS("Every3rd"), 3);
-    c_binEditMode->addItem (TRANS("Pile"), 4);
-    c_binEditMode->addItem (TRANS("DragShift"), 5);
-    c_binEditMode->addItem (TRANS("DragStretch"), 6);
+    c_binEditMode->setTextWhenNoChoicesAvailable (TRANS ("(no choices)"));
+    c_binEditMode->addItem (TRANS ("SingleBin"), 1);
+    c_binEditMode->addItem (TRANS ("Every2nd"), 2);
+    c_binEditMode->addItem (TRANS ("Every3rd"), 3);
+    c_binEditMode->addItem (TRANS ("Pile"), 4);
+    c_binEditMode->addItem (TRANS ("DragShift"), 5);
+    c_binEditMode->addItem (TRANS ("DragStretch"), 6);
     c_binEditMode->addListener (this);
 
     c_iconSampleHold.reset (new VASTDrawableButton ("c_iconSampleHold",waves_samplehold_svg, waves_samplehold_svgSize, "Initialize  selection of position with sample and hold wave"));
@@ -614,7 +614,7 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
     c_iconSampleHold->setName ("c_iconSampleHold");
 
     c_positionLabel.reset (new juce::Label ("c_positionLabel",
-                                            TRANS("-")));
+                                            TRANS ("-")));
     addAndMakeVisible (c_positionLabel.get());
     c_positionLabel->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     c_positionLabel->setJustificationType (juce::Justification::centred);
@@ -624,7 +624,7 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
     c_positionLabel->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label14.reset (new juce::Label ("new label",
-                                    TRANS("SNAP")));
+                                    TRANS ("SNAP")));
     addAndMakeVisible (label14.get());
     label14->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label14->setJustificationType (juce::Justification::centredLeft);
@@ -639,16 +639,16 @@ VASTWaveTableEditorViewHeader::VASTWaveTableEditorViewHeader (AudioProcessorEdit
 
     c_snap.reset (new juce::ToggleButton ("c_snap"));
     addAndMakeVisible (c_snap.get());
-    c_snap->setTooltip (TRANS("Snap editor functions to zero crossings"));
+    c_snap->setTooltip (TRANS ("Snap editor functions to zero crossings"));
     c_snap->setButtonText (juce::String());
 
     c_stretch.reset (new juce::ToggleButton ("c_stretch"));
     addAndMakeVisible (c_stretch.get());
-    c_stretch->setTooltip (TRANS("Stretch editor functions to zero crossings"));
+    c_stretch->setTooltip (TRANS ("Stretch editor functions to zero crossings"));
     c_stretch->setButtonText (juce::String());
 
     label16.reset (new juce::Label ("new label",
-                                    TRANS("STRETCH")));
+                                    TRANS ("STRETCH")));
     addAndMakeVisible (label16.get());
     label16->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label16->setJustificationType (juce::Justification::centredLeft);
@@ -948,21 +948,21 @@ void VASTWaveTableEditorViewHeader::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    label10->setBounds (proportionOfWidth (0.1013f), proportionOfHeight (0.5313f), proportionOfWidth (0.0788f), proportionOfHeight (0.1250f));
+    label10->setBounds (proportionOfWidth (0.1013f), proportionOfHeight (0.5312f), proportionOfWidth (0.0788f), proportionOfHeight (0.1250f));
     label9->setBounds (proportionOfWidth (0.1013f), proportionOfHeight (0.3333f), proportionOfWidth (0.0788f), proportionOfHeight (0.1250f));
     label7->setBounds (proportionOfWidth (0.0238f), proportionOfHeight (0.3333f), proportionOfWidth (0.0788f), proportionOfHeight (0.1250f));
-    label8->setBounds (proportionOfWidth (0.0238f), proportionOfHeight (0.5313f), proportionOfWidth (0.0788f), proportionOfHeight (0.1250f));
+    label8->setBounds (proportionOfWidth (0.0238f), proportionOfHeight (0.5312f), proportionOfWidth (0.0788f), proportionOfHeight (0.1250f));
     c_Phase->setBounds (proportionOfWidth (0.2175f), proportionOfHeight (0.2292f), proportionOfWidth (0.0462f), proportionOfHeight (0.3750f));
     label108->setBounds (proportionOfWidth (0.1537f), proportionOfHeight (0.5938f), proportionOfWidth (0.0775f), proportionOfHeight (0.1250f));
     label135->setBounds (proportionOfWidth (0.2013f), proportionOfHeight (0.5938f), proportionOfWidth (0.0775f), proportionOfHeight (0.1250f));
     c_Freq->setBounds (proportionOfWidth (0.2650f), proportionOfHeight (0.2292f), proportionOfWidth (0.0462f), proportionOfHeight (0.3750f));
     label2->setBounds (proportionOfWidth (0.2475f), proportionOfHeight (0.5938f), proportionOfWidth (0.0775f), proportionOfHeight (0.1250f));
-    c_Offset->setBounds (proportionOfWidth (0.4063f), proportionOfHeight (0.2292f), proportionOfWidth (0.0462f), proportionOfHeight (0.3750f));
+    c_Offset->setBounds (proportionOfWidth (0.4062f), proportionOfHeight (0.2292f), proportionOfWidth (0.0462f), proportionOfHeight (0.3750f));
     c_bitDepth->setBounds (proportionOfWidth (0.3588f), proportionOfHeight (0.2292f), proportionOfWidth (0.0462f), proportionOfHeight (0.3750f));
     label3->setBounds (proportionOfWidth (0.3400f), proportionOfHeight (0.5938f), proportionOfWidth (0.0775f), proportionOfHeight (0.1250f));
     label4->setBounds (proportionOfWidth (0.3887f), proportionOfHeight (0.5938f), proportionOfWidth (0.0775f), proportionOfHeight (0.1250f));
     c_Smooth->setBounds (proportionOfWidth (0.5475f), proportionOfHeight (0.2292f), proportionOfWidth (0.0462f), proportionOfHeight (0.3750f));
-    label5->setBounds (proportionOfWidth (0.5313f), proportionOfHeight (0.5938f), proportionOfWidth (0.0775f), proportionOfHeight (0.1250f));
+    label5->setBounds (proportionOfWidth (0.5312f), proportionOfHeight (0.5938f), proportionOfWidth (0.0775f), proportionOfHeight (0.1250f));
     c_Clean->setBounds (proportionOfWidth (0.5950f), proportionOfHeight (0.2292f), proportionOfWidth (0.0462f), proportionOfHeight (0.3750f));
     label6->setBounds (proportionOfWidth (0.5825f), proportionOfHeight (0.5938f), proportionOfWidth (0.0775f), proportionOfHeight (0.1250f));
     c_oscA->setBounds (proportionOfWidth (0.0050f), proportionOfHeight (0.3125f), proportionOfWidth (0.0213f), proportionOfHeight (0.1771f));
@@ -970,18 +970,18 @@ void VASTWaveTableEditorViewHeader::resized()
     c_oscC->setBounds (proportionOfWidth (0.0800f), proportionOfHeight (0.3125f), proportionOfWidth (0.0213f), proportionOfHeight (0.1771f));
     c_oscD->setBounds (proportionOfWidth (0.0800f), proportionOfHeight (0.5000f), proportionOfWidth (0.0213f), proportionOfHeight (0.1771f));
     m_iWTEditorZoom->setBounds (proportionOfWidth (0.9200f), proportionOfHeight (0.7708f), proportionOfWidth (0.0788f), proportionOfHeight (0.1667f));
-    c_wtName->setBounds (proportionOfWidth (0.2325f), proportionOfHeight (0.0417f), proportionOfWidth (0.1888f), proportionOfHeight (0.1563f));
+    c_wtName->setBounds (proportionOfWidth (0.2325f), proportionOfHeight (0.0417f), proportionOfWidth (0.1888f), proportionOfHeight (0.1562f));
     label13->setBounds (proportionOfWidth (0.1437f), proportionOfHeight (0.0625f), proportionOfWidth (0.0900f), proportionOfHeight (0.1250f));
     c_FreqMod->setBounds (proportionOfWidth (0.3113f), proportionOfHeight (0.2292f), proportionOfWidth (0.0462f), proportionOfHeight (0.3750f));
     label15->setBounds (proportionOfWidth (0.2950f), proportionOfHeight (0.5938f), proportionOfWidth (0.0775f), proportionOfHeight (0.1250f));
-    c_genMax->setBounds (proportionOfWidth (0.6563f), proportionOfHeight (0.7604f), proportionOfWidth (0.0300f), proportionOfHeight (0.1875f));
+    c_genMax->setBounds (proportionOfWidth (0.6562f), proportionOfHeight (0.7604f), proportionOfWidth (0.0300f), proportionOfHeight (0.1875f));
     c_Bend->setBounds (proportionOfWidth (0.4537f), proportionOfHeight (0.2292f), proportionOfWidth (0.0462f), proportionOfHeight (0.3750f));
     label18->setBounds (proportionOfWidth (0.4375f), proportionOfHeight (0.5938f), proportionOfWidth (0.0775f), proportionOfHeight (0.1250f));
     c_Bloat->setBounds (proportionOfWidth (0.5012f), proportionOfHeight (0.2292f), proportionOfWidth (0.0462f), proportionOfHeight (0.3750f));
     label19->setBounds (proportionOfWidth (0.4825f), proportionOfHeight (0.5938f), proportionOfWidth (0.0775f), proportionOfHeight (0.1250f));
     c_Level->setBounds (proportionOfWidth (0.1700f), proportionOfHeight (0.2292f), proportionOfWidth (0.0462f), proportionOfHeight (0.3750f));
     c_iconSelectAll->setBounds (proportionOfWidth (0.0050f), proportionOfHeight (0.7708f), proportionOfWidth (0.0250f), proportionOfHeight (0.1771f));
-    c_iconAddPos->setBounds (proportionOfWidth (0.0313f), proportionOfHeight (0.7708f), proportionOfWidth (0.0250f), proportionOfHeight (0.1771f));
+    c_iconAddPos->setBounds (proportionOfWidth (0.0312f), proportionOfHeight (0.7708f), proportionOfWidth (0.0250f), proportionOfHeight (0.1771f));
     c_iconDelPos->setBounds (proportionOfWidth (0.0587f), proportionOfHeight (0.7708f), proportionOfWidth (0.0250f), proportionOfHeight (0.1771f));
     c_iconPaste->setBounds (proportionOfWidth (0.1525f), proportionOfHeight (0.7708f), proportionOfWidth (0.0250f), proportionOfHeight (0.1771f));
     c_iconDuplicate->setBounds (proportionOfWidth (0.0862f), proportionOfHeight (0.7708f), proportionOfWidth (0.0250f), proportionOfHeight (0.1771f));
@@ -999,26 +999,26 @@ void VASTWaveTableEditorViewHeader::resized()
     c_iconSinc->setBounds (((proportionOfWidth (0.7125f) + proportionOfWidth (0.0437f)) + proportionOfWidth (0.0437f)) + proportionOfWidth (0.0437f), proportionOfHeight (0.3125f), proportionOfWidth (0.0437f), proportionOfHeight (0.1771f));
     c_iconReverse->setBounds (proportionOfWidth (0.9525f), proportionOfHeight (0.4896f), proportionOfWidth (0.0437f), proportionOfHeight (0.1771f));
     c_iconInvert->setBounds (proportionOfWidth (0.9525f), proportionOfHeight (0.3125f), proportionOfWidth (0.0437f), proportionOfHeight (0.1771f));
-    c_iconClearWT->setBounds (proportionOfWidth (0.0050f) + proportionOfWidth (0.0437f), proportionOfHeight (0.0313f), proportionOfWidth (0.0437f), proportionOfHeight (0.1771f));
-    c_iconLoadWT->setBounds (proportionOfWidth (0.0050f), proportionOfHeight (0.0313f), proportionOfWidth (0.0437f), proportionOfHeight (0.1771f));
+    c_iconClearWT->setBounds (proportionOfWidth (0.0050f) + proportionOfWidth (0.0437f), proportionOfHeight (0.0312f), proportionOfWidth (0.0437f), proportionOfHeight (0.1771f));
+    c_iconLoadWT->setBounds (proportionOfWidth (0.0050f), proportionOfHeight (0.0312f), proportionOfWidth (0.0437f), proportionOfHeight (0.1771f));
     c_iconArcConnect->setBounds (proportionOfWidth (1.0112f), proportionOfHeight (0.3125f), proportionOfWidth (0.0250f), proportionOfHeight (0.1771f));
     c_iconRampConnect->setBounds (proportionOfWidth (1.0112f), proportionOfHeight (0.4896f), proportionOfWidth (0.0250f), proportionOfHeight (0.1771f));
-    c_iconSave->setBounds ((proportionOfWidth (0.0050f) + proportionOfWidth (0.0437f)) + proportionOfWidth (0.0437f), proportionOfHeight (0.0313f), proportionOfWidth (0.0437f), proportionOfHeight (0.1771f));
-    c_applyOptions->setBounds (proportionOfWidth (0.2650f), proportionOfHeight (0.7813f), proportionOfWidth (0.1400f), proportionOfHeight (0.1563f));
-    c_generationOptions->setBounds (proportionOfWidth (0.4838f), proportionOfHeight (0.7813f), proportionOfWidth (0.1400f), proportionOfHeight (0.1563f));
+    c_iconSave->setBounds ((proportionOfWidth (0.0050f) + proportionOfWidth (0.0437f)) + proportionOfWidth (0.0437f), proportionOfHeight (0.0312f), proportionOfWidth (0.0437f), proportionOfHeight (0.1771f));
+    c_applyOptions->setBounds (proportionOfWidth (0.2650f), proportionOfHeight (0.7812f), proportionOfWidth (0.1400f), proportionOfHeight (0.1562f));
+    c_generationOptions->setBounds (proportionOfWidth (0.4838f), proportionOfHeight (0.7812f), proportionOfWidth (0.1400f), proportionOfHeight (0.1562f));
     c_iconApply->setBounds (proportionOfWidth (0.4138f), proportionOfHeight (0.7708f), proportionOfWidth (0.0250f), proportionOfHeight (0.1771f));
     c_iconGenerate->setBounds (proportionOfWidth (0.6325f), proportionOfHeight (0.7708f), proportionOfWidth (0.0250f), proportionOfHeight (0.1771f));
     c_Connect->setBounds (proportionOfWidth (0.6425f), proportionOfHeight (0.2292f), proportionOfWidth (0.0462f), proportionOfHeight (0.3750f));
     label11->setBounds (proportionOfWidth (0.6300f), proportionOfHeight (0.5938f), proportionOfWidth (0.0775f), proportionOfHeight (0.1250f));
     c_applyMax->setBounds (proportionOfWidth (0.4387f), proportionOfHeight (0.7500f), proportionOfWidth (0.0300f), proportionOfHeight (0.1875f));
-    c_WTableNext->setBounds (proportionOfWidth (0.4500f), proportionOfHeight (0.0313f), proportionOfWidth (0.0250f), proportionOfHeight (0.1771f));
-    c_WTablePrevious->setBounds (proportionOfWidth (0.4250f), proportionOfHeight (0.0313f), proportionOfWidth (0.0250f), proportionOfHeight (0.1771f));
+    c_WTableNext->setBounds (proportionOfWidth (0.4500f), proportionOfHeight (0.0312f), proportionOfWidth (0.0250f), proportionOfHeight (0.1771f));
+    c_WTablePrevious->setBounds (proportionOfWidth (0.4250f), proportionOfHeight (0.0312f), proportionOfWidth (0.0250f), proportionOfHeight (0.1771f));
     label12->setBounds (proportionOfWidth (0.9275f), proportionOfHeight (0.0625f), proportionOfWidth (0.0775f), proportionOfHeight (0.1250f));
-    c_soloSelection->setBounds (proportionOfWidth (0.9063f), proportionOfHeight (0.0417f), proportionOfWidth (0.0213f), proportionOfHeight (0.1771f));
-    c_gridMode->setBounds (proportionOfWidth (0.8075f), proportionOfHeight (0.0521f), proportionOfWidth (0.0838f), proportionOfHeight (0.1563f));
-    c_drawMode->setBounds (proportionOfWidth (0.7125f), proportionOfHeight (0.0521f), proportionOfWidth (0.0838f), proportionOfHeight (0.1563f));
-    c_binMode->setBounds (proportionOfWidth (0.8075f), proportionOfHeight (0.7813f), proportionOfWidth (0.0838f), proportionOfHeight (0.1563f));
-    c_binEditMode->setBounds (proportionOfWidth (0.7125f), proportionOfHeight (0.7813f), proportionOfWidth (0.0838f), proportionOfHeight (0.1563f));
+    c_soloSelection->setBounds (proportionOfWidth (0.9062f), proportionOfHeight (0.0417f), proportionOfWidth (0.0213f), proportionOfHeight (0.1771f));
+    c_gridMode->setBounds (proportionOfWidth (0.8075f), proportionOfHeight (0.0521f), proportionOfWidth (0.0838f), proportionOfHeight (0.1562f));
+    c_drawMode->setBounds (proportionOfWidth (0.7125f), proportionOfHeight (0.0521f), proportionOfWidth (0.0838f), proportionOfHeight (0.1562f));
+    c_binMode->setBounds (proportionOfWidth (0.8075f), proportionOfHeight (0.7812f), proportionOfWidth (0.0838f), proportionOfHeight (0.1562f));
+    c_binEditMode->setBounds (proportionOfWidth (0.7125f), proportionOfHeight (0.7812f), proportionOfWidth (0.0838f), proportionOfHeight (0.1562f));
     c_iconSampleHold->setBounds ((((proportionOfWidth (0.7125f) + proportionOfWidth (0.0437f)) + proportionOfWidth (0.0437f)) + proportionOfWidth (0.0437f)) + proportionOfWidth (0.0437f), proportionOfHeight (0.3125f), proportionOfWidth (0.0437f), proportionOfHeight (0.1771f));
     c_positionLabel->setBounds (proportionOfWidth (0.6250f), proportionOfHeight (0.0625f), proportionOfWidth (0.0862f), proportionOfHeight (0.1250f));
     label14->setBounds (proportionOfWidth (0.5025f), proportionOfHeight (0.0625f), proportionOfWidth (0.0775f), proportionOfHeight (0.1250f));
@@ -1026,7 +1026,7 @@ void VASTWaveTableEditorViewHeader::resized()
     c_snap->setBounds (proportionOfWidth (0.4813f), proportionOfHeight (0.0417f), proportionOfWidth (0.0213f), proportionOfHeight (0.1771f));
     c_stretch->setBounds (proportionOfWidth (0.5463f), proportionOfHeight (0.0417f), proportionOfWidth (0.0213f), proportionOfHeight (0.1771f));
     label16->setBounds (proportionOfWidth (0.5663f), proportionOfHeight (0.0625f), proportionOfWidth (0.0775f), proportionOfHeight (0.1250f));
-    c_iconRecordWT->setBounds (((proportionOfWidth (0.0050f) + proportionOfWidth (0.0437f)) + proportionOfWidth (0.0437f)) + proportionOfWidth (0.0437f) - 2, proportionOfHeight (0.0313f), proportionOfWidth (0.0437f), juce::roundToInt (proportionOfHeight (0.1771f) * 1.0000f));
+    c_iconRecordWT->setBounds (((proportionOfWidth (0.0050f) + proportionOfWidth (0.0437f)) + proportionOfWidth (0.0437f)) + proportionOfWidth (0.0437f) - 2, proportionOfHeight (0.0312f), proportionOfWidth (0.0437f), juce::roundToInt (proportionOfHeight (0.1771f) * 1.0000f));
     //[UserResized] Add your own custom resize handling here..
 
 	//c_editorOscilloscope->resized();

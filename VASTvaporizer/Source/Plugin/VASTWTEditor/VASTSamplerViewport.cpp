@@ -92,6 +92,8 @@ void VASTSamplerViewport::updateContentAsync() {
 }
 
 void VASTSamplerViewport::timerCallback() {
+	if (!myProcessor->m_initCompleted)
+		return;
 	if (m_needsUpdate)
 		updateContent(false);
 	else {

@@ -75,7 +75,9 @@ VASTTabbedComponent::VASTTabbedComponent(TabbedButtonBar::Orientation orientatio
 void VASTTabbedComponent::currentTabChanged(int index, const String&) {
     if (!m_bInitialized)
         return;
-    
+	if (index == -1)
+		return;
+
     VASTWaveTableEditorComponent* tab1 = dynamic_cast<VASTWaveTableEditorComponent*>(getTabContentComponent(TabSequence::WTEDITOR));
     if (tab1 == nullptr) return; //not initialized
     
@@ -599,7 +601,7 @@ bool VASTVaporizerComponent::keyPressed(const KeyPress& key, Component* originat
 				myWtEditor->updateAll(false);
 			}
 			else if (key.isKeyCode(78)) {//CTRL + n normalize
-				std::thread edit_thread(&VASTWaveTableEditorComponent::threadedEditorFunction, EditorFunction::Normalize, 0.f, /*wtPosStart, wtPosEnd,*/ 0, 0, myWtEditor, 0.f, 0.f, nullptr);
+				std::thread edit_thread(&VASTWaveTableEditorComponent::threadedEditorFunction, EditorFunction::Normalize, 0.f, /*wtPosStart, wtPosEnd,*/ 0, 0, myWtEditor, 0.f, 0.f, nullptr, true);
 				edit_thread.detach();
 			}
 			else if (key.isKeyCode(KeyPress::leftKey)) {//CTRL + Cursor left

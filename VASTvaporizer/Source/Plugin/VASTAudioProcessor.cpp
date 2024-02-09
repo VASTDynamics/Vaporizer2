@@ -525,28 +525,6 @@ void VASTAudioProcessor::initializeToDefaults() {
 	m_parameterState.undoManager->beginNewTransaction(); //start new transcation only here?
 }
 
-void VASTAudioProcessor::randomizePatch() {
-	return; //TODO
-
-    /*
-	struct timeval tp;
-	m_pVASTXperience.m_Set._gettimeofday(&tp);	
-	juce::Random rand(tp.tv_sec); //seed
-	VASTPresetElement element;
-	m_curPatchData = element;
-	m_curPatchData.freetag = TRANS("Random");
-
-	const ScopedWriteLock myScopedLock(m_pVASTXperience.m_Set.m_RoutingBuffers.mReadWriteLock);
-
-	int numparam = getNumParameters();
-	for (int parameterIndex = 0; parameterIndex < numparam; parameterIndex++) {
-		auto* param = getParameters()[parameterIndex];		
-		float rand01 = rand.nextFloat(); //0..1
-		param->setValue(rand01);
-	}
-     */
-}
-
 void VASTAudioProcessor::setCurrentProgram(int index)
 {
 	if (index >= getNumPrograms()) {
@@ -610,14 +588,12 @@ int VASTAudioProcessor::getNumPrograms()
 
 int VASTAudioProcessor::getCurrentProgram()
 {
-	// int l_prog = m_curPatchData.presetarrayindex; // this is set lazy in thread 
 	int l_prog = m_curPatchDataLoadRequestedIndex;
 	return l_prog;
 }
 
 int VASTAudioProcessor::getCurrentPresetProgram() const
 {
-	//int l_prog = m_curPatchData.presetarrayindex; // this is set lazy in thread 
 	int l_prog = m_curPatchDataLoadRequestedIndex;
 	return l_prog;
 }
@@ -1593,6 +1569,17 @@ void VASTAudioProcessor::toggleKeyboardHoldMode() {
     m_pVASTXperience.m_Poly.setKeyboardHoldMode(m_keyboardHoldMode.load());
 }
 
+/*
+AudioProcessorParameterWithID* VASTAudioProcessor::getParameterWithID(String paramID) {
+	std::map<String, AudioProcessorParameterWithID*>::iterator l_iter = m_mapParameterToID.find(paramID);
+	if (l_iter->first == paramID) {
+		if (l_iter->second != nullptr)
+			return l_iter->second;
+	}
+	return nullptr;
+}
+*/
+
 void VASTAudioProcessor::addModMatrixLookupTable(int modMatrixDestination, float rangeStart, float rangeEnd, float rangeSkew, StringRef paramID, AudioProcessorParameterWithID* param) {
 	m_modMatrixLookupTable[modMatrixDestination].rangeStart = rangeStart;
 	m_modMatrixLookupTable[modMatrixDestination].rangeEnd = rangeEnd;
@@ -1739,7 +1726,19 @@ String VASTAudioProcessor::autoDestinationGetParam(int modmatdest) {
 	return it->second;
 };
 
-//unused now
+void VASTAudioProcessor::setParameterFloat01(StringRef parName, float nvalue, bool bSilent) {
+	vassert((nvalue >= 0.f) && (nvalue <= 1.f));
+	AudioProcessorParameterWithID* param = m_parameterState.getParameter(parName);
+	if (param != nullptr) {
+		if (bSilent)
+			param->setValue(nvalue);
+		else
+			param->setValueNotifyingHost(nvalue);
+	}
+	else
+		vassertfalse;
+}
+
 void VASTAudioProcessor::setParameterText(StringRef parName, StringRef textVal, bool bSilent) {
 	AudioProcessorParameterWithID* param = m_parameterState.getParameter(parName);
 	if (param != nullptr) {
@@ -1751,9 +1750,8 @@ void VASTAudioProcessor::setParameterText(StringRef parName, StringRef textVal, 
 		else
 			param->setValueNotifyingHost(nvalue);
 	}
-	//else {
-		//jassert(false); //ignore - unused param in preset xml file
-	//}
+	else
+		vassertfalse;
 }
 
 AudioProcessorValueTreeState& VASTAudioProcessor::getParameterTree() {

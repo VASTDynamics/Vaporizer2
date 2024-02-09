@@ -15,7 +15,7 @@
 
 //==============================================================================
 VASTAudioProcessorEditor::VASTAudioProcessorEditor(VASTAudioProcessor& p)
-: AudioProcessorEditor(p), processor(&p) {
+: AudioProcessorEditor(p), myProcessor(&p) {
     
     if (juce::Desktop::getInstance().isHeadless() == false)
     {
@@ -26,9 +26,9 @@ VASTAudioProcessorEditor::VASTAudioProcessorEditor(VASTAudioProcessor& p)
         if (m_iMaxHeight > screenH) m_iMaxHeight = screenH;
     }
     
-	processor->m_mapParameterNameToControl.clear(); //clear slider mapping
+	myProcessor->m_mapParameterNameToControl.clear(); //clear slider mapping
     resizeCalledFromConstructor = true;
-    vaporizerComponent.reset(new VASTVaporizerComponent(this, processor));
+    vaporizerComponent.reset(new VASTVaporizerComponent(this, myProcessor));
 	vaporizerComponent->setVisible(false);
     
 	m_VASTComponentsAll = juce::Array<Component*>();
@@ -41,23 +41,23 @@ VASTAudioProcessorEditor::VASTAudioProcessorEditor(VASTAudioProcessor& p)
 	setResizable(true, true);
 #endif
 
-	if ((processor->m_iUserTargetPluginHeight == 0) || (processor->m_iUserTargetPluginWidth == 0)) {
-		processor->m_iUserTargetPluginWidth = processor->m_iDefaultPluginWidth;
-		processor->m_iUserTargetPluginHeight = processor->m_iDefaultPluginHeight;
+	if ((myProcessor->m_iUserTargetPluginHeight == 0) || (myProcessor->m_iUserTargetPluginWidth == 0)) {
+		myProcessor->m_iUserTargetPluginWidth = myProcessor->m_iDefaultPluginWidth;
+		myProcessor->m_iUserTargetPluginHeight = myProcessor->m_iDefaultPluginHeight;
 	}
 
 	tooltipWindow.setLookAndFeel(getProcessor()->getCurrentVASTLookAndFeel());
 
 	resizeCalledFromConstructor = true;
 #if !defined JUCE_LINUX
-	m_componentBoundsConstrainer.setFixedAspectRatio(processor->m_dPluginRatio);
+	m_componentBoundsConstrainer.setFixedAspectRatio(myProcessor->m_dPluginRatio);
 	m_componentBoundsConstrainer.setSizeLimits(m_iMinWidth, m_iMinHeight, m_iMaxWidth, m_iMaxHeight); //CHECK https://forum.juce.com/t/best-way-to-implement-resizable-plugin/12644/5
 	setConstrainer(&m_componentBoundsConstrainer);
 #endif
 
 	setOpaque(true);
     //setSize(1,1); //intermediate
-	setSize(processor->m_iUserTargetPluginHeight * processor->m_dPluginRatio, processor->m_iUserTargetPluginHeight);
+	setSize(myProcessor->m_iUserTargetPluginHeight * myProcessor->m_dPluginRatio, myProcessor->m_iUserTargetPluginHeight);
 
     startTimer(0, 100); //ui update
     startTimer(1, 10); //param update
@@ -65,7 +65,7 @@ VASTAudioProcessorEditor::VASTAudioProcessorEditor(VASTAudioProcessor& p)
 }
 
 VASTAudioProcessorEditor::~VASTAudioProcessorEditor() {
-	processor->resetCurrentEditorInitialized();
+	myProcessor->resetCurrentEditorInitialized();
 	this->removeAllChildren();
 	m_alertWindow = nullptr;
 	stopTimer(0);
@@ -99,14 +99,14 @@ void VASTAudioProcessorEditor::timerCallback(int timerID) {
         return;
     }
     
-	if (!processor->isCurrentEditorInitialized()) {
+	if (!myProcessor->isCurrentEditorInitialized()) {
 		if (vaporizerComponent.get() != nullptr) {
 			addChildComponent(vaporizerComponent.get());
-			vaporizerComponent->setVersionText(processor->getVersionString());
+			vaporizerComponent->setVersionText(myProcessor->getVersionString());
 			resizeCalledFromConstructor = false;
 			resized();
 			vaporizerComponent->setVisible(true);
-			processor->setCurrentEditorInitialized();
+			myProcessor->setCurrentEditorInitialized();
 		}
 		else
 			return;
@@ -116,58 +116,58 @@ void VASTAudioProcessorEditor::timerCallback(int timerID) {
         return; //not yet ready?
     
     if (!isVisible()) {
-        processor->m_editorIsProbablyVisible.store(false);
+		myProcessor->m_editorIsProbablyVisible.store(false);
         return;
     }
     else
-        processor->m_editorIsProbablyVisible.store(true);
+		myProcessor->m_editorIsProbablyVisible.store(true);
 	if (timerID == 1) { //component update
-		if (processor->m_bShallComponentValueUpdate.load()) {
-			if (processor->m_shallComponentUpdate != "") {
-				VASTSlider* lslider = dynamic_cast<VASTSlider*>(findChildComponetWithName(vaporizerComponent.get(), processor->m_shallComponentUpdate));
+		if (myProcessor->m_bShallComponentValueUpdate.load()) {
+			if (myProcessor->m_shallComponentUpdate != "") {
+				VASTSlider* lslider = dynamic_cast<VASTSlider*>(findChildComponetWithName(vaporizerComponent.get(), myProcessor->m_shallComponentUpdate));
 				if (lslider != nullptr) {
-					if (lslider->getComponentID().equalsIgnoreCase(processor->m_shallComponentUpdate)) {
-						float sVal = lslider->getRange().getStart() + (lslider->getRange().getEnd() - lslider->getRange().getStart()) * jlimit<float>(0.f, 1.f, processor->m_shallComponentUpdateValue);
+					if (lslider->getComponentID().equalsIgnoreCase(myProcessor->m_shallComponentUpdate)) {
+						float sVal = lslider->getRange().getStart() + (lslider->getRange().getEnd() - lslider->getRange().getStart()) * jlimit<float>(0.f, 1.f, myProcessor->m_shallComponentUpdateValue);
 						lslider->setValue(sVal, NotificationType::sendNotificationAsync);
 					}
 				}
 			}
-			processor->m_bShallComponentValueUpdate.store(false);
+			myProcessor->m_bShallComponentValueUpdate.store(false);
 		}
 	}
 	else { //ui update
-		vaporizerComponent->setLicenseText(processor->getLicenseText(), processor->isInErrorState(), processor->getErrorState());
+		vaporizerComponent->setLicenseText(myProcessor->getLicenseText(), myProcessor->isInErrorState(), myProcessor->getErrorState());
 
-		if (processor->m_showNewerVersionPopup) {
+		if (myProcessor->m_showNewerVersionPopup) {
 			showNewerVersionPopup();
 		}
 
-		if (processor->needsUIInit()) {
+		if (myProcessor->needsUIInit()) {
 			vaporizerComponent->initAll();
-			processor->clearUIInitFlag();
+			myProcessor->clearUIInitFlag();
 		}
 
-		if (processor->needsUIInitAfterPresetLoad()) {
+		if (myProcessor->needsUIInitAfterPresetLoad()) {
 			vaporizerComponent->getOscillatorComponent(0)->initAll();
 			vaporizerComponent->getOscillatorComponent(1)->initAll();
 			vaporizerComponent->getOscillatorComponent(2)->initAll();
 			vaporizerComponent->getOscillatorComponent(3)->initAll();
 			vaporizerComponent->updateMatrixDisplay();
 			vaporizerComponent->updateHeader();
-			processor->clearUIInitFlagAfterPresetLoad();
+			myProcessor->clearUIInitFlagAfterPresetLoad();
 		}
 
-		if (processor->needsUIUpdate()) {
-			if (processor->needsUIUpdate_tabs())
+		if (myProcessor->needsUIUpdate()) {
+			if (myProcessor->needsUIUpdate_tabs())
 				vaporizerComponent->updateAll();
 
-			if (processor->needsUIUpdate_matrix())
+			if (myProcessor->needsUIUpdate_matrix())
 				vaporizerComponent->updateMatrixDisplay();
 
-			if (processor->needsUIUpdate_sliders()) {
-				if ((processor->needsUIUpdate_slider1dest() == -1) && (processor->needsUIUpdate_slider2dest() == -1)) { //repaint all sliders 
-					for (int i = 0; i < processor->m_mapParameterNameToControl.size(); i++) {
-						VASTParameterSlider* lslider = dynamic_cast<VASTParameterSlider*>(processor->m_mapParameterNameToControl[i]);
+			if (myProcessor->needsUIUpdate_sliders()) {
+				if ((myProcessor->needsUIUpdate_slider1dest() == -1) && (myProcessor->needsUIUpdate_slider2dest() == -1)) { //repaint all sliders 
+					for (int i = 0; i < myProcessor->m_mapParameterNameToControl.size(); i++) {
+						VASTParameterSlider* lslider = dynamic_cast<VASTParameterSlider*>(myProcessor->m_mapParameterNameToControl[i]);
 						if (lslider != nullptr) {
 							if (lslider->isShowing())
 								lslider->repaint();
@@ -175,11 +175,11 @@ void VASTAudioProcessorEditor::timerCallback(int timerID) {
 					}
 				}
 				else { //repaint only the two that are given
-					String param1name = processor->autoDestinationGetParam(processor->needsUIUpdate_slider1dest());
-					String param2name = processor->autoDestinationGetParam(processor->needsUIUpdate_slider2dest());
+					String param1name = myProcessor->autoDestinationGetParam(myProcessor->needsUIUpdate_slider1dest());
+					String param2name = myProcessor->autoDestinationGetParam(myProcessor->needsUIUpdate_slider2dest());
 
-					for (int i = 0; i < processor->m_mapParameterNameToControl.size(); i++) {
-						VASTParameterSlider* lslider = dynamic_cast<VASTParameterSlider*>(processor->m_mapParameterNameToControl[i]);
+					for (int i = 0; i < myProcessor->m_mapParameterNameToControl.size(); i++) {
+						VASTParameterSlider* lslider = dynamic_cast<VASTParameterSlider*>(myProcessor->m_mapParameterNameToControl[i]);
 						if (lslider != nullptr) {
 							if ((lslider->getComponentID().equalsIgnoreCase(param1name)) || (lslider->getComponentID().equalsIgnoreCase(param2name))) {
 								if (lslider->isShowing())
@@ -190,39 +190,39 @@ void VASTAudioProcessorEditor::timerCallback(int timerID) {
 				}
 			}
 
-			if (processor->needsUIPresetUpdate()) {
+			if (myProcessor->needsUIPresetUpdate()) {
 				VASTPresetComponent* pres = vaporizerComponent->getConcertinaPanel()->getPresetOverlay();
 				if (pres != nullptr)
 					pres->updateAll();
-				processor->clearUIPresetFlag();
+				myProcessor->clearUIPresetFlag();
 			}
-			if (processor->needsUIPresetReloadUpdate()) {
+			if (myProcessor->needsUIPresetReloadUpdate()) {
 				VASTPresetComponent* pres = vaporizerComponent->getConcertinaPanel()->getPresetOverlay();
 				if (pres != nullptr)
 					pres->reloadPresets();
-				processor->clearUIPresetReloadFlag();
+				myProcessor->clearUIPresetReloadFlag();
 			}
 
-			processor->clearUIUpdateFlag();
+			myProcessor->clearUIUpdateFlag();
 		}
 
-		if (processor->wantsUIAlert()) {
-			processor->clearUIAlertFlag();
+		if (myProcessor->wantsUIAlert()) {
+			myProcessor->clearUIAlertFlag();
 			AlertWindow::showMessageBoxAsync(MessageBoxIconType::WarningIcon, TRANS("Load preset failed"), TRANS("Invalid data structure."), TRANS("Continue"), this);
 		}
 
 		VASTMasterVoicingComponent* voicingComp = vaporizerComponent->getMasterVoicingComponent();
 		if (voicingComp != nullptr) {
 			Label* labelV = voicingComp->getComponentCVoices();
-			int numVoicesPlaying = processor->m_pVASTXperience.m_Poly.numNotesPlaying();
-			int numOscsPlaying = processor->m_pVASTXperience.m_Poly.numOscsPlaying();
+			int numVoicesPlaying = myProcessor->m_pVASTXperience.m_Poly.numNotesPlaying();
+			int numOscsPlaying = myProcessor->m_pVASTXperience.m_Poly.numOscsPlaying();
 			labelV->setText(String(String(numVoicesPlaying) + "/" + String(numOscsPlaying)), NotificationType::dontSendNotification);
 		}
 	}
 }
 
 VASTAudioProcessor* VASTAudioProcessorEditor::getProcessor() {
-	return processor;
+	return myProcessor;
 }
 
 void VASTAudioProcessorEditor::paint(Graphics& ) {
@@ -310,4 +310,790 @@ void VASTAudioProcessorEditor::showNewerVersionPopup() {
 		m_alertWindow->setLookAndFeel(nullptr);
 		m_alertWindow = nullptr;
 	}), true);
+}
+
+void VASTAudioProcessorEditor::randomizePatch() {
+	struct timeval tp;
+	myProcessor->m_pVASTXperience.m_Set._gettimeofday(&tp);
+	juce::Random rand(tp.tv_sec); //seed
+	VASTPresetElement lRandomPatch;
+	lRandomPatch.freetag = TRANS("Random");
+	lRandomPatch.presetname = TRANS("Random");
+
+	myProcessor->initializeToDefaults();
+	int numparam = myProcessor->getParameters().size();
+	for (int parameterIndex = 0; parameterIndex < numparam; parameterIndex++) {
+		AudioProcessorParameterWithID* param =(AudioProcessorParameterWithID*)myProcessor->getParameters()[parameterIndex];
+		if (param->getParameterID().equalsIgnoreCase("m_iWTEditorZoom"))
+			continue;
+		if (param->getParameterID().equalsIgnoreCase("m_iWAVScale"))
+			continue;
+		if (param->getParameterID().equalsIgnoreCase("m_uOscRouting1_OscA"))
+			continue;
+		if (param->getParameterID().equalsIgnoreCase("m_uOscRouting2_OscA"))
+			continue;
+		if (param->getParameterID().equalsIgnoreCase("m_uOscRouting1_OscB"))
+			continue;
+		if (param->getParameterID().equalsIgnoreCase("m_uOscRouting2_OscB"))
+			continue;
+		if (param->getParameterID().equalsIgnoreCase("m_uOscRouting1_OscC"))
+			continue;
+		if (param->getParameterID().equalsIgnoreCase("m_uOscRouting2_OscC"))
+			continue;
+		if (param->getParameterID().equalsIgnoreCase("m_uOscRouting1_OscD"))
+			continue;
+		if (param->getParameterID().equalsIgnoreCase("m_uOscRouting2_OscD"))
+			continue;
+		if (param->getParameterID().equalsIgnoreCase("m_uOscRouting2_OscD"))
+			continue;
+		if (param->getParameterID().equalsIgnoreCase("m_fMasterTune")) //todo normalization
+			continue;
+		if (param->getParameterID().equalsIgnoreCase("m_fMasterVolumedB")) //todo normalization
+			continue;
+		if (param->getParameterID().contains("m_fFilterDryWet")) 
+			continue;
+		if (param->getParameterID().contains("Routing")) //todo
+			continue;
+		if (param->getParameterID().contains("Gain")) 
+			continue;
+		if (param->getParameterID().equalsIgnoreCase("m_bARPOnOff"))
+			continue;
+		if (param->getParameterID().contains("Attack")) 
+			continue;
+		if (param->getParameterID().contains("Decay")) 
+			continue;
+		if (param->getParameterID().contains("Sustain")) 
+			continue;
+		if (param->getParameterID().contains("Release")) 
+			continue;
+		if (param->getParameterID().contains("Cents")) 
+			continue;
+		if (param->getParameterID().contains("Oct"))
+			continue;
+		if (param->getParameterID().contains("Lowcut"))
+			continue;
+		if (param->getParameterID().contains("Highcut"))
+			continue;
+
+		if (param->getParameterID().contains("NumOscs")) {
+			float lrand = rand.nextFloat() * 0.2f; 
+			param->setValueNotifyingHost(lrand);
+			continue;
+		}
+		if (param->getParameterID().contains("Scale")) {
+			float lrand = (0.5f-0.3f/2) + rand.nextFloat() * 0.3f;
+			if (rand.nextFloat() > 0.7f)
+				param->setValueNotifyingHost(lrand);
+			continue;
+		}
+		if (param->getParameterID().contains("Drive")) {
+			float lrand = (0.5f - 0.3f / 2) + rand.nextFloat() * 0.3f;
+			if (rand.nextFloat() > 0.5f)
+				param->setValueNotifyingHost(lrand);
+			continue;
+		}
+		if (param->getParameterID().contains("Reso")) {
+			float lrand = rand.nextFloat() * 0.3f;
+			if (rand.nextFloat() > 0.5f)
+				param->setValueNotifyingHost(lrand);
+			continue;
+		}
+		if (param->getParameterID().contains("Cutoff")) {
+			float lrand = (1.f - 0.5f) + rand.nextFloat() * 0.5f;
+			if (rand.nextFloat() > 0.5f)
+				param->setValueNotifyingHost(lrand);
+			continue;
+		}
+		if (param->getParameterID().contains("ReverbSize")) {
+			float lrand = (1.f - 0.5f) + rand.nextFloat() * 0.5f;
+			param->setValueNotifyingHost(lrand);
+		}
+		if (param->getParameterID().contains("ReverbDamping")) {
+			float lrand = rand.nextFloat() * 0.3f;
+			param->setValueNotifyingHost(lrand);
+		}
+
+		//standard
+		float rand01 = rand.nextFloat(); //0..1
+		param->setValueNotifyingHost(rand01);
+	}
+	if (rand.nextFloat() > 0.1f) myProcessor->setParameterText("m_bNoiseOnOff", "Off", false);
+
+	//modmatrix
+	float lRandVal = 0.1f;
+	if (rand.nextFloat() > lRandVal) myProcessor->setParameterText("m_uModMatSrce16", "---", false);
+	if (rand.nextFloat() > lRandVal) myProcessor->setParameterText("m_uModMatSrce15", "---", false);
+	if (rand.nextFloat() > lRandVal) myProcessor->setParameterText("m_uModMatSrce14", "---", false);
+	if (rand.nextFloat() > lRandVal) myProcessor->setParameterText("m_uModMatSrce13", "---", false);
+	if (rand.nextFloat() > lRandVal) myProcessor->setParameterText("m_uModMatSrce12", "---", false);
+	if (rand.nextFloat() > lRandVal) myProcessor->setParameterText("m_uModMatSrce11", "---", false);
+	if (rand.nextFloat() > lRandVal) myProcessor->setParameterText("m_uModMatSrce10", "---", false);
+	if (rand.nextFloat() > lRandVal) myProcessor->setParameterText("m_uModMatSrce9", "---", false);
+	if (rand.nextFloat() > lRandVal) myProcessor->setParameterText("m_uModMatSrce8", "---", false);
+	if (rand.nextFloat() > lRandVal) myProcessor->setParameterText("m_uModMatSrce7", "---", false);
+	if (rand.nextFloat() > lRandVal) myProcessor->setParameterText("m_uModMatSrce6", "---", false);
+	if (rand.nextFloat() > lRandVal) myProcessor->setParameterText("m_uModMatSrce5", "---", false);
+	if (rand.nextFloat() > lRandVal) myProcessor->setParameterText("m_uModMatSrce4", "---", false);
+	if (rand.nextFloat() > lRandVal) myProcessor->setParameterText("m_uModMatSrce3", "---", false);
+	if (rand.nextFloat() > lRandVal) myProcessor->setParameterText("m_uModMatSrce2", "---", false);
+	if (rand.nextFloat() > lRandVal) myProcessor->setParameterText("m_uModMatSrce1", "---", false);
+	
+	//mseg	
+	for (int mseg = 0; mseg < 5; mseg++) {
+		int pattern = abs(rand.nextInt()) % 6;
+		switch (pattern) {
+		case 0:
+			myProcessor->m_pVASTXperience.m_Set.m_MSEGData[mseg].initToADR(mseg);
+			myProcessor->m_pVASTXperience.m_Set.m_MSEGData_changed[mseg].initToADR(mseg);
+			break;
+		case 1:
+			myProcessor->m_pVASTXperience.m_Set.m_MSEGData[mseg].initToADSR(mseg);
+			myProcessor->m_pVASTXperience.m_Set.m_MSEGData_changed[mseg].initToADSR(mseg);
+			break;
+		case 2:
+			myProcessor->m_pVASTXperience.m_Set.m_MSEGData[mseg].initToAHDSR(mseg);
+			myProcessor->m_pVASTXperience.m_Set.m_MSEGData_changed[mseg].initToAHDSR(mseg);
+			break;
+		case 3:
+			myProcessor->m_pVASTXperience.m_Set.m_MSEGData[mseg].initToRamp(mseg);
+			myProcessor->m_pVASTXperience.m_Set.m_MSEGData_changed[mseg].initToRamp(mseg);
+			break;
+		case 4:
+			myProcessor->m_pVASTXperience.m_Set.m_MSEGData[mseg].initToSine(mseg);
+			myProcessor->m_pVASTXperience.m_Set.m_MSEGData_changed[mseg].initToSine(mseg);
+			break;
+		case 5:
+			myProcessor->m_pVASTXperience.m_Set.m_MSEGData[mseg].initToStairs(mseg);
+			myProcessor->m_pVASTXperience.m_Set.m_MSEGData_changed[mseg].initToStairs(mseg);
+			break;
+		default:
+			vassertfalse;
+		}
+	}
+
+	//stepseq
+	for (int stepseq = 0; stepseq < 3; stepseq++) {
+		int pattern = abs(rand.nextInt()) % 3;
+		switch (pattern) {
+		case 0:
+			myProcessor->m_pVASTXperience.m_Set.m_StepSeqData[stepseq].initStepSeq(stepseq);
+			myProcessor->m_pVASTXperience.m_Set.m_StepSeqData_changed[stepseq].initStepSeq(stepseq);
+			break;
+		case 1:
+			myProcessor->m_pVASTXperience.m_Set.m_StepSeqData[stepseq].initStepSeqSidechain();
+			myProcessor->m_pVASTXperience.m_Set.m_StepSeqData_changed[stepseq].initStepSeqSidechain();
+			break;
+		case 2:
+			myProcessor->m_pVASTXperience.m_Set.m_StepSeqData[stepseq].initStepSeqStairs();
+			myProcessor->m_pVASTXperience.m_Set.m_StepSeqData_changed[stepseq].initStepSeqStairs();
+			break;
+		default:
+			vassertfalse;
+		}
+	}
+
+	//ARP
+	int pattern = abs(rand.nextInt()) % 16;
+	myProcessor->m_pVASTXperience.m_Set.m_ARPData.initDefaultPattern(pattern);
+	myProcessor->m_pVASTXperience.m_Set.m_ARPData_changed.initDefaultPattern(pattern);
+	
+	//filters
+	myProcessor->setParameterText("m_bOnOff_Filter1", "Off", false);
+	myProcessor->setParameterText("m_bOnOff_Filter2", "Off", false);
+	myProcessor->setParameterText("m_bOnOff_Filter3", "Off", false);
+
+	lRandVal = 0.5f;
+	float lRandVal2 = 0.4f;
+	if (rand.nextFloat() > lRandVal) {
+		myProcessor->setParameterText("m_bOnOff_Filter1", "On", false); 
+		
+		if (rand.nextFloat() > lRandVal2) myProcessor->setParameterText("m_uOscRouting1_OscA", "Filter1", false);
+		if (rand.nextFloat() > lRandVal2) myProcessor->setParameterText("m_uOscRouting2_OscA", "Filter1", false);
+		if (rand.nextFloat() > lRandVal2) myProcessor->setParameterText("m_uOscRouting1_OscB", "Filter1", false);
+		if (rand.nextFloat() > lRandVal2) myProcessor->setParameterText("m_uOscRouting2_OscB", "Filter1", false);
+		if (rand.nextFloat() > lRandVal2) myProcessor->setParameterText("m_uOscRouting1_OscC", "Filter1", false);
+		if (rand.nextFloat() > lRandVal2) myProcessor->setParameterText("m_uOscRouting2_OscC", "Filter1", false);
+		if (rand.nextFloat() > lRandVal2) myProcessor->setParameterText("m_uOscRouting1_OscD", "Filter1", false);
+		if (rand.nextFloat() > lRandVal2) myProcessor->setParameterText("m_uOscRouting2_OscD", "Filter1", false);
+		
+		if (rand.nextFloat() > lRandVal2) myProcessor->setParameterText("m_uFilterRouting2_Filter1", "Master", false);
+
+		if (rand.nextFloat() > lRandVal) {
+			myProcessor->setParameterText("m_bOnOff_Filter2", "On", false);
+
+			if (rand.nextFloat() > lRandVal2) myProcessor->setParameterText("m_uOscRouting1_OscA", "Filter2", false);
+			if (rand.nextFloat() > lRandVal2) myProcessor->setParameterText("m_uOscRouting2_OscA", "Filter2", false);
+			if (rand.nextFloat() > lRandVal2) myProcessor->setParameterText("m_uOscRouting1_OscB", "Filter2", false);
+			if (rand.nextFloat() > lRandVal2) myProcessor->setParameterText("m_uOscRouting2_OscB", "Filter2", false);
+			if (rand.nextFloat() > lRandVal2) myProcessor->setParameterText("m_uOscRouting1_OscC", "Filter2", false);
+			if (rand.nextFloat() > lRandVal2) myProcessor->setParameterText("m_uOscRouting2_OscC", "Filter2", false);
+			if (rand.nextFloat() > lRandVal2) myProcessor->setParameterText("m_uOscRouting1_OscD", "Filter2", false);
+			if (rand.nextFloat() > lRandVal2) myProcessor->setParameterText("m_uOscRouting2_OscD", "Filter2", false);
+
+			if (rand.nextFloat() > lRandVal2) myProcessor->setParameterText("m_uFilterRouting_Filter1", "Filter2", false);
+			if (rand.nextFloat() > lRandVal2) myProcessor->setParameterText("m_uFilterRouting2_Filter1", "Master", false);
+
+			if (rand.nextFloat() > lRandVal) {
+				if (rand.nextFloat() > lRandVal2) myProcessor->setParameterText("m_uOscRouting1_OscA", "Filter3", false);
+				if (rand.nextFloat() > lRandVal2) myProcessor->setParameterText("m_uOscRouting2_OscA", "Filter3", false);
+				if (rand.nextFloat() > lRandVal2) myProcessor->setParameterText("m_uOscRouting1_OscB", "Filter3", false);
+				if (rand.nextFloat() > lRandVal2) myProcessor->setParameterText("m_uOscRouting2_OscB", "Filter3", false);
+				if (rand.nextFloat() > lRandVal2) myProcessor->setParameterText("m_uOscRouting1_OscC", "Filter3", false);
+				if (rand.nextFloat() > lRandVal2) myProcessor->setParameterText("m_uOscRouting2_OscC", "Filter3", false);
+				if (rand.nextFloat() > lRandVal2) myProcessor->setParameterText("m_uOscRouting1_OscD", "Filter3", false);
+				if (rand.nextFloat() > lRandVal2) myProcessor->setParameterText("m_uOscRouting2_OscD", "Filter3", false);
+
+				if (rand.nextFloat() > lRandVal2) myProcessor->setParameterText("m_uFilterRouting_Filter1", "Filter2", false);
+				if (rand.nextFloat() > lRandVal2) myProcessor->setParameterText("m_uFilterRouting2_Filter1", "Master", false);
+
+				if (rand.nextFloat() > lRandVal2) myProcessor->setParameterText("m_uFilterRouting_Filter2", "Filter3", false);
+				if (rand.nextFloat() > lRandVal2) myProcessor->setParameterText("m_uFilterRouting2_Filter2", "Master", false);
+
+				if (rand.nextFloat() > lRandVal2) myProcessor->setParameterText("m_uFilterRouting2_Filter3", "Master", false);
+
+				myProcessor->setParameterText("m_bOnOff_Filter3", "On", false);
+			}
+		}
+	}
+	//fx
+	lRandVal = 0.2f;
+	if (rand.nextFloat() > 0.1f) myProcessor->setParameterText("m_bAtomizerOnOff", "Off", false);
+	if (rand.nextFloat() > 0.1f) myProcessor->setParameterText("m_bAtomizerOnOff_bus2", "Off", false);
+	if (rand.nextFloat() > 0.1f) myProcessor->setParameterText("m_bAtomizerOnOff_bus3", "Off", false);
+	if (rand.nextFloat() > 0.02f) myProcessor->setParameterText("m_bBitcrushOnOff", "Off", false);
+	if (rand.nextFloat() > 0.02f) myProcessor->setParameterText("m_bBitcrushOnOff_bus2", "Off", false);
+	if (rand.nextFloat() > 0.02f) myProcessor->setParameterText("m_bBitcrushOnOff_bus3", "Off", false);
+	if (rand.nextFloat() > lRandVal) myProcessor->setParameterText("m_bChorusOnOff", "Off", false);
+	if (rand.nextFloat() > lRandVal) myProcessor->setParameterText("m_bChorusOnOff_bus2", "Off", false);
+	if (rand.nextFloat() > lRandVal) myProcessor->setParameterText("m_bChorusOnOff_bus3", "Off", false);
+	if (rand.nextFloat() > 0.1f) myProcessor->setParameterText("m_bCombOnOff", "Off", false);
+	if (rand.nextFloat() > 0.1f) myProcessor->setParameterText("m_bCombOnOff_bus2", "Off", false);
+	if (rand.nextFloat() > 0.1f) myProcessor->setParameterText("m_bCombOnOff_bus3", "Off", false);
+	if (rand.nextFloat() > 0.02f) myProcessor->setParameterText("m_bLimiterOffOn", "Off", false);
+	if (rand.nextFloat() > 0.02f) myProcessor->setParameterText("m_bLimiterOffOn_bus2", "Off", false);
+	if (rand.nextFloat() > 0.02f) myProcessor->setParameterText("m_bLimiterOffOn_bus3", "Off", false);
+	if (rand.nextFloat() > 0.02f) myProcessor->setParameterText("m_bDistortionOnOff", "Off", false);
+	if (rand.nextFloat() > 0.02f) myProcessor->setParameterText("m_bDistortionOnOff_bus2", "Off", false);
+	if (rand.nextFloat() > 0.02f) myProcessor->setParameterText("m_bDistortionOnOff_bus3", "Off", false);
+	if (rand.nextFloat() > lRandVal) myProcessor->setParameterText("m_bEQOnOff", "Off", false);
+	if (rand.nextFloat() > lRandVal) myProcessor->setParameterText("m_bEQOnOff_bus2", "Off", false);
+	if (rand.nextFloat() > lRandVal) myProcessor->setParameterText("m_bEQOnOff_bus3", "Off", false);
+	if (rand.nextFloat() > lRandVal) myProcessor->setParameterText("m_bFlangerOnOff", "Off", false);
+	if (rand.nextFloat() > lRandVal) myProcessor->setParameterText("m_bFlangerOnOff_bus2", "Off", false);
+	if (rand.nextFloat() > lRandVal) myProcessor->setParameterText("m_bFlangerOnOff_bus3", "Off", false);
+	if (rand.nextFloat() > 0.1f) myProcessor->setParameterText("m_bFormantOnOff", "Off", false);
+	if (rand.nextFloat() > 0.1f) myProcessor->setParameterText("m_bFormantOnOff_bus2", "Off", false);
+	if (rand.nextFloat() > 0.1f) myProcessor->setParameterText("m_bFormantOnOff_bus3", "Off", false);
+	if (rand.nextFloat() > 0.05f) myProcessor->setParameterText("m_bMBCompOffOn", "Off", false);
+	if (rand.nextFloat() > 0.05f) myProcessor->setParameterText("m_bMBCompOffOn_bus2", "Off", false);
+	if (rand.nextFloat() > 0.05f) myProcessor->setParameterText("m_bMBCompOffOn_bus3", "Off", false);
+	if (rand.nextFloat() > lRandVal) myProcessor->setParameterText("m_bPhaserOnOff", "Off", false);
+	if (rand.nextFloat() > lRandVal) myProcessor->setParameterText("m_bPhaserOnOff_bus2", "Off", false);
+	if (rand.nextFloat() > lRandVal) myProcessor->setParameterText("m_bPhaserOnOff_bus3", "Off", false);
+	if (rand.nextFloat() > 0.05f) myProcessor->setParameterText("m_bWaveshaperOnOff", "Off", false);
+	if (rand.nextFloat() > 0.05f) myProcessor->setParameterText("m_bWaveshaperOnOff_bus2", "Off", false);
+	if (rand.nextFloat() > 0.05f) myProcessor->setParameterText("m_bWaveshaperOnOff_bus3", "Off", false);
+	lRandVal = 0.8f;
+	if (rand.nextFloat() > lRandVal) myProcessor->setParameterText("m_bReverbOnOff", "Off", false);
+	else 
+		myProcessor->setParameterText("m_bReverbOnOff", "On", false);
+	if (rand.nextFloat() > 0.05f) myProcessor->setParameterText("m_bReverbOnOff_bus2", "Off", false);
+	if (rand.nextFloat() > 0.05f) myProcessor->setParameterText("m_bReverbOnOff_bus3", "Off", false);
+	if (rand.nextFloat() > lRandVal) myProcessor->setParameterText("m_bDelayOnOff", "Off", false);
+	if (rand.nextFloat() > 0.05f) myProcessor->setParameterText("m_bDelayOnOff_bus2", "Off", false);
+	if (rand.nextFloat() > 0.05f) myProcessor->setParameterText("m_bDelayOnOff_bus2", "Off", false);
+	
+	lRandVal = 0.8f;
+	myProcessor->setParameterText("m_uFxBusRouting", "Master", false);
+	myProcessor->setParameterText("m_uFxBusRouting_Bus2", "Master", false);
+	myProcessor->setParameterText("m_uFxBusRouting_Bus3", "Master", false);
+	if (rand.nextFloat() > lRandVal) {
+		myProcessor->setParameterText("m_uFxBusRouting", "FxBus2", false);
+		if (rand.nextFloat() > lRandVal) {
+			myProcessor->setParameterText("m_uFxBusRouting", "FxBus3", false);
+		}
+	}	
+	if (rand.nextFloat() > lRandVal) {
+		myProcessor->setParameterText("m_uFxBusRouting_Bus2", "FxBus3", false);
+	}
+
+	//categories
+	bool analog = false;
+	bool digital = false;
+	bool WTgenerate = true;
+
+	String ls_preset_category = "SY";
+	int li_category = abs(rand.nextInt()) % 28;	
+	switch (li_category) {
+	case 0:
+		ls_preset_category = "AR"; // Arpeggio 		
+		for (int mseg = 0; mseg < 5; mseg++) {
+			myProcessor->m_pVASTXperience.m_Set.m_MSEGData[mseg].initToADSR(mseg);
+			myProcessor->m_pVASTXperience.m_Set.m_MSEGData_changed[mseg].initToADSR(mseg);
+		}
+		myProcessor->setParameterText("m_bARPOnOff", "On", false);		
+		myProcessor->setParameterText("m_fSustainLevel_MSEG1", String(abs(rand.nextInt()) % 20), false);
+		myProcessor->setParameterText("m_fSustainLevel_MSEG2", String(abs(rand.nextInt()) % 20), false);
+		myProcessor->setParameterText("m_fSustainLevel_MSEG3", String(abs(rand.nextInt()) % 20), false);
+		myProcessor->setParameterText("m_fSustainLevel_MSEG4", String(abs(rand.nextInt()) % 20), false);
+		myProcessor->setParameterText("m_fSustainLevel_MSEG5", String(abs(rand.nextInt()) % 20), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG1", String(abs(rand.nextInt()) % 1000), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG2", String(abs(rand.nextInt()) % 1000), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG3", String(abs(rand.nextInt()) % 1000), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG4", String(abs(rand.nextInt()) % 1000), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG5", String(abs(rand.nextInt()) % 1000), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG1", String(abs(rand.nextInt()) % 500), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG2", String(abs(rand.nextInt()) % 500), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG3", String(abs(rand.nextInt()) % 500), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG4", String(abs(rand.nextInt()) % 500), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG5", String(abs(rand.nextInt()) % 500), false);
+		myProcessor->setParameterText("m_bSamplerOnOff", "Off", false);
+		myProcessor->setParameterText("m_bNoiseOnOff", "Off", false);
+		myProcessor->setParameterText("m_uPolyMode", "Poly4", false);
+		break;
+	case 1:
+		ls_preset_category = "AT"; // Atmosphere
+		myProcessor->setParameterText("m_fReleaseTime_MSEG1", String(abs(rand.nextInt()) % 5000 + 2000), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG2", String(abs(rand.nextInt()) % 5000 + 2000), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG3", String(abs(rand.nextInt()) % 5000 + 2000), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG4", String(abs(rand.nextInt()) % 5000 + 2000), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG5", String(abs(rand.nextInt()) % 5000 + 2000), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG1", String(abs(rand.nextInt()) % 5000 + 1500), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG2", String(abs(rand.nextInt()) % 5000 + 1500), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG3", String(abs(rand.nextInt()) % 5000 + 1500), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG4", String(abs(rand.nextInt()) % 5000 + 1500), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG5", String(abs(rand.nextInt()) % 5000 + 1500), false);
+		myProcessor->setParameterText("m_bReverbOnOff", "On", false);
+		myProcessor->setParameterText("m_bReverbOnOff_bus2", "On", false);
+		myProcessor->setParameterText("m_bReverbOnOff_bus3", "On", false);
+		myProcessor->setParameterText("m_bNoiseOnOff", "On", false);
+		myProcessor->setParameterText("m_uPolyMode", "Poly16", false);
+		digital = true;
+		break;
+	case 2:
+		ls_preset_category = "BA"; // Bass
+		for (int mseg = 0; mseg < 5; mseg++) {
+			myProcessor->m_pVASTXperience.m_Set.m_MSEGData[mseg].initToADSR(mseg);
+			myProcessor->m_pVASTXperience.m_Set.m_MSEGData_changed[mseg].initToADSR(mseg);
+		}
+		myProcessor->setParameterText("m_fSustainLevel_MSEG1", String(abs(rand.nextInt()) % 10), false);
+		myProcessor->setParameterText("m_fSustainLevel_MSEG2", String(abs(rand.nextInt()) % 10), false);
+		myProcessor->setParameterText("m_fSustainLevel_MSEG3", String(abs(rand.nextInt()) % 10), false);
+		myProcessor->setParameterText("m_fSustainLevel_MSEG4", String(abs(rand.nextInt()) % 10), false);
+		myProcessor->setParameterText("m_fSustainLevel_MSEG5", String(abs(rand.nextInt()) % 10), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG1", String(abs(rand.nextInt()) % 2000), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG2", String(abs(rand.nextInt()) % 2000), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG3", String(abs(rand.nextInt()) % 2000), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG4", String(abs(rand.nextInt()) % 2000), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG5", String(abs(rand.nextInt()) % 2000), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG1", String(abs(rand.nextInt()) % 20), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG2", String(abs(rand.nextInt()) % 20), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG3", String(abs(rand.nextInt()) % 20), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG4", String(abs(rand.nextInt()) % 20), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG5", String(abs(rand.nextInt()) % 20), false);
+
+		myProcessor->setParameterText("m_bReverbOnOff", "Off", false);
+		myProcessor->setParameterText("m_bReverbOnOff_bus2", "Off", false);
+		myProcessor->setParameterText("m_bReverbOnOff_bus3", "Off", false);
+		myProcessor->setParameterText("m_uPolyMode", "Mono", false);
+		myProcessor->setParameterText("m_bLegatoMode", "On", false);
+		if (rand.nextFloat() > 0.3f)
+			myProcessor->setParameterText("m_fPortamento", String(abs(rand.nextInt()) % 5000 + 1500), false);
+		if (rand.nextFloat() > 0.7f)
+			myProcessor->setParameterText("m_iOscOct_OscA", "-2", false);
+		else 
+			myProcessor->setParameterText("m_iOscOct_OscA", "-1", false);
+		if (rand.nextFloat() > 0.7f)
+			myProcessor->setParameterText("m_iOscOct_OscB", "-2", false);
+		else
+			myProcessor->setParameterText("m_iOscOct_OscB", "-1", false);
+		if (rand.nextFloat() > 0.7f)
+			myProcessor->setParameterText("m_iOscOct_OscC", "-2", false);
+		else
+			myProcessor->setParameterText("m_iOscOct_OscC", "-1", false);
+		if (rand.nextFloat() > 0.7f)
+			myProcessor->setParameterText("m_iOscOct_OscD", "-2", false);
+		else
+			myProcessor->setParameterText("m_iOscOct_OscD", "-1", false);
+		myProcessor->setParameterText("m_bSamplerOnOff", "Off", false);
+		myProcessor->setParameterText("m_bNoiseOnOff", "Off", false);
+		analog = true;
+		break;
+	case 3:
+		ls_preset_category = "BR"; // Brass
+		for (int mseg = 0; mseg < 5; mseg++) {
+			myProcessor->m_pVASTXperience.m_Set.m_MSEGData[mseg].initToADSR(mseg);
+			myProcessor->m_pVASTXperience.m_Set.m_MSEGData_changed[mseg].initToADSR(mseg);
+		}
+		myProcessor->setParameterText("m_fSustainLevel_MSEG1", String(abs(rand.nextInt()) % 10 + 20), false);
+		myProcessor->setParameterText("m_fSustainLevel_MSEG2", String(abs(rand.nextInt()) % 10 + 20), false);
+		myProcessor->setParameterText("m_fSustainLevel_MSEG3", String(abs(rand.nextInt()) % 10 + 20), false);
+		myProcessor->setParameterText("m_fSustainLevel_MSEG4", String(abs(rand.nextInt()) % 10 + 20), false);
+		myProcessor->setParameterText("m_fSustainLevel_MSEG5", String(abs(rand.nextInt()) % 10 + 20), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG1", String(abs(rand.nextInt()) % 3000 + 100), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG2", String(abs(rand.nextInt()) % 3000 + 100), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG3", String(abs(rand.nextInt()) % 3000 + 100), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG4", String(abs(rand.nextInt()) % 3000 + 100), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG5", String(abs(rand.nextInt()) % 3000 + 100), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG1", String(abs(rand.nextInt()) % 50 + 10), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG2", String(abs(rand.nextInt()) % 50 + 10), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG3", String(abs(rand.nextInt()) % 50 + 10), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG4", String(abs(rand.nextInt()) % 50 + 10), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG5", String(abs(rand.nextInt()) % 50 + 10), false);
+		myProcessor->setParameterText("m_uPolyMode", "Poly16", false);
+		myProcessor->setParameterText("m_bSamplerOnOff", "Off", false);
+		myProcessor->setParameterText("m_bNoiseOnOff", "Off", false);
+		analog = true;
+		break;
+	case 4:
+		ls_preset_category = "BL"; // Bell
+		myProcessor->setParameterText("m_uPolyMode", "Mono", false);
+		myProcessor->setParameterText("m_bNoiseOnOff", "Off", false);
+		digital = true;
+		break;
+	case 5:
+		ls_preset_category = "CH"; // Chord
+		myProcessor->setParameterText("m_fSustainLevel_MSEG1", String(abs(rand.nextInt()) % 20 + 10), false);
+		myProcessor->setParameterText("m_fSustainLevel_MSEG2", String(abs(rand.nextInt()) % 20 + 10), false);
+		myProcessor->setParameterText("m_fSustainLevel_MSEG3", String(abs(rand.nextInt()) % 20 + 10), false);
+		myProcessor->setParameterText("m_fSustainLevel_MSEG4", String(abs(rand.nextInt()) % 20 + 10), false);
+		myProcessor->setParameterText("m_fSustainLevel_MSEG5", String(abs(rand.nextInt()) % 20 + 10), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG1", String(abs(rand.nextInt()) % 5000 + 100), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG2", String(abs(rand.nextInt()) % 5000 + 100), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG3", String(abs(rand.nextInt()) % 5000 + 100), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG4", String(abs(rand.nextInt()) % 5000 + 100), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG5", String(abs(rand.nextInt()) % 5000 + 100), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG1", String(abs(rand.nextInt()) % 50 + 10), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG2", String(abs(rand.nextInt()) % 50 + 10), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG3", String(abs(rand.nextInt()) % 50 + 10), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG4", String(abs(rand.nextInt()) % 50 + 10), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG5", String(abs(rand.nextInt()) % 50 + 10), false);
+		myProcessor->setParameterText("m_uPolyMode", "Poly16", false);
+		myProcessor->setParameterText("m_bSamplerOnOff", "Off", false);
+		myProcessor->setParameterText("m_bNoiseOnOff", "Off", false);
+		break;
+	case 6:
+		ls_preset_category = "DK"; // Drum kit
+		myProcessor->setParameterText("m_uPolyMode", "Mono", false);
+		myProcessor->setParameterText("m_bReverbOnOff", "Off", false);
+		myProcessor->setParameterText("m_bReverbOnOff_bus2", "Off", false);
+		myProcessor->setParameterText("m_bReverbOnOff_bus3", "Off", false);
+		myProcessor->setParameterText("m_bSamplerOnOff", "On", false);
+		myProcessor->setParameterText("m_bNoiseOnOff", "On", false);
+		if (rand.nextFloat() > 0.1f) myProcessor->setParameterText("m_bNoiseOnOff", "On", false);
+		break;
+	case 7:
+		ls_preset_category = "DR"; // Drum
+		myProcessor->setParameterText("m_uPolyMode", "Mono", false);
+		myProcessor->setParameterText("m_bReverbOnOff", "Off", false);
+		myProcessor->setParameterText("m_bReverbOnOff_bus2", "Off", false);
+		myProcessor->setParameterText("m_bReverbOnOff_bus3", "Off", false);
+		myProcessor->setParameterText("m_bSamplerOnOff", "On", false);
+		myProcessor->setParameterText("m_bNoiseOnOff", "On", false);
+		if (rand.nextFloat() > 0.1f) myProcessor->setParameterText("m_bNoiseOnOff", "On", false);
+		break;
+	case 8:
+		ls_preset_category = "DL"; // Drum loop
+		myProcessor->setParameterText("m_uPolyMode", "Mono", false);
+		myProcessor->setParameterText("m_bReverbOnOff", "Off", false);
+		myProcessor->setParameterText("m_bReverbOnOff_bus2", "Off", false);
+		myProcessor->setParameterText("m_bReverbOnOff_bus3", "Off", false);
+		myProcessor->setParameterText("m_bSamplerOnOff", "On", false);
+		myProcessor->setParameterText("m_bNoiseOnOff", "On", false);
+		break;
+	case 9:
+		ls_preset_category = "FX"; // Effect
+		myProcessor->setParameterText("m_uPolyMode", "Mono", false);
+		myProcessor->setParameterText("m_bReverbOnOff", "On", false);
+		myProcessor->setParameterText("m_bReverbOnOff_bus2", "On", false);
+		myProcessor->setParameterText("m_bReverbOnOff_bus3", "On", false);
+		myProcessor->setParameterText("m_bSamplerOnOff", "On", false);
+		myProcessor->setParameterText("m_bNoiseOnOff", "On", false);
+		if (rand.nextFloat() > 0.5f) myProcessor->setParameterText("m_bNoiseOnOff", "On", false);
+		break;
+	case 10:
+		ls_preset_category = "GT"; // Guitar
+		myProcessor->setParameterText("m_uPolyMode", "Mono", false);
+		myProcessor->setParameterText("m_bReverbOnOff", "On", false);
+		myProcessor->setParameterText("m_bReverbOnOff_bus2", "On", false);
+		myProcessor->setParameterText("m_bReverbOnOff_bus3", "On", false);
+		myProcessor->setParameterText("m_bNoiseOnOff", "Off", false);
+		break;
+	case 11:
+		ls_preset_category = "IN"; // Instrument
+		myProcessor->setParameterText("m_uPolyMode", "Poly16", false);
+		myProcessor->setParameterText("m_bReverbOnOff", "On", false);
+		myProcessor->setParameterText("m_bReverbOnOff_bus2", "On", false);
+		myProcessor->setParameterText("m_bReverbOnOff_bus3", "On", false);
+		digital = true;
+		break;
+	case 12:
+		ls_preset_category = "KB"; // Keyboard
+		myProcessor->setParameterText("m_uPolyMode", "Poly16", false);
+		myProcessor->setParameterText("m_bReverbOnOff", "On", false);
+		myProcessor->setParameterText("m_bReverbOnOff_bus2", "On", false);
+		myProcessor->setParameterText("m_bReverbOnOff_bus3", "On", false);
+		myProcessor->setParameterText("m_bChorusOnOff", "On", false);
+		myProcessor->setParameterText("m_bChorusOnOff_bus2", "On", false);
+		myProcessor->setParameterText("m_bChorusOnOff_bus3", "On", false);
+		myProcessor->setParameterText("m_bSamplerOnOff", "Off", false);
+		myProcessor->setParameterText("m_bNoiseOnOff", "Off", false);
+		digital = true;
+		break;
+	case 13:
+		ls_preset_category = "LD"; // Lead
+		for (int mseg = 0; mseg < 5; mseg++) {
+			myProcessor->m_pVASTXperience.m_Set.m_MSEGData[mseg].initToADSR(mseg);
+			myProcessor->m_pVASTXperience.m_Set.m_MSEGData_changed[mseg].initToADSR(mseg);
+		}
+		myProcessor->setParameterText("m_uPolyMode", "Mono", false);
+		myProcessor->setParameterText("m_bDelayOnOff", "On", false);
+		myProcessor->setParameterText("m_bDelayOnOff_bus2", "On", false);
+		myProcessor->setParameterText("m_bDelayOnOff_bus3", "On", false);
+		myProcessor->setParameterText("m_bSamplerOnOff", "Off", false);
+		analog = true;
+		break;
+	case 14:
+		ls_preset_category = "MA"; // Mallet
+		myProcessor->setParameterText("m_uPolyMode", "Poly16", false);
+		myProcessor->setParameterText("m_bNoiseOnOff", "Off", false);
+		digital = true;
+		break;
+	case 15:
+		ls_preset_category = "OR"; // Organ
+		myProcessor->setParameterText("m_uPolyMode", "Poly16", false);
+		myProcessor->setParameterText("m_bSamplerOnOff", "Off", false);
+		myProcessor->setParameterText("m_bNoiseOnOff", "Off", false);
+		digital = true;
+		break;
+	case 16:
+		ls_preset_category = "OC"; // Orchestral
+		myProcessor->setParameterText("m_uPolyMode", "Poly16", false);
+		break;
+	case 17:
+		ls_preset_category = "PD"; // Pad
+		for (int mseg = 0; mseg < 5; mseg++) {
+			myProcessor->m_pVASTXperience.m_Set.m_MSEGData[mseg].initToADSR(mseg);
+			myProcessor->m_pVASTXperience.m_Set.m_MSEGData_changed[mseg].initToADSR(mseg);
+		}
+		myProcessor->setParameterText("m_fReleaseTime_MSEG1", String(abs(rand.nextInt()) % 5000 + 2000), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG2", String(abs(rand.nextInt()) % 5000 + 2000), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG3", String(abs(rand.nextInt()) % 5000 + 2000), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG4", String(abs(rand.nextInt()) % 5000 + 2000), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG5", String(abs(rand.nextInt()) % 5000 + 2000), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG1", String(abs(rand.nextInt()) % 3000 + 500), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG2", String(abs(rand.nextInt()) % 3000 + 500), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG3", String(abs(rand.nextInt()) % 3000 + 500), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG4", String(abs(rand.nextInt()) % 3000 + 500), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG5", String(abs(rand.nextInt()) % 3000 + 500), false);
+		myProcessor->setParameterText("m_uPolyMode", "Poly32", false);
+		myProcessor->setParameterText("m_bSamplerOnOff", "Off", false);
+		myProcessor->setParameterText("m_bNoiseOnOff", "Off", false);
+		break;
+	case 18:
+		ls_preset_category = "PN"; // Piano
+		for (int mseg = 0; mseg < 5; mseg++) {
+			myProcessor->m_pVASTXperience.m_Set.m_MSEGData[mseg].initToADSR(mseg);
+			myProcessor->m_pVASTXperience.m_Set.m_MSEGData_changed[mseg].initToADSR(mseg);
+		}
+		myProcessor->setParameterText("m_fReleaseTime_MSEG1", String(abs(rand.nextInt()) % 1000 + 100), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG2", String(abs(rand.nextInt()) % 1000 + 100), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG3", String(abs(rand.nextInt()) % 1000 + 100), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG4", String(abs(rand.nextInt()) % 1000 + 100), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG5", String(abs(rand.nextInt()) % 1000 + 100), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG1", String(abs(rand.nextInt()) % 100 + 10), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG2", String(abs(rand.nextInt()) % 100 + 10), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG3", String(abs(rand.nextInt()) % 100 + 10), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG4", String(abs(rand.nextInt()) % 100 + 10), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG5", String(abs(rand.nextInt()) % 100 + 10), false);
+		myProcessor->setParameterText("m_bSamplerOnOff", "Off", false);
+		myProcessor->setParameterText("m_bNoiseOnOff", "Off", false);
+		myProcessor->setParameterText("m_uPolyMode", "Poly32", false);
+		break;
+	case 19:
+		ls_preset_category = "PL"; // Plucked
+		for (int mseg = 0; mseg < 5; mseg++) {
+			myProcessor->m_pVASTXperience.m_Set.m_MSEGData[mseg].initToADSR(mseg);
+			myProcessor->m_pVASTXperience.m_Set.m_MSEGData_changed[mseg].initToADSR(mseg);
+		}
+		myProcessor->setParameterText("m_fSustainLevel_MSEG1", String(abs(rand.nextInt()) % 10), false);
+		myProcessor->setParameterText("m_fSustainLevel_MSEG2", String(abs(rand.nextInt()) % 10), false);
+		myProcessor->setParameterText("m_fSustainLevel_MSEG3", String(abs(rand.nextInt()) % 10), false);
+		myProcessor->setParameterText("m_fSustainLevel_MSEG4", String(abs(rand.nextInt()) % 10), false);
+		myProcessor->setParameterText("m_fSustainLevel_MSEG5", String(abs(rand.nextInt()) % 10), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG1", String(abs(rand.nextInt()) % 3000 + 100), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG2", String(abs(rand.nextInt()) % 3000 + 100), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG3", String(abs(rand.nextInt()) % 3000 + 100), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG4", String(abs(rand.nextInt()) % 3000 + 100), false);
+		myProcessor->setParameterText("m_fReleaseTime_MSEG5", String(abs(rand.nextInt()) % 3000 + 100), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG1", String(abs(rand.nextInt()) % 50 + 10), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG2", String(abs(rand.nextInt()) % 50 + 10), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG3", String(abs(rand.nextInt()) % 50 + 10), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG4", String(abs(rand.nextInt()) % 50 + 10), false);
+		myProcessor->setParameterText("m_fAttackTime_MSEG5", String(abs(rand.nextInt()) % 50 + 10), false);
+		myProcessor->setParameterText("m_uPolyMode", "Poly16", false);
+		myProcessor->setParameterText("m_bNoiseOnOff", "Off", false);
+		break;
+	case 20:
+		ls_preset_category = "RI"; // Riser
+		myProcessor->setParameterText("m_uPolyMode", "Mono", false);
+		myProcessor->setParameterText("m_bSamplerOnOff", "Off", false);
+		break;
+	case 21:
+		ls_preset_category = "RD"; // Reed
+		myProcessor->setParameterText("m_uPolyMode", "Poly16", false);
+		myProcessor->setParameterText("m_bSamplerOnOff", "Off", false);
+		myProcessor->setParameterText("m_bNoiseOnOff", "Off", false);
+		digital = true;
+		break;
+	case 22:
+		ls_preset_category = "ST"; // String
+		for (int mseg = 0; mseg < 5; mseg++) {
+			myProcessor->m_pVASTXperience.m_Set.m_MSEGData[mseg].initToADSR(mseg);
+			myProcessor->m_pVASTXperience.m_Set.m_MSEGData_changed[mseg].initToADSR(mseg);
+		}
+		myProcessor->setParameterText("m_uPolyMode", "Poly16", false);
+		myProcessor->setParameterText("m_bSamplerOnOff", "Off", false);
+		myProcessor->setParameterText("m_bNoiseOnOff", "Off", false);
+		analog = true;
+		break;
+	case 23:
+		ls_preset_category = "SY"; // Synth
+		myProcessor->setParameterText("m_uPolyMode", "Poly16", false);
+		myProcessor->setParameterText("m_bDelayOnOff", "On", false);
+		myProcessor->setParameterText("m_bDelayOnOff_bus2", "On", false);
+		myProcessor->setParameterText("m_bDelayOnOff_bus3", "On", false);
+		myProcessor->setParameterText("m_bSamplerOnOff", "Off", false);
+		break;
+	case 24:
+		ls_preset_category = "SQ"; // Sequence / Split
+		myProcessor->setParameterText("m_uPolyMode", "Mono", false);
+		myProcessor->setParameterText("m_bDelayOnOff", "On", false);
+		myProcessor->setParameterText("m_bDelayOnOff_bus2", "On", false);
+		myProcessor->setParameterText("m_bDelayOnOff_bus3", "On", false);
+		myProcessor->setParameterText("m_bSamplerOnOff", "Off", false);
+		break;
+	case 25:
+		ls_preset_category = "TG"; // Trancegate
+		analog = true;		
+		myProcessor->setParameterText("m_uPolyMode", "Poly16", false);
+		myProcessor->setParameterText("m_bDelayOnOff", "On", false);
+		myProcessor->setParameterText("m_bDelayOnOff_bus2", "On", false);
+		myProcessor->setParameterText("m_bDelayOnOff_bus3", "On", false);
+		myProcessor->setParameterText("m_bSamplerOnOff", "Off", false);
+		myProcessor->setParameterText("m_bARPOnOff", "On", false);
+		break;
+	case 26:
+		ls_preset_category = "VC"; // Vocal / Voice
+		myProcessor->setParameterText("m_uPolyMode", "Poly16", false);
+		myProcessor->setParameterText("m_bSamplerOnOff", "On", false);
+		myProcessor->setParameterText("m_bNoiseOnOff", "Off", false);
+		break;
+	case 27:
+		ls_preset_category = "WW"; // Woodwind
+		myProcessor->setParameterText("m_uPolyMode", "Poly16", false);
+		myProcessor->setParameterText("m_bSamplerOnOff", "On", false);
+		myProcessor->setParameterText("m_bNoiseOnOff", "On", false);
+		digital = true;
+		break;
+	default:
+		vassertfalse;
+	}
+
+	//osc banks and wavetables
+	myProcessor->setParameterText("m_bOscOnOff_OscA", "Off", false);
+	myProcessor->setParameterText("m_bOscOnOff_OscB", "Off", false);
+	myProcessor->setParameterText("m_bOscOnOff_OscC", "Off", false);
+	myProcessor->setParameterText("m_bOscOnOff_OscD", "Off", false);
+	myProcessor->setParameterText("m_bOscOnOff_OscA", "On", false);
+	if (WTgenerate)
+		vaporizerComponent->getWaveTableEditorComponent()->randomizeBankWavetable(0, analog, digital);	
+	if (rand.nextFloat() > 0.5f) myProcessor->setParameterFloat01("m_uModMatSrce1", (abs(rand.nextInt()) % 27 + 1) / 28.f, false);
+	myProcessor->setParameterText("m_uModMatDest1", "OscAWTPos", false);
+	if (rand.nextFloat() > 0.5f) {
+		myProcessor->setParameterText("m_bOscOnOff_OscB", "On", false);
+		if (WTgenerate)
+			vaporizerComponent->getWaveTableEditorComponent()->randomizeBankWavetable(1, analog, digital);
+		if (rand.nextFloat() > 0.5f) myProcessor->setParameterFloat01("m_uModMatSrce2", (abs(rand.nextInt()) % 27 + 1) / 28.f, false);
+		myProcessor->setParameterText("m_uModMatDest2", "OscBWTPos", false);
+		if (rand.nextFloat() > 0.5f) {
+			myProcessor->setParameterText("m_bOscOnOff_OscC", "On", false);
+			if (WTgenerate)
+				vaporizerComponent->getWaveTableEditorComponent()->randomizeBankWavetable(2, analog, digital);
+			if (rand.nextFloat() > 0.5f) myProcessor->setParameterFloat01("m_uModMatSrce3", (abs(rand.nextInt()) % 27 + 1) / 28.f, false);
+			myProcessor->setParameterText("m_uModMatDest3", "OscCWTPos", false);
+			if (rand.nextFloat() > 0.5f) {
+				myProcessor->setParameterText("m_bOscOnOff_OscD", "On", false);
+				if (WTgenerate)
+					vaporizerComponent->getWaveTableEditorComponent()->randomizeBankWavetable(3, analog, digital);
+				if (rand.nextFloat() > 0.5f) myProcessor->setParameterFloat01("m_uModMatSrce4", (abs(rand.nextInt()) % 27 + 1) / 28.f, false);
+				myProcessor->setParameterText("m_uModMatDest4", "OscDWTPos", false);
+			}
+		}
+	}
+	if (rand.nextFloat() > 0.9f)
+		myProcessor->setParameterText("m_fOscCents_OscB", "500", false);
+	if (rand.nextFloat() > 0.9f)
+		myProcessor->setParameterText("m_fOscCents_OscB", "700", false);
+	if (rand.nextFloat() > 0.9f)
+		myProcessor->setParameterText("m_fOscCents_OscC", "500", false);
+	if (rand.nextFloat() > 0.9f)
+		myProcessor->setParameterText("m_fOscCents_OscC", "700", false);
+	if (rand.nextFloat() > 0.9f)
+		myProcessor->setParameterText("m_fOscCents_OscD", "500", false);
+	if (rand.nextFloat() > 0.9f)
+		myProcessor->setParameterText("m_fOscCents_OscD", "700", false);
+	if (rand.nextFloat() > 0.7f)
+		myProcessor->setParameterText("m_iOscOct_OscB", "-1", false);
+	if (rand.nextFloat() > 0.7f)
+		myProcessor->setParameterText("m_iOscOct_OscB", "1", false);
+	if (rand.nextFloat() > 0.7f)
+		myProcessor->setParameterText("m_iOscOct_OscC", "-1", false);
+	if (rand.nextFloat() > 0.7f)
+		myProcessor->setParameterText("m_iOscOct_OscC", "1", false);
+	if (rand.nextFloat() > 0.7f)
+		myProcessor->setParameterText("m_iOscOct_OscD", "-1", false);
+	if (rand.nextFloat() > 0.7f)
+		myProcessor->setParameterText("m_iOscOct_OscD", "1", false);
+	if (rand.nextFloat() > 0.2f)
+		myProcessor->setParameterText("m_fPortamento", "0", false);		
+	if ((rand.nextFloat() > 0.40f) || (*myProcessor->m_pVASTXperience.m_Set.m_State->m_bOscOnOff_OscA == static_cast<int>(SWITCH::SWITCH_OFF)))
+		myProcessor->setParameterText("m_uWTFX_OscA", "---", false);
+	else 
+		if (rand.nextFloat() > 0.3f) {
+			myProcessor->setParameterText("m_uModMatDest5", "OscAWTFXVal", false);
+			myProcessor->setParameterFloat01("m_uModMatSrce5", (abs(rand.nextInt()) % 27 + 1) / 28.f, false);
+		}
+	if ((rand.nextFloat() > 0.50f) || (*myProcessor->m_pVASTXperience.m_Set.m_State->m_bOscOnOff_OscB == static_cast<int>(SWITCH::SWITCH_OFF)))
+		myProcessor->setParameterText("m_uWTFX_OscB", "---", false);
+	else
+		if (rand.nextFloat() > 0.3f) {
+			myProcessor->setParameterText("m_uModMatDest6", "OscBWTFXVal", false);
+			myProcessor->setParameterFloat01("m_uModMatSrce6", (abs(rand.nextInt()) % 27 + 1) / 28.f, false);
+		}
+	if ((rand.nextFloat() > 0.60f) || (*myProcessor->m_pVASTXperience.m_Set.m_State->m_bOscOnOff_OscC == static_cast<int>(SWITCH::SWITCH_OFF)))
+		myProcessor->setParameterText("m_uWTFX_OscC", "---", false);
+	else
+		if (rand.nextFloat() > 0.3f) {
+			myProcessor->setParameterText("m_uModMatDest7", "OscCWTFXVal", false);
+			myProcessor->setParameterFloat01("m_uModMatSrce7", (abs(rand.nextInt()) % 27 + 1) / 28.f, false);
+		}
+	if ((rand.nextFloat() > 0.70f) || (*myProcessor->m_pVASTXperience.m_Set.m_State->m_bOscOnOff_OscD == static_cast<int>(SWITCH::SWITCH_OFF)))
+		myProcessor->setParameterText("m_uWTFX_OscD", "---", false);
+	else
+		if (rand.nextFloat() > 0.3f) {
+			myProcessor->setParameterText("m_uModMatDest8", "OscDWTFXVal", false);
+			myProcessor->setParameterFloat01("m_uModMatSrce8", (abs(rand.nextInt()) % 27 + 1) / 28.f, false);
+		}
+
+	//sampler
+	if (*myProcessor->m_pVASTXperience.m_Set.m_State->m_bSamplerOnOff == static_cast<int>(SWITCH::SWITCH_ON)) {
+		vaporizerComponent->getWaveTableEditorComponent()->randomizeSample();
+	}
+
+	lRandomPatch.category = ls_preset_category;
+
+	myProcessor->m_presetData.exchangeCurPatchData(lRandomPatch);
+	vaporizerComponent->getWaveTableEditorComponent()->setOscBank(0);
+	myProcessor->requestUIInitAfterPrestLoad();
 }

@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 6.0.1
+  Created with Projucer version: 7.0.9
 
   ------------------------------------------------------------------------------
 
@@ -45,7 +45,7 @@ VASTSamplerEditorComponentHeader::VASTSamplerEditorComponentHeader (VASTAudioPro
 
     m_iWAVScale.reset (new VASTParameterSlider ("m_iWAVScale"));
     addAndMakeVisible (m_iWAVScale.get());
-    m_iWAVScale->setTooltip (TRANS("Display scaling of wav file"));
+    m_iWAVScale->setTooltip (TRANS ("Display scaling of wav file"));
     m_iWAVScale->setRange (1, 256, 1);
     m_iWAVScale->setSliderStyle (juce::Slider::IncDecButtons);
     m_iWAVScale->setTextBoxStyle (juce::Slider::TextBoxLeft, false, 28, 20);
@@ -62,7 +62,7 @@ VASTSamplerEditorComponentHeader::VASTSamplerEditorComponentHeader (VASTAudioPro
     c_wavName->setText (juce::String());
 
     label14.reset (new juce::Label ("new label",
-                                    TRANS("WAV")));
+                                    TRANS ("WAV")));
     addAndMakeVisible (label14.get());
     label14->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label14->setJustificationType (juce::Justification::centredRight);
@@ -73,14 +73,14 @@ VASTSamplerEditorComponentHeader::VASTSamplerEditorComponentHeader (VASTAudioPro
 
     m_iWavWTPos.reset (new VASTParameterSlider ("m_iWavWTPos"));
     addAndMakeVisible (m_iWavWTPos.get());
-    m_iWavWTPos->setTooltip (TRANS("Number of positions to create from wav file"));
+    m_iWavWTPos->setTooltip (TRANS ("Number of positions to create from wav file"));
     m_iWavWTPos->setRange (1, 256, 1);
     m_iWavWTPos->setSliderStyle (juce::Slider::IncDecButtons);
     m_iWavWTPos->setTextBoxStyle (juce::Slider::TextBoxLeft, false, 28, 20);
     m_iWavWTPos->addListener (this);
 
     label16.reset (new juce::Label ("new label",
-                                    TRANS("FIT")));
+                                    TRANS ("FIT")));
     addAndMakeVisible (label16.get());
     label16->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label16->setJustificationType (juce::Justification::centredLeft);
@@ -114,7 +114,7 @@ VASTSamplerEditorComponentHeader::VASTSamplerEditorComponentHeader (VASTAudioPro
     c_iconZeroLoop->setName ("c_iconZeroLoop");
 
     label2.reset (new juce::Label ("new label",
-                                   TRANS("SNAP")));
+                                   TRANS ("SNAP")));
     addAndMakeVisible (label2.get());
     label2->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label2->setJustificationType (juce::Justification::centredLeft);
@@ -125,7 +125,7 @@ VASTSamplerEditorComponentHeader::VASTSamplerEditorComponentHeader (VASTAudioPro
 
     c_snap.reset (new juce::ToggleButton ("c_snap"));
     addAndMakeVisible (c_snap.get());
-    c_snap->setTooltip (TRANS("Snap editor functions to zero crossings "));
+    c_snap->setTooltip (TRANS ("Snap editor functions to zero crossings "));
     c_snap->setButtonText (juce::String());
     c_snap->addListener (this);
 
