@@ -1036,6 +1036,7 @@ void VASTPresetComponent::buildTreeContent() {
 	ltreeAuthors.setProperty("name", "Authors", nullptr);
 	ltreeAuthors.setProperty("id", "root", nullptr);
 	StringArray usedAuthors = *myProcessor->m_presetData.getUsedAuthors();
+	usedAuthors.sortNatural();
 	for (int j = 0; j < usedAuthors.size(); j++) {
 		vadd.setProperty("name", usedAuthors[j], nullptr);
 		vadd.setProperty("id", "author", nullptr);
@@ -1054,6 +1055,7 @@ void VASTPresetComponent::buildTreeContent() {
 	ltreeTags.setProperty("name", "Tags", nullptr);
 	ltreeTags.setProperty("id", "root", nullptr);
 	StringArray usedTags = *myProcessor->m_presetData.getUsedTags();
+	usedTags.sortNatural();
 	for (int j = 0; j < usedTags.size(); j++) {
 		vadd.setProperty("name", usedTags[j], nullptr);
 		vadd.setProperty("id", "tag", nullptr);

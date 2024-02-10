@@ -256,6 +256,8 @@ void VASTPositionViewport::stopAutoUpdate() {
 }
 
 void VASTPositionViewport::timerCallback() {
+	if (!myProcessor->m_initCompleted)
+		return;
 	updateContent(false);
 }
 
@@ -617,7 +619,7 @@ void VASTPositionViewport::mouseDown(const MouseEvent &e) {
 			}
 			else if (result == 40) {
 				// Normalize selected cycles globally
-				std::thread edit_thread(&VASTWaveTableEditorComponent::threadedEditorFunction, EditorFunction::Normalize, 0.f, /*wtPosStart, wtPosEnd,*/ 0, 0, myWtEditor, 0.f, 0.f, nullptr);
+				std::thread edit_thread(&VASTWaveTableEditorComponent::threadedEditorFunction, EditorFunction::Normalize, 0.f, /*wtPosStart, wtPosEnd,*/ 0, 0, myWtEditor, 0.f, 0.f, nullptr, true);
 				edit_thread.detach();
 
 				//myWtEditor->normalizePositions(wtPosStart, wtPosEnd, wavetable.get(), myWtEditor->getBankWavetable());
@@ -625,7 +627,7 @@ void VASTPositionViewport::mouseDown(const MouseEvent &e) {
 			}
 			else if (result == 41) {
 				// Normalize selected cycles locally
-				std::thread edit_thread(&VASTWaveTableEditorComponent::threadedEditorFunction, EditorFunction::NormalizePerCycle, 0.f, /*wtPosStart, wtPosEnd,*/ 0, 0, myWtEditor, 0.f, 0.f, nullptr);
+				std::thread edit_thread(&VASTWaveTableEditorComponent::threadedEditorFunction, EditorFunction::NormalizePerCycle, 0.f, /*wtPosStart, wtPosEnd,*/ 0, 0, myWtEditor, 0.f, 0.f, nullptr, true);
 				edit_thread.detach();
 
 				//myWtEditor->normalizePositions(i, i, wavetable.get(), myWtEditor->getBankWavetable());

@@ -608,6 +608,8 @@ void VASTOscilloscope::updateContent(bool force) {
 		for (int x = 0; x < waveformImage.getWidth(); x++) {
 			int xWT = int((x * step) + (m_safePhaseFloat * C_WAVE_TABLE_SIZE)) % C_WAVE_TABLE_SIZE;
 			float yVal = (*l_waveBuffer)[xWT];
+			if (isnan(yVal))
+				return;
 			if (b_hasNext) { //interpolate
 				float samp1 = l_waveBufferNextCopy[xWT];
 				//yVal = yVal * (1.0f - interpolquad) + samp1 * interpolquad;
@@ -968,7 +970,7 @@ void VASTOscilloscope::mouseDrag(const MouseEvent &e) { // show value
 		m_wtselend = (m_wtselend >(C_WAVE_TABLE_SIZE - 1)) ? C_WAVE_TABLE_SIZE - 1 : m_wtselend;
 		m_wtselend = m_wtselend < 0 ? 0 : m_wtselend;
 
-		std::thread edit_thread(&VASTWaveTableEditorComponent::threadedEditorFunction, EditorFunction::DrawConnect, curvy, /*myWtEditor->getWtPos(), myWtEditor->getWtPos(),*/ m_wtselstart, m_wtselend, myWtEditor, m_val1, m_val2, nullptr); //connect value 0?
+		std::thread edit_thread(&VASTWaveTableEditorComponent::threadedEditorFunction, EditorFunction::DrawConnect, curvy, /*myWtEditor->getWtPos(), myWtEditor->getWtPos(),*/ m_wtselstart, m_wtselend, myWtEditor, m_val1, m_val2, nullptr, true); //connect value 0?
 		edit_thread.detach();
 	}
 	else { //draw mode free

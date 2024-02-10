@@ -90,7 +90,7 @@ VASTKeyboardComponent::VASTKeyboardComponent (AudioProcessorEditor *editor, Audi
     //[UserPreSize]
 
 	c_midiKeyboard->setVelocity(1.0, true); // use mouse position for velocity
-	c_midiKeyboard->setMidiChannelsToDisplay(3); // display channel 1 & 2
+	c_midiKeyboard->setMidiChannelsToDisplay(0xffff); // display all channels
 	c_midiKeyboard->setMidiChannel(2); // own channel 2
 	c_midiKeyboard->setKeyPressBaseOctave(2); //checked
 	c_midiKeyboard->setOpaque(true);

@@ -60,10 +60,10 @@ void CVASTEffect::createAndAddParameter(std::atomic<float>** parameterVar, Audio
 			isAutomatableParameter, isDiscreteParameter, AudioProcessorParameter::Category::genericParameter));
     
 	my_parameters.insert(std::make_pair(uiSequence, p));
-	
 	my_processor->m_mapModdestToParameterName.insert(std::make_pair(modMatrixDestination, newId));
 	my_processor->m_mapParameterNameToModdest.insert(std::make_pair(newId, modMatrixDestination));
 	my_processor->addModMatrixLookupTable(modMatrixDestination, r.start, r.end, r.skew, newId, p);
+
     std::atomic<float>* par = stateTree.getRawParameterValue(newId);
     
 	*parameterVar = par;

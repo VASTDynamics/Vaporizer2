@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 7.0.7
+  Created with Projucer version: 7.0.9
 
   ------------------------------------------------------------------------------
 
@@ -47,53 +47,53 @@ VASTHeaderComponent::VASTHeaderComponent (AudioProcessorEditor *editor, AudioPro
 
     c_Preset.reset (new VASTComboPreset ("c_Preset"));
     addAndMakeVisible (c_Preset.get());
-    c_Preset->setTooltip (TRANS("Choose presets"));
+    c_Preset->setTooltip (TRANS ("Choose presets"));
     c_Preset->setEditableText (false);
     c_Preset->setJustificationType (juce::Justification::centredLeft);
-    c_Preset->setTextWhenNothingSelected (TRANS("no preset"));
-    c_Preset->setTextWhenNoChoicesAvailable (TRANS("no presets"));
+    c_Preset->setTextWhenNothingSelected (TRANS ("no preset"));
+    c_Preset->setTextWhenNoChoicesAvailable (TRANS ("no presets"));
     c_Preset->addListener (this);
 
     c_ReloadPresets.reset (new juce::TextButton ("c_ReloadPresets"));
     addAndMakeVisible (c_ReloadPresets.get());
-    c_ReloadPresets->setTooltip (TRANS("Reload presets from folder"));
-    c_ReloadPresets->setButtonText (TRANS("Reload"));
+    c_ReloadPresets->setTooltip (TRANS ("Reload presets from folder"));
+    c_ReloadPresets->setButtonText (TRANS ("Reload"));
     c_ReloadPresets->addListener (this);
 
     c_SavePreset.reset (new juce::TextButton ("c_SavePreset"));
     addAndMakeVisible (c_SavePreset.get());
-    c_SavePreset->setTooltip (TRANS("Save preset"));
-    c_SavePreset->setButtonText (TRANS("Save"));
+    c_SavePreset->setTooltip (TRANS ("Save preset"));
+    c_SavePreset->setButtonText (TRANS ("Save"));
     c_SavePreset->addListener (this);
 
     c_PresetUp.reset (new juce::TextButton ("c_PresetUp"));
     addAndMakeVisible (c_PresetUp.get());
-    c_PresetUp->setTooltip (TRANS("Preset Up (Shortcut PgUp)"));
-    c_PresetUp->setButtonText (TRANS(">"));
+    c_PresetUp->setTooltip (TRANS ("Preset Up (Shortcut PgUp)"));
+    c_PresetUp->setButtonText (TRANS (">"));
     c_PresetUp->addListener (this);
 
     c_PresetDown.reset (new juce::TextButton ("c_PresetDown"));
     addAndMakeVisible (c_PresetDown.get());
-    c_PresetDown->setTooltip (TRANS("Preset Down (Shortcut PgDwn)"));
-    c_PresetDown->setButtonText (TRANS("<"));
+    c_PresetDown->setTooltip (TRANS ("Preset Down (Shortcut PgDwn)"));
+    c_PresetDown->setButtonText (TRANS ("<"));
     c_PresetDown->addListener (this);
 
     c_Undo.reset (new juce::TextButton ("c_Undo"));
     addAndMakeVisible (c_Undo.get());
-    c_Undo->setTooltip (TRANS("Undo last change"));
-    c_Undo->setButtonText (TRANS("Undo"));
+    c_Undo->setTooltip (TRANS ("Undo last change"));
+    c_Undo->setButtonText (TRANS ("Undo"));
     c_Undo->addListener (this);
 
     c_Redo.reset (new juce::TextButton ("c_Redo"));
     addAndMakeVisible (c_Redo.get());
-    c_Redo->setTooltip (TRANS("Redo last undo"));
-    c_Redo->setButtonText (TRANS("Redo"));
+    c_Redo->setTooltip (TRANS ("Redo last undo"));
+    c_Redo->setButtonText (TRANS ("Redo"));
     c_Redo->addListener (this);
 
     c_LabelLicense.reset (new juce::Label ("c_LabelLicense",
-                                           TRANS("Free version")));
+                                           TRANS ("Free version")));
     addAndMakeVisible (c_LabelLicense.get());
-    c_LabelLicense->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain));
+    c_LabelLicense->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     c_LabelLicense->setJustificationType (juce::Justification::centred);
     c_LabelLicense->setEditable (false, false, false);
     c_LabelLicense->setColour (juce::Label::textColourId, juce::Colour (0xff838d95));
@@ -102,8 +102,14 @@ VASTHeaderComponent::VASTHeaderComponent (AudioProcessorEditor *editor, AudioPro
 
     c_InitPreset.reset (new juce::TextButton ("c_InitPreset"));
     addAndMakeVisible (c_InitPreset.get());
-    c_InitPreset->setButtonText (TRANS("Init"));
+    c_InitPreset->setButtonText (TRANS ("Init"));
     c_InitPreset->addListener (this);
+
+    c_Randomize.reset (new juce::TextButton ("c_Randomize"));
+    addAndMakeVisible (c_Randomize.get());
+    c_Randomize->setTooltip (TRANS ("Randomize preset"));
+    c_Randomize->setButtonText (TRANS ("Random"));
+    c_Randomize->addListener (this);
 
 
     //[UserPreSize]
@@ -144,7 +150,7 @@ VASTHeaderComponent::VASTHeaderComponent (AudioProcessorEditor *editor, AudioPro
 
 	String presetdisplay = myProcessor->m_presetData.getCurPatchData().category + " " + myProcessor->m_presetData.getCurPatchData().presetname;
 	c_Preset->setText(presetdisplay, juce::NotificationType::dontSendNotification);
-    
+
     return; //dont call setSize
     //[/UserPreSize]
 
@@ -169,6 +175,7 @@ VASTHeaderComponent::~VASTHeaderComponent()
     c_Redo = nullptr;
     c_LabelLicense = nullptr;
     c_InitPreset = nullptr;
+    c_Randomize = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -210,14 +217,15 @@ void VASTHeaderComponent::resized()
     //[/UserPreResize]
 
     c_Preset->setBounds (proportionOfWidth (0.0154f), proportionOfHeight (0.3947f), proportionOfWidth (0.7754f), proportionOfHeight (0.2368f));
-    c_ReloadPresets->setBounds (proportionOfWidth (0.4062f), proportionOfHeight (0.7237f), proportionOfWidth (0.1939f), proportionOfHeight (0.2368f));
-    c_SavePreset->setBounds (proportionOfWidth (0.0123f), proportionOfHeight (0.7237f), proportionOfWidth (0.1939f), proportionOfHeight (0.2368f));
-    c_PresetUp->setBounds (proportionOfWidth (0.8985f), proportionOfHeight (0.3947f), proportionOfWidth (0.0954f), proportionOfHeight (0.2368f));
-    c_PresetDown->setBounds (proportionOfWidth (0.8000f), proportionOfHeight (0.3947f), proportionOfWidth (0.0954f), proportionOfHeight (0.2368f));
-    c_Undo->setBounds (proportionOfWidth (0.6031f), proportionOfHeight (0.7237f), proportionOfWidth (0.1939f), proportionOfHeight (0.2368f));
-    c_Redo->setBounds (proportionOfWidth (0.8000f), proportionOfHeight (0.7237f), proportionOfWidth (0.1939f), proportionOfHeight (0.2368f));
+    c_ReloadPresets->setBounds (proportionOfWidth (0.3415f), proportionOfHeight (0.7237f), proportionOfWidth (0.1600f), proportionOfHeight (0.2368f));
+    c_SavePreset->setBounds (proportionOfWidth (0.0154f), proportionOfHeight (0.7237f), proportionOfWidth (0.1600f), proportionOfHeight (0.2368f));
+    c_PresetUp->setBounds (proportionOfWidth (0.8985f), proportionOfHeight (0.3947f), proportionOfWidth (0.0923f), proportionOfHeight (0.2368f));
+    c_PresetDown->setBounds (proportionOfWidth (0.8031f), proportionOfHeight (0.3947f), proportionOfWidth (0.0923f), proportionOfHeight (0.2368f));
+    c_Undo->setBounds (proportionOfWidth (0.5046f), proportionOfHeight (0.7237f), proportionOfWidth (0.1600f), proportionOfHeight (0.2368f));
+    c_Redo->setBounds (proportionOfWidth (0.6677f), proportionOfHeight (0.7237f), proportionOfWidth (0.1600f), proportionOfHeight (0.2368f));
     c_LabelLicense->setBounds (proportionOfWidth (0.0092f), proportionOfHeight (0.1579f), proportionOfWidth (0.9815f), proportionOfHeight (0.1184f));
-    c_InitPreset->setBounds (proportionOfWidth (0.2092f), proportionOfHeight (0.7237f), proportionOfWidth (0.1939f), proportionOfHeight (0.2368f));
+    c_InitPreset->setBounds (proportionOfWidth (0.1785f), proportionOfHeight (0.7237f), proportionOfWidth (0.1600f), proportionOfHeight (0.2368f));
+    c_Randomize->setBounds (proportionOfWidth (0.8308f), proportionOfHeight (0.7237f), proportionOfWidth (0.1600f), proportionOfHeight (0.2368f));
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -237,8 +245,7 @@ void VASTHeaderComponent::comboBoxChanged (juce::ComboBox* comboBoxThatHasChange
     //[/UsercomboBoxChanged_Post]
 }
 
-
-void VASTHeaderComponent::buttonClicked(juce::Button* buttonThatWasClicked)
+void VASTHeaderComponent::buttonClicked (juce::Button* buttonThatWasClicked)
 {
     //[UserbuttonClicked_Pre]
     //[/UserbuttonClicked_Pre]
@@ -430,6 +437,14 @@ void VASTHeaderComponent::buttonClicked(juce::Button* buttonThatWasClicked)
 		myEditor->vaporizerComponent->updateAll();
         //[/UserButtonCode_c_InitPreset]
     }
+    else if (buttonThatWasClicked == c_Randomize.get())
+    {
+        //[UserButtonCode_c_Randomize] -- add your button handler code here..
+        myEditor->vaporizerComponent->getWaveTableEditorComponent()->stopWTRecording();
+        myEditor->randomizePatch();
+        myEditor->vaporizerComponent->updateAll();
+        //[/UserButtonCode_c_Randomize]
+    }
 
     //[UserbuttonClicked_Post]
     //[/UserbuttonClicked_Post]
@@ -491,27 +506,26 @@ BEGIN_JUCER_METADATA
             editable="0" layout="33" items="" textWhenNonSelected="no preset"
             textWhenNoItems="no presets"/>
   <TEXTBUTTON name="c_ReloadPresets" id="2beb983bf4e05d5e" memberName="c_ReloadPresets"
-              virtualName="" explicitFocusOrder="0" pos="40.615% 72.368% 19.385% 23.684%"
+              virtualName="" explicitFocusOrder="0" pos="34.154% 72.368% 16% 23.684%"
               tooltip="Reload presets from folder" buttonText="Reload" connectedEdges="0"
               needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="c_SavePreset" id="bcde0cceb53adcad" memberName="c_SavePreset"
-              virtualName="" explicitFocusOrder="0" pos="1.231% 72.368% 19.385% 23.684%"
+              virtualName="" explicitFocusOrder="0" pos="1.538% 72.368% 16% 23.684%"
               tooltip="Save preset" buttonText="Save" connectedEdges="0" needsCallback="1"
               radioGroupId="0"/>
   <TEXTBUTTON name="c_PresetUp" id="8f9bd8b448847d40" memberName="c_PresetUp"
-              virtualName="" explicitFocusOrder="0" pos="89.846% 39.474% 9.538% 23.684%"
+              virtualName="" explicitFocusOrder="0" pos="89.846% 39.474% 9.231% 23.684%"
               tooltip="Preset Up (Shortcut PgUp)" buttonText="&gt;" connectedEdges="0"
               needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="c_PresetDown" id="b58b0ccbb24d70e6" memberName="c_PresetDown"
-              virtualName="" explicitFocusOrder="0" pos="80% 39.474% 9.538% 23.684%"
+              virtualName="" explicitFocusOrder="0" pos="80.308% 39.474% 9.231% 23.684%"
               tooltip="Preset Down (Shortcut PgDwn)" buttonText="&lt;" connectedEdges="0"
               needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="c_Undo" id="d59a8914e3d9c513" memberName="c_Undo" virtualName=""
-              explicitFocusOrder="0" pos="60.308% 72.368% 19.385% 23.684%"
-              tooltip="Undo last change" buttonText="Undo" connectedEdges="0"
-              needsCallback="1" radioGroupId="0"/>
+              explicitFocusOrder="0" pos="50.462% 72.368% 16% 23.684%" tooltip="Undo last change"
+              buttonText="Undo" connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="c_Redo" id="edd3483ee43ce979" memberName="c_Redo" virtualName=""
-              explicitFocusOrder="0" pos="80% 72.368% 19.385% 23.684%" tooltip="Redo last undo"
+              explicitFocusOrder="0" pos="66.769% 72.368% 16% 23.684%" tooltip="Redo last undo"
               buttonText="Redo" connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <LABEL name="c_LabelLicense" id="a925086450924204" memberName="c_LabelLicense"
          virtualName="" explicitFocusOrder="0" pos="0.923% 15.789% 98.154% 11.842%"
@@ -520,8 +534,12 @@ BEGIN_JUCER_METADATA
          fontname="Syntax" fontsize="11.0" kerning="0.0" bold="0" italic="0"
          justification="36"/>
   <TEXTBUTTON name="c_InitPreset" id="54ad2f2aaf6eafff" memberName="c_InitPreset"
-              virtualName="" explicitFocusOrder="0" pos="20.923% 72.368% 19.385% 23.684%"
+              virtualName="" explicitFocusOrder="0" pos="17.846% 72.368% 16% 23.684%"
               buttonText="Init" connectedEdges="0" needsCallback="1" radioGroupId="0"/>
+  <TEXTBUTTON name="c_Randomize" id="9ec3048bf2785b4c" memberName="c_Randomize"
+              virtualName="" explicitFocusOrder="0" pos="83.077% 72.368% 16% 23.684%"
+              tooltip="Randomize preset" buttonText="Random" connectedEdges="0"
+              needsCallback="1" radioGroupId="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

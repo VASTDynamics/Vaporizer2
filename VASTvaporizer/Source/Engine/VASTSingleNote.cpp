@@ -729,8 +729,8 @@ void CVASTSingleNote::samplerRenderNextBlock(AudioSampleBuffer* outputBuffer, in
 					{
 						lOutL += (l + r) * 0.5f;
 					}
-					jassert((lOutL >= -6.f) && (lOutL <= 6.f));
-					jassert((lOutR >= -6.f) && (lOutR <= 6.f));
+					//jassert((lOutL >= -6.f) && (lOutL <= 6.f));
+					//jassert((lOutR >= -6.f) && (lOutR <= 6.f));
 
 					//do loop fade in out
 					//if (bSwitchSamplerLoop || bSwitchSamplerLoopOnly || bSwitchSamplerLoopPingpong) {

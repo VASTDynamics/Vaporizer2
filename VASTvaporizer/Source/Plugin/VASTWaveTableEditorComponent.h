@@ -89,6 +89,9 @@ public:
 		setDrawMode(dmode);
 	};
 
+	void randomizeBankWavetable(int bank, bool analog, bool digital);
+	void randomizeSample();
+
 	int getOscBank()  const { return m_bank; };
 	void setOscBank(int bank);
 	std::shared_ptr<CVASTWaveTable> getBankWavetable() const {
@@ -236,7 +239,7 @@ public:
 
 	static void loadWTFileThread(juce::File file, VASTWaveTableEditorComponent* editor);
 	static void saveWTFileThread(juce::File file, CVASTWaveTable* wavetable, StringPairArray sarray, VASTWaveTableEditorComponent* editor);
-	static void threadedEditorFunction(int editorFunction, double sliderValue, /*int msbeg, int msend,*/ int wtselstart, int wtselend, VASTWaveTableEditorComponent* editor, float connectval1, float connectval2, std::shared_ptr<CVASTWaveTable> transactionWavetable);
+	static void threadedEditorFunction(int editorFunction, double sliderValue, /*int msbeg, int msend,*/ int wtselstart, int wtselend, VASTWaveTableEditorComponent* editor, float connectval1, float connectval2, std::shared_ptr<CVASTWaveTable> transactionWavetable, bool pregenerate);
 	static void threadedFreehandDraw(/*int msbeg, int msend,*/ VASTWaveTableEditorComponent* editor, juce::Array<juce::Point<float>> spoints);
 	static void normalizePositions(int beg, int end, CVASTWaveTable* wavetable, std::shared_ptr<CVASTWaveTable> bankWavetable, bool perCycle, int wtMode);
 	static void frequencyModulate(const std::vector<myFloat> &inSamples, std::vector<myFloat> &outSamples, int startSample, int endSample, float sinPhaseInc);

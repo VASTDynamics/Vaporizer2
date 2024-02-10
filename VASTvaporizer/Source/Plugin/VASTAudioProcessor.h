@@ -195,6 +195,7 @@ public:
     const String getName() const override;
   
 	void setParameterText(StringRef parName, StringRef textVal, bool bSilent);
+	void setParameterFloat01(StringRef parName, float nvalue, bool bSilent);
 	AudioProcessorValueTreeState& getParameterTree();
 	VASTVUMeterSource* getMeterSource();
 	char* _strncpy(char* dst, const char* src, size_t maxLen);
@@ -243,7 +244,6 @@ public:
 	static String getVSTPathAlternative();
 	static String getSettingsFilePath(bool read, bool& migrate_legacy);
     bool loadUserPatchMetaData(File file, VASTPresetElement& lPreset);
-	void randomizePatch(); //not yet implemented
 
 	String getVersionString();
 	static void crashHandler(void*);

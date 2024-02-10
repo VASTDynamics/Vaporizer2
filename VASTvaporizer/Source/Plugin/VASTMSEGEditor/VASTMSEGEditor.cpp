@@ -175,20 +175,22 @@ void VASTMSEGEditor::updateContent(bool force)
 		int beats = myData->getTimeBeats();
 
 		float displayPeriod = myData->calcTotalDuration();
-		float millisPerBeat = myProcessor->m_pVASTXperience.m_Set.getMillisecondsPerBeat();
-		float intRatio = myProcessor->m_pVASTXperience.m_Set.getIntervalRatio(beats);
-		float stepsPerDisplay = (displayPeriod / (millisPerBeat * intRatio));
+		if (displayPeriod > 0.f) {
+			float millisPerBeat = myProcessor->m_pVASTXperience.m_Set.getMillisecondsPerBeat();
+			float intRatio = myProcessor->m_pVASTXperience.m_Set.getIntervalRatio(beats);
+			float stepsPerDisplay = (displayPeriod / (millisPerBeat * intRatio));
 
-		Colour cGridlines = myProcessor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colFilterDisplayGrid).withAlpha(0.6f);
-		g.setColour(cGridlines);
-		float fGridWidth = m_drawwidth / stepsPerDisplay;
-		for (int verti = 0; verti <= int(stepsPerDisplay); verti++) {
-			float xpoint = verti;
-			int mod = 1 / intRatio;
-			if (mod < 1) 
-				mod = 1;
-			(verti % mod == 0.f) ? g.setColour(cGridlines.withAlpha(1.0f)) : g.setColour(cGridlines.withAlpha(0.4f));
-			g.drawLine(m_xbounds + xpoint * fGridWidth, 0.f, m_xbounds + xpoint * fGridWidth, m_drawheight, 1.f * myProcessor->getPluginScaleWidthFactor() * m_screenWidthScale);
+			Colour cGridlines = myProcessor->getCurrentVASTLookAndFeel()->findVASTColour(VASTColours::colFilterDisplayGrid).withAlpha(0.6f);
+			g.setColour(cGridlines);
+			float fGridWidth = m_drawwidth / stepsPerDisplay;
+			for (int verti = 0; verti <= int(stepsPerDisplay); verti++) {
+				float xpoint = verti;
+				int mod = 1 / intRatio;
+				if (mod < 1)
+					mod = 1;
+				(verti % mod == 0.f) ? g.setColour(cGridlines.withAlpha(1.0f)) : g.setColour(cGridlines.withAlpha(0.4f));
+				g.drawLine(m_xbounds + xpoint * fGridWidth, 0.f, m_xbounds + xpoint * fGridWidth, m_drawheight, 1.f * myProcessor->getPluginScaleWidthFactor() * m_screenWidthScale);
+			}
 		}
 	}
 

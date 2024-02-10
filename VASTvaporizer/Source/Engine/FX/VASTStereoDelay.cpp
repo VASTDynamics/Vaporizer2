@@ -107,8 +107,10 @@ void CVASTStereoDelay::initCompatibilityParameters() {
 
 void CVASTStereoDelay::parameterChanged(const String& parameterID, float newValue) {
 	if (parameterID.startsWith("m_bDelayOnOff")) {
-		if (newValue == static_cast<int>(SWITCH::SWITCH_ON))
+		if (newValue == static_cast<int>(SWITCH::SWITCH_ON)) {
+			reset();
 			switchOn();
+		}
 		else
 			switchOff();
 		return;

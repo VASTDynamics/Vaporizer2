@@ -224,6 +224,8 @@ void VASTFreqDomainViewport::stopAutoUpdate() {
 }
 
 void VASTFreqDomainViewport::timerCallback() {
+	if (!myProcessor->m_initCompleted)
+		return;
 	updateContent(false);
 }
 

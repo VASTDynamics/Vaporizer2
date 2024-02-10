@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 7.0.8
+  Created with Projucer version: 7.0.9
 
   ------------------------------------------------------------------------------
 
@@ -699,7 +699,7 @@ VASTFilterComponent::VASTFilterComponent (AudioProcessorEditor *editor, AudioPro
 	c_filterDisplay->setProcessor(myProcessor);
 	c_filterDisplay->setEditor(myEditor);
 	setOpaque(true);
-    
+
     return; //dont call setSizes
     //[/UserPreSize]
 

@@ -136,8 +136,11 @@ void VASTPresetData::reloadPresetArrayThreaded(Component::SafePointer<VASTPreset
 	if (VASTPresetData::isLoadThreadRunning) {
 		const ScopedLock sl(presetData->m_arraySwapLock);
 		presetData->swap_PresetArray.swapWith(l_thread_PresetArray);
+		l_thread_usedAuthors.sortNatural();
 		presetData->swap_usedAuthors.swapWith(l_thread_usedAuthors);
+		l_thread_usedCategories.sortNatural();
 		presetData->swap_usedCategories.swapWith(l_thread_usedCategories);
+		l_thread_usedTags.sortNatural();
 		presetData->swap_usedTags.swapWith(l_thread_usedTags);
 
 		l_thread_PresetArray.clear();

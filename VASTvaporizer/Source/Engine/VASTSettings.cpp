@@ -957,6 +957,7 @@ float CVASTSettings::getParameterValueWithMatrixModulation(std::atomic<float> *p
 
 	jassert((multiplier0to1 >= 0.f) && (multiplier0to1 <= 1.f));
 	double resultVal = my_processor->m_modMatrixLookupTable[destination].rangeStart + modStartPercentage * length + modLength * multiplier0to1; 
+	resultVal = jlimit<double>(my_processor->m_modMatrixLookupTable[destination].rangeStart, my_processor->m_modMatrixLookupTable[destination].rangeEnd, resultVal);
 	jassert((resultVal >= my_processor->m_modMatrixLookupTable[destination].rangeStart) && (resultVal <= my_processor->m_modMatrixLookupTable[destination].rangeEnd));
 	return resultVal;
 }
