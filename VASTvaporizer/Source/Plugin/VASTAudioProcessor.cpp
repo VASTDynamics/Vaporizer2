@@ -1794,6 +1794,10 @@ String VASTAudioProcessor::getVSTPath() {
 	return "";
 
 #elif JUCE_LINUX
+	String dataPath = CMAKE_INSTALL_FULL_DATAROOTDIR "/Vaporizer2";
+	if (File(dataPath).exists()) {
+		return dataPath;
+	}
 	return "/usr/share/Vaporizer2";
 
 #elif JUCE_WINDOWS	
