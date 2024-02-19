@@ -1311,12 +1311,13 @@ void VASTLookAndFeel::drawRotarySlider(Graphics& g, int x, int y, int width, int
 	}
 
 	bool isParameterSlider = false;
+    bool isHighlighted = false;
 	VASTParameterSlider* _parameterslider = nullptr;
     if ((_parameterslider = dynamic_cast<VASTParameterSlider*>(&slider))) {
 		isParameterSlider = true;
 		if (myProcessor != NULL) {
 			String cid = _parameterslider->getComponentID();
-
+            isHighlighted = _parameterslider->getHighlighted();
 			/*
 			if (cid.endsWith("_bus2") || cid.endsWith("_bus3")) {
 				cid = cid.dropLastCharacters(5);
@@ -1388,6 +1389,10 @@ void VASTLookAndFeel::drawRotarySlider(Graphics& g, int x, int y, int width, int
 	float w1 = radius / 12.f; 
 	// outer arc	
 	if ((isParameterSlider) && (isDDTarget)) {
+        if (isHighlighted) {
+            g.setColour(Colour(255,100,0)); //TODO highlight color
+            g.fillAll();
+        }
 		Path pArc;
 		pArc.addCentredArc(centreX, centreY, radius*1.3f, radius*1.3f, 0.0f, 1.2f * float(M_PI), 2.8f  * float(M_PI), true);
 		g.setColour(findVASTColour(VASTColours::colRotarySliderOuterArcBackground));
@@ -1433,7 +1438,7 @@ void VASTLookAndFeel::drawRotarySlider(Graphics& g, int x, int y, int width, int
 					}
 				}
                  */
-                for (int voice = 0; voice < C_MAX_POLY; voice++) { //magenta indicators
+                for (int voice = 0; voice < C_MAX_POLY; voice++) { //white indicators
                     if (myProcessor->m_pVASTXperience.m_Poly.isVoicePlaying(voice)) {
                         float lastSrceValPercentage = modStartPercentage + ((lastSrceVals[voice] + 1.f) * 0.5f)  * (modEndPercentage - modStartPercentage);
                         float lastSrceValPercentageUI = std::pow(lastSrceValPercentage, _parameterslider->getSkewFactor());

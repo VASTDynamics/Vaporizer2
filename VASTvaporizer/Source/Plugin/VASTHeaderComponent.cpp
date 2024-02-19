@@ -433,8 +433,7 @@ void VASTHeaderComponent::buttonClicked (juce::Button* buttonThatWasClicked)
     {
         //[UserButtonCode_c_InitPreset] -- add your button handler code here..
 		myEditor->vaporizerComponent->getWaveTableEditorComponent()->stopWTRecording();
-		myProcessor->setCurrentProgram(0);
-		myEditor->vaporizerComponent->updateAll();
+		myProcessor->setCurrentProgram(0); //this is async
         //[/UserButtonCode_c_InitPreset]
     }
     else if (buttonThatWasClicked == c_Randomize.get())

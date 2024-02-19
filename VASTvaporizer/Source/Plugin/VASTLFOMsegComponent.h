@@ -64,7 +64,7 @@ public:
 		else if (name.equalsIgnoreCase("STEPSEQ3"))
 			compName = "c_dd_StepSeq3";
 
-		VASTDragSource* dragSource = new VASTDragSource(compName, "n/a");
+		VASTDragSource* dragSource = new VASTDragSource(0, compName, "n/a", "n/a");
 		dragSource->setAudioProcessor(*myProcessor);
 		dragSource->setSize(50, 50);
 		setExtraComponent(dragSource, TabBarButton::ExtraComponentPlacement::afterText);

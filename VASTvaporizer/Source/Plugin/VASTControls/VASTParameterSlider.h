@@ -24,6 +24,8 @@ public:
 	void itemDropped(const SourceDetails& dragSourceDetails) override;
 	void setAutomationDestination(int destination);
 	void mouseDrag(const MouseEvent &e) override;
+    void mouseEnter(const MouseEvent &e) override;
+    void mouseExit(const MouseEvent &e) override;
 
 	void updateContent(bool force);
 	void startAutoUpdate();
@@ -31,6 +33,9 @@ public:
 
 	float m_lastDrawnValPercentageUI[C_MAX_POLY] {}; //for l&f
 	void paint(Graphics& g) override;
+    void setHighlighted();
+    bool getHighlighted();
+    void clearHighlighted();
 
 private:
 	VASTPopupHandler vastPopupHandler;
@@ -40,7 +45,8 @@ private:
 	void timerCallback() override;
 	bool m_timerRunning = false;
 	float m_lastSrceVals[C_MAX_POLY] {};
-
+    bool m_highlighted = false;
+    
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(VASTParameterSlider)
 };
 

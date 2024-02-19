@@ -9,7 +9,7 @@ VAST Dynamics
 #include "../../Engine/VASTMSEGData.h"
 #include "../VASTAudioProcessor.h"
 
-class VASTMSEGEditor : public Component, public Timer
+class VASTMSEGEditor : public Component, public Timer, public TooltipClient
 {
 public:
 	VASTMSEGEditor(AudioProcessor* processor, VASTMSEGData* data, VASTMSEGData* datalive, int msegNo);
@@ -21,6 +21,7 @@ public:
 	void passBackPopupResult(float resultVal, bool isX, int numIsClicked);
 	void startAutoUpdate();
 	void stopAutoUpdate();
+    String getTooltip() override;
 	
 private:
 	void resized() override;

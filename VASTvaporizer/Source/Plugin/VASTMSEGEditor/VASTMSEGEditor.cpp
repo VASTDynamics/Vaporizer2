@@ -723,3 +723,8 @@ void VASTMSEGEditor::timerCallback() {
 	if (m_dirty)
 		updateContent(false);
 }
+
+String VASTMSEGEditor::getTooltip()
+{
+    return TRANS("Left drag controlpoint: move controlpoint on x-axis (time) and on y-axis (intensity value). Left drag up/down between points: edit curviness of segment. Left doubleclick: reset curviness to ramp. Right click on empty space: open context menu to add / copy control points. Right click on control point: open context menu to delete/toggle decay, sustain, MPE, loop points.");
+}

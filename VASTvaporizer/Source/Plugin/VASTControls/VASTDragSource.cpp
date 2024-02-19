@@ -6,7 +6,7 @@ VAST Dynamics
 #include "VASTDragSource.h"
 #include "../VASTAudioProcessorEditor.h"
 
-VASTDragSource::VASTDragSource(const juce::String &componentName, const juce::String &dragText) {
+VASTDragSource::VASTDragSource(int modSource, const juce::String &componentName, const juce::String &dragText, const juce::String &tooltipText) : m_toolTipText(tooltipText), m_modSource(modSource){
 	this->setName(componentName);
 	this->setComponentID(componentName);
 
@@ -37,6 +37,10 @@ VASTDragSource::VASTDragSource(const juce::String &componentName, const juce::St
 	ddLabel->setColour(TextEditor::textColourId, Colours::black);
 	ddLabel->setColour(TextEditor::backgroundColourId, Colour(0x00000000));
 	ddLabel->addListener(this);
+    this->addMouseListener(this, true);
+    
+    ddLabel->setTooltip(m_toolTipText);
+    ddImageButton->setTooltip(m_toolTipText);
 	if (componentName.startsWithIgnoreCase("c_dd_CustomModulator"))
 		ddLabel->setEditable(true);
 	m_processor = NULL;
@@ -65,14 +69,30 @@ void VASTDragSource::lookAndFeelChanged() {
     m_bufferc1 = c1;
 }
 
+void VASTDragSource::setHighlighted() {
+    m_isHighlighted = true;
+}
+
+void VASTDragSource::clearHighlighted() {
+    m_isHighlighted = false;
+}
+
 void VASTDragSource::paint(Graphics& g)
 {
-	if (m_processor == nullptr) return;
-	if (m_noLabel) return;
-	Colour c1 = m_processor->getCurrentVASTLookAndFeel()->findVASTColour(colOscillatorComponentHeaderGradientFrom);
-	Colour c2 = m_processor->getCurrentVASTLookAndFeel()->findVASTColour(colOscillatorComponentHeaderGradientTo);
-	Colour c3 = Colour(0xff4e575c); //TODO
-	g.setGradientFill(ColourGradient(c1,
+    if (m_processor == nullptr) return;
+    if (m_noLabel) return;
+    
+    Colour c1 = m_processor->getCurrentVASTLookAndFeel()->findVASTColour(colOscillatorComponentHeaderGradientFrom);
+    Colour c2 = m_processor->getCurrentVASTLookAndFeel()->findVASTColour(colOscillatorComponentHeaderGradientTo);
+    Colour c3 = Colour(0xff4e575c); //TODO
+    
+    if (m_isHighlighted) {
+        c1 = Colour(255,100,0); //TODO highlight color
+        c2 = Colour(255,100,0); //TODO highlight color
+        c3 = Colour(255,100,0); //TODO highlight color
+    }
+    
+    g.setGradientFill(ColourGradient(c1,
 		proportionOfWidth(0),
 		proportionOfHeight(0),
 		c2,
@@ -139,4 +159,59 @@ void VASTDragSource::setLabelDefaultText(String defaultText)
 {
 	ddLabel->setText(defaultText, NotificationType::sendNotificationSync);
 	ddLabel->showEditor();
+}
+
+void VASTDragSource::mouseEnter(const MouseEvent &e)
+{
+    for (int slot = 0; slot<M_MODMATRIX_MAX_SLOTS; slot++) {
+        float  l_value = 0.f;
+        double l_curvy = 0.f;
+        int l_srce = 0;
+        int l_dest = 0;
+        float lastSrceVals[C_MAX_POLY] {};
+        int polarity = 0;
+        m_processor->m_pVASTXperience.m_Set.modMatrixSlotGetValues(slot, l_value, l_curvy, l_srce, l_dest, polarity, lastSrceVals);
+        if (l_srce == m_modSource) {
+            String l_paramName = m_processor->autoDestinationGetParam(l_dest);
+            for (int i = 0; i < m_processor->m_mapParameterNameToControl.size(); i++) {
+                VASTParameterSlider* lslider = dynamic_cast<VASTParameterSlider*>(m_processor->m_mapParameterNameToControl[i]);
+                if (lslider != nullptr) {
+                    if (lslider->getComponentID().equalsIgnoreCase(l_paramName)) {
+                        if (lslider->isShowing())
+                            lslider->setHighlighted();
+                            lslider->repaint();
+                    }
+                }
+            }
+        }
+    }
+}
+
+void VASTDragSource::mouseExit(const MouseEvent &e) {
+    for (int slot = 0; slot<M_MODMATRIX_MAX_SLOTS; slot++) {
+        float  l_value = 0.f;
+        double l_curvy = 0.f;
+        int l_srce = 0;
+        int l_dest = 0;
+        float lastSrceVals[C_MAX_POLY] {};
+        int polarity = 0;
+        m_processor->m_pVASTXperience.m_Set.modMatrixSlotGetValues(slot, l_value, l_curvy, l_srce, l_dest, polarity, lastSrceVals);
+        if (l_srce == m_modSource) {
+            String l_paramName = m_processor->autoDestinationGetParam(l_dest);
+            for (int i = 0; i < m_processor->m_mapParameterNameToControl.size(); i++) {
+                VASTParameterSlider* lslider = dynamic_cast<VASTParameterSlider*>(m_processor->m_mapParameterNameToControl[i]);
+                if (lslider != nullptr) {
+                    if (lslider->getComponentID().equalsIgnoreCase(l_paramName)) {
+                        if (lslider->isShowing())
+                            lslider->clearHighlighted();
+                            lslider->repaint();
+                    }
+                }
+            }
+        }
+    }
+}
+
+int VASTDragSource::getModSource() {
+    return m_modSource;
 }

@@ -351,11 +351,14 @@ void VASTAudioProcessor::initializeToDefaults() {
 	//int numparam = getNumParameters(); //deprecated
     int numparam = getParameters().size();
     
+    m_pVASTXperience.setIsInitDefaults(true);
 	for (int parameterIndex = 0; parameterIndex < numparam; parameterIndex++) {
 		auto* param = getParameters()[parameterIndex];
 		float defVal = param->getDefaultValue();
 		param->setValueNotifyingHost(defVal);
 	}
+    m_pVASTXperience.setIsInitDefaults(false);
+    m_pVASTXperience.parameterUpdatesAfterInit();
 
 	//reset wts and wav here
 	for (int bank = 0; bank < 4; bank++) {
@@ -520,7 +523,7 @@ void VASTAudioProcessor::initializeToDefaults() {
 	m_pVASTXperience.m_fxBus1.initSequence();
 	m_pVASTXperience.m_fxBus2.initSequence();
 	m_pVASTXperience.m_fxBus3.initSequence();
-	
+    
 	//m_parameterState.undoManager->clearUndoHistory(); //TODO: there is a sporadic segfault here!
 	m_parameterState.undoManager->beginNewTransaction(); //start new transcation only here?
 }

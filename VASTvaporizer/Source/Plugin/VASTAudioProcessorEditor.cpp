@@ -155,6 +155,7 @@ void VASTAudioProcessorEditor::timerCallback(int timerID) {
 			vaporizerComponent->updateMatrixDisplay();
 			vaporizerComponent->updateHeader();
 			myProcessor->clearUIInitFlagAfterPresetLoad();
+            myProcessor->requestUIUpdate(true, true, true, -1, -1);
 		}
 
 		if (myProcessor->needsUIUpdate()) {

@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 7.0.7
+  Created with Projucer version: 7.0.9
 
   ------------------------------------------------------------------------------
 
@@ -57,6 +57,8 @@ public:
 	VASTDragSource* getComponentCustomMod4() {
 		return c_dd_CustomModulator4.get();
 	}
+    void setHighlight(int modSource);
+    void removeHighlights();
     //[/UserMethods]
 
     void paint (juce::Graphics& g) override;

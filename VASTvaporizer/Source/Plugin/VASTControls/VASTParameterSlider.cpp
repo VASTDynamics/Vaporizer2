@@ -58,10 +58,13 @@ void VASTParameterSlider::itemDropped(const SourceDetails& dragSourceDetails) {
 	if (m_processor->m_pVASTXperience.m_Set.modMatrixIsSet(modmatsrce, modmatdest) == false) {
 		int freeSlot = m_processor->m_pVASTXperience.m_Set.modMatrixFindFirstFreeSlot();
 		if (freeSlot != -1) {
+            m_processor->m_pVASTXperience.setIsInitDefaults(true);
 			m_processor->setParameterText("m_uModMatSrce" + String(freeSlot + 1), CVASTParamState::comboBoxValueToTextFunction_MODMATSRCE(modmatsrce), false);
 			m_processor->setParameterText("m_uModMatDest" + String(freeSlot + 1), CVASTParamState::comboBoxValueToTextFunction_MODMATDEST(modmatdest), false);
 			m_processor->setParameterText("m_fModMatVal" + String(freeSlot + 1), String("100"), false);
 			m_processor->setParameterText("m_fModMatCurve" + String(freeSlot + 1), String("0"), false);
+            m_processor->m_pVASTXperience.setIsInitDefaults(false);
+            m_processor->m_pVASTXperience.parameterUpdatesAfterInit();
 			this->repaint();
 		}
 	}
@@ -196,4 +199,49 @@ void VASTParameterSlider::paint(Graphics& g) {
 	if (!m_timerRunning) {
 		startAutoUpdate();
 	}
+}
+
+void VASTParameterSlider::setHighlighted() {
+    m_highlighted = true;
+}
+
+bool VASTParameterSlider::getHighlighted() {
+    return m_highlighted;
+}
+
+void VASTParameterSlider::clearHighlighted() {
+    m_highlighted = false;
+}
+
+void VASTParameterSlider::mouseEnter(const MouseEvent &e) {
+    if (m_processor == nullptr) return;
+    VASTSidePanelComponent* sidePanelComponent = ((VASTAudioProcessorEditor*)m_processor->getActiveEditor())->vaporizerComponent->getSidePanelComponent();
+    if (sidePanelComponent==nullptr)
+        return;
+    if (sidePanelComponent->isVisible() == false)
+        return;
+    String cid = getComponentID();
+    int modmatdest = m_processor->autoParamGetDestination(cid); //name to remove _busx
+    vassert(modmatdest != -1);
+    int slot = m_processor->m_pVASTXperience.m_Set.modMatrixGetFirstSlotWithDestination(modmatdest);
+    if (slot<0)
+        return;
+    float  l_value = 0.f;
+    double l_curvy = 0.f;
+    int l_srce = 0;
+    int l_dest = 0;
+    float lastSrceVals[C_MAX_POLY] {};
+    int polarity = 0;
+    m_processor->m_pVASTXperience.m_Set.modMatrixSlotGetValues(slot, l_value, l_curvy, l_srce, l_dest, polarity, lastSrceVals);
+    sidePanelComponent->setHighlight(l_srce);
+}
+
+void VASTParameterSlider::mouseExit(const MouseEvent &e) {
+    if (m_processor == nullptr) return;
+    VASTSidePanelComponent* sidePanelComponent = ((VASTAudioProcessorEditor*)m_processor->getActiveEditor())->vaporizerComponent->getSidePanelComponent();
+    if (sidePanelComponent==nullptr)
+        return;
+    if (sidePanelComponent->isVisible() == false)
+        return;
+    sidePanelComponent->removeHighlights();
 }
