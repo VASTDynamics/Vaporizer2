@@ -622,6 +622,9 @@ Colour VASTLookAndFeelThemeIce::findVASTColour(int colourID) {
 	case colMSEGEditorControlpoint:
 		return Colours::yellow.withAlpha(0.8f);
 		break;
+    case colParameterBindingHighlight:
+        return Colour(255,100,0);
+        break;
 	}
 
 

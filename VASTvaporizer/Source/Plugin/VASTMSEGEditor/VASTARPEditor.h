@@ -9,7 +9,7 @@ VAST Dynamics
 #include "../../Engine/VASTARPData.h"
 #include "../VASTAudioProcessor.h"
 
-class VASTARPEditor : public Component, public Timer, public FileDragAndDropTarget
+class VASTARPEditor : public Component, public Timer, public FileDragAndDropTarget, public TooltipClient
 {
 public:
 	VASTARPEditor(AudioProcessor* processor, VASTARPData* data, VASTARPData* datalive);
@@ -23,6 +23,7 @@ public:
 
 	bool isInterestedInFileDrag(const StringArray& files) override;
 	void filesDropped(const StringArray& files, int x, int y) override;
+    String getTooltip() override;
 
 private:
 	void resized() override;

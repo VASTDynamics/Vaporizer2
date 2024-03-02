@@ -26,7 +26,6 @@ VASTAudioProcessorEditor::VASTAudioProcessorEditor(VASTAudioProcessor& p)
         if (m_iMaxHeight > screenH) m_iMaxHeight = screenH;
     }
     
-	myProcessor->m_mapParameterNameToControl.clear(); //clear slider mapping
     resizeCalledFromConstructor = true;
     vaporizerComponent.reset(new VASTVaporizerComponent(this, myProcessor));
 	vaporizerComponent->setVisible(false);
@@ -74,7 +73,7 @@ VASTAudioProcessorEditor::~VASTAudioProcessorEditor() {
 	vaporizerComponent = nullptr;
 }
 
-Component* VASTAudioProcessorEditor::findChildComponetWithName(Component* parent, String compName)
+Component* VASTAudioProcessorEditor::findChildComponentWithName(Component* parent, String compName)
 {
 	Component* retComp = nullptr;
 	for (int i = 0; i < parent->getNumChildComponents(); ++i)
@@ -84,7 +83,7 @@ Component* VASTAudioProcessorEditor::findChildComponetWithName(Component* parent
 			return childComp;
 		if (childComp->getNumChildComponents()) {
 			if (retComp == nullptr)
-				retComp = findChildComponetWithName(childComp, compName);
+				retComp = findChildComponentWithName(childComp, compName);
 			else
 				return retComp;
 		}
@@ -124,7 +123,7 @@ void VASTAudioProcessorEditor::timerCallback(int timerID) {
 	if (timerID == 1) { //component update
 		if (myProcessor->m_bShallComponentValueUpdate.load()) {
 			if (myProcessor->m_shallComponentUpdate != "") {
-				VASTSlider* lslider = dynamic_cast<VASTSlider*>(findChildComponetWithName(vaporizerComponent.get(), myProcessor->m_shallComponentUpdate));
+				VASTSlider* lslider = dynamic_cast<VASTSlider*>(findChildComponentWithName(vaporizerComponent.get(), myProcessor->m_shallComponentUpdate));
 				if (lslider != nullptr) {
 					if (lslider->getComponentID().equalsIgnoreCase(myProcessor->m_shallComponentUpdate)) {
 						float sVal = lslider->getRange().getStart() + (lslider->getRange().getEnd() - lslider->getRange().getStart()) * jlimit<float>(0.f, 1.f, myProcessor->m_shallComponentUpdateValue);
@@ -154,7 +153,9 @@ void VASTAudioProcessorEditor::timerCallback(int timerID) {
 			vaporizerComponent->getOscillatorComponent(3)->initAll();
 			vaporizerComponent->updateMatrixDisplay();
 			vaporizerComponent->updateHeader();
+			getGUIRuntimeModel()->clearAllHighlights();
 			myProcessor->clearUIInitFlagAfterPresetLoad();
+            myProcessor->requestUIUpdate(true, true, true, -1, -1);
 		}
 
 		if (myProcessor->needsUIUpdate()) {
@@ -165,28 +166,21 @@ void VASTAudioProcessorEditor::timerCallback(int timerID) {
 				vaporizerComponent->updateMatrixDisplay();
 
 			if (myProcessor->needsUIUpdate_sliders()) {
-				if ((myProcessor->needsUIUpdate_slider1dest() == -1) && (myProcessor->needsUIUpdate_slider2dest() == -1)) { //repaint all sliders 
-					for (int i = 0; i < myProcessor->m_mapParameterNameToControl.size(); i++) {
-						VASTParameterSlider* lslider = dynamic_cast<VASTParameterSlider*>(myProcessor->m_mapParameterNameToControl[i]);
-						if (lslider != nullptr) {
-							if (lslider->isShowing())
-								lslider->repaint();
-						}
-					}
+				if ((myProcessor->needsUIUpdate_slider1dest() == -1) && (myProcessor->needsUIUpdate_slider2dest() == -1)) { //repaint all sliders
+                    getGUIRuntimeModel()->repaintAllSliders();
 				}
 				else { //repaint only the two that are given
 					String param1name = myProcessor->autoDestinationGetParam(myProcessor->needsUIUpdate_slider1dest());
 					String param2name = myProcessor->autoDestinationGetParam(myProcessor->needsUIUpdate_slider2dest());
 
-					for (int i = 0; i < myProcessor->m_mapParameterNameToControl.size(); i++) {
-						VASTParameterSlider* lslider = dynamic_cast<VASTParameterSlider*>(myProcessor->m_mapParameterNameToControl[i]);
-						if (lslider != nullptr) {
-							if ((lslider->getComponentID().equalsIgnoreCase(param1name)) || (lslider->getComponentID().equalsIgnoreCase(param2name))) {
-								if (lslider->isShowing())
-									lslider->repaint();
-							}
-						}
-					}
+                    VASTGUIRuntimeModel::sGUIParameterSliders lslider = getGUIRuntimeModel()->getParameterSliderByParameterName(param1name);
+                    if (lslider.slider != nullptr)
+                        if (lslider.slider->isShowing())
+                            lslider.slider->repaint();
+                    lslider = getGUIRuntimeModel()->getParameterSliderByParameterName(param2name);
+                    if (lslider.slider != nullptr)
+                        if (lslider.slider->isShowing())
+                            lslider.slider->repaint();
 				}
 			}
 
@@ -1096,4 +1090,8 @@ void VASTAudioProcessorEditor::randomizePatch() {
 	myProcessor->m_presetData.exchangeCurPatchData(lRandomPatch);
 	vaporizerComponent->getWaveTableEditorComponent()->setOscBank(0);
 	myProcessor->requestUIInitAfterPrestLoad();
+}
+
+VASTGUIRuntimeModel* VASTAudioProcessorEditor::getGUIRuntimeModel() {
+    return &m_guiRuntimeModel;
 }

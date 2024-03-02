@@ -614,8 +614,7 @@ int VASTPresetData::getNumFavorites(int favoriteNo) {
 	return m_numFavorites[favoriteNo];
 }
 
-void VASTPresetData::removeAllFavorites(int favoriteNo) {	
-	std::unordered_multimap<String, int>::iterator it;
+void VASTPresetData::removeAllFavorites(int favoriteNo) {
 	for (auto it = m_favorites.begin(); it != m_favorites.end(); ) {
 		if (it->second == favoriteNo)
 			it = m_favorites.erase(it);
@@ -628,7 +627,6 @@ void VASTPresetData::removeAllFavorites(int favoriteNo) {
 }
 
 void VASTPresetData::removeFromAllFavorites(String internalid) {
-	std::unordered_multimap<String, int>::iterator it;
 	for (auto it = m_favorites.begin(); it != m_favorites.end(); ) {
 		if (it->first == internalid)
 			it = m_favorites.erase(it);

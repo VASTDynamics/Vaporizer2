@@ -527,6 +527,10 @@
             file="Source/Plugin/VASTGeneratorsComponent.cpp"/>
       <FILE id="xZjrBp" name="VASTGeneratorsComponent.h" compile="0" resource="0"
             file="Source/Plugin/VASTGeneratorsComponent.h"/>
+      <FILE id="VyLwZe" name="VASTGUIRuntimeModel.cpp" compile="1" resource="0"
+            file="Source/Plugin/VASTGUIRuntimeModel.cpp"/>
+      <FILE id="qTU8Jc" name="VASTGUIRuntimeModel.h" compile="0" resource="0"
+            file="Source/Plugin/VASTGUIRuntimeModel.h"/>
       <FILE id="opHXjl" name="VASTHeaderComponent.cpp" compile="1" resource="0"
             file="Source/Plugin/VASTHeaderComponent.cpp"/>
       <FILE id="u31aAf" name="VASTHeaderComponent.h" compile="0" resource="0"

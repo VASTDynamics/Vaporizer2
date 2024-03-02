@@ -351,11 +351,14 @@ void VASTAudioProcessor::initializeToDefaults() {
 	//int numparam = getNumParameters(); //deprecated
     int numparam = getParameters().size();
     
+    m_pVASTXperience.setIsInitDefaults(true);
 	for (int parameterIndex = 0; parameterIndex < numparam; parameterIndex++) {
 		auto* param = getParameters()[parameterIndex];
 		float defVal = param->getDefaultValue();
 		param->setValueNotifyingHost(defVal);
 	}
+    m_pVASTXperience.setIsInitDefaults(false);
+    m_pVASTXperience.parameterUpdatesAfterInit();
 
 	//reset wts and wav here
 	for (int bank = 0; bank < 4; bank++) {
@@ -520,9 +523,15 @@ void VASTAudioProcessor::initializeToDefaults() {
 	m_pVASTXperience.m_fxBus1.initSequence();
 	m_pVASTXperience.m_fxBus2.initSequence();
 	m_pVASTXperience.m_fxBus3.initSequence();
-	
+    
 	//m_parameterState.undoManager->clearUndoHistory(); //TODO: there is a sporadic segfault here!
 	m_parameterState.undoManager->beginNewTransaction(); //start new transcation only here?
+}
+
+void VASTAudioProcessor::loadPresetFile(File presetvvpfile) {
+	VASTPresetElement lPreset{};
+	std::unique_ptr<juce::XmlDocument> xml(new XmlDocument(presetvvpfile));
+	bool success = loadPatchXML(xml.get(), false, &lPreset, lPreset.presetarrayindex, lPreset); 
 }
 
 void VASTAudioProcessor::setCurrentProgram(int index)
@@ -1713,16 +1722,14 @@ void VASTAudioProcessor::setMidiKeyboardBaseOctave(int baseOctave)
 }
 
 int VASTAudioProcessor::autoParamGetDestination(String parametername) {
-	std::unordered_map<String, int>::iterator it;
-	it = m_mapParameterNameToModdest.find(parametername);
-	if (it == m_mapParameterNameToModdest.end()) return -1;
+	auto it = m_mapParameterNameToModdest.find(parametername); //binary search
+    if (!it->first.equalsIgnoreCase(parametername)) return -1;
 	return it->second;
 };
 
 String VASTAudioProcessor::autoDestinationGetParam(int modmatdest) {
-	std::unordered_multimap<int, String>::iterator it;
-	it = m_mapModdestToParameterName.find(modmatdest);
-	if (it == m_mapModdestToParameterName.end()) return "";
+    auto it = m_mapModdestToParameterName.find(modmatdest); //binary search
+	if (it->first != modmatdest) return "";
 	return it->second;
 };
 

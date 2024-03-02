@@ -797,13 +797,13 @@ void VASTOscillatorComponent::assignComponentIDsForChildren(const String &compID
 	for (int i = 0; i < _children.size(); i++) {
 		auto* aSlider = dynamic_cast<VASTParameterSlider*> (_children[i]);
 		if (aSlider != nullptr)
-			aSlider->bindParameter(aSlider->getName() + "_" + compID);
+			aSlider->bindParameter(myEditor, aSlider->getName() + "_" + compID, VASTGUIRuntimeModel::GUIComponents::OscillatorComponent, 0);
 		auto* aCombobox = dynamic_cast<VASTParameterComboBox*> (_children[i]);
 		if (aCombobox != nullptr)
-			aCombobox->bindParameter(aCombobox->getName() + "_" + compID);
+			aCombobox->bindParameter(myEditor, aCombobox->getName() + "_" + compID, VASTGUIRuntimeModel::GUIComponents::OscillatorComponent, 0);
 		auto* aButton = dynamic_cast<VASTParameterButton*> (_children[i]);
 		if (aButton != nullptr)
-			aButton->bindParameter(aButton->getName() + "_" + compID);
+			aButton->bindParameter(myEditor, aButton->getName() + "_" + compID, VASTGUIRuntimeModel::GUIComponents::OscillatorComponent, 0);
 	}
 }
 

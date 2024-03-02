@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 6.0.1
+  Created with Projucer version: 7.0.9
 
   ------------------------------------------------------------------------------
 
@@ -31,44 +31,58 @@
 #include "VASTMSEGEditor/VASTLFOEditor.h"
 #include "VASTMSEGEditor/VASTLFOEditorPane.h"
 
-class VASTDnDTabBarButton : public TabBarButton
+class VASTDnDTabBarButton : public TabBarButton, public DragAndDropTarget
 {
 public:
-	VASTAudioProcessor* myProcessor = nullptr;
-	VASTDnDTabBarButton(VASTAudioProcessor* processor, const String& name, TabbedButtonBar& ownerBar) : TabBarButton(name, ownerBar), myProcessor(processor) {
-		String compName = "";
-		if (name.equalsIgnoreCase("MSEG1"))
-			compName = "c_dd_MSEG1Env";
-		else if (name.equalsIgnoreCase("MSEG2"))
-			compName = "c_dd_MSEG2Env";
-		else if (name.equalsIgnoreCase("MSEG3"))
-			compName = "c_dd_MSEG3Env";
-		else if (name.equalsIgnoreCase("MSEG4"))
-			compName = "c_dd_MSEG4Env";
-		else if (name.equalsIgnoreCase("MSEG5"))
-			compName = "c_dd_MSEG5Env";
-		else if (name.equalsIgnoreCase("LFO1"))
-			compName = "c_dd_LFO1";
-		else if (name.equalsIgnoreCase("LFO2"))
-			compName = "c_dd_LFO2";
-		else if (name.equalsIgnoreCase("LFO3"))
-			compName = "c_dd_LFO3";
-		else if (name.equalsIgnoreCase("LFO4"))
-			compName = "c_dd_LFO4";
-		else if (name.equalsIgnoreCase("LFO5"))
-			compName = "c_dd_LFO5";
-		else if (name.equalsIgnoreCase("STEPSEQ1"))
-			compName = "c_dd_StepSeq1";
-		else if (name.equalsIgnoreCase("STEPSEQ2"))
-			compName = "c_dd_StepSeq2";
-		else if (name.equalsIgnoreCase("STEPSEQ3"))
-			compName = "c_dd_StepSeq3";
+    VASTAudioProcessor* myProcessor = nullptr;
+    VASTAudioProcessorEditor* myEditor = nullptr;
+    VASTDnDTabBarButton(VASTAudioProcessor* processor, VASTAudioProcessorEditor* editor, const String& name, TabbedButtonBar& ownerBar, int tabIndex, TabbedComponent* tabComponent) : TabBarButton(name, ownerBar), myProcessor(processor), myEditor(editor), tabbedComponent(tabComponent) {
+        String compName = "";
+        this->tabIndex = tabIndex;
+        if (name.equalsIgnoreCase("MSEG1"))
+            compName = "c_dd_MSEG1Env";
+        else if (name.equalsIgnoreCase("MSEG2"))
+            compName = "c_dd_MSEG2Env";
+        else if (name.equalsIgnoreCase("MSEG3"))
+            compName = "c_dd_MSEG3Env";
+        else if (name.equalsIgnoreCase("MSEG4"))
+            compName = "c_dd_MSEG4Env";
+        else if (name.equalsIgnoreCase("MSEG5"))
+            compName = "c_dd_MSEG5Env";
+        else if (name.equalsIgnoreCase("LFO1"))
+            compName = "c_dd_LFO1";
+        else if (name.equalsIgnoreCase("LFO2"))
+            compName = "c_dd_LFO2";
+        else if (name.equalsIgnoreCase("LFO3"))
+            compName = "c_dd_LFO3";
+        else if (name.equalsIgnoreCase("LFO4"))
+            compName = "c_dd_LFO4";
+        else if (name.equalsIgnoreCase("LFO5"))
+            compName = "c_dd_LFO5";
+        else if (name.equalsIgnoreCase("STEPSEQ1"))
+            compName = "c_dd_StepSeq1";
+        else if (name.equalsIgnoreCase("STEPSEQ2"))
+            compName = "c_dd_StepSeq2";
+        else if (name.equalsIgnoreCase("STEPSEQ3"))
+            compName = "c_dd_StepSeq3";
 
-		VASTDragSource* dragSource = new VASTDragSource(compName, "n/a");
-		dragSource->setAudioProcessor(*myProcessor);
-		dragSource->setSize(50, 50);
-		setExtraComponent(dragSource, TabBarButton::ExtraComponentPlacement::afterText);
-	}
+        VASTDragSource* dragSource = new VASTDragSource(0, compName, "n/a", "n/a");
+        dragSource->setAudioProcessor(*myProcessor, *myEditor);
+        dragSource->setSize(50, 50);
+        setExtraComponent(dragSource, TabBarButton::ExtraComponentPlacement::afterText);
+    }
+
+    void itemDragEnter (const SourceDetails& dragSourceDetails) override {
+        if (tabbedComponent->getCurrentTabIndex() != tabIndex)
+            tabbedComponent->setCurrentTabIndex(tabIndex);
+    }
+    void itemDragMove (const SourceDetails& dragSourceDetails) override {};
+    void itemDragExit (const SourceDetails& dragSourceDetails) override {};
+    void itemDropped (const SourceDetails& dragSourceDetails) override {};
+    bool shouldDrawDragImageWhenOver() override { return true; };
+    bool isInterestedInDragSource(const SourceDetails &dragSourceDetails) override { return true; }
+    int tabIndex = -1;
+    TabbedComponent* tabbedComponent = nullptr;
 };
 
 class VASTTabbedMSEGComponent : public TabbedComponent
@@ -76,7 +90,8 @@ class VASTTabbedMSEGComponent : public TabbedComponent
 public:
 	std::function<void(int)> TabChangedFunc;
 	VASTAudioProcessor* myProcessor = nullptr;
-	VASTTabbedMSEGComponent(VASTAudioProcessor* processor, TabbedButtonBar::Orientation orientation) : TabbedComponent(orientation), myProcessor(processor) {
+    VASTAudioProcessorEditor* myEditor = nullptr;
+	VASTTabbedMSEGComponent(VASTAudioProcessor* processor, VASTAudioProcessorEditor* editor, TabbedButtonBar::Orientation orientation) : TabbedComponent(orientation), myProcessor(processor), myEditor(editor) {
 		TabChangedFunc = [](int) {};
 	}
 	void currentTabChanged(int index, const String&) override
@@ -122,8 +137,8 @@ public:
 		TabChangedFunc(index);
 	}
 
-	TabBarButton* createTabButton(const String &tabName, int ) override {
-		return new VASTDnDTabBarButton(myProcessor, tabName, getTabbedButtonBar());
+	TabBarButton* createTabButton(const String &tabName, int tabIndex ) override {
+		return new VASTDnDTabBarButton(myProcessor, myEditor, tabName, getTabbedButtonBar(), tabIndex, this);
 	}
 };
 
@@ -132,7 +147,8 @@ class VASTTabbedLFOComponent : public TabbedComponent
 public:
 	std::function<void(int)> TabChangedFunc;
 	VASTAudioProcessor* myProcessor = nullptr;
-	VASTTabbedLFOComponent(VASTAudioProcessor* processor, TabbedButtonBar::Orientation orientation) : TabbedComponent(orientation), myProcessor(processor) {
+    VASTAudioProcessorEditor* myEditor = nullptr;
+	VASTTabbedLFOComponent(VASTAudioProcessor* processor, VASTAudioProcessorEditor* editor, TabbedButtonBar::Orientation orientation) : TabbedComponent(orientation), myProcessor(processor), myEditor(editor) {
 		TabChangedFunc = [](int) {};
 	}
 	void currentTabChanged(int index, const String&) override
@@ -150,7 +166,7 @@ public:
 		if (tab4 != nullptr)
             tab4->stopAutoUpdate();
 		VASTLFOEditorPane* tab5 = dynamic_cast<VASTLFOEditorPane*>(getTabContentComponent(4));
-		if (tab5 != nullptr) 
+		if (tab5 != nullptr)
             tab5->stopAutoUpdate();
 
 		switch (index) {
@@ -178,8 +194,8 @@ public:
 		TabChangedFunc(index);
 	}
 
-	TabBarButton* createTabButton(const String &tabName, int ) override {
-		return new VASTDnDTabBarButton(myProcessor, tabName, getTabbedButtonBar());
+	TabBarButton* createTabButton(const String &tabName, int tabIndex) override {
+		return new VASTDnDTabBarButton(myProcessor, myEditor, tabName, getTabbedButtonBar(), tabIndex, this);
 	}
 };
 //[/Headers]
@@ -217,6 +233,8 @@ public:
 	void updateAll();
 	void buttonClicked(Button* buttonThatWasClicked) override;
 	void mouseWheelMove(const MouseEvent &event, const MouseWheelDetails &wheel) override;
+    VASTTabbedMSEGComponent* getEnvTab() { return c_envTab.get(); };
+    VASTTabbedLFOComponent* getLFOTab(){ return c_lfoTab.get(); };
     //[/UserMethods]
 
     void paint (juce::Graphics& g) override;

@@ -130,17 +130,17 @@ VASTHeaderComponent::VASTHeaderComponent (AudioProcessorEditor *editor, AudioPro
 			auto* aSlider = dynamic_cast<VASTParameterSlider*> (child);
 			if (aSlider != nullptr) {
 				aSlider->setAudioProcessor(*myProcessor);
-				aSlider->bindParameter(aSlider->getName());
+				aSlider->bindParameter(myEditor, aSlider->getName(), VASTGUIRuntimeModel::GUIComponents::HeaderComponent, 0);
 			}
 			auto* aCombobox = dynamic_cast<VASTParameterComboBox*> (child);
 			if (aCombobox != nullptr) {
 				aCombobox->setAudioProcessor(*myProcessor);
-				aCombobox->bindParameter(aCombobox->getName());
+				aCombobox->bindParameter(myEditor, aCombobox->getName(), VASTGUIRuntimeModel::GUIComponents::HeaderComponent, 0);
 			}
 			auto* aButton = dynamic_cast<VASTParameterButton*> (child);
 			if (aButton != nullptr) {
 				aButton->setAudioProcessor(*myProcessor);
-				aButton->bindParameter(aButton->getName());
+				aButton->bindParameter(myEditor, aButton->getName(), VASTGUIRuntimeModel::GUIComponents::HeaderComponent, 0);
 			}
 		}
 	}
@@ -433,8 +433,7 @@ void VASTHeaderComponent::buttonClicked (juce::Button* buttonThatWasClicked)
     {
         //[UserButtonCode_c_InitPreset] -- add your button handler code here..
 		myEditor->vaporizerComponent->getWaveTableEditorComponent()->stopWTRecording();
-		myProcessor->setCurrentProgram(0);
-		myEditor->vaporizerComponent->updateAll();
+		myProcessor->setCurrentProgram(0); //this is async
         //[/UserButtonCode_c_InitPreset]
     }
     else if (buttonThatWasClicked == c_Randomize.get())
@@ -448,6 +447,19 @@ void VASTHeaderComponent::buttonClicked (juce::Button* buttonThatWasClicked)
 
     //[UserbuttonClicked_Post]
     //[/UserbuttonClicked_Post]
+}
+
+void VASTHeaderComponent::filesDropped (const juce::StringArray& filenames, int mouseX, int mouseY)
+{
+    //[UserCode_filesDropped] -- Add your code here...
+    if (filenames.size() < 1)
+        return;
+    String filename = filenames[0];
+    File presetfile = File(filename);
+    if ((!presetfile.existsAsFile()) || (!presetfile.getFileExtension().equalsIgnoreCase(".vvp")))
+        return;
+    myProcessor->loadPresetFile(presetfile);
+    //[/UserCode_filesDropped]
 }
 
 void VASTHeaderComponent::mouseDown (const juce::MouseEvent& e)
@@ -477,6 +489,16 @@ void VASTHeaderComponent::mouseDown (const juce::MouseEvent& e)
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
+bool VASTHeaderComponent::isInterestedInFileDrag(const juce::StringArray& filenames)
+{
+    if (filenames.size() < 1)
+        return false;
+    String filename = filenames[0];
+    File presetfile = File(filename);
+    if ((!presetfile.existsAsFile()) || (!presetfile.getFileExtension().equalsIgnoreCase(".vvp")))
+        return false;
+    return true;
+}
 //[/MiscUserCode]
 
 
@@ -490,12 +512,14 @@ void VASTHeaderComponent::mouseDown (const juce::MouseEvent& e)
 BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="VASTHeaderComponent" componentName=""
-                 parentClasses="public Component" constructorParams="AudioProcessorEditor *editor, AudioProcessor* processor"
+                 parentClasses="public Component, public FileDragAndDropTarget"
+                 constructorParams="AudioProcessorEditor *editor, AudioProcessor* processor"
                  variableInitialisers="myEditor((VASTAudioProcessorEditor*)editor), myProcessor((VASTAudioProcessor*)processor)"
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
                  fixedSize="1" initialWidth="325" initialHeight="76">
   <METHODS>
     <METHOD name="mouseDown (const juce::MouseEvent&amp; e)"/>
+    <METHOD name="filesDropped (const juce::StringArray&amp; filenames, int mouseX, int mouseY)"/>
   </METHODS>
   <BACKGROUND backgroundColour="ff323e44">
     <RECT pos="0 0 0M 0M" fill="linear: -46.769% -42.105%, 100.923% 105.263%, 0=ff212527, 1=ff0b0b0b"

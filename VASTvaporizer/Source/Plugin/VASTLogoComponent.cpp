@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 6.1.2
+  Created with Projucer version: 7.0.9
 
   ------------------------------------------------------------------------------
 
@@ -45,29 +45,18 @@ VASTLogoComponent::VASTLogoComponent (AudioProcessorEditor *editor, AudioProcess
     c_screenSize->setColour (juce::TextButton::textColourOffId, juce::Colour (0x00ffffff));
     c_screenSize->setColour (juce::TextButton::textColourOnId, juce::Colour (0x00ffffff));
 
-    auto asyncImageLoad = [p = juce::Component::SafePointer<VASTLogoComponent> (this)]()
-    {
-        if (p) {
-            p->drawable1 = juce::Drawable::createFromImageData (vaporizer2_svg, vaporizer2_svgSize);
-            p->drawable2 = juce::Drawable::createFromImageData (vast_svg, vast_svgSize);
-            p->drawable3 = juce::Drawable::createFromImageData (logokreis_svg, logokreis_svgSize);
-            p->drawable4 = juce::Drawable::createFromImageData (copyright_svg, copyright_svgSize);
-            p->drawable5 = juce::Drawable::createFromImageData (dynamics_svg, dynamics_svgSize);
-            p->drawable6 = juce::Drawable::createFromImageData (logokreisv_svg, logokreisv_svgSize);       
-        }
-    };
-    
-    //setRepaintsOnMouseActivity(false); //performance
-    //setBufferedToImage(true); //performance
+    drawable1 = juce::Drawable::createFromImageData (vaporizer2_svg, vaporizer2_svgSize);
+    drawable2 = juce::Drawable::createFromImageData (vast_svg, vast_svgSize);
+    drawable3 = juce::Drawable::createFromImageData (logokreis_svg, logokreis_svgSize);
+    drawable4 = juce::Drawable::createFromImageData (copyright_svg, copyright_svgSize);
+    drawable5 = juce::Drawable::createFromImageData (dynamics_svg, dynamics_svgSize);
+    drawable6 = juce::Drawable::createFromImageData (logokreisv_svg, logokreisv_svgSize);
 
-    setOpaque(false);
-    Timer::callAfterDelay (100, asyncImageLoad);
-    
     //[UserPreSize]
 
 	c_screenSize->setComponentID("screenSize");
 	setOpaque(true);
-    
+
     return; //dont call setSize
     //[/UserPreSize]
 
@@ -126,6 +115,7 @@ void VASTLogoComponent::paint (juce::Graphics& g)
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (juce::Colours::black.withAlpha (0.639f));
+        jassert (drawable1 != nullptr);
         if (drawable1 != nullptr)
             drawable1->drawWithin (g, juce::Rectangle<int> (x, y, width, height).toFloat(),
                                    juce::RectanglePlacement::centred, 0.639f);
@@ -136,6 +126,7 @@ void VASTLogoComponent::paint (juce::Graphics& g)
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (juce::Colours::black.withAlpha (0.613f));
+        jassert (drawable2 != nullptr);
         if (drawable2 != nullptr)
             drawable2->drawWithin (g, juce::Rectangle<int> (x, y, width, height).toFloat(),
                                    juce::RectanglePlacement::centred, 0.613f);
@@ -146,6 +137,7 @@ void VASTLogoComponent::paint (juce::Graphics& g)
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (juce::Colours::black);
+        jassert (drawable3 != nullptr);
         if (drawable3 != nullptr)
             drawable3->drawWithin (g, juce::Rectangle<int> (x, y, width, height).toFloat(),
                                    juce::RectanglePlacement::centred, 1.000f);
@@ -156,6 +148,7 @@ void VASTLogoComponent::paint (juce::Graphics& g)
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (juce::Colours::black.withAlpha (0.487f));
+        jassert (drawable4 != nullptr);
         if (drawable4 != nullptr)
             drawable4->drawWithin (g, juce::Rectangle<int> (x, y, width, height).toFloat(),
                                    juce::RectanglePlacement::centred, 0.487f);
@@ -166,6 +159,7 @@ void VASTLogoComponent::paint (juce::Graphics& g)
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (juce::Colours::black);
+        jassert (drawable5 != nullptr);
         if (drawable5 != nullptr)
             drawable5->drawWithin (g, juce::Rectangle<int> (x, y, width, height).toFloat(),
                                    juce::RectanglePlacement::centred, 1.000f);
@@ -176,6 +170,7 @@ void VASTLogoComponent::paint (juce::Graphics& g)
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (juce::Colours::black.withAlpha (0.712f));
+        jassert (drawable6 != nullptr);
         if (drawable6 != nullptr)
             drawable6->drawWithin (g, juce::Rectangle<int> (x, y, width, height).toFloat(),
                                    juce::RectanglePlacement::centred, 0.712f);

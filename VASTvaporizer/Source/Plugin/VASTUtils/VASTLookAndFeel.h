@@ -182,8 +182,8 @@ enum VASTColours {
 	colMSEGEditorLine,		
 	colMSEGEditorCurvepoint,
 	colMSEGEditorCurvepointOutline,
-	colMSEGEditorControlpoint 
-
+	colMSEGEditorControlpoint,
+    colParameterBindingHighlight
 };
 
 class VASTAudioProcessor; // forward declaration

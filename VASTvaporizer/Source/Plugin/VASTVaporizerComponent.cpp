@@ -47,6 +47,25 @@
 
 
 //[MiscUserDefs] You can add your own user definitions and misc code here...
+VASTTabBarButton::VASTTabBarButton(const String& name, TabbedButtonBar& ownerBar) : TabBarButton(name, ownerBar) {
+}
+
+bool VASTTabBarButton::isInterestedInDragSource(const SourceDetails &dragSourceDetails) {
+    return true;
+}
+
+void VASTTabBarButton::itemDragEnter(const SourceDetails &dragSourceDetails) {
+    if (tabbedComponent->getCurrentTabIndex() != tabIndex)
+        tabbedComponent->setCurrentTabIndex(tabIndex);
+}
+
+TabBarButton* VASTTabbedComponent::createTabButton (const String& tabName, int tabIndex) {
+    VASTTabBarButton* tabBarButton = new VASTTabBarButton (tabName, *tabs);
+    tabBarButton->tabbedComponent = this;
+    tabBarButton->tabIndex = tabIndex;
+    tabBarButton->tabName = tabName;
+    return tabBarButton;
+}
 
 VASTTabbedComponent::VASTTabbedComponent(TabbedButtonBar::Orientation orientation, AudioProcessorEditor *editor, AudioProcessor* processor) : TabbedComponent(orientation), myProcessor(processor), myEditor(editor)
 {
@@ -70,6 +89,16 @@ VASTTabbedComponent::VASTTabbedComponent(TabbedButtonBar::Orientation orientatio
     VASTWaveTableEditorComponent* tab1 = dynamic_cast<VASTWaveTableEditorComponent*>(getTabContentComponent(TabSequence::WTEDITOR));
     if (tab1 != nullptr)
         tab1->startAutoUpdate();
+    
+    /*
+    getTabbedButtonBar().getTabButton(TabSequence::WTEDITOR)->addMouseListener(&tabMouseListener, true);
+    getTabbedButtonBar().getTabButton(TabSequence::FILTER)->addMouseListener(&tabMouseListener, true);
+    getTabbedButtonBar().getTabButton(TabSequence::LFOMSEG)->addMouseListener(&tabMouseListener, true);
+    getTabbedButtonBar().getTabButton(TabSequence::MATRIX)->addMouseListener(&tabMouseListener, true);
+    getTabbedButtonBar().getTabButton(TabSequence::FX)->addMouseListener(&tabMouseListener, true);
+    getTabbedButtonBar().getTabButton(TabSequence::ARP)->addMouseListener(&tabMouseListener, true);
+    getTabbedButtonBar().getTabButton(TabSequence::PRESET)->addMouseListener(&tabMouseListener, true);
+     */
 }
 
 void VASTTabbedComponent::currentTabChanged(int index, const String&) {
@@ -228,17 +257,17 @@ VASTVaporizerComponent::VASTVaporizerComponent (AudioProcessorEditor *editor, Au
 			auto* aSlider = dynamic_cast<VASTParameterSlider*> (child);
 			if (aSlider != nullptr) {
 				aSlider->setAudioProcessor(*myProcessor);
-				aSlider->bindParameter(aSlider->getName());
+				aSlider->bindParameter(myEditor, aSlider->getName(), VASTGUIRuntimeModel::GUIComponents::VaporizerComponent, 0);
 			}
 			auto* aCombobox = dynamic_cast<VASTParameterComboBox*> (child);
 			if (aCombobox != nullptr) {
 				aCombobox->setAudioProcessor(*myProcessor);
-				aCombobox->bindParameter(aCombobox->getName());
+				aCombobox->bindParameter(myEditor, aCombobox->getName(), VASTGUIRuntimeModel::GUIComponents::VaporizerComponent, 0);
 			}
 			auto* aButton = dynamic_cast<VASTParameterButton*> (child);
 			if (aButton != nullptr) {
 				aButton->setAudioProcessor(*myProcessor);
-				aButton->bindParameter(aButton->getName());
+				aButton->bindParameter(myEditor, aButton->getName(), VASTGUIRuntimeModel::GUIComponents::VaporizerComponent, 0);
 			}
 		}
 	}

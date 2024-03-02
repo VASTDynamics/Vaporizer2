@@ -306,6 +306,7 @@ target_sources(${PROJECT_NAME}
     "VASTvaporizer/Source/Plugin/VASTFXComponent.cpp"
     "VASTvaporizer/Source/Plugin/VASTFilterComponent.cpp"
     "VASTvaporizer/Source/Plugin/VASTGeneratorsComponent.cpp"
+    "VASTvaporizer/Source/Plugin/VASTGUIRuntimeModel.cpp"
     "VASTvaporizer/Source/Plugin/VASTHeaderComponent.cpp"
     "VASTvaporizer/Source/Plugin/VASTKeyboardComponent.cpp"
     "VASTvaporizer/Source/Plugin/VASTLFOMsegComponent.cpp"

@@ -38,6 +38,7 @@
                                                                     //[/Comments]
 */
 class VASTHeaderComponent  : public Component,
+                             public FileDragAndDropTarget,
                              public juce::ComboBox::Listener,
                              public juce::Button::Listener
 {
@@ -54,12 +55,14 @@ public:
 	VASTComboPreset* getComponentCPreset() {
 		return c_Preset.get();
 	}
+    bool isInterestedInFileDrag(const juce::StringArray& filenames);
     //[/UserMethods]
 
     void paint (juce::Graphics& g) override;
     void resized() override;
     void comboBoxChanged (juce::ComboBox* comboBoxThatHasChanged) override;
     void buttonClicked (juce::Button* buttonThatWasClicked) override;
+    void filesDropped (const juce::StringArray& filenames, int mouseX, int mouseY) override;
     void mouseDown (const juce::MouseEvent& e) override;
 
     // Binary resources:

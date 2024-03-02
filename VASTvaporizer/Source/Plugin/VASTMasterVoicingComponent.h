@@ -76,6 +76,7 @@ private:
 	//std::unique_ptr<Label> c_underruns;
 	std::unique_ptr<Label> c_voices;
     bool m_initDone = false;
+    bool mb_unlazy = false;
     //[/UserVariables]
 
     //==============================================================================

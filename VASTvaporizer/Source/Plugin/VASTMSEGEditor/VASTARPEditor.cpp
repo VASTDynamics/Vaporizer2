@@ -345,3 +345,8 @@ void VASTARPEditor::filesDropped(const StringArray& files, int, int) {
 	}
 	updateContent(true);
 }
+
+String VASTARPEditor::getTooltip()
+{
+    return TRANS("Left mouse click: choose octave (-2..2). Left drag up/down: choose semitone (-11..11). Left doubleclick: toggle note gate length (off, 1/4, 1/2, 3/4, legato). Right drag up/down: choose note velocity.");
+}
