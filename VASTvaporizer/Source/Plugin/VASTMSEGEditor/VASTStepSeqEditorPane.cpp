@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 6.0.1
+  Created with Projucer version: 7.0.9
 
   ------------------------------------------------------------------------------
 
@@ -40,8 +40,8 @@
 //[/MiscUserDefs]
 
 //==============================================================================
-VASTStepSeqEditorPane::VASTStepSeqEditorPane (AudioProcessorEditor *editor, AudioProcessor* processor, VASTMSEGData* data, VASTMSEGData* datalive, String parameterSuffix)
-    : myEditor((VASTAudioProcessorEditor*)editor), myProcessor((VASTAudioProcessor*)processor), myData(data), myDataLive(datalive), mySuffix(parameterSuffix)
+VASTStepSeqEditorPane::VASTStepSeqEditorPane (AudioProcessorEditor *editor, AudioProcessor* processor, VASTMSEGData* data, VASTMSEGData* datalive, String parameterSuffix, int stepSeqNo)
+    : myEditor((VASTAudioProcessorEditor*)editor), myProcessor((VASTAudioProcessor*)processor), myData(data), myDataLive(datalive), mySuffix(parameterSuffix), myStepSeqNo(stepSeqNo)
 {
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
@@ -54,17 +54,17 @@ VASTStepSeqEditorPane::VASTStepSeqEditorPane (AudioProcessorEditor *editor, Audi
     addAndMakeVisible (c_loadEnv.get());
     c_loadEnv->setEditableText (false);
     c_loadEnv->setJustificationType (juce::Justification::centredLeft);
-    c_loadEnv->setTextWhenNothingSelected (TRANS("load env"));
-    c_loadEnv->setTextWhenNoChoicesAvailable (TRANS("none"));
-    c_loadEnv->addItem (TRANS("Default pattern"), 1);
-    c_loadEnv->addItem (TRANS("Sidechain"), 2);
-    c_loadEnv->addItem (TRANS("Stairs"), 3);
+    c_loadEnv->setTextWhenNothingSelected (TRANS ("load env"));
+    c_loadEnv->setTextWhenNoChoicesAvailable (TRANS ("none"));
+    c_loadEnv->addItem (TRANS ("Default pattern"), 1);
+    c_loadEnv->addItem (TRANS ("Sidechain"), 2);
+    c_loadEnv->addItem (TRANS ("Stairs"), 3);
     c_loadEnv->addListener (this);
 
     label3.reset (new juce::Label ("new label",
-                                   TRANS("STEPS")));
+                                   TRANS ("STEPS")));
     addAndMakeVisible (label3.get());
-    label3->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label3->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label3->setJustificationType (juce::Justification::centredRight);
     label3->setEditable (false, false, false);
     label3->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -72,9 +72,9 @@ VASTStepSeqEditorPane::VASTStepSeqEditorPane (AudioProcessorEditor *editor, Audi
     label3->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label4.reset (new juce::Label ("new label",
-                                   TRANS("GLIDE")));
+                                   TRANS ("GLIDE")));
     addAndMakeVisible (label4.get());
-    label4->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label4->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label4->setJustificationType (juce::Justification::centredRight);
     label4->setEditable (false, false, false);
     label4->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -82,9 +82,9 @@ VASTStepSeqEditorPane::VASTStepSeqEditorPane (AudioProcessorEditor *editor, Audi
     label4->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label5.reset (new juce::Label ("new label",
-                                   TRANS("GATE")));
+                                   TRANS ("GATE")));
     addAndMakeVisible (label5.get());
-    label5->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label5->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label5->setJustificationType (juce::Justification::centredRight);
     label5->setEditable (false, false, false);
     label5->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -92,7 +92,7 @@ VASTStepSeqEditorPane::VASTStepSeqEditorPane (AudioProcessorEditor *editor, Audi
     label5->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label108.reset (new juce::Label ("new label",
-                                     TRANS("BEATS (DAW)")));
+                                     TRANS ("BEATS (DAW)")));
     addAndMakeVisible (label108.get());
     label108->setFont (juce::Font (juce::Font::getDefaultSansSerifFontName(), 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label108->setJustificationType (juce::Justification::centredRight);
@@ -102,9 +102,9 @@ VASTStepSeqEditorPane::VASTStepSeqEditorPane (AudioProcessorEditor *editor, Audi
     label108->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label2.reset (new juce::Label ("new label",
-                                   TRANS("SYNC")));
+                                   TRANS ("SYNC")));
     addAndMakeVisible (label2.get());
-    label2->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label2->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label2->setJustificationType (juce::Justification::centredRight);
     label2->setEditable (false, false, false);
     label2->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -112,9 +112,9 @@ VASTStepSeqEditorPane::VASTStepSeqEditorPane (AudioProcessorEditor *editor, Audi
     label2->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label7.reset (new juce::Label ("new label",
-                                   TRANS("SPEED")));
+                                   TRANS ("SPEED")));
     addAndMakeVisible (label7.get());
-    label7->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label7->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label7->setJustificationType (juce::Justification::centredRight);
     label7->setEditable (false, false, false);
     label7->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -123,24 +123,24 @@ VASTStepSeqEditorPane::VASTStepSeqEditorPane (AudioProcessorEditor *editor, Audi
 
     m_uStepSeqTimeBeats.reset (new VASTParameterComboBox ("m_uStepSeqTimeBeats"));
     addAndMakeVisible (m_uStepSeqTimeBeats.get());
-    m_uStepSeqTimeBeats->setTooltip (TRANS("Step sequencer time in beats when synched to DAW"));
+    m_uStepSeqTimeBeats->setTooltip (TRANS ("Step sequencer time in beats when synched to DAW"));
     m_uStepSeqTimeBeats->setEditableText (false);
     m_uStepSeqTimeBeats->setJustificationType (juce::Justification::centredLeft);
-    m_uStepSeqTimeBeats->setTextWhenNothingSelected (TRANS("choose env mode"));
-    m_uStepSeqTimeBeats->setTextWhenNoChoicesAvailable (TRANS("none"));
-    m_uStepSeqTimeBeats->addItem (TRANS("UNIPOLAR"), 1);
-    m_uStepSeqTimeBeats->addItem (TRANS("BIPOLAR"), 2);
+    m_uStepSeqTimeBeats->setTextWhenNothingSelected (TRANS ("choose env mode"));
+    m_uStepSeqTimeBeats->setTextWhenNoChoicesAvailable (TRANS ("none"));
+    m_uStepSeqTimeBeats->addItem (TRANS ("UNIPOLAR"), 1);
+    m_uStepSeqTimeBeats->addItem (TRANS ("BIPOLAR"), 2);
     m_uStepSeqTimeBeats->addListener (this);
 
     m_bStepSeqSynch.reset (new VASTParameterButton ("m_bStepSeqSynch"));
     addAndMakeVisible (m_bStepSeqSynch.get());
-    m_bStepSeqSynch->setTooltip (TRANS("Synch LFO to DAW timecode (starts when played in DAW)"));
+    m_bStepSeqSynch->setTooltip (TRANS ("Synch LFO to DAW timecode (starts when played in DAW)"));
     m_bStepSeqSynch->setButtonText (juce::String());
     m_bStepSeqSynch->addListener (this);
 
     m_fStepSeqSpeed.reset (new VASTParameterSlider ("m_fStepSeqSpeed"));
     addAndMakeVisible (m_fStepSeqSpeed.get());
-    m_fStepSeqSpeed->setTooltip (TRANS("Step sequencer speed"));
+    m_fStepSeqSpeed->setTooltip (TRANS ("Step sequencer speed"));
     m_fStepSeqSpeed->setExplicitFocusOrder (1);
     m_fStepSeqSpeed->setRange (0, 100, 0.01);
     m_fStepSeqSpeed->setSliderStyle (juce::Slider::RotaryVerticalDrag);
@@ -152,7 +152,7 @@ VASTStepSeqEditorPane::VASTStepSeqEditorPane (AudioProcessorEditor *editor, Audi
 
     m_fGate.reset (new VASTParameterSlider ("m_fGate"));
     addAndMakeVisible (m_fGate.get());
-    m_fGate->setTooltip (TRANS("Gate amount step sequencer "));
+    m_fGate->setTooltip (TRANS ("Gate amount step sequencer "));
     m_fGate->setExplicitFocusOrder (1);
     m_fGate->setRange (0, 100, 0.01);
     m_fGate->setSliderStyle (juce::Slider::RotaryVerticalDrag);
@@ -164,7 +164,7 @@ VASTStepSeqEditorPane::VASTStepSeqEditorPane (AudioProcessorEditor *editor, Audi
 
     m_fGlide.reset (new VASTParameterSlider ("m_fGlide"));
     addAndMakeVisible (m_fGlide.get());
-    m_fGlide->setTooltip (TRANS("Glide mode time step sequencer"));
+    m_fGlide->setTooltip (TRANS ("Glide mode time step sequencer"));
     m_fGlide->setRange (0, 100, 0.01);
     m_fGlide->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     m_fGlide->setTextBoxStyle (juce::Slider::NoTextBox, false, 30, 14);
@@ -175,7 +175,7 @@ VASTStepSeqEditorPane::VASTStepSeqEditorPane (AudioProcessorEditor *editor, Audi
 
     c_numSteps.reset (new VASTSlider ("c_numSteps"));
     addAndMakeVisible (c_numSteps.get());
-    c_numSteps->setTooltip (TRANS("Number of steps in step sequencer"));
+    c_numSteps->setTooltip (TRANS ("Number of steps in step sequencer"));
     c_numSteps->setRange (1, 64, 1);
     c_numSteps->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     c_numSteps->setTextBoxStyle (juce::Slider::NoTextBox, false, 30, 14);
@@ -185,9 +185,9 @@ VASTStepSeqEditorPane::VASTStepSeqEditorPane (AudioProcessorEditor *editor, Audi
     c_numSteps->addListener (this);
 
     label6.reset (new juce::Label ("new label",
-                                   TRANS("INVERT")));
+                                   TRANS ("INVERT")));
     addAndMakeVisible (label6.get());
-    label6->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label6->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label6->setJustificationType (juce::Justification::centredRight);
     label6->setEditable (false, false, false);
     label6->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -196,7 +196,7 @@ VASTStepSeqEditorPane::VASTStepSeqEditorPane (AudioProcessorEditor *editor, Audi
 
     c_StepSeqInvert.reset (new VASTButton ("c_StepSeqInvert"));
     addAndMakeVisible (c_StepSeqInvert.get());
-    c_StepSeqInvert->setTooltip (TRANS("Invert step sequencer curve"));
+    c_StepSeqInvert->setTooltip (TRANS ("Invert step sequencer curve"));
     c_StepSeqInvert->setExplicitFocusOrder (1);
     c_StepSeqInvert->setButtonText (juce::String());
     c_StepSeqInvert->addListener (this);
@@ -210,17 +210,17 @@ VASTStepSeqEditorPane::VASTStepSeqEditorPane (AudioProcessorEditor *editor, Audi
 			auto* aSlider = dynamic_cast<VASTParameterSlider*> (child);
 			if (aSlider != nullptr) {
 				aSlider->setAudioProcessor(*myProcessor);
-				aSlider->bindParameter(aSlider->getName() + "_" + mySuffix);
+				aSlider->bindParameter(myEditor, aSlider->getName() + "_" + mySuffix, VASTGUIRuntimeModel::GUIComponents::StepSeqEditorPane, myStepSeqNo);
 			}
 			auto* aCombobox = dynamic_cast<VASTParameterComboBox*> (child);
 			if (aCombobox != nullptr) {
 				aCombobox->setAudioProcessor(*myProcessor);
-				aCombobox->bindParameter(aCombobox->getName() + "_" + mySuffix);
+				aCombobox->bindParameter(myEditor, aCombobox->getName() + "_" + mySuffix, VASTGUIRuntimeModel::GUIComponents::StepSeqEditorPane, myStepSeqNo);
 			}
 			auto* aButton = dynamic_cast<VASTParameterButton*> (child);
 			if (aButton != nullptr) {
 				aButton->setAudioProcessor(*myProcessor);
-				aButton->bindParameter(aButton->getName() + "_" + mySuffix);
+				aButton->bindParameter(myEditor, aButton->getName() + "_" + mySuffix, VASTGUIRuntimeModel::GUIComponents::StepSeqEditorPane, myStepSeqNo);
 			}
 		}
 	}
@@ -460,8 +460,8 @@ void VASTStepSeqEditorPane::stopAutoUpdate() {
 BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="VASTStepSeqEditorPane" componentName=""
-                 parentClasses="public Component" constructorParams="AudioProcessorEditor *editor, AudioProcessor* processor, VASTMSEGData* data, VASTMSEGData* datalive, String parameterSuffix"
-                 variableInitialisers="myEditor((VASTAudioProcessorEditor*)editor), myProcessor((VASTAudioProcessor*)processor), myData(data), myDataLive(datalive), mySuffix(parameterSuffix)"
+                 parentClasses="public Component" constructorParams="AudioProcessorEditor *editor, AudioProcessor* processor, VASTMSEGData* data, VASTMSEGData* datalive, String parameterSuffix, int stepSeqNo"
+                 variableInitialisers="myEditor((VASTAudioProcessorEditor*)editor), myProcessor((VASTAudioProcessor*)processor), myData(data), myDataLive(datalive), mySuffix(parameterSuffix), myStepSeqNo(stepSeqNo)"
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
                  fixedSize="1" initialWidth="800" initialHeight="287">
   <BACKGROUND backgroundColour="ff323e44">
@@ -471,84 +471,84 @@ BEGIN_JUCER_METADATA
           hasStroke="0"/>
   </BACKGROUND>
   <GENERICCOMPONENT name="c_stepseqEditor" id="5eb93e0013882f07" memberName="c_stepseqEditor"
-                    virtualName="" explicitFocusOrder="0" pos="0% 18.467% 100% 81.533%"
+                    virtualName="" explicitFocusOrder="0" pos="0% 19.377% 111.111% 85.784%"
                     class="VASTStepSeqEditor" params="myProcessor, myData, myDataLive"/>
   <COMBOBOX name="c_loadEnv" id="75b6e174a60d379f" memberName="c_loadEnv"
-            virtualName="VASTComboBox" explicitFocusOrder="0" pos="1.25% 8.014% 17.5% 4.878%"
+            virtualName="VASTComboBox" explicitFocusOrder="0" pos="1.389% 8.471% 19.444% 5.161%"
             editable="0" layout="33" items="Default pattern&#10;Sidechain&#10;Stairs"
             textWhenNonSelected="load env" textWhenNoItems="none"/>
   <LABEL name="new label" id="b688b6b2463f3740" memberName="label3" virtualName=""
-         explicitFocusOrder="0" pos="25.625% 8.362% 9.625% 3.833%" textCol="ffe2e2e2"
+         explicitFocusOrder="0" pos="28.472% 8.763% 10.706% 3.992%" textCol="ffe2e2e2"
          edTextCol="ff000000" edBkgCol="0" labelText="STEPS" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Code Pro Demo"
          fontsize="11.0" kerning="0.0" bold="0" italic="0" justification="34"/>
   <LABEL name="new label" id="28184510b080f51e" memberName="label4" virtualName=""
-         explicitFocusOrder="0" pos="34.5% 8.362% 9.625% 3.833%" textCol="ffe2e2e2"
+         explicitFocusOrder="0" pos="38.31% 8.763% 10.706% 3.992%" textCol="ffe2e2e2"
          edTextCol="ff000000" edBkgCol="0" labelText="GLIDE" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Code Pro Demo"
          fontsize="11.0" kerning="0.0" bold="0" italic="0" justification="34"/>
   <LABEL name="new label" id="6025d63af0416cf7" memberName="label5" virtualName=""
-         explicitFocusOrder="0" pos="43.375% 8.362% 9.625% 3.833%" textCol="ffe2e2e2"
+         explicitFocusOrder="0" pos="48.206% 8.763% 10.706% 3.992%" textCol="ffe2e2e2"
          edTextCol="ff000000" edBkgCol="0" labelText="GATE" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Code Pro Demo"
          fontsize="11.0" kerning="0.0" bold="0" italic="0" justification="34"/>
   <LABEL name="new label" id="9050920a08f3ea65" memberName="label108"
-         virtualName="" explicitFocusOrder="0" pos="83.625% 8.362% 9.625% 3.833%"
+         virtualName="" explicitFocusOrder="0" pos="92.94% 8.763% 10.706% 3.992%"
          textCol="ffe2e2e2" edTextCol="ff000000" edBkgCol="0" labelText="BEATS (DAW)"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default sans-serif font" fontsize="11.0" kerning="0.0"
          bold="0" italic="0" justification="34"/>
   <LABEL name="new label" id="852debe5e5f76751" memberName="label2" virtualName=""
-         explicitFocusOrder="0" pos="72% 8.362% 9.625% 3.833%" textCol="ffe2e2e2"
+         explicitFocusOrder="0" pos="79.977% 8.763% 10.706% 3.992%" textCol="ffe2e2e2"
          edTextCol="ff000000" edBkgCol="0" labelText="SYNC" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Code Pro Demo"
          fontsize="11.0" kerning="0.0" bold="0" italic="0" justification="34"/>
   <LABEL name="new label" id="8b1c744c8c6502ef" memberName="label7" virtualName=""
-         explicitFocusOrder="0" pos="52.375% 8.362% 9.625% 3.833%" textCol="ffe2e2e2"
+         explicitFocusOrder="0" pos="58.218% 8.763% 10.706% 3.992%" textCol="ffe2e2e2"
          edTextCol="ff000000" edBkgCol="0" labelText="SPEED" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Code Pro Demo"
          fontsize="11.0" kerning="0.0" bold="0" italic="0" justification="34"/>
   <COMBOBOX name="m_uStepSeqTimeBeats" id="e036b1cae3e29aa2" memberName="m_uStepSeqTimeBeats"
-            virtualName="VASTParameterComboBox" explicitFocusOrder="0" pos="93.5% 8.014% 5% 4.878%"
+            virtualName="VASTParameterComboBox" explicitFocusOrder="0" pos="93.49% 8.056% 5% 4.907%"
             tooltip="Step sequencer time in beats when synched to DAW" editable="0"
             layout="33" items="UNIPOLAR&#10;BIPOLAR" textWhenNonSelected="choose env mode"
             textWhenNoItems="none"/>
   <TOGGLEBUTTON name="m_bStepSeqSynch" id="2a4a8c0b3fb3a16a" memberName="m_bStepSeqSynch"
-                virtualName="VASTParameterButton" explicitFocusOrder="0" pos="81.625% 6.969% 2.25% 6.62%"
+                virtualName="VASTParameterButton" explicitFocusOrder="0" pos="90.683% 7.303% 2.488% 6.913%"
                 tooltip="Synch LFO to DAW timecode (starts when played in DAW)"
                 buttonText="" connectedEdges="0" needsCallback="1" radioGroupId="0"
                 state="0"/>
   <SLIDER name="m_fStepSeqSpeed" id="711d91f72f6bf943" memberName="m_fStepSeqSpeed"
-          virtualName="VASTParameterSlider" explicitFocusOrder="1" pos="61.25% 2.787% 5% 13.937%"
+          virtualName="VASTParameterSlider" explicitFocusOrder="1" pos="68.056% 2.921% 5.556% 14.703%"
           tooltip="Step sequencer speed" textboxtext="ffc9c9c9" textboxbkgd="ffffff"
           textboxoutline="808080" min="0.0" max="100.0" int="0.01" style="RotaryVerticalDrag"
           textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="30"
           textBoxHeight="14" skewFactor="1.0" needsCallback="1"/>
   <SLIDER name="m_fGate" id="3b3f56fd4a7f6aa9" memberName="m_fGate" virtualName="VASTParameterSlider"
-          explicitFocusOrder="1" pos="52.5% 2.787% 5% 13.937%" tooltip="Gate amount step sequencer "
+          explicitFocusOrder="1" pos="58.333% 2.921% 5.556% 14.703%" tooltip="Gate amount step sequencer "
           textboxtext="ffc9c9c9" textboxbkgd="ffffff" textboxoutline="808080"
           min="0.0" max="100.0" int="0.01" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="30" textBoxHeight="14" skewFactor="1.0"
           needsCallback="1"/>
   <SLIDER name="m_fGlide" id="d082b2f7dddc2836" memberName="m_fGlide" virtualName="VASTParameterSlider"
-          explicitFocusOrder="0" pos="43.75% 2.787% 5% 13.937%" tooltip="Glide mode time step sequencer"
+          explicitFocusOrder="0" pos="48.611% 2.921% 5.556% 14.703%" tooltip="Glide mode time step sequencer"
           textboxtext="ffc9c9c9" textboxbkgd="ffffff" textboxoutline="808080"
           min="0.0" max="100.0" int="0.01" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="30" textBoxHeight="14" skewFactor="1.0"
           needsCallback="1"/>
   <SLIDER name="c_numSteps" id="e40a662fd508c4e5" memberName="c_numSteps"
-          virtualName="VASTSlider" explicitFocusOrder="0" pos="35% 2.787% 5% 13.937%"
+          virtualName="VASTSlider" explicitFocusOrder="0" pos="38.889% 2.921% 5.556% 14.703%"
           tooltip="Number of steps in step sequencer" textboxtext="ffc9c9c9"
           textboxbkgd="ffffff" textboxoutline="808080" min="1.0" max="64.0"
           int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
           textBoxWidth="30" textBoxHeight="14" skewFactor="1.0" needsCallback="1"/>
   <LABEL name="new label" id="2ccc9143e2616ccd" memberName="label6" virtualName=""
-         explicitFocusOrder="0" pos="16.25% 8.362% 9.625% 3.833%" textCol="ffe2e2e2"
+         explicitFocusOrder="0" pos="18.056% 8.763% 10.706% 3.992%" textCol="ffe2e2e2"
          edTextCol="ff000000" edBkgCol="0" labelText="INVERT" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Code Pro Demo"
          fontsize="11.0" kerning="0.0" bold="0" italic="0" justification="34"/>
   <TOGGLEBUTTON name="c_StepSeqInvert" id="1d94b90683d2fb39" memberName="c_StepSeqInvert"
-                virtualName="VASTButton" explicitFocusOrder="1" pos="26% 6.969% 2.25% 6.62%"
+                virtualName="VASTButton" explicitFocusOrder="1" pos="28.877% 7.303% 2.488% 6.913%"
                 tooltip="Invert step sequencer curve" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
 </JUCER_COMPONENT>

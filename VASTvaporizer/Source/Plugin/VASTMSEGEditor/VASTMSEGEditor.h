@@ -7,12 +7,13 @@ VAST Dynamics
 
 #include "../../Engine/VASTEngineHeader.h"
 #include "../../Engine/VASTMSEGData.h"
-#include "../VASTAudioProcessor.h"
 
-class VASTMSEGEditor : public Component, public Timer
+class VASTAudioProcessor; //forward declaration
+class VASTAudioProcessorEditor; //forward declaration
+class VASTMSEGEditor : public Component, public Timer, public TooltipClient
 {
 public:
-	VASTMSEGEditor(AudioProcessor* processor, VASTMSEGData* data, VASTMSEGData* datalive, int msegNo);
+	VASTMSEGEditor(AudioProcessor* processor, AudioProcessorEditor* editor, VASTMSEGData* data, VASTMSEGData* datalive, int msegNo);
 	~VASTMSEGEditor();
 
 	VASTMSEGData& getData() { return *myData; }
@@ -21,6 +22,7 @@ public:
 	void passBackPopupResult(float resultVal, bool isX, int numIsClicked);
 	void startAutoUpdate();
 	void stopAutoUpdate();
+    String getTooltip() override;
 	
 private:
 	void resized() override;
@@ -39,6 +41,7 @@ private:
 	void handleBorderDisplay();
 
     VASTAudioProcessor* myProcessor;
+    VASTAudioProcessorEditor* myEditor;
 	VASTMSEGData* myData = nullptr;
 	VASTMSEGData* myDataLive = nullptr;
 

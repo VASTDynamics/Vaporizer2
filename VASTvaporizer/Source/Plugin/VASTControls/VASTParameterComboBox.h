@@ -7,6 +7,7 @@ VAST Dynamics
 
 #include "../../Engine/VASTEngineHeader.h"
 #include "VASTPopupHandler.h"
+#include "../VASTGUIRuntimeModel.h"
 
 struct VASTAttachedControlBase : public AudioProcessorValueTreeState::Listener,
 	public AsyncUpdater
@@ -176,7 +177,7 @@ public:
 	//Label *briefLabel;
 	VASTAudioProcessor* getAudioProcessor();
 	void setAudioProcessor(VASTAudioProcessor &processor);
-	void bindParameter(const String& newID);
+	void bindParameter(VASTAudioProcessorEditor* editor, const String& newID, VASTGUIRuntimeModel::GUIComponents guiComponent, int tabNo);
 	
 	void showPopup() override;
 

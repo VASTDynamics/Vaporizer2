@@ -8,15 +8,15 @@ VAST Dynamics Audio Software (TM)
 #include "../VASTControls/VASTParameterButton.h"
 #include "../VASTControls/VASTParameterComboBox.h"
 #include "../VASTAudioProcessor.h"
+#include "../VASTAudioProcessorEditor.h"
 #include "../../Engine/FX/VASTEffect.h"
 #include <wchar.h>
 
 
-VASTGenericEditor::VASTGenericEditor(CVASTEffect *effect, AudioProcessor *processor)
+VASTGenericEditor::VASTGenericEditor(CVASTEffect *effect, AudioProcessor *processor, AudioProcessorEditor *editor, int busNr): myEffect(effect), my_processor((VASTAudioProcessor*)processor), my_editor((VASTAudioProcessorEditor*)editor)
 {
-	my_processor = (VASTAudioProcessor *)processor;
-	myEffect = effect;
-	AudioProcessorValueTreeState& parameterState = my_processor->getParameterTree();
+    myBusNr = busNr;
+    AudioProcessorValueTreeState& parameterState = my_processor->getParameterTree();
 
 	auto& params = effect->getParameters(); //returns them in display sequence from left to right
 
@@ -32,7 +32,7 @@ VASTGenericEditor::VASTGenericEditor(CVASTEffect *effect, AudioProcessor *proces
 				VASTParameterSlider* aSlider;
 				paramSliders.add(aSlider = new VASTParameterSlider(param->paramID));
 				aSlider->setAudioProcessor(*my_processor);
-				aSlider->bindParameter(param->paramID);
+				aSlider->bindParameter(my_editor, param->paramID, VASTGUIRuntimeModel::GUIComponents::GenericEditor, myBusNr);
 				aSlider->setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
 				aSlider->setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
 				group.addAndMakeVisible(aSlider);
@@ -50,7 +50,7 @@ VASTGenericEditor::VASTGenericEditor(CVASTEffect *effect, AudioProcessor *proces
 				VASTParameterButton* aButton;
 				paramButtons.add(aButton = new VASTParameterButton(param->paramID));
 				aButton->setAudioProcessor(*my_processor);
-				aButton->bindParameter(param->paramID);
+				aButton->bindParameter(my_editor, param->paramID, VASTGUIRuntimeModel::GUIComponents::GenericEditor, myBusNr);
 				group.addAndMakeVisible(aButton);
 				Label* aLabel;
 				String lText = param->label.toUpperCase();
@@ -71,7 +71,7 @@ VASTGenericEditor::VASTGenericEditor(CVASTEffect *effect, AudioProcessor *proces
 					aCombobox->addItem(text, i + 1);
 				}
 				aCombobox->setAudioProcessor(*my_processor);
-				aCombobox->bindParameter(param->paramID);
+				aCombobox->bindParameter(my_editor, param->paramID, VASTGUIRuntimeModel::GUIComponents::GenericEditor, myBusNr);
 				group.addAndMakeVisible(aCombobox);
 				Label* aLabel;
 				String lText = param->label.toUpperCase();

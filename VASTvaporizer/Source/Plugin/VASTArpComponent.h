@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 6.1.2
+  Created with Projucer version: 7.0.9
 
   ------------------------------------------------------------------------------
 
@@ -35,7 +35,8 @@ class VASTTabbedSTEPSEQComponent : public TabbedComponent
 public:
 	std::function<void(int)> TabChangedFunc;
 	VASTAudioProcessor* myProcessor = nullptr;
-	VASTTabbedSTEPSEQComponent(VASTAudioProcessor* processor, TabbedButtonBar::Orientation orientation) : TabbedComponent(orientation), myProcessor(processor) {
+    VASTAudioProcessorEditor* myEditor = nullptr;
+	VASTTabbedSTEPSEQComponent(VASTAudioProcessor* processor, VASTAudioProcessorEditor* editor, TabbedButtonBar::Orientation orientation) : TabbedComponent(orientation), myProcessor(processor), myEditor(editor) {
 		TabChangedFunc = [](int) {};
 	}
 	void currentTabChanged(int index, const String&) override
@@ -47,7 +48,7 @@ public:
 		if (tab2 != nullptr)
             tab2->stopAutoUpdate();
 		VASTStepSeqEditorPane* tab3 = dynamic_cast<VASTStepSeqEditorPane*>(getTabContentComponent(2));
-		if (tab3 != nullptr) 
+		if (tab3 != nullptr)
             tab3->stopAutoUpdate();
 
 		switch (index) {
@@ -67,8 +68,8 @@ public:
 		TabChangedFunc(index);
 	}
 
-	TabBarButton* createTabButton(const String &tabName, int) override {
-		return new VASTDnDTabBarButton(myProcessor, tabName, getTabbedButtonBar());
+	TabBarButton* createTabButton(const String &tabName, int tabIndex) override {
+		return new VASTDnDTabBarButton(myProcessor, myEditor, tabName, getTabbedButtonBar(), tabIndex, this);
 	}
 };
 //[/Headers]
@@ -100,6 +101,7 @@ public:
 	void stopAutoUpdate();
 	void buttonClicked(Button* buttonThatWasClicked) override;
 	void mouseWheelMove(const MouseEvent &event, const MouseWheelDetails &wheel) override;
+    VASTTabbedSTEPSEQComponent* getStepSeqTab() { return c_stepseqTab.get(); };
     //[/UserMethods]
 
     void paint (juce::Graphics& g) override;

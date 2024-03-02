@@ -53,7 +53,7 @@ VASTDragFX::VASTDragFX(VASTAudioProcessorEditor *editor, VASTAudioProcessor *pro
 
 	ddToggleButton.reset(new VASTParameterButton(paramID));
 	ddToggleButton->setAudioProcessor(*my_processor);
-	ddToggleButton->bindParameter(paramID);
+	ddToggleButton->bindParameter(editor, paramID, VASTGUIRuntimeModel::GUIComponents::DragFX, myBusnr);
 	ddToggleButton->addListener(this);
 	addAndMakeVisible(ddToggleButton.get());
 }

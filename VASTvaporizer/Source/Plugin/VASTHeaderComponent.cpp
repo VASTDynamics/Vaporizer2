@@ -130,17 +130,17 @@ VASTHeaderComponent::VASTHeaderComponent (AudioProcessorEditor *editor, AudioPro
 			auto* aSlider = dynamic_cast<VASTParameterSlider*> (child);
 			if (aSlider != nullptr) {
 				aSlider->setAudioProcessor(*myProcessor);
-				aSlider->bindParameter(aSlider->getName());
+				aSlider->bindParameter(myEditor, aSlider->getName(), VASTGUIRuntimeModel::GUIComponents::HeaderComponent, 0);
 			}
 			auto* aCombobox = dynamic_cast<VASTParameterComboBox*> (child);
 			if (aCombobox != nullptr) {
 				aCombobox->setAudioProcessor(*myProcessor);
-				aCombobox->bindParameter(aCombobox->getName());
+				aCombobox->bindParameter(myEditor, aCombobox->getName(), VASTGUIRuntimeModel::GUIComponents::HeaderComponent, 0);
 			}
 			auto* aButton = dynamic_cast<VASTParameterButton*> (child);
 			if (aButton != nullptr) {
 				aButton->setAudioProcessor(*myProcessor);
-				aButton->bindParameter(aButton->getName());
+				aButton->bindParameter(myEditor, aButton->getName(), VASTGUIRuntimeModel::GUIComponents::HeaderComponent, 0);
 			}
 		}
 	}
@@ -433,8 +433,7 @@ void VASTHeaderComponent::buttonClicked (juce::Button* buttonThatWasClicked)
     {
         //[UserButtonCode_c_InitPreset] -- add your button handler code here..
 		myEditor->vaporizerComponent->getWaveTableEditorComponent()->stopWTRecording();
-		myProcessor->setCurrentProgram(0);
-		myEditor->vaporizerComponent->updateAll();
+		myProcessor->setCurrentProgram(0); //this is async
         //[/UserButtonCode_c_InitPreset]
     }
     else if (buttonThatWasClicked == c_Randomize.get())

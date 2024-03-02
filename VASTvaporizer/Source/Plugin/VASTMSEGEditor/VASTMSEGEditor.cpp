@@ -18,8 +18,8 @@ http://slideplayer.com/slide/6554987/
 #include "../VASTControls/VASTParameterSlider.h"
 #include "../VASTControls/VASTPositionEditor.h"
 
-VASTMSEGEditor::VASTMSEGEditor(AudioProcessor* processor, VASTMSEGData* data, VASTMSEGData* datalive, int msegNo)
-	: myProcessor((VASTAudioProcessor*)processor), myData(data), myDataLive(datalive), myMSEGNo(msegNo)
+VASTMSEGEditor::VASTMSEGEditor(AudioProcessor* processor, AudioProcessorEditor* editor, VASTMSEGData* data, VASTMSEGData* datalive, int msegNo)
+	: myProcessor((VASTAudioProcessor*)processor), myEditor((VASTAudioProcessorEditor*)editor), myData(data), myDataLive(datalive), myMSEGNo(msegNo)
 {
 	//myFont.setTypefaceName("Open Sans"); //bold 1-2, regular 2
 	//myFont.setDefaultMinimumHorizontalScaleFactor(1.0);
@@ -668,9 +668,9 @@ void VASTMSEGEditor::timerCallback() {
 	if (myDataLive == nullptr) return;
 
 	if (myData->getADSRUpdated()) {
-		VASTAudioProcessor* processor = ((VASTAudioProcessor*)myProcessor);
-
-		for (int i = 0; i < processor->m_mapParameterNameToControl.size(); i++) {
+        /*
+         VASTAudioProcessor* processor = ((VASTAudioProcessor*)myProcessor);
+         for (int i = 0; i < processor->m_mapParameterNameToControl.size(); i++) {
 			VASTParameterSlider* lslider = dynamic_cast<VASTParameterSlider*>(processor->m_mapParameterNameToControl[i]);
             if (lslider == nullptr)
                 continue;
@@ -699,7 +699,34 @@ void VASTMSEGEditor::timerCallback() {
 				myData->m_fReleaseSteps = myData->calcStepsFromTime(myData->getReleaseTime(), &myProcessor->m_pVASTXperience.m_Set);
 			}
 		}
+         */
 
+        VASTGUIRuntimeModel::sGUIParameterSliders lslider = myEditor->getGUIRuntimeModel()->getParameterSliderByParameterName("m_fSustainLevel_MSEG" + String(myData->m_msegNo + 1));
+        if (lslider.slider != nullptr)
+            lslider.slider->setValue(myData->getSustainLevel() * 100.f, juce::NotificationType::dontSendNotification);
+        if (myData->getSynch() == false) {
+            lslider = myEditor->getGUIRuntimeModel()->getParameterSliderByParameterName("m_fAttackTime_MSEG" + String(myData->m_msegNo + 1));
+            if (lslider.slider != nullptr)
+                lslider.slider->setValue(myData->getAttackTime(), juce::NotificationType::dontSendNotification);
+            lslider = myEditor->getGUIRuntimeModel()->getParameterSliderByParameterName("m_fDecayTime_MSEG" + String(myData->m_msegNo + 1));
+            if (lslider.slider != nullptr)
+                lslider.slider->setValue(myData->getDecayTime(), juce::NotificationType::dontSendNotification);
+            lslider = myEditor->getGUIRuntimeModel()->getParameterSliderByParameterName("m_fReleaseTime_MSEG" + String(myData->m_msegNo + 1));
+            if (lslider.slider != nullptr)
+                lslider.slider->setValue(myData->getReleaseTime(), juce::NotificationType::dontSendNotification);
+        }
+        else {
+            lslider = myEditor->getGUIRuntimeModel()->getParameterSliderByParameterName("m_fAttackSteps_MSEG" + String(myData->m_msegNo + 1));
+            if (lslider.slider != nullptr)
+                lslider.slider->setValue(myData->calcStepsFromTime(myData->getAttackTime(), &myProcessor->m_pVASTXperience.m_Set) , juce::NotificationType::dontSendNotification);
+            lslider = myEditor->getGUIRuntimeModel()->getParameterSliderByParameterName("m_fDecaySteps_MSEG" + String(myData->m_msegNo + 1));
+            if (lslider.slider != nullptr)
+                 lslider.slider->setValue(myData->calcStepsFromTime(myData->getDecayTime(), &myProcessor->m_pVASTXperience.m_Set), juce::NotificationType::dontSendNotification);
+            lslider = myEditor->getGUIRuntimeModel()->getParameterSliderByParameterName("m_fReleaseSteps_MSEG" + String(myData->m_msegNo + 1));
+            if (lslider.slider != nullptr)
+                lslider.slider->setValue(myData->calcStepsFromTime(myData->getReleaseTime(), &myProcessor->m_pVASTXperience.m_Set), juce::NotificationType::dontSendNotification);
+        }
+        
 		myData->resetADSRUpdated();
 		m_dirty = true;
 	}
@@ -722,4 +749,9 @@ void VASTMSEGEditor::timerCallback() {
 
 	if (m_dirty)
 		updateContent(false);
+}
+
+String VASTMSEGEditor::getTooltip()
+{
+    return TRANS("Left drag controlpoint: move controlpoint on x-axis (time) and on y-axis (intensity value). Left drag up/down between points: edit curviness of segment. Left doubleclick: reset curviness to ramp. Right click on empty space: open context menu to add / copy control points. Right click on control point: open context menu to delete/toggle decay, sustain, MPE, loop points.");
 }

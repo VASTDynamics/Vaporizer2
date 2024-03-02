@@ -25,6 +25,7 @@
 #include "VASTControls/VASTParameterSlider.h"
 #include "VASTControls/VASTDrawableButton.h"
 #include "VASTVUMeter.h"
+#include "VASTFX/VASTFXPane.h"
 //[/Headers]
 
 #include "VASTMasterVoicingComponent.h"
@@ -257,17 +258,17 @@ VASTMasterVoicingComponent::VASTMasterVoicingComponent (AudioProcessorEditor *ed
 			auto* aSlider = dynamic_cast<VASTParameterSlider*> (child);
 			if (aSlider != nullptr) {
 				aSlider->setAudioProcessor(*myProcessor);
-				aSlider->bindParameter(aSlider->getName());
+				aSlider->bindParameter(myEditor, aSlider->getName(), VASTGUIRuntimeModel::GUIComponents::MasterVoicingComponent, 0);
 			}
 			auto* aCombobox = dynamic_cast<VASTParameterComboBox*> (child);
 			if (aCombobox != nullptr) {
 				aCombobox->setAudioProcessor(*myProcessor);
-				aCombobox->bindParameter(aCombobox->getName());
+				aCombobox->bindParameter(myEditor, aCombobox->getName(), VASTGUIRuntimeModel::GUIComponents::MasterVoicingComponent, 0);
 			}
 			auto* aButton = dynamic_cast<VASTParameterButton*> (child);
 			if (aButton != nullptr) {
 				aButton->setAudioProcessor(*myProcessor);
-				aButton->bindParameter(aButton->getName());
+				aButton->bindParameter(myEditor, aButton->getName(), VASTGUIRuntimeModel::GUIComponents::MasterVoicingComponent, 0);
 			}
 		}
 	}
@@ -465,6 +466,21 @@ void VASTMasterVoicingComponent::buttonClicked (juce::Button* buttonThatWasClick
 {
     //[UserbuttonClicked_Pre]
 	if (buttonThatWasClicked == c_iconSidePanel.get()) {
+        
+        //un-lazy load all
+        if (!mb_unlazy) {
+            int currIdx = myEditor->vaporizerComponent->getTabbedComponent()->getCurrentTabIndex();
+            myEditor->vaporizerComponent->getTabbedComponent()->currentTabChanged(VASTTabbedComponent::TabSequence::FILTER,"");
+            myEditor->vaporizerComponent->getTabbedComponent()->currentTabChanged(VASTTabbedComponent::TabSequence::WTEDITOR,"");
+            myEditor->vaporizerComponent->getTabbedComponent()->currentTabChanged(VASTTabbedComponent::TabSequence::LFOMSEG,"");
+            myEditor->vaporizerComponent->getTabbedComponent()->currentTabChanged(VASTTabbedComponent::TabSequence::MATRIX,"");
+            myEditor->vaporizerComponent->getTabbedComponent()->currentTabChanged(VASTTabbedComponent::TabSequence::FX,"");
+            myEditor->vaporizerComponent->getTabbedComponent()->currentTabChanged(VASTTabbedComponent::TabSequence::ARP,"");
+            myEditor->vaporizerComponent->getTabbedComponent()->currentTabChanged(VASTTabbedComponent::TabSequence::PRESET,"");
+            myEditor->vaporizerComponent->getTabbedComponent()->setCurrentTabIndex(currIdx);
+            mb_unlazy = true;
+        }
+        
 		bool isShowing = myEditor->vaporizerComponent->getSidePanel()->isPanelShowing();
 		myEditor->vaporizerComponent->getSidePanel()->showOrHide(!isShowing); //toggle it
 	}

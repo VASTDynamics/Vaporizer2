@@ -15,6 +15,7 @@
 #include "VASTAudioProcessor.h"
 #include "VASTVaporizerComponent.h"
 #include "VASTUtils/VASTLookAndFeel.h"
+#include "VASTGUIRuntimeModel.h"
 
 //==============================================================================
 /**
@@ -50,7 +51,7 @@ public:
 	void initAllLookAndFeels();
 	void setActiveLookAndFeel(int no);
 	VASTLookAndFeel* getCurrentVASTLookAndFeel();
-	Component* findChildComponetWithName(Component* parent, String compName);
+	Component* findChildComponentWithName(Component* parent, String compName);
 
 	class VASTComponentBoundsConstrainer : public ComponentBoundsConstrainer {
 	public:
@@ -71,11 +72,13 @@ public:
 		};
 	};
 	
+    VASTGUIRuntimeModel* getGUIRuntimeModel();
 	void randomizePatch();
 
 private:
     VASTAudioProcessor* myProcessor;
-
+    VASTGUIRuntimeModel m_guiRuntimeModel {myProcessor, this};
+    
 	TooltipWindow tooltipWindow{ this, 200 }; //just add and leave here
     std::unique_ptr<juce::AlertWindow> m_alertWindow;
     int mi_update_delay = 0;

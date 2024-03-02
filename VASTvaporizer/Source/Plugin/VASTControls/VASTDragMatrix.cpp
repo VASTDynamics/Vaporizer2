@@ -15,11 +15,9 @@ VAST Dynamics
 #include "VASTDrawableButton.h"
 #include "../VASTScopeDisplay/VASTModMatCurveDisplay.h"
 
-VASTDragMatrix::VASTDragMatrix(VASTAudioProcessorEditor *editor, VASTAudioProcessor *processor, int slotno) {
-	my_processor = processor;
-	my_editor = editor;
-	my_slotno = slotno;
-
+VASTDragMatrix::VASTDragMatrix(VASTAudioProcessorEditor *editor, VASTAudioProcessor *processor, int slotno) :
+    my_processor(processor), my_editor(editor), my_slotno(slotno)
+{
 	//setRepaintsOnMouseActivity(false); //performance
 	//setBufferedToImage(true); //performance
 
@@ -37,28 +35,28 @@ VASTDragMatrix::VASTDragMatrix(VASTAudioProcessorEditor *editor, VASTAudioProces
 	paramID = "m_uModMatSrce" + String(my_slotno + 1);
 	m_uModMatSrce.reset(new VASTParameterComboBox(paramID));
 	m_uModMatSrce->setAudioProcessor(*my_processor);
-	m_uModMatSrce->bindParameter(paramID);
+	m_uModMatSrce->bindParameter(my_editor, paramID, VASTGUIRuntimeModel::GUIComponents::DragMatrix, 0);
 	//m_uModMatSrce->addListener(this);
 	addAndMakeVisible(m_uModMatSrce.get());
 
 	paramID = "m_uModMatPolarity" + String(my_slotno + 1);
 	m_uModMatPolarity.reset(new VASTParameterComboBox(paramID));
 	m_uModMatPolarity->setAudioProcessor(*my_processor);
-	m_uModMatPolarity->bindParameter(paramID);
+	m_uModMatPolarity->bindParameter(my_editor, paramID, VASTGUIRuntimeModel::GUIComponents::DragMatrix, 0);
 	//m_uModMatPolarity->addListener(this);
 	addAndMakeVisible(m_uModMatPolarity.get());
 
 	paramID = "m_uModMatDest" + String(my_slotno + 1);
 	m_uModMatDest.reset(new VASTParameterComboBox(paramID));
 	m_uModMatDest->setAudioProcessor(*my_processor);
-	m_uModMatDest->bindParameter(paramID);
+	m_uModMatDest->bindParameter(my_editor, paramID, VASTGUIRuntimeModel::GUIComponents::DragMatrix, 0);
 	//m_uModMatDest->addListener(this);
 	addAndMakeVisible(m_uModMatDest.get());
 		
 	paramID = "m_fModMatVal" + String(my_slotno + 1);
 	m_fModMatVal.reset(new VASTParameterSlider(paramID));
 	m_fModMatVal->setAudioProcessor(*my_processor);
-	m_fModMatVal->bindParameter(paramID);
+	m_fModMatVal->bindParameter(my_editor, paramID, VASTGUIRuntimeModel::GUIComponents::DragMatrix, 0);
 	m_fModMatVal->setSliderStyle(Slider::RotaryVerticalDrag);
 	m_fModMatVal->setTextBoxStyle(Slider::NoTextBox, false, 40, 16);
 	//m_fModMatVal->addListener(this);
@@ -67,7 +65,7 @@ VASTDragMatrix::VASTDragMatrix(VASTAudioProcessorEditor *editor, VASTAudioProces
 	paramID = "m_fModMatCurve" + String(my_slotno + 1);
 	m_fModMatCurve.reset(new VASTParameterSlider(paramID));
 	m_fModMatCurve->setAudioProcessor(*my_processor);
-	m_fModMatCurve->bindParameter(paramID);
+	m_fModMatCurve->bindParameter(my_editor, paramID, VASTGUIRuntimeModel::GUIComponents::DragMatrix, 0);
 	m_fModMatCurve->setSliderStyle(Slider::RotaryVerticalDrag);
 	m_fModMatCurve->setTextBoxStyle(Slider::NoTextBox, false, 40, 16);
 	//m_fModMatCurve->addListener(this);

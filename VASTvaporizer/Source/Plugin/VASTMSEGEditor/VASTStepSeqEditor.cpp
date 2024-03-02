@@ -498,3 +498,7 @@ void VASTStepSeqEditor::timerCallback() {
 		updateContent(false);
 }
 
+String VASTStepSeqEditor::getTooltip()
+{
+    return TRANS("Left mouse drag up/down: choose step height / velocity. Right click: enter value manually.");
+}

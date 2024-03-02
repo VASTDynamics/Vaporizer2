@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 6.0.1
+  Created with Projucer version: 7.0.9
 
   ------------------------------------------------------------------------------
 
@@ -45,7 +45,8 @@ VASTLFOMsegComponent::VASTLFOMsegComponent (AudioProcessorEditor *editor, AudioP
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
 
-    c_envTab.reset (new VASTTabbedMSEGComponent (myProcessor, juce::TabbedButtonBar::TabsAtTop));
+    c_envTab.reset (new VASTTabbedMSEGComponent (myProcessor,
+                                                 myEditor, juce::TabbedButtonBar::TabsAtTop));
     addAndMakeVisible (c_envTab.get());
     c_envTab->setName ("c_envTab");
 
@@ -53,7 +54,8 @@ VASTLFOMsegComponent::VASTLFOMsegComponent (AudioProcessorEditor *editor, AudioP
     addAndMakeVisible (c_iconMaximizeEditor.get());
     c_iconMaximizeEditor->setName ("c_iconMaximizeEditor");
 
-    c_lfoTab.reset (new VASTTabbedLFOComponent (myProcessor, juce::TabbedButtonBar::TabsAtTop));
+    c_lfoTab.reset (new VASTTabbedLFOComponent (myProcessor,
+                                                myEditor, juce::TabbedButtonBar::TabsAtTop));
     addAndMakeVisible (c_lfoTab.get());
     c_lfoTab->setName ("c_lfoTab3");
 
@@ -68,11 +70,11 @@ VASTLFOMsegComponent::VASTLFOMsegComponent (AudioProcessorEditor *editor, AudioP
 	c_envTab->setCurrentTabIndex(0);
 
 	c_lfoTab->setTabBarDepth(30);
-	c_lfoTab->addTab(TRANS("LFO1"), juce::Colour(0xff002a32), new VASTLFOEditorPane(myEditor, myProcessor, "LFO1"), true);
-	c_lfoTab->addTab(TRANS("LFO2"), juce::Colour(0xf0002a32), new VASTLFOEditorPane(myEditor, myProcessor, "LFO2"), true);
-	c_lfoTab->addTab(TRANS("LFO3"), juce::Colour(0xe0002a32), new VASTLFOEditorPane(myEditor, myProcessor, "LFO3"), true);
-	c_lfoTab->addTab(TRANS("LFO4"), juce::Colour(0xd0002a32), new VASTLFOEditorPane(myEditor, myProcessor, "LFO4"), true);
-	c_lfoTab->addTab(TRANS("LFO5"), juce::Colour(0xc0002a32), new VASTLFOEditorPane(myEditor, myProcessor, "LFO5"), true);
+	c_lfoTab->addTab(TRANS("LFO1"), juce::Colour(0xff002a32), new VASTLFOEditorPane(myEditor, myProcessor, "LFO1", 0), true);
+	c_lfoTab->addTab(TRANS("LFO2"), juce::Colour(0xf0002a32), new VASTLFOEditorPane(myEditor, myProcessor, "LFO2", 1), true);
+	c_lfoTab->addTab(TRANS("LFO3"), juce::Colour(0xe0002a32), new VASTLFOEditorPane(myEditor, myProcessor, "LFO3", 2), true);
+	c_lfoTab->addTab(TRANS("LFO4"), juce::Colour(0xd0002a32), new VASTLFOEditorPane(myEditor, myProcessor, "LFO4", 3), true);
+	c_lfoTab->addTab(TRANS("LFO5"), juce::Colour(0xc0002a32), new VASTLFOEditorPane(myEditor, myProcessor, "LFO5", 4), true);
 	c_lfoTab->setCurrentTabIndex(0);
 
 	setOpaque(true);
@@ -85,17 +87,17 @@ VASTLFOMsegComponent::VASTLFOMsegComponent (AudioProcessorEditor *editor, AudioP
 			auto* aSlider = dynamic_cast<VASTParameterSlider*> (child);
 			if (aSlider != nullptr) {
 				aSlider->setAudioProcessor(*myProcessor);
-				aSlider->bindParameter(aSlider->getName());
+				aSlider->bindParameter(myEditor, aSlider->getName(), VASTGUIRuntimeModel::GUIComponents::LFOMSEGComponent, 0);
 			}
 			auto* aCombobox = dynamic_cast<VASTParameterComboBox*> (child);
 			if (aCombobox != nullptr) {
 				aCombobox->setAudioProcessor(*myProcessor);
-				aCombobox->bindParameter(aCombobox->getName());
+				aCombobox->bindParameter(myEditor, aCombobox->getName(), VASTGUIRuntimeModel::GUIComponents::LFOMSEGComponent, 0);
 			}
 			auto* aButton = dynamic_cast<VASTParameterButton*> (child);
 			if (aButton != nullptr) {
 				aButton->setAudioProcessor(*myProcessor);
-				aButton->bindParameter(aButton->getName());
+				aButton->bindParameter(myEditor, aButton->getName(), VASTGUIRuntimeModel::GUIComponents::LFOMSEGComponent, 0);
 			}
 		}
 	}
@@ -314,13 +316,13 @@ BEGIN_JUCER_METADATA
   </BACKGROUND>
   <GENERICCOMPONENT name="c_envTab" id="3379d39a6d294a82" memberName="c_envTab" virtualName="VASTTabbedMSEGComponent"
                     explicitFocusOrder="0" pos="0% 0% 100% 49.913%" class="VASTTabbedMSEGComponent"
-                    params="myProcessor, juce::TabbedButtonBar::TabsAtTop"/>
+                    params="myProcessor,&#10;myEditor, juce::TabbedButtonBar::TabsAtTop"/>
   <GENERICCOMPONENT name="c_iconMaximizeEditor" id="ded548631676712b" memberName="c_iconMaximizeEditor"
                     virtualName="" explicitFocusOrder="0" pos="1Rr 1 1.5% 2.087%"
                     class="VASTDrawableButton" params="&quot;c_iconMaximize&quot;, arrow_right_corner_svg, arrow_right_corner_svgSize, &quot;Maximize area&quot;"/>
   <GENERICCOMPONENT name="c_lfoTab3" id="6964c7089eaacc93" memberName="c_lfoTab"
                     virtualName="VASTTabbedLFOComponent" explicitFocusOrder="0" pos="0% 50.087% 100% 49.913%"
-                    class="VASTTabbedLFOComponent" params="myProcessor, juce::TabbedButtonBar::TabsAtTop"/>
+                    class="VASTTabbedLFOComponent" params="myProcessor,&#10;myEditor, juce::TabbedButtonBar::TabsAtTop"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

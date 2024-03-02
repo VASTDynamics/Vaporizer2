@@ -53,6 +53,9 @@ public:
 	void setStateInformation(const void*, int) override {};
 	void updateTiming() override {};
 	void parameterChanged(const String&, float) override;
+    void parameterUpdatesAfterInit();
+    void setIsInitDefaults(bool defaults);
+    bool getIsInitDefaults();
 
 	CVASTSettings m_Set;
 	VASTAudioProcessor* myProcessor;
@@ -114,6 +117,7 @@ public:
 private:
 	std::atomic<int> m_midiBank = 0;
 	CriticalSection paramChangeLock;
+    std::atomic<bool> m_isInitDefaults = false;
 
 	JUCE_HEAVYWEIGHT_LEAK_DETECTOR(CVASTXperience)
 	//JUCE_LEAK_DETECTOR(CVASTXperience)

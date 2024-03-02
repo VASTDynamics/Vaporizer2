@@ -56,8 +56,7 @@ void VASTParameterComboBox::showPopup()
 			}		
 	);
 }
-
-void VASTParameterComboBox::bindParameter(const String& newID) {
+void VASTParameterComboBox::bindParameter(VASTAudioProcessorEditor* editor, const String& newID, VASTGUIRuntimeModel::GUIComponents guiComponent, int tabNo) {
 	ComboBox::setComponentID(newID); //call super
 	if (m_processor != nullptr) { //set AudioProcessor has to be called before
 		this->clear();
@@ -65,8 +64,7 @@ void VASTParameterComboBox::bindParameter(const String& newID) {
 		if (param == nullptr) {
 			vassert(false);
 			return;
-		}
-		//setTooltip(m_processor->getParameterName(param->getParameterIndex())); //deprecated        
+		}     
 		setTooltip(m_processor->getParameters()[param->getParameterIndex()]->getName(1024));
 
 		NormalisableRange<float> range = m_processor->getParameterTree().getParameterRange(this->getComponentID());

@@ -445,3 +445,30 @@ get_target_property(MAIN_CFLAGS ${PROJECT_NAME} COMPILE_OPTIONS)
 message("-- COMPILE_OPTIONS compiler flags are: ${MAIN_CFLAGS}")
 message("-- CMAKE_CXX_FLAGS compiler flags are: ${CMAKE_CXX_FLAGS}")
 message("-- CMAKE_CXX_FLAGS_RELEASE compiler flags are: ${CMAKE_CXX_FLAGS_RELEASE}")
+
+include(GNUInstallDirs)
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+  CMAKE_INSTALL_FULL_DATAROOTDIR="${CMAKE_INSTALL_FULL_DATAROOTDIR}"
+)
+
+if(TARGET ${PROJECT_NAME}_Standalone)
+  install(TARGETS ${PROJECT_NAME}_Standalone DESTINATION ${CMAKE_INSTALL_BINDIR})
+endif()
+
+foreach(format VST VST3 LV2)
+  if(TARGET ${PROJECT_NAME}_${format})
+    get_target_property(output ${PROJECT_NAME}_${format} JUCE_PLUGIN_ARTEFACT_FILE)
+    install(DIRECTORY ${output} DESTINATION ${CMAKE_INSTALL_LIBDIR}/$<LOWER_CASE:${format}>)
+  endif()
+endforeach()
+
+if(TARGET ${PROJECT_NAME}_CLAP)
+  install(TARGETS ${PROJECT_NAME}_CLAP DESTINATION ${CMAKE_INSTALL_LIBDIR}/clap)
+endif()
+
+foreach(data Noises Tables Presets)
+  install(DIRECTORY ${CMAKE_SOURCE_DIR}/VASTvaporizer/${data} DESTINATION
+    ${CMAKE_INSTALL_DATAROOTDIR}/Vaporizer2
+  )
+endforeach()

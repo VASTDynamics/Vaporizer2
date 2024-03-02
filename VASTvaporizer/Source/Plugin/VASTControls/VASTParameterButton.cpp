@@ -25,7 +25,7 @@ VASTParameterButton::~VASTParameterButton() {
 	buttonAttachment = nullptr;
 }
 
-void VASTParameterButton::bindParameter(const String& newID) {
+void VASTParameterButton::bindParameter(VASTAudioProcessorEditor* editor, const String& newID, VASTGUIRuntimeModel::GUIComponents guiComponent, int tabNo) {
 	ToggleButton::setComponentID(newID); //call super
 	if (m_processor != nullptr) {
 		buttonAttachment.reset(new ButtonAttachment(m_processor->getParameterTree(), this->getComponentID(), (juce::ToggleButton&)*this));
@@ -35,7 +35,6 @@ void VASTParameterButton::bindParameter(const String& newID) {
 			vassert(false);
 			return;
 		}
-		//setTooltip(m_processor->getParameterName(param->getParameterIndex())); //deprecated
         setTooltip(m_processor->getParameters()[param->getParameterIndex()]->getName(1024));
 		//setTooltip(m_processor->getParameters()[param->getParameterIndex()]->getLabel());        
 	}
