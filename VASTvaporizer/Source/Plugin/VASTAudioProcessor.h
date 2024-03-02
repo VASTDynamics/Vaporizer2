@@ -262,9 +262,8 @@ public:
 
 	void addModMatrixLookupTable(int modMatrixDestination, float rangeStart, float rangeEnd, float rangeSkew, StringRef paramID, AudioProcessorParameterWithID* param);
 	sModMatrixLookup m_modMatrixLookupTable[M_MODMATRIX_MAX_DESTINATIONS];
-	std::unordered_multimap<int, String> m_mapModdestToParameterName; //fast: hashed //declare before vastxperience
-	std::unordered_map<String, int> m_mapParameterNameToModdest; //declare before vastxperience	
-	Array<VASTParameterSlider*> m_mapParameterNameToControl; //declare before vastxperience
+	std::multimap<int, String> m_mapModdestToParameterName; //fast: hashed //declare before vastxperience
+	std::map<String, int> m_mapParameterNameToModdest; //declare before vastxperience	
 
     UndoManager m_undoManager {3000, 30}; //declare before parameterState
 	AudioProcessorValueTreeState m_parameterState; //declare before vastxperience

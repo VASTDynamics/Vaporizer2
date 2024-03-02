@@ -84,14 +84,15 @@ void VASTParameterSlider::itemDropped(const SourceDetails& dragSourceDetails) {
 	}
 };
 
-void VASTParameterSlider::bindParameter(const String& newID) {
+void VASTParameterSlider::bindParameter(VASTAudioProcessorEditor* editor, const String& newID, VASTGUIRuntimeModel::GUIComponents guiComponent, int tabNo) {
 	Slider::setComponentID(newID); //call super
-
+    myEditor = editor;
 	if (m_processor != nullptr) {
 		vassert(sliderAttachment == nullptr);
 		sliderAttachment.reset(new SliderAttachment(m_processor->getParameterTree(), this->getComponentID(), (juce::Slider&)*this));
 
-		m_processor->m_mapParameterNameToControl.add((VASTParameterSlider*)this);
+        if (editor != nullptr)
+            editor->getGUIRuntimeModel()->registerParameterSlider((VASTParameterSlider*)this, newID, guiComponent, tabNo);
 
 		auto* param = m_processor->getParameterTree().getParameter(newID);
 		if (param == nullptr) {
@@ -142,6 +143,12 @@ bool VASTParameterSlider::isInterestedInDragSource(const SourceDetails& ) {
 		cid = cid.dropLastCharacters(5);
 	}
 	*/
+    
+    if (m_draganddropinterested == false) {
+        m_draganddropinterested = true;
+        repaint();
+    }
+    
 	return (m_processor->autoParamGetDestination(cid) != -1); //name to remove _busx
 };
 
@@ -215,6 +222,7 @@ void VASTParameterSlider::clearHighlighted() {
 
 void VASTParameterSlider::mouseEnter(const MouseEvent &e) {
     if (m_processor == nullptr) return;
+    if (myEditor == nullptr) return;
     VASTSidePanelComponent* sidePanelComponent = ((VASTAudioProcessorEditor*)m_processor->getActiveEditor())->vaporizerComponent->getSidePanelComponent();
     if (sidePanelComponent==nullptr)
         return;
@@ -233,15 +241,37 @@ void VASTParameterSlider::mouseEnter(const MouseEvent &e) {
     float lastSrceVals[C_MAX_POLY] {};
     int polarity = 0;
     m_processor->m_pVASTXperience.m_Set.modMatrixSlotGetValues(slot, l_value, l_curvy, l_srce, l_dest, polarity, lastSrceVals);
-    sidePanelComponent->setHighlight(l_srce);
+    VASTDragSource* dragSource = myEditor->getGUIRuntimeModel()->getDragSourceByModMatrxiSource(l_srce);
+    if (dragSource!=nullptr) {
+        dragSource->setHighlighted();
+        dragSource->repaint();
+    }
 }
 
 void VASTParameterSlider::mouseExit(const MouseEvent &e) {
     if (m_processor == nullptr) return;
+    if (myEditor == nullptr) return;
     VASTSidePanelComponent* sidePanelComponent = ((VASTAudioProcessorEditor*)m_processor->getActiveEditor())->vaporizerComponent->getSidePanelComponent();
     if (sidePanelComponent==nullptr)
         return;
     if (sidePanelComponent->isVisible() == false)
         return;
-    sidePanelComponent->removeHighlights();
+    String cid = getComponentID();
+    int modmatdest = m_processor->autoParamGetDestination(cid); //name to remove _busx
+    vassert(modmatdest != -1);
+    int slot = m_processor->m_pVASTXperience.m_Set.modMatrixGetFirstSlotWithDestination(modmatdest);
+    if (slot<0)
+        return;
+    float  l_value = 0.f;
+    double l_curvy = 0.f;
+    int l_srce = 0;
+    int l_dest = 0;
+    float lastSrceVals[C_MAX_POLY] {};
+    int polarity = 0;
+    m_processor->m_pVASTXperience.m_Set.modMatrixSlotGetValues(slot, l_value, l_curvy, l_srce, l_dest, polarity, lastSrceVals);
+    VASTDragSource* dragSource = myEditor->getGUIRuntimeModel()->getDragSourceByModMatrxiSource(l_srce);
+    if (dragSource!=nullptr) {
+        dragSource->clearHighlighted();
+        dragSource->repaint();
+    }
 }

@@ -25,7 +25,7 @@ VASTDragSource::VASTDragSource(int modSource, const juce::String &componentName,
 	addAndMakeVisible(ddImageButton.get());
 	ddImageButton->setImages(false, true, true,
 		ImageCache::getFromMemory(VASTHeaderComponent::dragdrop_png, VASTHeaderComponent::dragdrop_pngSize), 1.000f, Colour(0x451c6d2f),
-		ImageCache::getFromMemory(VASTHeaderComponent::dragdrop_over_png, VASTHeaderComponent::dragdrop_over_pngSize), 1.000f, Colour(0x00000000),
+		ImageCache::getFromMemory(VASTHeaderComponent::dragdrop_over_png, VASTHeaderComponent::dragdrop_over_pngSize), 1.000f, Colour(0x00ff0000),
 		ImageCache::getFromMemory(VASTHeaderComponent::dragdrop_png, VASTHeaderComponent::dragdrop_pngSize), 1.000f, Colour(0x00000000));
 	
 	ddLabel.reset(new Label("new label", newtext));
@@ -44,6 +44,7 @@ VASTDragSource::VASTDragSource(int modSource, const juce::String &componentName,
 	if (componentName.startsWithIgnoreCase("c_dd_CustomModulator"))
 		ddLabel->setEditable(true);
 	m_processor = NULL;
+    m_editor = NULL;
 }
 
 void VASTDragSource::resized() {
@@ -64,7 +65,8 @@ void VASTDragSource::lookAndFeelChanged() {
         return;
 	ddImageButton->setImages(false, true, true,
 		ImageCache::getFromMemory(VASTHeaderComponent::dragdrop_png, VASTHeaderComponent::dragdrop_pngSize), 1.000f, c1,
-		ImageCache::getFromMemory(VASTHeaderComponent::dragdrop_over_png, VASTHeaderComponent::dragdrop_over_pngSize), 1.000f, c1.contrasting(0.3f),
+		ImageCache::getFromMemory(VASTHeaderComponent::dragdrop_over_png, VASTHeaderComponent::dragdrop_over_pngSize), 1.000f,
+                             c1.contrasting(0.3f),
 		ImageCache::getFromMemory(VASTHeaderComponent::dragdrop_png, VASTHeaderComponent::dragdrop_pngSize), 1.000f, c1.contrasting(0.5f));
     m_bufferc1 = c1;
 }
@@ -87,9 +89,9 @@ void VASTDragSource::paint(Graphics& g)
     Colour c3 = Colour(0xff4e575c); //TODO
     
     if (m_isHighlighted) {
-        c1 = Colour(255,100,0); //TODO highlight color
-        c2 = Colour(255,100,0); //TODO highlight color
-        c3 = Colour(255,100,0); //TODO highlight color
+        c1 = m_processor->getCurrentVASTLookAndFeel()->findVASTColour(colParameterBindingHighlight);
+        c2 = c1;
+        c3 = c1;
     }
     
     g.setGradientFill(ColourGradient(c1,
@@ -121,9 +123,11 @@ VASTDragSource::~VASTDragSource() {
 	ddLabel = nullptr;
 }
 
-void VASTDragSource::setAudioProcessor(VASTAudioProcessor &processor) {
+void VASTDragSource::setAudioProcessor(VASTAudioProcessor &processor, VASTAudioProcessorEditor &editor) {
 	m_processor = &processor;
+    m_editor = &editor;
 	ddImageButton->setAudioProcessor(processor);
+    m_editor->getGUIRuntimeModel()->registerDragSource(this, m_modSource);
 }
 
 VASTAudioProcessor* VASTDragSource::getAudioProcessor() {
@@ -163,6 +167,7 @@ void VASTDragSource::setLabelDefaultText(String defaultText)
 
 void VASTDragSource::mouseEnter(const MouseEvent &e)
 {
+    if ((m_processor==nullptr) || (m_editor == nullptr)) return;
     for (int slot = 0; slot<M_MODMATRIX_MAX_SLOTS; slot++) {
         float  l_value = 0.f;
         double l_curvy = 0.f;
@@ -173,15 +178,67 @@ void VASTDragSource::mouseEnter(const MouseEvent &e)
         m_processor->m_pVASTXperience.m_Set.modMatrixSlotGetValues(slot, l_value, l_curvy, l_srce, l_dest, polarity, lastSrceVals);
         if (l_srce == m_modSource) {
             String l_paramName = m_processor->autoDestinationGetParam(l_dest);
-            for (int i = 0; i < m_processor->m_mapParameterNameToControl.size(); i++) {
-                VASTParameterSlider* lslider = dynamic_cast<VASTParameterSlider*>(m_processor->m_mapParameterNameToControl[i]);
-                if (lslider != nullptr) {
-                    if (lslider->getComponentID().equalsIgnoreCase(l_paramName)) {
-                        if (lslider->isShowing())
-                            lslider->setHighlighted();
-                            lslider->repaint();
-                    }
+            VASTGUIRuntimeModel::sGUIParameterSliders lslider = m_editor->getGUIRuntimeModel()->getParameterSliderByParameterName(l_paramName);
+            if (lslider.slider != nullptr) {
+                if (lslider.slider->isShowing()) {
+                    lslider.slider->setHighlighted();
+                    lslider.slider->repaint();
                 }
+            }
+            switch (lslider.guiComponent ) {
+                case VASTGUIRuntimeModel::GUIComponents::WavetableEditorView:
+                case VASTGUIRuntimeModel::GUIComponents::WavetableEditorComponent:
+                case VASTGUIRuntimeModel::GUIComponents::WavetableEditorViewHeader:
+                case VASTGUIRuntimeModel::GUIComponents::SamplerEditorComponent:
+                case VASTGUIRuntimeModel::GUIComponents::SamplerEditorComponentHeader:
+                    m_editor->vaporizerComponent->getTabbedComponent()->setTabBackgroundColour(VASTTabbedComponent::TabSequence::WTEDITOR, m_editor->getCurrentVASTLookAndFeel()->findVASTColour(colParameterBindingHighlight));
+                    break;
+                case VASTGUIRuntimeModel::GUIComponents::FilterComponent:
+                    m_editor->vaporizerComponent->getTabbedComponent()->setTabBackgroundColour(VASTTabbedComponent::TabSequence::FILTER, m_editor->getCurrentVASTLookAndFeel()->findVASTColour(colParameterBindingHighlight));
+                    break;
+                case VASTGUIRuntimeModel::GUIComponents::MSEGEditorPane:
+                {
+                    VASTLFOMsegComponent* tab3 = dynamic_cast<VASTLFOMsegComponent*>(m_editor->vaporizerComponent->getTabbedComponent()->getTabContentComponent(VASTTabbedComponent::TabSequence::LFOMSEG));
+                    if (tab3 != nullptr)
+                        tab3->getEnvTab()->setTabBackgroundColour(lslider.tabNo,  m_editor->getCurrentVASTLookAndFeel()->findVASTColour(colParameterBindingHighlight));
+                }
+                    m_editor->vaporizerComponent->getTabbedComponent()->setTabBackgroundColour(VASTTabbedComponent::TabSequence::LFOMSEG, m_editor->getCurrentVASTLookAndFeel()->findVASTColour(colParameterBindingHighlight));
+                    break;
+                case VASTGUIRuntimeModel::GUIComponents::LFOEditorPane:
+                {
+                    VASTLFOMsegComponent* tab3 = dynamic_cast<VASTLFOMsegComponent*>(m_editor->vaporizerComponent->getTabbedComponent()->getTabContentComponent(VASTTabbedComponent::TabSequence::LFOMSEG));
+                    if (tab3 != nullptr)
+                        tab3->getLFOTab()->setTabBackgroundColour(lslider.tabNo,  m_editor->getCurrentVASTLookAndFeel()->findVASTColour(colParameterBindingHighlight));
+                }
+                    m_editor->vaporizerComponent->getTabbedComponent()->setTabBackgroundColour(VASTTabbedComponent::TabSequence::LFOMSEG, m_editor->getCurrentVASTLookAndFeel()->findVASTColour(colParameterBindingHighlight));
+                    break;
+                case VASTGUIRuntimeModel::GUIComponents::MatrixComponent:
+                case VASTGUIRuntimeModel::GUIComponents::DragMatrix:
+                    m_editor->vaporizerComponent->getTabbedComponent()->setTabBackgroundColour(VASTTabbedComponent::TabSequence::MATRIX, m_editor->getCurrentVASTLookAndFeel()->findVASTColour(colParameterBindingHighlight));
+                    break;
+                case VASTGUIRuntimeModel::GUIComponents::FXComponent:
+                case VASTGUIRuntimeModel::GUIComponents::DragFX:
+                case VASTGUIRuntimeModel::GUIComponents::GenericEditor:
+                {
+                    VASTFXComponent* tab5 = dynamic_cast<VASTFXComponent*>(m_editor->vaporizerComponent->getTabbedComponent()->getTabContentComponent(VASTTabbedComponent::TabSequence::FX));
+                    if (tab5 != nullptr)
+                        tab5->getFXBusTab()->setTabBackgroundColour(lslider.tabNo,  m_editor->getCurrentVASTLookAndFeel()->findVASTColour(colParameterBindingHighlight));
+                }
+                case VASTGUIRuntimeModel::GUIComponents::FXSelectionPane:
+                    m_editor->vaporizerComponent->getTabbedComponent()->setTabBackgroundColour(VASTTabbedComponent::TabSequence::FX, m_editor->getCurrentVASTLookAndFeel()->findVASTColour(colParameterBindingHighlight));
+                    break;
+                case VASTGUIRuntimeModel::GUIComponents::StepSeqEditorPane:
+                {
+                    VASTArpComponent* tab6 = dynamic_cast<VASTArpComponent*>(m_editor->vaporizerComponent->getTabbedComponent()->getTabContentComponent(VASTTabbedComponent::TabSequence::ARP));
+                    if (tab6 != nullptr)
+                        tab6->getStepSeqTab()->setTabBackgroundColour(lslider.tabNo,  m_editor->getCurrentVASTLookAndFeel()->findVASTColour(colParameterBindingHighlight));
+                }
+                case VASTGUIRuntimeModel::GUIComponents::ARPComponent:
+                case VASTGUIRuntimeModel::GUIComponents::ARPEditorPane:
+                    m_editor->vaporizerComponent->getTabbedComponent()->setTabBackgroundColour(VASTTabbedComponent::TabSequence::ARP, m_editor->getCurrentVASTLookAndFeel()->findVASTColour(colParameterBindingHighlight));
+                    break;
+                default:
+                    break;
             }
         }
     }
@@ -198,15 +255,48 @@ void VASTDragSource::mouseExit(const MouseEvent &e) {
         m_processor->m_pVASTXperience.m_Set.modMatrixSlotGetValues(slot, l_value, l_curvy, l_srce, l_dest, polarity, lastSrceVals);
         if (l_srce == m_modSource) {
             String l_paramName = m_processor->autoDestinationGetParam(l_dest);
-            for (int i = 0; i < m_processor->m_mapParameterNameToControl.size(); i++) {
-                VASTParameterSlider* lslider = dynamic_cast<VASTParameterSlider*>(m_processor->m_mapParameterNameToControl[i]);
-                if (lslider != nullptr) {
-                    if (lslider->getComponentID().equalsIgnoreCase(l_paramName)) {
-                        if (lslider->isShowing())
-                            lslider->clearHighlighted();
-                            lslider->repaint();
-                    }
+            VASTGUIRuntimeModel::sGUIParameterSliders lslider = m_editor->getGUIRuntimeModel()->getParameterSliderByParameterName(l_paramName);
+            if (lslider.slider != nullptr) {
+                if (lslider.slider->isShowing()) {
+                    lslider.slider->clearHighlighted();
+                    lslider.slider->repaint();
                 }
+            }
+            m_editor->vaporizerComponent->getTabbedComponent()->setTabBackgroundColour(VASTTabbedComponent::TabSequence::WTEDITOR, m_editor->getCurrentVASTLookAndFeel()->findVASTColour(colVaporizerComponentTabBarWTEDitorBackground));
+            m_editor->vaporizerComponent->getTabbedComponent()->setTabBackgroundColour(VASTTabbedComponent::TabSequence::FILTER, m_editor->getCurrentVASTLookAndFeel()->findVASTColour(colVaporizerComponentTabBarFilterBackground));
+            m_editor->vaporizerComponent->getTabbedComponent()->setTabBackgroundColour(VASTTabbedComponent::TabSequence::LFOMSEG, m_editor->getCurrentVASTLookAndFeel()->findVASTColour(colVaporizerComponentTabBarLFOMSEGBackground));
+            m_editor->vaporizerComponent->getTabbedComponent()->setTabBackgroundColour(VASTTabbedComponent::TabSequence::MATRIX, m_editor->getCurrentVASTLookAndFeel()->findVASTColour(colVaporizerComponentTabBarMatrixBackground));
+            m_editor->vaporizerComponent->getTabbedComponent()->setTabBackgroundColour(VASTTabbedComponent::TabSequence::FX, m_editor->getCurrentVASTLookAndFeel()->findVASTColour(colVaporizerComponentTabBarFXBackground));
+            m_editor->vaporizerComponent->getTabbedComponent()->setTabBackgroundColour(VASTTabbedComponent::TabSequence::ARP, m_editor->getCurrentVASTLookAndFeel()->findVASTColour(colVaporizerComponentTabBarARPBackground));
+            m_editor->vaporizerComponent->getTabbedComponent()->setTabBackgroundColour(VASTTabbedComponent::TabSequence::PRESET, m_editor->getCurrentVASTLookAndFeel()->findVASTColour(colVaporizerComponentTabBarPresetBackground));
+                        
+            VASTLFOMsegComponent* tab3 = dynamic_cast<VASTLFOMsegComponent*>(m_editor->vaporizerComponent->getTabbedComponent()->getTabContentComponent(VASTTabbedComponent::TabSequence::LFOMSEG));
+            if (tab3 != nullptr) {
+                    tab3->getEnvTab()->setTabBackgroundColour(0,  m_editor->getCurrentVASTLookAndFeel()->findVASTColour(colLFOMsegComponentTabBarMSEG1));
+                    tab3->getEnvTab()->setTabBackgroundColour(1,  m_editor->getCurrentVASTLookAndFeel()->findVASTColour(colLFOMsegComponentTabBarMSEG2));
+                    tab3->getEnvTab()->setTabBackgroundColour(2,  m_editor->getCurrentVASTLookAndFeel()->findVASTColour(colLFOMsegComponentTabBarMSEG3));
+                    tab3->getEnvTab()->setTabBackgroundColour(3,  m_editor->getCurrentVASTLookAndFeel()->findVASTColour(colLFOMsegComponentTabBarMSEG4));
+                    tab3->getEnvTab()->setTabBackgroundColour(4,  m_editor->getCurrentVASTLookAndFeel()->findVASTColour(colLFOMsegComponentTabBarMSEG5));
+                    tab3->getLFOTab()->setTabBackgroundColour(0,  m_editor->getCurrentVASTLookAndFeel()->findVASTColour(colLFOMsegComponentTabBarLFO1));
+                    tab3->getLFOTab()->setTabBackgroundColour(1,  m_editor->getCurrentVASTLookAndFeel()->findVASTColour(colLFOMsegComponentTabBarLFO2));
+                    tab3->getLFOTab()->setTabBackgroundColour(2,  m_editor->getCurrentVASTLookAndFeel()->findVASTColour(colLFOMsegComponentTabBarLFO3));
+                    tab3->getLFOTab()->setTabBackgroundColour(3,  m_editor->getCurrentVASTLookAndFeel()->findVASTColour(colLFOMsegComponentTabBarLFO4));
+                    tab3->getLFOTab()->setTabBackgroundColour(4,  m_editor->getCurrentVASTLookAndFeel()->findVASTColour(colLFOMsegComponentTabBarLFO5));
+                }
+
+            VASTFXComponent* tab5 = dynamic_cast<VASTFXComponent*>(m_editor->vaporizerComponent->getTabbedComponent()->getTabContentComponent(VASTTabbedComponent::TabSequence::FX));
+            if (tab5 != nullptr) {
+                tab5->getFXBusTab()->setTabBackgroundColour(0,  m_editor->getCurrentVASTLookAndFeel()->findVASTColour(colFXComponentTabBarFXBUS1));
+                tab5->getFXBusTab()->setTabBackgroundColour(1,  m_editor->getCurrentVASTLookAndFeel()->findVASTColour(colFXComponentTabBarFXBUS2));
+                tab5->getFXBusTab()->setTabBackgroundColour(2,  m_editor->getCurrentVASTLookAndFeel()->findVASTColour(colFXComponentTabBarFXBUS3));
+            }
+            
+            VASTArpComponent* tab6 = dynamic_cast<VASTArpComponent*>(m_editor->vaporizerComponent->getTabbedComponent()->getTabContentComponent(VASTTabbedComponent::TabSequence::ARP));
+            if (tab6 != nullptr){
+                tab6->getStepSeqTab()->setTabBackgroundColour(0,  m_editor->getCurrentVASTLookAndFeel()->findVASTColour(colArpComponentTabBarSTEPSEQ1));
+                tab6->getStepSeqTab()->setTabBackgroundColour(1,  m_editor->getCurrentVASTLookAndFeel()->findVASTColour(colArpComponentTabBarSTEPSEQ2));
+
+                tab6->getStepSeqTab()->setTabBackgroundColour(2,  m_editor->getCurrentVASTLookAndFeel()->findVASTColour(colArpComponentTabBarSTEPSEQ3));
             }
         }
     }

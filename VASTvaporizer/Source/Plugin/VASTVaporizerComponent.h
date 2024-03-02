@@ -49,6 +49,22 @@
 #include "VASTLFOMsegComponent.h"
 #include "../Engine/VASTSingleNote.h"
 
+class VASTTabbedComponent; //forward declaration
+class VASTTabBarButton : public TabBarButton, public DragAndDropTarget
+{
+public:
+    VASTTabBarButton (const String& name, TabbedButtonBar& ownerBar);
+    bool isInterestedInDragSource(const SourceDetails &dragSourceDetails) override;
+    void itemDragEnter (const SourceDetails& dragSourceDetails) override;
+    void itemDragMove (const SourceDetails& dragSourceDetails) override {};
+    void itemDragExit (const SourceDetails& dragSourceDetails) override {};
+    void itemDropped (const SourceDetails& dragSourceDetails) override {};
+    bool shouldDrawDragImageWhenOver() override { return true; };
+    VASTTabbedComponent* tabbedComponent = nullptr;
+    int tabIndex = -1;
+    String tabName = "";
+};
+
 class VASTTabbedComponent : public TabbedComponent
 {
 public:
@@ -59,6 +75,8 @@ public:
     AudioProcessor* myProcessor;
     AudioProcessorEditor* myEditor;
     bool m_bInitialized = false;
+    
+    TabBarButton* createTabButton (const String& tabName, int tabIndex) override;
 };
 //[/Headers]
 

@@ -57,8 +57,6 @@ public:
 	VASTDragSource* getComponentCustomMod4() {
 		return c_dd_CustomModulator4.get();
 	}
-    void setHighlight(int modSource);
-    void removeHighlights();
     //[/UserMethods]
 
     void paint (juce::Graphics& g) override;

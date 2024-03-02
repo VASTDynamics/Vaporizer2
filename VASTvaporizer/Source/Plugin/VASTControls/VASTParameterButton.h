@@ -7,6 +7,7 @@ VAST Dynamics
 
 #include "../../Engine/VASTEngineHeader.h"
 #include "VASTPopupHandler.h"
+#include "../VASTGUIRuntimeModel.h"
 
 class VASTParameterButton : public ToggleButton
 
@@ -18,7 +19,7 @@ public:
 	~VASTParameterButton();
 	void setAudioProcessor(VASTAudioProcessor &processor);
 	VASTAudioProcessor* getAudioProcessor();
-	void bindParameter(const String& newID);
+	void bindParameter(VASTAudioProcessorEditor* editor, const String& newID, VASTGUIRuntimeModel::GUIComponents guiComponent, int tabNo);
 
 private:
 	VASTPopupHandler vastPopupHandler;

@@ -44,6 +44,8 @@ VASTFXEffectPane::VASTFXEffectPane (AudioProcessorEditor *editor, AudioProcessor
 
 
     //[Constructor] You can add your own custom stuff here..
+    if (m_lazyInit == false)
+        lazyInit();
 	setOpaque(true);
     //[/Constructor]
 }
@@ -141,13 +143,13 @@ void VASTFXEffectPane::lazyInit() {
 		VASTGenericEditor* geditor;
 		switch (myBusnr) {
 		case 0:
-			geditor = new VASTGenericEditor(myProcessor->m_pVASTXperience.m_fxBus1.effectBus[i]->effectPlugin, myProcessor);
+			geditor = new VASTGenericEditor(myProcessor->m_pVASTXperience.m_fxBus1.effectBus[i]->effectPlugin, myProcessor, myEditor, 0);
 			break;
 		case 1:
-			geditor = new VASTGenericEditor(myProcessor->m_pVASTXperience.m_fxBus2.effectBus[i]->effectPlugin, myProcessor);
+			geditor = new VASTGenericEditor(myProcessor->m_pVASTXperience.m_fxBus2.effectBus[i]->effectPlugin, myProcessor, myEditor, 1);
 			break;
 		case 2:
-			geditor = new VASTGenericEditor(myProcessor->m_pVASTXperience.m_fxBus3.effectBus[i]->effectPlugin, myProcessor);
+			geditor = new VASTGenericEditor(myProcessor->m_pVASTXperience.m_fxBus3.effectBus[i]->effectPlugin, myProcessor, myEditor, 2);
 			break;
 		default:
 			jassert(false);

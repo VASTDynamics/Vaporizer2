@@ -19,7 +19,7 @@ public:
 	void resized() override;
 	void paint(Graphics& g) override;
 
-	void setAudioProcessor(VASTAudioProcessor &processor);
+    void setAudioProcessor(VASTAudioProcessor &processor, VASTAudioProcessorEditor &editor);
 	VASTAudioProcessor* getAudioProcessor();
 	void setModString(const juce::String& dragText);
 	void lookAndFeelChanged() override;
@@ -41,6 +41,7 @@ private:
     bool m_isHighlighted;
     
 	VASTAudioProcessor *m_processor;
+    VASTAudioProcessorEditor* m_editor;
     Colour m_bufferc1{};
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(VASTDragSource)
 };

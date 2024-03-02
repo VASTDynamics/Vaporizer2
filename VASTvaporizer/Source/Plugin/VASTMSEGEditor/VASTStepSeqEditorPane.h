@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 6.0.1
+  Created with Projucer version: 7.0.9
 
   ------------------------------------------------------------------------------
 
@@ -42,7 +42,7 @@ class VASTStepSeqEditorPane  : public Component,
 {
 public:
     //==============================================================================
-    VASTStepSeqEditorPane (AudioProcessorEditor *editor, AudioProcessor* processor, VASTMSEGData* data, VASTMSEGData* datalive, String parameterSuffix);
+    VASTStepSeqEditorPane (AudioProcessorEditor *editor, AudioProcessor* processor, VASTMSEGData* data, VASTMSEGData* datalive, String parameterSuffix, int stepSeqNo);
     ~VASTStepSeqEditorPane() override;
 
     //==============================================================================
@@ -67,7 +67,7 @@ private:
     VASTMSEGData * myData;
 	VASTMSEGData * myDataLive;
 	String mySuffix = "";
-
+    int myStepSeqNo = 0;
     //[/UserVariables]
 
     //==============================================================================

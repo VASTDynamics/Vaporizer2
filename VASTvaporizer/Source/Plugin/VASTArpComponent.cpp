@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 6.1.2
+  Created with Projucer version: 7.0.9
 
   ------------------------------------------------------------------------------
 
@@ -46,14 +46,15 @@ VASTArpComponent::VASTArpComponent (AudioProcessorEditor *editor, AudioProcessor
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
 
-    c_stepseqTab.reset (new VASTTabbedSTEPSEQComponent (myProcessor, juce::TabbedButtonBar::TabsAtTop));
+    c_stepseqTab.reset (new VASTTabbedSTEPSEQComponent (myProcessor,
+                                                        myEditor, juce::TabbedButtonBar::TabsAtTop));
     addAndMakeVisible (c_stepseqTab.get());
     c_stepseqTab->setName ("c_stepseqTab");
 
     c_arpTab.reset (new juce::TabbedComponent (juce::TabbedButtonBar::TabsAtTop));
     addAndMakeVisible (c_arpTab.get());
     c_arpTab->setTabBarDepth (30);
-    c_arpTab->addTab (TRANS("ARP"), juce::Colour (0xff002a32), new VASTARPEditorPane (myEditor, myProcessor, &myProcessor->m_pVASTXperience.m_Set.m_ARPData_changed, &myProcessor->m_pVASTXperience.m_Set.m_ARPData), true);
+    c_arpTab->addTab (TRANS ("ARP"), juce::Colour (0xff002a32), new VASTARPEditorPane (myEditor, myProcessor, &myProcessor->m_pVASTXperience.m_Set.m_ARPData_changed, &myProcessor->m_pVASTXperience.m_Set.m_ARPData), true);
     c_arpTab->setCurrentTabIndex (0);
 
     c_iconMaximizeEditor.reset (new VASTDrawableButton ("c_iconMaximize", arrow_right_corner_svg, arrow_right_corner_svgSize, "Maximize area"));
@@ -63,9 +64,9 @@ VASTArpComponent::VASTArpComponent (AudioProcessorEditor *editor, AudioProcessor
 
     //[UserPreSize]
 	c_stepseqTab->setTabBarDepth(30);
-	c_stepseqTab->addTab(TRANS("STEPSEQ1"), juce::Colour(0x90bc6445), new VASTStepSeqEditorPane(myEditor, myProcessor, &myProcessor->m_pVASTXperience.m_Set.m_StepSeqData_changed[0], &myProcessor->m_pVASTXperience.m_Set.m_StepSeqData[0], "STEPSEQ1"), true);
-	c_stepseqTab->addTab(TRANS("STEPSEQ2"), juce::Colour(0x80bc6445), new VASTStepSeqEditorPane(myEditor, myProcessor, &myProcessor->m_pVASTXperience.m_Set.m_StepSeqData_changed[1], &myProcessor->m_pVASTXperience.m_Set.m_StepSeqData[1], "STEPSEQ2"), true);
-	c_stepseqTab->addTab(TRANS("STEPSEQ3"), juce::Colour(0x70bc6445), new VASTStepSeqEditorPane(myEditor, myProcessor, &myProcessor->m_pVASTXperience.m_Set.m_StepSeqData_changed[2], &myProcessor->m_pVASTXperience.m_Set.m_StepSeqData[2], "STEPSEQ3"), true);
+	c_stepseqTab->addTab(TRANS("STEPSEQ1"), juce::Colour(0x90bc6445), new VASTStepSeqEditorPane(myEditor, myProcessor, &myProcessor->m_pVASTXperience.m_Set.m_StepSeqData_changed[0], &myProcessor->m_pVASTXperience.m_Set.m_StepSeqData[0], "STEPSEQ1", 0), true);
+	c_stepseqTab->addTab(TRANS("STEPSEQ2"), juce::Colour(0x80bc6445), new VASTStepSeqEditorPane(myEditor, myProcessor, &myProcessor->m_pVASTXperience.m_Set.m_StepSeqData_changed[1], &myProcessor->m_pVASTXperience.m_Set.m_StepSeqData[1], "STEPSEQ2", 1), true);
+	c_stepseqTab->addTab(TRANS("STEPSEQ3"), juce::Colour(0x70bc6445), new VASTStepSeqEditorPane(myEditor, myProcessor, &myProcessor->m_pVASTXperience.m_Set.m_StepSeqData_changed[2], &myProcessor->m_pVASTXperience.m_Set.m_StepSeqData[2], "STEPSEQ3", 2), true);
 	c_stepseqTab->setCurrentTabIndex(0);
 
 	//manage parameter bindings -> set ComponentID = Name and processor
@@ -75,17 +76,17 @@ VASTArpComponent::VASTArpComponent (AudioProcessorEditor *editor, AudioProcessor
 			auto* aSlider = dynamic_cast<VASTParameterSlider*> (child);
 			if (aSlider != nullptr) {
 				aSlider->setAudioProcessor(*myProcessor);
-				aSlider->bindParameter(aSlider->getName());
+				aSlider->bindParameter(myEditor, aSlider->getName(), VASTGUIRuntimeModel::GUIComponents::ARPComponent, 0);
 			}
 			auto* aCombobox = dynamic_cast<VASTParameterComboBox*> (child);
 			if (aCombobox != nullptr) {
 				aCombobox->setAudioProcessor(*myProcessor);
-				aCombobox->bindParameter(aCombobox->getName());
+				aCombobox->bindParameter(myEditor, aCombobox->getName(), VASTGUIRuntimeModel::GUIComponents::ARPComponent, 0);
 			}
 			auto* aButton = dynamic_cast<VASTParameterButton*> (child);
 			if (aButton != nullptr) {
 				aButton->setAudioProcessor(*myProcessor);
-				aButton->bindParameter(aButton->getName());
+				aButton->bindParameter(myEditor, aButton->getName(), VASTGUIRuntimeModel::GUIComponents::ARPComponent, 0);
 			}
 		}
 	}
@@ -99,7 +100,7 @@ VASTArpComponent::VASTArpComponent (AudioProcessorEditor *editor, AudioProcessor
 	c_arpTab->setOutline(0);
 	lastMouseWheelEvent = juce::Time::getCurrentTime();
 	setOpaque(true);
-    
+
     return; //dont call setSize
     //[/UserPreSize]
 
@@ -293,7 +294,7 @@ BEGIN_JUCER_METADATA
   </BACKGROUND>
   <GENERICCOMPONENT name="c_stepseqTab" id="9f443531cfa42ce5" memberName="c_stepseqTab"
                     virtualName="VASTTabbedSTEPSEQComponent" explicitFocusOrder="0"
-                    pos="0% 0% 100% 49.913%" class="VASTTabbedSTEPSEQComponent" params="myProcessor, juce::TabbedButtonBar::TabsAtTop"/>
+                    pos="0% 0% 100% 49.913%" class="VASTTabbedSTEPSEQComponent" params="myProcessor,&#10;myEditor, juce::TabbedButtonBar::TabsAtTop"/>
   <TABBEDCOMPONENT name="c_arpTab" id="b6cb6483520d3fbf" memberName="c_arpTab" virtualName=""
                    explicitFocusOrder="0" pos="0% 50.087% 100% 49.913%" orientation="top"
                    tabBarDepth="30" initialTab="0">

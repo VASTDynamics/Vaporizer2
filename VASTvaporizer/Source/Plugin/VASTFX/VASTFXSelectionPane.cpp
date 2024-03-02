@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 6.0.1
+  Created with Projucer version: 7.0.9
 
   ------------------------------------------------------------------------------
 
@@ -38,7 +38,7 @@ VASTFXSelectionPane::VASTFXSelectionPane (AudioProcessorEditor *editor, AudioPro
     //[/Constructor_pre]
 
     label125.reset (new juce::Label ("new label",
-                                     TRANS("MONO CUT")));
+                                     TRANS ("MONO CUT")));
     addAndMakeVisible (label125.get());
     label125->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain));
     label125->setJustificationType (juce::Justification::centred);
@@ -49,7 +49,7 @@ VASTFXSelectionPane::VASTFXSelectionPane (AudioProcessorEditor *editor, AudioPro
 
     m_fMBMonoFrequency.reset (new VASTParameterSlider ("m_fMBMonoFrequency"));
     addAndMakeVisible (m_fMBMonoFrequency.get());
-    m_fMBMonoFrequency->setTooltip (TRANS("Multi band frequency - below only mono processing and no delay & reverb"));
+    m_fMBMonoFrequency->setTooltip (TRANS ("Multi band frequency - below only mono processing and no delay & reverb"));
     m_fMBMonoFrequency->setRange (0, 20000, 0.01);
     m_fMBMonoFrequency->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     m_fMBMonoFrequency->setTextBoxStyle (juce::Slider::NoTextBox, false, 30, 14);
@@ -64,20 +64,20 @@ VASTFXSelectionPane::VASTFXSelectionPane (AudioProcessorEditor *editor, AudioPro
 
     m_uFxBusRouting.reset (new VASTParameterComboBox ("m_uFxBusRouting"));
     addAndMakeVisible (m_uFxBusRouting.get());
-    m_uFxBusRouting->setTooltip (TRANS("Effect bus routing"));
+    m_uFxBusRouting->setTooltip (TRANS ("Effect bus routing"));
     m_uFxBusRouting->setEditableText (false);
     m_uFxBusRouting->setJustificationType (juce::Justification::centredLeft);
     m_uFxBusRouting->setTextWhenNothingSelected (juce::String());
-    m_uFxBusRouting->setTextWhenNoChoicesAvailable (TRANS("---"));
-    m_uFxBusRouting->addItem (TRANS("MSEG1"), 1);
-    m_uFxBusRouting->addItem (TRANS("MSEG2"), 2);
-    m_uFxBusRouting->addItem (TRANS("MSEG3"), 3);
-    m_uFxBusRouting->addItem (TRANS("MSEG4"), 4);
-    m_uFxBusRouting->addItem (TRANS("MSEG5"), 5);
+    m_uFxBusRouting->setTextWhenNoChoicesAvailable (TRANS ("---"));
+    m_uFxBusRouting->addItem (TRANS ("MSEG1"), 1);
+    m_uFxBusRouting->addItem (TRANS ("MSEG2"), 2);
+    m_uFxBusRouting->addItem (TRANS ("MSEG3"), 3);
+    m_uFxBusRouting->addItem (TRANS ("MSEG4"), 4);
+    m_uFxBusRouting->addItem (TRANS ("MSEG5"), 5);
     m_uFxBusRouting->addListener (this);
 
     label14.reset (new juce::Label ("new label",
-                                    TRANS("ROUTING")));
+                                    TRANS ("ROUTING")));
     addAndMakeVisible (label14.get());
     label14->setFont (juce::Font ("Syntax", 11.00f, juce::Font::plain));
     label14->setJustificationType (juce::Justification::centred);
@@ -95,25 +95,25 @@ VASTFXSelectionPane::VASTFXSelectionPane (AudioProcessorEditor *editor, AudioPro
 			if (aSlider != nullptr) {
 				aSlider->setAudioProcessor(*myProcessor);
 				if (myBusnr>0)
-					aSlider->bindParameter(aSlider->getName() + "_Bus" + String(myBusnr + 1));
+					aSlider->bindParameter(myEditor, aSlider->getName() + "_Bus" + String(myBusnr + 1), VASTGUIRuntimeModel::GUIComponents::FXSelectionPane, myBusnr);
 				else
-					aSlider->bindParameter(aSlider->getName());
+					aSlider->bindParameter(myEditor, aSlider->getName(), VASTGUIRuntimeModel::GUIComponents::FXSelectionPane, myBusnr);
 			}
 			auto* aCombobox = dynamic_cast<VASTParameterComboBox*> (child);
 			if (aCombobox != nullptr) {
 				aCombobox->setAudioProcessor(*myProcessor);
 				if (myBusnr>0)
-					aCombobox->bindParameter(aCombobox->getName() + "_Bus" + String(myBusnr + 1));
+					aCombobox->bindParameter(myEditor, aCombobox->getName() + "_Bus" + String(myBusnr + 1), VASTGUIRuntimeModel::GUIComponents::FXSelectionPane, myBusnr);
 				else
-					aCombobox->bindParameter(aCombobox->getName());
+					aCombobox->bindParameter(myEditor, aCombobox->getName(), VASTGUIRuntimeModel::GUIComponents::FXSelectionPane, myBusnr);
 			}
 			auto* aButton = dynamic_cast<VASTParameterButton*> (child);
 			if (aButton != nullptr) {
 				aButton->setAudioProcessor(*myProcessor);
 				if (myBusnr>0)
-					aButton->bindParameter(aButton->getName() + "_Bus" + String(myBusnr + 1));
+					aButton->bindParameter(myEditor, aButton->getName() + "_Bus" + String(myBusnr + 1), VASTGUIRuntimeModel::GUIComponents::FXSelectionPane, myBusnr);
 				else
-					aButton->bindParameter(aButton->getName());
+					aButton->bindParameter(myEditor, aButton->getName(), VASTGUIRuntimeModel::GUIComponents::FXSelectionPane, myBusnr);
 
 			}
 		}

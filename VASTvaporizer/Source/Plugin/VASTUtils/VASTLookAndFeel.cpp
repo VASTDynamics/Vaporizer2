@@ -247,7 +247,7 @@ void VASTLookAndFeel::drawTabButton(TabBarButton& button, Graphics& g, bool isMo
 
 	if (button.getToggleState())
 	{
-		g.setColour(bkg);
+		g.setColour(bkg.darker(0.8f));
 	}
 	else
 	{
@@ -263,11 +263,13 @@ void VASTLookAndFeel::drawTabButton(TabBarButton& button, Graphics& g, bool isMo
 		}
 
 		if (isMouseOver)
-			g.setGradientFill(ColourGradient(bkg.brighter(0.5f), p1.toFloat(),
+			g.setGradientFill(ColourGradient(bkg.brighter(0.7f), p1.toFloat(),
 				bkg.brighter(0.2f), p2.toFloat(), false));
 		else 
-			g.setGradientFill(ColourGradient(bkg.brighter(0.2f), p1.toFloat(),
-				bkg.darker(0.1f), p2.toFloat(), false));
+            g.setGradientFill(ColourGradient(bkg.brighter(0.5f), p1.toFloat(),
+                bkg.darker(0.1f), p2.toFloat(), false));
+            //g.setGradientFill(ColourGradient(bkg.brighter(0.2f), p1.toFloat(),
+				//bkg.darker(0.1f), p2.toFloat(), false));
 	}
 
 	g.fillRect(activeArea);	
@@ -1312,6 +1314,7 @@ void VASTLookAndFeel::drawRotarySlider(Graphics& g, int x, int y, int width, int
 
 	bool isParameterSlider = false;
     bool isHighlighted = false;
+    bool isDragAndDropInterested = false;
 	VASTParameterSlider* _parameterslider = nullptr;
     if ((_parameterslider = dynamic_cast<VASTParameterSlider*>(&slider))) {
 		isParameterSlider = true;
@@ -1323,7 +1326,7 @@ void VASTLookAndFeel::drawRotarySlider(Graphics& g, int x, int y, int width, int
 				cid = cid.dropLastCharacters(5);
 			}
 			*/
-
+            isDragAndDropInterested = _parameterslider->m_draganddropinterested;
 			int modmatdest = myProcessor->autoParamGetDestination(cid);
 			if (modmatdest > 0) { //-1 and 0 are not wanted
 				isDDTarget = true;
@@ -1383,20 +1386,20 @@ void VASTLookAndFeel::drawRotarySlider(Graphics& g, int x, int y, int width, int
 	int radius70perc = radius * 0.7f;
 	if (radius70perc <= 1.f) radius70perc = 1;
 
-	//g.setColour(Colour(90,90,90));
-	//g.fillEllipse(rx, ry, rw, rw);
-
 	float w1 = radius / 12.f; 
 	// outer arc	
 	if ((isParameterSlider) && (isDDTarget)) {
         if (isHighlighted) {
-            g.setColour(Colour(255,100,0)); //TODO highlight color
+            g.setColour(findVASTColour(colParameterBindingHighlight));
             g.fillAll();
         }
 		Path pArc;
 		pArc.addCentredArc(centreX, centreY, radius*1.3f, radius*1.3f, 0.0f, 1.2f * float(M_PI), 2.8f  * float(M_PI), true);
 		g.setColour(findVASTColour(VASTColours::colRotarySliderOuterArcBackground));
-		g.strokePath(pArc, PathStrokeType(radius30perc));
+        if (isDragAndDropInterested) {
+            g.setColour(findVASTColour(VASTColours::colParameterBindingHighlight));
+        }
+        g.strokePath(pArc, PathStrokeType(radius30perc));
 
 		if (hasModMatrixSource == false) {
 			Path pArc2;

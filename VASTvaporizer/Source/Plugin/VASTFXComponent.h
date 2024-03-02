@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 6.0.1
+  Created with Projucer version: 7.0.9
 
   ------------------------------------------------------------------------------
 
@@ -27,6 +27,30 @@
 #include "VASTControls/VASTComboPreset.h"
 #include "VASTControls/VASTImageButton.h"
 #include "VASTFX/VASTGenericEditor.h"
+
+class VASTTabbedFXComponent; //forward declaration
+class VASTFXTabBarButton : public TabBarButton, public DragAndDropTarget
+{
+public:
+    VASTFXTabBarButton (const String& name, TabbedButtonBar& ownerBar) : TabBarButton(name, ownerBar) {};
+    bool isInterestedInDragSource(const SourceDetails &dragSourceDetails) override { return true; };
+    void itemDragEnter (const SourceDetails& dragSourceDetails) override;
+    void itemDragMove (const SourceDetails& dragSourceDetails) override {};
+    void itemDragExit (const SourceDetails& dragSourceDetails) override {};
+    void itemDropped (const SourceDetails& dragSourceDetails) override {};
+    bool shouldDrawDragImageWhenOver() override { return true; };
+    VASTTabbedFXComponent* tabbedComponent = nullptr;
+    int tabIndex = -1;
+};
+
+class VASTTabbedFXComponent : public TabbedComponent
+{
+public:
+    std::function<void(int)> TabChangedFunc;
+    VASTTabbedFXComponent(TabbedButtonBar::Orientation orientation) : TabbedComponent(orientation) {} ;
+    void currentTabChanged(int index, const String&) override {};
+    TabBarButton* createTabButton (const String& tabName, int tabIndex) override;
+};
 //[/Headers]
 
 
@@ -57,6 +81,7 @@ public:
 	void stopAutoUpdate() {};
 	void buttonClicked(Button* buttonThatWasClicked) override;
 	void mouseWheelMove(const MouseEvent &event, const MouseWheelDetails &wheel) override;
+    juce::TabbedComponent* getFXBusTab() { return c_fxBusTab.get(); };
     //[/UserMethods]
 
     void paint (juce::Graphics& g) override;
@@ -75,7 +100,7 @@ private:
     //[/UserVariables]
 
     //==============================================================================
-    std::unique_ptr<juce::TabbedComponent> c_fxBusTab;
+    std::unique_ptr<VASTTabbedFXComponent> c_fxBusTab;
     std::unique_ptr<VASTDrawableButton> c_iconMaximizeEditor;
 
 

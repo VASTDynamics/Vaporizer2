@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 6.0.1
+  Created with Projucer version: 7.0.9
 
   ------------------------------------------------------------------------------
 
@@ -40,12 +40,14 @@
 
 //==============================================================================
 VASTMSEGEditorPane::VASTMSEGEditorPane (AudioProcessorEditor *editor, AudioProcessor* processor, VASTMSEGData* data, VASTMSEGData* datalive, String parameterSuffix, int msegNo)
-    : myEditor((VASTAudioProcessorEditor*)editor), myProcessor((VASTAudioProcessor*)processor), myData(data), myDataLive(datalive), myMSEGNo(msegNo), mySuffix(parameterSuffix)
+    : myEditor((VASTAudioProcessorEditor*)editor), myProcessor((VASTAudioProcessor*)processor), myData(data), myDataLive(datalive), mySuffix(parameterSuffix), myMSEGNo(msegNo)
 {
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
 
-    c_msegEditor.reset (new VASTMSEGEditor (myProcessor, myData, myDataLive, myMSEGNo));
+    c_msegEditor.reset (new VASTMSEGEditor (myProcessor,
+                                            myEditor,
+                                            myData, myDataLive, myMSEGNo));
     addAndMakeVisible (c_msegEditor.get());
     c_msegEditor->setName ("c_msegEditor");
 
@@ -54,22 +56,22 @@ VASTMSEGEditorPane::VASTMSEGEditorPane (AudioProcessorEditor *editor, AudioProce
     c_loadEnv->setExplicitFocusOrder (1);
     c_loadEnv->setEditableText (false);
     c_loadEnv->setJustificationType (juce::Justification::centredLeft);
-    c_loadEnv->setTextWhenNothingSelected (TRANS("load env"));
-    c_loadEnv->setTextWhenNoChoicesAvailable (TRANS("none"));
-    c_loadEnv->addItem (TRANS("ADSR"), 1);
-    c_loadEnv->addItem (TRANS("ADR"), 2);
-    c_loadEnv->addItem (TRANS("AHDSR"), 3);
-    c_loadEnv->addItem (TRANS("Ramp"), 4);
-    c_loadEnv->addItem (TRANS("Sine"), 5);
-    c_loadEnv->addItem (TRANS("Stairs"), 6);
+    c_loadEnv->setTextWhenNothingSelected (TRANS ("load env"));
+    c_loadEnv->setTextWhenNoChoicesAvailable (TRANS ("none"));
+    c_loadEnv->addItem (TRANS ("ADSR"), 1);
+    c_loadEnv->addItem (TRANS ("ADR"), 2);
+    c_loadEnv->addItem (TRANS ("AHDSR"), 3);
+    c_loadEnv->addItem (TRANS ("Ramp"), 4);
+    c_loadEnv->addItem (TRANS ("Sine"), 5);
+    c_loadEnv->addItem (TRANS ("Stairs"), 6);
     c_loadEnv->addSeparator();
     c_loadEnv->addSeparator();
     c_loadEnv->addListener (this);
 
     label3.reset (new juce::Label ("new label",
-                                   TRANS("ATK")));
+                                   TRANS ("ATK")));
     addAndMakeVisible (label3.get());
-    label3->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label3->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label3->setJustificationType (juce::Justification::centredRight);
     label3->setEditable (false, false, false);
     label3->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -77,9 +79,9 @@ VASTMSEGEditorPane::VASTMSEGEditorPane (AudioProcessorEditor *editor, AudioProce
     label3->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label4.reset (new juce::Label ("new label",
-                                   TRANS("DEC")));
+                                   TRANS ("DEC")));
     addAndMakeVisible (label4.get());
-    label4->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label4->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label4->setJustificationType (juce::Justification::centredRight);
     label4->setEditable (false, false, false);
     label4->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -87,9 +89,9 @@ VASTMSEGEditorPane::VASTMSEGEditorPane (AudioProcessorEditor *editor, AudioProce
     label4->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label5.reset (new juce::Label ("new label",
-                                   TRANS("SUS")));
+                                   TRANS ("SUS")));
     addAndMakeVisible (label5.get());
-    label5->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label5->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label5->setJustificationType (juce::Justification::centredRight);
     label5->setEditable (false, false, false);
     label5->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -97,9 +99,9 @@ VASTMSEGEditorPane::VASTMSEGEditorPane (AudioProcessorEditor *editor, AudioProce
     label5->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label6.reset (new juce::Label ("new label",
-                                   TRANS("REL")));
+                                   TRANS ("REL")));
     addAndMakeVisible (label6.get());
-    label6->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label6->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label6->setJustificationType (juce::Justification::centredRight);
     label6->setEditable (false, false, false);
     label6->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -108,13 +110,13 @@ VASTMSEGEditorPane::VASTMSEGEditorPane (AudioProcessorEditor *editor, AudioProce
 
     m_uMSEGPolarity.reset (new VASTParameterComboBox ("m_uMSEGPolarity"));
     addAndMakeVisible (m_uMSEGPolarity.get());
-    m_uMSEGPolarity->setTooltip (TRANS("MSEG polarity (unipolar, bipolar) - used when MSEG is modulation source"));
+    m_uMSEGPolarity->setTooltip (TRANS ("MSEG polarity (unipolar, bipolar) - used when MSEG is modulation source"));
     m_uMSEGPolarity->setEditableText (false);
     m_uMSEGPolarity->setJustificationType (juce::Justification::centredLeft);
-    m_uMSEGPolarity->setTextWhenNothingSelected (TRANS("choose env mode"));
-    m_uMSEGPolarity->setTextWhenNoChoicesAvailable (TRANS("none"));
-    m_uMSEGPolarity->addItem (TRANS("UNIPOLAR"), 1);
-    m_uMSEGPolarity->addItem (TRANS("BIPOLAR"), 2);
+    m_uMSEGPolarity->setTextWhenNothingSelected (TRANS ("choose env mode"));
+    m_uMSEGPolarity->setTextWhenNoChoicesAvailable (TRANS ("none"));
+    m_uMSEGPolarity->addItem (TRANS ("UNIPOLAR"), 1);
+    m_uMSEGPolarity->addItem (TRANS ("BIPOLAR"), 2);
     m_uMSEGPolarity->addListener (this);
 
     m_fAttackTime.reset (new VASTParameterSlider ("m_fAttackTime"));
@@ -158,7 +160,7 @@ VASTMSEGEditorPane::VASTMSEGEditorPane (AudioProcessorEditor *editor, AudioProce
     m_fReleaseTime->addListener (this);
 
     label108.reset (new juce::Label ("new label",
-                                     TRANS("BEATS (DAW)")));
+                                     TRANS ("BEATS (DAW)")));
     addAndMakeVisible (label108.get());
     label108->setFont (juce::Font (11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     label108->setJustificationType (juce::Justification::centredRight);
@@ -168,9 +170,9 @@ VASTMSEGEditorPane::VASTMSEGEditorPane (AudioProcessorEditor *editor, AudioProce
     label108->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     label2.reset (new juce::Label ("new label",
-                                   TRANS("SYNC")));
+                                   TRANS ("SYNC")));
     addAndMakeVisible (label2.get());
-    label2->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label2->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label2->setJustificationType (juce::Justification::centredRight);
     label2->setEditable (false, false, false);
     label2->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -179,25 +181,25 @@ VASTMSEGEditorPane::VASTMSEGEditorPane (AudioProcessorEditor *editor, AudioProce
 
     m_uMSEGTimeBeats.reset (new VASTParameterComboBox ("m_uMSEGTimeBeats"));
     addAndMakeVisible (m_uMSEGTimeBeats.get());
-    m_uMSEGTimeBeats->setTooltip (TRANS("LFO time in beats when synched to DAW"));
+    m_uMSEGTimeBeats->setTooltip (TRANS ("LFO time in beats when synched to DAW"));
     m_uMSEGTimeBeats->setEditableText (false);
     m_uMSEGTimeBeats->setJustificationType (juce::Justification::centredLeft);
-    m_uMSEGTimeBeats->setTextWhenNothingSelected (TRANS("choose env mode"));
-    m_uMSEGTimeBeats->setTextWhenNoChoicesAvailable (TRANS("none"));
-    m_uMSEGTimeBeats->addItem (TRANS("UNIPOLAR"), 1);
-    m_uMSEGTimeBeats->addItem (TRANS("BIPOLAR"), 2);
+    m_uMSEGTimeBeats->setTextWhenNothingSelected (TRANS ("choose env mode"));
+    m_uMSEGTimeBeats->setTextWhenNoChoicesAvailable (TRANS ("none"));
+    m_uMSEGTimeBeats->addItem (TRANS ("UNIPOLAR"), 1);
+    m_uMSEGTimeBeats->addItem (TRANS ("BIPOLAR"), 2);
     m_uMSEGTimeBeats->addListener (this);
 
     m_bMSEGSynch.reset (new VASTParameterButton ("m_bMSEGSynch"));
     addAndMakeVisible (m_bMSEGSynch.get());
-    m_bMSEGSynch->setTooltip (TRANS("Synch MSEG to DAW timecode "));
+    m_bMSEGSynch->setTooltip (TRANS ("Synch MSEG to DAW timecode "));
     m_bMSEGSynch->setButtonText (juce::String());
     m_bMSEGSynch->addListener (this);
 
     label7.reset (new juce::Label ("new label",
-                                   TRANS("PER VOICE")));
+                                   TRANS ("PER VOICE")));
     addAndMakeVisible (label7.get());
-    label7->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label7->setFont (juce::Font ("Code Pro Demo", 11.00f, juce::Font::plain));
     label7->setJustificationType (juce::Justification::centredRight);
     label7->setEditable (false, false, false);
     label7->setColour (juce::Label::textColourId, juce::Colour (0xffe2e2e2));
@@ -206,13 +208,13 @@ VASTMSEGEditorPane::VASTMSEGEditorPane (AudioProcessorEditor *editor, AudioProce
 
     m_bMSEGPerVoice.reset (new VASTParameterButton ("m_bMSEGPerVoice"));
     addAndMakeVisible (m_bMSEGPerVoice.get());
-    m_bMSEGPerVoice->setTooltip (TRANS("Have a seperate MSEG per voice or global"));
+    m_bMSEGPerVoice->setTooltip (TRANS ("Have a seperate MSEG per voice or global"));
     m_bMSEGPerVoice->setButtonText (juce::String());
     m_bMSEGPerVoice->addListener (this);
 
     m_fAttackSteps.reset (new VASTParameterSlider ("m_fAttackSteps"));
     addAndMakeVisible (m_fAttackSteps.get());
-    m_fAttackSteps->setTooltip (TRANS("MSEG Attack steps of beats"));
+    m_fAttackSteps->setTooltip (TRANS ("MSEG Attack steps of beats"));
     m_fAttackSteps->setRange (0, 100, 0.01);
     m_fAttackSteps->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     m_fAttackSteps->setTextBoxStyle (juce::Slider::NoTextBox, false, 30, 14);
@@ -223,7 +225,7 @@ VASTMSEGEditorPane::VASTMSEGEditorPane (AudioProcessorEditor *editor, AudioProce
 
     m_fDecaySteps.reset (new VASTParameterSlider ("m_fDecaySteps"));
     addAndMakeVisible (m_fDecaySteps.get());
-    m_fDecaySteps->setTooltip (TRANS("MSEG Decay steps of beats"));
+    m_fDecaySteps->setTooltip (TRANS ("MSEG Decay steps of beats"));
     m_fDecaySteps->setRange (0, 100, 0.01);
     m_fDecaySteps->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     m_fDecaySteps->setTextBoxStyle (juce::Slider::NoTextBox, false, 30, 14);
@@ -234,7 +236,7 @@ VASTMSEGEditorPane::VASTMSEGEditorPane (AudioProcessorEditor *editor, AudioProce
 
     m_fReleaseSteps.reset (new VASTParameterSlider ("m_fReleaseSteps"));
     addAndMakeVisible (m_fReleaseSteps.get());
-    m_fReleaseSteps->setTooltip (TRANS("MSEG Release steps of beats"));
+    m_fReleaseSteps->setTooltip (TRANS ("MSEG Release steps of beats"));
     m_fReleaseSteps->setRange (0, 100, 0.01);
     m_fReleaseSteps->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     m_fReleaseSteps->setTextBoxStyle (juce::Slider::NoTextBox, false, 30, 14);
@@ -252,17 +254,17 @@ VASTMSEGEditorPane::VASTMSEGEditorPane (AudioProcessorEditor *editor, AudioProce
 			auto* aSlider = dynamic_cast<VASTParameterSlider*> (child);
 			if (aSlider != nullptr) {
 				aSlider->setAudioProcessor(*myProcessor);
-				aSlider->bindParameter(aSlider->getName() + "_" + mySuffix);
+				aSlider->bindParameter(myEditor, aSlider->getName() + "_" + mySuffix, VASTGUIRuntimeModel::GUIComponents::MSEGEditorPane, myMSEGNo);
 			}
 			auto* aCombobox = dynamic_cast<VASTParameterComboBox*> (child);
 			if (aCombobox != nullptr) {
 				aCombobox->setAudioProcessor(*myProcessor);
-				aCombobox->bindParameter(aCombobox->getName() + "_" + mySuffix);
+				aCombobox->bindParameter(myEditor, aCombobox->getName() + "_" + mySuffix, VASTGUIRuntimeModel::GUIComponents::MSEGEditorPane, myMSEGNo);
 			}
 			auto* aButton = dynamic_cast<VASTParameterButton*> (child);
 			if (aButton != nullptr) {
 				aButton->setAudioProcessor(*myProcessor);
-				aButton->bindParameter(aButton->getName() + "_" + mySuffix);
+				aButton->bindParameter(myEditor, aButton->getName() + "_" + mySuffix, VASTGUIRuntimeModel::GUIComponents::MSEGEditorPane, myMSEGNo);
 			}
 		}
 	}
@@ -532,7 +534,7 @@ void VASTMSEGEditorPane::updateAll() {
 		m_fAttackSteps->setVisible(true);
 		m_fDecaySteps->setVisible(true);
 		m_fReleaseSteps->setVisible(true);
-        
+
 	}
     else {
         m_fAttackTime->setVisible(true);
@@ -575,7 +577,7 @@ BEGIN_JUCER_METADATA
   </BACKGROUND>
   <GENERICCOMPONENT name="c_msegEditor" id="5eb93e0013882f07" memberName="c_msegEditor"
                     virtualName="" explicitFocusOrder="0" pos="0% 18.467% 100% 81.533%"
-                    class="VASTMSEGEditor" params="myProcessor, myData, myDataLive, myMSEGNo"/>
+                    class="VASTMSEGEditor" params="myProcessor, &#10;myEditor,&#10;myData, myDataLive, myMSEGNo"/>
   <COMBOBOX name="c_loadEnv" id="75b6e174a60d379f" memberName="c_loadEnv"
             virtualName="VASTComboBox" explicitFocusOrder="1" pos="1.25% 8.014% 10.75% 4.878%"
             editable="0" layout="33" items="ADSR&#10;ADR&#10;AHDSR&#10;Ramp&#10;Sine&#10;Stairs&#10;&#10;"

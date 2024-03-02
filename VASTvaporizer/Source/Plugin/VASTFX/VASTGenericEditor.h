@@ -7,6 +7,8 @@ VAST Dynamics Audio Software (TM)
 
 #include "../../Engine/VASTEngineHeader.h"
 #include "../../Engine/FX/VASTEffect.h"
+#include "../VASTAudioProcessor.h"
+#include "../VASTAudioProcessorEditor.h"
 
 //==============================================================================
 class VASTGenericEditor : public Component
@@ -18,7 +20,7 @@ public:
 	float paramLabelHeight = 40;
 	float paramSliderWidth = 300;
 
-	VASTGenericEditor(CVASTEffect *effect, AudioProcessor *processor);
+	VASTGenericEditor(CVASTEffect *effect, AudioProcessor *processor, AudioProcessorEditor *editor, int busNr);
 	~VASTGenericEditor() {};
 
 	void resized() override;    
@@ -27,7 +29,8 @@ public:
 	CVASTEffect* myEffect = nullptr;
 
 private:
-	VASTAudioProcessor * my_processor = nullptr;
+	VASTAudioProcessor* my_processor = nullptr;
+    VASTAudioProcessorEditor* my_editor = nullptr;
 	
 	Label noParameterLabel { "noparam", "No parameters available" };
 
@@ -40,6 +43,7 @@ private:
     OwnedArray<Button> paramButtons;  
 	OwnedArray<ComboBox> paramCombobox;
     Array<Component*> controls;     
+    int myBusNr = 0;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(VASTGenericEditor)
 };

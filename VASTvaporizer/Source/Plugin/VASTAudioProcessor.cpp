@@ -1716,16 +1716,14 @@ void VASTAudioProcessor::setMidiKeyboardBaseOctave(int baseOctave)
 }
 
 int VASTAudioProcessor::autoParamGetDestination(String parametername) {
-	std::unordered_map<String, int>::iterator it;
-	it = m_mapParameterNameToModdest.find(parametername);
-	if (it == m_mapParameterNameToModdest.end()) return -1;
+	auto it = m_mapParameterNameToModdest.find(parametername); //binary search
+    if (!it->first.equalsIgnoreCase(parametername)) return -1;
 	return it->second;
 };
 
 String VASTAudioProcessor::autoDestinationGetParam(int modmatdest) {
-	std::unordered_multimap<int, String>::iterator it;
-	it = m_mapModdestToParameterName.find(modmatdest);
-	if (it == m_mapModdestToParameterName.end()) return "";
+    auto it = m_mapModdestToParameterName.find(modmatdest); //binary search
+	if (it->first != modmatdest) return "";
 	return it->second;
 };
 

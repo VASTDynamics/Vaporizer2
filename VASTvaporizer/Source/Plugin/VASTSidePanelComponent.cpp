@@ -192,60 +192,60 @@ VASTSidePanelComponent::VASTSidePanelComponent (AudioProcessorEditor *editor, Au
 
 
     //[UserPreSize]
-	c_dd_Velocity->setAudioProcessor(*myProcessor);
+	c_dd_Velocity->setAudioProcessor(*myProcessor, *myEditor);
 	c_dd_Velocity->setRepaintsOnMouseActivity(false);
-	c_dd_Aftertouch->setAudioProcessor(*myProcessor);
+	c_dd_Aftertouch->setAudioProcessor(*myProcessor, *myEditor);
 	c_dd_Aftertouch->setRepaintsOnMouseActivity(false);
-	c_dd_ModWheel->setAudioProcessor(*myProcessor);
+	c_dd_ModWheel->setAudioProcessor(*myProcessor, *myEditor);
 	c_dd_ModWheel->setRepaintsOnMouseActivity(false);
-	c_dd_MSEG1Env->setAudioProcessor(*myProcessor);
+	c_dd_MSEG1Env->setAudioProcessor(*myProcessor, *myEditor);
 	c_dd_MSEG1Env->setRepaintsOnMouseActivity(false);
-	c_dd_MSEG2Env->setAudioProcessor(*myProcessor);
+	c_dd_MSEG2Env->setAudioProcessor(*myProcessor, *myEditor);
 	c_dd_MSEG2Env->setRepaintsOnMouseActivity(false);
-	c_dd_MSEG3Env->setAudioProcessor(*myProcessor);
+	c_dd_MSEG3Env->setAudioProcessor(*myProcessor, *myEditor);
 	c_dd_MSEG3Env->setRepaintsOnMouseActivity(false);
-	c_dd_MSEG4Env->setAudioProcessor(*myProcessor);
+	c_dd_MSEG4Env->setAudioProcessor(*myProcessor, *myEditor);
 	c_dd_MSEG4Env->setRepaintsOnMouseActivity(false);
-	c_dd_MSEG5Env->setAudioProcessor(*myProcessor);
+	c_dd_MSEG5Env->setAudioProcessor(*myProcessor, *myEditor);
 	c_dd_MSEG5Env->setRepaintsOnMouseActivity(false);
-	c_dd_LFO1->setAudioProcessor(*myProcessor);
+	c_dd_LFO1->setAudioProcessor(*myProcessor, *myEditor);
 	c_dd_LFO1->setRepaintsOnMouseActivity(false);
-	c_dd_LFO2->setAudioProcessor(*myProcessor);
+	c_dd_LFO2->setAudioProcessor(*myProcessor, *myEditor);
 	c_dd_LFO2->setRepaintsOnMouseActivity(false);
-	c_dd_LFO3->setAudioProcessor(*myProcessor);
+	c_dd_LFO3->setAudioProcessor(*myProcessor, *myEditor);
 	c_dd_LFO3->setRepaintsOnMouseActivity(false);
-	c_dd_LFO4->setAudioProcessor(*myProcessor);
+	c_dd_LFO4->setAudioProcessor(*myProcessor, *myEditor);
 	c_dd_LFO4->setRepaintsOnMouseActivity(false);
-	c_dd_LFO5->setAudioProcessor(*myProcessor);
+	c_dd_LFO5->setAudioProcessor(*myProcessor, *myEditor);
 	c_dd_LFO5->setRepaintsOnMouseActivity(false);
-	c_dd_StepSeq1->setAudioProcessor(*myProcessor);
+	c_dd_StepSeq1->setAudioProcessor(*myProcessor, *myEditor);
 	c_dd_StepSeq1->setRepaintsOnMouseActivity(false);
-	c_dd_StepSeq2->setAudioProcessor(*myProcessor);
+	c_dd_StepSeq2->setAudioProcessor(*myProcessor, *myEditor);
 	c_dd_StepSeq2->setRepaintsOnMouseActivity(false);
-	c_dd_StepSeq3->setAudioProcessor(*myProcessor);
+	c_dd_StepSeq3->setAudioProcessor(*myProcessor, *myEditor);
 	c_dd_StepSeq3->setRepaintsOnMouseActivity(false);
-	c_dd_KeyTrack->setAudioProcessor(*myProcessor);
+	c_dd_KeyTrack->setAudioProcessor(*myProcessor, *myEditor);
 	c_dd_KeyTrack->setRepaintsOnMouseActivity(false);
-	c_dd_InputEnvelope->setAudioProcessor(*myProcessor);
+	c_dd_InputEnvelope->setAudioProcessor(*myProcessor, *myEditor);
 	c_dd_InputEnvelope->setRepaintsOnMouseActivity(false);
-	c_dd_RandomDriftSlow->setAudioProcessor(*myProcessor);
+	c_dd_RandomDriftSlow->setAudioProcessor(*myProcessor, *myEditor);
 	c_dd_RandomDriftSlow->setRepaintsOnMouseActivity(false);
-	c_dd_RandomDriftFast->setAudioProcessor(*myProcessor);
+	c_dd_RandomDriftFast->setAudioProcessor(*myProcessor, *myEditor);
 	c_dd_RandomDriftFast->setRepaintsOnMouseActivity(false);
-	c_dd_MPETimbreMinMax->setAudioProcessor(*myProcessor);
+	c_dd_MPETimbreMinMax->setAudioProcessor(*myProcessor, *myEditor);
 	c_dd_MPETimbreMinMax->setRepaintsOnMouseActivity(false);
-	c_dd_MPETimbreMin->setAudioProcessor(*myProcessor);
+	c_dd_MPETimbreMin->setAudioProcessor(*myProcessor, *myEditor);
 	c_dd_MPETimbreMin->setRepaintsOnMouseActivity(false);
-	c_dd_MPETimbreMax->setAudioProcessor(*myProcessor);
+	c_dd_MPETimbreMax->setAudioProcessor(*myProcessor, *myEditor);
 	c_dd_MPETimbreMax->setRepaintsOnMouseActivity(false);
 
-	c_dd_CustomModulator1->setAudioProcessor(*myProcessor);
+	c_dd_CustomModulator1->setAudioProcessor(*myProcessor, *myEditor);
 	c_dd_CustomModulator1->setRepaintsOnMouseActivity(false);
-	c_dd_CustomModulator2->setAudioProcessor(*myProcessor);
+	c_dd_CustomModulator2->setAudioProcessor(*myProcessor, *myEditor);
 	c_dd_CustomModulator2->setRepaintsOnMouseActivity(false);
-	c_dd_CustomModulator3->setAudioProcessor(*myProcessor);
+	c_dd_CustomModulator3->setAudioProcessor(*myProcessor, *myEditor);
 	c_dd_CustomModulator3->setRepaintsOnMouseActivity(false);
-	c_dd_CustomModulator4->setAudioProcessor(*myProcessor);
+	c_dd_CustomModulator4->setAudioProcessor(*myProcessor, *myEditor);
 	c_dd_CustomModulator4->setRepaintsOnMouseActivity(false);
 
 	//manage parameter bindings -> set ComponentID = Name and processor
@@ -255,17 +255,17 @@ VASTSidePanelComponent::VASTSidePanelComponent (AudioProcessorEditor *editor, Au
 			auto* aSlider = dynamic_cast<VASTParameterSlider*> (child);
 			if (aSlider != nullptr) {
 				aSlider->setAudioProcessor(*myProcessor);
-				aSlider->bindParameter(aSlider->getName());
+				aSlider->bindParameter(myEditor, aSlider->getName(), VASTGUIRuntimeModel::GUIComponents::SidePanelComponent, 0);
 			}
 			auto* aCombobox = dynamic_cast<VASTParameterComboBox*> (child);
 			if (aCombobox != nullptr) {
 				aCombobox->setAudioProcessor(*myProcessor);
-				aCombobox->bindParameter(aCombobox->getName());
+				aCombobox->bindParameter(myEditor, aCombobox->getName(), VASTGUIRuntimeModel::GUIComponents::SidePanelComponent, 0);
 			}
 			auto* aButton = dynamic_cast<VASTParameterButton*> (child);
 			if (aButton != nullptr) {
 				aButton->setAudioProcessor(*myProcessor);
-				aButton->bindParameter(aButton->getName());
+				aButton->bindParameter(myEditor, aButton->getName(), VASTGUIRuntimeModel::GUIComponents::SidePanelComponent, 0);
 			}
 		}
 	}
@@ -424,27 +424,6 @@ void VASTSidePanelComponent::sliderValueChanged (juce::Slider* sliderThatWasMove
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
-void VASTSidePanelComponent::setHighlight(int modSource) {
-    for (int i=0; i< this->getNumChildComponents(); i++) {
-        VASTDragSource* ddsource = dynamic_cast<VASTDragSource*> (this->getChildComponent(i));
-        if (ddsource!=nullptr) {
-            if (ddsource->getModSource() == modSource) {
-                ddsource->setHighlighted();
-                ddsource->repaint();
-            }
-        }
-     }
-}
-
-void VASTSidePanelComponent::removeHighlights() {
-    for (int i=0; i< this->getNumChildComponents(); i++) {
-        VASTDragSource* ddsource = dynamic_cast<VASTDragSource*> (this->getChildComponent(i));
-        if (ddsource!=nullptr) {
-            ddsource->clearHighlighted();
-            ddsource->repaint();
-        }
-     }
-}
 //[/MiscUserCode]
 
 

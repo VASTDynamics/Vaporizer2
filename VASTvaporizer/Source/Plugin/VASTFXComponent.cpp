@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 6.0.0
+  Created with Projucer version: 7.0.9
 
   ------------------------------------------------------------------------------
 
@@ -32,6 +32,16 @@
 
 
 //[MiscUserDefs] You can add your own user definitions and misc code here...
+void VASTFXTabBarButton::itemDragEnter (const SourceDetails& dragSourceDetails) {
+    if (tabbedComponent->getCurrentTabIndex() != tabIndex)
+        tabbedComponent->setCurrentTabIndex(tabIndex);
+};
+TabBarButton* VASTTabbedFXComponent::createTabButton (const String& tabName, int tabIndex) {
+    VASTFXTabBarButton* tabBarButton = new VASTFXTabBarButton (tabName, *tabs);
+    tabBarButton->tabbedComponent = this;
+    tabBarButton->tabIndex = tabIndex;
+    return tabBarButton;
+}
 //[/MiscUserDefs]
 
 //==============================================================================
@@ -41,12 +51,12 @@ VASTFXComponent::VASTFXComponent (AudioProcessorEditor *editor, AudioProcessor* 
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
 
-    c_fxBusTab.reset (new juce::TabbedComponent (juce::TabbedButtonBar::TabsAtTop));
+    c_fxBusTab.reset (new VASTTabbedFXComponent (juce::TabbedButtonBar::TabsAtTop));
     addAndMakeVisible (c_fxBusTab.get());
     c_fxBusTab->setTabBarDepth (30);
-    c_fxBusTab->addTab (TRANS("BUS1"), juce::Colour (0xff7e7e60), new VASTFXPane (myEditor, myProcessor, 0), true);
-    c_fxBusTab->addTab (TRANS("BUS2"), juce::Colour (0xff8a9362), new VASTFXPane (myEditor, myProcessor, 1), true);
-    c_fxBusTab->addTab (TRANS("BUS3"), juce::Colour (0xff9a9a90), new VASTFXPane (myEditor, myProcessor, 2), true);
+    c_fxBusTab->addTab (TRANS ("BUS1"), juce::Colour (0xff7e7e60), new VASTFXPane (myEditor, myProcessor, 0), true);
+    c_fxBusTab->addTab (TRANS ("BUS2"), juce::Colour (0xff8a9362), new VASTFXPane (myEditor, myProcessor, 1), true);
+    c_fxBusTab->addTab (TRANS ("BUS3"), juce::Colour (0xff9a9a90), new VASTFXPane (myEditor, myProcessor, 2), true);
     c_fxBusTab->setCurrentTabIndex (0);
 
     c_iconMaximizeEditor.reset (new VASTDrawableButton ("c_iconMaximize", arrow_right_corner_svg, arrow_right_corner_svgSize, "Maximize area"));
@@ -62,17 +72,17 @@ VASTFXComponent::VASTFXComponent (AudioProcessorEditor *editor, AudioProcessor* 
 			auto* aSlider = dynamic_cast<VASTParameterSlider*> (child);
 			if (aSlider != nullptr) {
 				aSlider->setAudioProcessor(*myProcessor);
-				aSlider->bindParameter(aSlider->getName());
+				aSlider->bindParameter(myEditor, aSlider->getName(), VASTGUIRuntimeModel::GUIComponents::FXComponent, 0);
 			}
 			auto* aCombobox = dynamic_cast<VASTParameterComboBox*> (child);
 			if (aCombobox != nullptr) {
 				aCombobox->setAudioProcessor(*myProcessor);
-				aCombobox->bindParameter(aCombobox->getName());
+				aCombobox->bindParameter(myEditor, aCombobox->getName(), VASTGUIRuntimeModel::GUIComponents::FXComponent, 0);
 			}
 			auto* aButton = dynamic_cast<VASTParameterButton*> (child);
 			if (aButton != nullptr) {
 				aButton->setAudioProcessor(*myProcessor);
-				aButton->bindParameter(aButton->getName());
+				aButton->bindParameter(myEditor, aButton->getName(), VASTGUIRuntimeModel::GUIComponents::FXComponent, 0);
 			}
 		}
 	}
@@ -241,7 +251,7 @@ BEGIN_JUCER_METADATA
           hasStroke="1" stroke="1, mitered, butt" strokeColour="linear: 10% 34.483%, 77.684% 84.11%, 0=ff202d2d, 1=ff141515"/>
   </BACKGROUND>
   <TABBEDCOMPONENT name="c_fxBusTab" id="eebc75da900c2fda" memberName="c_fxBusTab"
-                   virtualName="" explicitFocusOrder="0" pos="0% 0% 100% 99.826%"
+                   virtualName="VASTTabbedFXComponent" explicitFocusOrder="0" pos="0% 0% 100% 99.826%"
                    orientation="top" tabBarDepth="30" initialTab="0">
     <TAB name="BUS1" colour="ff7e7e60" useJucerComp="0" contentClassName="VASTFXPane"
          constructorParams="myEditor, myProcessor, 0" jucerComponentFile=""/>
