@@ -239,6 +239,7 @@ public:
 	bool isUserPatch();
 	String getUserPatchName();
 	void savePatchXML(File *selectedFile);
+	void loadPresetFile(File presetvvpfile);
 	bool loadPatchXML(XmlDocument* xmlDoc, bool bNameOnly, const VASTPresetElement* preset, int index, VASTPresetElement& resultPresetData);
 	static String getVSTPath();
 	static String getVSTPathAlternative();

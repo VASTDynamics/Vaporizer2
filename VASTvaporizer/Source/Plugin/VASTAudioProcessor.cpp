@@ -528,6 +528,12 @@ void VASTAudioProcessor::initializeToDefaults() {
 	m_parameterState.undoManager->beginNewTransaction(); //start new transcation only here?
 }
 
+void VASTAudioProcessor::loadPresetFile(File presetvvpfile) {
+	VASTPresetElement lPreset{};
+	std::unique_ptr<juce::XmlDocument> xml(new XmlDocument(presetvvpfile));
+	bool success = loadPatchXML(xml.get(), false, &lPreset, lPreset.presetarrayindex, lPreset); 
+}
+
 void VASTAudioProcessor::setCurrentProgram(int index)
 {
 	if (index >= getNumPrograms()) {
