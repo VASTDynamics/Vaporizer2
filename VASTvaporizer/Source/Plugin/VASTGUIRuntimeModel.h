@@ -45,9 +45,8 @@ public:
     VASTGUIRuntimeModel::sGUIParameterSliders getParameterSliderByParameterName(String parameterName);
     VASTDragSource* getDragSourceByModMatrxiSource(int modMatrixSource);
     void repaintAllSliders();
-    
-    //Component* findChildComponentWithName(Component* parent, String compName);
-    
+    void clearAllHighlights();
+        
 private:
     VASTAudioProcessor* myProcessor;
     VASTAudioProcessorEditor* myEditor;

@@ -43,8 +43,9 @@ VASTDragSource::VASTDragSource(int modSource, const juce::String &componentName,
     ddImageButton->setTooltip(m_toolTipText);
 	if (componentName.startsWithIgnoreCase("c_dd_CustomModulator"))
 		ddLabel->setEditable(true);
+    clearHighlighted();
 	m_processor = NULL;
-    m_editor = NULL;
+    m_editor = NULL;    
 }
 
 void VASTDragSource::resized() {

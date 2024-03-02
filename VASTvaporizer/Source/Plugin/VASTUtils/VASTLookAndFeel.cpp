@@ -1333,11 +1333,12 @@ void VASTLookAndFeel::drawRotarySlider(Graphics& g, int x, int y, int width, int
 				if (myProcessor->m_pVASTXperience.m_Set.modMatrixDestinationSetFast(modmatdest)) {
 					hasModMatrixSource = true;
 
-					int slot = myProcessor->m_pVASTXperience.m_Set.modMatrixGetFirstSlotWithDestination(modmatdest);
+					int slot = myProcessor->m_pVASTXperience.m_Set.modMatrixGetFirstSlotWithDestination(modmatdest);					
 					float modVal = 0.f;
 					double curvy = 0.f;
 					int polarity = 0;
-					myProcessor->m_pVASTXperience.m_Set.modMatrixSlotGetValues(slot, modVal, curvy, polarity, lastSrceVals);
+					if (slot > 0)
+						myProcessor->m_pVASTXperience.m_Set.modMatrixSlotGetValues(slot, modVal, curvy, polarity, lastSrceVals);
 
 					modVal *= 0.01f;
 					juce::Range<double> range = (juce::Range<double>)_parameterslider->getRange();

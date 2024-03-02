@@ -13,7 +13,7 @@
   <PARAM id="m_fVoiceGain" text="100"/>
   <PARAM id="m_uPolyMode" text="Poly16"/>
   <PARAM id="m_bLegatoMode" text="Off"/>
-  <PARAM id="m_fCustomModulator1" text="76"/>
+  <PARAM id="m_fCustomModulator1" text="100"/>
   <PARAM id="m_fCustomModulator2" text="82.8"/>
   <PARAM id="m_fCustomModulator3" text="0"/>
   <PARAM id="m_fCustomModulator4" text="0"/>
@@ -230,7 +230,7 @@
   <PARAM id="m_fGate_STEPSEQ3" text="65"/>
   <PARAM id="m_bStepSeqSynch_STEPSEQ3" text="Off"/>
   <PARAM id="m_uStepSeqTimeBeats_STEPSEQ3" text="1"/>
-  <PARAM id="m_fARPSpeed" text="3000"/>
+  <PARAM id="m_fARPSpeed" text="260"/>
   <PARAM id="m_uARPMode" text="Poly"/>
   <PARAM id="m_uARPTimeBeats" text="1"/>
   <PARAM id="m_bARPOnOff" text="On"/>
@@ -267,7 +267,7 @@
   <PARAM id="m_uModMatDest14" text="---"/>
   <PARAM id="m_uModMatDest15" text="---"/>
   <PARAM id="m_uModMatDest16" text="---"/>
-  <PARAM id="m_fModMatVal1" text="100"/>
+  <PARAM id="m_fModMatVal1" text="8.01336"/>
   <PARAM id="m_fModMatVal2" text="100"/>
   <PARAM id="m_fModMatVal3" text="0.449989"/>
   <PARAM id="m_fModMatVal4" text="0"/>

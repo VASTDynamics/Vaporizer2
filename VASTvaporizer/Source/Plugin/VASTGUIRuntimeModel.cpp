@@ -33,8 +33,7 @@ VASTDragSource* VASTGUIRuntimeModel::getDragSourceByModMatrxiSource(int modMatri
 
 void VASTGUIRuntimeModel::registerParameterSlider(VASTParameterSlider* slider, String componentID, VASTGUIRuntimeModel::GUIComponents guiComponent, int tabNo) {
     AudioProcessorParameterWithID* param = myProcessor->m_parameterState.getParameter(componentID);
-    if (param==nullptr)
-        vassertfalse;
+    vassert(param != nullptr);
     
     sGUIParameterSliders ls_GUIParameterSliders;
     ls_GUIParameterSliders.slider = slider;
@@ -54,6 +53,7 @@ void VASTGUIRuntimeModel::registerParameterSlider(VASTParameterSlider* slider, S
 
 VASTGUIRuntimeModel::sGUIParameterSliders VASTGUIRuntimeModel::getParameterSliderByParameterName(String parameterName) {
     sGUIParameterSliders ls_GUIParameterSliders;
+    ls_GUIParameterSliders.slider = nullptr;
     auto pos = m_GUIParameterSliders_HashMapByParameterName.find(parameterName); //fast binary search
     if (pos != m_GUIParameterSliders_HashMapByParameterName.end()) {
         ls_GUIParameterSliders = m_GUIParameterSliders[pos->second];
@@ -72,6 +72,17 @@ void VASTGUIRuntimeModel::repaintAllSliders() {
         if (lslider != nullptr) {
             if (lslider->isShowing())
                 lslider->repaint();
+        }
+    }
+}
+
+void VASTGUIRuntimeModel::clearAllHighlights() {
+    sGUIParameterSliders ls_GUIParameterSliders;
+    for (int i = 0; i < m_GUIParameterSliders.size(); i++) {
+        ls_GUIParameterSliders = m_GUIParameterSliders[i];
+        VASTParameterSlider* lslider = ls_GUIParameterSliders.slider;
+        if (lslider != nullptr) {
+            lslider->clearHighlighted();
         }
     }
 }

@@ -97,7 +97,8 @@ VASTMatrixComponent::VASTMatrixComponent (AudioProcessorEditor *editor, AudioPro
 
     //[UserPreSize]
 	setOpaque(true);
-    
+    if (m_lazyInit == false)
+        lazyInit();
     return; //dont call setSize
     //[/UserPreSize]
 
