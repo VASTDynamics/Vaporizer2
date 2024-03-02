@@ -1337,7 +1337,7 @@ void VASTLookAndFeel::drawRotarySlider(Graphics& g, int x, int y, int width, int
 					float modVal = 0.f;
 					double curvy = 0.f;
 					int polarity = 0;
-					if (slot > 0)
+					if (slot >= 0)
 						myProcessor->m_pVASTXperience.m_Set.modMatrixSlotGetValues(slot, modVal, curvy, polarity, lastSrceVals);
 
 					modVal *= 0.01f;
