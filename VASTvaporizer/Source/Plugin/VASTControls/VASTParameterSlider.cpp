@@ -39,6 +39,7 @@ void VASTParameterSlider::setAutomationDestination(int ) {
 
 void VASTParameterSlider::itemDropped(const SourceDetails& dragSourceDetails) {
 	if (m_processor == nullptr) return;
+	m_draganddropinterested = false;
 	String cid = getComponentID();
 
 	/*
@@ -106,6 +107,7 @@ void VASTParameterSlider::bindParameter(VASTAudioProcessorEditor* editor, const 
 }
 
 void VASTParameterSlider::mouseDrag(const MouseEvent &e) {
+	m_draganddropinterested = false;
 	m_processor->m_pVASTXperience.m_Set.m_bBeforeV22CompatibilityMode = false; 	//HACK
 
 	ModifierKeys modifiers = ModifierKeys::getCurrentModifiersRealtime();
