@@ -26,7 +26,7 @@ Available formats: VST2 / VST3 / AU / AAX / LV2 plugins and a standalone version
    
 [![QR-Code](Artwork/QR-Code.png)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5H8QH4AU6UWWC)
 
-## Preparation for a CMAKE build (Projcuer .jucer file is distributed but not recommended)
+## Preparation for a CMAKE build (Projcuer .jucer file is distributed but not recommended, you need to have CMake and Ninja installed)
 Create a suitable local project folder and cd into it.
 ```
 git clone https://github.com/VASTDynamics/Vaporizer2.git
