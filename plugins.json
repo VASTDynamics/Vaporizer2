@@ -6,8 +6,10 @@
       "name": "Vaporizer2",
       "description": "Hybrid wavetable additive / subtractive VST / AU / AAX / CLAP / LV2 synthesizer / sampler workstation",
       "tags": [
-        "Fx",
-        "Delay"
+        "Instrument",
+        "Synth",
+        "Sampler",
+        "Wavetable Editor"
       ],
       "version": "3.5.0",
       "id": "com.vastdynamics.VAST2",
