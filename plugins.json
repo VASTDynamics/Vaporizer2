@@ -4,7 +4,7 @@
       "author": "VAST Dynamics",
       "homepage": "https://www.vast-dynamics.com/",
       "name": "Vaporizer2",
-      "description": "Hybrid wavetable additive / subtractive VST / AU / AAX / LV2 synthesizer / sampler workstation",
+      "description": "Hybrid wavetable additive / subtractive VST / AU / AAX / CLAP / LV2 synthesizer / sampler workstation",
       "tags": [
         "Fx",
         "Delay"
