@@ -15,23 +15,23 @@
       "files": {
         "audio": {
           "name": "https://github.com/VASTDynamics/Vaporizer2/releases/download/v3.5.0/Vaporizer2_3.5.0_Preset_Teaser.mp3",
-          "size": 352844
+          "size": 1893160 
         },
         "image": {
           "name": "https://github.com/VASTDynamics/Vaporizer2/blob/main/Artwork/vapo2box_neu_2_large.png",
-          "size": 35091
+          "size": 2469146
         },
         "linux": {
           "name": "https://software.opensuse.org/download.html?project=multimedia%3Aproaudio&package=vaporizer2",
-          "size": 13089625
+          "size": 1
         },
         "mac": {
           "name": "https://github.com/VASTDynamics/Vaporizer2/releases/download/v3.5.0/Vaporizer2_installer_OSX64_3.5.0.zip",
-          "size": 13089625
+          "size": 636191008
         },
         "win": {
           "name": "https://github.com/VASTDynamics/Vaporizer2/releases/download/v3.5.0/Vaporizer2_installer_win_3.5.0.zip",
-          "size": 13089625
+          "size": 421509729 
         }
       }
     }
