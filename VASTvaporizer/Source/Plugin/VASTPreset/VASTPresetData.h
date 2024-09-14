@@ -11,6 +11,7 @@
 #include "../../Engine/VASTEngineHeader.h"
 #include "VASTPresetElement.h"
 #include <map>
+#include <thread>
 #include <unordered_map>
 
 class VASTAudioProcessor; //forward declaration
@@ -107,6 +108,7 @@ private:
 	StringArray swap_usedTags;
 	std::atomic<bool> m_swapNeeded = false;
 
+	std::thread m_reloadPresetThread;
 	CriticalSection m_arraySwapLock;
 
 	int m_numFavorites[5];

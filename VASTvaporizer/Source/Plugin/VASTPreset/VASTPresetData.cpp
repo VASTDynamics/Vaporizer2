@@ -30,6 +30,8 @@ VASTPresetData::VASTPresetData(VASTAudioProcessor* proc) : myProcessor(proc) {
 
 VASTPresetData::~VASTPresetData()
 {
+	if (m_reloadPresetThread.joinable())
+		m_reloadPresetThread.join();
 	VASTPresetData::isLoadThreadRunning = false;
 }
 
@@ -239,8 +241,7 @@ void VASTPresetData::reloadPresetArray(bool synchronous) {
 		swapPresetArraysIfNeeded();
 	}
 	else {
-		std::thread reloadPresetthread(&VASTPresetData::reloadPresetArrayThreaded, SafePointer<VASTPresetData>(this), myProcessor);
-		reloadPresetthread.detach();
+		m_reloadPresetThread = std::thread(&VASTPresetData::reloadPresetArrayThreaded, SafePointer<VASTPresetData>(this), myProcessor);
 	}
 }
 
