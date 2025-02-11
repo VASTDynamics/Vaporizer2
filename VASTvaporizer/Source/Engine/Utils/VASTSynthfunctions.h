@@ -14,6 +14,9 @@ VAST Dynamics Audio Software (TM)
 #include <stdio.h>
 #ifdef __aarch64__ //arm64
     #include "../../sse2neon.h"
+#elif defined(__riscv)
+    #define SIMDE_ENABLE_NATIVE_ALIASES
+    #include "simde/x86/sse2.h"
 #else
     #include "immintrin.h"
 #endif
